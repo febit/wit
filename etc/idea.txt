@@ -2,33 +2,39 @@
 
 
 
-日志系统，异常处理  @next @to:zqq @hot
- 
-定长数组声明
-
-new 
+日志  @next @to:zqq @hot
 
 
-expr .. expr2
-
-for(item in expr,expr2...)
-expr ?: expr2
+定长数组声明, 什么格式？？？？
 
 
-import 指定导入名 以及重命名（as ?） @next
+native new java.util.List(int); native new java.util.List(int);
+
+
+针对于 Number 的递增操作符 `..` 优先级？ 每次+1 或-1  expr .. expr2
+
+
+
+循环多个集合 for(item : expr,expr2)
+
+新增 操作符 `?:`  expr ?: expr2 <== { var result= expr;  result = result ? result: expr2}
+
+
+import 限定需要导入的 变量名 以及重命名变量（as ?） @next
 
 
 @import 安全管理: 白名单 黑名单(包,类,方法) @from:Tryfor   @next
 				1. 谁更匹配 谁生效
 				2. 同时生效 黑名单优先级高
 
+
 i18n  @next
+
 
 ASM resolver && native methods  @next  @to:zqq
 
-DiskCacheTextStatment  @tbd
 
-L10n  @ref:PHP @from:Tryfor  @tbd
+DiskCacheTextStatment  @tbd
 
 
 final const @tbd
@@ -37,6 +43,9 @@ final const @tbd
 try-catch @tbd
 
 
-未使用的变量 精简？？？ @tbd
+解析优化时删除未使用的变量？提供 开启 Warning 选项？ @tbd
+
+
+L10n  @ref:PHP @from:Tryfor  @not-support
 
 
