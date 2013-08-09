@@ -451,7 +451,7 @@ action code {:
                 oper = new RShiftOperator(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.URSHIFT: // >>>
-                oper = new ModOperator(leftExpr, rightExpr, line, column);
+                oper = new URShiftOperator(leftExpr, rightExpr, line, column);
                 break;
             default:
                 throw new ParserException("Unsupported Operator", line, column);
