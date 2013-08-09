@@ -38,7 +38,7 @@ public class ImportStatment extends AbstractStatment {
                     if (paramsObject instanceof Map) {
                         params = (Map) paramsObject;
                     } else {
-                        throw new ScriptRuntimeException("Not a Map", paramsExpr);
+                        throw new ScriptRuntimeException("Params must be wrapped in a Map", paramsExpr);
                     }
                 }
             }
