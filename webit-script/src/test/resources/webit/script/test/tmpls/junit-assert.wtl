@@ -1,0 +1,66 @@
+<%
+
+var assertTrue;
+var assertFalse;
+var assertEquals;
+var assertNotEquals;
+var assertNull;
+var assertNotNull;
+var assertSame;
+var assertNotSame;
+var assertArrayEquals;
+
+{
+
+    @import org.junit.Assert;
+
+    var _assertEquals = native static Assert.assertEquals(String, Object, Object);
+    var _assertNotEquals = native static Assert.assertNotEquals(String, Object, Object);
+    var _assertTrue = native static Assert.assertTrue(String, boolean);
+    var _assertFalse = native static Assert.assertFalse(String, boolean);
+    var _assertNull = native static Assert.assertNull(String, Object);
+    var _assertNotNull = native static Assert.assertNotNull(String, Object);
+    var _assertSame = native static Assert.assertSame(String, Object, Object);
+    var _assertNotSame = native static Assert.assertNotSame(String, Object, Object);
+    var _assertArrayEquals = native static Assert.assertArrayEquals(String, Object[], Object[]);
+
+    
+    assertTrue = function(object, msg){
+        _assertTrue(msg, object);
+    };
+
+    assertFalse = function(object, msg){
+        _assertFalse(msg, object);
+    };
+
+    assertEquals = function(first, second, msg){
+        _assertEquals(msg, first, second);
+    };
+
+    assertNotEquals = function(first, second, msg){
+        _assertNotEquals(msg, first, second);
+    };
+
+    assertNull = function(object, msg){
+        _assertNull(msg, object);
+    };
+
+    assertNotNull = function(object, msg){
+        _assertNotNull(msg, object);
+    };
+
+    assertSame = function(first, second, msg){
+        _assertSame(msg, first, second);
+    };
+
+    assertNotSame = function(first, second, msg){
+        _assertNotSame(msg, first, second);
+    };
+
+    assertArrayEquals = function(first, second, msg){
+        _assertArrayEquals(msg, first, second);
+    };
+
+}
+
+%>

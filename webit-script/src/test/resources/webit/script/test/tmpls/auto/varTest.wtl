@@ -1,0 +1,27 @@
+<%
+
+import "/junit-assert.wtl"
+
+var assertEquals;
+var assertNotEquals;
+var assertSame;
+var assertNotSame;
+
+{
+    var a = "a";
+    var b = "b";
+    {
+        var b = "b";
+        assertSame(a, super.a);
+        assertNotSame(b, super.b);
+        assertEquals(a, "a");
+        {
+            assertSame(a, super.super.a);
+            assertEquals(a, "a");
+        }
+    }
+
+}
+
+
+%>

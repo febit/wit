@@ -1,0 +1,22 @@
+<%
+
+import "/junit-assert.wtl"
+
+var assertEquals;
+var assertNotEquals;
+{
+
+    assertEquals(3, 1+2);
+    assertEquals(-1, 1-2);
+    assertEquals(4, 2*2);
+    assertEquals(2, 5/2);
+    assertEquals(1, 5%2);
+    assertEquals(20,5 << 2);
+    assertEquals(1, 5 >> 2);
+    assertEquals(-2, -5 >> 2);
+    assertEquals(1073741822, -5 >>> 2);
+
+}
+
+
+%>
