@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>zqq90</groupId>
+    <artifactId>webit-script-group</artifactId>
+    <version>0.8.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
+    <name>Webit-script-group</name>
+    <description>a template-like script and engine, all writen with Java.</description>
+    
+    <url>https://github.com/zqq90/webit-script</url>
+    
+    <modules>
+        <module>webit-script</module>
+    </modules>
+    
+    <scm>
+        <url>https://github.com/zqq90/webit-script</url>
+        <connection>scm:git:https://github.com/zqq90/webit-script.git</connection>
+        <developerConnection>scm:git:git@github.com:zqq90/webit-script.git</developerConnection>
+    </scm>
+    <organization>
+        <name>Webit</name>
+        <url>https://github.com/zqq90</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>The New BSD License</name>
+            <url>https://github.com/zqq90/webit-script/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>zqq</id>
+            <name>Zhu Qingqing</name>
+            <email>zqq_90@163.com</email>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/zqq90/webit-script/issues</url>
+    </issueManagement>
+</project>

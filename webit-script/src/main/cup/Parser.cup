@@ -1,0 +1,1448 @@
+
+package webit.script.core;
+
+import java.util.Map;
+import webit.script.Template;
+import webit.script.core.java_cup.runtime.Symbol;
+import webit.script.core.VariantManager.VarAddress;
+import webit.script.core.ast.*;
+import webit.script.core.ast.expressions.*;
+import webit.script.core.ast.method.*;
+import webit.script.core.ast.statments.*;
+import webit.script.core.text.TextStatmentFactory;
+import webit.script.exceptions.ParserException;
+import webit.script.util.StatmentUtil;
+
+
+/* Preliminaries to use the scanner.  */
+scan with {: return lexer.next_token(); :};
+
+/*
+init with {: 
+:};
+*/
+
+parser code {: 
+
+    Template template;
+    TextStatmentFactory textStatmentFactory;
+
+    Lexer lexer;
+
+    public final int getLine() {
+        return lexer!= null ?lexer.getLine():0;
+    }
+
+    public final int getColumn() {
+        return lexer!= null ?lexer.getColumn():0;
+    }
+
+    /**
+     *
+     * @param in java.io.Reader
+     * @param template Template
+     * @return
+     * @throws ParserException
+     */
+    public TemplateAST parserTemplate(java.io.Reader in, Template template) throws ParserException{
+        this.lexer = new Lexer(in);
+        this.template = template;
+        this.textStatmentFactory = template.engine.getTextStatmentFactory();
+        try {
+            Symbol sym = this.parse();
+            return (TemplateAST) sym.value;
+        } catch (Exception e) {
+            if (e instanceof ParserException) {
+                throw (ParserException)e;
+            }else{
+                throw new ParserException(e);
+            }
+        } finally {
+            try {
+                this.lexer.yyclose();
+            } catch (Exception e) {
+                //ignore
+            }
+        }
+    }
+
+    protected Statment createTextStatment(String text, int line, int column) {
+        return StatmentUtil.optimize(textStatmentFactory.getTextStatment(template, text, line, column));
+    }
+
+    //TODO:
+    @Override
+    protected void report_fatal_error(String message,Object info){
+        done_parsing();
+
+        throw new ParserException("Parser stop at here, ",getLine(),getColumn());
+    }
+
+    protected void syntax_error(Symbol cur_token){
+    
+    }
+    
+    protected void unrecovered_syntax_error(Symbol cur_token){
+        report_fatal_error("Parser stop at here, and failed to recover ", cur_token);
+    }
+    
+    @Override
+    protected void report_error(String message, Object info) {
+        System.err.print(message);
+        System.err.flush();
+        if (info instanceof Symbol) {
+            if (((Symbol) info).line != -1) {
+                System.err.println(" at character " + ((Symbol) info).line
+                        + " of input");
+            } else {
+                System.err.println("");
+            }
+        } else {
+            System.err.println("");
+        }
+    }
+
+    //TODO:
+    @Override
+    protected void debug_message(String mess) {
+        System.err.println(mess);
+    }
+
+:}; 
+
+
+action code {: 
+
+    //================ >> 
+    NativeImportManager nativeImportMgr = new NativeImportManager();
+    
+    private void registPackage(ClassNameBand classNameBand, int line, int column) {
+        try {
+            nativeImportMgr.registPackage(classNameBand.getClassPureName());
+        } catch (ParserException e) {
+            throw e.setPosition(line, column);
+        }
+    }
+
+    private void registClass(ClassNameBand classNameBand, int line, int column) {
+        try {
+            nativeImportMgr.registClass(classNameBand);
+        } catch (ParserException e) {
+            throw e.setPosition(line, column);
+        }
+    }
+    
+    private Class<?> toClass(ClassNameBand classNameBand, int line, int column) {
+        try {
+            return nativeImportMgr.toClass(classNameBand);
+        } catch (ParserException e) {
+            throw e.setPosition(line, column);
+        }
+    }
+
+    //================ >> 
+
+
+    private VariantManager varmgr = new VariantManager();
+
+    private void pushVarMgrForFunction(){
+        varmgr.push();
+        varmgr.pushVarWall();
+    }
+
+    private int assignVariant(String ident, int line, int column) {
+        try {
+            return varmgr.assignVariant(ident);
+        } catch (ParserException e) {
+            throw e.setPosition(line, column);
+        }
+    }
+
+    private int assignVariantForNextBlock(String name, int line, int column) {
+        try {
+            return varmgr.assignVariantForNextBlock(name);
+        } catch (ParserException e) {
+            throw e.setPosition(line, column);
+        }
+    }
+
+    private VarAddress locateVar(String name) {
+        return varmgr.locate(name);
+    }
+
+    private int locateVarAtUpstairForce(String name, int upstair, int line, int column) {
+        try {
+            return varmgr.locateAtUpstair(name, upstair, true);
+        } catch (ParserException e) {
+            throw e.setPosition(line, column);
+        }
+    }
+
+    private VarAddress locateVarForce(String name, int line, int column) {
+        try {
+            return varmgr.locate(name, true);
+        } catch (ParserException e) {
+            throw e.setPosition(line, column);
+        }
+    }
+
+    //================ >> TemplateAST
+
+    private TemplatePart createTemplatePart() {
+        return new TemplatePart();
+    }
+
+    private TemplateAST createTemplate(TemplatePart part) {
+        return part.setVarMap(varmgr.pop()).pop();
+    }
+
+    //================ >> Statment
+    
+    private Statment createIncludeStatment(Expression expr,Expression paramExpr, int line, int column){
+        return StatmentUtil.optimize(new IncludeStatment(expr, paramExpr, line, column));
+    }
+                
+    private Statment createImportStatment(Expression expr,Expression paramExpr, int line, int column){
+        return StatmentUtil.optimize(new ImportStatment(expr, paramExpr, line, column));
+    }
+        
+    private Statment createEchoStatment(Expression expr, int line, int column){
+        return StatmentUtil.optimize(new EchoStatment(expr, line, column));
+    }
+    
+    private Statment createReturnStatment(Expression expr, int line, int column){
+        return StatmentUtil.optimize(new ReturnStatment(expr, line, column));
+    }
+
+    private Statment createBreakStatment(String label, int line, int column) {
+        return StatmentUtil.optimize(new BreakStatment(label, line, column));
+    }
+
+    private Statment createPlaseHolderStatment(Expression expr) {
+        return StatmentUtil.optimize(new PlaseHolderStatment(expr));
+    }
+
+    private Statment createContinueStatment(String label, int line, int column) {
+        return StatmentUtil.optimize(new ContinueStatment(label, line, column));
+    }
+
+
+    private SwitchStatmentPart createSwitchStatmentPart(){
+        return new SwitchStatmentPart();
+    }
+
+    private WhileStatmentPart createWhileStatmentPart(){
+        return new WhileStatmentPart();
+    }
+
+    private FunctionPart createFunctionPart(int line, int column){
+        return new FunctionPart(line, column);
+    }
+
+    private IfStatmentPart createIfStatmentPart(Expression ifexpr, int line, int column){
+        return new IfStatmentPart(ifexpr, line, column);
+    }
+
+    private ForInStatmentPart createForInStatmentPart(String item, Expression items, int line, int column){
+        
+        int itemIndex = assignVariantForNextBlock(item, line, column);
+        int iterIndex = assignVariantForNextBlock("for.iter", line, column);
+
+        return new ForInStatmentPart(itemIndex, iterIndex, items, line, column);
+    }
+
+
+    private ForMapStatmentPart createForMapStatmentPart(String key, String value, Expression map, int line, int column){
+        
+        int keyIndex = assignVariantForNextBlock(key, line, column);
+        int valueIndex = assignVariantForNextBlock(value, line, column);
+
+        int iterIndex = assignVariantForNextBlock("for.iter", line, column);
+
+        return new ForMapStatmentPart(keyIndex, valueIndex, iterIndex, map, line, column);
+    }
+
+    private Statment createTextStatment(String text, int line, int column) {
+        return parser.createTextStatment(text, line, column);
+    }
+
+    private BlockStatmentPart createBlockStatmentPart(int line, int column) {
+        varmgr.push();
+        return new BlockStatmentPart(line, column);
+    }
+
+
+    private BlockStatment createBlockStatment(BlockStatmentPart part) {
+
+        //TODO:优化Statment 处理
+        //TODO: init
+
+        Map<String, Integer> varMap = varmgr.pop();
+
+        //
+        return part.setVarMap(varMap).pop();
+    }
+    //================ << Statment
+
+    //================ >> Expression
+
+    private ContextValue createContextValue(String name, int line, int column) {
+
+        VarAddress addr = locateVarForce(name, line, column);
+
+        return new ContextValue(addr.upstairs, addr.index, name, line, column);
+    }
+
+    private ContextValue createContextValue(int upstair, String name, int line, int column) {
+
+        int index = locateVarAtUpstairForce(name, upstair, line, column);
+
+        return new ContextValue(upstair, index, name, true, line, column);
+    }
+
+    private DirectValue createDirectValue(Object value, int line, int column) {
+        return new DirectValue(value, line, column);
+    }
+
+
+    private RedirectOutExpression createRedirectOutExpression(Expression srcExpr, Expression rexpr, int line, int column){
+        if(rexpr instanceof ResetableValueExpression){
+            ResetableValueExpression outExpr = (ResetableValueExpression) rexpr;
+            return new RedirectOutExpression(srcExpr, outExpr, line, column);
+        }else{
+            throw new ParserException("Invalid expression to redirect out stream to, must be rewriteable", line, column);
+        }
+    }
+
+    private RedirectOutStatment createRedirectOutStatment(Statment srcStatment, Expression rexpr, int line, int column){
+        if(rexpr instanceof ResetableValueExpression){
+            ResetableValueExpression outExpr = (ResetableValueExpression) rexpr;
+            return new RedirectOutStatment(srcStatment, outExpr, line, column);
+        }else{
+            throw new ParserException("Invalid expression to redirect out stream to, must be rewriteable", line, column);
+        }
+    }
+
+    private FunctionDeclareExpression createFunctionDeclareExpression(Function function, int line, int column){
+        return new FunctionDeclareExpression(function, line, column);
+    }
+
+    private FunctionExecuteExpressionPart createFunctionExecuteExpressionPart(){
+        return new FunctionExecuteExpressionPart();
+    }
+
+    private NativeMethodDeclareExpressionPart createNativeMethodDeclareExpressionPart(int line, int column){
+        return new NativeMethodDeclareExpressionPart(line, column);
+    }
+
+    //================ >> Expression - Operator
+    private Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column){
+
+        if(lexpr instanceof ResetableValueExpression){
+            ResetableValueExpression leftExpr = (ResetableValueExpression) lexpr;
+            SelfOperator oper;
+            switch (sym) {
+
+                // (+ - * / %)=
+                case Tokens.PLUSEQ:
+                    oper = new SelfPlusOperator(leftExpr, rightExpr, line, column);
+                    break;
+                case Tokens.MINUSEQ:
+                    oper = new SelfMinusOperator(leftExpr, rightExpr, line, column);
+                    break;
+                case Tokens.MULTEQ:
+                    oper = new SelfMultOperator(leftExpr, rightExpr, line, column);
+                    break;
+                case Tokens.DIVEQ:
+                    oper = new SelfDivOperator(leftExpr, rightExpr, line, column);
+                    break;
+                case Tokens.MODEQ:
+                    oper = new SelfModOperator(leftExpr, rightExpr, line, column);
+                    break;
+
+                // (<< >> >>>)=
+                case Tokens.LSHIFTEQ:
+                    oper = new SelfLShiftOperator(leftExpr, rightExpr, line, column);
+                    break;
+                case Tokens.RSHIFTEQ:
+                    oper = new SelfRShiftOperator(leftExpr, rightExpr, line, column);
+                    break;
+                case Tokens.URSHIFTEQ:
+                    oper = new SelfURShiftOperator(leftExpr, rightExpr, line, column);
+                    break;
+
+                // (& ^ |)=
+                case Tokens.ANDEQ:
+                    oper = new SelfBitAndOperator(leftExpr, rightExpr, line, column);
+                    break;
+                case Tokens.XOREQ:
+                    oper = new SelfBitXorOperator(leftExpr, rightExpr, line, column);
+                    break;
+                case Tokens.OREQ:
+                    oper = new SelfBitOrOperator(leftExpr, rightExpr, line, column);
+                    break;
+
+                default:
+                    throw new ParserException("Unsupported Operator", line, column);
+            }
+            
+            return StatmentUtil.optimize(oper);
+        }else{
+            throw new ParserException("Invalid left expression, must be rewriteable", line, column);
+        }
+    }
+
+    private Expression createBinaryOperator(Expression leftExpr, int sym, Expression rightExpr, int line, int column) {
+
+        BinaryOperator oper;
+        switch (sym) {
+            case Tokens.ANDAND: // &&
+                oper = new AndOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.AND: // &
+                oper = new BitAndOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.OR: // |
+                oper = new BitOrOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.XOR: // ^
+                oper = new BitXorOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.DIV: // /
+                oper = new DivOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.EQEQ: // ==
+                oper = new EqualsOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.GTEQ: // >=
+                oper = new GreaterEqualsOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.GT: // >
+                oper = new GreaterOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.LSHIFT: // <<
+                oper = new LShiftOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.LTEQ: // <=
+                oper = new LessEqualsOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.LT: // <
+                oper = new LessOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.MINUS: // -
+                oper = new MinusOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.MOD: // %
+                oper = new ModOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.MULT: // *
+                oper = new MultOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.NOTEQ: // !=
+                oper = new NotEqualsOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.OROR: // ||
+                oper = new OrOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.PLUS: // +
+                oper = new PlusOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.RSHIFT: // >>
+                oper = new RShiftOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.URSHIFT: // >>>
+                oper = new ModOperator(leftExpr, rightExpr, line, column);
+                break;
+            default:
+                throw new ParserException("Unsupported Operator", line, column);
+        }
+        return StatmentUtil.optimize(oper);
+    }
+
+    private ArrayValuePart createArrayValuePart(Expression expr, int line, int column){
+        return new ArrayValuePart(line, column).append(expr);
+    }
+
+    private ArrayValue createEmptyArrayValue(int line, int column){
+        return new ArrayValue(new Expression[0], line, column);
+    }
+
+    private MapValuePart createMapValuePart(Object key, Expression expr, int line, int column){
+        return new MapValuePart(line, column).append(key, expr);
+    }
+
+    private MapValue createEmptyMapValue(int line, int column){
+        //TODO:可优化
+        return new MapValue(new Object[0], new Expression[0], line, column);
+    }
+
+    private Expression createAssignOperator(Expression lexpr, Expression expr, int line, int column) {
+        if(lexpr instanceof ResetableValueExpression){
+            return StatmentUtil.optimize(new AssignOperator((ResetableValueExpression)lexpr, expr, line, column));
+        }else{
+            throw new ParserException("Invalid left expression, must be rewriteable", line, column);
+        }
+    }
+
+    private Expression createIfOperator(Expression ifExpr, Expression leftValueExpr, Expression rightValueExpr, int line, int column) {
+        return StatmentUtil.optimize(new IfOperator(ifExpr, leftValueExpr, rightValueExpr, line, column));
+    }
+
+    private Expression createIndexOperator(Expression leftExpr, Expression rightExpr, int line, int column) {
+        return StatmentUtil.optimize(new IndexOperator(leftExpr, rightExpr, line, column));
+    }
+
+    private Expression createNegativeOperator(Expression expr, int line, int column) {
+        return StatmentUtil.optimize(new NegativeOperator(expr, line, column));
+    }
+
+    private Expression createBitNotOperator(Expression expr, int line, int column) {
+        return StatmentUtil.optimize(new BitNotOperator(expr, line, column));
+    }
+
+    private Expression createNotOperator(Expression expr, int line, int column) {
+        return StatmentUtil.optimize(new NotOperator(expr, line, column));
+    }
+
+    private Expression createPropertyOperator(Expression expr, String ident, int line, int column) {
+        return StatmentUtil.optimize(new PropertyOperator(expr, ident, line, column));
+    }
+
+    private Expression createPlusPlusOperator(Expression expr, boolean executeAtFirst, int line, int column){
+        if(expr instanceof ResetableValueExpression){
+            return StatmentUtil.optimize(new PlusPlusOperator((ResetableValueExpression) expr, executeAtFirst, line, column));
+        }else{
+            throw new ParserException("Invalid expression, must be rewriteable", line, column);
+        }
+    }
+
+    private Expression createMinusMinusOperator(Expression expr, boolean executeAtFirst, int line, int column){
+        if(expr instanceof ResetableValueExpression){
+            return StatmentUtil.optimize(new MinusMinusOperator((ResetableValueExpression) expr, executeAtFirst, line, column));
+        }else{
+            throw new ParserException("Invalid expression, must be rewriteable", line, column);
+        }
+    }
+
+    // ==============<< 
+
+:};
+
+
+/* Terminals */
+terminal Integer    VAR,
+                    IF, ELSE,
+                    FOR, /* IN, */
+                    THIS, SUPER,
+                    SWITCH, CASE, DEFAULT,
+                    DO, WHILE,
+                    THROW, TRY, CATCH, FINALLY,
+                    NEW,
+                    INSTANCEOF,
+                    FUNCTION,
+                    AS,
+                    ECHO,
+                    STATIC, NATIVE,
+                    IMPORT, INCLUDE, NATIVE_IMPORT,
+                    BREAK, CONTINUE, RETURN
+                    ;
+
+
+terminal Integer    PLUSPLUS, MINUSMINUS,  // ++ ==
+                    PLUS, MINUS, MULT, DIV, MOD,  // + - * /
+                    LSHIFT, RSHIFT, URSHIFT,  // << >> >>>
+                    LT, GT, LTEQ, GTEQ, EQEQ, NOTEQ,  // < > <= >= == !=
+                    AND, XOR, OR, COMP,  // & ^ | ~
+                    ANDAND, OROR, NOT,  // && || !
+                    QUESTION,  // ?
+                    PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, MODEQ,  // (+ - * / %)=
+                    LSHIFTEQ, RSHIFTEQ, URSHIFTEQ,  // (<< >> >>>)=
+                    ANDEQ, XOREQ, OREQ, // (& ^ |)=
+                    UMINUS,
+                    DOT,  // .
+                    COLON,  // :
+                    COMMA,  // ,
+                    SEMICOLON,  // ;
+                    LBRACE, RBRACE,  // { }
+                    LPAREN, RPAREN,  // ( )
+                    LBRACK, RBRACK,  // [ ]
+                    EQGT,  // =>
+                    AT,  // @
+                    EQ   // =
+                    ;
+
+
+terminal String     IDENTIFIER; // Ident
+
+
+terminal Number     INTEGER_LITERAL;
+terminal Number     FLOATING_POINT_LITERAL;
+terminal Boolean    BOOLEAN_LITERAL;
+terminal Character  CHARACTER_LITERAL;
+terminal String     STRING_LITERAL;
+
+terminal            NULL_LITERAL;
+
+
+terminal Integer    PLACE_HOLDER_END; // "}"
+terminal String     TEXT_STATMENT;
+
+
+/* non terminal */
+
+non terminal directValue;
+non terminal ClassNameBand classPureName;
+non terminal ClassNameBand className;
+
+/* TemplateAST */
+non terminal TemplateAST template;
+non terminal TemplatePart templatePart;
+
+
+/* function */
+non terminal Function func;
+non terminal FunctionPart funcPart,funcPart0,funcPart1;
+
+non terminal Expression funcDeclareExpr;
+non terminal Expression funcExecuteExpr;
+
+non terminal FunctionExecuteExpressionPart funcExecuteExprPart0, funcExecuteExprPart1;
+
+
+non terminal NativeMethodDeclareExpression nativeMethodExpr;
+non terminal NativeMethodDeclareExpressionPart nativeMethodExprPart, nativeMethodExprPart0, nativeMethodExprPart1;
+
+/* Statment */
+
+non terminal Statment statment;
+
+non terminal Statment varStatment;
+non terminal varStatmentPart;
+
+non terminal Statment nativeImportStat;  // @import
+
+non terminal Statment includeStat;  // include
+non terminal Statment importStat;  // include
+
+non terminal Statment elseStatPart, elseIfStatPart;
+
+non terminal BlockStatmentPart blockStatPart;
+
+non terminal BlockStatment blockStat;
+non terminal Statment breakStat;
+non terminal Statment continueStat;
+non terminal Statment forInStat;
+non terminal Statment ifStat;
+non terminal Statment forMapStat;
+non terminal Statment textStat;
+non terminal Statment returnStat;
+non terminal Statment whileStat;
+non terminal Statment switchStat;
+
+non terminal Statment echoStat;
+non terminal Statment redirectOutStat;
+
+non terminal BlockStatmentPart caseBlockStatPart;
+non terminal SwitchStatmentPart switchStatPart, switchStatPart0;
+non terminal ForInStatmentPart forInStatPart, forInStatPart0, forInStatPart1;
+non terminal ForMapStatmentPart forMapStatPart, forMapStatPart0, forMapStatPart1;
+non terminal WhileStatmentPart whileStatPart, whileStatPart0;
+non terminal IfStatmentPart ifStatPart, ifStatPart0;
+
+
+/* special Operators */
+
+
+non terminal Expression expression;
+non terminal Expression expression_stat;
+
+non terminal Expression parenOperator;
+
+non terminal ArrayValuePart arrayValuePart;
+non terminal ArrayValue arrayValue;
+
+non terminal MapValuePart mapValuePart;
+non terminal MapValue mapValue;
+
+/* Operators */
+
+non terminal Expression andOper; // &&
+non terminal Expression assignOper; // =
+non terminal Expression bitAndOper; // &
+non terminal Expression bitOrOper; // |
+non terminal Expression bitXorOper; // ^
+non terminal Expression bitNotOper;  // ~
+non terminal Expression divOper; // /
+non terminal Expression equalsOper; // ==
+non terminal Expression greaterEqualsOper; // >=
+non terminal Expression greaterOper; // >
+non terminal Expression lessEqualsOper; // <=
+non terminal Expression lessOper; // <
+non terminal Expression lShiftOper; // <<
+non terminal Expression minusOper; // -
+non terminal Expression modOper; // %
+non terminal Expression mulOper; // *
+non terminal Expression negativeOper; // -
+non terminal Expression notEqualsOper; // !=
+non terminal Expression notOper; // !
+non terminal Expression orOper; // ||
+non terminal Expression plusOper; // +
+non terminal Expression propertyOper; // .
+non terminal Expression rShiftOper; // >>
+non terminal Expression uRShiftOper; // >>>
+non terminal Expression ifOper; // ? :
+non terminal Expression indexOper; // []
+non terminal Expression plusPlusOper; // ++
+non terminal Expression minusMinusOper; // --
+//
+non terminal Expression selfPlusOper;  // +=
+non terminal Expression selfMinusOper;  // ==
+non terminal Expression selfMultOper;  // *=
+non terminal Expression selfDivOper;  // /=
+non terminal Expression selfModOper;  // %=
+non terminal Expression selfLShiftOper;  // <<=
+non terminal Expression selfRShiftOper;  // >>=
+non terminal Expression selfURShiftOper;  // >>>=
+non terminal Expression selfBitAndOper;  // &=
+non terminal Expression selfBitXorOper;  // ^=
+non terminal Expression selfBitOrOper;  // |=
+
+
+non terminal String contextValueIdent;
+non terminal Integer superCount;
+non terminal Expression contextValueExpr; // 
+
+
+non terminal Expression redirectOutExpr; // 
+
+non terminal Expression directValueExpr; // 
+
+
+/* precedence */
+
+precedence left     SEMICOLON; // ;
+
+precedence right    PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, MODEQ,  // (+ - * / %)=
+                    LSHIFTEQ, RSHIFTEQ, URSHIFTEQ,  // (<< >> >>>)=
+                    ANDEQ, XOREQ, OREQ, // (& ^ |)=
+                    EQ // = 
+                    ;
+
+precedence right    QUESTION; // ?
+precedence left     OROR; // ||
+precedence left     ANDAND; //&&
+precedence left     XOR; // ^
+precedence left     OR; // |
+precedence left     AND; // &
+precedence left     EQEQ, NOTEQ; // == !=
+precedence left     LT, LTEQ, GT, GTEQ; // < <= > >=  //Unsupport: instanceOf
+precedence left     LSHIFT, RSHIFT, URSHIFT; // << >> >>>
+precedence left     PLUS, MINUS; // + -
+precedence left     MULT, DIV, MOD; // * / %
+precedence right    PLUSPLUS, MINUSMINUS, UMINUS, NOT, COMP; // ++ -- - ! ~
+precedence left     EQGT;  // =>
+precedence left     DOT, LBRACK, LPAREN, LBRACE, AT; // . [ ( { @
+
+
+
+/* template */
+
+template            ::= templatePart:part
+                        {: RESULT = createTemplate(part); :}
+                        ;
+
+
+templatePart        ::= templatePart:part statment:stat
+                        {: RESULT = part.append(stat); :}
+                        |
+                        {: RESULT = createTemplatePart(); :}
+                        ;
+
+
+classPureName       ::= IDENTIFIER:ident
+                        {: RESULT = new ClassNameBand(ident); :}
+                        |classPureName:part DOT IDENTIFIER:ident
+                        {: RESULT = part.append(ident); :}
+                        ;
+
+className           ::= classPureName:part
+                        {: RESULT = part; :}
+                        |className:part LBRACK RBRACK
+                        {: RESULT = part.plusArrayDepth(); :}
+                        ;
+
+
+/* special Statments  */
+
+statment            ::= expression_stat:expr SEMICOLON
+                        {: RESULT = expr; :}
+                        |SEMICOLON
+                        {: RESULT = NoneStatment.getInstance(); :}
+                        |expression:expr PLACE_HOLDER_END
+                        {: RESULT = createPlaseHolderStatment(expr); :}
+                        |varStatment:stat
+                        {: RESULT = stat; :}
+                        |blockStat:stat
+                        {: RESULT = stat; :}
+                        |textStat:stat
+                        {: RESULT = stat; :}
+                        |ifStat:stat
+                        {: RESULT = stat; :}
+                        |forInStat:stat
+                        {: RESULT = stat; :}
+                        |forMapStat:stat
+                        {: RESULT = stat; :}
+                        |whileStat:stat
+                        {: RESULT = stat; :}
+                        |breakStat:stat
+                        {: RESULT = stat; :}
+                        |continueStat:stat
+                        {: RESULT = stat; :}
+                        |returnStat:stat
+                        {: RESULT = stat; :}
+                        |switchStat:stat
+                        {: RESULT = stat; :}
+                        |nativeImportStat:stat
+                        {: RESULT = stat; :}
+                        |echoStat:stat
+                        {: RESULT = stat; :}
+                        |redirectOutStat:stat
+                        {: RESULT = stat; :}
+                        |importStat:stat
+                        {: RESULT = stat; :}
+                        |includeStat:stat
+                        {: RESULT = stat; :}
+                        ;
+
+
+nativeImportStat    ::= NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
+                        {: registClass(nameBand, sym$Symbol.line, sym$Symbol.column); RESULT = NoneStatment.getInstance(); :}
+                        |NATIVE_IMPORT:sym classPureName:nameBand DOT MULT SEMICOLON
+                        {: registPackage(nameBand, sym$Symbol.line, sym$Symbol.column); RESULT = NoneStatment.getInstance(); :}
+                        ;
+
+
+varStatmentPart     ::= VAR IDENTIFIER:ident
+                        {: assignVariant(ident,ident$Symbol.line,ident$Symbol.column); :}
+                        |varStatmentPart COMMA IDENTIFIER:ident
+                        {: assignVariant(ident,ident$Symbol.line,ident$Symbol.column); :}
+                        ;
+
+
+varStatment         ::= varStatmentPart SEMICOLON
+                        {: RESULT = NoneStatment.getInstance(); :}
+                        ;
+
+
+echoStat            ::= ECHO:sym expression:expr SEMICOLON
+                        {: RESULT = createEchoStatment(expr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+importStat          ::= IMPORT:sym expression:expr
+                        {: RESULT = createImportStatment(expr, null, sym$Symbol.line, sym$Symbol.column); :}
+                        |IMPORT:sym expression:expr COMMA expression:paramExpr
+                        {: RESULT = createImportStatment(expr, paramExpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+includeStat         ::= INCLUDE:sym expression:expr 
+                        {: RESULT = createIncludeStatment(expr, null, sym$Symbol.line, sym$Symbol.column); :}
+                        |INCLUDE:sym expression:expr COMMA expression:paramExpr
+                        {: RESULT = createIncludeStatment(expr, paramExpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+/* Statments  */
+
+blockStatPart       ::= LBRACE:sym // statment:stat
+                        {: RESULT = createBlockStatmentPart(sym$Symbol.line, sym$Symbol.column); :}
+                        |blockStatPart:part statment:stat
+                        {: RESULT = part.append(stat); :}
+                        ;
+
+
+redirectOutStat     ::= blockStat:stat EQGT:sym expression:expr SEMICOLON
+                        {: RESULT = createRedirectOutStatment(stat, expr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+blockStat           ::= blockStatPart:part RBRACE
+                        {: RESULT = createBlockStatment(part); :}
+                        ;
+
+
+textStat            ::= TEXT_STATMENT:sym
+                        {: RESULT = createTextStatment(sym, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+elseStatPart        ::= ELSE blockStat:elseBody
+                        {: RESULT = elseBody; :}
+                        ;
+
+
+elseIfStatPart      ::= ELSE ifStat:stat
+                        {: RESULT = stat; :}
+                        ;
+
+
+ifStatPart0         ::= IF:sym LPAREN expression:expr RPAREN
+                        {: RESULT = createIfStatmentPart(expr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+ifStatPart          ::= ifStatPart0:part  blockStat:body
+                        {: RESULT = part.setThenStatment(body); :}
+                        ;
+
+
+ifStat              ::= ifStatPart:part
+                        {: RESULT = part.pop(); :}
+                        |ifStatPart:part elseStatPart:elseBody
+                        {: RESULT = part.setElseStatment(elseBody).pop(); :}
+                        |ifStatPart:part elseIfStatPart:elseBody
+                        {: RESULT = part.setElseStatment(elseBody).pop(); :}
+                        ;
+
+
+forInStatPart0        ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
+                        {: RESULT = createForInStatmentPart(item, items, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+forInStatPart1     ::= forInStatPart0:part
+                        {: RESULT = part; :}
+                        |IDENTIFIER:label COLON forInStatPart0:part
+                        {: RESULT = part.setLabel(label); :}
+                        ;
+
+
+forInStatPart         ::= forInStatPart1:part blockStat:body
+                        {: RESULT = part.setBodyStatment(body); :}
+                        ;
+
+
+forInStat             ::= forInStatPart:part
+                        {: RESULT = part.pop(); :}
+                        |forInStatPart:part elseStatPart:elseBody
+                        {: RESULT = part.setElseStatment(elseBody).pop(); :}
+                        ;
+
+
+forMapStatPart0     ::= FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COLON expression:map RPAREN
+                        {: RESULT = createForMapStatmentPart(key, value, map, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+forMapStatPart1     ::= forMapStatPart0:part
+                        {: RESULT = part; :}
+                        |IDENTIFIER:label COLON forMapStatPart0:part
+                        {: RESULT = part.setLabel(label); :}
+                        ;
+
+
+forMapStatPart      ::= forMapStatPart1:part blockStat:body
+                        {: RESULT = part.setBodyStatment(body); :}
+                        ;
+
+
+forMapStat          ::= forMapStatPart:part
+                        {: RESULT = part.pop(); :}
+                        |forMapStatPart:part elseStatPart:elseBody
+                        {: RESULT = part.setElseStatment(elseBody).pop(); :}
+                        ;
+
+
+whileStatPart0      ::= WHILE:sym LPAREN expression:whileExpr RPAREN
+                        {: RESULT = createWhileStatmentPart().setWhileExpr(whileExpr).setPosition(sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+whileStatPart       ::= whileStatPart0:part blockStat:body
+                        {: RESULT = part.setBodyStatment(body); :}
+                        |DO:sym blockStat:body whileStatPart0:part SEMICOLON
+                        {: RESULT = part.setBodyStatment(body).setPosition(sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+whileStat           ::= whileStatPart:part
+                        {: RESULT = part.pop(); :}
+                        |IDENTIFIER:label whileStatPart:part
+                        {: RESULT = part.setLabel(label).pop(); :}
+                        ;
+
+
+caseBlockStatPart     ::= 
+                        {: RESULT = createBlockStatmentPart(-1, -1); :}
+                        |caseBlockStatPart:part statment:stat
+                        {: RESULT = part.append(stat); :}
+                        ;
+
+
+switchStatPart0      ::= 
+                        {: RESULT = createSwitchStatmentPart(); :}
+                        | CASE:sym directValue:key COLON caseBlockStatPart:bodyPart switchStatPart0:part
+                        {: BlockStatment body = createBlockStatment(bodyPart); RESULT = part.appendCaseStatment(key, body, sym$Symbol.line, sym$Symbol.column); :}
+                        | DEFAULT:sym COLON caseBlockStatPart:bodyPart switchStatPart0:part
+                        {: BlockStatment body = createBlockStatment(bodyPart); RESULT = part.appendCaseStatment(null, body, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+switchStatPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE switchStatPart0:part RBRACE
+                        {: RESULT = part.setSwitchExpr(switchExpr).setPosition(sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+switchStat          ::= switchStatPart:part
+                        {: RESULT = part.pop(); :}
+                        |IDENTIFIER:label COLON switchStatPart:part
+                        {: RESULT = part.setLabel(label).pop(); :}
+                        ;
+
+
+breakStat           ::= BREAK:sym SEMICOLON
+                        {: RESULT = createBreakStatment(null, sym$Symbol.line, sym$Symbol.column); :}
+                        |BREAK:sym IDENTIFIER:label SEMICOLON
+                        {: RESULT = createBreakStatment(label, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+continueStat        ::= CONTINUE:sym SEMICOLON
+                        {: RESULT = createContinueStatment(null, sym$Symbol.line, sym$Symbol.column); :}
+                        |CONTINUE:sym IDENTIFIER:label SEMICOLON
+                        {: RESULT = createContinueStatment(label, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+returnStat          ::= RETURN:sym SEMICOLON
+                        {: RESULT = createReturnStatment(null, sym$Symbol.line, sym$Symbol.column); :}
+                        |RETURN:sym expression:expr SEMICOLON
+                        {: RESULT = createReturnStatment(expr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+/* Expressions */
+
+expression_stat     ::= assignOper:expr    {: RESULT = expr; :} // =
+                        //
+                        |plusPlusOper:expr    {: RESULT = expr; :}  // ++
+                        |minusMinusOper:expr    {: RESULT = expr; :}  // ++
+                        // (+ - * / %)=
+                        |selfPlusOper:expr    {: RESULT = expr; :}
+                        |selfMinusOper:expr    {: RESULT = expr; :}
+                        |selfMultOper:expr    {: RESULT = expr; :}
+                        |selfDivOper:expr    {: RESULT = expr; :}
+                        |selfModOper:expr    {: RESULT = expr; :}
+                        // (<< >> >>>)=
+                        |selfLShiftOper:expr    {: RESULT = expr; :}
+                        |selfRShiftOper:expr    {: RESULT = expr; :}
+                        |selfURShiftOper:expr    {: RESULT = expr; :}
+                        // (& ^ |)=
+                        |selfBitAndOper:expr    {: RESULT = expr; :}
+                        |selfBitXorOper:expr    {: RESULT = expr; :}
+                        |selfBitOrOper:expr    {: RESULT = expr; :}
+                        |funcExecuteExpr:expr    {: RESULT = expr; :}
+                        |redirectOutExpr:expr    {: RESULT = expr; :}
+                        ;
+
+
+expression          ::= expression_stat:expr    {: RESULT = expr; :}
+                        |andOper:expr    {: RESULT = expr; :}
+                        |bitAndOper:expr    {: RESULT = expr; :}
+                        |bitOrOper:expr    {: RESULT = expr; :}
+                        |bitXorOper:expr    {: RESULT = expr; :}
+                        |divOper:expr    {: RESULT = expr; :}
+                        |equalsOper:expr    {: RESULT = expr; :}
+                        |greaterEqualsOper:expr    {: RESULT = expr; :}
+                        |greaterOper:expr    {: RESULT = expr; :}
+                        |lessEqualsOper:expr    {: RESULT = expr; :}
+                        |lessOper:expr    {: RESULT = expr; :}
+                        |lShiftOper:expr    {: RESULT = expr; :}
+                        |minusOper:expr    {: RESULT = expr; :}
+                        |modOper:expr    {: RESULT = expr; :}
+                        |mulOper:expr    {: RESULT = expr; :}
+                        |negativeOper:expr    {: RESULT = expr; :}
+                        |notEqualsOper:expr    {: RESULT = expr; :}
+                        |notOper:expr    {: RESULT = expr; :}
+                        |orOper:expr    {: RESULT = expr; :}
+                        |plusOper:expr    {: RESULT = expr; :}
+                        |propertyOper:expr    {: RESULT = expr; :}
+                        |rShiftOper:expr    {: RESULT = expr; :}
+                        |uRShiftOper:expr    {: RESULT = expr; :}
+                        |ifOper:expr    {: RESULT = expr; :}
+                        |indexOper:expr    {: RESULT = expr; :}
+                        |contextValueExpr:expr    {: RESULT = expr; :}
+                        |directValueExpr:expr    {: RESULT = expr; :}
+                        |bitNotOper:expr    {: RESULT = expr; :}
+                        // special
+                        |parenOperator:expr    {: RESULT = expr; :}
+                        |arrayValue:expr    {: RESULT = expr; :}
+                        |mapValue:expr    {: RESULT = expr; :}
+                        |funcDeclareExpr:expr    {: RESULT = expr; :}
+                        |nativeMethodExpr:expr    {: RESULT = expr; :}
+                        ;
+
+
+directValue         ::= INTEGER_LITERAL:sym    {: RESULT = sym; :}
+                        |FLOATING_POINT_LITERAL:sym    {: RESULT = sym; :}
+                        |BOOLEAN_LITERAL:sym    {: RESULT = sym; :}
+                        |CHARACTER_LITERAL:sym    {: RESULT = sym; :}
+                        |STRING_LITERAL:sym    {: RESULT = sym; :}
+                        |NULL_LITERAL:sym    {: RESULT = sym; :}
+                        ;
+
+
+directValueExpr     ::= directValue:sym
+                        {: RESULT = createDirectValue(sym, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// super
+superCount          ::= SUPER DOT
+                        {: RESULT = 1; :}
+                        |superCount:count SUPER DOT
+                        {: RESULT = count + 1; :}
+                        ;
+
+// ident  super...ident  this.ident
+contextValueIdent   ::= IDENTIFIER:ident
+                        {: RESULT = ident; :}
+                        |FOR DOT IDENTIFIER:ident
+                        {: RESULT = ("for."+ident).intern(); :}
+                        ;
+
+contextValueExpr    ::= contextValueIdent:ident
+                        {: RESULT = createContextValue(ident, ident$Symbol.line, ident$Symbol.column); :}
+                        |THIS DOT contextValueIdent:ident
+                        {: RESULT = createContextValue(0, ident, ident$Symbol.line, ident$Symbol.column); :}
+                        |superCount:count contextValueIdent:ident
+                        {: RESULT = createContextValue(count, ident, ident$Symbol.line, ident$Symbol.column); :}
+                        ;
+
+// .
+propertyOper        ::= expression:expr DOT:sym IDENTIFIER:ident 
+                        {: RESULT = createPropertyOperator(expr, ident, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// ()
+parenOperator       ::= LPAREN expression:expr RPAREN
+                        {: RESULT = expr; :}
+                        ;
+
+// []
+indexOper           ::= expression:lexpr LBRACK:sym expression:rexpr RBRACK
+                        {: RESULT = createIndexOperator(lexpr, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// -
+negativeOper        ::= MINUS:sym expression:expr
+                        {: RESULT = createNegativeOperator(expr, sym$Symbol.line, sym$Symbol.column); :}
+                        %prec UMINUS
+                        ;
+
+// ~
+bitNotOper          ::= COMP:sym expression:expr
+                        {: RESULT = createBitNotOperator(expr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// !
+notOper             ::= NOT:sym expression:expr
+                        {: RESULT = createNotOperator(expr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// *
+mulOper             ::= expression:lexpr MULT:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// /
+divOper             ::= expression:lexpr DIV:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// %
+modOper             ::= expression:lexpr MOD:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// +
+plusOper            ::= expression:lexpr PLUS:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// -
+minusOper           ::= expression:lexpr MINUS:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// <<
+lShiftOper          ::= expression:lexpr LSHIFT:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// >>
+rShiftOper          ::= expression:lexpr RSHIFT:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// >>>
+uRShiftOper         ::= expression:lexpr URSHIFT:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// <
+lessOper            ::= expression:lexpr LT:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// <=
+lessEqualsOper      ::= expression:lexpr LTEQ:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// >
+greaterOper         ::= expression:lexpr GT:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// >=
+greaterEqualsOper   ::= expression:lexpr GTEQ:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// ==
+equalsOper          ::= expression:lexpr EQEQ:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// !=
+notEqualsOper       ::= expression:lexpr NOTEQ:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// &
+bitAndOper          ::= expression:lexpr AND:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// |
+bitOrOper           ::= expression:lexpr OR:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// ^
+bitXorOper          ::= expression:lexpr XOR:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// &&
+andOper             ::= expression:lexpr ANDAND:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// ||
+orOper              ::= expression:lexpr OROR:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// ?:
+ifOper              ::= expression:ifexpr QUESTION:sym expression:lexpr COLON expression:rexpr
+                        {: RESULT = createIfOperator(ifexpr, lexpr, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// =
+assignOper          ::= expression:lexpr EQ:sym expression:expr
+                        {: RESULT =  createAssignOperator(lexpr,expr, sym$Symbol.line, sym$Symbol.column); :}
+                        | VAR IDENTIFIER:ident EQ:sym expression:expr
+                        {: assignVariant(ident,ident$Symbol.line,ident$Symbol.column); ContextValue valueExpr = createContextValue(ident, ident$Symbol.line, ident$Symbol.column); RESULT = createAssignOperator(valueExpr,expr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// (+ - * / %)=
+selfPlusOper        ::= expression:lexpr PLUSEQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// 
+selfMinusOper       ::= expression:lexpr MINUSEQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// 
+selfMultOper        ::= expression:lexpr MULTEQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// 
+selfDivOper         ::= expression:lexpr DIVEQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// 
+selfModOper         ::= expression:lexpr MODEQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// (<< >> >>>)=
+selfLShiftOper      ::= expression:lexpr LSHIFTEQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// 
+selfRShiftOper      ::= expression:lexpr RSHIFTEQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// 
+selfURShiftOper     ::= expression:lexpr URSHIFTEQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// (& ^ |)=
+selfBitAndOper         ::= expression:lexpr ANDEQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// 
+selfBitXorOper         ::= expression:lexpr XOREQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// 
+selfBitOrOper          ::= expression:lexpr OREQ:sym expression:rexpr
+                        {: RESULT = createSelfOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// ++
+plusPlusOper        ::= PLUSPLUS:sym expression:expr
+                        {: RESULT = createPlusPlusOperator(expr, true, sym$Symbol.line, sym$Symbol.column); :}
+                        |expression:expr PLUSPLUS:sym
+                        {: RESULT = createPlusPlusOperator(expr, false, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// --
+minusMinusOper      ::= MINUSMINUS:sym expression:expr
+                        {: RESULT = createMinusMinusOperator(expr, true, sym$Symbol.line, sym$Symbol.column); :}
+                        |expression:expr MINUSMINUS:sym
+                        {: RESULT = createMinusMinusOperator(expr, false, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+
+// array [expr, ...]
+
+arrayValuePart      ::= LBRACK:sym expression:expr
+                        {: RESULT = createArrayValuePart(expr, sym$Symbol.line, sym$Symbol.column); :}
+                        |arrayValuePart:part COMMA expression:expr
+                        {: RESULT = part.append(expr); :}
+                        ;
+
+
+arrayValue          ::= arrayValuePart:part RBRACK
+                        {: RESULT = part.pop(); :}
+                        |LBRACK:sym RBRACK
+                        {: RESULT = createEmptyArrayValue(sym$Symbol.line,sym$Symbol.column); :}
+                        ;
+
+
+// map {key:expr, ...}
+
+mapValuePart        ::= LBRACE:sym directValue:key COLON expression:expr
+                        {: RESULT = createMapValuePart(key, expr, sym$Symbol.line, sym$Symbol.column); :}
+                        |mapValuePart:part COMMA directValue:key COLON expression:expr
+                        {: RESULT = part.append(key, expr); :}
+                        ;
+
+
+mapValue            ::= mapValuePart:part RBRACE
+                        {: RESULT = part.pop(); :}
+                        |LBRACE:sym RBRACE
+                        {: RESULT = createEmptyMapValue(sym$Symbol.line,sym$Symbol.column); :}
+                        ;
+
+/* function  */
+
+
+funcPart0           ::= FUNCTION:sym LPAREN
+                        {: pushVarMgrForFunction(); int argsIndex = assignVariant("arguments", sym$Symbol.line, sym$Symbol.column); RESULT = createFunctionPart(sym$Symbol.line, sym$Symbol.column).setArgsIndex(argsIndex); :}
+                        ;
+
+
+funcPart1           ::= funcPart0:part IDENTIFIER:ident
+                        {: int paramIndex = assignVariant(ident, ident$Symbol.line, ident$Symbol.column); RESULT = part.appendArgIndexs(paramIndex); :}
+                        |funcPart1:part COMMA IDENTIFIER:ident
+                        {: int paramIndex = assignVariant(ident, ident$Symbol.line, ident$Symbol.column); RESULT = part.appendArgIndexs(paramIndex); :}
+                        ;
+
+
+funcPart            ::= funcPart0:part RPAREN LBRACE
+                        {: RESULT = part; :}
+                        |funcPart1:part RPAREN LBRACE
+                        {: RESULT = part; :}
+                        |funcPart:part statment:stat
+                        {: RESULT = part.append(stat); :}
+                        ;
+
+
+func                ::= funcPart:part RBRACE
+                        {: RESULT = part.setOverflowUpstairs(varmgr.popVarWall()).setVarMap(varmgr.pop()).pop(); :}
+                        ;
+
+
+funcDeclareExpr     ::= func:f
+                        {: RESULT = createFunctionDeclareExpression(f, f$Symbol.line, f$Symbol.column); :}
+                        ;
+
+
+funcExecuteExpr     ::= funcExecuteExprPart0:part RPAREN
+                        {: RESULT = part.pop(); :}
+                        |funcExecuteExprPart1:part RPAREN
+                        {: RESULT = part.pop(); :}
+                        ;
+
+
+funcExecuteExprPart0    ::= expression:funcExpr LPAREN
+                            {: RESULT = createFunctionExecuteExpressionPart().setPosition(funcExpr$Symbol.line, funcExpr$Symbol.column).setFuncExpr(funcExpr); :}
+                            |expression:param0 AT contextValueExpr:funcExpr LPAREN
+                            {: RESULT = createFunctionExecuteExpressionPart().setPosition(funcExpr$Symbol.line, funcExpr$Symbol.column).setFuncExpr(funcExpr).append(param0); :}
+                            ;
+
+
+funcExecuteExprPart1    ::= funcExecuteExprPart0:part expression:expr
+                            {: RESULT = part.append(expr); :}
+                            |funcExecuteExprPart1:part COMMA expression:expr
+                            {: RESULT = part.append(expr); :}
+                            ;
+
+
+redirectOutExpr         ::= funcExecuteExpr:srcExpr EQGT:sym expression:expr
+                            {: RESULT = createRedirectOutExpression(srcExpr, expr, sym$Symbol.line, sym$Symbol.column); :}
+                            ;
+
+/* Native Method */
+
+nativeMethodExprPart0   ::= NATIVE:sym
+                            {: RESULT = createNativeMethodDeclareExpressionPart(sym$Symbol.line, sym$Symbol.column); :}
+                            |NATIVE:sym STATIC
+                            {: RESULT = createNativeMethodDeclareExpressionPart(sym$Symbol.line, sym$Symbol.column).setIsStatic(true); :}
+                            ;
+
+
+nativeMethodExprPart1   ::= nativeMethodExprPart0:part classPureName:nameBand DOT IDENTIFIER:ident LPAREN
+                            {: RESULT = part.setClassName(toClass(nameBand, nameBand$Symbol.line, nameBand$Symbol.column)).setMethodName(ident); :}
+                            ;
+
+
+nativeMethodExprPart    ::= nativeMethodExprPart1:part className:nameBand
+                            {: RESULT = part.append(toClass(nameBand, nameBand$Symbol.line, nameBand$Symbol.column)); :}
+                            |nativeMethodExprPart:part COMMA className:nameBand
+                            {: RESULT = part.append(toClass(nameBand, nameBand$Symbol.line, nameBand$Symbol.column)); :}
+                            ;
+
+
+nativeMethodExpr        ::= nativeMethodExprPart:part RPAREN
+                            {: RESULT = part.pop(); :}
+                            |nativeMethodExprPart1:part RPAREN
+                            {: RESULT = part.pop(); :}
+                            ;
+
+
+
+

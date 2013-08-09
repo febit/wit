@@ -1,0 +1,44 @@
+啊啊啊<%
+echo "啊 "+2;
+include "expr/directValue.wtl" ;
+{
+@import java.util.Map;
+@import java.lang.System;
+
+var map_put = native Map.put(Object,Object);
+var now = native static System.currentTimeMillis();
+
+var func =function(){
+    echo arguments[0];
+    return null;
+};
+
+var out,out2;
+{
+echo 1+1;
+echo '\n';
+} => out;
+
+var map={1:1,2:2};
+map@map_put(3,3);
+map_put(map,3,3);
+
+echo "\n===> map\n";
+for(k,v : map){
+    echo k+ " : "+ v;
+    echo "|";
+    echo for.iter.index;
+    echo "\n";
+}
+echo "\n===<\n";
+
+map@map_put(4);
+map@map_put(5,"sdasd\
+dsdasd\
+\tasdasdas\n\
+");
+map@map_put(6,null);
+map@map_put(null,null);
+%>${map}|${now()}|FUNC:${func("aaaaa")=>out2}|OUT:${out}|OUT2:${out2}<%
+
+}%>

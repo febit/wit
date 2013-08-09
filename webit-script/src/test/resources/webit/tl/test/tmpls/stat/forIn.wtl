@@ -1,0 +1,9 @@
+<%
+for(x : xs){
+    var isLast = for.iter.isLast;
+    for(y : ys){
+        var isLast = for.iter.isLast;
+        var isXsLast = super.for.iter.isLast;
+    }
+}
+%>
