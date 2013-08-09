@@ -8,7 +8,7 @@ resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
 textStatmentFactoryClass=webit.script.core.text.impl.SimpleTextStatmentFactory
 encoding=${DEFAULT_ENCODING}
 
-# filter=
+#filter=
 
 resolvers=\
     webit.script.resolvers.impl.MapResolver,\
