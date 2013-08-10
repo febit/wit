@@ -58,9 +58,9 @@ public final class NativeMethodDeclare implements MethodDeclare {
         try {
             return method.invoke(obj, methodArgs);
         } catch (IllegalAccessException ex) {
-            throw new ScriptRuntimeException("this method is inaccessible", ex);
+            throw new ScriptRuntimeException("this method is inaccessible: "+ ex.getLocalizedMessage());
         } catch (IllegalArgumentException ex) {
-            throw new ScriptRuntimeException("illegal argument", ex);
+            throw new ScriptRuntimeException("illegal argument: "+ ex.getLocalizedMessage());
         } catch (InvocationTargetException ex) {
             throw new ScriptRuntimeException("this method throws an exception", ex);
         }

@@ -1,0 +1,39 @@
+<%
+
+import "/junit-assert.wtl"
+
+var assertEquals;
+var assertNotEquals;
+var assertSame;
+var assertNotSame;
+
+{
+
+    var new_integer = native new Integer(int);
+    
+    assertEquals(1, new_integer(1));
+    assertEquals(0, new_integer(0));
+
+    assertNotSame(new_integer(0), new_integer(0));
+
+}
+{
+
+    @import java.util.List;
+    @import java.util.ArrayList;
+    
+    var new_arrayList = native new ArrayList();
+    var list_add = native List.add(Object);
+
+    var list = new_arrayList();
+    assertEquals(0, list.size);
+
+    var item = "item";
+    list@list_add(item);
+
+    assertEquals(1, list.size);
+    assertSame(item, list[0]);
+
+}
+
+%>
