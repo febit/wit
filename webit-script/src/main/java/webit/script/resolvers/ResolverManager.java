@@ -2,13 +2,8 @@ package webit.script.resolvers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import jodd.util.ReflectUtil;
-import static webit.script.resolvers.MatchMode.EQUALS;
-import static webit.script.resolvers.MatchMode.INSTANCEOF;
-import static webit.script.resolvers.MatchMode.REGIST;
 import webit.script.resolvers.impl.CommonResolver;
 
 /**
@@ -51,7 +46,7 @@ public class ResolverManager {
         GetResolver resolver = getResolverMap.get(type);
         if (resolver == null) {
             for (int i = 0; i < getResolverTypes.size(); i++) {
-                if (ReflectUtil.isSubclass(type, getResolverTypes.get(i))) {
+                if (getResolverTypes.get(i).isAssignableFrom(type)) {
                     resolver = getResolvers.get(i);
                     break;
                 }
@@ -74,7 +69,7 @@ public class ResolverManager {
         SetResolver resolver = setResolverMap.get(type);
         if (resolver == null) {
             for (int i = 0; i < setResolverTypes.size(); i++) {
-                if (ReflectUtil.isSubclass(type, setResolverTypes.get(i))) {
+                if (setResolverTypes.get(i).isAssignableFrom(type)) {
                     resolver = setResolvers.get(i);
                     break;
                 }
@@ -96,12 +91,12 @@ public class ResolverManager {
         ToBytesResolver resolver = toBytesResolverMap.get(type);
         if (resolver == null) {
             for (int i = 0; i < toBytesResolverTypes.size(); i++) {
-                if (ReflectUtil.isSubclass(type, toBytesResolverTypes.get(i))) {
+                if (toBytesResolverTypes.get(i).isAssignableFrom(type)) {
                     resolver = toBytesResolvers.get(i);
                     break;
                 }
             }
-            
+
             if (resolver == null) {
                 resolver = commonResolver;
             }
