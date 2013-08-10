@@ -56,15 +56,16 @@ public class ResolverManager {
                     break;
                 }
             }
-        }
-        if (resolver == null) {
-            resolver = commonResolver;
+            if (resolver == null) {
+                resolver = commonResolver;
+            }
+
+            GetResolver old = getResolverMap.putIfAbsent(type, resolver);
+            if (old != null) {
+                resolver = old;
+            }
         }
 
-        GetResolver old = getResolverMap.putIfAbsent(type, resolver);
-        if (old != null) {
-            resolver = old;
-        }
         return resolver;
     }
 
@@ -78,14 +79,14 @@ public class ResolverManager {
                     break;
                 }
             }
-        }
-        if (resolver == null) {
-            resolver = commonResolver;
-        }
+            if (resolver == null) {
+                resolver = commonResolver;
+            }
 
-        SetResolver old = setResolverMap.putIfAbsent(type, resolver);
-        if (old != null) {
-            resolver = old;
+            SetResolver old = setResolverMap.putIfAbsent(type, resolver);
+            if (old != null) {
+                resolver = old;
+            }
         }
         return resolver;
     }
@@ -100,14 +101,15 @@ public class ResolverManager {
                     break;
                 }
             }
-        }
-        if (resolver == null) {
-            resolver = commonResolver;
-        }
+            
+            if (resolver == null) {
+                resolver = commonResolver;
+            }
 
-        ToBytesResolver old = toBytesResolverMap.putIfAbsent(type, resolver);
-        if (old != null) {
-            resolver = old;
+            ToBytesResolver old = toBytesResolverMap.putIfAbsent(type, resolver);
+            if (old != null) {
+                resolver = old;
+            }
         }
         return resolver;
     }
