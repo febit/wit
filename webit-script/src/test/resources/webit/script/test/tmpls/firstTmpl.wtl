@@ -1,6 +1,5 @@
-啊啊啊<%
-echo "啊 "+2;
-include "expr/directValue.wtl" ;
+<%
+
 {
 @import java.util.Map;
 @import java.lang.System;

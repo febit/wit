@@ -339,6 +339,14 @@ action code {:
         return new NativeConstructorDeclareExpressionPart(line, column);
     }
 
+    private NativeNewArrayDeclareExpression createNativeNewArrayDeclareExpression(Class componentType, int line, int column){
+        if(componentType != Void.class){
+            return new NativeNewArrayDeclareExpression(componentType, line, column);
+        }else{
+            throw new ParserException("componentType must not Void.class", line, column);
+        }
+    };
+
     //================ >> Expression - Operator
     private Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column){
 
@@ -618,6 +626,8 @@ non terminal NativeMethodDeclareExpressionPart nativeMethodExprPart, nativeMetho
 
 non terminal NativeConstructorDeclareExpression nativeConstructorExpr;
 non terminal NativeConstructorDeclareExpressionPart nativeConstructorExprPart1, nativeConstructorExprPart;
+
+non terminal NativeNewArrayDeclareExpression nativeNewArrayExpr;
 
 /* Statment */
 
@@ -1088,6 +1098,7 @@ expression          ::= expression_stat:expr    {: RESULT = expr; :}
                         |funcDeclareExpr:expr    {: RESULT = expr; :}
                         |nativeMethodExpr:expr    {: RESULT = expr; :}
                         |nativeConstructorExpr:expr    {: RESULT = expr; :}
+                        |nativeNewArrayExpr:expr    {: RESULT = expr; :}
                         ;
 
 
@@ -1458,11 +1469,13 @@ nativeConstructorExprPart1  ::= NATIVE:sym NEW classPureName:nameBand LPAREN
                                 {: RESULT = createNativeConstructorDeclareExpressionPart(sym$Symbol.line, sym$Symbol.column).setClassName(toClass(nameBand, nameBand$Symbol.line, nameBand$Symbol.column)); :}
                                 ;
 
+
 nativeConstructorExprPart   ::= nativeConstructorExprPart1:part className:nameBand
                                 {: RESULT = part.append(toClass(nameBand, nameBand$Symbol.line, nameBand$Symbol.column)); :}
                                 |nativeConstructorExprPart:part COMMA className:nameBand
                                 {: RESULT = part.append(toClass(nameBand, nameBand$Symbol.line, nameBand$Symbol.column)); :}
                                 ;
+
 
 nativeConstructorExpr       ::= nativeConstructorExprPart1:part RPAREN
                                 {: RESULT = part.pop(); :}
@@ -1470,4 +1483,10 @@ nativeConstructorExpr       ::= nativeConstructorExprPart1:part RPAREN
                                 {: RESULT = part.pop(); :}
                                 ;
 
+
+nativeNewArrayExpr          ::= NATIVE:sym LBRACK RBRACK className:nameBand 
+                                {: RESULT = createNativeNewArrayDeclareExpression(toClass(nameBand, nameBand$Symbol.line, nameBand$Symbol.column), sym$Symbol.line, sym$Symbol.column); :}
+                                |NATIVE:sym LBRACK className:nameBand RBRACK
+                                {: RESULT = createNativeNewArrayDeclareExpression(toClass(nameBand, nameBand$Symbol.line, nameBand$Symbol.column), sym$Symbol.line, sym$Symbol.column); :}
+                                ;
 

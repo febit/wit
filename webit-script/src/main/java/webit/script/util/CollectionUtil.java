@@ -1,6 +1,5 @@
 package webit.script.util;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -19,12 +18,12 @@ public class CollectionUtil {
     public static int getSize(Object object) {
         if (object == null) {
             return 0;
-        } 
+        }
         Class cls = object.getClass();
 
         if (object instanceof Object[]) {
             return ((Object[]) object).length;
-        }else if (cls == int[].class) {
+        } else if (cls == int[].class) {
             return ((int[]) object).length;
         } else if (cls == long[].class) {
             return ((long[]) object).length;
@@ -103,7 +102,7 @@ public class CollectionUtil {
         if (o1 instanceof Map) {
             return ((Map) o1).get(key);
         }
-        throw new ScriptRuntimeException("Unsupported type");
+        throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());
     }
 
     public static void setByIndex(Object o1, Object key, Object value) {
@@ -113,13 +112,16 @@ public class CollectionUtil {
 
         if (o1 instanceof Map) {
             ((Map) o1).put(key, value);
+            return;
         }
         if (o1 instanceof List && key instanceof Number) {
             ((List) o1).set(((Number) key).intValue(), value);
+            return;
         }
-        if (o1 instanceof CharSequence && key instanceof Number) {
-            throw new ScriptRuntimeException("CharSequence isn't resetable");
-        }
+        
+        //if (o1 instanceof CharSequence && key instanceof Number) {
+        //    throw new ScriptRuntimeException("CharSequence isn't resetable");
+        //}
         //ARRAY
 
         Class clazz = o1.getClass();
@@ -129,37 +131,46 @@ public class CollectionUtil {
 
                 if (o1 instanceof Object[]) {
                     ((Object[]) o1)[index] = value;
+                    return;
                 } //
                 else if (clazz == int[].class) {
                     ((int[]) o1)[index] = ((Number) value).intValue();
+                    return;
                 } //
                 else if (clazz == boolean[].class) {
                     ((boolean[]) o1)[index] = ALU.toBoolean(value);
+                    return;
                 } //
                 else if (clazz == char[].class) {
                     ((char[]) o1)[index] = (Character) value;
+                    return;
                 } //
                 else if (clazz == float[].class) {
                     ((float[]) o1)[index] = ((Number) value).floatValue();
+                    return;
                 } //
                 else if (clazz == double[].class) {
                     ((double[]) o1)[index] = ((Number) value).doubleValue();
+                    return;
                 } //
                 else if (clazz == long[].class) {
                     ((long[]) o1)[index] = ((Number) value).longValue();
+                    return;
                 } //
                 else if (clazz == short[].class) {
                     ((short[]) o1)[index] = ((Number) value).shortValue();
+                    return;
                 } //
                 else if (clazz == byte[].class) {
                     ((byte[]) o1)[index] = ((Number) value).byteValue();
+                    return;
                 } //
             } catch (ArrayIndexOutOfBoundsException e) {
                 throw new ScriptRuntimeException("Array index out of bounds, index=" + index);
             }
         }
 
-        throw new ScriptRuntimeException("Unsupported type");
+        throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());
     }
 
     public static Iter toIter(Object o1) {
@@ -213,7 +224,7 @@ public class CollectionUtil {
             } //
         }
 
-        throw new ScriptRuntimeException("Unsupported type");
+        throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());
     }
 
     public static Iter toIter(Set o1) {
