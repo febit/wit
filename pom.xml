@@ -10,14 +10,14 @@
     <name>Webit-script-group</name>
     <description>a template-like script and engine, all writen with Java.</description>
     
-    <url>https://github.com/zqq90/webit-script</url>
+    <url>https://zqq90.github.com/webit-script</url>
     
     <modules>
         <module>webit-script</module>
     </modules>
     
     <scm>
-        <url>https://github.com/zqq90/webit-script</url>
+        <url>https://zqq90.github.com/webit-script</url>
         <connection>scm:git:https://github.com/zqq90/webit-script.git</connection>
         <developerConnection>scm:git:git@github.com:zqq90/webit-script.git</developerConnection>
     </scm>
@@ -44,4 +44,9 @@
         <system>GitHub</system>
         <url>https://github.com/zqq90/webit-script/issues</url>
     </issueManagement>
+    <profiles>
+        <profile>
+            <id>release</id>
+        </profile>
+    </profiles>
 </project>

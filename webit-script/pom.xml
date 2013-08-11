@@ -13,6 +13,10 @@
 
     <name>Webit-script</name>
     
+    <description>a template-like script and engine, all writen with Java.</description>
+    
+    <url>https://zqq90.github.com/webit-script</url>
+
     <properties>
         <!-- source encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,7 +28,6 @@
         <lib.slf4j.version>1.7.5</lib.slf4j.version>
     </properties>
     
-
     <dependencies>
         <dependency>
             <groupId>org.jodd</groupId>
@@ -79,39 +82,64 @@
             <scope>test</scope>
         </dependency>
     </dependencies>	
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <attach>true</attach>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <defaultGoal>clean package</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    
+    <scm>
+        <url>https://zqq90.github.com/webit-script</url>
+        <connection>scm:git:https://github.com/zqq90/webit-script.git</connection>
+        <developerConnection>scm:git:git@github.com:zqq90/webit-script.git</developerConnection>
+    </scm>
+    <organization>
+        <name>Webit</name>
+        <url>https://github.com/zqq90</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>The New BSD License</name>
+            <url>https://github.com/zqq90/webit-script/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>zqq</id>
+            <name>Zhu Qingqing</name>
+            <email>zqq_90@163.com</email>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/zqq90/webit-script/issues</url>
+    </issueManagement>
 </project>
