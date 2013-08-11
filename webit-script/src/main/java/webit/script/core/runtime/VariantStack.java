@@ -47,8 +47,7 @@ public class VariantStack {
 
     public final VariantContext pop() {
         if (current < 0) {
-            //TODO:EXCEPTION
-            return null;
+            throw new ScriptRuntimeException("VariantContext stack overflow");
         }
         VariantContext element = contexts[current];
         contexts[current--] = null;

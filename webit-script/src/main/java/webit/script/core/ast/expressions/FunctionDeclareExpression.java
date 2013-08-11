@@ -35,6 +35,6 @@ public final class FunctionDeclareExpression extends AbstractExpression {
             variantContexts = null;
         }
 
-        return new FunctionMethodDeclare(function, variantContexts);
+        return new FunctionMethodDeclare(function,context.template, variantContexts);
     }
 }

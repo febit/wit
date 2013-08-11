@@ -41,10 +41,10 @@ public final class Context {
         this.resolverManager = template.engine.getResolverManager();
     }
 
-    public Context(Context parent, VariantContext[] parentVarContexts) {
+    public Context(Context parent, Template template, VariantContext[] parentVarContexts) {
 
-        this.template = parent.template;
-        this.out = out == null ? parent.out : out;
+        this.template = template;
+        this.out = parent.out;
         this.encoding = parent.encoding;
         this.loopCtrl = new LoopCtrl();
         this.vars = new VariantStack(parentVarContexts);

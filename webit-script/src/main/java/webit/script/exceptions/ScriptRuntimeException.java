@@ -15,6 +15,17 @@ public class ScriptRuntimeException extends RuntimeException {
 
     private Stack<Statment> statmentStack = new ArrayStack(8);
     private Template template;
+    private String message;
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        return getMessage();
+    }
 
     public Template getTemplate() {
         return template;
@@ -71,7 +82,6 @@ public class ScriptRuntimeException extends RuntimeException {
     }
 
     public ScriptRuntimeException() {
-        super();
     }
 
     public ScriptRuntimeException(Statment statment) {
@@ -80,7 +90,7 @@ public class ScriptRuntimeException extends RuntimeException {
     }
 
     public ScriptRuntimeException(String message) {
-        super(message);
+        this.message = message;
     }
 
     public ScriptRuntimeException(String message, Statment statment) {
@@ -89,7 +99,8 @@ public class ScriptRuntimeException extends RuntimeException {
     }
 
     public ScriptRuntimeException(String message, Throwable cause) {
-        super(message, cause);
+        super(cause);
+        this.message = message;
     }
 
     public ScriptRuntimeException(String message, Throwable cause, Statment statment) {
@@ -98,7 +109,10 @@ public class ScriptRuntimeException extends RuntimeException {
     }
 
     public ScriptRuntimeException(Throwable cause) {
-        this(null,cause);
+        this(null, cause);
+        if (cause instanceof ScriptRuntimeException) {
+            this.message = cause.getMessage();
+        }
     }
 
     public ScriptRuntimeException(Throwable cause, Statment statment) {
