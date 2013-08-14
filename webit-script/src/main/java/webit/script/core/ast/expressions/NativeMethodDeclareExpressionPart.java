@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import webit.script.core.ast.StatmentPart;
 import webit.script.exceptions.ParserException;
-import webit.script.util.ReflectUtil;
+import webit.script.util.ClassUtil;
 
 /**
  *
@@ -49,7 +49,7 @@ public class NativeMethodDeclareExpressionPart extends StatmentPart {
             Class[] paramTypes = new Class[paramTypeList.size()];
             paramTypeList.toArray(paramTypes);
 
-            Method method = ReflectUtil.searchMethod(clazz, methodName, paramTypes, false);
+            Method method = ClassUtil.searchMethod(clazz, methodName, paramTypes, false);
             return new NativeMethodDeclareExpression(method, paramTypes.length, isStatic, line, column);
         } catch (NoSuchMethodException ex) {
             throw new ParserException(ex.getMessage(), line, column);

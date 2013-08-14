@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import webit.script.core.ast.ClassNameBand;
 import webit.script.exceptions.ParserException;
-import webit.script.util.ReflectUtil;
+import webit.script.util.ClassUtil;
 
 /**
  *
@@ -62,7 +62,7 @@ public class NativeImportManager {
 
             try {
                 classPureName = pkg + "." + simpleName;
-                ReflectUtil.getClassByName(classPureName);
+                ClassUtil.getClassByName(classPureName);
                 return classPureName;
             } catch (ClassNotFoundException e) {
                 //ignore
@@ -91,7 +91,7 @@ public class NativeImportManager {
             classPureName = classNameBand.getClassPureName();
         }
         try {
-            return ReflectUtil.getClassByName(classPureName, classNameBand.getArrayDepth());
+            return ClassUtil.getClassByName(classPureName, classNameBand.getArrayDepth());
         } catch (ClassNotFoundException ex) {
             throw new ParserException(ex);
         }

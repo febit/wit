@@ -18,6 +18,9 @@ resolvers=\
     webit.script.resolvers.impl.IterGetResolver
 
 
+[webit.script.resolvers.ResolverManager]
+enableAsm=true
+
 
 [webit.script.loaders.impl.ClasspathLoader]
 encoding=${DEFAULT_ENCODING}

@@ -44,27 +44,39 @@ public class Engine {
     @PetiteInitMethod
     public void init() throws Exception {
 
-        this.resourceLoader = (Loader) resolveNewInstance(this.resourceLoaderClass);
-        this.textStatmentFactory = (TextStatmentFactory) resolveNewInstance(this.textStatmentFactoryClass);
+        this.resourceLoader = (Loader) getBean(this.resourceLoaderClass);
+        this.textStatmentFactory = (TextStatmentFactory) getBean(this.textStatmentFactoryClass);
+        resolveBean(this.resolverManager);
         if (this.resolvers != null) {
             Resolver[] resolverInstances = new Resolver[this.resolvers.length];
             for (int i = 0; i < this.resolvers.length; i++) {
-                resolverInstances[i] = (Resolver) resolveNewInstance(this.resolvers[i]);
+                resolverInstances[i] = (Resolver) getBean(this.resolvers[i]);
             }
             this.resolverManager.init(resolverInstances);
         }
     }
 
-    public <E> E resolveNewInstance(Class<E> type) throws InstantiationException, IllegalAccessException {
+    protected void resolveBean(Object bean) throws InstantiationException, IllegalAccessException {
+
+        Class type = bean.getClass();
+        String beanName = _petite.resolveBeanName(type);
+        if (_petite.getBean(beanName) != bean) {
+
+            _petite.addBean(beanName, bean);
+
+            if (bean instanceof Configurable) {
+                ((Configurable) bean).init(this);
+            }
+        }
+    }
+
+    public <E> E getBean(Class<E> type) throws InstantiationException, IllegalAccessException {
 
         String beanName = _petite.resolveBeanName(type);
         Object object = _petite.getBean(beanName);
         if (object == null) {
             object = type.newInstance();
-            _petite.addBean(beanName, object);
-        }
-        if (object instanceof Configurable) {
-            ((Configurable) object).init(this);
+            resolveBean(object);
         }
         return (E) object;
     }

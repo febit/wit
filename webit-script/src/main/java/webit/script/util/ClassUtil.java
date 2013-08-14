@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author Zqq
  */
-public class ReflectUtil {
+public class ClassUtil {
 
     public static Class<?> getUnboxedClass(Class<?> type) {
         if (type == Boolean.class) {
@@ -31,6 +31,70 @@ public class ReflectUtil {
         } else {
             return type;
         }
+    }
+
+    public static boolean unBox(Boolean b) {
+        return b.booleanValue();
+    }
+
+    public static char unBox(Character b) {
+        return b.charValue();
+    }
+
+    public static byte unBox(Byte b) {
+        return b.byteValue();
+    }
+
+    public static short unBox(Short b) {
+        return b.shortValue();
+    }
+
+    public static int unBox(Integer b) {
+        return b.intValue();
+    }
+
+    public static long unBox(Long b) {
+        return b.longValue();
+    }
+
+    public static float unBox(Float b) {
+        return b.floatValue();
+    }
+
+    public static double unBox(Double b) {
+        return b.doubleValue();
+    }
+
+    public static Boolean box(boolean b) {
+        return b ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    public static Character box(char c) {
+        return Character.valueOf(c);
+    }
+
+    public static Byte box(byte c) {
+        return Byte.valueOf(c);
+    }
+
+    public static Short box(short c) {
+        return Short.valueOf(c);
+    }
+
+    public static Integer box(int c) {
+        return Integer.valueOf(c);
+    }
+
+    public static Long box(long c) {
+        return Long.valueOf(c);
+    }
+
+    public static Float box(float c) {
+        return Float.valueOf(c);
+    }
+
+    public static Double box(double c) {
+        return Double.valueOf(c);
     }
 
     public static Class<?> getBoxedClass(Class<?> type) {
@@ -124,8 +188,8 @@ public class ReflectUtil {
                                     && !type.equals(parameterType)) {
                                 eq = false;
                                 if (boxed) {
-                                    type = ReflectUtil.getBoxedClass(type);
-                                    parameterType = ReflectUtil.getBoxedClass(parameterType);
+                                    type = ClassUtil.getBoxedClass(type);
+                                    parameterType = ClassUtil.getBoxedClass(parameterType);
                                 }
                                 if (!type.isAssignableFrom(parameterType)) {
                                     eq = false;
