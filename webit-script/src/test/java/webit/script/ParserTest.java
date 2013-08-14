@@ -20,7 +20,7 @@ public class ParserTest {
         
             Template template = engine.getTemplate("/firstTmpl.wtl");
             //TemplateAST result = template.prepareTemplate();
-            template.execute(null, out);
+            template.merge(null, out);
             System.out.println("===========================>>");
             System.out.println(out);
             System.out.println("<<===========================");

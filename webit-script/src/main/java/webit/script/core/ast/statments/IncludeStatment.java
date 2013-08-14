@@ -47,7 +47,7 @@ public class IncludeStatment extends AbstractStatment {
 
             try {
                 childTemplate = thisTemplate.engine.getTemplate(thisTemplate.name, templateName);
-                childTemplate.execute(params, context.getOut());
+                childTemplate.merge(params, context.getOut());
             } catch (Exception e) {
                 throw new ScriptRuntimeException(e);
             }

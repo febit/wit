@@ -63,8 +63,8 @@ public class Template {
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
-    public Context execute(Map<String, Object> root, OutputStream outputStream) throws ScriptRuntimeException, ParserException {
-        return execute(root, new OutputStreamOut(outputStream, engine.encoding));
+    public Context merge(Map<String, Object> root, OutputStream outputStream) throws ScriptRuntimeException, ParserException {
+        return merge(root, new OutputStreamOut(outputStream, engine.encoding));
     }
 
     /**
@@ -76,8 +76,8 @@ public class Template {
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
-    public Context execute(Map<String, Object> root, OutputStream outputStream, String encoding) throws ScriptRuntimeException, ParserException {
-        return execute(root, new OutputStreamOut(outputStream, encoding));
+    public Context merge(Map<String, Object> root, OutputStream outputStream, String encoding) throws ScriptRuntimeException, ParserException {
+        return merge(root, new OutputStreamOut(outputStream, encoding));
     }
 
     /**
@@ -88,8 +88,8 @@ public class Template {
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
-    public Context execute(Map<String, Object> root, Writer writer) throws ScriptRuntimeException, ParserException {
-        return execute(root, new WriterOut(writer, engine.encoding));
+    public Context merge(Map<String, Object> root, Writer writer) throws ScriptRuntimeException, ParserException {
+        return merge(root, new WriterOut(writer, engine.encoding));
     }
 
     /**
@@ -100,7 +100,7 @@ public class Template {
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
-    public final Context execute(Map<String, Object> root, Out out) throws ScriptRuntimeException, ParserException {
+    public final Context merge(Map<String, Object> root, Out out) throws ScriptRuntimeException, ParserException {
         try {
             TemplateAST tmpl = prepareTemplate();
             Context context = new Context(this, out);

@@ -51,7 +51,7 @@ public class AutoTest {
             System.out.println("AUTO RUN: "+templatePath);
             Template template = engine.getTemplate(templatePath);
 
-            template.execute(null, out);
+            template.merge(null, out);
         }
     }
 }

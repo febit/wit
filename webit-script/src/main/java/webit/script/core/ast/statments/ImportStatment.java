@@ -48,7 +48,7 @@ public class ImportStatment extends AbstractStatment {
 
             try {
                 childTemplate = thisTemplate.engine.getTemplate(thisTemplate.name, templateName);
-                Context childContext = childTemplate.execute(params, context.getOut());
+                Context childContext = childTemplate.merge(params, context.getOut());
                 Map returns = new HashMap();
                 childContext.exportTo(returns);
                 context.vars.setToCurrentContext(returns);
