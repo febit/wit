@@ -1,5 +1,6 @@
 package webit.script.util;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -118,7 +119,7 @@ public class CollectionUtil {
             ((List) o1).set(((Number) key).intValue(), value);
             return;
         }
-        
+
         //if (o1 instanceof CharSequence && key instanceof Number) {
         //    throw new ScriptRuntimeException("CharSequence isn't resetable");
         //}
@@ -168,6 +169,44 @@ public class CollectionUtil {
             } catch (ArrayIndexOutOfBoundsException e) {
                 throw new ScriptRuntimeException("Array index out of bounds, index=" + index);
             }
+        }
+
+        throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());
+    }
+
+    public static String arrayToString(Object o1) {
+        if (o1 == null) {
+            return null;
+        }
+
+        Class clazz = o1.getClass();
+        if (clazz.isArray()) {
+            if (o1 instanceof Object[]) {
+                return Arrays.toString((Object[]) o1);
+            } //
+            else if (clazz == int[].class) {
+                return Arrays.toString((int[]) o1);
+            } //
+            else if (clazz == boolean[].class) {
+                return Arrays.toString((boolean[]) o1);
+            } //
+            else if (clazz == char[].class) {
+                return Arrays.toString((char[]) o1);
+            } //
+            else if (clazz == float[].class) {
+                return Arrays.toString((float[]) o1);
+            } //
+            else if (clazz == double[].class) {
+                return Arrays.toString((double[]) o1);
+            } else if (clazz == long[].class) {
+                return Arrays.toString((long[]) o1);
+            } //
+            else if (clazz == short[].class) {
+                return Arrays.toString((short[]) o1);
+            } //
+            else if (clazz == byte[].class) {
+                return Arrays.toString((byte[]) o1);
+            } //
         }
 
         throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());

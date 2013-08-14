@@ -1,6 +1,5 @@
 package webit.script.util;
 
-import java.io.OutputStream;
 import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
@@ -9,6 +8,7 @@ import webit.script.core.ast.ResetableValueExpression;
 import webit.script.core.ast.Statment;
 import webit.script.exceptions.ParserException;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.io.Out;
 
 /**
  *
@@ -16,7 +16,7 @@ import webit.script.exceptions.ScriptRuntimeException;
  */
 public class StatmentUtil {
 
-    public static Object execute(Expression expression, Context context, boolean needReturn, OutputStream out) {
+    public static Object execute(Expression expression, Context context, boolean needReturn, Out out) {
         try {
             context.pushOut(out);
             Object result = expression.execute(context, needReturn);
@@ -79,7 +79,7 @@ public class StatmentUtil {
         }
     }
 
-    public static void execute(Statment statment, OutputStream out, Context context) {
+    public static void execute(Statment statment, Out out, Context context) {
         try {
             context.pushOut(out);
             statment.execute(context);

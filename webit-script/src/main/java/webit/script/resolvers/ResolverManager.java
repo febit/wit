@@ -16,14 +16,14 @@ public class ResolverManager {
 
     private ConcurrentMap<Class, GetResolver> getResolverMap;
     private ConcurrentMap<Class, SetResolver> setResolverMap;
-    private ConcurrentMap<Class, ToBytesResolver> toBytesResolverMap;
+    private ConcurrentMap<Class, ToStringResolver> toStringResolverMap;
     //
     private ArrayList<GetResolver> getResolvers;
     private ArrayList<SetResolver> setResolvers;
-    private ArrayList<ToBytesResolver> toBytesResolvers;
+    private ArrayList<ToStringResolver> toStringResolvers;
     private ArrayList<Class> getResolverTypes;
     private ArrayList<Class> setResolverTypes;
-    private ArrayList<Class> toBytesResolverTypes;
+    private ArrayList<Class> toStringResolverTypes;
     //
     private CommonResolver commonResolver;
     //settings
@@ -32,14 +32,14 @@ public class ResolverManager {
     public ResolverManager() {
         getResolverMap = new ConcurrentHashMap<Class, GetResolver>();
         setResolverMap = new ConcurrentHashMap<Class, SetResolver>();
-        toBytesResolverMap = new ConcurrentHashMap<Class, ToBytesResolver>();
+        toStringResolverMap = new ConcurrentHashMap<Class, ToStringResolver>();
 
         getResolvers = new ArrayList<GetResolver>();
         setResolvers = new ArrayList<SetResolver>();
-        toBytesResolvers = new ArrayList<ToBytesResolver>();
+        toStringResolvers = new ArrayList<ToStringResolver>();
         getResolverTypes = new ArrayList<Class>();
         setResolverTypes = new ArrayList<Class>();
-        toBytesResolverTypes = new ArrayList<Class>();
+        toStringResolverTypes = new ArrayList<Class>();
 
         commonResolver = new CommonResolver();
     }
@@ -129,13 +129,13 @@ public class ResolverManager {
         return resolver;
     }
 
-    private ToBytesResolver getToBytesResolver(Object bean) {
+    private ToStringResolver getToStringResolver(Object bean) {
         Class type = bean.getClass();
-        ToBytesResolver resolver = toBytesResolverMap.get(type);
+        ToStringResolver resolver = toStringResolverMap.get(type);
         if (resolver == null) {
-            for (int i = 0; i < toBytesResolverTypes.size(); i++) {
-                if (toBytesResolverTypes.get(i).isAssignableFrom(type)) {
-                    resolver = toBytesResolvers.get(i);
+            for (int i = 0; i < toStringResolverTypes.size(); i++) {
+                if (toStringResolverTypes.get(i).isAssignableFrom(type)) {
+                    resolver = toStringResolvers.get(i);
                     break;
                 }
             }
@@ -144,7 +144,7 @@ public class ResolverManager {
                 resolver = commonResolver;
             }
 
-            ToBytesResolver old = toBytesResolverMap.putIfAbsent(type, resolver);
+            ToStringResolver old = toStringResolverMap.putIfAbsent(type, resolver);
             if (old != null) {
                 resolver = old;
             }
@@ -164,10 +164,10 @@ public class ResolverManager {
 
         getResolvers.trimToSize();
         setResolvers.trimToSize();
-        toBytesResolvers.trimToSize();
+        toStringResolvers.trimToSize();
         getResolverTypes.trimToSize();
         setResolverTypes.trimToSize();
-        toBytesResolverTypes.trimToSize();
+        toStringResolverTypes.trimToSize();
         //
     }
 
@@ -182,9 +182,9 @@ public class ResolverManager {
                     setResolverTypes.add(type);
                     setResolvers.add((SetResolver) resolver);
                 }
-                if (resolver instanceof ToBytesResolver) {
-                    toBytesResolverTypes.add(type);
-                    toBytesResolvers.add((ToBytesResolver) resolver);
+                if (resolver instanceof ToStringResolver) {
+                    toStringResolverTypes.add(type);
+                    toStringResolvers.add((ToStringResolver) resolver);
                 }
                 break;
 
@@ -195,8 +195,8 @@ public class ResolverManager {
                 if (resolver instanceof SetResolver) {
                     setResolverMap.putIfAbsent(type, (SetResolver) resolver);
                 }
-                if (resolver instanceof ToBytesResolver) {
-                    toBytesResolverMap.putIfAbsent(type, (ToBytesResolver) resolver);
+                if (resolver instanceof ToStringResolver) {
+                    toStringResolverMap.putIfAbsent(type, (ToStringResolver) resolver);
                 }
                 break;
             case REGIST:
@@ -224,13 +224,9 @@ public class ResolverManager {
         }
     }
 
-    public final byte[] toBytes(Object bean, String encoding) throws UnsupportedEncodingException {
+    public final String toString(Object bean){
         if (bean != null) {
-            if (bean.getClass() == byte[].class) {
-                return (byte[]) bean;
-            } else {
-                return getToBytesResolver(bean).toBytes(bean, encoding);
-            }
+            return getToStringResolver(bean).toString(bean);
         } else {
             return null;
         }

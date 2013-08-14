@@ -17,7 +17,7 @@ import webit.script.resolvers.ResolverManager;
  *
  * @author Zqq
  */
-public class Engine {
+public final class Engine {
 
     public static final String ENGINE = "engine";
     public static final String PETITE = "petite";

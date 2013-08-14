@@ -2,17 +2,20 @@ package webit.script.resolvers.impl;
 
 import java.io.UnsupportedEncodingException;
 import jodd.bean.BeanUtil;
+import webit.script.Configurable;
+import webit.script.Engine;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
-import webit.script.resolvers.ToBytesResolver;
+import webit.script.resolvers.ToStringResolver;
 
 /**
  *
  * @author Zqq
  */
-public class CommonResolver implements GetResolver, SetResolver, ToBytesResolver {
+public class CommonResolver implements GetResolver, SetResolver, ToStringResolver{
+
 
     public Object get(Object object, Object property) {
         try {
@@ -30,8 +33,8 @@ public class CommonResolver implements GetResolver, SetResolver, ToBytesResolver
         }
     }
 
-    public byte[] toBytes(Object bean, String encoding) throws UnsupportedEncodingException {
-        return bean.toString().getBytes(encoding);
+    public String toString(Object bean) {
+        return bean.toString();
     }
 
     public MatchMode getMatchMode() {
@@ -41,4 +44,6 @@ public class CommonResolver implements GetResolver, SetResolver, ToBytesResolver
     public Class<?> getMatchClass() {
         return Object.class;
     }
+
+
 }

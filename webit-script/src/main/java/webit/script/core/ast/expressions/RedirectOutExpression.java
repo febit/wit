@@ -1,11 +1,14 @@
 package webit.script.core.ast.expressions;
 
 import jodd.io.FastByteArrayOutputStream;
+import jodd.io.FastCharArrayWriter;
 import webit.script.Context;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
+import webit.script.io.impl.OutputStreamOut;
+import webit.script.io.impl.WriterOut;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -26,13 +29,25 @@ public class RedirectOutExpression extends AbstractExpression {
     @Override
     public Object execute(Context context, boolean needReturn) {
 
-        FastByteArrayOutputStream out = new FastByteArrayOutputStream(128);
 
-        Object result =  StatmentUtil.execute(srcExpr, context, needReturn, out);
+        if (context.getOut() instanceof OutputStreamOut) {
 
-        ResetableValue value =  StatmentUtil.getResetableValue(toExpr, context);
+            FastByteArrayOutputStream out = new FastByteArrayOutputStream(128);
 
-        value.set(out.toByteArray());
-        return result;
+            Object result = StatmentUtil.execute(srcExpr, context, needReturn, new OutputStreamOut(out, context.encoding));
+            ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
+            value.set(out.toByteArray());
+
+            return result;
+        } else {
+            FastCharArrayWriter writer = new FastCharArrayWriter();
+
+            Object result = StatmentUtil.execute(srcExpr, context, needReturn, new WriterOut(writer, context.encoding));
+            ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
+            value.set(writer.toString());
+
+            return result;
+        }
+
     }
 }

@@ -3,11 +3,15 @@ package webit.script;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.Map;
 import webit.script.core.Parser;
 import webit.script.core.ast.TemplateAST;
 import webit.script.exceptions.ParserException;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.io.Out;
+import webit.script.io.impl.OutputStreamOut;
+import webit.script.io.impl.WriterOut;
 import webit.script.loaders.Resource;
 
 /**
@@ -28,7 +32,13 @@ public class Template {
         this.resource = resource;
     }
 
-    protected TemplateAST prepareTemplate() throws IOException, ParserException{
+    /**
+     *
+     * @return
+     * @throws IOException
+     * @throws ParserException
+     */
+    protected TemplateAST prepareTemplate() throws IOException, ParserException {
         TemplateAST tmpl = this.templateAst;
         if (tmpl == null || resource.isModified()) { //fast
             synchronized (this) {
@@ -48,12 +58,49 @@ public class Template {
     /**
      *
      * @param root
+     * @param outputStream
+     * @return
+     * @throws ScriptRuntimeException
+     * @throws ParserException
+     */
+    public Context execute(Map<String, Object> root, OutputStream outputStream) throws ScriptRuntimeException, ParserException {
+        return execute(root, new OutputStreamOut(outputStream, engine.encoding));
+    }
+
+    /**
+     *
+     * @param root
+     * @param outputStream
+     * @param encoding
+     * @return
+     * @throws ScriptRuntimeException
+     * @throws ParserException
+     */
+    public Context execute(Map<String, Object> root, OutputStream outputStream, String encoding) throws ScriptRuntimeException, ParserException {
+        return execute(root, new OutputStreamOut(outputStream, encoding));
+    }
+
+    /**
+     *
+     * @param root
+     * @param writer
+     * @return
+     * @throws ScriptRuntimeException
+     * @throws ParserException
+     */
+    public Context execute(Map<String, Object> root, Writer writer) throws ScriptRuntimeException, ParserException {
+        return execute(root, new WriterOut(writer, engine.encoding));
+    }
+
+    /**
+     *
+     * @param root
      * @param out
      * @return Context
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
-    public Context execute(Map<String, Object> root, OutputStream out) throws ScriptRuntimeException, ParserException{
+    public final Context execute(Map<String, Object> root, Out out) throws ScriptRuntimeException, ParserException {
         try {
             TemplateAST tmpl = prepareTemplate();
             Context context = new Context(this, out);
@@ -61,11 +108,11 @@ public class Template {
             return context;
         } catch (Exception e) {
             if (e instanceof ScriptRuntimeException) {
-                ((ScriptRuntimeException)e).setTemplate(this);
-                throw (ScriptRuntimeException)e;
-            }else if (e instanceof ParserException) {
-                ((ParserException)e).registTemplate(this);
-                throw (ParserException)e;
+                ((ScriptRuntimeException) e).setTemplate(this);
+                throw (ScriptRuntimeException) e;
+            } else if (e instanceof ParserException) {
+                ((ParserException) e).registTemplate(this);
+                throw (ParserException) e;
             }
             throw new ScriptRuntimeException(e);
         }

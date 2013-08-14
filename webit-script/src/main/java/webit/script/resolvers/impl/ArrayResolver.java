@@ -1,18 +1,25 @@
 package webit.script.resolvers.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import webit.script.Configurable;
+import webit.script.Engine;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.RegistModeResolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.resolvers.SetResolver;
+import webit.script.resolvers.ToStringResolver;
 import webit.script.util.CollectionUtil;
 
 /**
  *
  * @author Zqq
  */
-public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolver {
+public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolver, ToStringResolver {
 
     public MatchMode getMatchMode() {
         return MatchMode.REGIST;
@@ -54,5 +61,9 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
         resolverManager.registResolver(long[].class, this, MatchMode.EQUALS);
         resolverManager.registResolver(short[].class, this, MatchMode.EQUALS);
         resolverManager.registResolver(byte[].class, this, MatchMode.EQUALS);
+    }
+
+    public String toString(Object bean) {
+        return CollectionUtil.arrayToString(bean);
     }
 }

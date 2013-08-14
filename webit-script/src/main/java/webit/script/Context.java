@@ -1,13 +1,10 @@
 package webit.script;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import webit.script.core.runtime.LoopCtrl;
 import webit.script.core.runtime.VariantStack;
 import webit.script.core.runtime.variant.VariantContext;
-import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.io.Out;
 import webit.script.resolvers.ResolverManager;
 import webit.script.util.ArrayStack;
 import webit.script.util.Stack;
@@ -21,8 +18,8 @@ public final class Context {
     public static final Object VOID = new Object();
     public static final Object UNDEFINED = new Object();
     //
-    protected Stack<OutputStream> outStack;
-    protected OutputStream out;
+    protected Out out;
+    protected Stack<Out> outStack;
     public final String encoding;
     //
     public final LoopCtrl loopCtrl;
@@ -30,12 +27,11 @@ public final class Context {
     public final Template template;
     public final ResolverManager resolverManager;
 
-    // **********************
-    public Context(Template template, OutputStream out) {
+    public Context(Template template, Out out) {
 
         this.template = template;
         this.out = out;
-        this.encoding = template.engine.encoding;
+        this.encoding = out.getEncoding();
         this.loopCtrl = new LoopCtrl();
         this.vars = new VariantStack();
         this.resolverManager = template.engine.getResolverManager();
@@ -51,63 +47,69 @@ public final class Context {
         this.resolverManager = parent.resolverManager;
     }
 
-//    public boolean setToRoot(String key, Object value) {
-//        root.put(key, value);
-//        return true;
-//    }
     protected final void checkOutStack() {
         if (outStack == null) {
-            outStack = new ArrayStack<OutputStream>(5);
+            outStack = new ArrayStack<Out>(5);
         }
     }
 
+    /**
+     * Dangerous !
+     *
+     * @param out
+     * @deprecated
+     */
     @Deprecated
-    public final void pushOut(OutputStream out) {
+    public final void pushOut(Out out) {
         checkOutStack();
         outStack.push(this.out);
         this.out = out;
     }
 
+    /**
+     * Dangerous !
+     *
+     * @return
+     * @deprecated
+     */
     @Deprecated
-    public final OutputStream popOut() {
+    public final Out popOut() {
         checkOutStack();
-        OutputStream old = this.out;
+        Out old = this.out;
         this.out = outStack.pop();
         return old;
     }
 
-    public final OutputStream getOut() {
+    public final Out getOut() {
         return out;
     }
 
     public final void out(byte[] bytes) {
         if (bytes != null) {
-            try {
-                out.write(bytes);
-            } catch (IOException ex) {
-                throw new ScriptRuntimeException(ex);
+            out.write(bytes);
+        }
+    }
+
+    public final void out(String string) {
+        if (string != null) {
+            out.write(string);
+        }
+    }
+
+    public final void out(Object object) {
+        if (object != null) {
+            Class objClass = object.getClass();
+            if (objClass == byte[].class) {
+                out((byte[]) object);
+            } else if (objClass == String.class) {
+                out((String) object);
+            } else {
+                out(resolverManager.toString(object));
             }
         }
     }
 
     public final void exportTo(Map map) {
         vars.getCurrentContext().exportTo(map);
-    }
-
-    public final void out(Object object) {
-        if (object != null) {
-            if (object instanceof byte[]) {
-                out((byte[]) object);
-            } else {
-                try {
-                    out(resolverManager.toBytes(object, encoding));
-                } catch (UnsupportedEncodingException ex) {
-                    throw new ScriptRuntimeException(ex);
-                }
-            }
-        }
-    }
-
-    protected static void setContext() {
     }
 }
