@@ -1,5 +1,6 @@
 package webit.script.resolvers;
 
+import webit.script.asm.AsmResolverGenerator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

@@ -26,6 +26,7 @@ public final class Context {
     public final VariantStack vars;
     public final Template template;
     public final ResolverManager resolverManager;
+    public final boolean enableAsmNative;
 
     public Context(Template template, Out out) {
 
@@ -35,6 +36,7 @@ public final class Context {
         this.loopCtrl = new LoopCtrl();
         this.vars = new VariantStack();
         this.resolverManager = template.engine.getResolverManager();
+        this.enableAsmNative = template.engine.isEnableAsmNative();
     }
 
     public Context(Context parent, Template template, VariantContext[] parentVarContexts) {
@@ -45,6 +47,7 @@ public final class Context {
         this.loopCtrl = new LoopCtrl();
         this.vars = new VariantStack(parentVarContexts);
         this.resolverManager = parent.resolverManager;
+        this.enableAsmNative = parent.enableAsmNative;
     }
 
     protected final void checkOutStack() {

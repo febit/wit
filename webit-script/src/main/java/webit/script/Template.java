@@ -64,7 +64,7 @@ public class Template {
      * @throws ParserException
      */
     public Context merge(Map<String, Object> root, OutputStream outputStream) throws ScriptRuntimeException, ParserException {
-        return merge(root, new OutputStreamOut(outputStream, engine.encoding));
+        return merge(root, new OutputStreamOut(outputStream, engine.getEncoding()));
     }
 
     /**
@@ -89,7 +89,7 @@ public class Template {
      * @throws ParserException
      */
     public Context merge(Map<String, Object> root, Writer writer) throws ScriptRuntimeException, ParserException {
-        return merge(root, new WriterOut(writer, engine.encoding));
+        return merge(root, new WriterOut(writer, engine.getEncoding()));
     }
 
     /**

@@ -24,16 +24,17 @@ public final class Engine {
     //
     private static final String DEFAULT_PROPERTIES = "/webitl-default.props";
     //settings
-    protected Class resourceLoaderClass;
-    protected Class textStatmentFactoryClass;
-    protected Class[] resolvers;
-    protected String encoding;
+    private Class resourceLoaderClass;
+    private Class textStatmentFactoryClass;
+    private Class[] resolvers;
+    private String encoding = "UTF-8";
+    private boolean enableAsmNative = true;
     //
-    protected TextStatmentFactory textStatmentFactory;
-    protected final ResolverManager resolverManager;
-    protected Loader resourceLoader;
-    protected final ConcurrentMap<String, Template> templateCache;
-    protected final PetiteContainer _petite;
+    private TextStatmentFactory textStatmentFactory;
+    private final ResolverManager resolverManager;
+    private Loader resourceLoader;
+    private final ConcurrentMap<String, Template> templateCache;
+    private final PetiteContainer _petite;
 
     public Engine(PetiteContainer petite) {
         this._petite = petite;
@@ -56,7 +57,7 @@ public final class Engine {
         }
     }
 
-    protected void resolveBean(Object bean) throws InstantiationException, IllegalAccessException {
+    public void resolveBean(Object bean) throws InstantiationException, IllegalAccessException {
 
         Class type = bean.getClass();
         String beanName = _petite.resolveBeanName(type);
@@ -119,6 +120,14 @@ public final class Engine {
 
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public boolean isEnableAsmNative() {
+        return enableAsmNative;
+    }
+
+    public void setEnableAsmNative(boolean enableAsmNative) {
+        this.enableAsmNative = enableAsmNative;
     }
 
     //

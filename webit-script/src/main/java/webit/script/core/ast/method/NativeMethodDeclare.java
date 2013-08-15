@@ -56,6 +56,7 @@ public final class NativeMethodDeclare implements MethodDeclare {
             System.arraycopy(args, 1, methodArgs, 0, copyLen);
         }
         try {
+            //TODO: how if a void result
             return method.invoke(obj, methodArgs);
         } catch (IllegalAccessException ex) {
             throw new ScriptRuntimeException("this method is inaccessible: "+ ex.getLocalizedMessage());

@@ -165,6 +165,10 @@ public class ClassUtil {
         return Class.forName(name, true, Thread.currentThread().getContextClassLoader());
     }
 
+    public static boolean isStatic(Method method) {
+        return Modifier.isStatic(method.getModifiers());
+    }
+
     public static Method searchMethod(Class<?> currentClass, String name, Class<?>[] parameterTypes, boolean boxed) throws NoSuchMethodException {
         if (currentClass == null) {
             throw new NoSuchMethodException("class == null");

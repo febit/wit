@@ -1,6 +1,6 @@
 package webit.script.resolvers;
 
-import java.io.UnsupportedEncodingException;
+import webit.script.asm.AsmResolverGenerator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

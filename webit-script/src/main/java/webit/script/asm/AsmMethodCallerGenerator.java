@@ -1,0 +1,210 @@
+package webit.script.asm;
+
+import webit.script.Context;
+import webit.script.asm4.ClassWriter;
+import webit.script.asm4.Label;
+import webit.script.asm4.Opcodes;
+import webit.script.asm4.Type;
+import webit.script.asm4.commons.GeneratorAdapter;
+import webit.script.asm4.commons.Method;
+import webit.script.util.ClassUtil;
+
+/**
+ *
+ * @author Zqq
+ */
+public class AsmMethodCallerGenerator {
+    //
+
+    private static final Type TYPE_ASM_CALLER = Type.getType(AsmMethodCaller.class);
+    private static final Type TYPE_CONTEXT = Type.getType(Context.class);
+    private static final Type TYPE_SYSTEM = Type.getType(System.class);
+    private static final Type TYPE_OBJECT_ARR = Type.getType(Object[].class);
+    private static final Method METHOD_EXECUTE = new Method("execute", ASMUtil.TYPE_OBJECT, new Type[]{TYPE_OBJECT_ARR});
+    private static final Method METHOD_CREATE_EXCEPTION = new Method("createException", ASMUtil.TYPE_SCRIPT_RUNTIME_EXCEPTION, new Type[]{ASMUtil.TYPE_STRING});
+    private static final Method METHOD_ARRAY_COPY = new Method("arraycopy", Type.VOID_TYPE, new Type[]{
+        ASMUtil.TYPE_OBJECT,
+        Type.INT_TYPE,
+        ASMUtil.TYPE_OBJECT,
+        Type.INT_TYPE,
+        Type.INT_TYPE
+    });
+    //
+    private static int sn = 1;
+    private static final String CALLER_CLASS_NAME_PRE = AsmMethodCallerGenerator.class.getName() + "_";
+    private static final String ASM_METHOD_CALLER = ASMUtil.toAsmClassName(AsmMethodCaller.class.getName());
+
+    private static synchronized int getSn() {
+        return sn++;
+    }
+
+    protected static String generateClassName(java.lang.reflect.Method method) {
+        return CALLER_CLASS_NAME_PRE + method.getName() + '_' + getSn();
+    }
+
+    protected byte[] generateClassBody(String className, java.lang.reflect.Method method) {
+        String asmClassName = ASMUtil.toAsmClassName(className);
+        ClassWriter classWriter;
+
+        classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, asmClassName, null, ASM_METHOD_CALLER, null);
+
+        //Default Constructor
+        attachDefaultConstructorMethod(classWriter);
+
+        attach_execute_Method(classWriter, method);
+
+        //End Class Writer
+        classWriter.visitEnd();
+        return classWriter.toByteArray();
+    }
+
+    private void attachDefaultConstructorMethod(ClassWriter classWriter) {
+        GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR, null, null, classWriter);
+
+        mg.loadThis();
+        mg.invokeConstructor(TYPE_ASM_CALLER, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR);
+        mg.returnValue();
+        mg.endMethod();
+    }
+
+    public Class generateCaller(java.lang.reflect.Method method) {
+        String className = generateClassName(method);
+
+        byte[] code = generateClassBody(className, method);
+        /*
+        try {
+            FileUtil.writeBytes("F:/temp_" + method.getName() + ".class", code);
+        } catch (IOException ex) {
+            //ignore
+        }*/
+        return ASMUtil.loadClass(className, code, 0, code.length);
+    }
+
+    private void attach_execute_Method(ClassWriter classWriter, java.lang.reflect.Method method) {
+
+        final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, METHOD_EXECUTE, null, null, classWriter);
+
+        final Class declaringClass = method.getDeclaringClass();
+        final Method asmMethod = Method.getMethod(method);
+        final Type declaringClassType = Type.getType(declaringClass);
+        final boolean isStatic = ClassUtil.isStatic(method);
+        final Class[] paramTypes = method.getParameterTypes();
+
+        if (isStatic && paramTypes.length == 0) {
+            mg.invokeStatic(declaringClassType, asmMethod);
+        } else {
+            final int var_args = mg.newLocal(TYPE_OBJECT_ARR);
+
+            final int argsNeed = isStatic ? paramTypes.length : paramTypes.length + 1;
+
+            Label pushArgs = mg.newLabel();
+            Label createNewArray = mg.newLabel();
+            Label firstIsNullException = mg.newLabel();
+            //Object[] args = ;
+            mg.loadArg(0);
+            mg.dup();
+            mg.storeLocal(var_args);
+            //check args count
+            if (isStatic) {
+                mg.ifNull(createNewArray);
+            } else {
+                mg.ifNull(firstIsNullException);
+                mg.loadLocal(var_args);
+                mg.arrayLength();
+                mg.ifZCmp(GeneratorAdapter.EQ, firstIsNullException);
+                mg.loadLocal(var_args);
+                mg.push(0);
+                mg.arrayLoad(ASMUtil.TYPE_OBJECT);
+                mg.ifNull(firstIsNullException);
+            }
+            mg.loadArg(0);
+            mg.arrayLength();
+            mg.push(argsNeed);
+            mg.ifICmp(GeneratorAdapter.GE, pushArgs);
+            //copyArray
+            //System.arraycopy(src, srcPos, dest, destPos, length);
+            //src
+            mg.loadArg(0);
+            //srcPos
+            mg.push(0);
+            //dest
+            mg.push(argsNeed);
+            mg.newArray(ASMUtil.TYPE_OBJECT);
+            mg.dup();
+            mg.storeLocal(var_args);
+            //destPos
+            mg.push(0);
+            //length
+            mg.loadArg(0);
+            mg.arrayLength();
+
+            mg.invokeStatic(TYPE_SYSTEM, METHOD_ARRAY_COPY);
+
+            mg.goTo(pushArgs);
+
+            if (isStatic) {
+                //createNewArray
+                mg.mark(createNewArray);
+                mg.push(argsNeed);
+                mg.newArray(ASMUtil.TYPE_OBJECT);
+                mg.storeLocal(var_args);
+            } else {
+                mg.mark(firstIsNullException);
+                mg.push("The first argument of this method can't be null");
+                mg.invokeStatic(TYPE_ASM_CALLER, METHOD_CREATE_EXCEPTION);
+                mg.throwException();
+            }
+
+            //
+            mg.mark(pushArgs);
+
+            int i_args = 0;
+            if (isStatic == false) {
+                mg.loadLocal(var_args);
+                mg.push(0);
+                mg.arrayLoad(ASMUtil.TYPE_OBJECT);
+                mg.checkCast(declaringClassType);
+                i_args = 1;
+            }
+
+            for (int i_paramType = 0; i_paramType < paramTypes.length; i_args++, i_paramType++) {
+
+                Class paramType = paramTypes[i_paramType];
+                Class boxedParamType = ClassUtil.getBoxedClass(paramType);
+
+                mg.loadLocal(var_args);
+                mg.push(i_args);
+                mg.arrayLoad(ASMUtil.TYPE_OBJECT);
+                mg.checkCast(Type.getType(boxedParamType));
+                if (paramType != boxedParamType) {
+                    mg.invokeStatic(ASMUtil.TYPE_CLASS_UTIL, ASMUtil.getUnBoxMethod(paramType));
+                }
+            }
+
+            //Call Method
+            if (isStatic) {
+                mg.invokeStatic(declaringClassType, asmMethod);
+            } else {
+                if (method.getDeclaringClass().isInterface()) {
+                    mg.invokeInterface(declaringClassType, asmMethod);
+                } else {
+                    mg.invokeVirtual(declaringClassType, asmMethod);
+                }
+            }
+        }
+        // return result; //  void, Boxed Object
+        Class methodReturnType = method.getReturnType();
+        if (methodReturnType == void.class) {
+            // return Context.VOID;
+            mg.getStatic(TYPE_CONTEXT, "VOID", ASMUtil.TYPE_OBJECT);
+        } else {
+            Method boxMethod = ASMUtil.getBoxMethod(methodReturnType);
+            if (boxMethod != null) {
+                mg.invokeStatic(ASMUtil.TYPE_CLASS_UTIL, boxMethod);
+            }
+        }
+        mg.returnValue();
+        mg.endMethod();
+    }
+}

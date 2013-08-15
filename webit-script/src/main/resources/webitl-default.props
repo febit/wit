@@ -17,6 +17,7 @@ resolvers=\
     webit.script.resolvers.impl.ArrayResolver,\
     webit.script.resolvers.impl.IterGetResolver
 
+enableAsmNative=true
 
 [webit.script.resolvers.ResolverManager]
 enableAsm=true

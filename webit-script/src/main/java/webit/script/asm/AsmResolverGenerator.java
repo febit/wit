@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package webit.script.resolvers;
+package webit.script.asm;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,8 @@ import webit.script.asm4.commons.GeneratorAdapter;
 import webit.script.asm4.commons.Method;
 import webit.script.asm4.commons.TableSwitchGenerator;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.util.ASMUtil;
+import webit.script.asm.ASMUtil;
+import webit.script.resolvers.AsmResolver;
 import webit.script.util.FieldInfo;
 import webit.script.util.FieldInfoResolver;
 import webit.script.util.ClassUtil;
@@ -27,48 +28,19 @@ public class AsmResolverGenerator implements Opcodes {
 
     private static final String RESOLVERS_CLASS_NAME_PRE = "webit.script.resolvers.impl.Resolver_";
     //
-    private static final Type TYPE_OBJECT = Type.getType(Object.class);
-    private static final Type TYPE_STRING = Type.getType(String.class);
-    private static final Type TYPE_CLASS_UTIL = Type.getType(ClassUtil.class);
     private static final Type TYPE_ASM_RESOLVER = Type.getType(AsmResolver.class);
     //
     private static final Method METHOD_HASH_CODE = new Method("hashCode", Type.INT_TYPE, new Type[0]);
-    private static final Method METHOD_EQUALS = new Method("equals", Type.BOOLEAN_TYPE, new Type[]{TYPE_OBJECT});
-    private static final Method METHOD_CONSTRUCTOR = new Method("<init>", Type.VOID_TYPE, new Type[0]);
+    private static final Method METHOD_EQUALS = new Method("equals", Type.BOOLEAN_TYPE, new Type[]{ASMUtil.TYPE_OBJECT});
     //
-    private static final Method METHOD_GET = new Method("get", TYPE_OBJECT, new Type[]{TYPE_OBJECT, TYPE_OBJECT});
-    private static final Method METHOD_SET = new Method("set", Type.BOOLEAN_TYPE, new Type[]{TYPE_OBJECT, TYPE_OBJECT, TYPE_OBJECT});
+    private static final Method METHOD_GET = new Method("get", ASMUtil.TYPE_OBJECT, new Type[]{ASMUtil.TYPE_OBJECT, ASMUtil.TYPE_OBJECT});
+    private static final Method METHOD_SET = new Method("set", Type.BOOLEAN_TYPE, new Type[]{ASMUtil.TYPE_OBJECT, ASMUtil.TYPE_OBJECT, ASMUtil.TYPE_OBJECT});
     private static final Method METHOD_CONSTRUCTOR_ASM_RESOLVER = new Method("<init>", Type.VOID_TYPE, new Type[]{Type.getType(Class.class)});
-    private static final Method METHOD_CREATE_NOSUCHPROPERTY_EXCEPTION = new Method("createNoSuchPropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{TYPE_OBJECT});
-    private static final Method METHOD_CREATE_UNWRITE_EXCEPTION = new Method("createUnwriteablePropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{TYPE_OBJECT});
-    private static final Method METHOD_CREATE_UNREAD_EXCEPTION = new Method("createUnreadablePropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{TYPE_OBJECT});
+    private static final Method METHOD_CREATE_NOSUCHPROPERTY_EXCEPTION = new Method("createNoSuchPropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{ASMUtil.TYPE_OBJECT});
+    private static final Method METHOD_CREATE_UNWRITE_EXCEPTION = new Method("createUnwriteablePropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{ASMUtil.TYPE_OBJECT});
+    private static final Method METHOD_CREATE_UNREAD_EXCEPTION = new Method("createUnreadablePropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{ASMUtil.TYPE_OBJECT});
     //
-    private static final Map<Class, Method> BOX_METHDO_MAP;
-    private static final Map<Class, Method> UNBOX_METHDO_MAP;
 
-    static {
-        Map<Class, Method> boxMap = new HashMap<Class, Method>(12, 0.75f);
-        boxMap.put(boolean.class, new Method("box", ASMUtil.BOOLEAN_BOXED_TYPE, new Type[]{Type.BOOLEAN_TYPE}));
-        boxMap.put(char.class, new Method("box", ASMUtil.CHAR_BOXED_TYPE, new Type[]{Type.CHAR_TYPE}));
-        boxMap.put(byte.class, new Method("box", ASMUtil.BYTE_BOXED_TYPE, new Type[]{Type.BYTE_TYPE}));
-        boxMap.put(short.class, new Method("box", ASMUtil.SHORT_BOXED_TYPE, new Type[]{Type.SHORT_TYPE}));
-        boxMap.put(int.class, new Method("box", ASMUtil.INT_BOXED_TYPE, new Type[]{Type.INT_TYPE}));
-        boxMap.put(long.class, new Method("box", ASMUtil.LONG_BOXED_TYPE, new Type[]{Type.LONG_TYPE}));
-        boxMap.put(float.class, new Method("box", ASMUtil.FLOAT_BOXED_TYPE, new Type[]{Type.FLOAT_TYPE}));
-        boxMap.put(double.class, new Method("box", ASMUtil.DOUBLE_BOXED_TYPE, new Type[]{Type.DOUBLE_TYPE}));
-        BOX_METHDO_MAP = boxMap;
-
-        Map<Class, Method> unBoxMap = new HashMap<Class, Method>(12, 0.75f);
-        unBoxMap.put(boolean.class, new Method("unBox", Type.BOOLEAN_TYPE, new Type[]{ASMUtil.BOOLEAN_BOXED_TYPE}));
-        unBoxMap.put(char.class, new Method("unBox", Type.CHAR_TYPE, new Type[]{ASMUtil.CHAR_BOXED_TYPE}));
-        unBoxMap.put(byte.class, new Method("unBox", Type.BYTE_TYPE, new Type[]{ASMUtil.BYTE_BOXED_TYPE}));
-        unBoxMap.put(short.class, new Method("unBox", Type.SHORT_TYPE, new Type[]{ASMUtil.SHORT_BOXED_TYPE}));
-        unBoxMap.put(int.class, new Method("unBox", Type.INT_TYPE, new Type[]{ASMUtil.INT_BOXED_TYPE}));
-        unBoxMap.put(long.class, new Method("unBox", Type.LONG_TYPE, new Type[]{ASMUtil.LONG_BOXED_TYPE}));
-        unBoxMap.put(float.class, new Method("unBox", Type.FLOAT_TYPE, new Type[]{ASMUtil.FLOAT_BOXED_TYPE}));
-        unBoxMap.put(double.class, new Method("unBox", Type.DOUBLE_TYPE, new Type[]{ASMUtil.DOUBLE_BOXED_TYPE}));
-        UNBOX_METHDO_MAP = unBoxMap;
-    }
     //
     private static int sn = 1;
 
@@ -158,7 +130,7 @@ public class AsmResolverGenerator implements Opcodes {
             //int hashcode = property.hashCode();
             //int var_hashcode = mg.newLocal(Type.INT_TYPE);
             mg.loadArg(1); //property
-            mg.invokeVirtual(TYPE_OBJECT, METHOD_HASH_CODE);
+            mg.invokeVirtual(ASMUtil.TYPE_OBJECT, METHOD_HASH_CODE);
             //mg.storeLocal(var_hashcode);
 
             final Label end_switch = mg.newLabel();
@@ -258,7 +230,7 @@ public class AsmResolverGenerator implements Opcodes {
             //int hashcode = property.hashCode();
             //int var_hashcode = mg.newLocal(Type.INT_TYPE);
             mg.loadArg(1); //property
-            mg.invokeVirtual(TYPE_OBJECT, METHOD_HASH_CODE);
+            mg.invokeVirtual(ASMUtil.TYPE_OBJECT, METHOD_HASH_CODE);
             //mg.storeLocal(var_hashcode);
 
             final Label end_switch = mg.newLabel();
@@ -308,7 +280,7 @@ public class AsmResolverGenerator implements Opcodes {
     private void attachIfFieldMatchCode(GeneratorAdapter mg, FieldInfo fieldInfo, Label elseJumpTo) {
         mg.loadArg(1); //property
         mg.push(fieldInfo.getName());
-        mg.invokeVirtual(TYPE_OBJECT, METHOD_EQUALS);
+        mg.invokeVirtual(ASMUtil.TYPE_OBJECT, METHOD_EQUALS);
         mg.ifZCmp(GeneratorAdapter.EQ, elseJumpTo); // if == 0 jump
     }
 
@@ -327,7 +299,7 @@ public class AsmResolverGenerator implements Opcodes {
             mg.loadArg(2);
             mg.checkCast(boxedType);
             if (boxedClass != fieldClass) {
-                mg.invokeStatic(TYPE_CLASS_UTIL, UNBOX_METHDO_MAP.get(fieldClass));
+                mg.invokeStatic(ASMUtil.TYPE_CLASS_UTIL, ASMUtil.getUnBoxMethod(fieldClass));
             }
             mg.invokeVirtual(beanType, setterMethod);
             attachReturnTrueCode(mg);
@@ -343,7 +315,7 @@ public class AsmResolverGenerator implements Opcodes {
             mg.loadArg(2);
             mg.checkCast(boxedType);
             if (boxedClass != fieldClass) {
-                mg.invokeStatic(TYPE_CLASS_UTIL, UNBOX_METHDO_MAP.get(fieldClass));
+                mg.invokeStatic(ASMUtil.TYPE_CLASS_UTIL, ASMUtil.getUnBoxMethod(fieldClass));
             }
             mg.putField(beanType, fieldInfo.getName(), fieldType);
             attachReturnTrueCode(mg);
@@ -361,25 +333,25 @@ public class AsmResolverGenerator implements Opcodes {
         if (getter != null) {
             //return book.getName();
             Class valueType = getter.getReturnType();
-            Method boxMethod = BOX_METHDO_MAP.get(valueType);
+            Method boxMethod = ASMUtil.getBoxMethod(valueType);
 
             Method getterMethod = Method.getMethod(getter);
             mg.loadLocal(var_entity);
             mg.invokeVirtual(beanType, getterMethod);
             if (boxMethod != null) {
-                mg.invokeStatic(TYPE_CLASS_UTIL, boxMethod);
+                mg.invokeStatic(ASMUtil.TYPE_CLASS_UTIL, boxMethod);
             }
             mg.returnValue();
         } else if (fieldInfo.getField() != null) {
             //return book.name;
 
             Class valueType = fieldInfo.getField().getType();
-            Method boxMethod = BOX_METHDO_MAP.get(valueType);
+            Method boxMethod = ASMUtil.getBoxMethod(valueType);
 
             mg.loadLocal(var_entity);
             mg.getField(beanType, fieldInfo.getName(), Type.getType(fieldInfo.getField().getType()));
             if (boxMethod != null) {
-                mg.invokeStatic(TYPE_CLASS_UTIL, boxMethod);
+                mg.invokeStatic(ASMUtil.TYPE_CLASS_UTIL, boxMethod);
             }
             mg.returnValue();
         } else {
@@ -392,7 +364,7 @@ public class AsmResolverGenerator implements Opcodes {
     }
 
     private void attachDefaultConstructorMethod(ClassWriter classWriter, Class beanClass) {
-        GeneratorAdapter mg = new GeneratorAdapter(ACC_PUBLIC, METHOD_CONSTRUCTOR, null, null, classWriter);
+        GeneratorAdapter mg = new GeneratorAdapter(ACC_PUBLIC, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR, null, null, classWriter);
 
         mg.loadThis();
         mg.push(Type.getType(beanClass));
