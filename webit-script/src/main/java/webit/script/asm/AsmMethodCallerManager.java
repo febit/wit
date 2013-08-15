@@ -1,5 +1,6 @@
 package webit.script.asm;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,10 +11,18 @@ import java.util.Map;
  */
 public class AsmMethodCallerManager {
 
-    private final static Map<Method, AsmMethodCallerBox> asmMethodCallerMap = new HashMap<Method, AsmMethodCallerBox>();
+    private final static Map<Object, AsmMethodCallerBox> asmMethodCallerMap = new HashMap<Object, AsmMethodCallerBox>();
     private final static AsmMethodCallerGenerator asmMethodCallerGenerator = new AsmMethodCallerGenerator();
 
     public static AsmMethodCaller generateCaller(Method method) throws Exception {
+        return _generateCaller(method);
+    }
+
+    public static AsmMethodCaller generateCaller(Constructor constructor) throws Exception {
+        return _generateCaller(constructor);
+    }
+
+    private static AsmMethodCaller _generateCaller(Object method) throws Exception {
         AsmMethodCallerBox box = asmMethodCallerMap.get(method);
         if (box == null) {
             synchronized (asmMethodCallerMap) {
@@ -30,7 +39,11 @@ public class AsmMethodCallerManager {
             synchronized (box) {
                 caller = box.getCaller();
                 if (caller == null) {
-                    caller = (AsmMethodCaller) asmMethodCallerGenerator.generateCaller(method).newInstance();
+                    if (method instanceof Method) {
+                        caller = (AsmMethodCaller) asmMethodCallerGenerator.generateCaller((Method) method).newInstance();
+                    } else if (method instanceof Constructor) {
+                        caller = (AsmMethodCaller) asmMethodCallerGenerator.generateCaller((Constructor) method).newInstance();
+                    }
                     box.setCaller(caller);
                 }
             }
@@ -40,11 +53,11 @@ public class AsmMethodCallerManager {
 
     private static class AsmMethodCallerBox {
 
-        private final Method method;
+        private final Object key;
         private AsmMethodCaller caller;
 
-        public AsmMethodCallerBox(Method method) {
-            this.method = method;
+        public AsmMethodCallerBox(Object method) {
+            this.key = method;
         }
 
         public AsmMethodCaller getCaller() {
@@ -57,7 +70,7 @@ public class AsmMethodCallerManager {
 
         @Override
         public int hashCode() {
-            return this.method != null ? this.method.hashCode() : 0;
+            return this.key != null ? this.key.hashCode() : 0;
         }
 
         @Override
@@ -69,7 +82,7 @@ public class AsmMethodCallerManager {
                 return false;
             }
             final AsmMethodCallerBox other = (AsmMethodCallerBox) obj;
-            if (this.method != other.method && (this.method == null || !this.method.equals(other.method))) {
+            if (this.key != other.key && (this.key == null || !this.key.equals(other.key))) {
                 return false;
             }
             return true;

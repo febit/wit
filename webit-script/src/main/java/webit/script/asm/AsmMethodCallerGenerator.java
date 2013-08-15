@@ -1,5 +1,6 @@
 package webit.script.asm;
 
+import java.lang.reflect.Constructor;
 import webit.script.Context;
 import webit.script.asm4.ClassWriter;
 import webit.script.asm4.Label;
@@ -42,6 +43,27 @@ public class AsmMethodCallerGenerator {
         return CALLER_CLASS_NAME_PRE + method.getName() + '_' + getSn();
     }
 
+    protected static String generateClassName(Constructor constructor) {
+        return CALLER_CLASS_NAME_PRE + constructor.getDeclaringClass().getSimpleName() + '_' + getSn();
+    }
+
+    protected byte[] generateClassBody(String className, Constructor constructor) {
+        String asmClassName = ASMUtil.toAsmClassName(className);
+        ClassWriter classWriter;
+
+        classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, asmClassName, null, ASM_METHOD_CALLER, null);
+
+        //Default Constructor
+        attachDefaultConstructorMethod(classWriter);
+
+        attach_execute_Method(classWriter, constructor);
+
+        //End Class Writer
+        classWriter.visitEnd();
+        return classWriter.toByteArray();
+    }
+
     protected byte[] generateClassBody(String className, java.lang.reflect.Method method) {
         String asmClassName = ASMUtil.toAsmClassName(className);
         ClassWriter classWriter;
@@ -73,12 +95,107 @@ public class AsmMethodCallerGenerator {
 
         byte[] code = generateClassBody(className, method);
         /*
-        try {
-            FileUtil.writeBytes("F:/temp_" + method.getName() + ".class", code);
-        } catch (IOException ex) {
-            //ignore
-        }*/
+         try {
+         FileUtil.writeBytes("F:/temp_" + method.getName() + ".class", code);
+         } catch (IOException ex) {
+         //ignore
+         }*/
         return ASMUtil.loadClass(className, code, 0, code.length);
+    }
+
+    public Class generateCaller(Constructor constructor) {
+        String className = generateClassName(constructor);
+
+        byte[] code = generateClassBody(className, constructor);
+        /*
+         try {
+         FileUtil.writeBytes("F:/temp_" + method.getName() + ".class", code);
+         } catch (IOException ex) {
+         //ignore
+         }*/
+        return ASMUtil.loadClass(className, code, 0, code.length);
+    }
+
+    private void attach_execute_Method(ClassWriter classWriter, Constructor constructor) {
+
+        final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, METHOD_EXECUTE, null, null, classWriter);
+
+        final Class[] paramTypes = constructor.getParameterTypes();
+        final Class declaringClass = constructor.getDeclaringClass();
+        final Type declaringClassType = Type.getType(declaringClass);
+        final Method asmMethod = Method.getMethod(constructor);
+
+        // new
+        mg.newInstance(declaringClassType);
+        mg.dup();
+
+        final int argsNeed = paramTypes.length;
+        if (argsNeed > 0) {
+
+            final int var_args = mg.newLocal(TYPE_OBJECT_ARR);
+            Label pushArgs = mg.newLabel();
+            Label createNewArray = mg.newLabel();
+            //Object[] args = ;
+            mg.loadArg(0);
+            mg.dup();
+            mg.storeLocal(var_args);
+            //check args count
+
+            mg.ifNull(createNewArray);
+            mg.loadArg(0);
+            mg.arrayLength();
+            mg.push(argsNeed);
+            mg.ifICmp(GeneratorAdapter.GE, pushArgs);
+            //copyArray
+            //System.arraycopy(src, srcPos, dest, destPos, length);
+            //src
+            mg.loadArg(0);
+            //srcPos
+            mg.push(0);
+            //dest
+            mg.push(argsNeed);
+            mg.newArray(ASMUtil.TYPE_OBJECT);
+            mg.dup();
+            mg.storeLocal(var_args);
+            //destPos
+            mg.push(0);
+            //length
+            mg.loadArg(0);
+            mg.arrayLength();
+
+            mg.invokeStatic(TYPE_SYSTEM, METHOD_ARRAY_COPY);
+
+            mg.goTo(pushArgs);
+
+            //createNewArray
+            mg.mark(createNewArray);
+            mg.push(argsNeed);
+            mg.newArray(ASMUtil.TYPE_OBJECT);
+            mg.storeLocal(var_args);
+
+            //
+            mg.mark(pushArgs);
+
+            for (int i = 0; i < argsNeed; i++) {
+
+                Class paramType = paramTypes[i];
+                Class boxedParamType = ClassUtil.getBoxedClass(paramType);
+
+                mg.loadLocal(var_args);
+                mg.push(i);
+                mg.arrayLoad(ASMUtil.TYPE_OBJECT);
+                mg.checkCast(Type.getType(boxedParamType));
+                if (paramType != boxedParamType) {
+                    mg.invokeStatic(ASMUtil.TYPE_CLASS_UTIL, ASMUtil.getUnBoxMethod(paramType));
+                }
+            }
+        }
+
+        //Call Constructor
+        mg.invokeConstructor(declaringClassType, asmMethod);
+
+        mg.returnValue();
+        mg.endMethod();
     }
 
     private void attach_execute_Method(ClassWriter classWriter, java.lang.reflect.Method method) {
@@ -101,7 +218,7 @@ public class AsmMethodCallerGenerator {
             Label pushArgs = mg.newLabel();
             Label createNewArray = mg.newLabel();
             Label firstIsNullException = mg.newLabel();
-            //Object[] args = ;
+
             mg.loadArg(0);
             mg.dup();
             mg.storeLocal(var_args);

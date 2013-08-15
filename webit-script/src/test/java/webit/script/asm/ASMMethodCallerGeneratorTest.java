@@ -21,15 +21,24 @@ public class ASMMethodCallerGeneratorTest {
         Class currentTimeMillisClass = generator.generateCaller(System.class.getMethod("currentTimeMillis", new Class[0]));
         Class arraycopyClass = generator.generateCaller(System.class.getMethod("arraycopy", new Class[]{Object.class, int.class, Object.class, int.class, int.class}));
 
+        Class newListClass = generator.generateCaller(ArrayList.class.getConstructor());
+        Class newListWithInitSizeClass = generator.generateCaller(ArrayList.class.getConstructor(new Class[]{int.class}));
+        
         Class listSizeClass = generator.generateCaller(ArrayList.class.getMethod("size", new Class[0]));
         Class listAddClass = generator.generateCaller(List.class.getMethod("add", new Class[]{Object.class}));
         Class listAddToIndexClass = generator.generateCaller(List.class.getMethod("add", new Class[]{int.class, Object.class}));
-
+        
+        
         AsmMethodCaller currentTimeMillis = (AsmMethodCaller) currentTimeMillisClass.newInstance();
         AsmMethodCaller arraycopy = (AsmMethodCaller) arraycopyClass.newInstance();
+        
+        AsmMethodCaller newList = (AsmMethodCaller) newListClass.newInstance();
+        AsmMethodCaller newListWithInitSize = (AsmMethodCaller) newListWithInitSizeClass.newInstance();
+
         AsmMethodCaller listSize = (AsmMethodCaller) listSizeClass.newInstance();
         AsmMethodCaller listAdd = (AsmMethodCaller) listAddClass.newInstance();
         AsmMethodCaller listAddToIndex = (AsmMethodCaller) listAddToIndexClass.newInstance();
+        
 
         assertEquals(currentTimeMillis.execute(null).getClass(), Long.class);
         assertEquals(currentTimeMillis.execute(new Object[0]).getClass(), Long.class);
@@ -43,11 +52,16 @@ public class ASMMethodCallerGeneratorTest {
         assertArrayEquals(array2, array2);
 
 
-        List list = new ArrayList();
-        list.size();
+        List list = (List) newList.execute(null);
+        
+        List list2 = (List) newListWithInitSize.execute(new Object[]{2});
+        assertNotNull(list2);
+        
+        //list.size();
         list.add("i1");
         list.add("i2");
 
+        
 
         Exception exception = null;
         try {
