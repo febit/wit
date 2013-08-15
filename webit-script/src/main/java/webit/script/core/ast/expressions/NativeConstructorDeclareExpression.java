@@ -12,16 +12,14 @@ import webit.script.core.ast.method.NativeConstructorDeclare;
 public class NativeConstructorDeclareExpression extends AbstractExpression {
 
     private final Constructor constructor;
-    private final int argsCount;
 
-    public NativeConstructorDeclareExpression(Constructor constructor, int argsCount, int line, int column) {
+    public NativeConstructorDeclareExpression(Constructor constructor, int line, int column) {
         super(line, column);
         this.constructor = constructor;
-        this.argsCount = argsCount;
     }
 
     @Override
     public Object execute(Context context, boolean needReturn) {
-        return new NativeConstructorDeclare(constructor, argsCount);
+        return new NativeConstructorDeclare(constructor);
     }
 }

@@ -14,9 +14,9 @@ public class NativeConstructorDeclare implements MethodDeclare {
     private final Constructor constructor;
     private final int argsCount;
 
-    public NativeConstructorDeclare(Constructor constructor, int argsCount) {
+    public NativeConstructorDeclare(Constructor constructor) {
         this.constructor = constructor;
-        this.argsCount = argsCount;
+        this.argsCount = constructor.getParameterTypes().length;
     }
 
     public Object execute(Context context, Object[] args) {

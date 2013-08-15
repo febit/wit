@@ -37,7 +37,7 @@ public class NativeConstructorDeclareExpressionPart extends StatmentPart {
             paramTypeList.toArray(paramTypes);
 
             Constructor constructor = clazz.getConstructor(paramTypes);
-            return new NativeConstructorDeclareExpression(constructor, paramTypes.length, line, column);
+            return new NativeConstructorDeclareExpression(constructor, line, column);
         } catch (NoSuchMethodException ex) {
             throw new ParserException(ex.getMessage(), line, column);
         } catch (SecurityException ex) {

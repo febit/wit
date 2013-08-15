@@ -16,14 +16,10 @@ import webit.script.exceptions.ScriptRuntimeException;
 public class NativeMethodDeclareExpression extends AbstractExpression {
 
     private final Method method;
-    private final int argsCount;
-    private final boolean isStatic;
 
-    public NativeMethodDeclareExpression(Method method, int argsCount, boolean isStatic, int line, int column) {
+    public NativeMethodDeclareExpression(Method method, int line, int column) {
         super(line, column);
         this.method = method;
-        this.argsCount = argsCount;
-        this.isStatic = isStatic;
     }
 
     @Override
@@ -43,7 +39,7 @@ public class NativeMethodDeclareExpression extends AbstractExpression {
             }
             return new AsmNativeMethodDeclare(caller);
         } else {
-            return new NativeMethodDeclare(method, argsCount, isStatic);
+            return new NativeMethodDeclare(method);
         }
     }
 }

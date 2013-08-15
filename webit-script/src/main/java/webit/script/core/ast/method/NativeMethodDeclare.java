@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.util.ClassUtil;
 
 /**
  *
@@ -15,10 +16,10 @@ public final class NativeMethodDeclare implements MethodDeclare {
     private final int argsCount;
     private final boolean isStatic;
 
-    public NativeMethodDeclare(Method method, int argsCount, boolean isStatic) {
+    public NativeMethodDeclare(Method method) {
         this.method = method;
-        this.argsCount = argsCount;
-        this.isStatic = isStatic;
+        this.argsCount = method.getParameterTypes().length;
+        this.isStatic = ClassUtil.isStatic(method);
     }
 
     public Object execute(Context context, Object[] args) {

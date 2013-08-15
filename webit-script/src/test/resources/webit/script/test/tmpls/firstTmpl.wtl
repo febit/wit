@@ -5,7 +5,7 @@
 @import java.lang.System;
 
 var map_put = native Map.put(Object,Object);
-var now = native static System.currentTimeMillis();
+var now = native System.currentTimeMillis();
 
 var func =function(){
     echo arguments[0];

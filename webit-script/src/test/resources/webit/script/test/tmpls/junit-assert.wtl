@@ -14,15 +14,15 @@ var assertArrayEquals;
 
     @import org.junit.Assert;
 
-    var _assertEquals = native static Assert.assertEquals(String, Object, Object);
-    var _assertNotEquals = native static Assert.assertNotEquals(String, Object, Object);
-    var _assertTrue = native static Assert.assertTrue(String, boolean);
-    var _assertFalse = native static Assert.assertFalse(String, boolean);
-    var _assertNull = native static Assert.assertNull(String, Object);
-    var _assertNotNull = native static Assert.assertNotNull(String, Object);
-    var _assertSame = native static Assert.assertSame(String, Object, Object);
-    var _assertNotSame = native static Assert.assertNotSame(String, Object, Object);
-    var _assertArrayEquals = native static Assert.assertArrayEquals(String, Object[], Object[]);
+    var _assertEquals = native Assert.assertEquals(String, Object, Object);
+    var _assertNotEquals = native Assert.assertNotEquals(String, Object, Object);
+    var _assertTrue = native Assert.assertTrue(String, boolean);
+    var _assertFalse = native Assert.assertFalse(String, boolean);
+    var _assertNull = native Assert.assertNull(String, Object);
+    var _assertNotNull = native Assert.assertNotNull(String, Object);
+    var _assertSame = native Assert.assertSame(String, Object, Object);
+    var _assertNotSame = native Assert.assertNotSame(String, Object, Object);
+    var _assertArrayEquals = native Assert.assertArrayEquals(String, Object[], Object[]);
 
     
     assertTrue = function(object, msg){

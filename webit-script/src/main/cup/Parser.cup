@@ -622,7 +622,7 @@ non terminal FunctionExecuteExpressionPart funcExecuteExprPart0, funcExecuteExpr
 
 
 non terminal NativeMethodDeclareExpression nativeMethodExpr;
-non terminal NativeMethodDeclareExpressionPart nativeMethodExprPart, nativeMethodExprPart0, nativeMethodExprPart1;
+non terminal NativeMethodDeclareExpressionPart nativeMethodExprPart, nativeMethodExprPart1;
 
 non terminal NativeConstructorDeclareExpression nativeConstructorExpr;
 non terminal NativeConstructorDeclareExpressionPart nativeConstructorExprPart1, nativeConstructorExprPart;
@@ -1437,15 +1437,9 @@ redirectOutExpr         ::= funcExecuteExpr:srcExpr EQGT:sym expression:expr
 
 /* Native Method */
 
-nativeMethodExprPart0   ::= NATIVE:sym
-                            {: RESULT = createNativeMethodDeclareExpressionPart(sym$Symbol.line, sym$Symbol.column); :}
-                            |NATIVE:sym STATIC
-                            {: RESULT = createNativeMethodDeclareExpressionPart(sym$Symbol.line, sym$Symbol.column).setIsStatic(true); :}
-                            ;
 
-
-nativeMethodExprPart1   ::= nativeMethodExprPart0:part classPureName:nameBand DOT IDENTIFIER:ident LPAREN
-                            {: RESULT = part.setClassName(toClass(nameBand, nameBand$Symbol.line, nameBand$Symbol.column)).setMethodName(ident); :}
+nativeMethodExprPart1   ::= NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN
+                            {: RESULT = createNativeMethodDeclareExpressionPart(sym$Symbol.line, sym$Symbol.column).setClassName(toClass(nameBand, nameBand$Symbol.line, nameBand$Symbol.column)).setMethodName(ident); :}
                             ;
 
 

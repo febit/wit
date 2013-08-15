@@ -13,7 +13,6 @@ import webit.script.util.ClassUtil;
  */
 public class NativeMethodDeclareExpressionPart extends StatmentPart {
 
-    private boolean isStatic;
     private Class clazz;
     private String methodName;
     private List<Class> paramTypeList;
@@ -38,11 +37,6 @@ public class NativeMethodDeclareExpressionPart extends StatmentPart {
         return this;
     }
 
-    public NativeMethodDeclareExpressionPart setIsStatic(boolean isStatic) {
-        this.isStatic = isStatic;
-        return this;
-    }
-
     @Override
     public NativeMethodDeclareExpression pop() {
         try {
@@ -50,7 +44,7 @@ public class NativeMethodDeclareExpressionPart extends StatmentPart {
             paramTypeList.toArray(paramTypes);
 
             Method method = ClassUtil.searchMethod(clazz, methodName, paramTypes, false);
-            return new NativeMethodDeclareExpression(method, paramTypes.length, isStatic, line, column);
+            return new NativeMethodDeclareExpression(method, line, column);
         } catch (NoSuchMethodException ex) {
             throw new ParserException(ex.getMessage(), line, column);
         }
