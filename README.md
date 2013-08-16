@@ -57,6 +57,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 + 匹配支持  "/webit-script-*.props"
 + 多文件支持 "/webit-script-config1.props,/webit-script-config2.props"
 + 可选额外参数: extraSettingsMap
++ 默认配置: [webitl-default.props] [default_config]
 
 ## Grammar(语法)
 
@@ -64,6 +65,59 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 ~~~~~
     Hello ${"world"}
 ~~~~~
+
+~~~~~
+<%
+var books; //List
+{
+    for(book in books){
+%>${for.iter.index}. ${book.name}:${book.price} ${for.iter.hasNext?null,"\n\n"}
+<%
+    }
+}
+{
+    //this is a function
+    var func =function(a, b){
+        return a + b + arguments[3];
+    };
+    echo func("a", "b", "c");
+    echo '\n';
+}
+{
+
+    @import java.lang.System;
+    var now = native System.currentTimeMillis();
+    
+    echo "Now: ";
+    echo now();
+    echo '\n';
+}
+{
+    @import java.util.Map;
+    @import java.util.List;
+    @import java.util.ArrayList;
+
+    var map_put = native Map.put(Object,Object);
+
+    var map = {
+        1:1,
+        "key2":"value2",
+        3: 2+1
+    };
+    
+    map@map_put(4,4);
+    map_put(map,5,5);
+    
+    for(key, value : map){
+        echo key + ":" +value + "\n";
+    }
+
+    //
+}
+%>
+~~~~~
+
+更多实例可见:[测试模板] [tests]
 
 ### 结构
 
@@ -101,9 +155,9 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 ### 操作符
 *与Java 保持一致，顺序按优先级从高到低*
 ~~~~~
-[]  .  ()  @
-=>
-!  ~  ++  --  –(取负)
+[]  .  ()  @ (新增)
+=> (新增,重定向输出)
+!  ~  ++  --  – (取负)
 *  /  %
 +  -
 <<  >>  >>>
@@ -112,9 +166,39 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 |
 &&
 ||
-?:
+?: (条件运算符)
 =  +=  -=  *=  /=  %=  ^=  <<=  >>=  >>>=
 ~~~~~
+
+### 语句
++ 结尾分号不能省略
+
+### 作用域 (代码段) {}
++ 作用域引用上层变量
++ 本层作用域变量不会影响上层
++ **模板传入的变量仅在该作用域查找同名变量并赋值**
+*1. 调用模板传入的变量; 2.import 返回的变量*
+
+*于声明 Map的 区别 在于 1.代码段内部为语句组成 2.Map 是 表达式对*
+
+### 变量
+#### 变量声明 var
+~~~~~
+    var a；
+    var a, b,
+          c=0, d="d" ;
+~~~~~
+
+#### 变量名规则
++ 先声明 后使用，所有变量 必须全部声明
++ 
++ 对大小写敏感
++ 不能使用关键字
++ 仅能包含 0-9a-zA-Z
++ 特殊变量名: 
+++ super. 用于 取得指定上层且仅该层作用域的变量, 可嵌套`super.super.a`
+++ this. 用于 取得本层且仅本层作用域的变量, 可嵌套`this.this.a`
+++ for.iter 用于 最近一层for循环的 迭代状态对象, 可使用"super" "this" 限定作用域
 
 
 ## Requirements(依赖)
@@ -127,12 +211,10 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ## Contributing(贡献)
 
-+ 国际化
-+ code
-+ idea
-+ bug report
-+ doc
-+ donate
++ 国际化: 联系我
++ code & doc: fork -> pull requests
++ idea & bug report: [github-issue] [new_issue]
++ donate:
 
 
 ## License(许可证)
@@ -145,4 +227,7 @@ details.
 [sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-0.8.0-SNAPSHOT-sources.jar
 [doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-0.8.0-SNAPSHOT-javadoc.jar
 [url_props_doc]: http://jodd.org/doc/props.html
+[tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
+[default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webitl-default.props
+[new_issue]: https://github.com/zqq90/webit-script/issues/new
 
