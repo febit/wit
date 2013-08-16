@@ -1,7 +1,6 @@
 Webit Script
 ====
 
-*this is a new project, lot of things need to be done, stay tuned!*
 
 **Webit Script** is a template-like script and engine, all writen with Java.
 
@@ -42,7 +41,9 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 
 ### Code like this
+
 ~~~~~
+    // !!! Engine 并不会被缓存, 请根据需要自行实现 Engine的单例模式
     Engine engine = Engine.getEngine("/webit-script-config.props", extraSettingsMap);
     Template template = engine.getTemplate("/your/template/path/filename.ext");
     ...
@@ -62,6 +63,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 ## Grammar(语法)
 
 ### Hello word
+
 ~~~~~
     Hello ${"world"}
 ~~~~~
@@ -123,6 +125,7 @@ var books; //List
 
 
 ### 关键字
+
 ~~~~~
     var  super  this
     if  else
@@ -134,6 +137,7 @@ var books; //List
 ~~~~~
 
 ### 保留的关键字
+
 ~~~~~
     static  instanceof  class  const  final
     throw  try  catch  finally
@@ -141,6 +145,7 @@ var books; //List
 
 ### 操作符
 *与Java 保持一致，顺序按优先级从高到低*
+
 ~~~~~
 []  .  ()  @ (新增)
 => (新增,重定向输出)
@@ -170,6 +175,7 @@ var books; //List
 
 ### 变量
 #### 变量声明 var
+
 ~~~~~
 var a;
 var a, b, c=0, d="d";
@@ -187,7 +193,8 @@ var a, b, c=0, d="d";
 ++ for.iter 用于 最近一层for循环的 迭代状态对象, 可使用"super" "this" 限定作用域
 
 ### 数据结构
-#### 拥有动态类型
+#### 拥有动态类
+
 ~~~~~
 var x                 //   null
 var x2 = 6;        //  数字
@@ -199,6 +206,7 @@ var x5 = {};        // Map
 #### 字符串
 + 转义，`\\` `\"` `\'` `\n` `\r` `\t` `\f` `\b`
 + 允许换行，行后转义字符 可屏蔽该换行符
+
 ~~~~~ 
 var string = "第一行  \
 这还是在第一行
@@ -208,6 +216,7 @@ var string = "第一行  \
 ~~~~~ 
 
 ### 数字
+
 ~~~~~ 
 var x1=34;  //Integer
 var x2=34L;  //Long
@@ -221,6 +230,7 @@ var x8 = 0x1A; //十六进制
 ~~~~~ 
 
 ### 布尔
+
 ~~~~~ 
 var x=true;
 var y=false;
@@ -228,6 +238,7 @@ var y=false;
 
 ### 数组
 *现只能用native的方法 引用java 数组*
+
 ~~~~~ 
 // 引入生成数组的 native 方法
 var new_int_array = native [int];
@@ -258,6 +269,7 @@ list[1] = "a string";
 ~~~~~ 
 
 ### Map
+
 ~~~~~ 
 var map = {};
 var map2 = {1:1,"2","2"};
@@ -270,19 +282,24 @@ value = map["key"];
 
 ### Java对象
 #### 声明
+
 ~~~~~
 var new_list = native new java.util.ArrayList();
 var list = new_list();
 var list2 = new_list();
 ~~~~~
+
 #### 访问属性
+
 ~~~~
 var book;
 var name = book.name; // book.getName();
 book.name = "new name"; //book.setName("new name"); 
 ~~~~
+
 #### 访问方法
 *访问方法必须事先native导入成本地函数*
+
 ~~~~~
 var list_add = native java.util.List.add(Object);
 
@@ -291,6 +308,7 @@ list_add(list, 1);
 ~~~~~
 
 *访问静态方法*
+
 ~~~~~
 var now = native java.lang.System.currentTimeMillis();
 echo now();
@@ -304,13 +322,13 @@ echo now();
 + 可通过 arguments 获得所有传入的参数, java类型为 Object[]
 + 可访问父层作用域
 + 函数内部可嵌套函数
+
+
 ~~~~~
 var outSideVar;
 var a;
 
 var myFunc = function(arg1, arg2){
-    ...
-
     var arg3 = arguments[3]; // 如果没有将抛出异常,最好通过 arguments.size确认
     outSideVar = "a new "; //可访问
     var a = 0; //内部变量
@@ -322,6 +340,7 @@ var myFunc = function(arg1, arg2){
 #### 导入Java内的 方法
 + 仅可导入公共类的公共方法, 包括静态方法 和 成员方法
 + 可使用`@import` 导入类名 或者包名 用法同Java里的 `import`, 以简化输入
+
 ~~~~~
 @import  java.lang.System; //实际上默认已经导入  java.lang.* 只是掩饰使用方法
 @import  java.util.*;
@@ -334,6 +353,7 @@ var new_list = native new add(Object); // 导入 构造函数
 + 可变参数个数, 多余函数同样会被传入, 多余函数是否被使用 取决于函数本身
 + 缺少的参数 自动 null 填充, *为了良好的设计 不建议使用缺少函数自动填充*
 + 可使用@ 将第一个参数 外置
+
 ~~~~~
 func(arg1, arg2);
 //等同于
@@ -350,6 +370,7 @@ list@list_add(item);
 + 意义: 可以延后输出
 + **使用对象: 1. 代码段；  2. 函数调用**
 + 数据格式: 使用OutputStream 时, 为 byte[] ; 使用 Writer 时, 为String.
+
 ~~~~~
 var out;
 var book;
@@ -361,6 +382,7 @@ echo "a String";
 } => out; //不要忘了分号！！！
 // "a String" 以及 book.name 都将输出到 out
 ~~~~~
+
 ~~~~~
 var out;
 // 函数 输出重定向
@@ -397,7 +419,24 @@ var book;
 import "book-head.wtl"  {"book": book, "func":func};
 ~~~~~
 
+
 ### 其他
+
+
+
+## 性能
+
++ 缺省开启ASM构建Native 调用减少反射, 不同于将整个模板编译成Java字节码,该方法不会造成无限制的perm溢出;
++ 解析之后的Template AST会放入缓存, 检测到模板源文件改变时将重新家在资源并解析;
++ 性能测试结果比较理想, 待比较权威的模版测试程序;
++ 使用OutputStream 输出时, 选择 SimpleTextStatmentFactory 将会预先将纯文本根据缺省编码编码成字节流. 
+
+## SPI
+
++ ResourceLoader  模板资源加载
++ Resolver  Bean属性解析
++ TextStatmentFactory  对模板纯文本的存贮以及输出形式进行管理
+
 
 ## Requirements(依赖)
 
