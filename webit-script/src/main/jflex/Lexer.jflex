@@ -264,6 +264,7 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   /* "in"                           { return symbol(IN); } */
   "function"                     { return symbol(FUNCTION); }
   "return"                       { return symbol(RETURN); }
+  "this"                         { return symbol(THIS); }
   
 
   "throw"                        { return symbol(THROW); }
