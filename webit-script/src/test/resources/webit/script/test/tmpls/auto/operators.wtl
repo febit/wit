@@ -16,6 +16,12 @@ var assertNotEquals;
     assertEquals(-2, -5 >> 2);
     assertEquals(1073741822, -5 >>> 2);
 
+
+    // ？:
+    assertEquals(1, true?1:2);
+    assertEquals(1, 1?:2);
+    assertEquals(2, null?:2);
+
 }
 
 

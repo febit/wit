@@ -319,6 +319,7 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   "~"                            { return symbol(COMP); }
   "?"                            { return symbol(QUESTION); }
   ":"                            { return symbol(COLON); }
+  "?:"                           { return symbol(QUESTION_COLON); }
   "=="                           { return symbol(EQEQ); }
   "<="                           { return symbol(LTEQ); }
   ">="                           { return symbol(GTEQ); }

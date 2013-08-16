@@ -465,6 +465,9 @@ action code {:
             case Tokens.URSHIFT: // >>>
                 oper = new URShiftOperator(leftExpr, rightExpr, line, column);
                 break;
+            case Tokens.QUESTION_COLON: // ?:
+                oper = new IfOrOperator(leftExpr, rightExpr, line, column);
+                break;
             default:
                 throw new ParserException("Unsupported Operator", line, column);
         }
@@ -566,7 +569,7 @@ terminal Integer    PLUSPLUS, MINUSMINUS,  // ++ ==
                     LT, GT, LTEQ, GTEQ, EQEQ, NOTEQ,  // < > <= >= == !=
                     AND, XOR, OR, COMP,  // & ^ | ~
                     ANDAND, OROR, NOT,  // && || !
-                    QUESTION,  // ?
+                    QUESTION, QUESTION_COLON,// ?  ?:
                     PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, MODEQ,  // (+ - * / %)=
                     LSHIFTEQ, RSHIFTEQ, URSHIFTEQ,  // (<< >> >>>)=
                     ANDEQ, XOREQ, OREQ, // (& ^ |)=
@@ -708,6 +711,7 @@ non terminal Expression propertyOper; // .
 non terminal Expression rShiftOper; // >>
 non terminal Expression uRShiftOper; // >>>
 non terminal Expression ifOper; // ? :
+non terminal Expression ifOrOper; // ?:
 non terminal Expression indexOper; // []
 non terminal Expression plusPlusOper; // ++
 non terminal Expression minusMinusOper; // --
@@ -745,7 +749,7 @@ precedence right    PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, MODEQ,  // (+ - * / %)=
                     EQ // = 
                     ;
 
-precedence right    QUESTION; // ?
+precedence right    QUESTION, QUESTION_COLON; // [? : ] ?:
 precedence left     OROR; // ||
 precedence left     ANDAND; //&&
 precedence left     XOR; // ^
@@ -1087,6 +1091,7 @@ expression          ::= expression_stat:expr    {: RESULT = expr; :}
                         |rShiftOper:expr    {: RESULT = expr; :}
                         |uRShiftOper:expr    {: RESULT = expr; :}
                         |ifOper:expr    {: RESULT = expr; :}
+                        |ifOrOper:expr    {: RESULT = expr; :}
                         |indexOper:expr    {: RESULT = expr; :}
                         |contextValueExpr:expr    {: RESULT = expr; :}
                         |directValueExpr:expr    {: RESULT = expr; :}
@@ -1263,9 +1268,14 @@ orOper              ::= expression:lexpr OROR:sym expression:rexpr
                         {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
                         ;
 
-// ?:
+// ? :
 ifOper              ::= expression:ifexpr QUESTION:sym expression:lexpr COLON expression:rexpr
                         {: RESULT = createIfOperator(ifexpr, lexpr, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// ?:
+ifOrOper            ::= expression:lexpr QUESTION_COLON:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
                         ;
 
 // =
