@@ -216,20 +216,24 @@ public class CollectionUtil {
         if (o1 == null) {
             return null;
         }
+        
+        else if (o1 instanceof Iter) {
+            return (Iter)o1;
+        }
 
-        if (o1 instanceof Iterable) {
+        else if (o1 instanceof Iterable) {
             return new IteratorIterAdapter(((Iterable) o1).iterator());
         }
 
-        if (o1 instanceof Iterator) {
+        else if (o1 instanceof Iterator) {
             return new IteratorIterAdapter((Iterator) o1);
         }
 
-        if (o1 instanceof Enumeration) {
+        else if (o1 instanceof Enumeration) {
             return new EnumerationIterAdapter((Enumeration) o1);
         }
 
-        if (o1 instanceof CharSequence) {
+        else if (o1 instanceof CharSequence) {
             return new CharSequenceIterAdapter((CharSequence) o1);
         }
 

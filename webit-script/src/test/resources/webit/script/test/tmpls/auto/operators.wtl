@@ -23,6 +23,28 @@ var assertNotEquals;
     assertEquals(2, null?:2);
 
 }
+{
+    //Int Step test
+
+    //asc
+    var one = 1;
+    var tree = 3; 
+    var i = 1;
+    for(num : i .. tree){
+        assertEquals(i, num);
+        i++;
+    }
+    assertEquals(i, 4);
+
+    //desc
+    i = 3;
+    for(num : i .. one){
+        assertEquals(i, num);
+        i--;
+    }
+    assertEquals(i, 0);
+
+}
 
 
 %>

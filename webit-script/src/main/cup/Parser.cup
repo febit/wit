@@ -468,6 +468,9 @@ action code {:
             case Tokens.QUESTION_COLON: // ?:
                 oper = new IfOrOperator(leftExpr, rightExpr, line, column);
                 break;
+            case Tokens.DOTDOT: // ..
+                oper = new IntStepOperator(leftExpr, rightExpr, line, column);
+                break;
             default:
                 throw new ParserException("Unsupported Operator", line, column);
         }
@@ -583,6 +586,7 @@ terminal Integer    PLUSPLUS, MINUSMINUS,  // ++ ==
                     LBRACK, RBRACK,  // [ ]
                     EQGT,  // =>
                     AT,  // @
+                    DOTDOT,  // ..
                     EQ   // =
                     ;
 
@@ -715,6 +719,7 @@ non terminal Expression ifOrOper; // ?:
 non terminal Expression indexOper; // []
 non terminal Expression plusPlusOper; // ++
 non terminal Expression minusMinusOper; // --
+non terminal Expression intStepOper; // ..
 //
 non terminal Expression selfPlusOper;  // +=
 non terminal Expression selfMinusOper;  // ==
@@ -749,9 +754,10 @@ precedence right    PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, MODEQ,  // (+ - * / %)=
                     EQ // = 
                     ;
 
+precedence left     DOTDOT;  // ..
 precedence right    QUESTION, QUESTION_COLON; // [? : ] ?:
 precedence left     OROR; // ||
-precedence left     ANDAND; //&&
+precedence left     ANDAND; // &&
 precedence left     XOR; // ^
 precedence left     OR; // |
 precedence left     AND; // &
@@ -1104,6 +1110,7 @@ expression          ::= expression_stat:expr    {: RESULT = expr; :}
                         |nativeMethodExpr:expr    {: RESULT = expr; :}
                         |nativeConstructorExpr:expr    {: RESULT = expr; :}
                         |nativeNewArrayExpr:expr    {: RESULT = expr; :}
+                        |intStepOper:expr    {: RESULT = expr; :}
                         ;
 
 
@@ -1260,6 +1267,11 @@ bitXorOper          ::= expression:lexpr XOR:sym expression:rexpr
 
 // &&
 andOper             ::= expression:lexpr ANDAND:sym expression:rexpr
+                        {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
+                        ;
+
+// ..
+intStepOper         ::= expression:lexpr DOTDOT:sym expression:rexpr
                         {: RESULT = createBinaryOperator(lexpr, sym, rexpr, sym$Symbol.line, sym$Symbol.column); :}
                         ;
 

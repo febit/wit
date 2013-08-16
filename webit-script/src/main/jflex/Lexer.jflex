@@ -310,6 +310,7 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   ";"                            { return symbol(SEMICOLON); }
   ","                            { return symbol(COMMA); }
   "."                            { return symbol(DOT); }
+  ".."                           { return symbol(DOTDOT); }
   
   /* operators */
   "="                            { return symbol(EQ); }
