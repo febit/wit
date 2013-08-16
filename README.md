@@ -31,13 +31,12 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 ~~~~~
 
 ### Add jar
-
  + `webit-script-[version].jar`
-  
  + `jodd-[version].jar`
 
+
 ### Download: [Jar][jar]   [Javadoc][doc]   [Sources][sources]
-*current version 0.8.0-SNAPSHOT*
+ + *current version 0.8.0-SNAPSHOT*
 
 
 ### Code like this
@@ -65,7 +64,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 ### Hello word
 
 ~~~~~
-    Hello ${"world"}
+Hello ${"world"}
 ~~~~~
 
 ~~~~~
@@ -460,9 +459,9 @@ import "book-head.wtl"  {"book": book, "func":func};
 details.
 **Webit Script** 依据 BSD许可证发布。详细请看捆绑的 LICENSE 文件。
 
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-0.8.0-SNAPSHOT.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-0.8.0-SNAPSHOT-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-0.8.0-SNAPSHOT-javadoc.jar
+[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/0.8.0-SNAPSHOT/webit-script-0.8.0-SNAPSHOT.jar
+[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/0.8.0-SNAPSHOT/webit-script-0.8.0-SNAPSHOT-sources.jar
+[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/0.8.0-SNAPSHOT/webit-script-0.8.0-SNAPSHOT-javadoc.jar
 [url_props_doc]: http://jodd.org/doc/props.html
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
 [default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webitl-default.props
