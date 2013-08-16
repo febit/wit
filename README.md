@@ -37,7 +37,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
   
  + `jodd-[version].jar`
 
-You can download Webit-Script here: [Jar][jar] [Javadoc][doc]  [Sources][sources]
+### Download: [Jar][jar]   [Javadoc][doc]   [Sources][sources]
 *current version 0.8.0-SNAPSHOT*
 
 
@@ -65,7 +65,7 @@ You can download Webit-Script here: [Jar][jar] [Javadoc][doc]  [Sources][sources
     Hello ${"world"}
 ~~~~~
 
-### Structors
+### 结构
 
 + 脚本必须都放在`<% %>` 内. `<% .code inside.. %> plain text outside`
 + 替换占位符`${}` 只能允许带返回值的单个表达式,只能在脚本块`<% %>` 以外使用.`${ .. expression .. }` 
@@ -74,8 +74,6 @@ You can download Webit-Script here: [Jar][jar] [Javadoc][doc]  [Sources][sources
 + 转义窍门: 偶数个 `\` 会 打印 一半数量的`\` 并进入代码段, 
             奇数 会 打印 (count-1)/2 个 `\` 然后打印被转移的符号。
             
-            
-            
 
 ### 注释
 
@@ -83,23 +81,40 @@ You can download Webit-Script here: [Jar][jar] [Javadoc][doc]  [Sources][sources
 + `/* */` 块注释
 
 
-
 ### 关键字
-
-+ `var`
-+ `function`
-+ `echo`
-+ `native`
-
+~~~~~
+    var  super  this
+    if  else
+    switch  case  default
+    for  do  while  break  continue 
+    function  return
+    import  include  echo
+    native  new  @import
+~~~~~
 
 ### 保留的关键字
-
-
+~~~~~
+    static  instanceof  class  const  final
+    throw  try  catch  finally
+~~~~~
 
 ### 操作符
-
-+ ``
-
+*与Java 保持一致，顺序按优先级从高到低*
+~~~~~
+[]  .  ()  @
+=>
+!  ~  ++  --  –(取负)
+*  /  %
++  -
+<<  >>  >>>
+<  <=  >  >=
+^
+|
+&&
+||
+?:
+=  +=  -=  *=  /=  %=  ^=  <<=  >>=  >>>=
+~~~~~
 
 
 ## Requirements(依赖)
@@ -112,12 +127,12 @@ You can download Webit-Script here: [Jar][jar] [Javadoc][doc]  [Sources][sources
 
 ## Contributing(贡献)
 
-+ <谁来帮我翻译>
-+ <code> 
-+ <idea>
-+ <bug>
-+ <doc>
-+ <donate>
++ 国际化
++ code
++ idea
++ bug report
++ doc
++ donate
 
 
 ## License(许可证)
@@ -125,7 +140,6 @@ You can download Webit-Script here: [Jar][jar] [Javadoc][doc]  [Sources][sources
 **Webit Script** is released under the BSD License. See the bundled LICENSE file for
 details.
 **Webit Script** 依据 BSD许可证发布。详细请看捆绑的 LICENSE 文件。
-
 
 [jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-0.8.0-SNAPSHOT.jar
 [sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-0.8.0-SNAPSHOT-sources.jar
