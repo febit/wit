@@ -159,11 +159,11 @@ public final class Engine {
             props = PropsUtil.createFromClasspath(DEFAULT_PROPERTIES);
         }
 
-        petite.defineParameters(props);
         if (parameters != null) {
-            petite.defineParameters(parameters);
+            props.load(parameters);
         }
 
+        petite.defineParameters(props);
         petite.addBean(PETITE, petite);
 
         Engine engine = new Engine(petite);
