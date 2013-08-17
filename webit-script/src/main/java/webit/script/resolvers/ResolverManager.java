@@ -2,12 +2,10 @@
 
 package webit.script.resolvers;
 
-import webit.script.asm.AsmResolverGenerator;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import webit.script.asm.AsmResolverManager;
 import webit.script.resolvers.impl.CommonResolver;
 
 /**
@@ -45,37 +43,6 @@ public class ResolverManager {
 
         commonResolver = new CommonResolver();
     }
-    private Map<Class, AsmResolverBox> asmResolversMap = new HashMap<Class, AsmResolverBox>();
-    private AsmResolverGenerator asmResolverGenerator = new AsmResolverGenerator();
-
-    private AsmResolver generateAsmResolver(Class type) {
-        AsmResolverBox box = asmResolversMap.get(type);
-        if (box == null) {
-            synchronized (asmResolversMap) {
-                box = asmResolversMap.get(type);
-                if (box == null) {
-                    box = new AsmResolverBox(type);
-                    asmResolversMap.put(type, box);
-                }
-            }
-        }
-        //
-        AsmResolver resolver = box.getResolver();
-        if (resolver == null) {
-            synchronized (box) {
-                resolver = box.getResolver();
-                if (resolver == null) {
-                    try {
-                        resolver = (AsmResolver) asmResolverGenerator.generateResolver(type).newInstance();
-                        box.setResolver(resolver);
-                    } catch (Exception ex) {
-                        //TODO: 记录生成失败
-                    }
-                }
-            }
-        }
-        return resolver;
-    }
 
     private GetResolver getGetResolver(Object bean) {
         Class type = bean.getClass();
@@ -89,7 +56,7 @@ public class ResolverManager {
             }
 
             if (resolver == null && enableAsm) {
-                resolver = generateAsmResolver(type);
+                resolver = AsmResolverManager.generateAsmResolver(type);
             }
 
             if (resolver == null) {
@@ -117,7 +84,7 @@ public class ResolverManager {
             }
 
             if (resolver == null && enableAsm) {
-                resolver = generateAsmResolver(type);
+                resolver = AsmResolverManager.generateAsmResolver(type);
             }
             if (resolver == null) {
                 resolver = commonResolver;
@@ -226,7 +193,7 @@ public class ResolverManager {
         }
     }
 
-    public final String toString(Object bean){
+    public final String toString(Object bean) {
         if (bean != null) {
             return getToStringResolver(bean).toString(bean);
         } else {
@@ -240,43 +207,5 @@ public class ResolverManager {
 
     public void setEnableAsm(boolean enableAsm) {
         this.enableAsm = enableAsm;
-    }
-
-    private static class AsmResolverBox {
-
-        private final Class type;
-        private AsmResolver resolver;
-
-        public AsmResolverBox(Class type) {
-            this.type = type;
-        }
-
-        public AsmResolver getResolver() {
-            return resolver;
-        }
-
-        public void setResolver(AsmResolver resolver) {
-            this.resolver = resolver;
-        }
-
-        @Override
-        public int hashCode() {
-            return this.type != null ? this.type.hashCode() : 0;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final AsmResolverBox other = (AsmResolverBox) obj;
-            if (this.type != other.type && (this.type == null || !this.type.equals(other.type))) {
-                return false;
-            }
-            return true;
-        }
     }
 }
