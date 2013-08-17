@@ -1,9 +1,12 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 
-package webit.script.resolvers;
+package webit.script.asm;
 
 import webit.script.asm.AsmResolverGenerator;
 import org.junit.Test;
+import webit.script.resolvers.GetResolver;
+import webit.script.resolvers.MatchMode;
+import webit.script.resolvers.SetResolver;
 import static org.junit.Assert.*;
 
 /**

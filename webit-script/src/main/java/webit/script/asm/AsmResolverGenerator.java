@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script.asm;
 
 import java.util.HashMap;
@@ -36,7 +35,7 @@ public class AsmResolverGenerator implements Opcodes {
     private static final Method METHOD_CREATE_UNWRITE_EXCEPTION = new Method("createUnwriteablePropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{ASMUtil.TYPE_OBJECT});
     private static final Method METHOD_CREATE_UNREAD_EXCEPTION = new Method("createUnreadablePropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{ASMUtil.TYPE_OBJECT});
     //
-
+    private static final String ASM_RESILVER = ASMUtil.toAsmClassName(AsmResolver.class.getName());
     //
     private static int sn = 1;
 
@@ -53,7 +52,7 @@ public class AsmResolverGenerator implements Opcodes {
         ClassWriter classWriter;
 
         classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classWriter.visit(V1_5, ACC_PUBLIC, asmClassName, null, "webit/script/resolvers/AsmResolver", null);
+        classWriter.visit(V1_5, ACC_PUBLIC, asmClassName, null, ASM_RESILVER, null);
 
         //Default Constructor
         attachDefaultConstructorMethod(classWriter, beanClass);
