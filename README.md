@@ -430,6 +430,43 @@ import "book-head.wtl"  {"book": book, "func":func};
 + 性能测试结果比较理想, 待比较权威的模版测试程序;
 + 使用OutputStream 输出时, 选择 SimpleTextStatmentFactory 将会预先将纯文本根据缺省编码编码成字节流. 
 
++ HTTL BenchmarkTest 的测试结果
+
+OutputStream:
+~~~~~
+====================test environment=====================
+os: Windows 7 6.1 x86, cpu: 4 cores, jvm: 1.7.0_25, 
+mem: max: 247M, total: 15M, free: 2M, use: 13M
+====================test parameters======================
+count: 10000, warm: 100, list: 100, stream: true,
+engines: java,httl,velocity,freemarker,smarty4j,webitScript
+====================test result==========================
+     engine,       version,    time,     tps, rate,
+       java,      1.7.0_25,  5082ms,  1967/s, 100%,
+       httl,        1.0.10,  3468ms,  2883/s, 146%,
+   velocity,           1.7, 10172ms,   983/s,  49%,
+ freemarker,        2.3.18, 14902ms,   671/s,  34%,
+   smarty4j,    1.0.0-jdk5, 21407ms,   467/s,  23%,
+webitscript,0.8.0-snapshot,  3966ms,  2521/s, 128%,
+=========================================================
+~~~~~
+Writer:
+~~~~~
+====================test environment=====================
+os: Windows 7 6.1 x86, cpu: 4 cores, jvm: 1.7.0_25, 
+mem: max: 455M, total: 122M, free: 89M, use: 33M
+====================test parameters======================
+count: 10000, warm: 100, list: 100, stream: false,
+engines: java,httl,velocity,webitScript
+====================test result==========================
+     engine,       version,    time,     tps, rate,
+       java,      1.7.0_25,  1371ms,  7293/s, 100%,
+       httl,        1.0.10,  1039ms,  9624/s, 131%,
+   velocity,           1.7,  3438ms,  2908/s,  39%,
+webitscript,0.8.0-snapshot,  1881ms,  5316/s,  72%,
+=========================================================
+~~~~~
+
 ## SPI
 
 + ResourceLoader  模板资源加载
