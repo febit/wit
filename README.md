@@ -195,11 +195,12 @@ var a, b, c=0, d="d";
 #### 拥有动态类
 
 ~~~~~
-var x                 //   null
-var x2 = 6;        //  数字
-var x3 = "Bill";   //  字符串
-var x4 = 'a';       //  字符
-var x5 = {};        // Map
+var x                             //  null
+var x2 = 6;                    //  数字
+var x3 = "Bill";               //  字符串
+var x4 = 'a';                   //  字符
+var x5 = [1, "string"];     //  数组
+var x6 = {};                    // Map
 ~~~~~
 
 #### 字符串
@@ -210,8 +211,7 @@ var x5 = {};        // Map
 var string = "第一行  \
 这还是在第一行
 这是第二行\n第三行\n
-这是第五行，第四行是空行
-"；
+这是第五行，第四行是空行"；
 ~~~~~ 
 
 ### 数字
@@ -236,8 +236,20 @@ var y=false;
 ~~~~~ 
 
 ### 数组
-*现只能用native的方法 引用java 数组*
 
+#### 带初始值的数组
+
+~~~~~
+var array = [1, "a string", book];
+var item;
+item = array[0];
+item = array[1];
+item = array[2];
+
+array[0] = "a new value"；
+~~~~~
+
+#### Native 方法声明定长数组,
 ~~~~~ 
 // 引入生成数组的 native 方法
 var new_int_array = native [int];
