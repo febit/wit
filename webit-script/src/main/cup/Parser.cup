@@ -26,6 +26,7 @@ parser code {:
 
     Template template;
     TextStatmentFactory textStatmentFactory;
+    PlaseHolderStatmentFactory plaseHolderStatmentFactory;
 
     Lexer lexer;
 
@@ -48,6 +49,7 @@ parser code {:
         this.lexer = new Lexer(in);
         this.template = template;
         this.textStatmentFactory = template.engine.getTextStatmentFactory();
+        this.plaseHolderStatmentFactory = new PlaseHolderStatmentFactory(template.engine.getFilter());
         try {
             Symbol sym = this.parse();
             return (TemplateAST) sym.value;
@@ -66,8 +68,12 @@ parser code {:
         }
     }
 
-    protected Statment createTextStatment(String text, int line, int column) {
+    protected final Statment createTextStatment(String text, int line, int column) {
         return StatmentUtil.optimize(textStatmentFactory.getTextStatment(template, text, line, column));
+    }
+    
+    protected final Statment createPlaseHolderStatment(Expression expr) {
+        return StatmentUtil.optimize(plaseHolderStatmentFactory.creatPlaseHolderStatment(expr));
     }
 
     //TODO:
@@ -219,13 +225,12 @@ action code {:
     }
 
     private Statment createPlaseHolderStatment(Expression expr) {
-        return StatmentUtil.optimize(new PlaseHolderStatment(expr));
+        return parser.createPlaseHolderStatment(expr);
     }
 
     private Statment createContinueStatment(String label, int line, int column) {
         return StatmentUtil.optimize(new ContinueStatment(label, line, column));
     }
-
 
     private SwitchStatmentPart createSwitchStatmentPart(){
         return new SwitchStatmentPart();
@@ -251,7 +256,6 @@ action code {:
         return new ForInStatmentPart(itemIndex, iterIndex, items, line, column);
     }
 
-
     private ForMapStatmentPart createForMapStatmentPart(String key, String value, Expression map, int line, int column){
         
         int keyIndex = assignVariantForNextBlock(key, line, column);
@@ -270,7 +274,6 @@ action code {:
         varmgr.push();
         return new BlockStatmentPart(line, column);
     }
-
 
     private BlockStatment createBlockStatment(BlockStatmentPart part) {
 
@@ -303,7 +306,6 @@ action code {:
     private DirectValue createDirectValue(Object value, int line, int column) {
         return new DirectValue(value, line, column);
     }
-
 
     private RedirectOutExpression createRedirectOutExpression(Expression srcExpr, Expression rexpr, int line, int column){
         if(rexpr instanceof ResetableValueExpression){

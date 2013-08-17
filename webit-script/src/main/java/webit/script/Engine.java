@@ -9,6 +9,7 @@ import jodd.props.Props;
 import jodd.props.PropsUtil;
 import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ResourceNotFoundException;
+import webit.script.filters.Filter;
 import webit.script.loaders.Loader;
 import webit.script.resolvers.Resolver;
 import webit.script.resolvers.ResolverManager;
@@ -26,10 +27,12 @@ public final class Engine {
     //settings
     private Class resourceLoaderClass;
     private Class textStatmentFactoryClass;
+    private Class filterClass;
     private Class[] resolvers;
     private String encoding = "UTF-8";
     private boolean enableAsmNative = true;
     //
+    private Filter filter;
     private TextStatmentFactory textStatmentFactory;
     private final ResolverManager resolverManager;
     private Loader resourceLoader;
@@ -47,6 +50,9 @@ public final class Engine {
 
         this.resourceLoader = (Loader) getBean(this.resourceLoaderClass);
         this.textStatmentFactory = (TextStatmentFactory) getBean(this.textStatmentFactoryClass);
+        if (this.filterClass != null) {
+            this.filter = (Filter) getBean(this.filterClass);
+        }
         resolveBean(this.resolverManager);
         if (this.resolvers != null) {
             Resolver[] resolverInstances = new Resolver[this.resolvers.length];
@@ -137,6 +143,14 @@ public final class Engine {
 
     public TextStatmentFactory getTextStatmentFactory() {
         return textStatmentFactory;
+    }
+
+    public void setFilterClass(Class filterClass) {
+        this.filterClass = filterClass;
+    }
+
+    public Filter getFilter() {
+        return filter;
     }
 
     public static Engine getEngine(String configPath) {

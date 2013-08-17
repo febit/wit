@@ -8,7 +8,7 @@ resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
 textStatmentFactoryClass=webit.script.core.text.impl.SimpleTextStatmentFactory
 encoding=${DEFAULT_ENCODING}
 
-#filter=
+# filterClass=webit.script.filters.impl.MutiFilter
 
 resolvers=\
     webit.script.resolvers.impl.MapResolver,\
@@ -18,6 +18,11 @@ resolvers=\
     webit.script.resolvers.impl.IterGetResolver
 
 enableAsmNative=true
+
+
+# [webit.script.filters.impl.MutiFilter]
+# filtersClass=
+
 
 [webit.script.resolvers.ResolverManager]
 enableAsm=true
