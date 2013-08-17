@@ -4,7 +4,6 @@ package webit.script;
 
 import jodd.io.StringOutputStream;
 import org.junit.Test;
-import webit.script.core.ast.TemplateAST;
 
 /**
  *

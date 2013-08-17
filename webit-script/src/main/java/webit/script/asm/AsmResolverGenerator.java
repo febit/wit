@@ -11,9 +11,9 @@ import webit.script.asm4.commons.GeneratorAdapter;
 import webit.script.asm4.commons.Method;
 import webit.script.asm4.commons.TableSwitchGenerator;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.util.ClassUtil;
 import webit.script.util.FieldInfo;
 import webit.script.util.FieldInfoResolver;
-import webit.script.util.ClassUtil;
 
 /**
  *

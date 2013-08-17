@@ -2,12 +2,6 @@
 
 package webit.script.resolvers.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import webit.script.Configurable;
-import webit.script.Engine;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;

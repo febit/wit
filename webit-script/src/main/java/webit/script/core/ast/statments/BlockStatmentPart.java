@@ -8,7 +8,6 @@ import java.util.Map;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.StatmentPart;
 import webit.script.core.runtime.variant.VariantUtil;
-import webit.script.util.StatmentUtil;
 
 /**
  *

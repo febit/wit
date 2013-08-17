@@ -2,7 +2,6 @@
 
 package webit.script.core.ast.expressions;
 
-import javax.script.ScriptException;
 import webit.script.Context;
 import webit.script.core.ast.BinaryOperator;
 import webit.script.core.ast.Expression;

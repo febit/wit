@@ -2,12 +2,11 @@
 
 package webit.script.asm;
 
-import webit.script.asm.AsmResolverGenerator;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
-import static org.junit.Assert.*;
 
 /**
  *

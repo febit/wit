@@ -2,10 +2,7 @@
 
 package webit.script.resolvers.impl;
 
-import java.io.UnsupportedEncodingException;
 import jodd.bean.BeanUtil;
-import webit.script.Configurable;
-import webit.script.Engine;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;

@@ -3,7 +3,6 @@
 package webit.script.core.ast.method;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
 

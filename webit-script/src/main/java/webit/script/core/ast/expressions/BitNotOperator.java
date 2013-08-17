@@ -6,7 +6,6 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
-import webit.script.exceptions.ParserException;
 import webit.script.util.ALU;
 import webit.script.util.StatmentUtil;
 
