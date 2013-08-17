@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Webit Team. All Rights Reserved.
+
 package webit.script.core.text.impl;
 
 import webit.script.Context;
