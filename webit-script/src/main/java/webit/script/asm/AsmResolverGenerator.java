@@ -273,9 +273,9 @@ public class AsmResolverGenerator implements Opcodes {
     }
 
     private void attachIfFieldMatchCode(GeneratorAdapter mg, FieldInfo fieldInfo, Label elseJumpTo) {
-        mg.loadArg(1); //property
         mg.push(fieldInfo.getName());
-        mg.invokeVirtual(ASMUtil.TYPE_OBJECT, METHOD_EQUALS);
+        mg.loadArg(1); //property
+        mg.invokeVirtual(ASMUtil.TYPE_STRING, METHOD_EQUALS);
         mg.ifZCmp(GeneratorAdapter.EQ, elseJumpTo); // if == 0 jump
     }
 
