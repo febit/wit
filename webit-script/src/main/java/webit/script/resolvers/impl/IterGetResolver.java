@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script.resolvers.impl;
 
 import webit.script.exceptions.ScriptRuntimeException;
@@ -23,23 +22,40 @@ public class IterGetResolver implements GetResolver {
 
     public Object get(Object object, Object property) {
         Iter iter = (Iter) object;
-        //TODO:可优化
-        if (property.equals("hasNext")) {
-            return iter.hasNext();
+
+        switch (property.hashCode()) {
+            case 696759469:
+                if ("hasNext".equals(property)) {
+                    return iter.hasNext();
+                }
+                break;
+            case 100346066:
+                if ("index".equals(property)) {
+                    return iter.index();
+                }
+                break;
+            case 2058846118:
+                if ("isFirst".equals(property)) {
+                    return iter.isFirst();
+                }
+                break;
+            case 3377907:
+                if ("next".equals(property)) {
+                    return iter.next();
+                }
+                break;
+            case -1180529308:
+                if ("isEven".equals(property)) {
+                    return iter.index() % 2 == 0;
+                }
+                break;
+            case 100474789:
+                if ("isOdd".equals(property)) {
+                    return iter.index() % 2 == 1;
+                }
+                break;
         }
-        
-        else if (property.equals("index")) {
-            return iter.index();
-        }
-        
-        else if (property.equals("isFirst")) {
-            return iter.isFirst();
-        }
-        
-        else if (property.equals("next")) {
-            return iter.next();
-        }
-        
-        throw new ScriptRuntimeException("Invalid property or can't read: webit.tl.util.collection.Iter#"+property);
+
+        throw new ScriptRuntimeException("Invalid property or can't read: webit.tl.util.collection.Iter#" + property);
     }
 }
