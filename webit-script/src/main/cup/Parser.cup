@@ -27,7 +27,7 @@ parser code {:
 
     Template template;
     TextStatmentFactory textStatmentFactory;
-    PlaseHolderStatmentFactory plaseHolderStatmentFactory;
+    PlaceHolderStatmentFactory placeHolderStatmentFactory;
 
     Lexer lexer;
 
@@ -50,7 +50,7 @@ parser code {:
         this.lexer = new Lexer(in);
         this.template = template;
         this.textStatmentFactory = template.engine.getTextStatmentFactory();
-        this.plaseHolderStatmentFactory = new PlaseHolderStatmentFactory(template.engine.getFilter());
+        this.placeHolderStatmentFactory = new PlaceHolderStatmentFactory(template.engine.getFilter());
         try {
             Symbol sym = this.parse();
             return (TemplateAST) sym.value;
@@ -73,8 +73,8 @@ parser code {:
         return StatmentUtil.optimize(textStatmentFactory.getTextStatment(template, text, line, column));
     }
     
-    protected final Statment createPlaseHolderStatment(Expression expr) {
-        return StatmentUtil.optimize(plaseHolderStatmentFactory.creatPlaseHolderStatment(expr));
+    protected final Statment createPlaceHolderStatment(Expression expr) {
+        return StatmentUtil.optimize(placeHolderStatmentFactory.creatPlaceHolderStatment(expr));
     }
 
     //TODO:
@@ -225,8 +225,8 @@ action code {:
         return StatmentUtil.optimize(new BreakStatment(label, line, column));
     }
 
-    private Statment createPlaseHolderStatment(Expression expr) {
-        return parser.createPlaseHolderStatment(expr);
+    private Statment createPlaceHolderStatment(Expression expr) {
+        return parser.createPlaceHolderStatment(expr);
     }
 
     private Statment createContinueStatment(String label, int line, int column) {
@@ -809,7 +809,7 @@ statment            ::= expression_stat:expr SEMICOLON
                         |SEMICOLON
                         {: RESULT = NoneStatment.getInstance(); :}
                         |expression:expr PLACE_HOLDER_END
-                        {: RESULT = createPlaseHolderStatment(expr); :}
+                        {: RESULT = createPlaceHolderStatment(expr); :}
                         |varStatment:stat
                         {: RESULT = stat; :}
                         |blockStat:stat

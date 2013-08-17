@@ -10,21 +10,21 @@ import webit.script.filters.Filter;
  *
  * @author Zqq
  */
-public class PlaseHolderStatmentFactory {
+public class PlaceHolderStatmentFactory {
 
     private final Filter filter;
     private final boolean withFilter;
 
-    public PlaseHolderStatmentFactory(Filter filter) {
+    public PlaceHolderStatmentFactory(Filter filter) {
         this.filter = filter;
         this.withFilter = filter != null;
     }
 
-    public Statment creatPlaseHolderStatment(Expression expr) {
+    public Statment creatPlaceHolderStatment(Expression expr) {
         if (withFilter) {
-            return new FilterPlaseHolderStatment(filter, expr);
+            return new FilterPlaceHolderStatment(filter, expr);
         } else {
-            return new PlaseHolderStatment(expr);
+            return new PlaceHolderStatment(expr);
         }
     }
 }
