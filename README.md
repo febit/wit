@@ -456,6 +456,7 @@ import "book-head.wtl"  {"book": book, "func":func};
 ### 三元条件运算符 & 其简写
 + **操作符按 自右向左 结合 [不是执行顺序], 详解看下面例子**
 + **简写时 `?:` 之间不能有空白**
+
 ~~~~~
 var a1 = isTrue ? "Yes" : "No";
 
@@ -465,11 +466,11 @@ var a2 = value ?: defaultValue; //取默认值
 // 如果 value 是个表达式什么的(例如包含 ++ -- 或者 .next()), 
 // 我想你知道为什么说是"不严格意义上"
  
-
 var a3 = list1 ?: list2;  // list1为空时 取 list2, !当然 list2是否为空什么的
 var a4 = list1 ?: list2 ?: list3; // 这样 就判断 list2 了, list3 就是终极defaultValue
 
-// 自右向左 结合
+
+//自右向左 结合
 
 //这里很重要！相信你能搞明白！
 var x =  expr1 ?  expr3 :  expr2 ? expr4 : expr5;
@@ -478,8 +479,9 @@ var x =  expr1 ?  expr3 :  (expr2 ? expr4 : expr5);
 // 如果 是 自左向右 就会变成这样
 var x =  (expr1 ?  expr3 :  expr2) ? expr4 : expr5;
 // 这么看 结果 肯定有出入了吧，其实还真没有, 对于弱类型系统结果没有出入
-//但是 换做 Java, 就会引起类型转换什么的 前者 只要求 expr1 ， expr2  是boolean,  后者 要求 expr1 , expr3 , expr2 都是 boolean
-// 既然 java 里 这么定了, 也得这么做啊, 结果一样 但是 在理解层次上 逻辑是不一样的
+// 但是 换做 Java, 就会引起类型转换什么的 前者 只要求 expr1 ， expr2  是boolean,  后者 要求 expr1 , expr3 , expr2 都是 boolean
+// 既然 java 里 这么定了, 也得这么做啊,
+// 虽然结果一样 但是 在理解&逻辑上 是不一样的啊
 
 //来个更复杂的
 var x =  expr1 ?  expr3? expr6 : expr7 :  expr2 ? expr4 : expr5;
@@ -487,12 +489,10 @@ var x =  expr1 ?  expr3? expr6 : expr7 :  expr2 ? expr4 : expr5;
 var x = expr1 ?  (expr3? expr6 : expr7) :  (expr2 ? expr4 : expr5);
 // 自左向右 结合
 var x = (expr1 ? (expr3 ? expr6 : expr7) :  expr2) ? expr4 : expr5;
-//What?  要求 expr1 expr3  expr6 expr7 expr2 都是 boolean ？？ java里不会出现这么变态的结合吧
+// What?  要求 expr1 expr3  expr6 expr7 expr2 都是 boolean ??!! java里不会出现这么变态的结合吧? 一堆boolean 用 ?: 有意义么？装大神吗？
 
-
-//这个 你就按 右左向右 “执行” 没关系
+//简写这个 你就按 从左向右 “执行”  别管结合性了
 var a4 = list1 ?: list2 ?: list3;
-
 ~~~~~
 
 ### 正在完善。。。
