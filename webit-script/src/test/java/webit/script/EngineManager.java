@@ -11,7 +11,7 @@ public class EngineManager {
     private static Engine engine;
 
     static {
-        engine = Engine.getEngine("/webitl-test.props", null);
+        engine = Engine.createEngine("/webitl-test.props", null);
     }
 
     public static Engine getEngine() {

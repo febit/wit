@@ -49,7 +49,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ~~~~~
     // !! engine 并不会被缓存, 请根据需要自行实现 Engine的单例模式
-    Engine engine = Engine.getEngine("/webit-script-config.props", extraSettingsMap);
+    Engine engine = Engine.createEngine("/webit-script-config.props", extraSettingsMap);
 
     ....
     // template 已缓存, 线程安全, 并自动检测模板源是否被更新

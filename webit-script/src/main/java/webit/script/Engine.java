@@ -155,11 +155,11 @@ public final class Engine {
         return filter;
     }
 
-    public static Engine getEngine(String configPath) {
-        return getEngine(configPath, null);
+    public static Engine createEngine(String configPath) {
+        return createEngine(configPath, null);
     }
 
-    public static Engine getEngine(String configPath, Map parameters) {
+    public static Engine createEngine(String configPath, Map parameters) {
 
         PetiteContainer petite = new PetiteContainer();
         petite.getConfig().setUseFullTypeNames(true);
