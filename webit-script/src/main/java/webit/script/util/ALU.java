@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script.util;
 
 import webit.script.Context;
@@ -331,21 +330,23 @@ public class ALU {
 
     /////////////////
     // &&
-    public static boolean and(Object o1, Object o2) {
-        return toBoolean(o1) && toBoolean(o2);
+    public static Object and(Object o1, Object o2) {
+        return toBoolean(o1) ? o2 : o1;
     }
 
-    public static boolean and(Expression expr1, Expression expr2, Context context) {
-        return toBoolean(StatmentUtil.execute(expr1, context)) && toBoolean(StatmentUtil.execute(expr2, context));
+    public static Object and(Expression expr1, Expression expr2, Context context) {
+        Object left = StatmentUtil.execute(expr1, context);
+        return toBoolean(left) ? StatmentUtil.execute(expr2, context) : left;
     }
 
     // ||
-    public static boolean or(Object o1, Object o2) {
-        return toBoolean(o1) || toBoolean(o2);
+    public static Object or(Object o1, Object o2) {
+        return toBoolean(o1) ? o1 : o2;
     }
 
-    public static boolean or(Expression expr1, Expression expr2, Context context) {
-        return toBoolean(StatmentUtil.execute(expr1, context)) || toBoolean(StatmentUtil.execute(expr2, context));
+    public static Object or(Expression expr1, Expression expr2, Context context) {
+        Object left = StatmentUtil.execute(expr1, context);
+        return toBoolean(left) ? left : StatmentUtil.execute(expr2, context);
     }
 
     // !
