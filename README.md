@@ -478,10 +478,10 @@ var x =  expr1 ?  expr3 :  expr2 ? expr4 : expr5;
 var x =  expr1 ?  expr3 :  (expr2 ? expr4 : expr5);
 // 如果 是 自左向右 就会变成这样
 var x =  (expr1 ?  expr3 :  expr2) ? expr4 : expr5;
-// 这么看 结果 肯定有出入了吧，其实还真没有, 对于弱类型系统结果没有出入
-// 但是 换做 Java, 就会引起类型转换什么的 前者 只要求 expr1 ， expr2  是boolean,  后者 要求 expr1 , expr3 , expr2 都是 boolean
-// 既然 java 里 这么定了, 也得这么做啊,
-// 虽然结果一样 但是 在理解&逻辑上 是不一样的啊
+// 这么看 结果 肯定有出入了吧，
+//前者 候选人 expr3 expr4 expr5； 评委 expr1  expr2
+//后者 候选人 expr4 expr5；评委 expr1 expr3 expr2
+//PS: 后者 expr1 就是传说中的"V神" 啊有木有，前者的 expr2 顶多是 吃expr1 剩下的, 话说高考的话 第二志愿能录取 也不错，总比被V了好
 
 //来个更复杂的
 var x =  expr1 ?  expr3? expr6 : expr7 :  expr2 ? expr4 : expr5;
@@ -489,7 +489,9 @@ var x =  expr1 ?  expr3? expr6 : expr7 :  expr2 ? expr4 : expr5;
 var x = expr1 ?  (expr3? expr6 : expr7) :  (expr2 ? expr4 : expr5);
 // 自左向右 结合
 var x = (expr1 ? (expr3 ? expr6 : expr7) :  expr2) ? expr4 : expr5;
-// What?  要求 expr1 expr3  expr6 expr7 expr2 都是 boolean ??!! java里不会出现这么变态的结合吧? 一堆boolean 用 ?: 有意义么？装大神吗？
+// What?  java里要求 expr1 expr3  expr6 expr7 expr2 都是 boolean(评委) ??!! java里不会出现这么变态的结合吧? 一堆boolean 用 ?: 有意义么？
+//是的 这下就明白了后者 真是 天外有天 V神中的V神, 评委海选选拔赛, 括弧笑
+
 
 //简写这个 你就按 从左向右 “执行”  别管结合性了
 var a4 = list1 ?: list2 ?: list3;
