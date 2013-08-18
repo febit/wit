@@ -19,6 +19,6 @@ public final class SelfBitAndOperator extends SelfOperator{
 
     @Override
     protected Object doOperate(Object left, Object right) {
-        return ALU.and(left, right);
+        return ALU.bitAnd(left, right);
     }
 }

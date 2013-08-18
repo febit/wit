@@ -19,7 +19,6 @@ public final class SelfBitOrOperator extends SelfOperator{
 
     @Override
     protected Object doOperate(Object left, Object right) {
-        return ALU.mod(left, right);
+        return ALU.bitOr(left, right);
     }
-
 }
