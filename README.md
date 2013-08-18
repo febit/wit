@@ -30,22 +30,32 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
     </dependencies>
 ~~~~~
 
-### Add jar
+### Or Add jars
  + `webit-script-[version].jar`
  + `jodd-[version].jar`
 
+### Or jodd-inside Version
 
-### Download: [Jar][jar]   [Javadoc][doc]   [Sources][sources]
+ + `webit-script-joddin-[version].jar`
+ + *如果您不喜欢Jodd, 并且其他组件没使用到Jodd, 可以试试这个 *
+
+### Download: [Jar][jar]      [Javadoc][doc]   [Sources][sources]  
  + *current version 0.8.0-SNAPSHOT*
+ + [webit-script-joddin-0.8.0-SNAPSHOT.jar] [jar_joddin]
+ + Jodd here: [Download] [jodd_down]   [Site] [jodd_site]   [Doc] [jodd_doc]   [Github][jodd_github]
 
 
-### Code like this
+### Code in Java like this
 
 ~~~~~
-    // !!! Engine 并不会被缓存, 请根据需要自行实现 Engine的单例模式
+    // !! engine 并不会被缓存, 请根据需要自行实现 Engine的单例模式
     Engine engine = Engine.getEngine("/webit-script-config.props", extraSettingsMap);
+
+    ....
+    // template 已缓存, 线程安全, 并自动检测模板源是否被更新
     Template template = engine.getTemplate("/your/template/path/filename.ext");
     ...
+
     template.merge(parametersMap, outputStream); 
     //template.merge(parametersMap, writer);
 ~~~~~
@@ -56,7 +66,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
   `Tips: Java-Properties also works`
 + 匹配支持  "/webit-script-*.props"
 + 多文件支持 "/webit-script-config1.props,/webit-script-config2.props"
-+ 可选额外参数: extraSettingsMap
++ 可选额外参数: extraSettingsMap 类型为Map, 支持props 宏
 + 默认配置: [webitl-default.props] [default_config]
 
 ## Grammar(语法)
@@ -67,11 +77,13 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 Hello ${"world"}
 ~~~~~
 
+更复杂点儿的
 ~~~~~
 <%
 var books; //List
 {
-    for(book in books){
+    for(book : books){
+        //for.iter:  index  hasNext next isFast isEven isOdd
 %>${for.iter.index}. ${book.name}:${book.price} ${for.iter.hasNext?null,"\n\n"}
 <%
     }
@@ -85,20 +97,22 @@ var books; //List
     echo '\n';
 }
 {
-    @import java.util.Map;
-
-    var map_put = native Map.put(Object,Object);
-
     var map = {
         1:1,
         "key2":"value2",
         3: 2+1
     };
     
-    map@map_put(4,4);
-    map_put(map,5,5);
+    map[5] = 2+3;
     
+    var x;
+    x = map[3];
+    x = map["key2"];
+    x = map.key2; //不推荐的写法
+    //x = map.3; //错误的写法 
+
     for(key, value : map){
+        //同样有 for.iter
         echo key + ":" +value + "\n";
     }
 }
@@ -157,7 +171,8 @@ var books; //List
 |
 &&
 ||
-?: (条件运算符)
+? : (三元条件运算符)   ?: (新增: 二元操作符)
+.. (新增: 递增[减]操作符)
 =  +=  -=  *=  /=  %=  ^=  <<=  >>=  >>>=
 ~~~~~
 
@@ -430,6 +445,57 @@ var book;
 import "book-head.wtl"  {"book": book, "func":func};
 ~~~~~
 
+### 关于条件判断的三种情况
+
++ 如果是boolean(Boolean)值 会原封返回
++ **如果 ==null 返回 false**
++ **如果 是空集合 或者 空数组 (.size==0)  返回 false **
++ 否则 返回 true
+
+
+### 三元条件运算符 & 其简写
++ **操作符按 自右向左 结合 [不是执行顺序], 详解看下面例子**
++ **简写时 `?:` 之间不能有空白**
+~~~~~
+var a1 = isTrue ? "Yes" : "No";
+
+//简写
+var a2 = value ?: defaultValue; //取默认值
+// 在不严格意义上相当于 value ?  value  : defaultValue
+// 如果 value 是个表达式什么的(例如包含 ++ -- 或者 .next()), 
+// 我想你知道为什么说是"不严格意义上"
+ 
+
+var a3 = list1 ?: list2;  // list1为空时 取 list2, !当然 list2是否为空什么的
+var a4 = list1 ?: list2 ?: list3; // 这样 就判断 list2 了, list3 就是终极defaultValue
+
+// 自右向左 结合
+
+//这里很重要！相信你能搞明白！
+var x =  expr1 ?  expr3 :  expr2 ? expr4 : expr5;
+//这个等同于
+var x =  expr1 ?  expr3 :  (expr2 ? expr4 : expr5);
+// 如果 是 自左向右 就会变成这样
+var x =  (expr1 ?  expr3 :  expr2) ? expr4 : expr5;
+// 这么看 结果 肯定有出入了吧，其实还真没有, 对于弱类型系统结果没有出入
+//但是 换做 Java, 就会引起类型转换什么的 前者 只要求 expr1 ， expr2  是boolean,  后者 要求 expr1 , expr3 , expr2 都是 boolean
+// 既然 java 里 这么定了, 也得这么做啊, 结果一样 但是 在理解层次上 逻辑是不一样的
+
+//来个更复杂的
+var x =  expr1 ?  expr3? expr6 : expr7 :  expr2 ? expr4 : expr5;
+// 自右向左 结合
+var x = expr1 ?  (expr3? expr6 : expr7) :  (expr2 ? expr4 : expr5);
+// 自左向右 结合
+var x = (expr1 ? (expr3 ? expr6 : expr7) :  expr2) ? expr4 : expr5;
+//What?  要求 expr1 expr3  expr6 expr7 expr2 都是 boolean ？？ java里不会出现这么变态的结合吧
+
+
+//这个 你就按 右左向右 “执行” 没关系
+var a4 = list1 ?: list2 ?: list3;
+
+~~~~~
+
+### 正在完善。。。
 
 ### 其他
 
@@ -515,4 +581,10 @@ details.
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
 [default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webitl-default.props
 [new_issue]: https://github.com/zqq90/webit-script/issues/new
+
+[jodd_down]: http://jodd.org/download/index.html
+[jodd_site]: http://jodd.org/index.html
+[jodd_doc]: http://jodd.org/doc/index.html
+[jodd_github]: https://github.com/oblac/jodd
+
 
