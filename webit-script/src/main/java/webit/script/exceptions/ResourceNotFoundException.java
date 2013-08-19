@@ -2,11 +2,13 @@
 
 package webit.script.exceptions;
 
+import java.io.IOException;
+
 /**
  *
  * @author Zqq
  */
-public class ResourceNotFoundException extends Exception{
+public class ResourceNotFoundException extends IOException{
     public ResourceNotFoundException() {
         super();
     }
