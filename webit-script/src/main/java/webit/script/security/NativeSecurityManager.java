@@ -8,5 +8,4 @@ package webit.script.security;
 public interface NativeSecurityManager {
 
     boolean access(String path);
-    
 }
