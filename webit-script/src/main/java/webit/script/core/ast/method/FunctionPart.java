@@ -58,7 +58,6 @@ public final class FunctionPart extends StatmentPart {
         return this;
     }
 
-    @Override
     public Function pop() {
         //TODO: 待优化
         int[] argIndexs = new int[argIndexList.size()];

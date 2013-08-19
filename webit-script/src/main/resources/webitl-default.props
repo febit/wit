@@ -4,8 +4,9 @@ DEFAULT_ENCODING=utf-8
 
 
 [webit.script.Engine]
-resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
-textStatmentFactoryClass=webit.script.core.text.impl.SimpleTextStatmentFactory
+# resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
+# textStatmentFactoryClass=webit.script.core.text.impl.SimpleTextStatmentFactory
+# nativeSecurityManagerClass=webit.script.security.impl.DefaultNativeSecurityManager
 encoding=${DEFAULT_ENCODING}
 
 # filterClass=webit.script.filters.impl.MutiFilter
@@ -17,7 +18,7 @@ resolvers=\
     webit.script.resolvers.impl.ArrayResolver,\
     webit.script.resolvers.impl.IterGetResolver
 
-enableAsmNative=true
+# enableAsmNative=true
 
 
 # [webit.script.filters.impl.MutiFilter]
@@ -38,4 +39,48 @@ encoding=${DEFAULT_ENCODING}
 
 [webit.script.loaders.impl.FileLoader]
 encoding=${DEFAULT_ENCODING}
+
+
+[webit.script.security.impl.DefaultNativeSecurityManager]
+list='''
+
+  boolean
+  byte
+  char
+  short
+  int
+  long
+  float
+  double
+
+  java.lang.Object
+
+  java.lang.Boolean
+  java.lang.Character
+  java.lang.Byte
+  java.lang.Short
+  java.lang.Integer
+  java.lang.Long
+  java.lang.Float
+  java.lang.Double
+
+  java.lang.Number
+  java.lang.Math
+
+  java.math
+
+  java.util.List
+  java.util.Map
+  java.util.Set
+
+  java.util.Calendar
+  java.util.Date
+
+  java.text.SimpleDateFormat
+  
+  jodd.datetime
+  jodd.util.StringUtil
+  jodd.util.ArraysUtil
+'''
+
 

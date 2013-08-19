@@ -5,3 +5,18 @@ resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
 
 [webit.script.loaders.impl.ClasspathLoader]
 root=webit/script/test/tmpls
+
+[webit.script.security.impl.DefaultNativeSecurityManager]
+list='''
+  org.junit.Assert
+  java.lang
+  java.util
+  boolean
+  byte
+  char
+  short
+  int
+  long
+  float
+  double
+'''

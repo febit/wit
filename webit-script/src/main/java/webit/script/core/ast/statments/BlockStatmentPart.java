@@ -35,7 +35,6 @@ public final class BlockStatmentPart extends StatmentPart {
         return this;
     }
 
-    @Override
     public BlockStatment pop() {
         if (statmentList.isEmpty()) {
             return new BlockStatment(null, null, line, column);

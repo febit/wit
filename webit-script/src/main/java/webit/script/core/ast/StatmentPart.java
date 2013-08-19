@@ -23,7 +23,4 @@ public abstract class StatmentPart {
         this.column = column;
         return this;
     }
-    
-    
-    public abstract Statment pop();
 }

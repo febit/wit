@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script;
 
 import java.util.Map;
@@ -15,6 +14,7 @@ import webit.script.filters.Filter;
 import webit.script.loaders.Loader;
 import webit.script.resolvers.Resolver;
 import webit.script.resolvers.ResolverManager;
+import webit.script.security.NativeSecurityManager;
 
 /**
  *
@@ -27,8 +27,9 @@ public final class Engine {
     //
     private static final String DEFAULT_PROPERTIES = "/webitl-default.props";
     //settings
-    private Class resourceLoaderClass;
-    private Class textStatmentFactoryClass;
+    private Class resourceLoaderClass = webit.script.loaders.impl.ClasspathLoader.class;
+    private Class textStatmentFactoryClass = webit.script.core.text.impl.SimpleTextStatmentFactory.class;
+    private Class nativeSecurityManagerClass = webit.script.security.impl.DefaultNativeSecurityManager.class;
     private Class filterClass;
     private Class[] resolvers;
     private String encoding = "UTF-8";
@@ -36,6 +37,7 @@ public final class Engine {
     //
     private Filter filter;
     private TextStatmentFactory textStatmentFactory;
+    private NativeSecurityManager nativeSecurityManager;
     private final ResolverManager resolverManager;
     private Loader resourceLoader;
     private final ConcurrentMap<String, Template> templateCache;
@@ -52,9 +54,12 @@ public final class Engine {
 
         this.resourceLoader = (Loader) getBean(this.resourceLoaderClass);
         this.textStatmentFactory = (TextStatmentFactory) getBean(this.textStatmentFactoryClass);
+        this.nativeSecurityManager = (NativeSecurityManager) getBean(this.nativeSecurityManagerClass);
+
         if (this.filterClass != null) {
             this.filter = (Filter) getBean(this.filterClass);
         }
+
         resolveBean(this.resolverManager);
         if (this.resolvers != null) {
             Resolver[] resolverInstances = new Resolver[this.resolvers.length];
@@ -138,7 +143,10 @@ public final class Engine {
         this.enableAsmNative = enableAsmNative;
     }
 
-    //
+    public NativeSecurityManager getNativeSecurityManager() {
+        return nativeSecurityManager;
+    }
+
     public ResolverManager getResolverManager() {
         return resolverManager;
     }

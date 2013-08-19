@@ -3,6 +3,7 @@
 package webit.script.core;
 
 import java.util.Map;
+import webit.script.Engine;
 import webit.script.Template;
 import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.core.VariantManager.VarAddress;
@@ -12,6 +13,7 @@ import webit.script.core.ast.method.*;
 import webit.script.core.ast.statments.*;
 import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ParserException;
+import webit.script.security.NativeSecurityManager;
 import webit.script.util.StatmentUtil;
 
 
@@ -28,6 +30,7 @@ parser code {:
     Template template;
     TextStatmentFactory textStatmentFactory;
     PlaceHolderStatmentFactory placeHolderStatmentFactory;
+    NativeSecurityManager nativeSecurityManager;
 
     Lexer lexer;
 
@@ -49,7 +52,9 @@ parser code {:
     public TemplateAST parserTemplate(java.io.Reader in, Template template) throws ParserException{
         this.lexer = new Lexer(in);
         this.template = template;
-        this.textStatmentFactory = template.engine.getTextStatmentFactory();
+        Engine engine = template.engine;
+        this.textStatmentFactory = engine.getTextStatmentFactory();
+        this.nativeSecurityManager = engine.getNativeSecurityManager();
         this.placeHolderStatmentFactory = new PlaceHolderStatmentFactory(template.engine.getFilter());
         try {
             Symbol sym = this.parse();
@@ -343,12 +348,8 @@ action code {:
     }
 
     private NativeNewArrayDeclareExpression createNativeNewArrayDeclareExpression(Class componentType, int line, int column){
-        if(componentType != Void.class){
-            return new NativeNewArrayDeclareExpression(componentType, line, column);
-        }else{
-            throw new ParserException("componentType must not Void.class", line, column);
-        }
-    };
+        return new NativeNewArrayDeclareExpressionPart(componentType, line, column).pop(parser.nativeSecurityManager);
+    }
 
     //================ >> Expression - Operator
     private Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column){
@@ -1476,9 +1477,9 @@ nativeMethodExprPart    ::= nativeMethodExprPart1:part className:nameBand
 
 
 nativeMethodExpr        ::= nativeMethodExprPart:part RPAREN
-                            {: RESULT = part.pop(); :}
+                            {: RESULT = part.pop(parser.nativeSecurityManager); :}
                             |nativeMethodExprPart1:part RPAREN
-                            {: RESULT = part.pop(); :}
+                            {: RESULT = part.pop(parser.nativeSecurityManager); :}
                             ;
 
 
@@ -1497,9 +1498,9 @@ nativeConstructorExprPart   ::= nativeConstructorExprPart1:part className:nameBa
 
 
 nativeConstructorExpr       ::= nativeConstructorExprPart1:part RPAREN
-                                {: RESULT = part.pop(); :}
+                                {: RESULT = part.pop(parser.nativeSecurityManager); :}
                                 |nativeConstructorExprPart:part RPAREN
-                                {: RESULT = part.pop(); :}
+                                {: RESULT = part.pop(parser.nativeSecurityManager); :}
                                 ;
 
 

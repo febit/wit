@@ -25,7 +25,6 @@ public final class ArrayValuePart extends StatmentPart{
         return this;
     }
 
-    @Override
     public ArrayValue pop() {
         Expression[] exprs = new Expression[valueExprs.size()];
         valueExprs.toArray(exprs);

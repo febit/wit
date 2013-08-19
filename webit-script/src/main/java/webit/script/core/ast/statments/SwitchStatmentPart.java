@@ -64,7 +64,6 @@ public final class SwitchStatmentPart extends StatmentPart {
         return this;
     }
 
-    @Override
     public Statment pop() {
         
         if (defaultStatment.isBodyEmpty()) {

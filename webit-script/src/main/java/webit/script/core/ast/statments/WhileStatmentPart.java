@@ -41,13 +41,12 @@ public final class WhileStatmentPart extends StatmentPart {
         return this;
     }
 
+    @Override
     public WhileStatmentPart setPosition(int line, int column) {
-        this.line = line;
-        this.column = column;
+        super.setPosition(line, column);
         return this;
     }
 
-    @Override
     public Statment pop() {
         return StatmentUtil.optimize(new WhileStatment(whileExpr, bodyStatment, checkAtFirst, label, line, column));
     }
