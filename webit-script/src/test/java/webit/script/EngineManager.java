@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script;
+
+import webit.script.exceptions.ResourceNotFoundException;
 
 /**
  *
@@ -16,5 +17,9 @@ public class EngineManager {
 
     public static Engine getEngine() {
         return engine;
+    }
+
+    public static Template getTemplate(String name) throws ResourceNotFoundException {
+        return engine.getTemplate(name);
     }
 }
