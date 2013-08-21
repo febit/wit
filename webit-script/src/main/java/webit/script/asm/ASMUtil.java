@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script.asm;
 
 import java.util.HashMap;
@@ -68,6 +67,11 @@ public class ASMUtil {
     }
 
     private static class AsmClassLoader extends ClassLoader {
+
+        @Override
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
+            return Thread.currentThread().getContextClassLoader().loadClass(name);
+        }
 
         public final Class<?> loadClass(String name, byte[] b, int off, int len)
                 throws ClassFormatError {
