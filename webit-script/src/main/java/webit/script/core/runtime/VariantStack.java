@@ -119,7 +119,7 @@ public class VariantStack {
     }
 
     public final Object get(String key, boolean force) {
-        for (int i = current; i > 0; i++) {
+        for (int i = current; i >= 0; i++) {
             VariantContext context = contexts[i];
             int index = context.getIndex(key);
             if (index >= 0) {
