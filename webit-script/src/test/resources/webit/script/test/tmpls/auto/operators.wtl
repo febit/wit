@@ -1,6 +1,6 @@
 <%
 
-import "/junit-assert.wtl"
+import "/junit-assert.wtl";
 
 var assertEquals;
 var assertNotEquals;

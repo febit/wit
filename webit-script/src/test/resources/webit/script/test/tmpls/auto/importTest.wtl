@@ -1,16 +1,17 @@
 <%
 
-import "/junit-assert.wtl"
+import "/junit-assert.wtl";
 
 var assertEquals;
 var assertNotEquals;
 var assertSame;
 var assertNotSame;
+var assertNull;
 
 {
     
-    var a = "a";
-    var b = "b";
+    var a = "A";
+    var b = "B";
     {
         import "/import1.wtl";
 
@@ -24,6 +25,25 @@ var assertNotSame;
 
         assertNotSame(b, super.b);
         assertEquals(b, "b");
+
+    }
+    {
+        var b;
+        var b_1;
+        import "/import1.wtl" a,b_1=b;
+
+        var func;
+
+        var c = "c";
+
+        assertSame(a, super.a);
+
+        assertEquals(a, "a");
+
+        assertNull(func);
+        assertNull(b);
+
+        assertEquals(b_1, "b");
 
     }
 

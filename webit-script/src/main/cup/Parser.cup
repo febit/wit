@@ -214,8 +214,8 @@ action code {:
         return StatmentUtil.optimize(new IncludeStatment(expr, paramExpr, line, column));
     }
                 
-    private Statment createImportStatment(Expression expr,Expression paramExpr, int line, int column){
-        return StatmentUtil.optimize(new ImportStatment(expr, paramExpr, line, column));
+    private ImportStatmentPart createImportStatmentPart(Expression expr, int line, int column){
+        return new ImportStatmentPart(expr, line, column);
     }
         
     private Statment createEchoStatment(Expression expr, int line, int column){
@@ -650,7 +650,9 @@ non terminal varStatmentPart;
 non terminal Statment nativeImportStat;  // @import
 
 non terminal Statment includeStat;  // include
-non terminal Statment importStat;  // include
+non terminal Statment importStat;  // import
+non terminal ImportStatmentPart  importStatPart1, importStatPart2;
+
 
 non terminal Statment elseStatPart, elseIfStatPart;
 
@@ -740,7 +742,7 @@ non terminal Expression selfBitOrOper;  // |=
 
 non terminal String contextValueIdent;
 non terminal Integer superCount;
-non terminal Expression contextValueExpr; // 
+non terminal ContextValue contextValueExpr; // 
 
 
 non terminal Expression redirectOutExpr; // 
@@ -870,17 +872,36 @@ echoStat            ::= ECHO:sym expression:expr SEMICOLON
                         ;
 
 
-importStat          ::= IMPORT:sym expression:expr
-                        {: RESULT = createImportStatment(expr, null, sym$Symbol.line, sym$Symbol.column); :}
-                        |IMPORT:sym expression:expr COMMA expression:paramExpr
-                        {: RESULT = createImportStatment(expr, paramExpr, sym$Symbol.line, sym$Symbol.column); :}
+
+importStatPart1     ::= IMPORT:sym expression:expr
+                        {: RESULT = createImportStatmentPart(expr, sym$Symbol.line, sym$Symbol.column); :}
+                        |IMPORT:sym expression:expr mapValue:paramsExpr
+                        {: RESULT = createImportStatmentPart(expr, sym$Symbol.line, sym$Symbol.column).setParamsExpr(paramsExpr); :}
+                        ;
+
+
+importStatPart2     ::= |importStatPart1:part IDENTIFIER:ident
+                        {: RESULT = part.append(ident, createContextValue(ident, ident$Symbol.line, ident$Symbol.column)); :}
+                        |importStatPart1:part contextValueExpr:valueExpr EQ IDENTIFIER:ident
+                        {: RESULT = part.append(ident, valueExpr); :}
+                        |importStatPart2:part COMMA IDENTIFIER:ident
+                        {: RESULT = part.append(ident, createContextValue(ident, ident$Symbol.line, ident$Symbol.column)); :}
+                        |importStatPart2:part COMMA contextValueExpr:valueExpr EQ IDENTIFIER:ident
+                        {: RESULT = part.append(ident, valueExpr); :}
+                        ;
+
+
+importStat          ::= importStatPart1:part SEMICOLON
+                        {: RESULT = part.pop(); :}
+                        |importStatPart2:part SEMICOLON
+                        {: RESULT = part.pop(); :}
                         ;
 
 
 includeStat         ::= INCLUDE:sym expression:expr 
                         {: RESULT = createIncludeStatment(expr, null, sym$Symbol.line, sym$Symbol.column); :}
-                        |INCLUDE:sym expression:expr COMMA expression:paramExpr
-                        {: RESULT = createIncludeStatment(expr, paramExpr, sym$Symbol.line, sym$Symbol.column); :}
+                        |INCLUDE:sym expression:expr mapValue:paramsExpr
+                        {: RESULT = createIncludeStatment(expr, paramsExpr, sym$Symbol.line, sym$Symbol.column); :}
                         ;
 
 

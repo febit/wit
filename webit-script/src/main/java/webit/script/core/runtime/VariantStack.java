@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script.core.runtime;
 
 import java.util.Map;
@@ -33,7 +32,7 @@ public class VariantStack {
         //push(context);
         if (contexts != null) {
             System.arraycopy(contexts, 0, this.contexts, 0, contexts.length);
-            current = contexts.length-1;
+            current = contexts.length - 1;
         }
     }
 
@@ -112,6 +111,14 @@ public class VariantStack {
 
     public final Object get(int upstairs, int index) {
         return getContext(upstairs).get(index);
+    }
+
+    public final Object[] get(final String[] keys) {
+        Object[] results = new Object[keys.length];
+        for (int i = 0; i < results.length; i++) {
+            results[i] = get(keys[i], true);
+        }
+        return results;
     }
 
     public final Object get(String key) {
