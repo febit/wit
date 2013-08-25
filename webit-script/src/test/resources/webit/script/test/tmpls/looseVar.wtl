@@ -1,0 +1,23 @@
+<%
+import "/junit-assert.wtl";
+
+// var assertSame;
+
+
+a=0;
+
+{
+    b = "b"; //loose var
+
+    assertSame(b,super.b);
+
+    var func = function(){
+        c = "C";
+    };
+
+    func();
+
+}
+var c; //asset function not assign variant at the big Top;
+
+%>

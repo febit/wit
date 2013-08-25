@@ -24,7 +24,7 @@ public class VariantManager {
     //private Stack<Integer> varWallStack = new ArrayStack<Integer>();
     private Stack<VarWall> varWallStack = new ArrayStack<VarWall>();
 
-    public int pushVarWall() {
+    public final int pushVarWall() {
         varWallStack.push(new VarWall(currentElementIndex));
         return currentElementIndex;
     }
@@ -41,19 +41,10 @@ public class VariantManager {
         elements[1] = createNewMap(); //next
 
         currentElementIndex = 0;
+        pushVarWall();
     }
 
-    public VariantManager(Map<String, Integer> root) {
-
-        elements = new Map[10];
-        elements[0] = root;
-        elements[1] = createNewMap(); //current
-        elements[2] = createNewMap(); //next
-
-        currentElementIndex = 1;
-    }
-
-    public void ensureCapacity(int mincap) {
+    private void ensureCapacity(int mincap) {
         if (mincap > elements.length) {
             int newcap = ((elements.length * 3) >> 1) + 1;
             Object[] olddata = elements;
@@ -142,6 +133,17 @@ public class VariantManager {
         current.put(name, address);
         return address;
     }
+    
+    public VarAddress assignVariantAtTopWall(String name) {
+        int topindex = varWallStack.peek().value;
+        Map<String, Integer> top = elements[topindex];
+        if (top.containsKey(name)) {
+            throw new ParserException("Duplicate Variant declare: " + name);
+        }
+        int address = top.size();
+        top.put(name, address);
+        return new VarAddress(currentElementIndex - topindex, address);
+    }
 
     public int assignVariantForNextBlock(String name) {
         Map<String, Integer> next = next();
@@ -184,7 +186,7 @@ public class VariantManager {
         if (force) {
             throw new ParserException("Can't locate variant: " + name);
         } else {
-            return null;
+            return assignVariantAtTopWall(name);
         }
     }
 

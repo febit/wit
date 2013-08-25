@@ -34,6 +34,7 @@ public final class Engine {
     private Class[] resolvers;
     private String encoding = "UTF-8";
     private boolean enableAsmNative = true;
+    private boolean looseVar = false;
     //
     private Filter filter;
     private TextStatmentFactory textStatmentFactory;
@@ -141,6 +142,14 @@ public final class Engine {
 
     public void setEnableAsmNative(boolean enableAsmNative) {
         this.enableAsmNative = enableAsmNative;
+    }
+
+    public boolean isLooseVar() {
+        return looseVar;
+    }
+
+    public void setLooseVar(boolean looseVar) {
+        this.looseVar = looseVar;
     }
 
     public NativeSecurityManager getNativeSecurityManager() {

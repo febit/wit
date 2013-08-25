@@ -31,6 +31,7 @@ parser code {:
     TextStatmentFactory textStatmentFactory;
     PlaceHolderStatmentFactory placeHolderStatmentFactory;
     NativeSecurityManager nativeSecurityManager;
+    boolean locateVarForce;
 
     Lexer lexer;
 
@@ -55,6 +56,7 @@ parser code {:
         Engine engine = template.engine;
         this.textStatmentFactory = engine.getTextStatmentFactory();
         this.nativeSecurityManager = engine.getNativeSecurityManager();
+        this.locateVarForce = !engine.isLooseVar();
         this.placeHolderStatmentFactory = new PlaceHolderStatmentFactory(template.engine.getFilter());
         try {
             Symbol sym = this.parse();
@@ -178,10 +180,6 @@ action code {:
         }
     }
 
-    private VarAddress locateVar(String name) {
-        return varmgr.locate(name);
-    }
-
     private int locateVarAtUpstairForce(String name, int upstair, int line, int column) {
         try {
             return varmgr.locateAtUpstair(name, upstair, true);
@@ -190,9 +188,9 @@ action code {:
         }
     }
 
-    private VarAddress locateVarForce(String name, int line, int column) {
+    private VarAddress locateVar(String name, int line, int column) {
         try {
-            return varmgr.locate(name, true);
+            return varmgr.locate(name, parser.locateVarForce);
         } catch (ParserException e) {
             throw e.setPosition(line, column);
         }
@@ -297,7 +295,7 @@ action code {:
 
     private ContextValue createContextValue(String name, int line, int column) {
 
-        VarAddress addr = locateVarForce(name, line, column);
+        VarAddress addr = locateVar(name, line, column);
 
         return new ContextValue(addr.upstairs, addr.index, name, line, column);
     }
