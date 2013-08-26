@@ -192,9 +192,10 @@ OctIntegerLiteral = 0+ [1-3]? {OctDigit} {1,15}
 OctLongLiteral    = 0+ 1? {OctDigit} {1,21} [lL]
 OctDigit          = [0-7]
 
-/* floating point literals */        
-FloatLiteral  = ({FLit1}|{FLit2}|{FLit3}) {Exponent}? [fF]
-DoubleLiteral = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
+/* floating point literals */
+DoubleLiteralPart = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
+FloatLiteral  = {DoubleLiteralPart} [fF]
+DoubleLiteral = {DoubleLiteralPart} [dD]
 
 FLit1    = [0-9]+ \. [0-9]* 
 FLit2    = \. [0-9]+ 
@@ -377,8 +378,8 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   {OctLongLiteral}               { return symbol(INTEGER_LITERAL, yyLong(1, -1, 8)); }
   
   {FloatLiteral}                 { return symbol(FLOATING_POINT_LITERAL, new Float(yytext(0, -1))); }
-  {DoubleLiteral}                { return symbol(FLOATING_POINT_LITERAL, new Double(yytext())); }
-  {DoubleLiteral}[dD]            { return symbol(FLOATING_POINT_LITERAL, new Double(yytext(0, -1))); }
+  {DoubleLiteralPart}            { return symbol(FLOATING_POINT_LITERAL, new Double(yytext())); }
+  {DoubleLiteral}                { return symbol(FLOATING_POINT_LITERAL, new Double(yytext(0, -1))); }
   
   /* comments */
   {Comment}                      { /* ignore */ }
