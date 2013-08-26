@@ -22,6 +22,12 @@ var assertNotSame;
     }
 
 }
+{
+    var $;
+    var _;
+    var __;
+    var $$;
+}
 
 
 %>
