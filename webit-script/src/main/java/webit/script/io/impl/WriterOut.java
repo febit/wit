@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script.io.impl;
 
 import java.io.IOException;
@@ -21,9 +20,41 @@ public final class WriterOut implements Out {
         this.encoding = encoding;
     }
 
+    public void write(byte[] bytes, int offset, int length) {
+        try {
+            writer.write(new String(bytes, offset, length, encoding));
+        } catch (IOException ex) {
+            throw new ScriptRuntimeException(ex);
+        }
+    }
+
     public void write(byte[] bytes) {
         try {
             writer.write(new String(bytes, encoding));
+        } catch (IOException ex) {
+            throw new ScriptRuntimeException(ex);
+        }
+    }
+
+    public void write(char[] chars, int offset, int length) {
+        try {
+            writer.write(chars, offset, length);
+        } catch (IOException ex) {
+            throw new ScriptRuntimeException(ex);
+        }
+    }
+
+    public void write(char[] chars) {
+        try {
+            writer.write(chars);
+        } catch (IOException ex) {
+            throw new ScriptRuntimeException(ex);
+        }
+    }
+
+    public void write(String string, int offset, int length) {
+        try {
+            writer.write(string, offset, length);
         } catch (IOException ex) {
             throw new ScriptRuntimeException(ex);
         }
