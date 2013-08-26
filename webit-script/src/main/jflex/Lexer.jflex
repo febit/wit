@@ -280,17 +280,12 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   "import"                       { return symbol(IMPORT); }
   "include"                      { return symbol(INCLUDE); }
 
-  "as"                           { return symbol(AS); }
   "echo"                         { return symbol(ECHO); }
 
   "@import"                      { return symbol(NATIVE_IMPORT); }
 
 
 /*  "const"                        { return symbol(CONST); } */
-/*  "as"                           { return symbol(AS); } */
-
-
-
   
   /* boolean literals */
   "true"                         { return symbol(BOOLEAN_LITERAL, Boolean.TRUE); }
