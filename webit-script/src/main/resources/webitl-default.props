@@ -19,7 +19,7 @@ resolvers=\
     webit.script.resolvers.impl.IterGetResolver
 
 # enableAsmNative=true
-
+# looseVar=false
 
 # [webit.script.filters.impl.MutiFilter]
 # filtersClass=
