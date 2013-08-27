@@ -33,12 +33,14 @@ public class ScriptRuntimeException extends RuntimeException {
         return template;
     }
 
-    public final void setTemplate(Template template) {
+    public final ScriptRuntimeException setTemplate(Template template) {
         this.template = template;
+        return this;
     }
 
-    public final void registStatment(Statment statment) {
+    public final ScriptRuntimeException registStatment(Statment statment) {
         statmentStack.push(statment);
+        return this;
     }
 
     public Stack<Statment> getStatmentStack() {

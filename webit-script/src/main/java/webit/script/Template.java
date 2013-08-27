@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script;
 
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class Template {
 
     /**
      *
-     * @return
+     * @return 
      * @throws IOException
      * @throws ParserException
      */
@@ -116,7 +115,7 @@ public class Template {
                 ((ParserException) e).registTemplate(this);
                 throw (ParserException) e;
             }
-            throw new ScriptRuntimeException(e);
+            throw new ScriptRuntimeException(e).setTemplate(this);
         }
     }
 
