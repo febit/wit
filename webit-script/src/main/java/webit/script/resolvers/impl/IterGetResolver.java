@@ -46,12 +46,12 @@ public class IterGetResolver implements GetResolver {
                 break;
             case -1180529308:
                 if ("isEven".equals(property)) {
-                    return iter.index() % 2 == 0;
+                    return iter.index() % 2 == 1; //Note: when index start by 0
                 }
                 break;
             case 100474789:
                 if ("isOdd".equals(property)) {
-                    return iter.index() % 2 == 1;
+                    return iter.index() % 2 == 0; //Note: when index start by 0
                 }
                 break;
         }
