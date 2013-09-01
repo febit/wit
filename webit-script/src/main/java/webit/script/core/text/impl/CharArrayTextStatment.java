@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script.core.text.impl;
 
 import webit.script.Context;
@@ -10,13 +9,13 @@ import webit.script.core.ast.Optimizable;
  *
  * @author Zqq
  */
-public final class StringTextStatment extends AbstractStatment implements Optimizable {
+public final class CharArrayTextStatment extends AbstractStatment implements Optimizable {
 
-    private final String text;
+    private final char[] text;
 
-    public StringTextStatment(String text, int line, int column) {
+    public CharArrayTextStatment(String text, int line, int column) {
         super(line, column);
-        this.text = text;
+        this.text = text != null ? text.toCharArray() : null;
     }
 
     @Override
@@ -24,8 +23,8 @@ public final class StringTextStatment extends AbstractStatment implements Optimi
         context.out(text);
     }
 
-    public StringTextStatment optimize() {
-        if (text != null && text.length() > 0) {
+    public CharArrayTextStatment optimize() {
+        if (text != null) {
             return this;
         }
         return null;

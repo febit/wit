@@ -10,8 +10,7 @@ import webit.script.core.text.TextStatmentFactory;
  *
  * @author Zqq
  */
-@Deprecated
-public class StringTextStatmentFactory implements TextStatmentFactory {
+public class CharArrayTextStatmentFactory implements TextStatmentFactory {
 
     public void startTemplate(Template template) {
     }

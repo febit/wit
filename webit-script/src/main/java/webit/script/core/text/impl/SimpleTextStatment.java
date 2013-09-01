@@ -33,7 +33,7 @@ public final class SimpleTextStatment extends AbstractStatment implements Optimi
 
     @Override
     public void execute(Context context) {
-        if (context.encoding.equals(encoding)) {
+        if (encoding.equals(context.encoding)) {
             context.out(textBytes);
         } else {
             context.out(text);
