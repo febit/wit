@@ -22,7 +22,7 @@ public final class WriterOut implements Out {
 
     public void write(byte[] bytes, int offset, int length) {
         try {
-            writer.write(new String(bytes, offset, length, encoding));
+            write(new String(bytes, offset, length, encoding));
         } catch (IOException ex) {
             throw new ScriptRuntimeException(ex);
         }
@@ -30,7 +30,7 @@ public final class WriterOut implements Out {
 
     public void write(byte[] bytes) {
         try {
-            writer.write(new String(bytes, encoding));
+            write(new String(bytes, encoding));
         } catch (IOException ex) {
             throw new ScriptRuntimeException(ex);
         }
@@ -54,7 +54,9 @@ public final class WriterOut implements Out {
 
     public void write(String string, int offset, int length) {
         try {
-            writer.write(string, offset, length);
+            char[] chars = new char[length];
+            string.getChars(offset, offset + length, new char[length], 0);
+            writer.write(chars);
         } catch (IOException ex) {
             throw new ScriptRuntimeException(ex);
         }
@@ -62,7 +64,7 @@ public final class WriterOut implements Out {
 
     public void write(String string) {
         try {
-            writer.write(string);
+            writer.write(string.toCharArray());
         } catch (IOException ex) {
             throw new ScriptRuntimeException(ex);
         }

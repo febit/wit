@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script;
 
 import java.util.Map;
@@ -95,6 +94,12 @@ public final class Context {
         }
     }
 
+    public final void out(char[] chars) {
+        if (chars != null) {
+            out.write(chars);
+        }
+    }
+
     public final void out(String string) {
         if (string != null) {
             out.write(string);
@@ -106,6 +111,8 @@ public final class Context {
             Class objClass = object.getClass();
             if (objClass == byte[].class) {
                 out((byte[]) object);
+            } else if (objClass == char[].class) {
+                out((char[]) object);
             } else if (objClass == String.class) {
                 out((String) object);
             } else {
