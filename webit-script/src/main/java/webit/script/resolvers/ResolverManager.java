@@ -1,12 +1,10 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script.resolvers;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import webit.script.asm.AsmResolverManager;
 import webit.script.resolvers.impl.CommonResolver;
+import webit.script.util.collection.IdentityHashMap;
 
 /**
  *
@@ -14,9 +12,9 @@ import webit.script.resolvers.impl.CommonResolver;
  */
 public class ResolverManager {
 
-    private ConcurrentMap<Class, GetResolver> getResolverMap;
-    private ConcurrentMap<Class, SetResolver> setResolverMap;
-    private ConcurrentMap<Class, ToStringResolver> toStringResolverMap;
+    private IdentityHashMap<GetResolver> getResolverMap;
+    private IdentityHashMap<SetResolver> setResolverMap;
+    private IdentityHashMap<ToStringResolver> toStringResolverMap;
     //
     private ArrayList<GetResolver> getResolvers;
     private ArrayList<SetResolver> setResolvers;
@@ -30,9 +28,9 @@ public class ResolverManager {
     private boolean enableAsm = true;
 
     public ResolverManager() {
-        getResolverMap = new ConcurrentHashMap<Class, GetResolver>();
-        setResolverMap = new ConcurrentHashMap<Class, SetResolver>();
-        toStringResolverMap = new ConcurrentHashMap<Class, ToStringResolver>();
+        getResolverMap = new IdentityHashMap<GetResolver>();
+        setResolverMap = new IdentityHashMap<SetResolver>();
+        toStringResolverMap = new IdentityHashMap<ToStringResolver>();
 
         getResolvers = new ArrayList<GetResolver>();
         setResolvers = new ArrayList<SetResolver>();
@@ -46,26 +44,27 @@ public class ResolverManager {
 
     private GetResolver getGetResolver(Object bean) {
         Class type = bean.getClass();
-        GetResolver resolver = getResolverMap.get(type);
+        GetResolver resolver = getResolverMap.unsafeGet(type);
         if (resolver == null) {
-            for (int i = 0; i < getResolverTypes.size(); i++) {
-                if (getResolverTypes.get(i).isAssignableFrom(type)) {
-                    resolver = getResolvers.get(i);
-                    break;
-                }
-            }
-
-            if (resolver == null && enableAsm) {
-                resolver = AsmResolverManager.generateAsmResolver(type);
-            }
-
+            resolver = getResolverMap.get(type);
             if (resolver == null) {
-                resolver = commonResolver;
-            }
+                for (int i = 0; i < getResolverTypes.size(); i++) {
+                    if (getResolverTypes.get(i).isAssignableFrom(type)) {
+                        resolver = getResolvers.get(i);
+                        break;
+                    }
+                }
 
-            GetResolver old = getResolverMap.putIfAbsent(type, resolver);
-            if (old != null) {
-                resolver = old;
+                if (resolver == null && enableAsm) {
+                    resolver = AsmResolverManager.generateAsmResolver(type);
+                }
+
+                if (resolver == null) {
+                    resolver = commonResolver;
+                }
+
+                //last
+                resolver = getResolverMap.putIfAbsent(type, resolver);
             }
         }
 
@@ -74,25 +73,26 @@ public class ResolverManager {
 
     private SetResolver getSetResolver(Object bean) {
         Class type = bean.getClass();
-        SetResolver resolver = setResolverMap.get(type);
+        SetResolver resolver = setResolverMap.unsafeGet(type);
         if (resolver == null) {
-            for (int i = 0; i < setResolverTypes.size(); i++) {
-                if (setResolverTypes.get(i).isAssignableFrom(type)) {
-                    resolver = setResolvers.get(i);
-                    break;
-                }
-            }
-
-            if (resolver == null && enableAsm) {
-                resolver = AsmResolverManager.generateAsmResolver(type);
-            }
+            resolver = setResolverMap.get(type);
             if (resolver == null) {
-                resolver = commonResolver;
-            }
+                for (int i = 0; i < setResolverTypes.size(); i++) {
+                    if (setResolverTypes.get(i).isAssignableFrom(type)) {
+                        resolver = setResolvers.get(i);
+                        break;
+                    }
+                }
 
-            SetResolver old = setResolverMap.putIfAbsent(type, resolver);
-            if (old != null) {
-                resolver = old;
+                if (resolver == null && enableAsm) {
+                    resolver = AsmResolverManager.generateAsmResolver(type);
+                }
+                
+                if (resolver == null) {
+                    resolver = commonResolver;
+                }
+
+                resolver = setResolverMap.putIfAbsent(type, resolver);
             }
         }
         return resolver;
@@ -100,22 +100,22 @@ public class ResolverManager {
 
     private ToStringResolver getToStringResolver(Object bean) {
         Class type = bean.getClass();
-        ToStringResolver resolver = toStringResolverMap.get(type);
+        ToStringResolver resolver = toStringResolverMap.unsafeGet(type);
         if (resolver == null) {
-            for (int i = 0; i < toStringResolverTypes.size(); i++) {
-                if (toStringResolverTypes.get(i).isAssignableFrom(type)) {
-                    resolver = toStringResolvers.get(i);
-                    break;
-                }
-            }
-
             if (resolver == null) {
-                resolver = commonResolver;
-            }
+                resolver = toStringResolverMap.get(type);
+                for (int i = 0; i < toStringResolverTypes.size(); i++) {
+                    if (toStringResolverTypes.get(i).isAssignableFrom(type)) {
+                        resolver = toStringResolvers.get(i);
+                        break;
+                    }
+                }
 
-            ToStringResolver old = toStringResolverMap.putIfAbsent(type, resolver);
-            if (old != null) {
-                resolver = old;
+                if (resolver == null) {
+                    resolver = commonResolver;
+                }
+
+                resolver = toStringResolverMap.putIfAbsent(type, resolver);
             }
         }
         return resolver;
