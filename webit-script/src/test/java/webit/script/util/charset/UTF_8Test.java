@@ -1,10 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util.charset;
 
-import webit.script.util.charset.UTF_8;
 import java.io.UnsupportedEncodingException;
 import static org.junit.Assert.*;
 import org.junit.Test;

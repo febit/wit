@@ -1,11 +1,11 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.io.charset.impl.special;
 
-import webit.script.util.charset.UTF_8;
 import java.io.IOException;
 import java.io.OutputStream;
 import webit.script.io.charset.Encoder;
 import webit.script.io.charset.impl.ThreadLocalCache;
+import webit.script.util.charset.UTF_8;
 
 /**
  *

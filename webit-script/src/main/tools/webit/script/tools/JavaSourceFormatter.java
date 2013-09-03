@@ -1,3 +1,4 @@
+// Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
 import jodd.io.FileUtil;
@@ -115,7 +116,7 @@ public class JavaSourceFormatter {
                 content = content.substring(index + 1);
             }
         }
-        content = COPYRIGHT + "\n\n" + content;
+        content = COPYRIGHT + "\n" + content;
         return content;
     }
 }

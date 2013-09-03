@@ -1,20 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
 import java.io.PrintStream;
-import java.security.spec.MGF1ParameterSpec;
-import java.util.Arrays;
 import org.junit.Test;
 import webit.script.asm4.ClassWriter;
-import webit.script.asm4.Label;
 import webit.script.asm4.Opcodes;
 import webit.script.asm4.Type;
 import webit.script.asm4.commons.GeneratorAdapter;
 import webit.script.asm4.commons.Method;
-import webit.script.asm4.commons.TableSwitchGenerator;
 import webit.script.resolvers.MatchMode;
 
 /**
@@ -24,7 +17,7 @@ import webit.script.resolvers.MatchMode;
 public class AsmTest extends ClassLoader implements Opcodes {
 
 
-    @Test
+    //@Test
     public void main() throws Exception {
         ClassWriter cw;
         byte[] code;

@@ -1,12 +1,12 @@
-
+// Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
 import java.util.HashMap;
 import java.util.Map;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.test.util.DiscardOutputStream;
-import static org.junit.Assert.*;
 
 /**
  *

@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
 import org.junit.Test;

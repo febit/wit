@@ -2,7 +2,6 @@
 package webit.script.core.ast.statments;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import webit.script.Context;
 import webit.script.Template;
