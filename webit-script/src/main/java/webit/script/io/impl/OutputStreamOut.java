@@ -3,9 +3,10 @@ package webit.script.io.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.UnsupportedCharsetException;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
+import webit.script.io.charset.CoderFactory;
+import webit.script.io.charset.Encoder;
 
 /**
  *
@@ -15,11 +16,20 @@ public final class OutputStreamOut implements Out {
 
     private final OutputStream outputStream;
     private final String encoding;
-    private CharArrayEncoder encoder;
+    private final Encoder encoder;
 
-    public OutputStreamOut(OutputStream outputStream, String encoding) {
+    public OutputStreamOut(OutputStream outputStream, String encoding, Encoder encoder) {
         this.outputStream = outputStream;
         this.encoding = encoding;
+        this.encoder = encoder;
+    }
+
+    public OutputStreamOut(OutputStream outputStream, OutputStreamOut out) {
+        this(outputStream, out.encoding, out.encoder);
+    }
+
+    public OutputStreamOut(OutputStream outputStream, String encoding, CoderFactory coderFactory) {
+        this(outputStream, encoding, coderFactory.newEncoder(encoding));
     }
 
     public void write(byte[] bytes, int offset, int length) {
@@ -39,9 +49,8 @@ public final class OutputStreamOut implements Out {
     }
 
     public void write(char[] chars, int offset, int length) {
-        checkEncoder();
         try {
-            this.encoder.write(chars, offset, length);
+            this.encoder.write(chars, offset, length, outputStream);
         } catch (IOException ex) {
             throw new ScriptRuntimeException(ex);
         }
@@ -52,14 +61,16 @@ public final class OutputStreamOut implements Out {
     }
 
     public void write(String string, int offset, int length) {
-        char[] chars = new char[length];
-        string.getChars(0, offset + length, chars, 0);
-        write(chars);
+        try {
+            this.encoder.write(string, offset, length, outputStream);
+        } catch (IOException ex) {
+            throw new ScriptRuntimeException(ex);
+        }
     }
 
     public void write(String string) {
         try {
-            outputStream.write(string.getBytes(encoding));
+            this.encoder.write(string, 0, string.length(), outputStream);
         } catch (IOException ex) {
             throw new ScriptRuntimeException(ex);
         }
@@ -67,15 +78,5 @@ public final class OutputStreamOut implements Out {
 
     public String getEncoding() {
         return encoding;
-    }
-
-    private void checkEncoder() {
-        if (this.encoder == null) {
-            try {
-                this.encoder = new CharArrayEncoder(encoding, outputStream);
-            } catch (UnsupportedCharsetException ex) {
-                throw new ScriptRuntimeException(ex);
-            }
-        }
     }
 }

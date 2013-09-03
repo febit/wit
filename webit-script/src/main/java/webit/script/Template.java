@@ -35,8 +35,7 @@ public class Template {
 
     /**
      *
-     * @return 
-     * @throws IOException
+     * @return @throws IOException
      * @throws ParserException
      */
     protected TemplateAST prepareTemplate() throws IOException, ParserException {
@@ -65,7 +64,7 @@ public class Template {
      * @throws ParserException
      */
     public Context merge(Map<String, Object> root, OutputStream outputStream) throws ScriptRuntimeException, ParserException {
-        return merge(root, new OutputStreamOut(outputStream, engine.getEncoding()));
+        return merge(root, new OutputStreamOut(outputStream, engine.getEncoding(), engine.getCoderFactory()));
     }
 
     /**
@@ -78,7 +77,7 @@ public class Template {
      * @throws ParserException
      */
     public Context merge(Map<String, Object> root, OutputStream outputStream, String encoding) throws ScriptRuntimeException, ParserException {
-        return merge(root, new OutputStreamOut(outputStream, encoding));
+        return merge(root, new OutputStreamOut(outputStream, encoding, engine.getCoderFactory()));
     }
 
     /**
@@ -90,7 +89,7 @@ public class Template {
      * @throws ParserException
      */
     public Context merge(Map<String, Object> root, Writer writer) throws ScriptRuntimeException, ParserException {
-        return merge(root, new WriterOut(writer, engine.getEncoding()));
+        return merge(root, new WriterOut(writer, engine.getEncoding(), engine.getCoderFactory()));
     }
 
     /**

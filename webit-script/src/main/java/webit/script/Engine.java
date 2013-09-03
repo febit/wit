@@ -11,6 +11,7 @@ import jodd.props.PropsUtil;
 import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.filters.Filter;
+import webit.script.io.charset.CoderFactory;
 import webit.script.loaders.Loader;
 import webit.script.resolvers.Resolver;
 import webit.script.resolvers.ResolverManager;
@@ -30,6 +31,7 @@ public final class Engine {
     private Class resourceLoaderClass = webit.script.loaders.impl.ClasspathLoader.class;
     private Class textStatmentFactoryClass = webit.script.core.text.impl.SimpleTextStatmentFactory.class;
     private Class nativeSecurityManagerClass = webit.script.security.impl.DefaultNativeSecurityManager.class;
+    private Class coderFactoryClass = webit.script.io.charset.impl.DefaultCoderFactory.class;
     private Class filterClass;
     private Class[] resolvers;
     private String encoding = "UTF-8";
@@ -39,6 +41,7 @@ public final class Engine {
     private Filter filter;
     private TextStatmentFactory textStatmentFactory;
     private NativeSecurityManager nativeSecurityManager;
+    private CoderFactory coderFactory;
     private final ResolverManager resolverManager;
     private Loader resourceLoader;
     private final ConcurrentMap<String, Template> templateCache;
@@ -56,6 +59,7 @@ public final class Engine {
         this.resourceLoader = (Loader) getBean(this.resourceLoaderClass);
         this.textStatmentFactory = (TextStatmentFactory) getBean(this.textStatmentFactoryClass);
         this.nativeSecurityManager = (NativeSecurityManager) getBean(this.nativeSecurityManagerClass);
+        this.coderFactory = (CoderFactory) getBean(this.coderFactoryClass);
 
         if (this.filterClass != null) {
             this.filter = (Filter) getBean(this.filterClass);
@@ -162,6 +166,10 @@ public final class Engine {
 
     public TextStatmentFactory getTextStatmentFactory() {
         return textStatmentFactory;
+    }
+
+    public CoderFactory getCoderFactory() {
+        return coderFactory;
     }
 
     public void setFilterClass(Class filterClass) {

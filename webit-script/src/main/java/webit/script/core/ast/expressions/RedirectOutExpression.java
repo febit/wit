@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script.core.ast.expressions;
 
 import jodd.io.FastByteArrayOutputStream;
@@ -9,6 +8,7 @@ import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
+import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.util.StatmentUtil;
@@ -31,20 +31,28 @@ public class RedirectOutExpression extends AbstractExpression {
     @Override
     public Object execute(Context context, boolean needReturn) {
 
+        final Out current = context.getOut();
+        if (current instanceof OutputStreamOut) {
 
-        if (context.getOut() instanceof OutputStreamOut) {
+            FastByteArrayOutputStream out = new FastByteArrayOutputStream(256);
 
-            FastByteArrayOutputStream out = new FastByteArrayOutputStream(128);
-
-            Object result = StatmentUtil.execute(srcExpr, context, needReturn, new OutputStreamOut(out, context.encoding));
+            Object result = StatmentUtil.execute(srcExpr, context, needReturn, new OutputStreamOut(out, (OutputStreamOut) current));
             ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(out.toByteArray());
 
             return result;
-        } else {
-            FastCharArrayWriter writer = new FastCharArrayWriter();
+        } else if (current instanceof WriterOut) {
+            FastCharArrayWriter writer = new FastCharArrayWriter(256);
 
-            Object result = StatmentUtil.execute(srcExpr, context, needReturn, new WriterOut(writer, context.encoding));
+            Object result = StatmentUtil.execute(srcExpr, context, needReturn, new WriterOut(writer, (WriterOut) current));
+            ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
+            value.set(writer.toString());
+
+            return result;
+        } else {
+            FastCharArrayWriter writer = new FastCharArrayWriter(256);
+
+            Object result = StatmentUtil.execute(srcExpr, context, needReturn, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
             ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(writer.toString());
 
