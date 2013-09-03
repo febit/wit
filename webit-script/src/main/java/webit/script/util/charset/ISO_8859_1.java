@@ -1,5 +1,5 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.io.charset.impl.special;
+package webit.script.util.charset;
 
 /**
  *

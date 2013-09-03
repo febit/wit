@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package webit.script.io.charset.impl.special;
+package webit.script.util.charset;
 
+import webit.script.util.charset.UTF_8;
 import java.io.UnsupportedEncodingException;
 import static org.junit.Assert.*;
 import org.junit.Test;

@@ -1,3 +1,6 @@
+
+package webit.script.util.charset;
+
 /*
  * Copyright (c) 2000, 2010, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -22,8 +25,6 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-package webit.script.io.charset.impl.special;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.CoderResult;
 import webit.script.io.charset.Decoder;
