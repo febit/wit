@@ -23,7 +23,6 @@ public final class PlusPlusOperator extends AbstractExpression {
         this.executeAtFirst = executeAtFirst;
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         ResetableValue resetableValue = StatmentUtil.getResetableValue(expr, context);
         Object value = resetableValue.get();

@@ -21,12 +21,10 @@ public final class NotOperator extends AbstractExpression implements Optimizable
         this.expr = expr;
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         return ALU.not(StatmentUtil.execute(expr, context));
     }
 
-    @Override
     public Expression optimize() {
         if (expr instanceof DirectValue) {
             return new DirectValue(ALU.not(((DirectValue) expr).value), line, column);

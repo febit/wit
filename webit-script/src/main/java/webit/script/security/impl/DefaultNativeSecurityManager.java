@@ -44,7 +44,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
             StringUtil.trimAll(nodeRules);
             for (int i = 0; i < nodeRules.length; i++) {
                 String rule = nodeRules[i];
-                if (rule.isEmpty() == false) {
+                if (rule.length() > 0) {
                     char firstChar = rule.charAt(0);
                     String nodeName;
                     boolean access;

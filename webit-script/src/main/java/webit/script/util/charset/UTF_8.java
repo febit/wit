@@ -29,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.CoderResult;
 import webit.script.io.charset.Decoder;
 import webit.script.io.charset.Encoder;
+import webit.script.util.CharUtil;
 
 /* Legal UTF-8 Byte Sequences
  *
@@ -145,8 +146,8 @@ public class UTF_8 {
                         bb = getByteBuffer(bb, sa, sp);
                         sp += malformedN(bb, 4).length();
                     } else {
-                        da[dp++] = Character.highSurrogate(uc);
-                        da[dp++] = Character.lowSurrogate(uc);
+                        da[dp++] = CharUtil.highSurrogate(uc);
+                        da[dp++] = CharUtil.lowSurrogate(uc);
                     }
                     continue;
                 }
@@ -282,7 +283,7 @@ public class UTF_8 {
                 // 2 bytes, 11 bits
                 da[dp++] = (byte) (0xc0 | (c >> 6));
                 da[dp++] = (byte) (0x80 | (c & 0x3f));
-            } else if (Character.isSurrogate(c)) {
+            } else if (CharUtil.isSurrogate(c)) {
                 if (sgp == null) {
                     sgp = new Surrogate.Parser();
                 }

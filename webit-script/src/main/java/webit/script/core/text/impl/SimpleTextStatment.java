@@ -30,7 +30,6 @@ public final class SimpleTextStatment extends AbstractStatment implements Optimi
         this.textBytes = bytes;
     }
 
-    @Override
     public void execute(Context context) {
         if (encoding.equals(context.encoding)) {
             context.out(textBytes);

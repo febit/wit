@@ -19,7 +19,6 @@ public abstract class SelfOperator extends AbstractExpression {
         this.rightExpr = rightExp;
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         Object rightResult = StatmentUtil.execute(rightExpr, context);
         ResetableValue resetableValue = StatmentUtil.getResetableValue(leftExpr, context);

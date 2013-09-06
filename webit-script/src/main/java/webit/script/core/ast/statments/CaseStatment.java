@@ -22,7 +22,6 @@ public final class CaseStatment extends AbstractStatment {
         this.hasNext = next != null;
     }
 
-    @Override
     public void execute(Context context) {
         if (body != null) {
             StatmentUtil.execute(body, context);

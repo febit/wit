@@ -28,7 +28,6 @@ public final class SwitchStatment extends AbstractStatment {
         this.hasDefaultStatment = defaultStatment != null;
     }
 
-    @Override
     public void execute(Context context) {
         Object result = StatmentUtil.execute(switchExpr, context);
         boolean run = false;

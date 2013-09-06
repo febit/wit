@@ -43,7 +43,7 @@ public abstract class AbstractLoader implements Loader, Configurable {
 
     public void setRoot(String root) {
         root = FileNameUtil.normalizeNoEndSeparator(root, true);
-        if (root != null && root.isEmpty()) {
+        if (root != null && root.length() == 0) {
             root = null;
         }
         this.root = root;

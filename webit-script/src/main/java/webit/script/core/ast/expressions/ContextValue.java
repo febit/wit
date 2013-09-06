@@ -41,7 +41,6 @@ public final class ContextValue extends AbstractExpression implements ResetableV
         context.vars.set(upstairs, index, value);
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         return get(context);
     }

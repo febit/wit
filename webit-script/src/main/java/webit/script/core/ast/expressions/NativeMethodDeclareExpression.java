@@ -23,7 +23,6 @@ public class NativeMethodDeclareExpression extends AbstractExpression {
         this.method = method;
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         if (context.enableAsmNative) {
             AsmMethodCaller caller;

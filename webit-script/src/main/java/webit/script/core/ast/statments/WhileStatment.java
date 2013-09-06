@@ -27,7 +27,6 @@ public final class WhileStatment extends AbstractStatment {
         this.label = label;
     }
 
-    @Override
     public void execute(Context context) {
         boolean go = checkAtFirst ? ALU.toBoolean(StatmentUtil.execute(whileExpr, context)) : true;
         LoopCtrl ctrl = context.loopCtrl;

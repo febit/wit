@@ -28,7 +28,6 @@ public class RedirectOutStatment extends AbstractStatment {
         this.toExpr = toExpr;
     }
 
-    @Override
     public void execute(Context context) {
 
         final Out current = context.getOut();

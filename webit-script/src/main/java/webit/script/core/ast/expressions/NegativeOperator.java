@@ -21,12 +21,10 @@ public final class NegativeOperator extends AbstractExpression implements Optimi
         this.expr = expr;
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         return ALU.negative(StatmentUtil.execute(expr, context));
     }
 
-    @Override
     public Expression optimize() {
         if (expr instanceof DirectValue) {
             return new DirectValue(ALU.negative(((DirectValue) expr).value), line, column);

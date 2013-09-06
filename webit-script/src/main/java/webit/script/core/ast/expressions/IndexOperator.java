@@ -19,7 +19,6 @@ public final class IndexOperator extends BinaryOperator implements ResetableValu
         super(leftExpr, rightExpr, line, column);
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         return context.resolverManager.get(StatmentUtil.execute(leftExpr, context), StatmentUtil.execute(rightExpr, context));
     }

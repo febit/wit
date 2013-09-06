@@ -20,12 +20,10 @@ public final class BitNotOperator extends AbstractExpression implements Optimiza
         this.expr = expr;
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         return ALU.bitNot(StatmentUtil.execute(expr, context));
     }
 
-    @Override
     public Expression optimize() {
         if (expr instanceof DirectValue) {
             return new DirectValue(ALU.bitNot(((DirectValue) expr).value), line, column);

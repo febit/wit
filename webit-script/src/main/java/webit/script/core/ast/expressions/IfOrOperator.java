@@ -17,7 +17,6 @@ public final class IfOrOperator extends BinaryOperator {
         super(leftExp, rightExp, line, column);
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         Object ifResult = StatmentUtil.execute(leftExpr, context);
         if (ALU.toBoolean(ifResult)) {

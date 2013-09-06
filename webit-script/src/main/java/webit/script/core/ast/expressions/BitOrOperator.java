@@ -18,12 +18,10 @@ public final class BitOrOperator extends BinaryOperator implements Optimizable {
         super(leftExpr, rightExpr, line, column);
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         return ALU.bitOr(StatmentUtil.execute(leftExpr, context), StatmentUtil.execute(rightExpr, context));
     }
 
-    @Override
     public Expression optimize() {
         if (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue) {
             return new DirectValue(ALU.bitOr(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column);

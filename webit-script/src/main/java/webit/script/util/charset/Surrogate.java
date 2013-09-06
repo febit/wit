@@ -27,6 +27,7 @@ package webit.script.util.charset;
  */
 import java.nio.CharBuffer;
 import java.nio.charset.CoderResult;
+import webit.script.util.CharUtil;
 
 /**
  * Utility class for dealing with surrogates.
@@ -88,7 +89,7 @@ public class Surrogate {
      */
     public static char high(int uc) {
         assert Character.isSupplementaryCodePoint(uc);
-        return Character.highSurrogate(uc);
+        return CharUtil.highSurrogate(uc);
     }
 
     /**
@@ -97,7 +98,7 @@ public class Surrogate {
      */
     public static char low(int uc) {
         assert Character.isSupplementaryCodePoint(uc);
-        return Character.lowSurrogate(uc);
+        return CharUtil.lowSurrogate(uc);
     }
 
     /**
@@ -279,9 +280,9 @@ public class Surrogate {
          * return a descriptive result object
          */
         public int generate(int uc, int len, CharBuffer dst) {
-            if (Character.isBmpCodePoint(uc)) {
+            if (CharUtil.isBmpCodePoint(uc)) {
                 char c = (char) uc;
-                if (Character.isSurrogate(c)) {
+                if (CharUtil.isSurrogate(c)) {
                     error = CoderResult.malformedForLength(len);
                     return -1;
                 }
@@ -297,8 +298,8 @@ public class Surrogate {
                     error = CoderResult.OVERFLOW;
                     return -1;
                 }
-                dst.put(Character.highSurrogate(uc));
-                dst.put(Character.lowSurrogate(uc));
+                dst.put(CharUtil.highSurrogate(uc));
+                dst.put(CharUtil.lowSurrogate(uc));
                 error = null;
                 return 2;
             } else {
@@ -324,9 +325,9 @@ public class Surrogate {
          * return a descriptive result object
          */
         public int generate(int uc, int len, char[] da, int dp, int dl) {
-            if (Character.isBmpCodePoint(uc)) {
+            if (CharUtil.isBmpCodePoint(uc)) {
                 char c = (char) uc;
-                if (Character.isSurrogate(c)) {
+                if (CharUtil.isSurrogate(c)) {
                     error = CoderResult.malformedForLength(len);
                     return -1;
                 }
@@ -342,8 +343,8 @@ public class Surrogate {
                     error = CoderResult.OVERFLOW;
                     return -1;
                 }
-                da[dp] = Character.highSurrogate(uc);
-                da[dp + 1] = Character.lowSurrogate(uc);
+                da[dp] = CharUtil.highSurrogate(uc);
+                da[dp + 1] = CharUtil.lowSurrogate(uc);
                 error = null;
                 return 2;
             } else {

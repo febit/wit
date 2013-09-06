@@ -32,7 +32,6 @@ public final class IfStatment extends AbstractStatment implements Optimizable {
         elseNotEmpty = elseStatment != null;
     }
 
-    @Override
     public void execute(Context context) {
         if (ALU.toBoolean(StatmentUtil.execute(ifExpr, context))) {
             if (bodyNotEmpty) {

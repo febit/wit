@@ -19,7 +19,6 @@ public final class ArrayValue extends AbstractExpression {
         this.valueExprs = valueExprs;
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         int len = valueExprs.length;
         Object[] value = new Object[len];

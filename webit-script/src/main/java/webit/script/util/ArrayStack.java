@@ -23,7 +23,6 @@ public class ArrayStack<T> implements Stack<T> {
         size = 0;
     }
 
-    @Override
     public boolean empty() {
         return size == 0;
     }
@@ -37,12 +36,10 @@ public class ArrayStack<T> implements Stack<T> {
         size = 0;
     }
 
-    @Override
     public int size() {
         return size;
     }
 
-    @Override
     public T push(T element) {
         ensureCapacity(size + 1);
         elements[size++] = element;
@@ -50,7 +47,6 @@ public class ArrayStack<T> implements Stack<T> {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public T pop() {
         if (size == 0) {
             return null;

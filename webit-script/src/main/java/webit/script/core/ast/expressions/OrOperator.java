@@ -17,12 +17,10 @@ public final class OrOperator extends BinaryOperator implements Optimizable {
         super(leftExpr, rightExpr, line, column);
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         return ALU.or(leftExpr, rightExpr, context);
     }
 
-    @Override
     public Expression optimize() {
         if (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue) {
             return new DirectValue(ALU.or(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column);

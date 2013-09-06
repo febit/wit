@@ -23,7 +23,6 @@ public final class AssignOperator extends AbstractExpression {
         this.rexpr = rexpr;
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
         Object result = StatmentUtil.execute(rexpr, context, needReturn);
         ResetableValue value = StatmentUtil.getResetableValue(lexpr, context);

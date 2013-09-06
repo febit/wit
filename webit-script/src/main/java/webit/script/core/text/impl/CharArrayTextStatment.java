@@ -18,7 +18,6 @@ public final class CharArrayTextStatment extends AbstractStatment implements Opt
         this.text = text != null ? text.toCharArray() : null;
     }
 
-    @Override
     public void execute(Context context) {
         context.out(text);
     }

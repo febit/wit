@@ -28,7 +28,6 @@ public class RedirectOutExpression extends AbstractExpression {
         this.toExpr = toExpr;
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
 
         final Out current = context.getOut();

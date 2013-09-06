@@ -20,7 +20,6 @@ public final class FunctionDeclareExpression extends AbstractExpression {
         this.function = function;
     }
 
-    @Override
     public Object execute(Context context, boolean needReturn) {
 
         VariantContext[] variantContexts;
