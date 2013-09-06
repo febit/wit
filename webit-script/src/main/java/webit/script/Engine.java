@@ -13,6 +13,7 @@ import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.filters.Filter;
 import webit.script.io.charset.CoderFactory;
 import webit.script.loaders.Loader;
+import webit.script.loggers.Logger;
 import webit.script.resolvers.Resolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
@@ -33,11 +34,13 @@ public final class Engine {
     private Class nativeSecurityManagerClass = webit.script.security.impl.DefaultNativeSecurityManager.class;
     private Class coderFactoryClass = webit.script.io.charset.impl.DefaultCoderFactory.class;
     private Class filterClass;
+    private Class loggerClass = webit.script.loggers.impl.NOPLogger.class;
     private Class[] resolvers;
     private String encoding = "UTF-8";
     private boolean enableAsmNative = true;
     private boolean looseVar = false;
     //
+    private Logger logger;
     private Filter filter;
     private TextStatmentFactory textStatmentFactory;
     private NativeSecurityManager nativeSecurityManager;
@@ -60,6 +63,8 @@ public final class Engine {
         this.textStatmentFactory = (TextStatmentFactory) getBean(this.textStatmentFactoryClass);
         this.nativeSecurityManager = (NativeSecurityManager) getBean(this.nativeSecurityManagerClass);
         this.coderFactory = (CoderFactory) getBean(this.coderFactoryClass);
+        
+        this.logger = (Logger) getBean(this.loggerClass);
 
         if (this.filterClass != null) {
             this.filter = (Filter) getBean(this.filterClass);
@@ -83,8 +88,8 @@ public final class Engine {
 
             _petite.addBean(beanName, bean);
 
-            if (bean instanceof Configurable) {
-                ((Configurable) bean).init(this);
+            if (bean instanceof Configable) {
+                ((Configable) bean).init(this);
             }
         }
     }
@@ -178,6 +183,10 @@ public final class Engine {
 
     public Filter getFilter() {
         return filter;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 
     public static Engine createEngine(String configPath) {

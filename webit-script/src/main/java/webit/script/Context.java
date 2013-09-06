@@ -6,6 +6,7 @@ import webit.script.core.runtime.LoopCtrl;
 import webit.script.core.runtime.VariantStack;
 import webit.script.core.runtime.variant.VariantContext;
 import webit.script.io.Out;
+import webit.script.loggers.Logger;
 import webit.script.resolvers.ResolverManager;
 import webit.script.util.ArrayStack;
 import webit.script.util.Stack;
@@ -28,6 +29,7 @@ public final class Context {
     public final Template template;
     public final ResolverManager resolverManager;
     public final boolean enableAsmNative;
+    public final Logger logger;
 
     public Context(Template template, Out out) {
 
@@ -36,8 +38,10 @@ public final class Context {
         this.encoding = out.getEncoding();
         this.loopCtrl = new LoopCtrl();
         this.vars = new VariantStack();
-        this.resolverManager = template.engine.getResolverManager();
-        this.enableAsmNative = template.engine.isEnableAsmNative();
+        final Engine engine = template.engine;
+        this.resolverManager = engine.getResolverManager();
+        this.enableAsmNative = engine.isEnableAsmNative();
+        this.logger = engine.getLogger();
     }
 
     public Context(Context parent, Template template, VariantContext[] parentVarContexts) {
@@ -49,6 +53,7 @@ public final class Context {
         this.vars = new VariantStack(parentVarContexts);
         this.resolverManager = parent.resolverManager;
         this.enableAsmNative = parent.enableAsmNative;
+        this.logger = parent.logger;
     }
 
     protected final void checkOutStack() {

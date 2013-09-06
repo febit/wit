@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.filters.impl;
 
-import webit.script.Configurable;
+import webit.script.Configable;
 import webit.script.Engine;
 import webit.script.filters.Filter;
 
@@ -9,7 +9,7 @@ import webit.script.filters.Filter;
  *
  * @author Zqq
  */
-public class MutiFilter implements Filter, Configurable {
+public class MutiFilter implements Filter, Configable {
 
     //settings
     private Class[] filtersClass;
