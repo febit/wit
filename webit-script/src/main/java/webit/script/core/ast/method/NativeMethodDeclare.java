@@ -16,11 +16,14 @@ public final class NativeMethodDeclare implements MethodDeclare {
     private final Method method;
     private final int argsCount;
     private final boolean isStatic;
+    private final boolean noVoid;
 
     public NativeMethodDeclare(Method method) {
         this.method = method;
         this.argsCount = method.getParameterTypes().length;
         this.isStatic = ClassUtil.isStatic(method);
+        Class returnType = method.getReturnType();
+        this.noVoid = (returnType != void.class) && (returnType != Void.class);
     }
 
     public Object execute(Context context, Object[] args) {
@@ -58,12 +61,11 @@ public final class NativeMethodDeclare implements MethodDeclare {
             System.arraycopy(args, 1, methodArgs, 0, copyLen);
         }
         try {
-            //TODO: how if a void result
-            return method.invoke(obj, methodArgs);
+            return noVoid ? method.invoke(obj, methodArgs) : Context.VOID;
         } catch (IllegalAccessException ex) {
-            throw new ScriptRuntimeException("this method is inaccessible: "+ ex.getLocalizedMessage());
+            throw new ScriptRuntimeException("this method is inaccessible: " + ex.getLocalizedMessage());
         } catch (IllegalArgumentException ex) {
-            throw new ScriptRuntimeException("illegal argument: "+ ex.getLocalizedMessage());
+            throw new ScriptRuntimeException("illegal argument: " + ex.getLocalizedMessage());
         } catch (InvocationTargetException ex) {
             throw new ScriptRuntimeException("this method throws an exception", ex);
         }
