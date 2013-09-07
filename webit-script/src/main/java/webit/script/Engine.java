@@ -1,13 +1,15 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
+import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import jodd.petite.PetiteContainer;
 import jodd.petite.meta.PetiteInitMethod;
 import jodd.props.Props;
-import jodd.props.PropsUtil;
+import jodd.util.StringUtil;
 import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.filters.Filter;
@@ -17,6 +19,7 @@ import webit.script.loggers.Logger;
 import webit.script.resolvers.Resolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
+import webit.script.util.PropsUtil;
 
 /**
  *
@@ -185,6 +188,10 @@ public final class Engine {
         return filter;
     }
 
+    public void setLoggerClass(Class loggerClass) {
+        this.loggerClass = loggerClass;
+    }
+
     public Logger getLogger() {
         return logger;
     }
@@ -198,15 +205,15 @@ public final class Engine {
         PetiteContainer petite = new PetiteContainer();
         petite.getConfig().setUseFullTypeNames(true);
 
-        Props props;
+        final Props props = new Props();
         //props.loadSystemProperties("sys");
         //props.loadEnvironment("env");
 
-        //TODO: 记录加载的配置文件
+        List<String> propsFiles;
         if (configPath != null) {
-            props = PropsUtil.createFromClasspath(DEFAULT_PROPERTIES, configPath);
+            propsFiles = PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES, configPath);
         } else {
-            props = PropsUtil.createFromClasspath(DEFAULT_PROPERTIES);
+            propsFiles = PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES);
         }
 
         if (parameters != null) {
@@ -216,11 +223,17 @@ public final class Engine {
         petite.defineParameters(props);
         petite.addBean(PETITE, petite);
 
-        Engine engine = new Engine(petite);
+        final Engine engine = new Engine(petite);
 
         String engineBeanName = petite.resolveBeanName(Engine.class);
         petite.addBean(engineBeanName, engine);
         petite.addBean(ENGINE, engine);
+        
+        //Log props file name
+        Logger logger = engine.getLogger();
+        if (logger != null && logger.isInfoEnabled()) {
+            logger.info("Loaded props files from classpath: {}", StringUtil.join(propsFiles, ", "));
+        }
 
         return engine;
     }

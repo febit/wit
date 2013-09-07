@@ -24,6 +24,8 @@ resolvers=\
 # [webit.script.filters.impl.MutiFilter]
 # filtersClass=
 
+loggerClass=webit.script.loggers.impl.Slf4jLogger
+
 
 [webit.script.resolvers.ResolverManager]
 enableAsm=true
