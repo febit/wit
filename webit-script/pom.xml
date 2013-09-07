@@ -157,6 +157,7 @@
                 <configuration>
                     <compilerArgument> -Xlint:unchecked </compilerArgument>
                     <showWarnings>true</showWarnings>
+                    <debug>false</debug>
                 </configuration>
             </plugin>
         </plugins>
