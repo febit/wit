@@ -53,7 +53,7 @@ public class Slf4jLogger implements Logger {
     }
 
     public boolean isInfoEnabled() {
-        return logger.isDebugEnabled();
+        return logger.isInfoEnabled();
     }
 
     public void info(String msg) {

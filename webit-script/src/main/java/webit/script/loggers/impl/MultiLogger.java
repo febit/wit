@@ -9,7 +9,7 @@ import webit.script.loggers.Logger;
  *
  * @author zqq90
  */
-public class MultiLogger implements Logger, Configable {
+public final class MultiLogger implements Logger, Configable {
 
     //Settings
     private Class[] loggers;

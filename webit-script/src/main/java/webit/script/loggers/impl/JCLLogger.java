@@ -12,7 +12,7 @@ import webit.script.util.MessageFormatter;
  *
  * @author zqq90
  */
-public class JCLLogger implements Logger {
+public final class JCLLogger implements Logger {
 
     //settings
     private String name = DEFAULT_NAME;
@@ -61,7 +61,7 @@ public class JCLLogger implements Logger {
     }
 
     public boolean isInfoEnabled() {
-        return logger.isDebugEnabled();
+        return logger.isInfoEnabled();
     }
 
     public void info(String msg) {

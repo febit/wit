@@ -10,7 +10,7 @@ import webit.script.util.MessageFormatter;
  *
  * @author zqq90
  */
-public class SimpleLogger implements Logger {
+public final class SimpleLogger implements Logger {
 
     public static final int LEVEL_TRACE = 1;
     public static final int LEVEL_DEBUG = 2;
@@ -33,7 +33,7 @@ public class SimpleLogger implements Logger {
     public void init() {
         prefix = "[" + name + "] ";
         level = level.trim().toLowerCase();
-        
+
         _error = true;
         if ("error".equals(level)) {
             return;

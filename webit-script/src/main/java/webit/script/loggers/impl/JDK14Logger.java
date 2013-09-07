@@ -10,7 +10,7 @@ import webit.script.util.MessageFormatter;
  *
  * @author zqq90
  */
-public class JDK14Logger implements Logger {
+public final class JDK14Logger implements Logger {
 
     //settings
     private String name = DEFAULT_NAME;

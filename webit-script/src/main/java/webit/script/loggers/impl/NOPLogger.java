@@ -7,7 +7,7 @@ import webit.script.loggers.Logger;
  *
  * @author zqq90
  */
-public class NOPLogger implements Logger {
+public final class NOPLogger implements Logger {
 
     public boolean isTraceEnabled() {
         return false;
