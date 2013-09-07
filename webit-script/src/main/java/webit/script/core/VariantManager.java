@@ -33,6 +33,7 @@ public class VariantManager {
         return varWall.getOverflowUpstairs();
     }
 
+    @SuppressWarnings("unchecked")
     public VariantManager() {
 
         elements = new Map[10];
@@ -43,11 +44,12 @@ public class VariantManager {
         pushVarWall();
     }
 
+    @SuppressWarnings("unchecked")
     private void ensureCapacity(int mincap) {
         if (mincap > elements.length) {
             int newcap = ((elements.length * 3) >> 1) + 1;
             Object[] olddata = elements;
-            elements = new HashMap[newcap < mincap ? mincap : newcap];
+            elements = new Map[newcap < mincap ? mincap : newcap];
             System.arraycopy(olddata, 0, elements, 0, currentElementIndex + 1);
         }
     }

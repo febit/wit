@@ -39,6 +39,7 @@ public class ImportStatment extends AbstractStatment {
 
     }
 
+    @SuppressWarnings("unchecked")
     public void execute(Context context) {
         Object templateNameObject = StatmentUtil.execute(templateNameExpr, context);
 

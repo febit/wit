@@ -17,6 +17,7 @@ import webit.script.io.Out;
  */
 public class StatmentUtil {
 
+    @SuppressWarnings("deprecation")
     public static Object execute(Expression expression, Context context, boolean needReturn, Out out) {
         try {
             context.pushOut(out);
@@ -80,6 +81,7 @@ public class StatmentUtil {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static void execute(Statment statment, Out out, Context context) {
         try {
             context.pushOut(out);

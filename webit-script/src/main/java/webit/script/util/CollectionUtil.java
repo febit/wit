@@ -107,6 +107,7 @@ public class CollectionUtil {
         throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());
     }
 
+    @SuppressWarnings("unchecked")
     public static void setByIndex(Object o1, Object key, Object value) {
         if (o1 == null || key == null) {
             throw new ScriptRuntimeException("value is null");
@@ -213,6 +214,7 @@ public class CollectionUtil {
         throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());
     }
 
+    @SuppressWarnings("unchecked")
     public static Iter toIter(Object o1) {
         if (o1 == null) {
             return null;
@@ -271,6 +273,7 @@ public class CollectionUtil {
         throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());
     }
 
+    @SuppressWarnings("unchecked")
     public static Iter toIter(Set o1) {
         return new IteratorIterAdapter(o1.iterator());
     }

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.StatmentPart;
@@ -16,7 +16,7 @@ public final class FunctionExecuteExpressionPart extends StatmentPart {
     private List<Expression> paramExprList;
 
     public FunctionExecuteExpressionPart() {
-        paramExprList = new ArrayList<Expression>();
+        paramExprList = new LinkedList<Expression>();
     }
 
     @Override

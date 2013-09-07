@@ -16,6 +16,7 @@ public final class MultiLogger implements Logger, Configable {
     //
     private Logger[] _loggers;
 
+    @SuppressWarnings("unchecked")
     public void init(Engine engine) {
         if (loggers != null && loggers.length > 0) {
             int len = loggers.length;

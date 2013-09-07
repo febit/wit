@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import webit.script.core.runtime.variant.VariantUtil;
@@ -17,7 +17,7 @@ public class TemplatePart {
     private Map<String, Integer> varMap;
 
     public TemplatePart() {
-        this.statmentList = new ArrayList();
+        this.statmentList = new LinkedList<Statment>();
     }
 
     public TemplatePart setVarMap(Map<String, Integer> varMap) {

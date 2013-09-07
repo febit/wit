@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.method;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import webit.script.core.ast.Statment;
@@ -48,8 +48,8 @@ public final class FunctionPart extends StatmentPart {
 
     public FunctionPart(int line, int column) {
         super(line, column);
-        this.statmentList = new ArrayList();
-        this.argIndexList = new ArrayList<Integer>();
+        this.statmentList = new LinkedList<Statment>();
+        this.argIndexList = new LinkedList<Integer>();
     }
 
     public FunctionPart appendArgIndexs(int index) {
@@ -60,8 +60,9 @@ public final class FunctionPart extends StatmentPart {
     public Function pop() {
         //TODO: 待优化
         int[] argIndexs = new int[argIndexList.size()];
-        for (int i = 0; i < argIndexs.length; i++) {
-            argIndexs[i] = argIndexList.get(i);
+        int i  = 0;
+        for (int index : argIndexList) {
+            argIndexs[i++] = index;
         }
         Statment[] statments = new Statment[statmentList.size()];
         statmentList.toArray(statments);

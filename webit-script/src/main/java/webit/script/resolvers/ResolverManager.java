@@ -42,6 +42,7 @@ public class ResolverManager {
         commonResolver = new CommonResolver();
     }
 
+    @SuppressWarnings("unchecked")
     private GetResolver getGetResolver(Object bean) {
         Class type = bean.getClass();
         GetResolver resolver = getResolverMap.unsafeGet(type);
@@ -71,6 +72,7 @@ public class ResolverManager {
         return resolver;
     }
 
+    @SuppressWarnings("unchecked")
     private SetResolver getSetResolver(Object bean) {
         Class type = bean.getClass();
         SetResolver resolver = setResolverMap.unsafeGet(type);
@@ -98,6 +100,7 @@ public class ResolverManager {
         return resolver;
     }
 
+    @SuppressWarnings("unchecked")
     private ToStringResolver getToStringResolver(Object bean) {
         Class type = bean.getClass();
         ToStringResolver resolver = toStringResolverMap.unsafeGet(type);

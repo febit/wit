@@ -2,7 +2,7 @@
 package webit.script.core.ast.expressions;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.StatmentPart;
 import webit.script.exceptions.NativeSecurityException;
@@ -21,7 +21,7 @@ public class NativeConstructorDeclareExpressionPart extends StatmentPart {
 
     public NativeConstructorDeclareExpressionPart(int line, int column) {
         super(line, column);
-        this.paramTypeList = new ArrayList<Class>(5);
+        this.paramTypeList = new LinkedList<Class>();
     }
 
     public NativeConstructorDeclareExpressionPart setClassName(Class clazz) {
@@ -34,6 +34,7 @@ public class NativeConstructorDeclareExpressionPart extends StatmentPart {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     public NativeConstructorDeclareExpression pop(NativeSecurityManager securityManager) {
         try {
             Class[] paramTypes = new Class[paramTypeList.size()];

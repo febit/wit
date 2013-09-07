@@ -15,6 +15,7 @@ import webit.script.exceptions.ScriptRuntimeException;
 public class ASMMethodCallerGeneratorTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     public void test() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
         AsmMethodCallerGenerator generator = new AsmMethodCallerGenerator();
         //System.currentTimeMillis();
@@ -67,13 +68,11 @@ public class ASMMethodCallerGeneratorTest {
         try {
             //exception
             assertEquals(listSize.execute(new Object[0]), 2);
-        } catch (Exception e) {
+        } catch (ScriptRuntimeException e) {
             exception = e;
         }
-
         assertNotNull(exception);
-        assertEquals(exception.getClass(), ScriptRuntimeException.class);
-
+        
 
         assertEquals(listSize.execute(new Object[]{list}), 2);
         assertEquals(listSize.execute(new Object[]{list, 2, 3}), 2);

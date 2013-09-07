@@ -56,7 +56,7 @@ public final class Context {
         this.logger = parent.logger;
     }
 
-    protected final void checkOutStack() {
+    protected void checkOutStack() {
         if (outStack == null) {
             outStack = new ArrayStack<Out>(5);
         }
@@ -69,7 +69,7 @@ public final class Context {
      * @deprecated
      */
     @Deprecated
-    public final void pushOut(Out out) {
+    public void pushOut(Out out) {
         checkOutStack();
         outStack.push(this.out);
         this.out = out;
@@ -82,36 +82,36 @@ public final class Context {
      * @deprecated
      */
     @Deprecated
-    public final Out popOut() {
+    public Out popOut() {
         checkOutStack();
         Out old = this.out;
         this.out = outStack.pop();
         return old;
     }
 
-    public final Out getOut() {
+    public Out getOut() {
         return out;
     }
 
-    public final void out(byte[] bytes) {
+    public void out(byte[] bytes) {
         if (bytes != null) {
             out.write(bytes);
         }
     }
 
-    public final void out(char[] chars) {
+    public void out(char[] chars) {
         if (chars != null) {
             out.write(chars);
         }
     }
 
-    public final void out(String string) {
+    public void out(String string) {
         if (string != null) {
             out.write(string);
         }
     }
 
-    public final void out(Object object) {
+    public void out(Object object) {
         if (object != null) {
             Class objClass = object.getClass();
             if (objClass == byte[].class) {
@@ -126,7 +126,7 @@ public final class Context {
         }
     }
 
-    public final void exportTo(Map map) {
+    public void exportTo(Map map) {
         vars.getCurrentContext().exportTo(map);
     }
 }

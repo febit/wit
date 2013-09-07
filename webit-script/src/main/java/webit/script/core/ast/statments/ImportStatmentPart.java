@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statments;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.StatmentPart;
@@ -21,8 +21,8 @@ public class ImportStatmentPart extends StatmentPart {
     public ImportStatmentPart(Expression expr, int line, int column) {
         super(line, column);
         this.expr = expr;
-        exportNameList = new ArrayList<String>();
-        toContextValueList = new ArrayList<ContextValue>();
+        exportNameList = new LinkedList<String>();
+        toContextValueList = new LinkedList<ContextValue>();
     }
 
     public ImportStatmentPart setParamsExpr(Expression paramsExpr) {

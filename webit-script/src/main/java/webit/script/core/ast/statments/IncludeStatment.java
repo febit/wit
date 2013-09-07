@@ -24,6 +24,7 @@ public class IncludeStatment extends AbstractStatment {
         this.paramsExpr = paramsExpr;
     }
 
+    @SuppressWarnings("unchecked")
     public void execute(Context context) {
         Object templateNameObject = StatmentUtil.execute(templateNameExpr, context);
 

@@ -10,6 +10,7 @@ public final class IdentityHashMap<V> {
     //
     private final Object lock = new Object();
 
+    @SuppressWarnings("unchecked")
     public IdentityHashMap(int initialCapacity, float loadFactor) {
         if (initialCapacity < 0) {
             throw new IllegalArgumentException("Invalid initial capacity: " + initialCapacity);
@@ -58,6 +59,7 @@ public final class IdentityHashMap<V> {
         }
     }
     
+    @SuppressWarnings("unchecked")
     private void resize() {
         synchronized(lock){
             if (count < threshold) {
@@ -87,6 +89,7 @@ public final class IdentityHashMap<V> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public V unsafePutIfAbsent(Object key, V value) {
 
         Entry<V> tab[] = table;
@@ -127,7 +130,7 @@ public final class IdentityHashMap<V> {
         V value;
         Entry<V> next;
 
-        Entry(int id, V value, Entry next) {
+        Entry(int id, V value, Entry<V> next) {
             this.value = value;
             this.id = id;
             this.next = next;

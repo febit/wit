@@ -2,7 +2,7 @@
 package webit.script.core.ast.expressions;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.StatmentPart;
 import webit.script.exceptions.NativeSecurityException;
@@ -23,7 +23,7 @@ public class NativeMethodDeclareExpressionPart extends StatmentPart {
 
     public NativeMethodDeclareExpressionPart(int line, int column) {
         super(line, column);
-        this.paramTypeList = new ArrayList<Class>(5);
+        this.paramTypeList = new LinkedList<Class>();
     }
 
     public NativeMethodDeclareExpressionPart setClassName(Class clazz) {

@@ -27,6 +27,7 @@ public class MutiFilter implements Filter, Configable {
         return object;
     }
 
+    @SuppressWarnings("unchecked")
     public void init(Engine engine) {
         if (filtersClass != null) {
             filters = new Filter[filtersClass.length];

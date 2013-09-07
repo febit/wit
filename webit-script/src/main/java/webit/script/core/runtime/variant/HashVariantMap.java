@@ -16,7 +16,7 @@ public class HashVariantMap implements VariantMap {
     public HashVariantMap(Map<String, Integer> map) {
         int size = map.size();
         array = new String[size];
-        varMap = new HashMap((size + 1) * 4 / 3, 0.75f);
+        varMap = new HashMap<String, Integer>((size + 1) * 4 / 3, 0.75f);
 
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             String name = entry.getKey();

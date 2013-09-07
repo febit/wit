@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,6 +59,7 @@ public final class Engine {
     }
 
     @PetiteInitMethod
+    @SuppressWarnings("unchecked")
     public void init() throws Exception {
 
         this.resourceLoader = (Loader) getBean(this.resourceLoaderClass);
@@ -97,6 +97,7 @@ public final class Engine {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <E> E getBean(Class<E> type) throws InstantiationException, IllegalAccessException {
 
         String beanName = _petite.resolveBeanName(type);

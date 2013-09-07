@@ -19,6 +19,7 @@ public class VariantContext {
         this.values = size != 0 ? new Object[size] : EMPTY_ARRAY;
     }
 
+    @SuppressWarnings("unchecked")
     public void exportTo(Map map) {
         for (int i = 0; i < values.length; i++) {
             map.put(box.getName(i), values[i]);

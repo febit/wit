@@ -14,7 +14,7 @@ import webit.script.util.Stack;
  */
 public class ScriptRuntimeException extends RuntimeException {
 
-    private Stack<Statment> statmentStack = new ArrayStack(8);
+    private Stack<Statment> statmentStack = new ArrayStack<Statment>(8);
     private Template template;
     private String message;
 

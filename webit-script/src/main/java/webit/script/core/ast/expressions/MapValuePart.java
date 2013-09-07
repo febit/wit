@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.StatmentPart;
@@ -17,16 +17,18 @@ public final class MapValuePart extends StatmentPart{
 
     public MapValuePart(int line, int column) {
         super(line, column);
-        this.keys = new ArrayList();
-        this.valueExprs = new ArrayList();
+        this.keys = new LinkedList();
+        this.valueExprs = new LinkedList<Expression>();
     }
     
+    @SuppressWarnings("unchecked")
     public MapValuePart append(Object key, Expression expr){
         keys.add(key);
         valueExprs.add(expr);
         return this;
     }
     
+    @SuppressWarnings("unchecked")
     public MapValue pop(){
 
         int len = keys.size();

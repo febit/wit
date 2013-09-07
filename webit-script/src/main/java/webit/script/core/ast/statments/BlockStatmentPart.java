@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statments;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import webit.script.core.ast.Statment;
@@ -19,7 +19,7 @@ public final class BlockStatmentPart extends StatmentPart {
 
     public BlockStatmentPart(int line, int column) {
         super(line, column);
-        this.statmentList = new ArrayList();
+        this.statmentList = new LinkedList<Statment>();
     }
 
     public BlockStatmentPart setVarMap(Map<String, Integer> varMap) {

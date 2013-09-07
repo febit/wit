@@ -23,7 +23,7 @@ public class TemplateAST {
         this.statments = statments;
     }
 
-    public Context execute(Context context, Map root) {
+    public Context execute(Context context, Map<String, Object> root) {
         VariantStack vars = context.vars;
         vars.push(varMap);
         vars.setToCurrentContext(root);

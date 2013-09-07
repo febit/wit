@@ -3,6 +3,7 @@ package webit.script.resolvers.impl;
 
 import java.util.Collection;
 import java.util.List;
+import webit.script.core.ast.Statment;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
@@ -39,7 +40,8 @@ public class ListResolver implements GetResolver, SetResolver {
             throw new ScriptRuntimeException("Invalid property or can't read: java.util.List#" + property);
         }
     }
-
+    
+    @SuppressWarnings("unchecked")
     public boolean set(Object object, Object property, Object value) {
         List list = (List) object;
         if (property instanceof Number) {

@@ -2,8 +2,8 @@
 package webit.script;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import jodd.io.StringOutputStream;
 import jodd.io.findfile.ClassFinder;
@@ -22,7 +22,7 @@ public class AutoTest {
     private final static String TEMPLATE_ROOT = "/webit/script/test/tmpls";
 
     private List<String> collectAutoTestTemplates() {
-        final List<String> templates = new ArrayList<String>();
+        final List<String> templates = new LinkedList<String>();
         final ClassScanner scanner = new ClassScanner() {
             @Override
             protected void onEntry(ClassFinder.EntryData entryData) throws IOException {
