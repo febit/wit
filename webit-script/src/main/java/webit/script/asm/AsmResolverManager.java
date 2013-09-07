@@ -34,7 +34,7 @@ public class AsmResolverManager {
                         resolver = (AsmResolver) asmResolverGenerator.generateResolver(type).newInstance();
                         box.setResolver(resolver);
                     } catch (Exception ex) {
-                        //TODO: 记录生成失败
+                        //Note: ignore failed
                     }
                 }
             }

@@ -26,7 +26,7 @@ public class VariantUtil {
     public static VariantMap toVariantMap(Map<String, Integer> map) {
         if (map == null || map.isEmpty()) {
             return EMPTY;
-        } else if (map.size() < 7) { //TODO: adjust
+        } else if (map.size() < 7) {
             return new ArrayVariantMap(map);
         } else {
             return new HashVariantMap(map);

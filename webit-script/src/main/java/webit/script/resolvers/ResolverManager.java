@@ -2,7 +2,10 @@
 package webit.script.resolvers;
 
 import java.util.ArrayList;
+import webit.script.Configable;
+import webit.script.Engine;
 import webit.script.asm.AsmResolverManager;
+import webit.script.loggers.Logger;
 import webit.script.resolvers.impl.CommonResolver;
 import webit.script.util.collection.IdentityHashMap;
 
@@ -10,8 +13,11 @@ import webit.script.util.collection.IdentityHashMap;
  *
  * @author Zqq
  */
-public class ResolverManager {
+public class ResolverManager implements Configable{
 
+    //
+    private Logger logger;
+    //
     private IdentityHashMap<GetResolver> getResolverMap;
     private IdentityHashMap<SetResolver> setResolverMap;
     private IdentityHashMap<ToStringResolver> toStringResolverMap;
@@ -58,6 +64,9 @@ public class ResolverManager {
 
                 if (resolver == null && enableAsm) {
                     resolver = AsmResolverManager.generateAsmResolver(type);
+                    if (resolver == null) {
+                        logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
+                    }
                 }
 
                 if (resolver == null) {
@@ -88,6 +97,9 @@ public class ResolverManager {
 
                 if (resolver == null && enableAsm) {
                     resolver = AsmResolverManager.generateAsmResolver(type);
+                    if (resolver == null) {
+                        logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
+                    }
                 }
                 
                 if (resolver == null) {
@@ -210,5 +222,9 @@ public class ResolverManager {
 
     public void setEnableAsm(boolean enableAsm) {
         this.enableAsm = enableAsm;
+    }
+
+    public void init(Engine engine) {
+        logger = engine.getLogger();
     }
 }

@@ -62,13 +62,13 @@ public final class Engine {
     @SuppressWarnings("unchecked")
     public void init() throws Exception {
 
+        this.logger = (Logger) getBean(this.loggerClass);
+        
         this.resourceLoader = (Loader) getBean(this.resourceLoaderClass);
         this.textStatmentFactory = (TextStatmentFactory) getBean(this.textStatmentFactoryClass);
         this.nativeSecurityManager = (NativeSecurityManager) getBean(this.nativeSecurityManagerClass);
         this.coderFactory = (CoderFactory) getBean(this.coderFactoryClass);
         
-        this.logger = (Logger) getBean(this.loggerClass);
-
         if (this.filterClass != null) {
             this.filter = (Filter) getBean(this.filterClass);
         }
