@@ -33,25 +33,25 @@ public class DefaultEncoder implements Encoder {
 //        }
     }
 
-    public void write(String string, int offset, int length, OutputStream out) throws IOException {
+    public void write(final String string, final int offset, final int length, final OutputStream out) throws IOException {
         char[] chars = ThreadLocalCache.getChars(length);
         string.getChars(offset, offset + length, chars, 0);
         write(chars, 0, length, out);
     }
 
-    public void write(char[] chars, int offset, int length, OutputStream out) throws IOException {
+    public void write(final char[] chars, final int offset, final int length, final OutputStream out) throws IOException {
         if (chars == null || length == 0) {
             return;
         }
-        int new_len = (int) (length * expansionFactor);
-        byte[] bytes = ThreadLocalCache.getBytes(new_len); //new byte[new_len];
+        
+        final byte[] bytes = ThreadLocalCache.getBytes((int) (length * expansionFactor)); //new byte[new_len];
 //        if (arrayEncoder != null) {
 //            int blen = arrayEncoder.encode(chars, off, len, bytes);
 //            out.write(bytes, 0, blen);
 //        } else {
         charsetEncoder.reset();
-        ByteBuffer bb = ByteBuffer.wrap(bytes);
-        CharBuffer cb = CharBuffer.wrap(chars, offset, length);
+        final ByteBuffer bb = ByteBuffer.wrap(bytes);
+        final CharBuffer cb = CharBuffer.wrap(chars, offset, length);
         try {
             CoderResult cr = charsetEncoder.encode(cb, bb, true);
             if (!cr.isUnderflow()) {

@@ -19,20 +19,20 @@ public class IntStepOperator extends BinaryOperator {
         super(leftExp, rightExp, line, column);
     }
 
-    public Object execute(Context context, boolean needReturn) {
-        Object object1 = StatmentUtil.execute(leftExpr, context);
-        int num1;
-        if (object1 instanceof Number) {
-            num1 = ((Number) object1).intValue();
+    public Object execute(final Context context, final boolean needReturn) {
+        Object result = StatmentUtil.execute(leftExpr, context);
+        final int num1;
+        if (result instanceof Number) {
+            num1 = ((Number) result).intValue();
         } else {
-            throw new ScriptRuntimeException("left need a int, but found " + (object1 != null ? object1.getClass().getName() : "[null]"));
+            throw new ScriptRuntimeException("left need a int, but found " + (result != null ? result.getClass().getName() : "[null]"));
         }
-        Object object2 = StatmentUtil.execute(rightExpr, context);
-        int num2;
-        if (object2 instanceof Number) {
-            num2 = ((Number) object2).intValue();
+        result = StatmentUtil.execute(rightExpr, context);
+        final int num2;
+        if (result instanceof Number) {
+            num2 = ((Number) result).intValue();
         } else {
-            throw new ScriptRuntimeException("left need a int, but found " + (object2 != null ? object2.getClass().getName() : "[null]"));
+            throw new ScriptRuntimeException("right need a int, but found " + (result != null ? result.getClass().getName() : "[null]"));
         }
         if (num1 < num2) {
             return new IntegerAscStepIter(num1, num2);

@@ -24,7 +24,7 @@ public final class PlaceHolderStatment extends AbstractStatment {
         this.expr = expr;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
         context.out(StatmentUtil.execute(expr, context));
     }
 }

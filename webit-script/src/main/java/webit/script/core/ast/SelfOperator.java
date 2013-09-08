@@ -19,10 +19,10 @@ public abstract class SelfOperator extends AbstractExpression {
         this.rightExpr = rightExp;
     }
 
-    public Object execute(Context context, boolean needReturn) {
-        Object rightResult = StatmentUtil.execute(rightExpr, context);
-        ResetableValue resetableValue = StatmentUtil.getResetableValue(leftExpr, context);
-        Object result = doOperate(resetableValue.get(), rightResult);
+    public Object execute(final Context context, boolean needReturn) {
+        final Object rightResult = StatmentUtil.execute(rightExpr, context);
+        final ResetableValue resetableValue = StatmentUtil.getResetableValue(leftExpr, context);
+        final Object result = doOperate(resetableValue.get(), rightResult);
         resetableValue.set(result);
         return result;
     }

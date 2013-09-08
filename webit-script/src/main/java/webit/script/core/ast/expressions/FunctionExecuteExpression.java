@@ -23,19 +23,18 @@ public final class FunctionExecuteExpression extends AbstractExpression {
         this.paramExprs = paramExprs;
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
 
-        Object funcObject = StatmentUtil.execute(funcExpr, context);
+        final Object funcObject = StatmentUtil.execute(funcExpr, context);
 
         if (funcObject instanceof MethodDeclare) {
-            MethodDeclare function = (MethodDeclare) funcObject;
-            Object[] args = new Object[paramExprs.length];
+            final Object[] args = new Object[paramExprs.length];
 
             for (int i = 0; i < args.length; i++) {
                 args[i] = StatmentUtil.execute(paramExprs[i], context, true);
             }
 
-            Object functionResult = function.execute(context, args);
+            final Object functionResult = ((MethodDeclare) funcObject).execute(context, args);
             if (needReturn && functionResult == Context.VOID) {
                 throw new ScriptRuntimeException("function returned void");
             }
@@ -43,6 +42,5 @@ public final class FunctionExecuteExpression extends AbstractExpression {
         } else {
             throw new ScriptRuntimeException("not a function");
         }
-
     }
 }

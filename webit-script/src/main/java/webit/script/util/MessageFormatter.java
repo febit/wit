@@ -9,11 +9,7 @@ public class MessageFormatter {
 
     private final static ArrayTemplateParser PARSER = new ArrayTemplateParser();
 
-    public static String format(String format, Object... args) {
-        if (format != null) {
-            return PARSER.parse(format, args);
-        } else {
-            return null;
-        }
+    public static String format(final String format, final Object... args) {
+        return format != null ? PARSER.parse(format, args) : null;
     }
 }

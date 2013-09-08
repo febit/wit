@@ -19,8 +19,8 @@ public final class ReturnStatment extends AbstractStatment {
         this.expr = expr;
     }
 
-    public void execute(Context context) {
-        Object result = expr != null ? StatmentUtil.execute(expr, context) : Context.VOID;
+    public void execute(final Context context) {
+        final Object result = expr != null ? StatmentUtil.execute(expr, context) : Context.VOID;
         context.loopCtrl.returnLoop(result, this);
     }
 }

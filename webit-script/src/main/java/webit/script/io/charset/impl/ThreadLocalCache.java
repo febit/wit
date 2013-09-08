@@ -13,7 +13,7 @@ public class ThreadLocalCache {
         charsBufLocal.set(null);
     }
 
-    public static char[] getChars(int length) {
+    public static char[] getChars(final int length) {
         SoftReference<char[]> ref = charsBufLocal.get();
 
         if (ref == null) {
@@ -33,7 +33,7 @@ public class ThreadLocalCache {
         return chars;
     }
 
-    private static char[] allocate(int length) {
+    private static char[] allocate(final int length) {
         int allocateLength = getAllocateLength(CHARS_CACH_INIT_SIZE, CHARS_CACH_MAX_SIZE, length);
 
         if (allocateLength <= CHARS_CACH_MAX_SIZE) {
@@ -45,7 +45,7 @@ public class ThreadLocalCache {
         return new char[length];
     }
 
-    private static int getAllocateLength(int init, int max, int length) {
+    private static int getAllocateLength(final int init, final int max, final int length) {
         int value = init;
         for (;;) {
             if (value >= length) {
@@ -70,7 +70,7 @@ public class ThreadLocalCache {
         bytesBufLocal.set(null);
     }
 
-    public static byte[] getBytes(int length) {
+    public static byte[] getBytes(final int length) {
         SoftReference<byte[]> ref = bytesBufLocal.get();
 
         if (ref == null) {
@@ -90,7 +90,7 @@ public class ThreadLocalCache {
         return bytes;
     }
 
-    private static byte[] allocateBytes(int length) {
+    private static byte[] allocateBytes(final int length) {
         int allocateLength = getAllocateLength(CHARS_CACH_INIT_SIZE, CHARS_CACH_MAX_SIZE, length);
 
         if (allocateLength <= CHARS_CACH_MAX_SIZE) {

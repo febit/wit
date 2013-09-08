@@ -22,8 +22,8 @@ public final class IdentityHashMap<V> {
             initialCapacity = 1;
         }
         this.loadFactor = loadFactor;
-        table = new Entry[initialCapacity];
-        threshold = (int) (initialCapacity * loadFactor);
+        this.table = new Entry[initialCapacity];
+        this.threshold = (int) (initialCapacity * loadFactor);
     }
 
     public IdentityHashMap(int initialCapacity) {
@@ -73,11 +73,12 @@ public final class IdentityHashMap<V> {
 
 
             for (int i = oldCapacity; i-- > 0;) {
-                for (Entry<V> old = oldTable[i]; old != null;) {
-                    Entry<V> e = old;
+                int index;
+                for (Entry<V> old = oldTable[i],e; old != null;) {
+                    e = old;
                     old = old.next;
 
-                    int index = e.id % newCapacity;
+                    index = e.id % newCapacity;
                     e.next = newTable[index];
                     newTable[index] = e;
                 }

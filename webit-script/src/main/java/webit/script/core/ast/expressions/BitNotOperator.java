@@ -20,7 +20,7 @@ public final class BitNotOperator extends AbstractExpression implements Optimiza
         this.expr = expr;
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
         return ALU.bitNot(StatmentUtil.execute(expr, context));
     }
 

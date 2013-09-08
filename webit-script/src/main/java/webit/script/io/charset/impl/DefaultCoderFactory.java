@@ -13,14 +13,14 @@ import webit.script.io.charset.impl.special.UTF_8_Encoder;
  */
 public class DefaultCoderFactory implements CoderFactory {
 
-    public Encoder newEncoder(String encoding) {
+    public Encoder newEncoder(final String encoding) {
         if (encoding.equalsIgnoreCase("UTF-8")) {
             return new UTF_8_Encoder();
         }
         return new DefaultEncoder(encoding);
     }
 
-    public Decoder newDecoder(String encoding) {
+    public Decoder newDecoder(final String encoding) {
         if (encoding.equalsIgnoreCase("UTF-8")) {
             return new UTF_8_Decoder();
         }

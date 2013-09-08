@@ -15,5 +15,4 @@ public class ClasspathLoader extends AbstractLoader {
     public Resource get(String name) throws ResourceNotFoundException {
         return new ClasspathResource(getRealPath(name), encoding);
     }
-
 }

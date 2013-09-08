@@ -13,12 +13,12 @@ import webit.script.util.charset.UTF_8;
  */
 public class UTF_8_Decoder implements Decoder {
 
-    public void write(byte[] bytes, int off, int len, Writer writer) throws IOException {
+    public void write(final byte[] bytes, final int off, final int len, final Writer writer) throws IOException {
         if (bytes == null || len == 0) {
             return;
         }
-        int new_len = (int) (len * UTF_8.MAX_CHARS_PER_BYTE);
-        char[] chars = ThreadLocalCache.getChars(new_len);
+        
+        final char[] chars = ThreadLocalCache.getChars((int) (len * UTF_8.MAX_CHARS_PER_BYTE));
 
         int used = UTF_8.decode(bytes, off, len, chars);
         writer.write(chars, 0, used);

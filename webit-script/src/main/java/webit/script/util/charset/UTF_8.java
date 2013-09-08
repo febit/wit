@@ -55,7 +55,7 @@ public class UTF_8 {
     public static final double MAX_CHARS_PER_BYTE = 1.0;
     public static final double MAX_BYTES_PER_CHAR = 3.0;
 
-    public static int decode(byte[] sa, int sp, int len, char[] da) {
+    public static int decode(final byte[] sa, int sp, int len, final char[] da) {
         final int sl = sp + len;
         int dp = 0;
         int dlASCII = Math.min(len, da.length);
@@ -201,7 +201,7 @@ public class UTF_8 {
                 || (b4 & 0xc0) != 0x80;
     }
 
-    private static CoderResult lookupN(ByteBuffer src, int n) {
+    private static CoderResult lookupN(final ByteBuffer src, int n) {
         for (int i = 1; i < n; i++) {
             if (isNotContinuation(src.get())) {
                 return CoderResult.malformedForLength(i);
@@ -210,7 +210,7 @@ public class UTF_8 {
         return CoderResult.malformedForLength(n);
     }
 
-    private static CoderResult malformedN(ByteBuffer src, int nb) {
+    private static CoderResult malformedN(final ByteBuffer src, int nb) {
         switch (nb) {
             case 1:
                 int b1 = src.get();
@@ -264,7 +264,7 @@ public class UTF_8 {
         return bb;
     }
 
-    public static int encode(char[] sa, int sp, int len, byte[] da) {
+    public static int encode(final char[] sa, int sp, int len, final byte[] da) {
         int sl = sp + len;
         int dp = 0;
         int dlASCII = dp + Math.min(len, da.length);

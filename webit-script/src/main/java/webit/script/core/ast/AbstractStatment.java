@@ -16,12 +16,11 @@ public abstract class AbstractStatment implements Statment{
         this.column = column;
     }
 
-    public int getLine() {
+    public final int getLine() {
         return line;
     }
 
-    public int getColumn() {
+    public final int getColumn() {
         return column;
     }
-
 }

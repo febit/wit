@@ -27,7 +27,7 @@ public class VariantStack {
         this(initialCapacity);
     }
 
-    public VariantStack(VariantContext[] contexts) {
+    public VariantStack(final VariantContext[] contexts) {
         this(Math.max(initialCapacity, contexts != null ? contexts.length : 0));
         //push(context);
         if (contexts != null) {
@@ -42,8 +42,7 @@ public class VariantStack {
     }
 
     public final void push(VariantMap varMap) {
-        VariantContext element = new VariantContext(varMap);
-        push(element);
+        push(new VariantContext(varMap));
     }
 
     public final VariantContext pop() {
@@ -55,10 +54,10 @@ public class VariantStack {
         return element;
     }
 
-    public final int setToCurrentContext(Map<String, Object> map) {
+    public final int setToCurrentContext(final Map<String, Object> map) {
         int count = 0;
         if (map != null) {
-            VariantContext element = getCurrentContext();
+            final VariantContext element = getCurrentContext();
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 if (element.set(entry.getKey(), entry.getValue())) {
                     ++count;
@@ -68,8 +67,8 @@ public class VariantStack {
         return count;
     }
 
-    public final int set(int[] indexs, Object[] values) {
-        VariantContext context = getCurrentContext();
+    public final int set(final int[] indexs, final Object[] values) {
+        final VariantContext context = getCurrentContext();
         if (indexs != null && values != null) {
             int len = values.length;
             if (len > indexs.length) {
@@ -84,15 +83,13 @@ public class VariantStack {
     }
 
     public final boolean set(int upstairs, int index, Object value) {
-        VariantContext context = getContext(upstairs);
-        context.set(index, value);
+        getContext(upstairs).set(index, value);
         return true;
     }
 
     public final boolean set(int offset, String key, Object value) {
         for (int i = current - offset; i >= 0; i--) {
-            VariantContext context = contexts[i];
-            if (context.set(key, value)) {
+            if (contexts[i].set(key, value)) {
                 return true;
             }
         }
@@ -101,8 +98,7 @@ public class VariantStack {
 
     public final boolean set(String key, Object value) {
         for (int i = current; i >= 0; i--) {
-            VariantContext context = contexts[i];
-            if (context.set(key, value)) {
+            if (contexts[i].set(key, value)) {
                 return true;
             }
         }
@@ -114,7 +110,7 @@ public class VariantStack {
     }
 
     public final Object[] get(final String[] keys) {
-        Object[] results = new Object[keys.length];
+        final Object[] results = new Object[keys.length];
         for (int i = 0; i < results.length; i++) {
             results[i] = get(keys[i], true);
         }
@@ -126,8 +122,9 @@ public class VariantStack {
     }
 
     public final Object get(String key, boolean force) {
+        VariantContext context;
         for (int i = current; i >= 0; i++) {
-            VariantContext context = contexts[i];
+            context = contexts[i];
             int index = context.getIndex(key);
             if (index >= 0) {
                 return context.get(index);
@@ -148,7 +145,7 @@ public class VariantStack {
     }
 
     public final VariantContext getContext(int offset) {
-        int realIndex = current - offset;
+        final int realIndex = current - offset;
         if (realIndex < 0 || realIndex > current) {
             throw new IndexOutOfBoundsException();
         }

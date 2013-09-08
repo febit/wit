@@ -25,9 +25,12 @@ public class FieldInfoResolver {
 
         Field[] fields = beanClass.getFields();
 
+        Field field;
+        int modifiers;
+        
         for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
-            int modifiers = field.getModifiers();
+            field = fields[i];
+            modifiers = field.getModifiers();
             if (Modifier.isStatic(modifiers) == false) {
                 registField(field);
             } else {
@@ -35,11 +38,11 @@ public class FieldInfoResolver {
             }
         }
 
-        Method[] methods = beanClass.getMethods();
-
+        final Method[] methods = beanClass.getMethods();
+        Method method;
         for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
-            int modifiers = method.getModifiers();
+            method = methods[i];
+            modifiers = method.getModifiers();
             if (Modifier.isStatic(modifiers) == false) {
                 int argsCount = method.getParameterTypes().length;
                 if (argsCount == 1 && method.getReturnType().equals(void.class)) {
@@ -71,7 +74,7 @@ public class FieldInfoResolver {
         }
 
 
-        FieldInfo[] fieldInfoArray = new FieldInfo[fieldInfos.size()];
+        final FieldInfo[] fieldInfoArray = new FieldInfo[fieldInfos.size()];
         fieldInfos.values().toArray(fieldInfoArray);
 
         Arrays.sort(fieldInfoArray);

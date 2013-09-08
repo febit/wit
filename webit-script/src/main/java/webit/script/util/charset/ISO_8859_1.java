@@ -9,7 +9,7 @@ public class ISO_8859_1 {
 
     //public static final double MAX_CHARS_PER_BYTE = 1.0;
     //public static final double MAX_BYTES_PER_CHAR = 1.0;
-    public static int decode(byte[] src, int sp, int len, char[] dst) {
+    public static int decode(final byte[] src, int sp, int len, final char[] dst) {
         if (len > dst.length) {
             len = dst.length;
         }
@@ -21,7 +21,7 @@ public class ISO_8859_1 {
     }
     private final static byte repl = (byte) '?';
 
-    public static int encode(char[] src, int sp, int len, byte[] dst) {
+    public static int encode(final char[] src, int sp, int len, final byte[] dst) {
         int dp = 0;
         int sl = sp + Math.min(len, dst.length);
         while (sp < sl) {

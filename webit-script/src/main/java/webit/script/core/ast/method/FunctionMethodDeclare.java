@@ -22,11 +22,10 @@ public final class FunctionMethodDeclare implements MethodDeclare {
         this.parentVarContexts = parentVarContexts;
     }
 
-    public Object execute(Context context, Object[] args) {
-        Context functionContext = new Context(context, template, parentVarContexts);
+    public Object execute(final Context context, final Object[] args) {
         try {
-            return function.execute(functionContext, args);
-        } catch (Exception e) {
+            return function.execute(new Context(context, template, parentVarContexts), args);
+        } catch (Throwable e) {
 
             ScriptRuntimeException old;
             if (e instanceof ScriptRuntimeException) {

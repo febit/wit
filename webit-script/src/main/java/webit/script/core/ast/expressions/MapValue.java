@@ -24,9 +24,9 @@ public final class MapValue extends AbstractExpression {
     }
 
     @SuppressWarnings("unchecked")
-    public Object execute(Context context, boolean needReturn) {
-        int len = valueExprs.length;
-        Map value = new HashMap(keys.length);
+    public Object execute(final Context context, final boolean needReturn) {
+        final int len = valueExprs.length;
+        final Map value = new HashMap(keys.length);
         for (int i = 0; i < len; i++) {
             value.put(keys[i], StatmentUtil.execute(valueExprs[i], context));
         }

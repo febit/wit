@@ -20,7 +20,7 @@ public class VariantContext {
     }
 
     @SuppressWarnings("unchecked")
-    public void exportTo(Map map) {
+    public void exportTo(final Map map) {
         for (int i = 0; i < values.length; i++) {
             map.put(box.getName(i), values[i]);
         }

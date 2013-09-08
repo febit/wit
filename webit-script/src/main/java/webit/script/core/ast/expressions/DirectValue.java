@@ -17,7 +17,7 @@ public final class DirectValue extends AbstractExpression {
         this.value = value;
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
         return value;
     }
 }

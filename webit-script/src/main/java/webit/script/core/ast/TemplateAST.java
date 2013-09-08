@@ -23,12 +23,12 @@ public class TemplateAST {
         this.statments = statments;
     }
 
-    public Context execute(Context context, Map<String, Object> root) {
-        VariantStack vars = context.vars;
+    public Context execute(final Context context, final Map<String, Object> root) {
+        final VariantStack vars = context.vars;
         vars.push(varMap);
         vars.setToCurrentContext(root);
-        LoopCtrl ctrl = context.loopCtrl;
-        int len = statments.length;
+        final LoopCtrl ctrl = context.loopCtrl;
+        final int len = statments.length;
         for (int i = 0; i < len && ctrl.goon(); i++) {
             StatmentUtil.execute(statments[i], context);
         }

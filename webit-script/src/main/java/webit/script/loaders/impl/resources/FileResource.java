@@ -30,7 +30,7 @@ public class FileResource implements Resource {
 
     public Reader openReader() throws IOException {
         lastLoadTime = System.currentTimeMillis();
-        InputStream inputStream = new FileInputStream(this.path);
+        final InputStream inputStream = new FileInputStream(this.path);
 
         return encoding == null
                 ? new InputStreamReader(inputStream)

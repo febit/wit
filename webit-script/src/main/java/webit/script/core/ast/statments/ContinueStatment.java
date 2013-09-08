@@ -17,7 +17,7 @@ public final class ContinueStatment extends AbstractStatment {
         this.label = label;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
         context.loopCtrl.continueLoop(label, this);
     }
 }

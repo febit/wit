@@ -18,32 +18,26 @@ public final class IfStatment extends AbstractStatment implements Optimizable {
     private final Expression ifExpr;
     private final Statment thenStatment;
     private final Statment elseStatment;
-    //
-    private final boolean bodyNotEmpty;
-    private final boolean elseNotEmpty;
 
     public IfStatment(Expression ifExpr, Statment thenStatment, Statment elseStatment, int line, int column) {
         super(line, column);
         this.ifExpr = ifExpr;
         this.thenStatment = thenStatment;
         this.elseStatment = elseStatment;
-        //
-        bodyNotEmpty = thenStatment != null;
-        elseNotEmpty = elseStatment != null;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
         if (ALU.toBoolean(StatmentUtil.execute(ifExpr, context))) {
-            if (bodyNotEmpty) {
+            if (thenStatment != null) {
                 StatmentUtil.execute(thenStatment, context);
             }
-        } else if (elseNotEmpty) {
+        } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }
     }
 
     public Statment optimize() {
-        if (bodyNotEmpty || elseNotEmpty) {
+        if (thenStatment != null || elseStatment != null) {
             return this;
         }
         return null;

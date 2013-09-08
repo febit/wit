@@ -29,7 +29,7 @@ public class ClasspathResource implements Resource {
 
     public Reader openReader() throws IOException {
         //lastLoadTime = System.currentTimeMillis();
-        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+        final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
         if (inputStream == null) {
             throw new ResourceNotFoundException("Not found: " + path);
         }

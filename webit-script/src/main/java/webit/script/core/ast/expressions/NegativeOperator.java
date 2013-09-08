@@ -21,7 +21,7 @@ public final class NegativeOperator extends AbstractExpression implements Optimi
         this.expr = expr;
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
         return ALU.negative(StatmentUtil.execute(expr, context));
     }
 

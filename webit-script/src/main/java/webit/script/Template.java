@@ -19,7 +19,7 @@ import webit.script.loaders.Resource;
  *
  * @author Zqq
  */
-public class Template {
+public final class Template {
 
     public final Engine engine;
     public final String name;
@@ -63,7 +63,7 @@ public class Template {
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
-    public Context merge(Map<String, Object> root, OutputStream outputStream) throws ScriptRuntimeException, ParserException {
+    public Context merge(final Map<String, Object> root, final OutputStream outputStream) throws ScriptRuntimeException, ParserException {
         return merge(root, new OutputStreamOut(outputStream, engine.getEncoding(), engine.getCoderFactory()));
     }
 
@@ -76,7 +76,7 @@ public class Template {
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
-    public Context merge(Map<String, Object> root, OutputStream outputStream, String encoding) throws ScriptRuntimeException, ParserException {
+    public Context merge(final Map<String, Object> root, final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParserException {
         return merge(root, new OutputStreamOut(outputStream, encoding, engine.getCoderFactory()));
     }
 
@@ -88,7 +88,7 @@ public class Template {
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
-    public Context merge(Map<String, Object> root, Writer writer) throws ScriptRuntimeException, ParserException {
+    public Context merge(final Map<String, Object> root, final Writer writer) throws ScriptRuntimeException, ParserException {
         return merge(root, new WriterOut(writer, engine.getEncoding(), engine.getCoderFactory()));
     }
 
@@ -100,13 +100,13 @@ public class Template {
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
-    public final Context merge(Map<String, Object> root, Out out) throws ScriptRuntimeException, ParserException {
+    public Context merge(final Map<String, Object> root, final Out out) throws ScriptRuntimeException, ParserException {
         try {
-            TemplateAST tmpl = prepareTemplate();
-            Context context = new Context(this, out);
+            final TemplateAST tmpl = prepareTemplate();
+            final Context context = new Context(this, out);
             tmpl.execute(context, root);
             return context;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if (e instanceof ScriptRuntimeException) {
                 ((ScriptRuntimeException) e).setTemplate(this);
                 throw (ScriptRuntimeException) e;

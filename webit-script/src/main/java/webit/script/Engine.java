@@ -43,12 +43,13 @@ public final class Engine {
     private boolean looseVar = false;
     //
     private Logger logger;
-    private Filter filter;
+    private Loader resourceLoader;
     private TextStatmentFactory textStatmentFactory;
     private NativeSecurityManager nativeSecurityManager;
     private CoderFactory coderFactory;
+    private Filter filter;
+    //
     private final ResolverManager resolverManager;
-    private Loader resourceLoader;
     private final ConcurrentMap<String, Template> templateCache;
     private final PetiteContainer _petite;
 
@@ -63,12 +64,12 @@ public final class Engine {
     public void init() throws Exception {
 
         this.logger = (Logger) getBean(this.loggerClass);
-        
+
         this.resourceLoader = (Loader) getBean(this.resourceLoaderClass);
         this.textStatmentFactory = (TextStatmentFactory) getBean(this.textStatmentFactoryClass);
         this.nativeSecurityManager = (NativeSecurityManager) getBean(this.nativeSecurityManagerClass);
         this.coderFactory = (CoderFactory) getBean(this.coderFactoryClass);
-        
+
         if (this.filterClass != null) {
             this.filter = (Filter) getBean(this.filterClass);
         }
@@ -113,7 +114,7 @@ public final class Engine {
         return getTemplate(resourceLoader.concat(parentName, name));
     }
 
-    public Template getTemplate(String name) throws ResourceNotFoundException {
+    public final Template getTemplate(String name) throws ResourceNotFoundException {
         String normalizedName = resourceLoader.normalize(name);
         if (normalizedName == null) {
             throw new ResourceNotFoundException("TODO: 不合法的模板名:" + name);
@@ -129,71 +130,71 @@ public final class Engine {
         return template;
     }
 
-    public void setResourceLoaderClass(Class resourceLoaderClass) {
+    public final void setResourceLoaderClass(Class resourceLoaderClass) {
         this.resourceLoaderClass = resourceLoaderClass;
     }
 
-    public void setTextStatmentFactoryClass(Class textStatmentFactoryClass) {
+    public final void setTextStatmentFactoryClass(Class textStatmentFactoryClass) {
         this.textStatmentFactoryClass = textStatmentFactoryClass;
     }
 
-    public void setResourceLoader(Loader resourceLoader) {
+    public final void setResourceLoader(Loader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
-    public String getEncoding() {
+    public final String getEncoding() {
         return encoding;
     }
 
-    public void setEncoding(String encoding) {
+    public final void setEncoding(String encoding) {
         this.encoding = encoding;
     }
 
-    public boolean isEnableAsmNative() {
+    public final boolean isEnableAsmNative() {
         return enableAsmNative;
     }
 
-    public void setEnableAsmNative(boolean enableAsmNative) {
+    public final void setEnableAsmNative(boolean enableAsmNative) {
         this.enableAsmNative = enableAsmNative;
     }
 
-    public boolean isLooseVar() {
+    public final boolean isLooseVar() {
         return looseVar;
     }
 
-    public void setLooseVar(boolean looseVar) {
+    public final void setLooseVar(boolean looseVar) {
         this.looseVar = looseVar;
     }
 
-    public NativeSecurityManager getNativeSecurityManager() {
+    public final NativeSecurityManager getNativeSecurityManager() {
         return nativeSecurityManager;
     }
 
-    public ResolverManager getResolverManager() {
+    public final ResolverManager getResolverManager() {
         return resolverManager;
     }
 
-    public TextStatmentFactory getTextStatmentFactory() {
+    public final TextStatmentFactory getTextStatmentFactory() {
         return textStatmentFactory;
     }
 
-    public CoderFactory getCoderFactory() {
+    public final CoderFactory getCoderFactory() {
         return coderFactory;
     }
 
-    public void setFilterClass(Class filterClass) {
+    public final void setFilterClass(Class filterClass) {
         this.filterClass = filterClass;
     }
 
-    public Filter getFilter() {
+    public final Filter getFilter() {
         return filter;
     }
 
-    public void setLoggerClass(Class loggerClass) {
+    public final void setLoggerClass(Class loggerClass) {
         this.loggerClass = loggerClass;
     }
 
-    public Logger getLogger() {
+    public final Logger getLogger() {
         return logger;
     }
 
@@ -203,7 +204,7 @@ public final class Engine {
 
     public static Engine createEngine(String configPath, Map parameters) {
 
-        PetiteContainer petite = new PetiteContainer();
+        final PetiteContainer petite = new PetiteContainer();
         petite.getConfig().setUseFullTypeNames(true);
 
         final Props props = new Props();
@@ -229,9 +230,9 @@ public final class Engine {
         String engineBeanName = petite.resolveBeanName(Engine.class);
         petite.addBean(engineBeanName, engine);
         petite.addBean(ENGINE, engine);
-        
+
         //Log props file name
-        Logger logger = engine.getLogger();
+        final Logger logger = engine.getLogger();
         if (logger != null && logger.isInfoEnabled()) {
             logger.info("Loaded props files from classpath: {}", StringUtil.join(propsFiles, ", "));
         }

@@ -21,7 +21,7 @@ public final class NotOperator extends AbstractExpression implements Optimizable
         this.expr = expr;
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
         return ALU.not(StatmentUtil.execute(expr, context));
     }
 

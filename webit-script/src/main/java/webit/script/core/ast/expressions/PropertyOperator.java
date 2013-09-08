@@ -24,7 +24,7 @@ public final class PropertyOperator extends AbstractExpression implements Reseta
         this.property = property;
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
         return context.resolverManager.get(StatmentUtil.execute(expr, context), property);
     }
 

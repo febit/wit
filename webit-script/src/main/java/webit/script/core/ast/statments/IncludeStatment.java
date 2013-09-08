@@ -25,15 +25,14 @@ public class IncludeStatment extends AbstractStatment {
     }
 
     @SuppressWarnings("unchecked")
-    public void execute(Context context) {
-        Object templateNameObject = StatmentUtil.execute(templateNameExpr, context);
+    public void execute(final Context context) {
+        final Object templateNameObject = StatmentUtil.execute(templateNameExpr, context);
 
         if (templateNameObject != null) {
-            String templateName = String.valueOf(templateNameObject);
             Map params = null;
             if (paramsExpr != null) {
 
-                Object paramsObject = StatmentUtil.execute(paramsExpr, context);
+                final Object paramsObject = StatmentUtil.execute(paramsExpr, context);
                 if (paramsObject != null) {
                     if (paramsObject instanceof Map) {
                         params = (Map) paramsObject;
@@ -42,14 +41,14 @@ public class IncludeStatment extends AbstractStatment {
                     }
                 }
             }
-            Template thisTemplate = context.template;
+            final Template thisTemplate = context.template;
 
-            Template childTemplate;
+            final Template childTemplate;
 
             try {
-                childTemplate = thisTemplate.engine.getTemplate(thisTemplate.name, templateName);
+                childTemplate = thisTemplate.engine.getTemplate(thisTemplate.name, String.valueOf(templateNameObject));
                 childTemplate.merge(params, context.getOut());
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new ScriptRuntimeException(e);
             }
         }

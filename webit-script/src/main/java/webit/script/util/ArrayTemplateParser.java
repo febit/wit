@@ -22,7 +22,7 @@ public class ArrayTemplateParser extends StringTemplateParser {
         this.macroEnd = "}";
     }
 
-    public String parse(String template, Object... context) {
+    public String parse(final String template, final Object... context) {
         return parse(template, createArrayMacroResolver(context));
     }
 
@@ -35,7 +35,7 @@ public class ArrayTemplateParser extends StringTemplateParser {
             };
         }
         return new MacroResolver() {
-            private int len = array.length;
+            private final int len = array.length;
             private int current = 0;
 
             public String resolve(String macroName) {
@@ -46,7 +46,7 @@ public class ArrayTemplateParser extends StringTemplateParser {
                 } else {
                      try {
                         index = Integer.parseInt(macroName);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         return null;
                     }
                 }

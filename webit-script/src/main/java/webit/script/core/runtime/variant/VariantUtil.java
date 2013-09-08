@@ -23,7 +23,7 @@ public class VariantUtil {
         }
     };
 
-    public static VariantMap toVariantMap(Map<String, Integer> map) {
+    public static VariantMap toVariantMap(final Map<String, Integer> map) {
         if (map == null || map.isEmpty()) {
             return EMPTY;
         } else if (map.size() < 7) {

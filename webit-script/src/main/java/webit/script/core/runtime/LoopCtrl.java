@@ -34,50 +34,50 @@ public final class LoopCtrl {
     }
 
     public void breakLoop(String label, Statment statment) {
-        goon = false;
-        _label = label;
-        loopValue = null;
-        loopType = LoopType.BREAK;
+        this.goon = false;
+        this._label = label;
+        this.loopValue = null;
+        this.loopType = LoopType.BREAK;
         this.statment = statment;
     }
 
     public void continueLoop(String label, Statment statment) {
-        goon = false;
-        _label = label;
-        loopValue = null;
-        loopType = LoopType.CONTINUE;
+        this.goon = false;
+        this._label = label;
+        this.loopValue = null;
+        this.loopType = LoopType.CONTINUE;
         this.statment = statment;
     }
 
     public void returnLoop(Object value, Statment statment) {
-        goon = false;
-        _label = null;
-        loopValue = value;
-        loopType = LoopType.RETURN;
+        this.goon = false;
+        this._label = null;
+        this.loopValue = value;
+        this.loopType = LoopType.RETURN;
         this.statment = statment;
     }
 
     public void reset() {
-        loopValue = null;
-        _label = null;
-        loopType = LoopType.NULL;
-        goon = true;
-        statment = null;
+        this.loopValue = null;
+        this._label = null;
+        this.loopType = LoopType.NULL;
+        this.goon = true;
+        this.statment = null;
     }
 
     public boolean goon() {
-        return goon;
+        return this.goon;
     }
 
     public LoopType getLoopType() {
-        return loopType;
+        return this.loopType;
     }
 
     public Object getLoopValue() {
-        return loopValue;
+        return this.loopValue;
     }
 
     public Statment getStatment() {
-        return statment;
+        return this.statment;
     }
 }

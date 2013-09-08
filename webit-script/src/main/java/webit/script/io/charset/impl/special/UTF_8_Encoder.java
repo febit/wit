@@ -13,23 +13,22 @@ import webit.script.util.charset.UTF_8;
  */
 public final class UTF_8_Encoder implements Encoder {
 
-    public void write(char[] chars, int off, int len, OutputStream out) throws IOException {
+    public void write(final char[] chars, final int off, final int len, final OutputStream out) throws IOException {
         if (chars == null || len == 0) {
             return;
         }
-        int new_len = (int) (len * UTF_8.MAX_BYTES_PER_CHAR);
-        byte[] bytes = ThreadLocalCache.getBytes(new_len);
+        final byte[] bytes = ThreadLocalCache.getBytes((int) (len * UTF_8.MAX_BYTES_PER_CHAR));
 
         int used = UTF_8.encode(chars, off, len, bytes);
 
         out.write(bytes, 0, used);
     }
 
-    public void write(String string, int off, int len, OutputStream out) throws IOException {
+    public void write(final String string, final int off, final int len, final OutputStream out) throws IOException {
         if (string == null || len == 0) {
             return;
         }
-        char[] chars = ThreadLocalCache.getChars(len);
+        final char[] chars = ThreadLocalCache.getChars(len);
 
         string.getChars(off, off + len, chars, 0);
 

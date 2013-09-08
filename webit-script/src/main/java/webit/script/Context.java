@@ -31,7 +31,7 @@ public final class Context {
     public final boolean enableAsmNative;
     public final Logger logger;
 
-    public Context(Template template, Out out) {
+    public Context(final Template template, final Out out) {
 
         this.template = template;
         this.out = out;
@@ -44,7 +44,7 @@ public final class Context {
         this.logger = engine.getLogger();
     }
 
-    public Context(Context parent, Template template, VariantContext[] parentVarContexts) {
+    public Context(final Context parent, final Template template, final VariantContext[] parentVarContexts) {
 
         this.template = template;
         this.out = parent.out;
@@ -93,27 +93,27 @@ public final class Context {
         return out;
     }
 
-    public void out(byte[] bytes) {
+    public void out(final byte[] bytes) {
         if (bytes != null) {
             out.write(bytes);
         }
     }
 
-    public void out(char[] chars) {
+    public void out(final char[] chars) {
         if (chars != null) {
             out.write(chars);
         }
     }
 
-    public void out(String string) {
+    public void out(final String string) {
         if (string != null) {
             out.write(string);
         }
     }
 
-    public void out(Object object) {
+    public void out(final Object object) {
         if (object != null) {
-            Class objClass = object.getClass();
+            final Class objClass = object.getClass();
             if (objClass == byte[].class) {
                 out((byte[]) object);
             } else if (objClass == char[].class) {
@@ -126,7 +126,7 @@ public final class Context {
         }
     }
 
-    public void exportTo(Map map) {
+    public void exportTo(final Map map) {
         vars.getCurrentContext().exportTo(map);
     }
 }

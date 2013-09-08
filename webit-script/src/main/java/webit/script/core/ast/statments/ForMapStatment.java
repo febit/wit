@@ -24,9 +24,6 @@ public final class ForMapStatment extends AbstractStatment implements Optimizabl
     private final BlockStatment bodyStatment;
     private final Statment elseStatment;
     private final String label;
-    //
-    private final boolean bodyNotEmpty;
-    private final boolean elseNotEmpty;
 
     public ForMapStatment(int keyIndex, int valueIndex, int iterIndex, Expression mapExpr, BlockStatment bodyStatment, Statment elseStatment, String label, int line, int column) {
         super(line, column);
@@ -35,15 +32,12 @@ public final class ForMapStatment extends AbstractStatment implements Optimizabl
         this.bodyStatment = bodyStatment;
         this.elseStatment = elseStatment;
         this.label = label;
-        //
-        bodyNotEmpty = bodyStatment != null;
-        elseNotEmpty = elseStatment != null;
     }
 
     @SuppressWarnings("unchecked")
-    public void execute(Context context) {
-        Object object = StatmentUtil.execute(mapExpr, context);
-        Iter<Map.Entry> iter;
+    public void execute(final Context context) {
+        final Object object = StatmentUtil.execute(mapExpr, context);
+        final Iter<Map.Entry> iter;
         if (object != null) {
             if (object instanceof Map) {
                 iter = CollectionUtil.toIter(((Map) object).entrySet());
@@ -53,13 +47,19 @@ public final class ForMapStatment extends AbstractStatment implements Optimizabl
         } else {
             iter = null;
         }
-        if (iter != null && iter.hasNext() && bodyNotEmpty) {
-            LoopCtrl ctrl = context.loopCtrl;
+        if (iter != null && iter.hasNext() && bodyStatment != null) {
+            final LoopCtrl ctrl = context.loopCtrl;
+            final Object[] params = new Object[3];
+            params[2] = iter;
+            Map.Entry entry;
             label:
             while (iter.hasNext()) {
 
-                Map.Entry entry = iter.next();
-                bodyStatment.execute(context, paramIndexs, new Object[]{entry.getKey(), entry.getValue(), iter});
+                entry = iter.next();
+                params[0] = entry.getKey();
+                params[1] = entry.getValue();
+
+                bodyStatment.execute(context, paramIndexs, params);
 
                 if (!ctrl.goon()) {
                     if (ctrl.matchLabel(label)) {
@@ -81,13 +81,13 @@ public final class ForMapStatment extends AbstractStatment implements Optimizabl
                     }
                 }
             }
-        } else if (elseNotEmpty) {
+        } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }
     }
 
     public Statment optimize() {
-        if (bodyNotEmpty || elseNotEmpty) {
+        if (bodyStatment != null || elseStatment != null) {
             return this;
         }
         return null;

@@ -25,19 +25,19 @@ public final class BlockStatment extends AbstractStatment implements Optimizable
         this.statments = statments;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
         execute(context, null, null);
     }
 
-    public void execute(Context context, int[] indexs, Object[] values) {
+    public void execute(final Context context, final int[] indexs, final Object[] values) {
         if (statments != null) {
-            VariantStack vars = context.vars;
+            final VariantStack vars = context.vars;
             vars.push(varMap);
             if (indexs != null) {
                 vars.set(indexs, values);
             }
-            int len = statments.length;
-            LoopCtrl ctrl = context.loopCtrl;
+            final int len = statments.length;
+            final LoopCtrl ctrl = context.loopCtrl;
             for (int i = 0; i < len && ctrl.goon(); i++) {
                 StatmentUtil.execute(statments[i], context);
             }

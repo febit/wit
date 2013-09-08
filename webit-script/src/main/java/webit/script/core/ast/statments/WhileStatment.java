@@ -16,20 +16,20 @@ public final class WhileStatment extends AbstractStatment {
 
     private final Expression whileExpr;
     private final BlockStatment bodyStatment;
-    private final boolean checkAtFirst;
+    private final boolean doWhileAtFirst;
     private final String label;
 
-    public WhileStatment(Expression whileExpr, BlockStatment bodyStatment, boolean checkAtFirst, String label, int line, int column) {
+    public WhileStatment(Expression whileExpr, BlockStatment bodyStatment, boolean doWhileAtFirst, String label, int line, int column) {
         super(line, column);
         this.whileExpr = whileExpr;
         this.bodyStatment = bodyStatment;
-        this.checkAtFirst = checkAtFirst;
+        this.doWhileAtFirst = doWhileAtFirst;
         this.label = label;
     }
 
-    public void execute(Context context) {
-        boolean go = checkAtFirst ? ALU.toBoolean(StatmentUtil.execute(whileExpr, context)) : true;
-        LoopCtrl ctrl = context.loopCtrl;
+    public void execute(final Context context) {
+        boolean go = doWhileAtFirst ? ALU.toBoolean(StatmentUtil.execute(whileExpr, context)) : true;
+        final LoopCtrl ctrl = context.loopCtrl;
         label:
         while (go) {
             StatmentUtil.execute(bodyStatment, context);

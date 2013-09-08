@@ -28,29 +28,29 @@ public class RedirectOutStatment extends AbstractStatment {
         this.toExpr = toExpr;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
 
         final Out current = context.getOut();
         if (current instanceof OutputStreamOut) {
 
-            FastByteArrayOutputStream out = new FastByteArrayOutputStream(128);
+            final FastByteArrayOutputStream out = new FastByteArrayOutputStream(128);
 
             StatmentUtil.execute(srcStatment, new OutputStreamOut(out, (OutputStreamOut) current), context);
-            ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
+            final ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(out.toByteArray());
         } else if (current instanceof WriterOut) {
 
-            FastCharArrayWriter writer = new FastCharArrayWriter();
+            final FastCharArrayWriter writer = new FastCharArrayWriter();
 
             StatmentUtil.execute(srcStatment, new WriterOut(writer, (WriterOut) current), context);
-            ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
+            final ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(writer.toString());
         } else {
 
-            FastCharArrayWriter writer = new FastCharArrayWriter();
+            final FastCharArrayWriter writer = new FastCharArrayWriter();
 
             StatmentUtil.execute(srcStatment, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()), context);
-            ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
+            final ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(writer.toString());
         }
     }

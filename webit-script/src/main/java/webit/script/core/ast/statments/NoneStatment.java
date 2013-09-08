@@ -20,7 +20,7 @@ public final class NoneStatment extends AbstractStatment implements Optimizable{
         super(line, column);
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
         //
     }
     private static NoneStatment instance;

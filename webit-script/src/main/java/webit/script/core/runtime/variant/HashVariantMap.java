@@ -27,8 +27,8 @@ public class HashVariantMap implements VariantMap {
         }
     }
 
-    public int getIndex(String name) {
-        Integer index = varMap.get(name);
+    public int getIndex(final String name) {
+        final Integer index = varMap.get(name);
         return index != null ? index : -1;
     }
 

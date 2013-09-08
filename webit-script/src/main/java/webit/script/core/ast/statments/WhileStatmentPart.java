@@ -14,7 +14,7 @@ public final class WhileStatmentPart extends StatmentPart {
 
     private Expression whileExpr;
     private BlockStatment bodyStatment;
-    private boolean checkAtFirst;
+    private boolean doWhileAtFirst;
     private String label;
 
     public WhileStatmentPart() {
@@ -30,8 +30,8 @@ public final class WhileStatmentPart extends StatmentPart {
         return this;
     }
 
-    public WhileStatmentPart setCheckAtFirst(boolean checkAtFirst) {
-        this.checkAtFirst = checkAtFirst;
+    public WhileStatmentPart setDoWhileAtFirst(boolean doWhileAtFirst) {
+        this.doWhileAtFirst = doWhileAtFirst;
         return this;
     }
 
@@ -47,6 +47,6 @@ public final class WhileStatmentPart extends StatmentPart {
     }
 
     public Statment pop() {
-        return StatmentUtil.optimize(new WhileStatment(whileExpr, bodyStatment, checkAtFirst, label, line, column));
+        return StatmentUtil.optimize(new WhileStatment(whileExpr, bodyStatment, doWhileAtFirst, label, line, column));
     }
 }

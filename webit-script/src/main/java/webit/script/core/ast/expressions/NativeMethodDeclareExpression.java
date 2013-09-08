@@ -3,7 +3,6 @@ package webit.script.core.ast.expressions;
 
 import java.lang.reflect.Method;
 import webit.script.Context;
-import webit.script.asm.AsmMethodCaller;
 import webit.script.asm.AsmMethodCallerManager;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.method.AsmNativeMethodDeclare;
@@ -23,12 +22,11 @@ public class NativeMethodDeclareExpression extends AbstractExpression {
         this.method = method;
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
         if (context.enableAsmNative) {
-            AsmMethodCaller caller;
             try {
-                caller = AsmMethodCallerManager.generateCaller(method);
-            } catch (Exception ex) {
+                return new AsmNativeMethodDeclare(AsmMethodCallerManager.generateCaller(method));
+            } catch (Throwable ex) {
                 ScriptRuntimeException scriptRuntimeException;
                 if (ex instanceof ScriptRuntimeException) {
                     scriptRuntimeException = (ScriptRuntimeException) ex;
@@ -37,7 +35,6 @@ public class NativeMethodDeclareExpression extends AbstractExpression {
                 }
                 throw scriptRuntimeException;
             }
-            return new AsmNativeMethodDeclare(caller);
         } else {
             return new NativeMethodDeclare(method);
         }

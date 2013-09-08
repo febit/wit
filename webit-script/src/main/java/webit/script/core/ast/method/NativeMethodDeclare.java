@@ -26,9 +26,9 @@ public final class NativeMethodDeclare implements MethodDeclare {
         this.noVoid = (returnType != void.class) && (returnType != Void.class);
     }
 
-    public Object execute(Context context, Object[] args) {
-        Object obj;
-        Object[] methodArgs;
+    public Object execute(final Context context, final Object[] args) {
+        final Object obj;
+        final Object[] methodArgs;
         if (isStatic) {
             obj = null;
             if (args != null) {

@@ -18,7 +18,7 @@ public class ServletLoader extends AbstractLoader implements ServletContextListe
     private ServletContext servletContext;
 
     public Resource get(String name) throws ResourceNotFoundException {
-        String realpath = servletContext.getRealPath(getRealPath(name));
+        final String realpath = servletContext.getRealPath(getRealPath(name));
         if (realpath == null) {
             throw new ResourceNotFoundException("Not found: " + name);
         }

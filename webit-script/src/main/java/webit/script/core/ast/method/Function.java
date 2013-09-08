@@ -19,6 +19,7 @@ public final class Function extends AbstractStatment {
     private final int argsIndex;
     private final int[] argIndexs; //with arguments at first
     public final int[] overflowUpstairs;
+    public final int overflowUpstairsRange;
     private final VariantMap varMap;
     private final Statment[] statments;
 
@@ -26,23 +27,25 @@ public final class Function extends AbstractStatment {
         super(line, column);
         this.argIndexs = argIndexs;
         this.argsIndex = argsIndex;
-        this.overflowUpstairs = overflowUpstairs != null && overflowUpstairs.length > 0 ? overflowUpstairs : null;
+        overflowUpstairs = overflowUpstairs != null && overflowUpstairs.length > 0 ? overflowUpstairs : null;
+        this.overflowUpstairs = overflowUpstairs != null ? overflowUpstairs : null;
+        this.overflowUpstairsRange = overflowUpstairs != null ? overflowUpstairs[overflowUpstairs.length - 1] - overflowUpstairs[0] : -1;
         this.varMap = varMap;
         this.statments = statments;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
         execute(context, null);
     }
 
-    public Object execute(Context context, Object[] args) {
+    public Object execute(final Context context, final Object[] args) {
 
-        VariantStack vars = context.vars;
+        final VariantStack vars = context.vars;
         vars.push(varMap);
         vars.set(0, argsIndex, args);
         vars.set(argIndexs, args);
-        int len = statments.length;
-        LoopCtrl ctrl = context.loopCtrl;
+        final int len = statments.length;
+        final LoopCtrl ctrl = context.loopCtrl;
         for (int i = 0; i < len && ctrl.goon(); i++) {
             StatmentUtil.execute(statments[i], context);
         }

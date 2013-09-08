@@ -17,7 +17,7 @@ public final class OrOperator extends BinaryOperator implements Optimizable {
         super(leftExpr, rightExpr, line, column);
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
         return ALU.or(leftExpr, rightExpr, context);
     }
 

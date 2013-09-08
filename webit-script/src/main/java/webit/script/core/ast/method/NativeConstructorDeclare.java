@@ -20,9 +20,9 @@ public class NativeConstructorDeclare implements MethodDeclare {
         this.argsCount = constructor.getParameterTypes().length;
     }
 
-    public Object execute(Context context, Object[] args) {
+    public Object execute(final Context context, final Object[] args) {
 
-        Object[] methodArgs;
+        final Object[] methodArgs;
         if (args != null) {
             int copyLen = args.length;
 

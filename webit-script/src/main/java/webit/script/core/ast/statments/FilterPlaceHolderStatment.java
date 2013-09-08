@@ -28,7 +28,7 @@ public final class FilterPlaceHolderStatment extends AbstractStatment {
         this.expr = expr;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
         context.out(filter.process(StatmentUtil.execute(expr, context)));
     }
 }

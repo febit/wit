@@ -27,7 +27,7 @@ public class DefaultDecoder implements Decoder {
         this.charsetDecoder = cd;
     }
 
-    public void write(byte[] bytes, int offset, int length, Writer writer) throws IOException {
+    public void write(final byte[] bytes, final int offset, final int length, final Writer writer) throws IOException {
         if (bytes == null || length == 0) {
             return;
         }

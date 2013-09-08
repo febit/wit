@@ -15,16 +15,15 @@ public abstract class AbstractLoader implements Loader, Configable {
     protected String encoding;
     protected String root = null;
 
-    public String concat(String parent, String name) {
+    public String concat(final String parent, final String name) {
         if (parent != null) {
-            String folder = FileNameUtil.getPath(parent);
-            return FileNameUtil.concat(folder, name, true);
+            return FileNameUtil.concat(FileNameUtil.getPath(parent), name, true);
         } else {
             return name;
         }
     }
 
-    protected String getRealPath(String name) {
+    protected String getRealPath(final String name) {
         return root != null ? (root + name) : name.substring(1, name.length());
     }
 
@@ -33,12 +32,7 @@ public abstract class AbstractLoader implements Loader, Configable {
     }
 
     public String normalize(String name) {
-        if (name == null) {
-            return null;
-        }
-        name = StringUtil.prefix(name, "/");
-        name = FileNameUtil.normalize(name, true);
-        return name;
+        return name != null ? FileNameUtil.normalize(StringUtil.prefix(name, "/"), true) : null;
     }
 
     public void setRoot(String root) {

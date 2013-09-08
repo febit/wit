@@ -13,7 +13,7 @@ import webit.script.util.charset.ISO_8859_1;
  */
 public final class ISO_8859_1_Decoder implements Decoder {
     
-    public void write(byte[] bytes, int off, int len, Writer writer) throws IOException {
+    public void write(final byte[] bytes, final int off, final int len, final Writer writer) throws IOException {
         if (bytes == null || len == 0) {
             return;
         }

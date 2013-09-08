@@ -48,11 +48,8 @@ public class AsmResolverGenerator implements Opcodes {
     }
 
     protected byte[] generateClassBody(String className, Class beanClass) {
-        String asmClassName = ASMUtil.toAsmClassName(className);
-        ClassWriter classWriter;
-
-        classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classWriter.visit(V1_5, ACC_PUBLIC, asmClassName, null, ASM_RESILVER, null);
+        final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        classWriter.visit(V1_5, ACC_PUBLIC, ASMUtil.toAsmClassName(className), null, ASM_RESILVER, null);
 
         //Default Constructor
         attachDefaultConstructorMethod(classWriter, beanClass);
@@ -267,19 +264,19 @@ public class AsmResolverGenerator implements Opcodes {
         mg.endMethod();
     }
 
-    private void attachReturnTrueCode(GeneratorAdapter mg) {
+    private void attachReturnTrueCode(final GeneratorAdapter mg) {
         mg.push(true);
         mg.returnValue();
     }
 
-    private void attachIfFieldMatchCode(GeneratorAdapter mg, FieldInfo fieldInfo, Label elseJumpTo) {
+    private void attachIfFieldMatchCode(final GeneratorAdapter mg, FieldInfo fieldInfo, Label elseJumpTo) {
         mg.push(fieldInfo.getName());
         mg.loadArg(1); //property
         mg.invokeVirtual(ASMUtil.TYPE_STRING, METHOD_EQUALS);
         mg.ifZCmp(GeneratorAdapter.EQ, elseJumpTo); // if == 0 jump
     }
 
-    private void attachSetFieldCode(GeneratorAdapter mg, FieldInfo fieldInfo, int var_entity, Type beanType) {
+    private void attachSetFieldCode(final GeneratorAdapter mg, FieldInfo fieldInfo, int var_entity, Type beanType) {
         java.lang.reflect.Method setter = fieldInfo.getSetterMethod();
         if (setter != null) {
             //return book.setName((String)name);
@@ -323,7 +320,7 @@ public class AsmResolverGenerator implements Opcodes {
         }
     }
 
-    private void attachGetFieldCode(GeneratorAdapter mg, FieldInfo fieldInfo, int var_entity, Type beanType) {
+    private void attachGetFieldCode(final GeneratorAdapter mg, FieldInfo fieldInfo, int var_entity, Type beanType) {
         java.lang.reflect.Method getter = fieldInfo.getGetterMethod();
         if (getter != null) {
             //return book.getName();
@@ -359,7 +356,7 @@ public class AsmResolverGenerator implements Opcodes {
     }
 
     private void attachDefaultConstructorMethod(ClassWriter classWriter, Class beanClass) {
-        GeneratorAdapter mg = new GeneratorAdapter(ACC_PUBLIC, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR, null, null, classWriter);
+        final GeneratorAdapter mg = new GeneratorAdapter(ACC_PUBLIC, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR, null, null, classWriter);
 
         mg.loadThis();
         mg.push(Type.getType(beanClass));

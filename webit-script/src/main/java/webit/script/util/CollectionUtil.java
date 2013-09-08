@@ -17,11 +17,11 @@ import webit.script.util.collection.*;
  */
 public class CollectionUtil {
 
-    public static int getSize(Object object) {
+    public static int getSize(final Object object) {
         if (object == null) {
             return 0;
         }
-        Class cls = object.getClass();
+        final Class cls = object.getClass();
 
         if (object instanceof Object[]) {
             return ((Object[]) object).length;
@@ -51,7 +51,7 @@ public class CollectionUtil {
         return -1;
     }
 
-    public static Object getByIndex(Object o1, Object key) {
+    public static Object getByIndex(final Object o1, final Object key) {
         if (o1 == null || key == null) {
             throw new ScriptRuntimeException("value is null");
         }
@@ -59,9 +59,9 @@ public class CollectionUtil {
 
         //ARRAY
 
-        Class clazz = o1.getClass();
+        final Class clazz = o1.getClass();
         if (clazz.isArray() && key instanceof Number) {
-            int index = ((Number) key).intValue();
+            final int index = ((Number) key).intValue();
             try {
 
                 if (o1 instanceof Object[]) {
@@ -108,7 +108,7 @@ public class CollectionUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static void setByIndex(Object o1, Object key, Object value) {
+    public static void setByIndex(final Object o1, final Object key, final Object value) {
         if (o1 == null || key == null) {
             throw new ScriptRuntimeException("value is null");
         }
@@ -127,9 +127,9 @@ public class CollectionUtil {
         //}
         //ARRAY
 
-        Class clazz = o1.getClass();
+        final Class clazz = o1.getClass();
         if (clazz.isArray() && key instanceof Number) {
-            int index = ((Number) key).intValue();
+            final int index = ((Number) key).intValue();
             try {
 
                 if (o1 instanceof Object[]) {
@@ -176,12 +176,12 @@ public class CollectionUtil {
         throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());
     }
 
-    public static String arrayToString(Object o1) {
+    public static String arrayToString(final Object o1) {
         if (o1 == null) {
             return null;
         }
 
-        Class clazz = o1.getClass();
+        final Class clazz = o1.getClass();
         if (clazz.isArray()) {
             if (o1 instanceof Object[]) {
                 return Arrays.toString((Object[]) o1);
@@ -215,7 +215,7 @@ public class CollectionUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static Iter toIter(Object o1) {
+    public static Iter toIter(final Object o1) {
         if (o1 == null) {
             return null;
         }
@@ -240,7 +240,7 @@ public class CollectionUtil {
             return new CharSequenceIterAdapter((CharSequence) o1);
         }
 
-        Class clazz = o1.getClass();
+        final Class clazz = o1.getClass();
         if (clazz.isArray()) {
             if (o1 instanceof Object[]) {
                 return new ArrayIterAdapter((Object[]) o1);
@@ -274,12 +274,12 @@ public class CollectionUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static Iter toIter(Set o1) {
+    public static Iter toIter(final Set o1) {
         return new IteratorIterAdapter(o1.iterator());
     }
 
-    public static boolean notEmpty(Object object, boolean defaultValue) {
-        int size = getSize(object);
+    public static boolean notEmpty(final Object object, final boolean defaultValue) {
+        final int size = getSize(object);
         if (size == 0) {
             return false;
         } else if (size > 0) {
@@ -302,7 +302,7 @@ public class CollectionUtil {
         return defaultValue;
     }
 
-    public static Map toMap(Object o1) {
+    public static Map toMap(final Object o1) {
         if (o1 == null) {
             return null;
         }

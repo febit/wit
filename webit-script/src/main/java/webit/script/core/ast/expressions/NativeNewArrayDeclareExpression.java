@@ -18,7 +18,7 @@ public class NativeNewArrayDeclareExpression extends AbstractExpression {
         this.componentType = componentType;
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
         return new NativeNewArrayDeclare(componentType);
     }
 }

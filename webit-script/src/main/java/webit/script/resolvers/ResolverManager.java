@@ -13,9 +13,8 @@ import webit.script.util.collection.IdentityHashMap;
  *
  * @author Zqq
  */
-public class ResolverManager implements Configable{
+public class ResolverManager implements Configable {
 
-    //
     private Logger logger;
     //
     private IdentityHashMap<GetResolver> getResolverMap;
@@ -32,6 +31,7 @@ public class ResolverManager implements Configable{
     private CommonResolver commonResolver;
     //settings
     private boolean enableAsm = true;
+    //
 
     public ResolverManager() {
         getResolverMap = new IdentityHashMap<GetResolver>();
@@ -50,7 +50,7 @@ public class ResolverManager implements Configable{
 
     @SuppressWarnings("unchecked")
     private GetResolver getGetResolver(Object bean) {
-        Class type = bean.getClass();
+        final Class type = bean.getClass();
         GetResolver resolver = getResolverMap.unsafeGet(type);
         if (resolver == null) {
             resolver = getResolverMap.get(type);
@@ -83,7 +83,7 @@ public class ResolverManager implements Configable{
 
     @SuppressWarnings("unchecked")
     private SetResolver getSetResolver(Object bean) {
-        Class type = bean.getClass();
+        final Class type = bean.getClass();
         SetResolver resolver = setResolverMap.unsafeGet(type);
         if (resolver == null) {
             resolver = setResolverMap.get(type);
@@ -101,7 +101,7 @@ public class ResolverManager implements Configable{
                         logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
                     }
                 }
-                
+
                 if (resolver == null) {
                     resolver = commonResolver;
                 }
@@ -114,7 +114,7 @@ public class ResolverManager implements Configable{
 
     @SuppressWarnings("unchecked")
     private ToStringResolver getToStringResolver(Object bean) {
-        Class type = bean.getClass();
+        final Class type = bean.getClass();
         ToStringResolver resolver = toStringResolverMap.unsafeGet(type);
         if (resolver == null) {
             if (resolver == null) {
@@ -137,8 +137,9 @@ public class ResolverManager implements Configable{
     }
 
     public void init(Resolver[] resolvers) {
+        Resolver resolver;
         for (int i = 0; i < resolvers.length; i++) {
-            Resolver resolver = resolvers[i];
+            resolver = resolvers[i];
             if (resolver.getMatchMode() == MatchMode.REGIST) {
                 ((RegistModeResolver) resolver).regist(this);
             } else {
@@ -193,31 +194,15 @@ public class ResolverManager implements Configable{
     }
 
     public final Object get(Object bean, Object property) {
-        if (bean != null) {
-            return getGetResolver(bean).get(bean, property);
-        } else {
-            return null;
-        }
+        return bean != null ? getGetResolver(bean).get(bean, property) : null;
     }
 
     public final boolean set(Object bean, Object property, Object value) {
-        if (bean != null) {
-            return getSetResolver(bean).set(bean, property, value);
-        } else {
-            return false;
-        }
+        return bean != null ? getSetResolver(bean).set(bean, property, value) : null;
     }
 
     public final String toString(Object bean) {
-        if (bean != null) {
-            return getToStringResolver(bean).toString(bean);
-        } else {
-            return null;
-        }
-    }
-
-    public boolean isEnableAsm() {
-        return enableAsm;
+        return bean != null ? getToStringResolver(bean).toString(bean) : null;
     }
 
     public void setEnableAsm(boolean enableAsm) {

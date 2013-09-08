@@ -925,7 +925,7 @@ forMapStat          ::= forMapStatPart:part
 
 
 whileStatPart0      ::= WHILE:sym LPAREN expression:whileExpr RPAREN
-                        {: RESULT = createWhileStatmentPart().setWhileExpr(whileExpr).setPosition(sym$Symbol.line, sym$Symbol.column); :}
+                        {: RESULT = createWhileStatmentPart().setWhileExpr(whileExpr).setDoWhileAtFirst(true).setPosition(sym$Symbol.line, sym$Symbol.column); :}
                         ;
 
 

@@ -88,11 +88,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
 
     protected static String getParentNodeName(String name) {
         int index = name.lastIndexOf('.');
-        if (index > 0) {
-            return name.substring(0, index);
-        } else {
-            return ROOT_NODE_NAME;
-        }
+        return index > 0 ? name.substring(0, index) : ROOT_NODE_NAME;
     }
 
     protected static class Node {
@@ -105,8 +101,8 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
         public Node(Node parent, String name) {
             this.parent = parent;
             this.name = name;
-            inherit = true;
-            access = false;
+            this.inherit = true;
+            this.access = false;
         }
 
         public final boolean isAccess() {
@@ -123,7 +119,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
          * @return the value after set
          */
         public final boolean setAccess(boolean access) {
-            if (inherit == false) {
+            if (this.inherit == false) {
                 //already has a value
                 //black list has higher priority
                 if (access == false) {
@@ -133,7 +129,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
                     return this.access;
                 }
             } else {
-                inherit = false;
+                this.inherit = false;
                 this.access = access;
                 return access;
             }

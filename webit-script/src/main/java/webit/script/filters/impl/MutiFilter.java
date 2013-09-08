@@ -12,16 +12,15 @@ import webit.script.filters.Filter;
 public class MutiFilter implements Filter, Configable {
 
     //settings
-    private Class[] filtersClass;
+    private Class[] filterClasses;
     //
-    private Filter[] filters;
+    private Filter[] _Filters;
 
     public Object process(Object object) {
-        Filter[] filters = this.filters;
+        final Filter[] filters = this._Filters;
         if (filters != null) {
             for (int i = 0; i < filters.length; i++) {
-                Filter filter = filters[i];
-                object = filter.process(object);
+                object = filters[i].process(object);
             }
         }
         return object;
@@ -29,19 +28,19 @@ public class MutiFilter implements Filter, Configable {
 
     @SuppressWarnings("unchecked")
     public void init(Engine engine) {
-        if (filtersClass != null) {
-            filters = new Filter[filtersClass.length];
+        if (filterClasses != null) {
+            _Filters = new Filter[filterClasses.length];
             try {
-                for (int i = 0; i < filtersClass.length; i++) {
-                    filters[i] = (Filter) engine.getBean(filtersClass[i]);
+                for (int i = 0; i < filterClasses.length; i++) {
+                    _Filters[i] = (Filter) engine.getBean(filterClasses[i]);
                 }
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 throw new RuntimeException(ex);
             }
         }
     }
 
-    public void setFiltersClass(Class[] filtersClass) {
-        this.filtersClass = filtersClass;
+    public void setFilterClasses(Class[] filterClasses) {
+        this.filterClasses = filterClasses;
     }
 }

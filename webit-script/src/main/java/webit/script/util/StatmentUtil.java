@@ -18,13 +18,13 @@ import webit.script.io.Out;
 public class StatmentUtil {
 
     @SuppressWarnings("deprecation")
-    public static Object execute(Expression expression, Context context, boolean needReturn, Out out) {
+    public static Object execute(final Expression expression, final Context context, final boolean needReturn, final Out out) {
         try {
             context.pushOut(out);
             Object result = expression.execute(context, needReturn);
             context.popOut();
             return result;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ScriptRuntimeException scriptRuntimeException;
             if (e instanceof ScriptRuntimeException) {
                 scriptRuntimeException = (ScriptRuntimeException) e;
@@ -36,10 +36,10 @@ public class StatmentUtil {
         }
     }
 
-    public static Object execute(Expression expression, Context context, boolean needReturn) {
+    public static Object execute(final Expression expression, final Context context, final boolean needReturn) {
         try {
             return expression.execute(context, needReturn);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ScriptRuntimeException scriptRuntimeException;
             if (e instanceof ScriptRuntimeException) {
                 scriptRuntimeException = (ScriptRuntimeException) e;
@@ -51,10 +51,10 @@ public class StatmentUtil {
         }
     }
 
-    public static Object execute(Expression expression, Context context) {
+    public static Object execute(final Expression expression, final Context context) {
         try {
             return expression.execute(context, true);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ScriptRuntimeException scriptRuntimeException;
             if (e instanceof ScriptRuntimeException) {
                 scriptRuntimeException = (ScriptRuntimeException) e;
@@ -66,10 +66,10 @@ public class StatmentUtil {
         }
     }
 
-    public static void execute(Statment statment, Context context) {
+    public static void execute(final Statment statment, final Context context) {
         try {
             statment.execute(context);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ScriptRuntimeException scriptRuntimeException;
             if (e instanceof ScriptRuntimeException) {
                 scriptRuntimeException = (ScriptRuntimeException) e;
@@ -82,12 +82,12 @@ public class StatmentUtil {
     }
 
     @SuppressWarnings("deprecation")
-    public static void execute(Statment statment, Out out, Context context) {
+    public static void execute(final Statment statment, final Out out, final Context context) {
         try {
             context.pushOut(out);
             statment.execute(context);
             context.popOut();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ScriptRuntimeException scriptRuntimeException;
             if (e instanceof ScriptRuntimeException) {
                 scriptRuntimeException = (ScriptRuntimeException) e;
@@ -99,10 +99,10 @@ public class StatmentUtil {
         }
     }
 
-    public static ResetableValue getResetableValue(ResetableValueExpression expression, Context context) {
+    public static ResetableValue getResetableValue(final ResetableValueExpression expression, final Context context) {
         try {
             return expression.getResetableValue(context);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ScriptRuntimeException scriptRuntimeException;
             if (e instanceof ScriptRuntimeException) {
                 scriptRuntimeException = (ScriptRuntimeException) e;
@@ -118,7 +118,7 @@ public class StatmentUtil {
         if (expression instanceof Optimizable) {
             try {
                 expression = (Expression) ((Optimizable) expression).optimize();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new ParserException("Exception(s) occur when do optimize", e, expression);
             }
         }
@@ -129,7 +129,7 @@ public class StatmentUtil {
         if (statment instanceof Optimizable) {
             try {
                 statment = ((Optimizable) statment).optimize();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new ParserException("Exception(s) occur when do optimize", e, statment);
             }
         }

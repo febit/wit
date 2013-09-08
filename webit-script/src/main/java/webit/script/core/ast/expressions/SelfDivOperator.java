@@ -17,7 +17,7 @@ public final class SelfDivOperator extends SelfOperator{
     }
 
     @Override
-    protected Object doOperate(Object left, Object right) {
+    protected Object doOperate(final Object left, final Object right) {
         return ALU.div(left, right);
     }
 }

@@ -33,7 +33,7 @@ public class AsmResolverManager {
                     try {
                         resolver = (AsmResolver) asmResolverGenerator.generateResolver(type).newInstance();
                         box.setResolver(resolver);
-                    } catch (Exception ex) {
+                    } catch (Throwable ex) {
                         //Note: ignore failed
                     }
                 }

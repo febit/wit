@@ -40,11 +40,10 @@ public class ImportStatment extends AbstractStatment {
     }
 
     @SuppressWarnings("unchecked")
-    public void execute(Context context) {
-        Object templateNameObject = StatmentUtil.execute(templateNameExpr, context);
+    public void execute(final Context context) {
+        final Object templateNameObject = StatmentUtil.execute(templateNameExpr, context);
 
         if (templateNameObject != null) {
-            String templateName = String.valueOf(templateNameObject);
             Map params = null;
             if (paramsExpr != null) {
 
@@ -57,27 +56,26 @@ public class ImportStatment extends AbstractStatment {
                     }
                 }
             }
-            Template thisTemplate = context.template;
+            final Template thisTemplate = context.template;
 
-            Template childTemplate;
+            final Template childTemplate;
 
             try {
-                childTemplate = thisTemplate.engine.getTemplate(thisTemplate.name, templateName);
-                Context childContext = childTemplate.merge(params, context.getOut());
+                childTemplate = thisTemplate.engine.getTemplate(thisTemplate.name, String.valueOf(templateNameObject));
+                final Context childContext = childTemplate.merge(params, context.getOut());
                 if (exportAll) {
-                    
-                Map returns = new HashMap();
-                childContext.exportTo(returns);
-                context.vars.setToCurrentContext(returns);
-                }else{
-                    Object[] vars = childContext.vars.get(exportNames);
+
+                    final Map returns = new HashMap();
+                    childContext.exportTo(returns);
+                    context.vars.setToCurrentContext(returns);
+                } else {
+                    final Object[] vars = childContext.vars.get(exportNames);
                     for (int i = 0; i < vars.length; i++) {
-                        Object object = vars[i];
-                        toContextValues[i].set(context,vars[i]);
+                        toContextValues[i].set(context, vars[i]);
                     }
                 }
 
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new ScriptRuntimeException(e);
             }
         }

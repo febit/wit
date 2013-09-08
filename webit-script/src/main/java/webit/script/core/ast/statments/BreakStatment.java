@@ -17,7 +17,7 @@ public final class BreakStatment extends AbstractStatment {
         this.label = label;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
         context.loopCtrl.breakLoop(label, this);
     }
 }

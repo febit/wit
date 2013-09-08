@@ -15,5 +15,4 @@ public abstract class BinaryOperator extends AbstractExpression {
         this.leftExpr = leftExp;
         this.rightExpr = rightExp;
     }
-    
 }

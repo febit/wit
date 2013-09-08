@@ -13,25 +13,23 @@ public final class CaseStatment extends AbstractStatment {
 
     private final BlockStatment body;
     private final CaseStatment next;
-    private final boolean hasNext;
 
     public CaseStatment(BlockStatment body, CaseStatment next, int line, int column) {
         super(line, column);
         this.body = body;
         this.next = next;
-        this.hasNext = next != null;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
         if (body != null) {
             StatmentUtil.execute(body, context);
         }
-        if (context.loopCtrl.goon() && hasNext) {
+        if (context.loopCtrl.goon() && next != null) {
             StatmentUtil.execute(next, context);
         }
     }
 
     public boolean isBodyEmpty() {
-        return (body == null) && (hasNext == false);
+        return (body == null) && (next == null);
     }
 }

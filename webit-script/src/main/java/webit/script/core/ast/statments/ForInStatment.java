@@ -17,42 +17,34 @@ import webit.script.util.collection.Iter;
  */
 public final class ForInStatment extends AbstractStatment implements Optimizable {
 
-//    private final int itemIndex;
-//    private final int iterIndex;
     private final int[] paramIndexs;
     private final Expression collectionExpr;
     private final BlockStatment bodyStatment;
     private final Statment elseStatment;
     private final String label;
-    //
-    private final boolean bodyNotEmpty;
-    private final boolean elseNotEmpty;
 
     public ForInStatment(int itemIndex, int iterIndex, Expression collectionExpr, BlockStatment bodyStatment, Statment elseStatment, String label, int line, int column) {
         super(line, column);
-//        this.itemIndex = itemIndex;
-//        this.iterIndex = iterIndex;
         this.paramIndexs = new int[]{itemIndex, iterIndex};
         this.collectionExpr = collectionExpr;
         this.bodyStatment = bodyStatment;
         this.elseStatment = elseStatment;
         this.label = label;
-        //
-        bodyNotEmpty = bodyStatment != null;
-        elseNotEmpty = elseStatment != null;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
 
-        Object collection = StatmentUtil.execute(collectionExpr, context);
-        Iter iter = CollectionUtil.toIter(collection);
-        if (iter != null && iter.hasNext() && bodyNotEmpty) {
-            LoopCtrl ctrl = context.loopCtrl;
+        final Object collection = StatmentUtil.execute(collectionExpr, context);
+        final Iter iter = CollectionUtil.toIter(collection);
+        
+        if (iter != null && iter.hasNext() &&  bodyStatment != null) {
+            final LoopCtrl ctrl = context.loopCtrl;
+            final Object[] params = new Object[2];
+            params[1] = iter;
             label:
             while (iter.hasNext()) {
-
-                Object object = iter.next();
-                bodyStatment.execute(context, paramIndexs, new Object[]{object, iter});
+                params[0] = iter.next();
+                bodyStatment.execute(context, paramIndexs, params);
                 if (!ctrl.goon()) {
                     if (ctrl.matchLabel(label)) {
                         switch (ctrl.getLoopType()) {
@@ -73,13 +65,13 @@ public final class ForInStatment extends AbstractStatment implements Optimizable
                     }
                 }
             }
-        } else if (elseNotEmpty) {
+        } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }
     }
 
     public Statment optimize() {
-        if (bodyNotEmpty || elseNotEmpty) {
+        if (bodyStatment != null || elseStatment != null) {
             return this;
         }
         return null;

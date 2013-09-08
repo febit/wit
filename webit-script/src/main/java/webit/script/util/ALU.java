@@ -22,10 +22,10 @@ public class ALU {
     public static final int CHAR = 8;
     public static final int BYTE = 9;
 
-    public static int getBaseType(Object o1, Object o2) {
+    public static int getBaseType(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            Class cls1 = o1.getClass();
-            Class cls2 = o2.getClass();
+            final Class cls1 = o1.getClass();
+            final Class cls2 = o2.getClass();
 
             if (cls1 == String.class || cls2 == String.class) {
                 return STRING;
@@ -60,9 +60,9 @@ public class ALU {
         return NULL;
     }
 
-    public static int getNumberType(Number o1) {
+    public static int getNumberType(final Number o1) {
         if (o1 != null) {
-            Class cls = o1.getClass();
+            final Class cls = o1.getClass();
             if (cls == Integer.class) {
                 return INTEGER;
             } else if (cls == Long.class) {
@@ -78,9 +78,9 @@ public class ALU {
         return NULL;
     }
 
-    public static int getBaseType(Object o1) {
+    public static int getBaseType(final Object o1) {
         if (o1 != null) {
-            Class cls = o1.getClass();
+            final Class cls = o1.getClass();
             if (cls == String.class) {
                 return STRING;
             } else if (cls == Integer.class) {
@@ -105,10 +105,10 @@ public class ALU {
     }
 
     //+1
-    public static Object plusOne(Object o1) {
+    public static Object plusOne(final Object o1) {
         if (o1 != null) {
             if (o1 instanceof Number) {
-                Number num = (Number) o1;
+                final Number num = (Number) o1;
                 switch (getNumberType(num)) {
                     case INTEGER:
                         return Integer.valueOf(num.intValue() + 1);
@@ -129,10 +129,10 @@ public class ALU {
     }
     // -1
 
-    public static Object minusOne(Object o1) {
+    public static Object minusOne(final Object o1) {
         if (o1 != null) {
             if (o1 instanceof Number) {
-                Number num = (Number) o1;
+                final Number num = (Number) o1;
                 switch (getNumberType(num)) {
                     case INTEGER:
                         return Integer.valueOf(num.intValue() - 1);
@@ -154,7 +154,7 @@ public class ALU {
     /////////////////////////////
     //+
 
-    public static Object plus(Object o1, Object o2) {
+    public static Object plus(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -183,7 +183,7 @@ public class ALU {
     }
     //-
 
-    public static Object minus(Object o1, Object o2) {
+    public static Object minus(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -212,7 +212,7 @@ public class ALU {
     }
 
     // 负
-    public static Object negative(Object o1) {
+    public static Object negative(final Object o1) {
         if (o1 != null) {
             int type = getBaseType(o1);
             switch (type) {
@@ -241,7 +241,7 @@ public class ALU {
     }
     //*
 
-    public static Object mult(Object o1, Object o2) {
+    public static Object mult(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -270,7 +270,7 @@ public class ALU {
     }
     // /
 
-    public static Object div(Object o1, Object o2) {
+    public static Object div(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -299,7 +299,7 @@ public class ALU {
     }
     // %
 
-    public static Object mod(Object o1, Object o2) {
+    public static Object mod(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -330,32 +330,32 @@ public class ALU {
 
     /////////////////
     // &&
-    public static Object and(Object o1, Object o2) {
+    public static Object and(final Object o1, final Object o2) {
         return toBoolean(o1) ? o2 : o1;
     }
 
-    public static Object and(Expression expr1, Expression expr2, Context context) {
+    public static Object and(final Expression expr1, final Expression expr2, final Context context) {
         Object left = StatmentUtil.execute(expr1, context);
         return toBoolean(left) ? StatmentUtil.execute(expr2, context) : left;
     }
 
     // ||
-    public static Object or(Object o1, Object o2) {
+    public static Object or(final Object o1, final Object o2) {
         return toBoolean(o1) ? o1 : o2;
     }
 
-    public static Object or(Expression expr1, Expression expr2, Context context) {
+    public static Object or(final Expression expr1, final Expression expr2, final Context context) {
         Object left = StatmentUtil.execute(expr1, context);
         return toBoolean(left) ? left : StatmentUtil.execute(expr2, context);
     }
 
     // !
-    public static boolean not(Object o1) {
+    public static boolean not(final Object o1) {
         return !toBoolean(o1);
     }
 
     // ==
-    public static boolean equals(Object o1, Object o2) {
+    public static boolean equals(final Object o1, final Object o2) {
         if (o1 == o2) {
             return true;
         }
@@ -387,12 +387,12 @@ public class ALU {
     }
     // !=
 
-    public static boolean notEquals(Object o1, Object o2) {
+    public static boolean notEquals(final Object o1, final Object o2) {
         return !equals(o1, o2);
     }
 
     // >
-    public static boolean greater(Object o1, Object o2) {
+    public static boolean greater(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -420,7 +420,7 @@ public class ALU {
     }
     // >=
 
-    public static boolean greaterEquals(Object o1, Object o2) {
+    public static boolean greaterEquals(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -448,7 +448,7 @@ public class ALU {
     }
     // <
 
-    public static boolean less(Object o1, Object o2) {
+    public static boolean less(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -476,7 +476,7 @@ public class ALU {
     }
     // <=
 
-    public static boolean lessEquals(Object o1, Object o2) {
+    public static boolean lessEquals(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -505,7 +505,7 @@ public class ALU {
 
     // ****************************
     // &
-    public static Object bitAnd(Object o1, Object o2) {
+    public static Object bitAnd(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -533,7 +533,7 @@ public class ALU {
     }
     // |
 
-    public static Object bitOr(Object o1, Object o2) {
+    public static Object bitOr(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -561,7 +561,7 @@ public class ALU {
     }
     // ^ XOR
 
-    public static Object bitXor(Object o1, Object o2) {
+    public static Object bitXor(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             int type = getBaseType(o1, o2);
             switch (type) {
@@ -589,7 +589,7 @@ public class ALU {
     }
 
     // ~ 
-    public static Object bitNot(Object o1) {
+    public static Object bitNot(final Object o1) {
         if (o1 != null) {
             int type = getBaseType(o1);
             switch (type) {
@@ -615,7 +615,7 @@ public class ALU {
 
     //*****************
     // <<
-    public static Object lshift(Object o1, Object o2) {
+    public static Object lshift(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
                 int right = ((Number) o2).intValue();
@@ -645,7 +645,7 @@ public class ALU {
     }
     // >>
 
-    public static Object rshift(Object o1, Object o2) {
+    public static Object rshift(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
                 int right = ((Number) o2).intValue();
@@ -675,7 +675,7 @@ public class ALU {
     }
     // >>>
 
-    public static Object urshift(Object o1, Object o2) {
+    public static Object urshift(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
                 int right = ((Number) o2).intValue();
@@ -705,15 +705,15 @@ public class ALU {
     }
     //*******************
 
-    private static ScriptRuntimeException UnsupportedTypeException(Object o1, Object o2) {
+    private static ScriptRuntimeException UnsupportedTypeException(final Object o1, final Object o2) {
         return new ScriptRuntimeException("Unsupported type: left[" + o1.getClass().getName() + "], right[" + o2.getClass().getName() + "]");
     }
 
-    private static ScriptRuntimeException ValueIsNullException(Object o1) {
+    private static ScriptRuntimeException ValueIsNullException(final Object o1) {
         return new ScriptRuntimeException("value is null");
     }
 
-    private static ScriptRuntimeException ValueIsNullException(Object o1, Object o2) {
+    private static ScriptRuntimeException ValueIsNullException(final Object o1, final Object o2) {
         if (o1 == null) {
             if (o2 == null) {
                 return new ScriptRuntimeException("left & right values are null");
@@ -728,7 +728,7 @@ public class ALU {
     }
 
     ////////////////////////////
-    public static boolean toBoolean(Object o) {
+    public static boolean toBoolean(final Object o) {
         if (o == null) {
             return false;
         } else if (Boolean.TRUE.equals(o)) {

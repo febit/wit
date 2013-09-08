@@ -32,7 +32,7 @@ public final class OutputStreamOut implements Out {
         this(outputStream, encoding, coderFactory.newEncoder(encoding));
     }
 
-    public void write(byte[] bytes, int offset, int length) {
+    public void write(final byte[] bytes, final int offset, final int length) {
         try {
             outputStream.write(bytes, offset, length);
         } catch (IOException ex) {
@@ -40,7 +40,7 @@ public final class OutputStreamOut implements Out {
         }
     }
 
-    public void write(byte[] bytes) {
+    public void write(final byte[] bytes) {
         try {
             outputStream.write(bytes);
         } catch (IOException ex) {
@@ -48,7 +48,7 @@ public final class OutputStreamOut implements Out {
         }
     }
 
-    public void write(char[] chars, int offset, int length) {
+    public void write(final char[] chars, final int offset, final int length) {
         try {
             this.encoder.write(chars, offset, length, outputStream);
         } catch (IOException ex) {
@@ -56,11 +56,11 @@ public final class OutputStreamOut implements Out {
         }
     }
 
-    public void write(char[] chars) {
+    public void write(final char[] chars) {
         write(chars, 0, chars.length);
     }
 
-    public void write(String string, int offset, int length) {
+    public void write(final String string, final int offset, final int length) {
         try {
             this.encoder.write(string, offset, length, outputStream);
         } catch (IOException ex) {
@@ -68,7 +68,7 @@ public final class OutputStreamOut implements Out {
         }
     }
 
-    public void write(String string) {
+    public void write(final String string) {
         try {
             this.encoder.write(string, 0, string.length(), outputStream);
         } catch (IOException ex) {

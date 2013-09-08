@@ -23,9 +23,9 @@ public final class AssignOperator extends AbstractExpression {
         this.rexpr = rexpr;
     }
 
-    public Object execute(Context context, boolean needReturn) {
-        Object result = StatmentUtil.execute(rexpr, context, needReturn);
-        ResetableValue value = StatmentUtil.getResetableValue(lexpr, context);
+    public Object execute(final Context context, final boolean needReturn) {
+        final Object result = StatmentUtil.execute(rexpr, context, needReturn);
+        final ResetableValue value = StatmentUtil.getResetableValue(lexpr, context);
         value.set(result);
         return result;
     }

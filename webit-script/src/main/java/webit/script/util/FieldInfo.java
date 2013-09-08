@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
  *
  * @author Zqq
  */
-public class FieldInfo implements Comparable<FieldInfo> {
+public final class FieldInfo implements Comparable<FieldInfo> {
 
     private final String name;
     private final int hashCode;

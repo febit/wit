@@ -20,21 +20,21 @@ public final class FunctionDeclareExpression extends AbstractExpression {
         this.function = function;
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
 
-        VariantContext[] variantContexts;
-        int[] overflowUpstairs = function.overflowUpstairs;
-        if (overflowUpstairs != null && overflowUpstairs.length > 0) {
-            int len_1 = overflowUpstairs[overflowUpstairs.length - 1] - overflowUpstairs[0];
-            variantContexts = new VariantContext[len_1+1];
-            for (int i = 0; i < overflowUpstairs.length; i++) {
-                int j = overflowUpstairs[i];
-                variantContexts[len_1 - j] = context.vars.getContext(j);
+        final VariantContext[] variantContexts;
+        final int range = function.overflowUpstairsRange;
+        if (range >= 0) {
+            final int[] overflowUpstairs = function.overflowUpstairs;
+            variantContexts = new VariantContext[range + 1];
+            for (int i = 0, j; i < overflowUpstairs.length; i++) {
+                j = overflowUpstairs[i];
+                variantContexts[range - j] = context.vars.getContext(j);
             }
         } else {
             variantContexts = null;
         }
 
-        return new FunctionMethodDeclare(function,context.template, variantContexts);
+        return new FunctionMethodDeclare(function, context.template, variantContexts);
     }
 }

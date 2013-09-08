@@ -28,11 +28,11 @@ public final class SwitchStatment extends AbstractStatment {
         this.hasDefaultStatment = defaultStatment != null;
     }
 
-    public void execute(Context context) {
-        Object result = StatmentUtil.execute(switchExpr, context);
+    public void execute(final Context context) {
+        final Object result = StatmentUtil.execute(switchExpr, context);
         boolean run = false;
         if (result != null) {
-            CaseStatment caseStatment = caseMap.get(result);
+            final CaseStatment caseStatment = caseMap.get(result);
             if (caseStatment != null) {
                 StatmentUtil.execute(caseStatment, context);
                 run = true;

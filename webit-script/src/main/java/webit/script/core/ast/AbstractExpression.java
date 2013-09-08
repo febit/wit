@@ -25,7 +25,7 @@ public abstract class AbstractExpression implements Expression {
         return column;
     }
 
-    public void execute(Context context) {
+    public void execute(final Context context) {
         execute(context, false);
     }
 }

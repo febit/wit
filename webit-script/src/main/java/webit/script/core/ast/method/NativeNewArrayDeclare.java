@@ -17,7 +17,7 @@ public class NativeNewArrayDeclare implements MethodDeclare {
         this.componentType = componentType;
     }
 
-    public Object execute(Context context, Object[] args) {
+    public Object execute(final Context context, final Object[] args) {
         int len = 0;
         if (args != null && args.length > 0) {
             Object lenObject = args[0];

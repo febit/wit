@@ -137,7 +137,7 @@ public class ClassUtil {
         BASE_TYPE_ARRAY_PRE_MAP = array_pre;
     }
 
-    public static Class<?> getClassByName(String pureName, int arrayDepth) throws ClassNotFoundException {
+    public static Class<?> getClassByName(final String pureName, final int arrayDepth) throws ClassNotFoundException {
         if (arrayDepth <= 0) {
             return getClassByName(pureName);
         } else {

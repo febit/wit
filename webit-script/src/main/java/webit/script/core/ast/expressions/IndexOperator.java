@@ -19,7 +19,7 @@ public final class IndexOperator extends BinaryOperator implements ResetableValu
         super(leftExpr, rightExpr, line, column);
     }
 
-    public Object execute(Context context, boolean needReturn) {
+    public Object execute(final Context context, final boolean needReturn) {
         return context.resolverManager.get(StatmentUtil.execute(leftExpr, context), StatmentUtil.execute(rightExpr, context));
     }
 
