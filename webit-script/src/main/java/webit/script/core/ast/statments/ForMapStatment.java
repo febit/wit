@@ -87,9 +87,6 @@ public final class ForMapStatment extends AbstractStatment implements Optimizabl
     }
 
     public Statment optimize() {
-        if (bodyStatment != null || elseStatment != null) {
-            return this;
-        }
-        return null;
+        return bodyStatment != null || elseStatment != null ? this : null;
     }
 }

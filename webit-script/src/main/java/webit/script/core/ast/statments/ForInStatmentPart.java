@@ -38,9 +38,7 @@ public final class ForInStatmentPart extends StatmentPart {
     }
 
     public ForInStatmentPart setElseStatment(Statment elseStatment) {
-        
-        elseStatment = StatmentUtil.optimize(elseStatment);
-        this.elseStatment = elseStatment;
+        this.elseStatment = StatmentUtil.optimize(elseStatment);
         return this;
     }
     

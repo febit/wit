@@ -19,10 +19,8 @@ public final class IfOrOperator extends BinaryOperator {
 
     public Object execute(final Context context, final boolean needReturn) {
         final Object ifResult = StatmentUtil.execute(leftExpr, context);
-        if (ALU.toBoolean(ifResult)) {
-            return ifResult;
-        } else {
-            return StatmentUtil.execute(rightExpr, context);
-        }
+        return ALU.toBoolean(ifResult)
+                ? ifResult
+                : StatmentUtil.execute(rightExpr, context);
     }
 }

@@ -4,6 +4,7 @@ package webit.script.core.ast.method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import jodd.util.collection.IntArrayList;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.StatmentPart;
 import webit.script.core.runtime.variant.VariantUtil;
@@ -15,7 +16,7 @@ import webit.script.util.StatmentUtil;
  */
 public final class FunctionPart extends StatmentPart {
 
-    protected List<Integer> argIndexList; //with arguments at first
+    private IntArrayList argIndexList; //with arguments at first
     private List<Statment> statmentList;
     private Map<String, Integer> varMap;
     private int[] overflowUpstairs;
@@ -49,23 +50,20 @@ public final class FunctionPart extends StatmentPart {
     public FunctionPart(int line, int column) {
         super(line, column);
         this.statmentList = new LinkedList<Statment>();
-        this.argIndexList = new LinkedList<Integer>();
+        this.argIndexList = new IntArrayList(6);
     }
 
     public FunctionPart appendArgIndexs(int index) {
-        argIndexList.add(index);
+        this.argIndexList.add(index);
         return this;
     }
 
     public Function pop() {
-        //TODO: 待优化
-        int[] argIndexs = new int[argIndexList.size()];
-        int i  = 0;
-        for (int index : argIndexList) {
-            argIndexs[i++] = index;
-        }
-        Statment[] statments = new Statment[statmentList.size()];
-        statmentList.toArray(statments);
-        return new Function(argsIndex, argIndexs, overflowUpstairs, VariantUtil.toVariantMap(varMap), statments, line, column);
+        return new Function(argsIndex,
+                argIndexList.isEmpty() ? null : argIndexList.toArray(),
+                overflowUpstairs,
+                VariantUtil.toVariantMap(varMap),
+                statmentList.toArray(new Statment[statmentList.size()]),
+                line, column);
     }
 }

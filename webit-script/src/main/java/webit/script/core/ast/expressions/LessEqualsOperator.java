@@ -23,9 +23,8 @@ public final class LessEqualsOperator extends BinaryOperator implements Optimiza
     }
 
     public Expression optimize() {
-        if (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue) {
-            return new DirectValue(ALU.lessEquals(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column);
-        }
-        return this;
+        return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
+                ? new DirectValue(ALU.lessEquals(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
+                : this;
     }
 }

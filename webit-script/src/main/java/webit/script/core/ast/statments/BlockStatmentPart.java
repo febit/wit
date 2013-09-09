@@ -35,11 +35,12 @@ public final class BlockStatmentPart extends StatmentPart {
     }
 
     public BlockStatment pop() {
-        if (statmentList.isEmpty()) {
-            return new BlockStatment(null, null, line, column);
-        }
-        Statment[] statments = new Statment[statmentList.size()];
-        statmentList.toArray(statments);
-        return new BlockStatment(VariantUtil.toVariantMap(varMap), statments, line, column).optimize();
+
+        return statmentList.isEmpty()
+                ? new BlockStatment(null, null, line, column)
+                : new BlockStatment(VariantUtil.toVariantMap(varMap),
+                statmentList.toArray(new Statment[statmentList.size()]),
+                line, column)
+                .optimize();
     }
 }

@@ -37,9 +37,8 @@ public final class FunctionExecuteExpressionPart extends StatmentPart {
 
     public FunctionExecuteExpression pop() {
 
-        Expression[] paramExprs = new Expression[paramExprList.size()];
-        paramExprList.toArray(paramExprs);
-
-        return new FunctionExecuteExpression(funcExpr, paramExprs, line, column);
+        return new FunctionExecuteExpression(funcExpr,
+                paramExprList.toArray(new Expression[paramExprList.size()]),
+                line, column);
     }
 }

@@ -115,24 +115,22 @@ public class StatmentUtil {
     }
 
     public static Expression optimize(Expression expression) {
-        if (expression instanceof Optimizable) {
-            try {
-                expression = (Expression) ((Optimizable) expression).optimize();
-            } catch (Throwable e) {
-                throw new ParserException("Exception(s) occur when do optimize", e, expression);
-            }
+        try {
+            return expression instanceof Optimizable
+                    ? (Expression) ((Optimizable) expression).optimize()
+                    : expression;
+        } catch (Throwable e) {
+            throw new ParserException("Exception(s) occur when do optimize", e, expression);
         }
-        return expression;
     }
 
     public static Statment optimize(Statment statment) {
-        if (statment instanceof Optimizable) {
-            try {
-                statment = ((Optimizable) statment).optimize();
-            } catch (Throwable e) {
-                throw new ParserException("Exception(s) occur when do optimize", e, statment);
-            }
+        try {
+            return statment instanceof Optimizable
+                    ? ((Optimizable) statment).optimize()
+                    : statment;
+        } catch (Throwable e) {
+            throw new ParserException("Exception(s) occur when do optimize", e, statment);
         }
-        return statment;
     }
 }

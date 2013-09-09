@@ -23,9 +23,8 @@ public final class BitOrOperator extends BinaryOperator implements Optimizable {
     }
 
     public Expression optimize() {
-        if (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue) {
-            return new DirectValue(ALU.bitOr(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column);
-        }
-        return this;
+        return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
+                ? new DirectValue(ALU.bitOr(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
+                : this;
     }
 }

@@ -45,9 +45,7 @@ public final class ForMapStatmentPart extends StatmentPart {
     }
 
     public ForMapStatmentPart setElseStatment(Statment elseStatment) {
-        
-        elseStatment = StatmentUtil.optimize(elseStatment);
-        this.elseStatment = elseStatment;
+        this.elseStatment = StatmentUtil.optimize(elseStatment);
         return this;
     }
     

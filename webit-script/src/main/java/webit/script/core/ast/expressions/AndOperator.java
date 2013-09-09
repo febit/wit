@@ -6,6 +6,7 @@ import webit.script.core.ast.BinaryOperator;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
 import webit.script.util.ALU;
+import webit.script.util.StatmentUtil;
 
 /**
  *
@@ -18,13 +19,13 @@ public final class AndOperator extends BinaryOperator implements Optimizable {
     }
 
     public Object execute(final Context context, final boolean needReturn) {
-        return ALU.and(leftExpr, rightExpr, context);
+        Object left = StatmentUtil.execute(leftExpr, context);
+        return ALU.toBoolean(left) ? StatmentUtil.execute(rightExpr, context) : left;
     }
 
     public Expression optimize() {
-        if (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue) {
-            return new DirectValue(ALU.and(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column);
-        }
-        return this;
+        return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
+                ? new DirectValue(ALU.and(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
+                : this;
     }
 }

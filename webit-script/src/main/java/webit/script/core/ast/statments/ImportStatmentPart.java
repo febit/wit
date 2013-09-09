@@ -21,8 +21,8 @@ public class ImportStatmentPart extends StatmentPart {
     public ImportStatmentPart(Expression expr, int line, int column) {
         super(line, column);
         this.expr = expr;
-        exportNameList = new LinkedList<String>();
-        toContextValueList = new LinkedList<ContextValue>();
+        this.exportNameList = new LinkedList<String>();
+        this.toContextValueList = new LinkedList<ContextValue>();
     }
 
     public ImportStatmentPart setParamsExpr(Expression paramsExpr) {
@@ -31,22 +31,19 @@ public class ImportStatmentPart extends StatmentPart {
     }
 
     public ImportStatmentPart append(String name, ContextValue to) {
-        exportNameList.add(name);
-        toContextValueList.add(to);
+        this.exportNameList.add(name);
+        this.toContextValueList.add(to);
         return this;
     }
 
     public ImportStatment pop() {
-        if (exportNameList.isEmpty()) {
-            return new ImportStatment(expr, paramsExpr, null, null, line, column);
-        } else {
-            int len = exportNameList.size();
-            String[] exportNames = new String[len];
-            ContextValue[] toContextValues = new ContextValue[len];
-            exportNameList.toArray(exportNames);
-            toContextValueList.toArray(toContextValues);
 
-            return new ImportStatment(expr, paramsExpr, exportNames, toContextValues, line, column);
-        }
+        final int len = exportNameList.size();
+        return len == 0
+                ? new ImportStatment(expr, paramsExpr, null, null, line, column)
+                : new ImportStatment(expr, paramsExpr,
+                exportNameList.toArray(new String[len]),
+                toContextValueList.toArray(new ContextValue[len]),
+                line, column);
     }
 }

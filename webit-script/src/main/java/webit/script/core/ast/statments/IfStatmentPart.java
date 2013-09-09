@@ -22,16 +22,12 @@ public final class IfStatmentPart extends StatmentPart {
     }
 
     public IfStatmentPart setThenStatment(Statment thenStatment) {
-        
-        thenStatment = StatmentUtil.optimize(thenStatment);
-        this.thenStatment = thenStatment;
+        this.thenStatment = StatmentUtil.optimize(thenStatment);
         return this;
     }
 
     public IfStatmentPart setElseStatment(Statment elseStatment) {
-        
-        elseStatment = StatmentUtil.optimize(elseStatment);
-        this.elseStatment = elseStatment;
+        this.elseStatment = StatmentUtil.optimize(elseStatment);
         return this;
     }
 

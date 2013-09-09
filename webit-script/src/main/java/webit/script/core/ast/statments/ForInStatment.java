@@ -71,9 +71,6 @@ public final class ForInStatment extends AbstractStatment implements Optimizable
     }
 
     public Statment optimize() {
-        if (bodyStatment != null || elseStatment != null) {
-            return this;
-        }
-        return null;
+        return bodyStatment != null || elseStatment != null ? this : null;
     }
 }

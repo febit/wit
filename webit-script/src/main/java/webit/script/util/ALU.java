@@ -156,8 +156,7 @@ public class ALU {
 
     public static Object plus(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 case STRING:
                     return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER:
@@ -185,8 +184,7 @@ public class ALU {
 
     public static Object minus(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 //return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER:
@@ -214,8 +212,7 @@ public class ALU {
     // 负
     public static Object negative(final Object o1) {
         if (o1 != null) {
-            int type = getBaseType(o1);
-            switch (type) {
+            switch (getBaseType(o1)) {
                 //case STRING:
                 //return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER:
@@ -243,8 +240,7 @@ public class ALU {
 
     public static Object mult(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 //return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER:
@@ -272,8 +268,7 @@ public class ALU {
 
     public static Object div(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 //return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER:
@@ -301,8 +296,7 @@ public class ALU {
 
     public static Object mod(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 //return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER:
@@ -334,19 +328,9 @@ public class ALU {
         return toBoolean(o1) ? o2 : o1;
     }
 
-    public static Object and(final Expression expr1, final Expression expr2, final Context context) {
-        Object left = StatmentUtil.execute(expr1, context);
-        return toBoolean(left) ? StatmentUtil.execute(expr2, context) : left;
-    }
-
     // ||
     public static Object or(final Object o1, final Object o2) {
         return toBoolean(o1) ? o1 : o2;
-    }
-
-    public static Object or(final Expression expr1, final Expression expr2, final Context context) {
-        Object left = StatmentUtil.execute(expr1, context);
-        return toBoolean(left) ? left : StatmentUtil.execute(expr2, context);
     }
 
     // !
@@ -366,8 +350,7 @@ public class ALU {
             return true;
         }
         if (o1 instanceof Number && o2 instanceof Number) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 //case CHAR:
                 case BYTE:
@@ -394,13 +377,11 @@ public class ALU {
     // >
     public static boolean greater(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 case CHAR:
-                    int left = o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue();
-                    int right = o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue();
-                    return left > right;
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
+                            > (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
                 case BYTE:
                 case SHORT:
                 case INTEGER:
@@ -422,13 +403,11 @@ public class ALU {
 
     public static boolean greaterEquals(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 case CHAR:
-                    int left = o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue();
-                    int right = o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue();
-                    return left >= right;
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
+                            >= (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
                 case BYTE:
                 case SHORT:
                 case INTEGER:
@@ -450,13 +429,11 @@ public class ALU {
 
     public static boolean less(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 case CHAR:
-                    int left = o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue();
-                    int right = o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue();
-                    return left < right;
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
+                            < (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
                 case BYTE:
                 case SHORT:
                 case INTEGER:
@@ -478,13 +455,11 @@ public class ALU {
 
     public static boolean lessEquals(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 case CHAR:
-                    int left = o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue();
-                    int right = o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue();
-                    return left <= right;
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
+                            <= (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
                 case BYTE:
                 case SHORT:
                 case INTEGER:
@@ -507,13 +482,11 @@ public class ALU {
     // &
     public static Object bitAnd(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 case CHAR:
-                    char left = o1 instanceof Number ? (char) ((Number) o1).intValue() : ((Character) o1).charValue();
-                    char right = o2 instanceof Number ? (char) ((Number) o2).intValue() : ((Character) o2).charValue();
-                    return left & right;
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
+                            & (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
                 case BYTE:
                     return ((Number) o1).byteValue() & ((Number) o2).byteValue();
                 case SHORT:
@@ -535,13 +508,11 @@ public class ALU {
 
     public static Object bitOr(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 case CHAR:
-                    char left = o1 instanceof Number ? (char) ((Number) o1).intValue() : ((Character) o1).charValue();
-                    char right = o2 instanceof Number ? (char) ((Number) o2).intValue() : ((Character) o2).charValue();
-                    return left | right;
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
+                            | (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
                 case BYTE:
                     return ((Number) o1).byteValue() | ((Number) o2).byteValue();
                 case SHORT:
@@ -563,13 +534,11 @@ public class ALU {
 
     public static Object bitXor(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            int type = getBaseType(o1, o2);
-            switch (type) {
+            switch (getBaseType(o1, o2)) {
                 //case STRING:
                 case CHAR:
-                    char left = o1 instanceof Number ? (char) ((Number) o1).intValue() : ((Character) o1).charValue();
-                    char right = o2 instanceof Number ? (char) ((Number) o2).intValue() : ((Character) o2).charValue();
-                    return left ^ right;
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
+                            ^ (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
                 case BYTE:
                     return ((Number) o1).byteValue() ^ ((Number) o2).byteValue();
                 case SHORT:
@@ -591,8 +560,7 @@ public class ALU {
     // ~ 
     public static Object bitNot(final Object o1) {
         if (o1 != null) {
-            int type = getBaseType(o1);
-            switch (type) {
+            switch (getBaseType(o1)) {
                 //case STRING:
                 //case CHAR:
                 case BYTE:
@@ -618,20 +586,18 @@ public class ALU {
     public static Object lshift(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
-                int right = ((Number) o2).intValue();
-                int type = getBaseType(o1);
-                switch (type) {
+                switch (getBaseType(o1)) {
                     //case STRING:
                     case CHAR:
-                        return ((Character) o1).charValue() << right;
+                        return ((Character) o1).charValue() << ((Number) o2).intValue();
                     case BYTE:
-                        return ((Byte) o1).byteValue() << right;
+                        return ((Byte) o1).byteValue() << ((Number) o2).intValue();
                     case SHORT:
-                        return ((Short) o1).shortValue() << right;
+                        return ((Short) o1).shortValue() << ((Number) o2).intValue();
                     case INTEGER:
-                        return ((Integer) o1).intValue() << right;
+                        return ((Integer) o1).intValue() << ((Number) o2).intValue();
                     case LONG:
-                        return ((Long) o1).longValue() << right;
+                        return ((Long) o1).longValue() << ((Number) o2).intValue();
                     //case DOUBLE:
                     //case FLOAT:
                     default:
@@ -648,20 +614,18 @@ public class ALU {
     public static Object rshift(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
-                int right = ((Number) o2).intValue();
-                int type = getBaseType(o1);
-                switch (type) {
+                switch (getBaseType(o1)) {
                     //case STRING:
                     case CHAR:
-                        return ((Character) o1).charValue() >> right;
+                        return ((Character) o1).charValue() >> ((Number) o2).intValue();
                     case BYTE:
-                        return ((Byte) o1).byteValue() >> right;
+                        return ((Byte) o1).byteValue() >> ((Number) o2).intValue();
                     case SHORT:
-                        return ((Short) o1).shortValue() >> right;
+                        return ((Short) o1).shortValue() >> ((Number) o2).intValue();
                     case INTEGER:
-                        return ((Integer) o1).intValue() >> right;
+                        return ((Integer) o1).intValue() >> ((Number) o2).intValue();
                     case LONG:
-                        return ((Long) o1).longValue() >> right;
+                        return ((Long) o1).longValue() >> ((Number) o2).intValue();
                     //case DOUBLE:
                     //case FLOAT:
                     default:
@@ -678,20 +642,18 @@ public class ALU {
     public static Object urshift(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
-                int right = ((Number) o2).intValue();
-                int type = getBaseType(o1);
-                switch (type) {
+                switch (getBaseType(o1)) {
                     //case STRING:
                     case CHAR:
-                        return ((Character) o1).charValue() >>> right;
+                        return ((Character) o1).charValue() >>> ((Number) o2).intValue();
                     case BYTE:
-                        return ((Byte) o1).byteValue() >>> right;
+                        return ((Byte) o1).byteValue() >>> ((Number) o2).intValue();
                     case SHORT:
-                        return ((Short) o1).shortValue() >>> right;
+                        return ((Short) o1).shortValue() >>> ((Number) o2).intValue();
                     case INTEGER:
-                        return ((Integer) o1).intValue() >>> right;
+                        return ((Integer) o1).intValue() >>> ((Number) o2).intValue();
                     case LONG:
-                        return ((Long) o1).longValue() >>> right;
+                        return ((Long) o1).longValue() >>> ((Number) o2).intValue();
                     //case DOUBLE:
                     //case FLOAT:
                     default:

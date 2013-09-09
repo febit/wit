@@ -11,7 +11,7 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public final class IfOperator extends AbstractExpression{
+public final class IfOperator extends AbstractExpression {
 
     private final Expression ifExpr;
     private final Expression leftValueExpr;
@@ -25,11 +25,11 @@ public final class IfOperator extends AbstractExpression{
     }
 
     public Object execute(final Context context, final boolean needReturn) {
-        final Object ifResult = StatmentUtil.execute(ifExpr, context);
-        if (ALU.toBoolean(ifResult)) {
-            return StatmentUtil.execute(leftValueExpr, context);
-        }else{
-            return StatmentUtil.execute(rightValueExpr, context);
-        }
+        return StatmentUtil.execute(
+                ALU.toBoolean(StatmentUtil.execute(ifExpr, context))
+                ? leftValueExpr
+                : rightValueExpr,
+                context);
+
     }
 }

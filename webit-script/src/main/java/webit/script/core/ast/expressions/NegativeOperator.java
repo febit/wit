@@ -26,9 +26,8 @@ public final class NegativeOperator extends AbstractExpression implements Optimi
     }
 
     public Expression optimize() {
-        if (expr instanceof DirectValue) {
-            return new DirectValue(ALU.negative(((DirectValue) expr).value), line, column);
-        }
-        return this;
+        return expr instanceof DirectValue
+                ? new DirectValue(ALU.negative(((DirectValue) expr).value), line, column)
+                : this;
     }
 }

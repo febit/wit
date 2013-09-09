@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
-import java.lang.reflect.Constructor;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.StatmentPart;
@@ -37,13 +36,12 @@ public class NativeConstructorDeclareExpressionPart extends StatmentPart {
     @SuppressWarnings("unchecked")
     public NativeConstructorDeclareExpression pop(NativeSecurityManager securityManager) {
         try {
-            Class[] paramTypes = new Class[paramTypeList.size()];
-            paramTypeList.toArray(paramTypes);
 
             NativeSecurityManagerUtil.checkAccess(securityManager, clazz.getName() + ".<init>");
 
-            Constructor constructor = clazz.getConstructor(paramTypes);
-            return new NativeConstructorDeclareExpression(constructor, line, column);
+            return new NativeConstructorDeclareExpression(
+                    clazz.getConstructor(paramTypeList.toArray(new Class[paramTypeList.size()])),
+                    line, column);
         } catch (NoSuchMethodException ex) {
             throw new ParserException(ex.getMessage(), line, column);
         } catch (SecurityException ex) {

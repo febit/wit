@@ -37,9 +37,6 @@ public final class IfStatment extends AbstractStatment implements Optimizable {
     }
 
     public Statment optimize() {
-        if (thenStatment != null || elseStatment != null) {
-            return this;
-        }
-        return null;
+        return thenStatment != null || elseStatment != null ? this : null;
     }
 }

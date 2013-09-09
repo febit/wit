@@ -23,9 +23,8 @@ public final class MinusOperator extends BinaryOperator implements Optimizable {
     }
 
     public Expression optimize() {
-        if (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue) {
-            return new DirectValue(ALU.minus(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column);
-        }
-        return this;
+        return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
+                ? new DirectValue(ALU.minus(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
+                : this;
     }
 }

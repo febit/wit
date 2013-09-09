@@ -12,18 +12,14 @@ import webit.script.filters.Filter;
 public class PlaceHolderStatmentFactory {
 
     private final Filter filter;
-    private final boolean withFilter;
 
     public PlaceHolderStatmentFactory(Filter filter) {
         this.filter = filter;
-        this.withFilter = filter != null;
     }
 
     public Statment creatPlaceHolderStatment(final Expression expr) {
-        if (withFilter) {
-            return new FilterPlaceHolderStatment(filter, expr);
-        } else {
-            return new PlaceHolderStatment(expr);
-        }
+        return filter != null
+                ? new FilterPlaceHolderStatment(filter, expr)
+                : new PlaceHolderStatment(expr);
     }
 }

@@ -43,13 +43,11 @@ public class NativeMethodDeclareExpressionPart extends StatmentPart {
 
     public NativeMethodDeclareExpression pop(NativeSecurityManager securityManager) {
         try {
-            Class[] paramTypes = new Class[paramTypeList.size()];
-            paramTypeList.toArray(paramTypes);
-
             NativeSecurityManagerUtil.checkAccess(securityManager, clazz.getName() + "." + methodName);
 
-            Method method = ClassUtil.searchMethod(clazz, methodName, paramTypes, false);
-            return new NativeMethodDeclareExpression(method, line, column);
+            return new NativeMethodDeclareExpression(
+                    ClassUtil.searchMethod(clazz, methodName, paramTypeList.toArray(new Class[paramTypeList.size()]), false),
+                    line, column);
         } catch (NoSuchMethodException ex) {
             throw new ParserException(ex.getMessage(), line, column);
         } catch (NativeSecurityException ex) {

@@ -13,6 +13,7 @@ import webit.script.util.StatmentUtil;
  * @author Zqq
  */
 public final class BitNotOperator extends AbstractExpression implements Optimizable {
+
     private final Expression expr;
 
     public BitNotOperator(Expression expr, int line, int column) {
@@ -25,9 +26,8 @@ public final class BitNotOperator extends AbstractExpression implements Optimiza
     }
 
     public Expression optimize() {
-        if (expr instanceof DirectValue) {
-            return new DirectValue(ALU.bitNot(((DirectValue) expr).value), line, column);
-        }
-        return this;
+        return expr instanceof DirectValue
+                ? new DirectValue(ALU.bitNot(((DirectValue) expr).value), line, column)
+                : this;
     }
 }

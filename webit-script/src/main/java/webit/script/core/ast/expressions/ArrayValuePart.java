@@ -10,23 +10,23 @@ import webit.script.core.ast.StatmentPart;
  *
  * @author Zqq
  */
-public final class ArrayValuePart extends StatmentPart{
-    
+public final class ArrayValuePart extends StatmentPart {
+
     protected final List<Expression> valueExprs;
 
     public ArrayValuePart(int line, int column) {
         super(line, column);
         this.valueExprs = new LinkedList<Expression>();
     }
-    
-    public ArrayValuePart append(Expression expr){
-        valueExprs.add(expr);
+
+    public ArrayValuePart append(Expression expr) {
+        this.valueExprs.add(expr);
         return this;
     }
 
     public ArrayValue pop() {
-        Expression[] exprs = new Expression[valueExprs.size()];
-        valueExprs.toArray(exprs);
-        return new ArrayValue(exprs, line, column);
+        return new ArrayValue(
+                valueExprs.toArray(new Expression[valueExprs.size()]),
+                line, column);
     }
 }
