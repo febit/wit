@@ -796,6 +796,8 @@ importStatPart1     ::= IMPORT:sym expression:expr
                         {: RESULT = createImportStatmentPart(expr, sym$Symbol.line, sym$Symbol.column); :}
                         |IMPORT:sym expression:expr mapValue:paramsExpr
                         {: RESULT = createImportStatmentPart(expr, sym$Symbol.line, sym$Symbol.column).setParamsExpr(paramsExpr); :}
+                        |IMPORT:sym expression:expr LBRACE expression:paramsExpr RBRACE
+                        {: RESULT = createImportStatmentPart(expr, sym$Symbol.line, sym$Symbol.column).setParamsExpr(paramsExpr); :}
                         ;
 
 
@@ -817,9 +819,11 @@ importStat          ::= importStatPart1:part SEMICOLON
                         ;
 
 
-includeStat         ::= INCLUDE:sym expression:expr 
+includeStat         ::= INCLUDE:sym expression:expr SEMICOLON
                         {: RESULT = createIncludeStatment(expr, null, sym$Symbol.line, sym$Symbol.column); :}
-                        |INCLUDE:sym expression:expr mapValue:paramsExpr
+                        |INCLUDE:sym expression:expr mapValue:paramsExpr SEMICOLON
+                        {: RESULT = createIncludeStatment(expr, paramsExpr, sym$Symbol.line, sym$Symbol.column); :}
+                        |INCLUDE:sym expression:expr LBRACE expression:paramsExpr RBRACE SEMICOLON
                         {: RESULT = createIncludeStatment(expr, paramsExpr, sym$Symbol.line, sym$Symbol.column); :}
                         ;
 

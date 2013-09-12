@@ -46,6 +46,13 @@ var assertNull;
         assertEquals(b_1, "b");
 
     }
+    {
+        import "/import1.wtl" {"1":"1","2":"2"} a,b;
+        var a;
+        var b;
+        var c = {"1":"1","2":"2"};
+        import "/import1.wtl" {c} a,b;
+    }
 
 }
 
