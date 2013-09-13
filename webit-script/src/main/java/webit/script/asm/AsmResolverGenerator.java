@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.asm;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.asm4.ClassWriter;
@@ -118,6 +119,8 @@ public class AsmResolverGenerator implements Opcodes {
                 System.arraycopy(old, 0, hashcodes, 0, realLength);
             }
 
+            //
+            Arrays.sort(hashcodes);
 
             //int hashcode = property.hashCode();
             //int var_hashcode = mg.newLocal(Type.INT_TYPE);
@@ -218,6 +221,8 @@ public class AsmResolverGenerator implements Opcodes {
                 System.arraycopy(old, 0, hashcodes, 0, realLength);
             }
 
+            //
+            Arrays.sort(hashcodes);
 
             //int hashcode = property.hashCode();
             //int var_hashcode = mg.newLocal(Type.INT_TYPE);

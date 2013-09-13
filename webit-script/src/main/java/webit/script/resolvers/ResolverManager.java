@@ -63,7 +63,11 @@ public class ResolverManager implements Configable {
                 }
 
                 if (resolver == null && enableAsm) {
-                    resolver = AsmResolverManager.generateAsmResolver(type);
+                    try {
+                        resolver = AsmResolverManager.generateAsmResolver(type);
+                    } catch (Throwable e) {
+                        logger.error(null, e);
+                    }
                     if (resolver == null) {
                         logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
                     }
@@ -96,7 +100,11 @@ public class ResolverManager implements Configable {
                 }
 
                 if (resolver == null && enableAsm) {
-                    resolver = AsmResolverManager.generateAsmResolver(type);
+                    try {
+                        resolver = AsmResolverManager.generateAsmResolver(type);
+                    } catch (Throwable e) {
+                        logger.error(null, e);
+                    }
                     if (resolver == null) {
                         logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
                     }

@@ -13,7 +13,7 @@ public class AsmResolverManager {
     private final static Map<Class, AsmResolverBox> asmResolversMap = new HashMap<Class, AsmResolverBox>();
     private static AsmResolverGenerator asmResolverGenerator = new AsmResolverGenerator();
 
-    public static AsmResolver generateAsmResolver(Class type) {
+    public static AsmResolver generateAsmResolver(Class type) throws Throwable {
         AsmResolverBox box = asmResolversMap.get(type);
         if (box == null) {
             synchronized (asmResolversMap) {
@@ -30,12 +30,8 @@ public class AsmResolverManager {
             synchronized (box) {
                 resolver = box.getResolver();
                 if (resolver == null) {
-                    try {
                         resolver = (AsmResolver) asmResolverGenerator.generateResolver(type).newInstance();
                         box.setResolver(resolver);
-                    } catch (Throwable ex) {
-                        //Note: ignore failed
-                    }
                 }
             }
         }
