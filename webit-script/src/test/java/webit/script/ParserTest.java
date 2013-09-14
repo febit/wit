@@ -17,7 +17,6 @@ public class ParserTest {
 
         try {
             StringOutputStream out = new StringOutputStream();
-        
             Template template = engine.getTemplate("/firstTmpl.wtl");
             //TemplateAST result = template.prepareTemplate();
             template.merge(null, out);

@@ -115,13 +115,11 @@ public final class Context {
         if (object != null) {
             final Class objClass = object.getClass();
             if (objClass == byte[].class) {
-                out((byte[]) object);
+                out.write((byte[]) object);
             } else if (objClass == char[].class) {
-                out((char[]) object);
-            } else if (objClass == String.class) {
-                out((String) object);
+                out.write((char[]) object);
             } else {
-                out(resolverManager.toString(object));
+                resolverManager.render(out, object);
             }
         }
     }

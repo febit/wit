@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import webit.script.Configable;
 import webit.script.Engine;
 import webit.script.asm.AsmResolverManager;
+import webit.script.io.Out;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.impl.CommonResolver;
 import webit.script.util.collection.IdentityHashMap;
@@ -13,20 +14,20 @@ import webit.script.util.collection.IdentityHashMap;
  *
  * @author Zqq
  */
-public class ResolverManager implements Configable {
+public final class ResolverManager implements Configable {
 
     private Logger logger;
     //
     private IdentityHashMap<GetResolver> getResolverMap;
     private IdentityHashMap<SetResolver> setResolverMap;
-    private IdentityHashMap<ToStringResolver> toStringResolverMap;
+    private IdentityHashMap<OutResolver> outResolverMap;
     //
     private ArrayList<GetResolver> getResolvers;
     private ArrayList<SetResolver> setResolvers;
-    private ArrayList<ToStringResolver> toStringResolvers;
+    private ArrayList<OutResolver> outResolvers;
     private ArrayList<Class> getResolverTypes;
     private ArrayList<Class> setResolverTypes;
-    private ArrayList<Class> toStringResolverTypes;
+    private ArrayList<Class> outResolverTypes;
     //
     private CommonResolver commonResolver;
     //settings
@@ -36,14 +37,14 @@ public class ResolverManager implements Configable {
     public ResolverManager() {
         getResolverMap = new IdentityHashMap<GetResolver>();
         setResolverMap = new IdentityHashMap<SetResolver>();
-        toStringResolverMap = new IdentityHashMap<ToStringResolver>();
+        outResolverMap = new IdentityHashMap<OutResolver>();
 
         getResolvers = new ArrayList<GetResolver>();
         setResolvers = new ArrayList<SetResolver>();
-        toStringResolvers = new ArrayList<ToStringResolver>();
+        outResolvers = new ArrayList<OutResolver>();
         getResolverTypes = new ArrayList<Class>();
         setResolverTypes = new ArrayList<Class>();
-        toStringResolverTypes = new ArrayList<Class>();
+        outResolverTypes = new ArrayList<Class>();
 
         commonResolver = new CommonResolver();
     }
@@ -121,15 +122,15 @@ public class ResolverManager implements Configable {
     }
 
     @SuppressWarnings("unchecked")
-    private ToStringResolver getToStringResolver(Object bean) {
+    private OutResolver getOutResolver(Object bean) {
         final Class type = bean.getClass();
-        ToStringResolver resolver = toStringResolverMap.unsafeGet(type);
+        OutResolver resolver = outResolverMap.unsafeGet(type);
         if (resolver == null) {
             if (resolver == null) {
-                resolver = toStringResolverMap.get(type);
-                for (int i = 0; i < toStringResolverTypes.size(); i++) {
-                    if (toStringResolverTypes.get(i).isAssignableFrom(type)) {
-                        resolver = toStringResolvers.get(i);
+                resolver = outResolverMap.get(type);
+                for (int i = 0; i < outResolverTypes.size(); i++) {
+                    if (outResolverTypes.get(i).isAssignableFrom(type)) {
+                        resolver = outResolvers.get(i);
                         break;
                     }
                 }
@@ -138,7 +139,7 @@ public class ResolverManager implements Configable {
                     resolver = commonResolver;
                 }
 
-                resolver = toStringResolverMap.putIfAbsent(type, resolver);
+                resolver = outResolverMap.putIfAbsent(type, resolver);
             }
         }
         return resolver;
@@ -157,14 +158,14 @@ public class ResolverManager implements Configable {
 
         getResolvers.trimToSize();
         setResolvers.trimToSize();
-        toStringResolvers.trimToSize();
+        outResolvers.trimToSize();
         getResolverTypes.trimToSize();
         setResolverTypes.trimToSize();
-        toStringResolverTypes.trimToSize();
+        outResolverTypes.trimToSize();
         //
     }
 
-    public final boolean registResolver(Class type, Resolver resolver, MatchMode matchMode) {
+    public boolean registResolver(Class type, Resolver resolver, MatchMode matchMode) {
         switch (matchMode) {
             case INSTANCEOF:
                 if (resolver instanceof GetResolver) {
@@ -175,9 +176,9 @@ public class ResolverManager implements Configable {
                     setResolverTypes.add(type);
                     setResolvers.add((SetResolver) resolver);
                 }
-                if (resolver instanceof ToStringResolver) {
-                    toStringResolverTypes.add(type);
-                    toStringResolvers.add((ToStringResolver) resolver);
+                if (resolver instanceof OutResolver) {
+                    outResolverTypes.add(type);
+                    outResolvers.add((OutResolver) resolver);
                 }
                 break;
 
@@ -188,8 +189,8 @@ public class ResolverManager implements Configable {
                 if (resolver instanceof SetResolver) {
                     setResolverMap.putIfAbsent(type, (SetResolver) resolver);
                 }
-                if (resolver instanceof ToStringResolver) {
-                    toStringResolverMap.putIfAbsent(type, (ToStringResolver) resolver);
+                if (resolver instanceof OutResolver) {
+                    outResolverMap.putIfAbsent(type, (OutResolver) resolver);
                 }
                 break;
             case REGIST:
@@ -201,16 +202,18 @@ public class ResolverManager implements Configable {
         return true;
     }
 
-    public final Object get(Object bean, Object property) {
+    public Object get(Object bean, Object property) {
         return bean != null ? getGetResolver(bean).get(bean, property) : null;
     }
 
-    public final boolean set(Object bean, Object property, Object value) {
+    public boolean set(Object bean, Object property, Object value) {
         return bean != null ? getSetResolver(bean).set(bean, property, value) : null;
     }
 
-    public final String toString(Object bean) {
-        return bean != null ? getToStringResolver(bean).toString(bean) : null;
+    public void render(final Out out, final Object bean) {
+        if (bean != null) {
+            getOutResolver(bean).render(out, bean);
+        }
     }
 
     public void setEnableAsm(boolean enableAsm) {

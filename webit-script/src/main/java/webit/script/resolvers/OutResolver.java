@@ -1,12 +1,13 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.resolvers;
 
+import webit.script.io.Out;
 
 /**
  *
  * @author Zqq
  */
-public interface ToStringResolver extends Resolver {
+public interface OutResolver extends Resolver {
 
-    String toString(Object bean);
+    void render(Out out, Object bean);
 }

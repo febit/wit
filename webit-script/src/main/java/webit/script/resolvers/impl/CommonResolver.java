@@ -3,16 +3,17 @@ package webit.script.resolvers.impl;
 
 import jodd.bean.BeanUtil;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.io.Out;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
-import webit.script.resolvers.ToStringResolver;
+import webit.script.resolvers.OutResolver;
 
 /**
  *
  * @author Zqq
  */
-public class CommonResolver implements GetResolver, SetResolver, ToStringResolver{
+public class CommonResolver implements GetResolver, SetResolver, OutResolver{
 
 
     public Object get(Object object, Object property) {
@@ -31,8 +32,8 @@ public class CommonResolver implements GetResolver, SetResolver, ToStringResolve
         }
     }
 
-    public String toString(Object bean) {
-        return bean.toString();
+    public void render(final Out out, Object bean) {
+        out.write(bean.toString());
     }
 
     public MatchMode getMatchMode() {
