@@ -12,28 +12,6 @@ import java.util.Map;
  */
 public class ClassUtil {
 
-    public static Class<?> getUnboxedClass(Class<?> type) {
-        if (type == Boolean.class) {
-            return boolean.class;
-        } else if (type == Character.class) {
-            return char.class;
-        } else if (type == Byte.class) {
-            return byte.class;
-        } else if (type == Short.class) {
-            return short.class;
-        } else if (type == Integer.class) {
-            return int.class;
-        } else if (type == Long.class) {
-            return long.class;
-        } else if (type == Float.class) {
-            return float.class;
-        } else if (type == Double.class) {
-            return double.class;
-        } else {
-            return type;
-        }
-    }
-
     public static boolean unBox(Boolean b) {
         return b.booleanValue();
     }
@@ -98,6 +76,30 @@ public class ClassUtil {
         return Double.valueOf(c);
     }
 
+    //XXX:Will asm do this better?
+    public static Class<?> getUnboxedClass(Class<?> type) {
+        if (type == Boolean.class) {
+            return boolean.class;
+        } else if (type == Character.class) {
+            return char.class;
+        } else if (type == Byte.class) {
+            return byte.class;
+        } else if (type == Short.class) {
+            return short.class;
+        } else if (type == Integer.class) {
+            return int.class;
+        } else if (type == Long.class) {
+            return long.class;
+        } else if (type == Float.class) {
+            return float.class;
+        } else if (type == Double.class) {
+            return double.class;
+        } else {
+            return type;
+        }
+    }
+
+    //XXX:Will asm do this better?
     public static Class<?> getBoxedClass(Class<?> type) {
         if (type == boolean.class) {
             return Boolean.class;
@@ -119,50 +121,126 @@ public class ClassUtil {
             return type;
         }
     }
-    private static final Map<String, String> BASE_TYPE_ARRAY_PRE_MAP;
+
+    public static char getAliasOfBaseType(final String name) {
+        switch (name.hashCode()) {
+            case 3625364:
+                if ("void" == name || "void".equals(name)) {
+                    return 'V';
+                }
+                break;
+            case 64711720:
+                if ("boolean" == name || "boolean".equals(name)) {
+                    return 'Z';
+                }
+                break;
+            case 3039496:
+                if ("byte" == name || "byte".equals(name)) {
+                    return 'B';
+                }
+                break;
+            case 3052374:
+                if ("char" == name || "char".equals(name)) {
+                    return 'C';
+                }
+                break;
+            case -1325958191:
+                if ("double" == name || "double".equals(name)) {
+                    return 'D';
+                }
+                break;
+            case 97526364:
+                if ("float" == name || "float".equals(name)) {
+                    return 'F';
+                }
+                break;
+            case 104431:
+                if ("int" == name || "int".equals(name)) {
+                    return 'I';
+                }
+                break;
+            case 3327612:
+                if ("long" == name || "long".equals(name)) {
+                    return 'J';
+                }
+                break;
+            case 109413500:
+                if ("short" == name || "short".equals(name)) {
+                    return 'S';
+                }
+                break;
+        }
+        return '\0';
+    }
+
+    public static Class<?> getClass(final String name, final int arrayDepth) throws ClassNotFoundException {
+
+        if (arrayDepth == 0) {
+            return getClass(name);
+        }
+        char alias = getAliasOfBaseType(name);
+        //final StringBuilder sb;
+        final char[] chars;
+        if (alias == '\0') {
+            chars = new char[name.length() + 2 + arrayDepth];
+            int i = arrayDepth - 1;
+            while (i >= 0) {
+                chars[i--] = '[';
+            }
+            chars[arrayDepth] = 'L';
+            name.getChars(0, name.length(), chars, arrayDepth + 1);
+            chars[chars.length - 1] = ';';
+        } else {
+            chars = new char[arrayDepth + 1];
+            int i = arrayDepth - 1;
+            while (i >= 0) {
+                chars[i--] = '[';
+            }
+            chars[arrayDepth] = alias;
+        }
+        return getClassByInternalName(new String(chars));
+    }
+    private static final Map<String, Class<?>> CLASS_CACHE;
 
     static {
-        Map<String, String> array_pre = new HashMap<String, String>();
 
-        array_pre.put("void", "V");
-        array_pre.put("boolean", "Z");
-        array_pre.put("byte", "B");
-        array_pre.put("char", "C");
-        array_pre.put("double", "D");
-        array_pre.put("float", "F");
-        array_pre.put("int", "I");
-        array_pre.put("long", "J");
-        array_pre.put("short", "S");
+        Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+        classes.put("boolean", boolean.class);
+        classes.put("char", char.class);
+        classes.put("byte", byte.class);
+        classes.put("short", short.class);
+        classes.put("int", int.class);
+        classes.put("long", long.class);
+        classes.put("float", float.class);
+        classes.put("double", double.class);
+        classes.put("void", void.class);
+        classes.put("Boolean", Boolean.class);
+        classes.put("Character", Character.class);
+        classes.put("Byte", Byte.class);
+        classes.put("Short", Short.class);
+        classes.put("Integer", Integer.class);
+        classes.put("Long", Long.class);
+        classes.put("Float", Float.class);
+        classes.put("Double", Double.class);
+        classes.put("Number", Number.class);
+        classes.put("String", String.class);
+        classes.put("Object", Object.class);
+        classes.put("Class", Class.class);
+        classes.put("Void", Void.class);
 
-        BASE_TYPE_ARRAY_PRE_MAP = array_pre;
+        CLASS_CACHE = classes;
     }
 
-    public static Class<?> getClassByName(final String pureName, final int arrayDepth) throws ClassNotFoundException {
-        if (arrayDepth <= 0) {
-            return getClassByName(pureName);
-        } else {
-            String shortName = BASE_TYPE_ARRAY_PRE_MAP.get(pureName);
-            StringBuilder sb;
-            if (shortName == null) {
-                sb = new StringBuilder(pureName.length() + 2 + arrayDepth);
-                int i = arrayDepth;
-                while (i-- > 0) {
-                    sb.append('[');
-                }
-                sb.append('L').append(pureName).append(';');
-            } else {
-                sb = new StringBuilder(arrayDepth + 1);
-                int i = arrayDepth;
-                while (i-- > 0) {
-                    sb.append('[');
-                }
-                sb.append(shortName);
-            }
-            return getClassByName(sb.toString());
-        }
+    public static Class<?> getCachedClass(final String name) {
+        return CLASS_CACHE.get(name);
     }
 
-    public static Class<?> getClassByName(String name) throws ClassNotFoundException {
+    public static Class<?> getClass(final String name) throws ClassNotFoundException {
+        Class cls = CLASS_CACHE.get(name);
+        return cls != null ? cls : getClassByInternalName(name);
+    }
+
+    private static Class<?> getClassByInternalName(String name) throws ClassNotFoundException {
         return Class.forName(name, true, Thread.currentThread().getContextClassLoader());
     }
 

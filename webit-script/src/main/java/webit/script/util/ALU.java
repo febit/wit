@@ -1,8 +1,6 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util;
 
-import webit.script.Context;
-import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
 
 /**

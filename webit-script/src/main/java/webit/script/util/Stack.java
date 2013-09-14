@@ -7,7 +7,7 @@ package webit.script.util;
  */
 public interface Stack<E> {
 
-    public E push(E item);
+    public void push(E item);
 
     public E peek();
     

@@ -17,6 +17,7 @@ import webit.script.util.collection.*;
  */
 public class CollectionUtil {
 
+    //XXX:Will asm do this better?
     public static int getSize(final Object object) {
         if (object == null) {
             return 0;

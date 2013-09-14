@@ -5,18 +5,18 @@ package webit.script.util;
  *
  * @author Zqq
  */
-public class ArrayStack<T> implements Stack<T> {
+public final class ArrayStack<T> implements Stack<T> {
 
     private Object[] elements;
     private int size;
-    public static int initialCapacity = 16;
+    public final static int initialCapacity = 16;
 
     public ArrayStack() {
         this(initialCapacity);
     }
 
     public ArrayStack(int initialCapacity) {
-        if (initialCapacity < 0) {
+        if (initialCapacity <= 0) {
             throw new IllegalArgumentException("Invalid capacity: " + initialCapacity);
         }
         elements = new Object[initialCapacity];
@@ -27,10 +27,8 @@ public class ArrayStack<T> implements Stack<T> {
         return size == 0;
     }
 
-
     public void clear() {
         for (int i = size - 1; i >= 0; i--) {
-            Object element = elements[i];
             elements[i] = null;
         }
         size = 0;
@@ -40,10 +38,9 @@ public class ArrayStack<T> implements Stack<T> {
         return size;
     }
 
-    public T push(T element) {
-        ensureCapacity(size + 1);
+    public void push(final T element) {
+        ensureIndex(size);
         elements[size++] = element;
-        return element;
     }
 
     @SuppressWarnings("unchecked")
@@ -58,20 +55,19 @@ public class ArrayStack<T> implements Stack<T> {
 
     @SuppressWarnings("unchecked")
     public T peek(int offset) {
-        int realIndex = size - offset - 1;
+        final int realIndex = size - offset - 1;
         checkRange(realIndex);
-        T element = (T) elements[realIndex];
-        return element;
+        return (T) elements[realIndex];
     }
 
-    private void checkRange(int index) {
+    private void checkRange(final int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
     }
 
-    public void ensureCapacity(int mincap) {
-        if (mincap > elements.length) {
+    private void ensureIndex(int mincap) {
+        if (mincap >= elements.length) {
             int newcap = ((elements.length * 3) >> 1) + 1;
             Object[] olddata = elements;
             elements = new Object[newcap < mincap ? mincap : newcap];
