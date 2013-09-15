@@ -247,6 +247,9 @@ public class ClassUtil {
     public static boolean isStatic(Method method) {
         return Modifier.isStatic(method.getModifiers());
     }
+    public static boolean isPublic(Class cls) {
+        return Modifier.isPublic(cls.getModifiers());
+    }
 
     public static Method searchMethod(Class<?> currentClass, String name, Class<?>[] parameterTypes, boolean boxed) throws NoSuchMethodException {
         if (currentClass == null) {

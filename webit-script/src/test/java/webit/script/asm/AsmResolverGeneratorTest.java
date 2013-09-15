@@ -31,6 +31,35 @@ public class AsmResolverGeneratorTest {
         }
     }
 
+    private static class Book {
+
+        public String f1 = "f1";
+        private String f2 = "f2";
+        public int f4 = 4;
+
+        public String getF2() {
+            return f2;
+        }
+
+        public void setF2(String f2) {
+            this.f2 = f2;
+        }
+    }
+
+    @Test
+    public void testPrivateClass() throws Exception {
+
+        AsmResolverGenerator generator = new AsmResolverGenerator();
+        Exception exception = null;
+        try {
+            generator.generateResolver(Book.class);
+        } catch (Exception e) {
+            exception = e;
+        }
+        assertNotNull(exception);
+
+    }
+
     @Test
     public void test() throws Exception {
 
@@ -38,7 +67,7 @@ public class AsmResolverGeneratorTest {
         Class clazz = generator.generateResolver(Foo.class);
 
         Foo foo = new Foo();
-        
+
         GetResolver resolver = (GetResolver) clazz.newInstance();
         SetResolver setResolver = (SetResolver) resolver;
 

@@ -21,7 +21,7 @@ import webit.script.util.FieldInfoResolver;
  */
 public class AsmResolverGenerator implements Opcodes {
 
-    private static final String RESOLVERS_CLASS_NAME_PRE = "webit.script.resolvers.impl.Resolver_";
+    private static final String RESOLVERS_CLASS_NAME_PRE = AsmResolver.class.getName() + '_';
     //
     private static final String ASM_RESILVER = ASMUtil.toAsmClassName(AsmResolver.class.getName());
     //
@@ -352,9 +352,12 @@ public class AsmResolverGenerator implements Opcodes {
         mg.endMethod();
     }
 
-    public Class generateResolver(Class beanClass) {
-        String className = generateClassName(beanClass);
+    public Class generateResolver(Class beanClass) throws Exception {
 
+        if (!ClassUtil.isPublic(beanClass)) {
+            throw new Exception("Class ["+beanClass.getName()+"] is not a public class");
+        }
+        String className = generateClassName(beanClass);
         byte[] code = generateClassBody(className, beanClass);
 
         return ASMUtil.loadClass(className, code, 0, code.length);

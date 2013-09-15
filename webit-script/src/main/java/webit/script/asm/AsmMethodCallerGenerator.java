@@ -17,9 +17,8 @@ import webit.script.util.ClassUtil;
 public class AsmMethodCallerGenerator {
 
     //
-    private static final String CALLER_CLASS_NAME_PRE = AsmMethodCallerGenerator.class.getName() + "_";
+    private static final String CALLER_CLASS_NAME_PRE = AsmMethodCaller.class.getName() + '_';
     private static final String ASM_METHOD_CALLER = ASMUtil.toAsmClassName(AsmMethodCaller.class.getName());
-
 
     protected static String generateClassName(java.lang.reflect.Method method) {
         return CALLER_CLASS_NAME_PRE + method.getName() + '_' + ASMUtil.getSn();
