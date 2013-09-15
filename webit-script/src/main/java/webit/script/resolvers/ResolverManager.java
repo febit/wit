@@ -18,18 +18,18 @@ public final class ResolverManager implements Configable {
 
     private Logger logger;
     //
-    private IdentityHashMap<GetResolver> getResolverMap;
-    private IdentityHashMap<SetResolver> setResolverMap;
-    private IdentityHashMap<OutResolver> outResolverMap;
+    private final IdentityHashMap<GetResolver> getResolverMap;
+    private final IdentityHashMap<SetResolver> setResolverMap;
+    private final IdentityHashMap<OutResolver> outResolverMap;
     //
-    private ArrayList<GetResolver> getResolvers;
-    private ArrayList<SetResolver> setResolvers;
-    private ArrayList<OutResolver> outResolvers;
-    private ArrayList<Class> getResolverTypes;
-    private ArrayList<Class> setResolverTypes;
-    private ArrayList<Class> outResolverTypes;
+    private final ArrayList<GetResolver> getResolvers;
+    private final ArrayList<SetResolver> setResolvers;
+    private final ArrayList<OutResolver> outResolvers;
+    private final ArrayList<Class> getResolverTypes;
+    private final ArrayList<Class> setResolverTypes;
+    private final ArrayList<Class> outResolverTypes;
     //
-    private CommonResolver commonResolver;
+    private final CommonResolver commonResolver;
     //settings
     private boolean enableAsm = true;
     //
@@ -207,13 +207,11 @@ public final class ResolverManager implements Configable {
     }
 
     public boolean set(Object bean, Object property, Object value) {
-        return bean != null ? getSetResolver(bean).set(bean, property, value) : null;
+        return bean != null ? getSetResolver(bean).set(bean, property, value) : false;
     }
 
     public void render(final Out out, final Object bean) {
-        if (bean != null) {
-            getOutResolver(bean).render(out, bean);
-        }
+        getOutResolver(bean).render(out, bean);
     }
 
     public void setEnableAsm(boolean enableAsm) {

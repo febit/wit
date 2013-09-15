@@ -60,6 +60,13 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
     }
 
     public void render(final Out out, Object bean) {
-        out.write(CollectionUtil.arrayToString(bean));
+        final Class objClass = bean.getClass();
+        if (objClass == char[].class) {
+            out.write((char[]) bean);
+        } else if (objClass == byte[].class) {
+            out.write((byte[]) bean);
+        } else {
+            out.write(CollectionUtil.arrayToString(bean));
+        }
     }
 }

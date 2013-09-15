@@ -20,37 +20,37 @@ public class IterGetResolver implements GetResolver {
         return Iter.class;
     }
 
-    public Object get(Object object, Object property) {
+    public Object get(final Object object, final Object property) {
         Iter iter = (Iter) object;
 
         switch (property.hashCode()) {
             case 696759469:
-                if ("hasNext".equals(property)) {
+                if ("hasNext" == property || "hasNext".equals(property)) {
                     return iter.hasNext();
                 }
                 break;
             case 100346066:
-                if ("index".equals(property)) {
+                if ("index" == property || "index".equals(property)) {
                     return iter.index();
                 }
                 break;
             case 2058846118:
-                if ("isFirst".equals(property)) {
+                if ("isFirst" == property || "isFirst".equals(property)) {
                     return iter.isFirst();
                 }
                 break;
             case 3377907:
-                if ("next".equals(property)) {
+                if ("next" == property || "next".equals(property)) {
                     return iter.next();
                 }
                 break;
             case -1180529308:
-                if ("isEven".equals(property)) {
+                if ("isEven" == property || "isEven".equals(property)) {
                     return iter.index() % 2 == 1; //Note: when index start by 0
                 }
                 break;
             case 100474789:
-                if ("isOdd".equals(property)) {
+                if ("isOdd" == property || "isOdd".equals(property)) {
                     return iter.index() % 2 == 0; //Note: when index start by 0
                 }
                 break;

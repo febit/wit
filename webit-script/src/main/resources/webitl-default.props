@@ -16,7 +16,9 @@ resolvers=\
     webit.script.resolvers.impl.ListResolver,\
     webit.script.resolvers.impl.CharSequenceResolver,\
     webit.script.resolvers.impl.ArrayResolver,\
-    webit.script.resolvers.impl.IterGetResolver
+    webit.script.resolvers.impl.IterGetResolver,\
+    webit.script.resolvers.impl.IntegerOutResolver,\
+    webit.script.resolvers.impl.LongOutResolver
 
 # enableAsmNative=true
 # looseVar=false

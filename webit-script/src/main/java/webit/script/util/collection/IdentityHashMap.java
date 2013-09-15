@@ -38,15 +38,17 @@ public final class IdentityHashMap<V> {
         return count;
     }
 
-    public V unsafeGet(Object key) {
-        final Entry<V> tab[] = table;
+    @SuppressWarnings("unchecked")
+    public V unsafeGet(final Object key) {
 
         final int id = System.identityHashCode(key);
-        final int index = id % tab.length;
+        //final int index = id % tab.length;
 
-        for (Entry<V> e = tab[index]; e != null; e = e.next) {
-            if (e.id == id) {
-                return e.value;
+        final Entry<V>[] tab = table;
+        Entry<V> e = tab[id % tab.length];
+        for (; e != null; e = e.next) {
+            if (id == e.id) {
+                return (V) e.value;
             }
         }
 
@@ -54,14 +56,14 @@ public final class IdentityHashMap<V> {
     }
 
     public V get(Object key) {
-        synchronized(lock){
+        synchronized (lock) {
             return unsafeGet(key);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private void resize() {
-        synchronized(lock){
+        synchronized (lock) {
             if (count < threshold) {
                 return;
             }
@@ -74,7 +76,7 @@ public final class IdentityHashMap<V> {
 
             for (int i = oldCapacity; i-- > 0;) {
                 int index;
-                for (Entry<V> old = oldTable[i],e; old != null;) {
+                for (Entry<V> old = oldTable[i], e; old != null;) {
                     e = old;
                     old = old.next;
 
@@ -114,13 +116,13 @@ public final class IdentityHashMap<V> {
         }
 
         // creates the new entry.
-        tab[index] = new Entry(id, value, tab[index]);
+        tab[index] = new Entry(id, key, value, tab[index]);
         count++;
         return value;
     }
-    
+
     public V putIfAbsent(Object key, V value) {
-        synchronized(lock){
+        synchronized (lock) {
             return unsafePutIfAbsent(key, value);
         }
     }
@@ -128,12 +130,14 @@ public final class IdentityHashMap<V> {
     private static final class Entry<V> {
 
         final int id;
-        V value;
+        final Object key;
+        final V value;
         Entry<V> next;
 
-        Entry(int id, V value, Entry<V> next) {
+        Entry(int id, Object key, V value, Entry<V> next) {
             this.value = value;
             this.id = id;
+            this.key = key;
             this.next = next;
         }
     }

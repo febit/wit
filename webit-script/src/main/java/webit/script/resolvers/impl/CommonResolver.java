@@ -16,7 +16,7 @@ import webit.script.resolvers.OutResolver;
 public class CommonResolver implements GetResolver, SetResolver, OutResolver{
 
 
-    public Object get(Object object, Object property) {
+    public Object get(final Object object, final Object property) {
         try {
             return BeanUtil.getProperty(object, String.valueOf(property));
         } catch (jodd.bean.BeanException e) {
@@ -24,7 +24,7 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver{
         }
     }
 
-    public boolean set(Object object, Object property, Object value) {
+    public boolean set(final Object object, final Object property, final Object value) {
         try {
             return BeanUtil.setPropertySilent(object, String.valueOf(property), value);
         } catch (jodd.bean.BeanException e) {
@@ -32,7 +32,7 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver{
         }
     }
 
-    public void render(final Out out, Object bean) {
+    public void render(final Out out, final Object bean) {
         out.write(bean.toString());
     }
 

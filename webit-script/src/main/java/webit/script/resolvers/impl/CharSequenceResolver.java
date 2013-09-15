@@ -19,8 +19,8 @@ public class CharSequenceResolver implements GetResolver {
         return CharSequence.class;
     }
 
-    public Object get(Object object, Object property) {
-        CharSequence charSequence = (CharSequence) object;
+    public Object get(final Object object, final Object property) {
+        final CharSequence charSequence = (CharSequence) object;
         if (property instanceof Number) {
             try {
                 return charSequence.charAt(((Number) property).intValue());

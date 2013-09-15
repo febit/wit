@@ -113,11 +113,8 @@ public final class Context {
 
     public void out(final Object object) {
         if (object != null) {
-            final Class objClass = object.getClass();
-            if (objClass == byte[].class) {
-                out.write((byte[]) object);
-            } else if (objClass == char[].class) {
-                out.write((char[]) object);
+            if (object instanceof String) {
+                out.write((String) object);
             } else {
                 resolverManager.render(out, object);
             }
