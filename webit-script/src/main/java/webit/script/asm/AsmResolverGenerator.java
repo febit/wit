@@ -11,7 +11,6 @@ import webit.script.asm4.Type;
 import webit.script.asm4.commons.GeneratorAdapter;
 import webit.script.asm4.commons.Method;
 import webit.script.asm4.commons.TableSwitchGenerator;
-import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.ClassUtil;
 import webit.script.util.FieldInfo;
 import webit.script.util.FieldInfoResolver;
@@ -24,28 +23,11 @@ public class AsmResolverGenerator implements Opcodes {
 
     private static final String RESOLVERS_CLASS_NAME_PRE = "webit.script.resolvers.impl.Resolver_";
     //
-    private static final Type TYPE_ASM_RESOLVER = Type.getType(AsmResolver.class);
-    //
-    private static final Method METHOD_HASH_CODE = new Method("hashCode", Type.INT_TYPE, new Type[0]);
-    private static final Method METHOD_EQUALS = new Method("equals", Type.BOOLEAN_TYPE, new Type[]{ASMUtil.TYPE_OBJECT});
-    //
-    private static final Method METHOD_GET = new Method("get", ASMUtil.TYPE_OBJECT, new Type[]{ASMUtil.TYPE_OBJECT, ASMUtil.TYPE_OBJECT});
-    private static final Method METHOD_SET = new Method("set", Type.BOOLEAN_TYPE, new Type[]{ASMUtil.TYPE_OBJECT, ASMUtil.TYPE_OBJECT, ASMUtil.TYPE_OBJECT});
-    private static final Method METHOD_CONSTRUCTOR_ASM_RESOLVER = new Method("<init>", Type.VOID_TYPE, new Type[]{Type.getType(Class.class)});
-    private static final Method METHOD_CREATE_NOSUCHPROPERTY_EXCEPTION = new Method("createNoSuchPropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{ASMUtil.TYPE_OBJECT});
-    private static final Method METHOD_CREATE_UNWRITE_EXCEPTION = new Method("createUnwriteablePropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{ASMUtil.TYPE_OBJECT});
-    private static final Method METHOD_CREATE_UNREAD_EXCEPTION = new Method("createUnreadablePropertyException", Type.getType(ScriptRuntimeException.class), new Type[]{ASMUtil.TYPE_OBJECT});
-    //
     private static final String ASM_RESILVER = ASMUtil.toAsmClassName(AsmResolver.class.getName());
     //
-    private static int sn = 1;
-
-    private static synchronized int getSn() {
-        return sn++;
-    }
 
     protected static String generateClassName(Class beanClass) {
-        return RESOLVERS_CLASS_NAME_PRE + beanClass.getSimpleName() + '_' + getSn();
+        return RESOLVERS_CLASS_NAME_PRE + beanClass.getSimpleName() + '_' + ASMUtil.getSn();
     }
 
     protected byte[] generateClassBody(String className, Class beanClass) {
@@ -65,7 +47,7 @@ public class AsmResolverGenerator implements Opcodes {
     //
 
     private void attach_get_Method(ClassWriter classWriter, Class beanClass) {
-        final GeneratorAdapter mg = new GeneratorAdapter(ACC_PUBLIC, METHOD_GET, null, null, classWriter);
+        final GeneratorAdapter mg = new GeneratorAdapter(ACC_PUBLIC, ASMUtil.METHOD_ASM_RESOLVER_GET, null, null, classWriter);
         final Type beanType = Type.getType(beanClass);
 
         //Book book = (Book) bean;
@@ -125,7 +107,7 @@ public class AsmResolverGenerator implements Opcodes {
             //int hashcode = property.hashCode();
             //int var_hashcode = mg.newLocal(Type.INT_TYPE);
             mg.loadArg(1); //property
-            mg.invokeVirtual(ASMUtil.TYPE_OBJECT, METHOD_HASH_CODE);
+            mg.invokeVirtual(ASMUtil.TYPE_OBJECT, ASMUtil.METHOD_HASH_CODE);
             //mg.storeLocal(var_hashcode);
 
             final Label end_switch = mg.newLabel();
@@ -161,13 +143,13 @@ public class AsmResolverGenerator implements Opcodes {
         //Exception
         mg.loadThis(); //this.
         mg.loadArg(1); //property
-        mg.invokeVirtual(TYPE_ASM_RESOLVER, METHOD_CREATE_NOSUCHPROPERTY_EXCEPTION);
+        mg.invokeVirtual(ASMUtil.TYPE_ASM_RESOLVER, ASMUtil.METHOD_CREATE_NOSUCHPROPERTY_EXCEPTION);
         mg.throwException();
         mg.endMethod();
     }
 
     private void attach_set_Method(ClassWriter classWriter, Class beanClass) {
-        final GeneratorAdapter mg = new GeneratorAdapter(ACC_PUBLIC, METHOD_SET, null, null, classWriter);
+        final GeneratorAdapter mg = new GeneratorAdapter(ACC_PUBLIC, ASMUtil.METHOD_ASM_RESOLVER_SET, null, null, classWriter);
         final Type beanType = Type.getType(beanClass);
 
         //Book book = (Book) bean;
@@ -227,7 +209,7 @@ public class AsmResolverGenerator implements Opcodes {
             //int hashcode = property.hashCode();
             //int var_hashcode = mg.newLocal(Type.INT_TYPE);
             mg.loadArg(1); //property
-            mg.invokeVirtual(ASMUtil.TYPE_OBJECT, METHOD_HASH_CODE);
+            mg.invokeVirtual(ASMUtil.TYPE_OBJECT, ASMUtil.METHOD_HASH_CODE);
             //mg.storeLocal(var_hashcode);
 
             final Label end_switch = mg.newLabel();
@@ -264,7 +246,7 @@ public class AsmResolverGenerator implements Opcodes {
         //Exception
         mg.loadThis(); //this.
         mg.loadArg(1); //property
-        mg.invokeVirtual(TYPE_ASM_RESOLVER, METHOD_CREATE_NOSUCHPROPERTY_EXCEPTION);
+        mg.invokeVirtual(ASMUtil.TYPE_ASM_RESOLVER, ASMUtil.METHOD_CREATE_NOSUCHPROPERTY_EXCEPTION);
         mg.throwException();
         mg.endMethod();
     }
@@ -277,7 +259,7 @@ public class AsmResolverGenerator implements Opcodes {
     private void attachIfFieldMatchCode(final GeneratorAdapter mg, FieldInfo fieldInfo, Label elseJumpTo) {
         mg.push(fieldInfo.getName());
         mg.loadArg(1); //property
-        mg.invokeVirtual(ASMUtil.TYPE_STRING, METHOD_EQUALS);
+        mg.invokeVirtual(ASMUtil.TYPE_STRING, ASMUtil.METHOD_EQUALS);
         mg.ifZCmp(GeneratorAdapter.EQ, elseJumpTo); // if == 0 jump
     }
 
@@ -320,7 +302,7 @@ public class AsmResolverGenerator implements Opcodes {
             //Exception
             mg.loadThis(); //this.
             mg.loadArg(1); //property
-            mg.invokeVirtual(TYPE_ASM_RESOLVER, METHOD_CREATE_UNWRITE_EXCEPTION);
+            mg.invokeVirtual(ASMUtil.TYPE_ASM_RESOLVER, ASMUtil.METHOD_CREATE_UNWRITE_EXCEPTION);
             mg.throwException();
         }
     }
@@ -355,7 +337,7 @@ public class AsmResolverGenerator implements Opcodes {
             //Exception
             mg.loadThis(); //this.
             mg.loadArg(1); //property
-            mg.invokeVirtual(TYPE_ASM_RESOLVER, METHOD_CREATE_UNREAD_EXCEPTION);
+            mg.invokeVirtual(ASMUtil.TYPE_ASM_RESOLVER, ASMUtil.METHOD_CREATE_UNREAD_EXCEPTION);
             mg.throwException();
         }
     }
@@ -365,7 +347,7 @@ public class AsmResolverGenerator implements Opcodes {
 
         mg.loadThis();
         mg.push(Type.getType(beanClass));
-        mg.invokeConstructor(TYPE_ASM_RESOLVER, METHOD_CONSTRUCTOR_ASM_RESOLVER);
+        mg.invokeConstructor(ASMUtil.TYPE_ASM_RESOLVER, ASMUtil.METHOD_CONSTRUCTOR_ASM_RESOLVER);
         mg.returnValue();
         mg.endMethod();
     }

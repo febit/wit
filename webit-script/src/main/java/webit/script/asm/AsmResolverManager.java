@@ -11,7 +11,7 @@ import java.util.Map;
 public class AsmResolverManager {
 
     private final static Map<Class, AsmResolverBox> asmResolversMap = new HashMap<Class, AsmResolverBox>();
-    private static AsmResolverGenerator asmResolverGenerator = new AsmResolverGenerator();
+    private final static AsmResolverGenerator asmResolverGenerator = new AsmResolverGenerator();
 
     public static AsmResolver generateAsmResolver(Class type) throws Throwable {
         AsmResolverBox box = asmResolversMap.get(type);
@@ -25,13 +25,13 @@ public class AsmResolverManager {
             }
         }
         //
-        AsmResolver resolver = box.getResolver();
+        AsmResolver resolver = box.resolver;
         if (resolver == null) {
             synchronized (box) {
-                resolver = box.getResolver();
+                resolver = box.resolver;
                 if (resolver == null) {
-                        resolver = (AsmResolver) asmResolverGenerator.generateResolver(type).newInstance();
-                        box.setResolver(resolver);
+                    resolver = (AsmResolver) asmResolverGenerator.generateResolver(type).newInstance();
+                    box.resolver = resolver;
                 }
             }
         }
@@ -40,19 +40,11 @@ public class AsmResolverManager {
 
     private static class AsmResolverBox {
 
-        private final Class type;
-        private AsmResolver resolver;
+        final Class type;
+        AsmResolver resolver;
 
         public AsmResolverBox(Class type) {
             this.type = type;
-        }
-
-        public AsmResolver getResolver() {
-            return resolver;
-        }
-
-        public void setResolver(AsmResolver resolver) {
-            this.resolver = resolver;
         }
 
         @Override

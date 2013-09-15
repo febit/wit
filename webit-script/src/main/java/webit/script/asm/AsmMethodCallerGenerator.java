@@ -2,7 +2,6 @@
 package webit.script.asm;
 
 import java.lang.reflect.Constructor;
-import webit.script.Context;
 import webit.script.asm4.ClassWriter;
 import webit.script.asm4.Label;
 import webit.script.asm4.Opcodes;
@@ -16,40 +15,22 @@ import webit.script.util.ClassUtil;
  * @author Zqq
  */
 public class AsmMethodCallerGenerator {
-    //
 
-    private static final Type TYPE_ASM_CALLER = Type.getType(AsmMethodCaller.class);
-    private static final Type TYPE_CONTEXT = Type.getType(Context.class);
-    private static final Type TYPE_SYSTEM = Type.getType(System.class);
-    private static final Type TYPE_OBJECT_ARR = Type.getType(Object[].class);
-    private static final Method METHOD_EXECUTE = new Method("execute", ASMUtil.TYPE_OBJECT, new Type[]{TYPE_OBJECT_ARR});
-    private static final Method METHOD_CREATE_EXCEPTION = new Method("createException", ASMUtil.TYPE_SCRIPT_RUNTIME_EXCEPTION, new Type[]{ASMUtil.TYPE_STRING});
-    private static final Method METHOD_ARRAY_COPY = new Method("arraycopy", Type.VOID_TYPE, new Type[]{
-        ASMUtil.TYPE_OBJECT,
-        Type.INT_TYPE,
-        ASMUtil.TYPE_OBJECT,
-        Type.INT_TYPE,
-        Type.INT_TYPE
-    });
     //
-    private static int sn = 1;
     private static final String CALLER_CLASS_NAME_PRE = AsmMethodCallerGenerator.class.getName() + "_";
     private static final String ASM_METHOD_CALLER = ASMUtil.toAsmClassName(AsmMethodCaller.class.getName());
 
-    private static synchronized int getSn() {
-        return sn++;
-    }
 
     protected static String generateClassName(java.lang.reflect.Method method) {
-        return CALLER_CLASS_NAME_PRE + method.getName() + '_' + getSn();
+        return CALLER_CLASS_NAME_PRE + method.getName() + '_' + ASMUtil.getSn();
     }
 
     protected static String generateClassName(Constructor constructor) {
-        return CALLER_CLASS_NAME_PRE + constructor.getDeclaringClass().getSimpleName() + '_' + getSn();
+        return CALLER_CLASS_NAME_PRE + constructor.getDeclaringClass().getSimpleName() + '_' + ASMUtil.getSn();
     }
 
     protected byte[] generateClassBody(String className, Constructor constructor) {
-        
+
         final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, ASMUtil.toAsmClassName(className), null, ASM_METHOD_CALLER, null);
 
@@ -66,7 +47,7 @@ public class AsmMethodCallerGenerator {
     protected byte[] generateClassBody(String className, java.lang.reflect.Method method) {
 
         final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC,  ASMUtil.toAsmClassName(className), null, ASM_METHOD_CALLER, null);
+        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, ASMUtil.toAsmClassName(className), null, ASM_METHOD_CALLER, null);
 
         //Default Constructor
         attachDefaultConstructorMethod(classWriter);
@@ -82,7 +63,7 @@ public class AsmMethodCallerGenerator {
         final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR, null, null, classWriter);
 
         mg.loadThis();
-        mg.invokeConstructor(TYPE_ASM_CALLER, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR);
+        mg.invokeConstructor(ASMUtil.TYPE_ASM_CALLER, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR);
         mg.returnValue();
         mg.endMethod();
     }
@@ -115,7 +96,7 @@ public class AsmMethodCallerGenerator {
 
     private void attach_execute_Method(ClassWriter classWriter, Constructor constructor) {
 
-        final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, METHOD_EXECUTE, null, null, classWriter);
+        final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_EXECUTE, null, null, classWriter);
 
         final Class[] paramTypes = constructor.getParameterTypes();
         final Class declaringClass = constructor.getDeclaringClass();
@@ -129,7 +110,7 @@ public class AsmMethodCallerGenerator {
         final int argsNeed = paramTypes.length;
         if (argsNeed > 0) {
 
-            final int var_args = mg.newLocal(TYPE_OBJECT_ARR);
+            final int var_args = mg.newLocal(ASMUtil.TYPE_OBJECT_ARR);
             Label pushArgs = mg.newLabel();
             Label createNewArray = mg.newLabel();
             //Object[] args = ;
@@ -160,7 +141,7 @@ public class AsmMethodCallerGenerator {
             mg.loadArg(0);
             mg.arrayLength();
 
-            mg.invokeStatic(TYPE_SYSTEM, METHOD_ARRAY_COPY);
+            mg.invokeStatic(ASMUtil.TYPE_SYSTEM, ASMUtil.METHOD_ARRAY_COPY);
 
             mg.goTo(pushArgs);
 
@@ -197,7 +178,7 @@ public class AsmMethodCallerGenerator {
 
     private void attach_execute_Method(ClassWriter classWriter, java.lang.reflect.Method method) {
 
-        final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, METHOD_EXECUTE, null, null, classWriter);
+        final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_EXECUTE, null, null, classWriter);
 
         final Class declaringClass = method.getDeclaringClass();
         final Method asmMethod = Method.getMethod(method);
@@ -208,7 +189,7 @@ public class AsmMethodCallerGenerator {
         if (isStatic && paramTypes.length == 0) {
             mg.invokeStatic(declaringClassType, asmMethod);
         } else {
-            final int var_args = mg.newLocal(TYPE_OBJECT_ARR);
+            final int var_args = mg.newLocal(ASMUtil.TYPE_OBJECT_ARR);
 
             final int argsNeed = isStatic ? paramTypes.length : paramTypes.length + 1;
 
@@ -253,7 +234,7 @@ public class AsmMethodCallerGenerator {
             mg.loadArg(0);
             mg.arrayLength();
 
-            mg.invokeStatic(TYPE_SYSTEM, METHOD_ARRAY_COPY);
+            mg.invokeStatic(ASMUtil.TYPE_SYSTEM, ASMUtil.METHOD_ARRAY_COPY);
 
             mg.goTo(pushArgs);
 
@@ -266,7 +247,7 @@ public class AsmMethodCallerGenerator {
             } else {
                 mg.mark(firstIsNullException);
                 mg.push("The first argument of this method can't be null");
-                mg.invokeStatic(TYPE_ASM_CALLER, METHOD_CREATE_EXCEPTION);
+                mg.invokeStatic(ASMUtil.TYPE_ASM_CALLER, ASMUtil.METHOD_CREATE_EXCEPTION);
                 mg.throwException();
             }
 
@@ -311,7 +292,7 @@ public class AsmMethodCallerGenerator {
         Class methodReturnType = method.getReturnType();
         if (methodReturnType == void.class) {
             // return Context.VOID;
-            mg.getStatic(TYPE_CONTEXT, "VOID", ASMUtil.TYPE_OBJECT);
+            mg.getStatic(ASMUtil.TYPE_CONTEXT, "VOID", ASMUtil.TYPE_OBJECT);
         } else {
             Method boxMethod = ASMUtil.getBoxMethod(methodReturnType);
             if (boxMethod != null) {

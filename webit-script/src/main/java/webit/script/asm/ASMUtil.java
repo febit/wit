@@ -4,6 +4,7 @@ package webit.script.asm;
 import java.util.HashMap;
 import java.util.Map;
 import jodd.util.StringUtil;
+import webit.script.Context;
 import webit.script.asm4.Type;
 import webit.script.asm4.commons.Method;
 import webit.script.exceptions.ScriptRuntimeException;
@@ -29,7 +30,28 @@ public class ASMUtil {
     public static final Type TYPE_OBJECT = Type.getType(Object.class);
     public static final Type TYPE_SCRIPT_RUNTIME_EXCEPTION = Type.getType(ScriptRuntimeException.class);
     //
-    public static final Method METHOD_DEFAULT_CONSTRUCTOR = new Method("<init>", Type.VOID_TYPE, new Type[0]);
+    public static final Type TYPE_ASM_CALLER = Type.getType(AsmMethodCaller.class);
+    public static final Type TYPE_CONTEXT = Type.getType(Context.class);
+    public static final Type TYPE_SYSTEM = Type.getType(System.class);
+    public static final Type TYPE_OBJECT_ARR = Type.getType(Object[].class);
+    public static final Type TYPE_ASM_RESOLVER = Type.getType(AsmResolver.class);
+    //
+    public static final Method METHOD_HASH_CODE = new Method("hashCode", "()I");
+    public static final Method METHOD_EQUALS = new Method("equals", "(Ljava/lang/Object;)Z");
+    public static final Method METHOD_DEFAULT_CONSTRUCTOR = new Method("<init>", "()V");
+    //
+    public static final Method METHOD_ASM_RESOLVER_GET = new Method("get", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+    public static final Method METHOD_ASM_RESOLVER_SET = new Method("set", "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z");
+    public static final Method METHOD_CONSTRUCTOR_ASM_RESOLVER = new Method("<init>", "(Ljava/lang/Class;)V");
+    public static final Method METHOD_CREATE_NOSUCHPROPERTY_EXCEPTION = new Method("createNoSuchPropertyException", "(Ljava/lang/Object;)Lwebit/script/exceptions/ScriptRuntimeException;");
+    public static final Method METHOD_CREATE_UNWRITE_EXCEPTION = new Method("createUnwriteablePropertyException", "(Ljava/lang/Object;)Lwebit/script/exceptions/ScriptRuntimeException;");
+    public static final Method METHOD_CREATE_UNREAD_EXCEPTION = new Method("createUnreadablePropertyException", "(Ljava/lang/Object;)Lwebit/script/exceptions/ScriptRuntimeException;");
+    //AsmMethodCaller.
+    public static final Method METHOD_CREATE_EXCEPTION = new Method("createException", "(Ljava/lang/String;)Lwebit/script/exceptions/ScriptRuntimeException;");
+    //Object execute(Object[])
+    public static final Method METHOD_EXECUTE = new Method("execute", "([Ljava/lang/Object;)Ljava/lang/Object;");
+    //System.
+    public static final Method METHOD_ARRAY_COPY = new Method("arraycopy", "(Ljava/lang/Object;ILjava/lang/Object;II)V");
     //
     private static final Map<Class, Method> BOX_METHDO_MAP;
     private static final Map<Class, Method> UNBOX_METHDO_MAP;
@@ -37,26 +59,31 @@ public class ASMUtil {
     static {
         //XXX:
         Map<Class, Method> boxMap = new HashMap<Class, Method>(12, 0.75f);
-        boxMap.put(boolean.class, new Method("box", ASMUtil.BOOLEAN_BOXED_TYPE, new Type[]{Type.BOOLEAN_TYPE}));
-        boxMap.put(char.class, new Method("box", ASMUtil.CHAR_BOXED_TYPE, new Type[]{Type.CHAR_TYPE}));
-        boxMap.put(byte.class, new Method("box", ASMUtil.BYTE_BOXED_TYPE, new Type[]{Type.BYTE_TYPE}));
-        boxMap.put(short.class, new Method("box", ASMUtil.SHORT_BOXED_TYPE, new Type[]{Type.SHORT_TYPE}));
-        boxMap.put(int.class, new Method("box", ASMUtil.INT_BOXED_TYPE, new Type[]{Type.INT_TYPE}));
-        boxMap.put(long.class, new Method("box", ASMUtil.LONG_BOXED_TYPE, new Type[]{Type.LONG_TYPE}));
-        boxMap.put(float.class, new Method("box", ASMUtil.FLOAT_BOXED_TYPE, new Type[]{Type.FLOAT_TYPE}));
-        boxMap.put(double.class, new Method("box", ASMUtil.DOUBLE_BOXED_TYPE, new Type[]{Type.DOUBLE_TYPE}));
+        boxMap.put(boolean.class, new Method("box", "(Z)Ljava/lang/Boolean;"));
+        boxMap.put(char.class, new Method("box", "(C)Ljava/lang/Character;"));
+        boxMap.put(byte.class, new Method("box", "(B)Ljava/lang/Byte;"));
+        boxMap.put(short.class, new Method("box", "(S)Ljava/lang/Short;"));
+        boxMap.put(int.class, new Method("box", "(I)Ljava/lang/Integer;"));
+        boxMap.put(long.class, new Method("box", "(J)Ljava/lang/Long;"));
+        boxMap.put(float.class, new Method("box", "(F)Ljava/lang/Float;"));
+        boxMap.put(double.class, new Method("box", "(D)Ljava/lang/Double;"));
         BOX_METHDO_MAP = boxMap;
 
         Map<Class, Method> unBoxMap = new HashMap<Class, Method>(12, 0.75f);
-        unBoxMap.put(boolean.class, new Method("unBox", Type.BOOLEAN_TYPE, new Type[]{ASMUtil.BOOLEAN_BOXED_TYPE}));
-        unBoxMap.put(char.class, new Method("unBox", Type.CHAR_TYPE, new Type[]{ASMUtil.CHAR_BOXED_TYPE}));
-        unBoxMap.put(byte.class, new Method("unBox", Type.BYTE_TYPE, new Type[]{ASMUtil.BYTE_BOXED_TYPE}));
-        unBoxMap.put(short.class, new Method("unBox", Type.SHORT_TYPE, new Type[]{ASMUtil.SHORT_BOXED_TYPE}));
-        unBoxMap.put(int.class, new Method("unBox", Type.INT_TYPE, new Type[]{ASMUtil.INT_BOXED_TYPE}));
-        unBoxMap.put(long.class, new Method("unBox", Type.LONG_TYPE, new Type[]{ASMUtil.LONG_BOXED_TYPE}));
-        unBoxMap.put(float.class, new Method("unBox", Type.FLOAT_TYPE, new Type[]{ASMUtil.FLOAT_BOXED_TYPE}));
-        unBoxMap.put(double.class, new Method("unBox", Type.DOUBLE_TYPE, new Type[]{ASMUtil.DOUBLE_BOXED_TYPE}));
+        unBoxMap.put(boolean.class, new Method("unBox", "(Ljava/lang/Boolean;)Z"));
+        unBoxMap.put(char.class, new Method("unBox", "(Ljava/lang/Character;)C"));
+        unBoxMap.put(byte.class, new Method("unBox", "(Ljava/lang/Byte;)B"));
+        unBoxMap.put(short.class, new Method("unBox", "(Ljava/lang/Short;)S"));
+        unBoxMap.put(int.class, new Method("unBox", "(Ljava/lang/Integer;)I"));
+        unBoxMap.put(long.class, new Method("unBox", "(Ljava/lang/Long;)J"));
+        unBoxMap.put(float.class, new Method("unBox", "(Ljava/lang/Float;)F"));
+        unBoxMap.put(double.class, new Method("unBox", "(Ljava/lang/Double;)D"));
         UNBOX_METHDO_MAP = unBoxMap;
+    }
+    private static int sn = 1;
+
+    static synchronized int getSn() {
+        return sn++;
     }
 
     public static Method getBoxMethod(Class type) {

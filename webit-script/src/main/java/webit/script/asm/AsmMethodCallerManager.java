@@ -35,17 +35,17 @@ public class AsmMethodCallerManager {
             }
         }
         //
-        AsmMethodCaller caller = box.getCaller();
+        AsmMethodCaller caller = box.caller;
         if (caller == null) {
             synchronized (box) {
-                caller = box.getCaller();
+                caller = box.caller;
                 if (caller == null) {
                     if (method instanceof Method) {
                         caller = (AsmMethodCaller) asmMethodCallerGenerator.generateCaller((Method) method).newInstance();
                     } else if (method instanceof Constructor) {
                         caller = (AsmMethodCaller) asmMethodCallerGenerator.generateCaller((Constructor) method).newInstance();
                     }
-                    box.setCaller(caller);
+                    box.caller = caller;
                 }
             }
         }
@@ -54,19 +54,11 @@ public class AsmMethodCallerManager {
 
     private static class AsmMethodCallerBox {
 
-        private final Object key;
-        private AsmMethodCaller caller;
+        final Object key;
+        AsmMethodCaller caller;
 
         public AsmMethodCallerBox(Object method) {
             this.key = method;
-        }
-
-        public AsmMethodCaller getCaller() {
-            return caller;
-        }
-
-        public void setCaller(AsmMethodCaller caller) {
-            this.caller = caller;
         }
 
         @Override
