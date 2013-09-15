@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2011 INRIA, France Telecom
+ * Copyright (c) 2000-2007 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-package webit.script.asm4;
+package webit.script.asm3;
 
 /**
  * A dynamically extensible vector of bytes. This class is roughly equivalent to
@@ -59,8 +59,7 @@ public class ByteVector {
      * Constructs a new {@link ByteVector ByteVector} with the given initial
      * size.
      * 
-     * @param initialSize
-     *            the initial size of the byte vector to be constructed.
+     * @param initialSize the initial size of the byte vector to be constructed.
      */
     public ByteVector(final int initialSize) {
         data = new byte[initialSize];
@@ -70,8 +69,7 @@ public class ByteVector {
      * Puts a byte into this byte vector. The byte vector is automatically
      * enlarged if necessary.
      * 
-     * @param b
-     *            a byte.
+     * @param b a byte.
      * @return this byte vector.
      */
     public ByteVector putByte(final int b) {
@@ -88,10 +86,8 @@ public class ByteVector {
      * Puts two bytes into this byte vector. The byte vector is automatically
      * enlarged if necessary.
      * 
-     * @param b1
-     *            a byte.
-     * @param b2
-     *            another byte.
+     * @param b1 a byte.
+     * @param b2 another byte.
      * @return this byte vector.
      */
     ByteVector put11(final int b1, final int b2) {
@@ -110,8 +106,7 @@ public class ByteVector {
      * Puts a short into this byte vector. The byte vector is automatically
      * enlarged if necessary.
      * 
-     * @param s
-     *            a short.
+     * @param s a short.
      * @return this byte vector.
      */
     public ByteVector putShort(final int s) {
@@ -130,10 +125,8 @@ public class ByteVector {
      * Puts a byte and a short into this byte vector. The byte vector is
      * automatically enlarged if necessary.
      * 
-     * @param b
-     *            a byte.
-     * @param s
-     *            a short.
+     * @param b a byte.
+     * @param s a short.
      * @return this byte vector.
      */
     ByteVector put12(final int b, final int s) {
@@ -153,8 +146,7 @@ public class ByteVector {
      * Puts an int into this byte vector. The byte vector is automatically
      * enlarged if necessary.
      * 
-     * @param i
-     *            an int.
+     * @param i an int.
      * @return this byte vector.
      */
     public ByteVector putInt(final int i) {
@@ -175,8 +167,7 @@ public class ByteVector {
      * Puts a long into this byte vector. The byte vector is automatically
      * enlarged if necessary.
      * 
-     * @param l
-     *            a long.
+     * @param l a long.
      * @return this byte vector.
      */
     public ByteVector putLong(final long l) {
@@ -203,8 +194,7 @@ public class ByteVector {
      * Puts an UTF8 string into this byte vector. The byte vector is
      * automatically enlarged if necessary.
      * 
-     * @param s
-     *            a String.
+     * @param s a String.
      * @return this byte vector.
      */
     public ByteVector putUTF8(final String s) {
@@ -269,16 +259,14 @@ public class ByteVector {
      * Puts an array of bytes into this byte vector. The byte vector is
      * automatically enlarged if necessary.
      * 
-     * @param b
-     *            an array of bytes. May be <tt>null</tt> to put <tt>len</tt>
-     *            null bytes into this byte vector.
-     * @param off
-     *            index of the fist byte of b that must be copied.
-     * @param len
-     *            number of bytes of b that must be copied.
+     * @param b an array of bytes. May be <tt>null</tt> to put <tt>len</tt>
+     *        null bytes into this byte vector.
+     * @param off index of the fist byte of b that must be copied.
+     * @param len number of bytes of b that must be copied.
      * @return this byte vector.
      */
-    public ByteVector putByteArray(final byte[] b, final int off, final int len) {
+    public ByteVector putByteArray(final byte[] b, final int off, final int len)
+    {
         if (length + len > data.length) {
             enlarge(len);
         }
@@ -292,9 +280,8 @@ public class ByteVector {
     /**
      * Enlarge this byte vector so that it can receive n more bytes.
      * 
-     * @param size
-     *            number of additional bytes that this byte vector should be
-     *            able to receive.
+     * @param size number of additional bytes that this byte vector should be
+     *        able to receive.
      */
     private void enlarge(final int size) {
         int length1 = 2 * data.length;

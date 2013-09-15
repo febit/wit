@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import jodd.util.StringUtil;
 import webit.script.Context;
-import webit.script.asm4.Type;
-import webit.script.asm4.commons.Method;
+import webit.script.asm3.Type;
+import webit.script.asm3.commons.Method;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.ClassUtil;
 

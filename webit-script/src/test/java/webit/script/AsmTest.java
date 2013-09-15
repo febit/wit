@@ -3,11 +3,11 @@ package webit.script;
 
 import java.io.PrintStream;
 import org.junit.Test;
-import webit.script.asm4.ClassWriter;
-import webit.script.asm4.Opcodes;
-import webit.script.asm4.Type;
-import webit.script.asm4.commons.GeneratorAdapter;
-import webit.script.asm4.commons.Method;
+import webit.script.asm3.ClassWriter;
+import webit.script.asm3.Opcodes;
+import webit.script.asm3.Type;
+import webit.script.asm3.commons.GeneratorAdapter;
+import webit.script.asm3.commons.Method;
 import webit.script.resolvers.MatchMode;
 
 /**

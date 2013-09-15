@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2011 INRIA, France Telecom
+ * Copyright (c) 2000-2007 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-package webit.script.asm4;
+package webit.script.asm3;
 
 /**
  * Defines the JVM opcodes, access flags and array type codes. This interface
@@ -42,10 +42,6 @@ package webit.script.asm4;
  * @author Eugene Kuleshov
  */
 public interface Opcodes {
-
-    // ASM API versions
-
-    int ASM4 = 4 << 16 | 0 << 8 | 0;
 
     // versions
 
@@ -93,18 +89,6 @@ public interface Opcodes {
     int T_INT = 10;
     int T_LONG = 11;
 
-    // tags for Handle
-
-    int H_GETFIELD = 1;
-    int H_GETSTATIC = 2;
-    int H_PUTFIELD = 3;
-    int H_PUTSTATIC = 4;
-    int H_INVOKEVIRTUAL = 5;
-    int H_INVOKESTATIC = 6;
-    int H_INVOKESPECIAL = 7;
-    int H_NEWINVOKESPECIAL = 8;
-    int H_INVOKEINTERFACE = 9;
-
     // stack map frame types
 
     /**
@@ -151,6 +135,11 @@ public interface Opcodes {
     Integer NULL = new Integer(5);
     Integer UNINITIALIZED_THIS = new Integer(6);
 
+    /** 
+     * Represents a owner of an invokedynamic call.
+     */
+    String INVOKEDYNAMIC_OWNER = "java/lang/dyn/Dynamic";
+    
     // opcodes // visit method (- = idem)
 
     int NOP = 0; // visitInsn
@@ -339,7 +328,7 @@ public interface Opcodes {
     int INVOKESPECIAL = 183; // -
     int INVOKESTATIC = 184; // -
     int INVOKEINTERFACE = 185; // -
-    int INVOKEDYNAMIC = 186; // visitInvokeDynamicInsn
+    int INVOKEDYNAMIC = 186; // -
     int NEW = 187; // visitTypeInsn
     int NEWARRAY = 188; // visitIntInsn
     int ANEWARRAY = 189; // visitTypeInsn
