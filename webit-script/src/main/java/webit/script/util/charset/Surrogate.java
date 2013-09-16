@@ -40,22 +40,13 @@ public class Surrogate {
 
     private Surrogate() {
     }
-    // TODO: Deprecate/remove the following redundant definitions
-    public static final char MIN_HIGH = Character.MIN_HIGH_SURROGATE;
-    public static final char MAX_HIGH = Character.MAX_HIGH_SURROGATE;
-    public static final char MIN_LOW = Character.MIN_LOW_SURROGATE;
-    public static final char MAX_LOW = Character.MAX_LOW_SURROGATE;
-    public static final char MIN = Character.MIN_SURROGATE;
-    public static final char MAX = Character.MAX_SURROGATE;
-    public static final int UCS4_MIN = Character.MIN_SUPPLEMENTARY_CODE_POINT;
-    public static final int UCS4_MAX = Character.MAX_CODE_POINT;
 
     /**
      * Tells whether or not the given value is in the high surrogate range. Use
      * of {@link Character#isHighSurrogate} is generally preferred.
      */
     public static boolean isHigh(int c) {
-        return (MIN_HIGH <= c) && (c <= MAX_HIGH);
+        return ((Character.MIN_HIGH_SURROGATE) <= c) && (c <= (Character.MAX_HIGH_SURROGATE));
     }
 
     /**
@@ -63,7 +54,7 @@ public class Surrogate {
      * of {@link Character#isLowSurrogate} is generally preferred.
      */
     public static boolean isLow(int c) {
-        return (MIN_LOW <= c) && (c <= MAX_LOW);
+        return ((Character.MIN_LOW_SURROGATE) <= c) && (c <= (Character.MAX_LOW_SURROGATE));
     }
 
     /**
@@ -71,7 +62,7 @@ public class Surrogate {
      * {@link Character#isSurrogate} is generally preferred.
      */
     public static boolean is(int c) {
-        return (MIN <= c) && (c <= MAX);
+        return ((Character.MIN_SURROGATE) <= c) && (c <= (Character.MAX_SURROGATE));
     }
 
     /**
