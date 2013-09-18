@@ -24,7 +24,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
         <dependency>
             <groupId>com.github.zqq90.webit-script</groupId>
             <artifactId>webit-script</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         ...
     </dependencies>
@@ -40,8 +40,8 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
  + *如果您不喜欢Jodd, 并且其他组件没使用到Jodd, 可以试试这个 *
 
 ### Download: [Jar][jar]      [Javadoc][doc]   [Sources][sources]  
- + *current version 0.8.0-SNAPSHOT*
- + [webit-script-joddin-0.8.0-SNAPSHOT.jar] [jar_joddin]
+ + *current version 1.0.0*
+ + [webit-script-joddin-1.0.0.jar] [jar_joddin]
  + Jodd here: [Download] [jodd_down]   [Site] [jodd_site]   [Doc] [jodd_doc]   [Github][jodd_github]
 
 
@@ -197,10 +197,10 @@ var a, b, c=0, d="d";
 
 #### 变量名规则
 + 先声明 后使用，所有变量 必须全部声明
-+ 
++ 可开启 弱声明模式，所有变量不需要 事先声明，解析时自动声明
 + 对大小写敏感
 + 不能使用关键字
-+ 仅能包含 0-9a-zA-Z
++ 仅能包含 0-9a-zA-Z_$
 + 特殊变量名: 
 ++ super. 用于 取得指定上层且仅该层作用域的变量, 可嵌套`super.super.a`
 ++ this. 用于 取得本层且仅本层作用域的变量, 可嵌套`this.this.a`
@@ -425,6 +425,7 @@ var a = arg1@func() => out +1;
 + 将使用默认的Loader 加载模板，可使用相对路径或绝对路径
 + 可跟随 一个 map 格式的传参
 + 模板名可以动态生成
++ import 可支持指定需要导出的变量, 否则只导出本层作用域内的同名变量
 
 ~~~~~
 //相对路径
@@ -497,6 +498,126 @@ var x = (expr1 ? (expr3 ? expr6 : expr7) :  expr2) ? expr4 : expr5;
 var a4 = list1 ?: list2 ?: list3;
 ~~~~~
 
+### 判断语句
+#### 判断表达式 ?:
+#### 判断控制语句 if - else if - else
++ 不能省略 `{  }`
+
+~~~~~
+if( ... ){
+...;
+}else if(...){
+...;
+}else{
+...;
+}
+~~~~~
+
+### 循环控制语句
++ 支持 数组,  java.util.Collection, java.util.Iterator, java.util.Enumeration, CharSequence, java.util.Map, 整型递增/递减
++ 当集合为null 或者为空时将不会执行循环
++ 支持 else , 可选, 当不符合执行循环体的条件时执行else体.
+#### for-in
+
+~~~~~
+//集合 数组 等
+for(item : list){
+    echo item;
+    //echo for.iter.index; // .isFirst .hasNext .isOdd .isEven
+} else{
+    echo "list is empty";
+}
+
+//递增 
+for(i: 3..6){
+    echo i;
+}
+
+//递减
+for(i: 6..3){
+    echo i;
+    //支持 for.iter.*
+}
+~~~~~
+
+#### for-in Map version
+
+~~~~~
+for(key, value : map){
+    echo key + " = " value;
+    echo "\n";
+    //同样支持 for.iter.*
+}
+~~~~~
+#### while do-while 
++ 不支持 for.iter 特殊变量
+
+~~~~~
+//
+var iter;
+... ;
+while(iter.hasNext){
+    var item = iter.next;
+    ....;
+}
+
+//
+do{
+    ....;
+}while( ... );
+
+~~~~~
+
+### Switch-Case
+
++ 支持普通 Object, 包括 String 
++ 使用  Object.equls() 判断是否相等
++ 需要 break, 否则无条件继续执行下一个标签的句柄
++ 每个case 命名空间独立
+
+~~~~~
+switch(a){
+    case 1:
+        ....;
+        break;
+    case "c": //String
+        ....;
+        break;
+    case 'c': //Char
+        ....;
+        break;
+    default:
+        ....;
+}
+~~~~~
+
+### break continue
++ **支持 label, 直接操作该循环体 或 switch**
+
+~~~~~
+//break continue
+outter: for(i: 6..3){
+    echo i;
+    //支持 for.iter.*
+    inner: for(item : list){
+        if( ..... ){
+           break outter;
+        }
+        .....;
+        break; // break inner;
+    }
+    
+    //
+    switch(a){
+        ...;
+        case 'x':
+           break outter;
+        ...;
+    }
+}
+~~~~~
+
+
 ### 正在完善。。。
 
 ### 其他
@@ -506,7 +627,7 @@ var a4 = list1 ?: list2 ?: list3;
 ## 性能
 
 + 缺省开启ASM构建Native 调用减少反射, 不同于将整个模板编译成Java字节码,该方法不会造成无限制的perm溢出;
-+ 解析之后的Template AST会放入缓存, 检测到模板源文件改变时将重新家在资源并解析;
++ 解析之后的Template AST会放入缓存, 检测到模板源文件改变时将重新加载资源并解析;
 + 性能测试结果比较理想, 待比较权威的模版测试程序;
 + 使用OutputStream 输出时, 选择 SimpleTextStatmentFactory 将会预先将纯文本根据缺省编码编码成字节流. 
 
@@ -515,43 +636,73 @@ var a4 = list1 ?: list2 ?: list3;
 OutputStream:
 ~~~~~
 ====================test environment=====================
-os: Windows 7 6.1 x86, cpu: 4 cores, jvm: 1.7.0_25, 
-mem: max: 247M, total: 15M, free: 2M, use: 13M
+os: Windows 7 6.1 x86, cpu: 2 cores, jvm: 1.7.0_17, 
+mem: max: 247M, total: 21M, free: 9M, use: 12M
 ====================test parameters======================
-count: 10000, warm: 100, list: 100, stream: true,
-engines: java,httl,velocity,freemarker,smarty4j,webitScript
+count: 10000, warm: 100, list: 30, stream: true,
+engines: java,httl,webitScript,velocity
 ====================test result==========================
-     engine,       version,    time,     tps, rate,
-       java,      1.7.0_25,  5082ms,  1967/s, 100%,
-       httl,        1.0.10,  3468ms,  2883/s, 146%,
-   velocity,           1.7, 10172ms,   983/s,  49%,
- freemarker,        2.3.18, 14902ms,   671/s,  34%,
-   smarty4j,    1.0.0-jdk5, 21407ms,   467/s,  23%,
-webitscript,0.8.0-snapshot,  3966ms,  2521/s, 128%,
+     engine, version,    time,     tps, rate,
+       java,1.7.0_17,  2700ms,  3703/s, 100%,
+       httl,  1.0.10,  1592ms,  6281/s, 169%,
+webitscript,   1.0.0,  2004ms,  4990/s, 134%,
+   velocity,     1.7,  5022ms,  1991/s,  53%,
+=========================================================
+====================test environment=====================
+os: Windows 7 6.1 x86, cpu: 2 cores, jvm: 1.6.0_37, 
+mem: max: 247M, total: 15M, free: 4M, use: 11M
+====================test parameters======================
+count: 10000, warm: 100, list: 30, stream: true,
+engines: java,httl,webitScript,velocity
+====================test result==========================
+     engine, version,    time,     tps, rate,
+       java,1.6.0_37,  2620ms,  3816/s, 100%,
+       httl,  1.0.10,  1542ms,  6485/s, 169%,
+webitscript,   1.0.0,  2292ms,  4363/s, 114%,
+   velocity,     1.7,  5102ms,  1960/s,  51%,
 =========================================================
 ~~~~~
 Writer:
 ~~~~~
 ====================test environment=====================
-os: Windows 7 6.1 x86, cpu: 4 cores, jvm: 1.7.0_25, 
-mem: max: 455M, total: 122M, free: 89M, use: 33M
+os: Windows 7 6.1 x86, cpu: 2 cores, jvm: 1.6.0_37, 
+mem: max: 455M, total: 122M, free: 108M, use: 14M
 ====================test parameters======================
-count: 10000, warm: 100, list: 100, stream: false,
-engines: java,httl,velocity,webitScript
+count: 10000, warm: 100, list: 30, stream: false,
+engines: java,httl,webitScript,velocity
 ====================test result==========================
-     engine,       version,    time,     tps, rate,
-       java,      1.7.0_25,  1371ms,  7293/s, 100%,
-       httl,        1.0.10,  1039ms,  9624/s, 131%,
-   velocity,           1.7,  3438ms,  2908/s,  39%,
-webitscript,0.8.0-snapshot,  1881ms,  5316/s,  72%,
+     engine, version,    time,     tps, rate,
+       java,1.6.0_37,  1273ms,  7855/s, 100%,
+       httl,  1.0.10,   700ms, 14285/s, 181%,
+webitscript,   1.0.0,  1240ms,  8064/s, 102%,
+   velocity,     1.7,  2028ms,  4930/s,  62%,
 =========================================================
+
+====================test environment=====================
+os: Windows 7 6.1 x86, cpu: 2 cores, jvm: 1.7.0_17, 
+mem: max: 455M, total: 122M, free: 90M, use: 32M
+====================test parameters======================
+count: 10000, warm: 100, list: 30, stream: false,
+engines: java,httl,webitScript,velocity
+====================test result==========================
+     engine, version,    time,     tps, rate,
+       java,1.7.0_17,  1124ms,  8896/s, 100%,
+       httl,  1.0.10,   684ms, 14619/s, 164%,
+webitscript,   1.0.0,  1219ms,  8203/s,  92%,
+   velocity,     1.7,  1941ms,  5151/s,  57%,
+=========================================================
+
 ~~~~~
 
 ## SPI
 
-+ ResourceLoader  模板资源加载
-+ Resolver  Bean属性解析
 + TextStatmentFactory  对模板纯文本的存贮以及输出形式进行管理
++ Filter   输出过滤
++ CoderFactory   编码/解码
++ Loader   模板资源加载(原ResourceLoader)
++ Logger   日志
++ GetResolver, SetResolver, OutResolver  Bean属性解释器
++ NativeSecurityManager   Native调用安全管理器
 
 
 ## Requirements(依赖)
@@ -559,7 +710,6 @@ webitscript,0.8.0-snapshot,  1881ms,  5316/s,  72%,
 + `Jodd-core`
 + `Jodd-bean`
 + `Jodd-props`
-+ `Jodd-petite`
 
 
 ## Contributing(贡献)
@@ -576,9 +726,9 @@ webitscript,0.8.0-snapshot,  1881ms,  5316/s,  72%,
 details.
 **Webit Script** 依据 BSD许可证发布。详细请看捆绑的 LICENSE 文件。
 
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/0.8.0-SNAPSHOT/webit-script-0.8.0-SNAPSHOT.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/0.8.0-SNAPSHOT/webit-script-0.8.0-SNAPSHOT-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/0.8.0-SNAPSHOT/webit-script-0.8.0-SNAPSHOT-javadoc.jar
+[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.0.0/webit-script-1.0.0.jar
+[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.0.0/webit-script-1.0.0-sources.jar
+[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.0.0/webit-script-1.0.0-javadoc.jar
 [url_props_doc]: http://jodd.org/doc/props.html
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
 [default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webitl-default.props
