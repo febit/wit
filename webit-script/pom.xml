@@ -24,7 +24,7 @@
         <java.source.version>1.5</java.source.version>
         <java.target.version>1.5</java.target.version>
         
-        <lib.jodd.version>3.4.5</lib.jodd.version>
+        <lib.jodd.version>3.4.7</lib.jodd.version>
         <lib.slf4j.version>1.7.5</lib.slf4j.version>
     </properties>
     
