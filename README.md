@@ -53,6 +53,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
     ....
     // template 已缓存, 线程安全, 并自动检测模板源是否被更新
+    // 当然您也可以缓存 Template 实例，模板更新时更新实例内部AST, 其实例不会变化
     Template template = engine.getTemplate("/your/template/path/filename.ext");
     ...
 
@@ -429,12 +430,12 @@ var a = arg1@func() => out +1;
 
 ~~~~~
 //相对路径
-import "./book-head.wtl";
+include "./book-head.wtl";
 //等同于 
-import "book-head.wtl";
+include "book-head.wtl";
 
 //绝对路径
-import "/copyright.wtl";
+include "/copyright.wtl";
 
 //动态模板名
 var style = "";
@@ -444,6 +445,18 @@ import "book-list-"+ style  +".wtl";
 var func = function(){}; 
 var book;
 import "book-head.wtl"  {"book": book, "func":func};
+
+//传入Map 变量作为参数
+var map =  {"book": book, "func":func}；
+map["one"] = 1; 
+import "book-head.wtl"  {map};
+
+//导出指定变量
+var a;
+var b;
+//导出 : a 到a ，c 到 b
+import "book-head.wtl"  {"param1":1}  a,b=c;
+
 ~~~~~
 
 ### 关于条件判断的三种情况
