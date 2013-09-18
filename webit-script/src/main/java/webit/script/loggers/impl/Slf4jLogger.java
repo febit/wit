@@ -1,22 +1,22 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
-import jodd.petite.meta.PetiteInitMethod;
+import webit.script.Initable;
+import webit.script.Engine;
 import webit.script.loggers.Logger;
 
 /**
  *
  * @author zqq90
  */
-public class Slf4jLogger implements Logger {
+public class Slf4jLogger implements Logger, Initable {
 
     //settings
     private String name = DEFAULT_NAME;
     //
     private org.slf4j.Logger logger;
 
-    @PetiteInitMethod
-    public void init() {
+    public void init(Engine engine) {
         logger = org.slf4j.LoggerFactory.getLogger(name);
     }
 

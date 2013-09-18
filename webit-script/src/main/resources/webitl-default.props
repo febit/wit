@@ -26,7 +26,7 @@ resolvers=\
 # [webit.script.filters.impl.MutiFilter]
 # filtersClass=
 
-loggerClass=webit.script.loggers.impl.Slf4jLogger
+# loggerClass=webit.script.loggers.impl.Slf4jLogger
 
 
 [webit.script.resolvers.ResolverManager]
@@ -67,6 +67,7 @@ list='''
   java.lang.Long
   java.lang.Float
   java.lang.Double
+  java.lang.String
 
   java.lang.Number
   java.lang.Math
@@ -74,8 +75,11 @@ list='''
   java.math
 
   java.util.List
+  java.util.ArrayList
   java.util.Map
+  java.util.HashMap
   java.util.Set
+  java.util.HashSet
 
   java.util.Calendar
   java.util.Date

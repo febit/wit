@@ -5,15 +5,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import jodd.petite.meta.PetiteInitMethod;
 import jodd.util.StringUtil;
+import webit.script.Initable;
+import webit.script.Engine;
 import webit.script.security.NativeSecurityManager;
 
 /**
  *
  * @author Zqq
  */
-public class DefaultNativeSecurityManager implements NativeSecurityManager {
+public class DefaultNativeSecurityManager implements NativeSecurityManager, Initable {
 
     //settings
     //private String listFiles;
@@ -30,8 +31,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
         this.list = list;
     }
 
-    @PetiteInitMethod
-    public void init() {
+    public void init(Engine engine) {
         Map<String, Node> nodes = new HashMap<String, Node>();
 
         Node rootNode = new Node(null, ROOT_NODE_NAME);

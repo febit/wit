@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
-import webit.script.Configable;
+import webit.script.Initable;
 import webit.script.Engine;
 import webit.script.loggers.Logger;
 
@@ -9,7 +9,7 @@ import webit.script.loggers.Logger;
  *
  * @author zqq90
  */
-public final class MultiLogger implements Logger, Configable {
+public final class MultiLogger implements Logger, Initable {
 
     //Settings
     private Class[] loggers;

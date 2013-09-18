@@ -5,7 +5,7 @@ package webit.script;
  *
  * @author Zqq
  */
-public interface Configable {
+public interface Initable {
 
     void init(Engine engine);
 }

@@ -2,7 +2,7 @@
 package webit.script.resolvers;
 
 import java.util.ArrayList;
-import webit.script.Configable;
+import webit.script.Initable;
 import webit.script.Engine;
 import webit.script.asm.AsmResolverManager;
 import webit.script.io.Out;
@@ -14,7 +14,7 @@ import webit.script.util.collection.IdentityHashMap;
  *
  * @author Zqq
  */
-public final class ResolverManager implements Configable {
+public final class ResolverManager implements Initable {
 
     private Logger logger;
     //

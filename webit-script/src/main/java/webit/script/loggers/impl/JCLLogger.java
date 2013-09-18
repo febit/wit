@@ -1,9 +1,10 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
-import jodd.petite.meta.PetiteInitMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import webit.script.Initable;
+import webit.script.Engine;
 import webit.script.loggers.Logger;
 import static webit.script.loggers.Logger.DEFAULT_NAME;
 import webit.script.util.MessageFormatter;
@@ -12,15 +13,14 @@ import webit.script.util.MessageFormatter;
  *
  * @author zqq90
  */
-public final class JCLLogger implements Logger {
+public final class JCLLogger implements Logger, Initable {
 
     //settings
     private String name = DEFAULT_NAME;
     //
     private Log logger;
 
-    @PetiteInitMethod
-    public void init() {
+    public void init(Engine engine) {
         logger = LogFactory.getLog(name);
     }
 
@@ -114,12 +114,12 @@ public final class JCLLogger implements Logger {
         logger.error(msg, t);
     }
 
-    //
-    public void setName(String name) {
-        this.name = name;
-    }
-
     private String getMessage(String msg, Object... args) {
         return MessageFormatter.format(msg, args);
+    }
+    //
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

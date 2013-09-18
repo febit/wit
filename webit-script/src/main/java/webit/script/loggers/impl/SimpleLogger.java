@@ -1,7 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
-import jodd.petite.meta.PetiteInitMethod;
+import webit.script.Initable;
+import webit.script.Engine;
 import webit.script.loggers.Logger;
 import static webit.script.loggers.Logger.DEFAULT_NAME;
 import webit.script.util.MessageFormatter;
@@ -10,7 +11,7 @@ import webit.script.util.MessageFormatter;
  *
  * @author zqq90
  */
-public final class SimpleLogger implements Logger {
+public final class SimpleLogger implements Logger, Initable {
 
     public static final int LEVEL_TRACE = 1;
     public static final int LEVEL_DEBUG = 2;
@@ -29,8 +30,7 @@ public final class SimpleLogger implements Logger {
     private boolean _warn = false;
     private boolean _error = false;
 
-    @PetiteInitMethod
-    public void init() {
+    public void init(Engine engine) {
         prefix = "[" + name + "] ";
         level = level.trim().toLowerCase();
 

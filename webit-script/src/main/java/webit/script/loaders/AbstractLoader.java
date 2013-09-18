@@ -3,14 +3,14 @@ package webit.script.loaders;
 
 import jodd.io.FileNameUtil;
 import jodd.util.StringUtil;
-import webit.script.Configable;
+import webit.script.Initable;
 import webit.script.Engine;
 
 /**
  *
  * @author Zqq
  */
-public abstract class AbstractLoader implements Loader, Configable {
+public abstract class AbstractLoader implements Loader, Initable {
 
     protected String encoding;
     protected String root = null;

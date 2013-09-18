@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import jodd.petite.PetiteContainer;
-import jodd.petite.meta.PetiteInitMethod;
 import jodd.props.Props;
 import jodd.util.StringUtil;
 import webit.script.core.text.TextStatmentFactory;
@@ -18,6 +16,7 @@ import webit.script.loggers.Logger;
 import webit.script.resolvers.Resolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
+import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
 
 /**
@@ -51,17 +50,16 @@ public final class Engine {
     //
     private final ResolverManager resolverManager;
     private final ConcurrentMap<String, Template> templateCache;
-    private final PetiteContainer _petite;
+    private final Petite _petite;
 
-    public Engine(PetiteContainer petite) {
+    private Engine(Petite petite) {
         this._petite = petite;
         this.templateCache = new ConcurrentHashMap<String, Template>();
         this.resolverManager = new ResolverManager();
     }
 
-    @PetiteInitMethod
     @SuppressWarnings("unchecked")
-    public void init() throws Exception {
+    private void init() throws Exception {
 
         this.logger = (Logger) getBean(this.loggerClass);
 
@@ -84,30 +82,19 @@ public final class Engine {
         }
     }
 
-    public void resolveBean(Object bean) throws InstantiationException, IllegalAccessException {
-
-        Class type = bean.getClass();
-        String beanName = _petite.resolveBeanName(type);
-        if (_petite.getBean(beanName) != bean) {
-
-            _petite.addBean(beanName, bean);
-
-            if (bean instanceof Configable) {
-                ((Configable) bean).init(this);
-            }
+    public void resolveBean(Object bean) {
+        _petite.wireBean(bean);
+        if (bean instanceof Initable) {
+            ((Initable) bean).init(this);
         }
     }
 
     @SuppressWarnings("unchecked")
     public <E> E getBean(Class<E> type) throws InstantiationException, IllegalAccessException {
 
-        String beanName = _petite.resolveBeanName(type);
-        Object object = _petite.getBean(beanName);
-        if (object == null) {
-            object = type.newInstance();
-            resolveBean(object);
-        }
-        return (E) object;
+        Object bean = type.newInstance();
+        resolveBean(bean);
+        return (E) bean;
     }
 
     public Template getTemplate(String parentName, String name) throws ResourceNotFoundException {
@@ -204,9 +191,6 @@ public final class Engine {
 
     public static Engine createEngine(String configPath, Map parameters) {
 
-        final PetiteContainer petite = new PetiteContainer();
-        petite.getConfig().setUseFullTypeNames(true);
-
         final Props props = new Props();
         //props.loadSystemProperties("sys");
         //props.loadEnvironment("env");
@@ -222,17 +206,22 @@ public final class Engine {
             props.load(parameters);
         }
 
+        Petite petite = new Petite();
         petite.defineParameters(props);
-        petite.addBean(PETITE, petite);
 
         final Engine engine = new Engine(petite);
 
-        String engineBeanName = petite.resolveBeanName(Engine.class);
-        petite.addBean(engineBeanName, engine);
-        petite.addBean(ENGINE, engine);
+        petite.wireBean(engine);
+        
+        try {
+            engine.init();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
 
         //Log props file name
         final Logger logger = engine.getLogger();
+        petite.setLogger(logger);
         if (logger != null && logger.isInfoEnabled()) {
             logger.info("Loaded props files from classpath: {}", StringUtil.join(propsFiles, ", "));
         }

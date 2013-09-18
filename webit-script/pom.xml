@@ -47,12 +47,6 @@
             <version>${lib.jodd.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jodd</groupId>
-            <artifactId>jodd-petite</artifactId>
-            <version>${lib.jodd.version}</version>
-            <scope>compile</scope>
-        </dependency>
 
         <!-- provided -->
         <dependency>
