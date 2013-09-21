@@ -79,4 +79,8 @@ public final class OutputStreamOut implements Out {
     public String getEncoding() {
         return encoding;
     }
+
+    public boolean isByteStream() {
+        return true;
+    }
 }

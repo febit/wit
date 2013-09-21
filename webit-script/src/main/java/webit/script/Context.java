@@ -30,6 +30,7 @@ public final class Context {
     public final ResolverManager resolverManager;
     public final boolean enableAsmNative;
     public final Logger logger;
+    public final boolean isByteStream;
 
     public Context(final Template template, final Out out) {
 
@@ -38,6 +39,7 @@ public final class Context {
         this.encoding = out.getEncoding();
         this.loopCtrl = new LoopCtrl();
         this.vars = new VariantStack();
+        this.isByteStream = out.isByteStream();
         final Engine engine = template.engine;
         this.resolverManager = engine.getResolverManager();
         this.enableAsmNative = engine.isEnableAsmNative();
@@ -49,6 +51,7 @@ public final class Context {
         this.template = template;
         this.out = parent.out;
         this.encoding = parent.encoding;
+        this.isByteStream = parent.isByteStream;
         this.loopCtrl = new LoopCtrl();
         this.vars = new VariantStack(parentVarContexts);
         this.resolverManager = parent.resolverManager;

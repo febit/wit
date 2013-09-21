@@ -20,4 +20,6 @@ public interface Out {
     public void write(String string);
 
     String getEncoding();
+    
+    boolean isByteStream();
 }

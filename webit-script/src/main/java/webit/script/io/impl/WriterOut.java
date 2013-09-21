@@ -82,4 +82,8 @@ public final class WriterOut implements Out {
     public String getEncoding() {
         return encoding;
     }
+    
+    public boolean isByteStream() {
+        return false;
+    }
 }
