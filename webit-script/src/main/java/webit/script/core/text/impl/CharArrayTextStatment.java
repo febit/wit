@@ -15,7 +15,7 @@ public final class CharArrayTextStatment extends AbstractStatment implements Opt
 
     public CharArrayTextStatment(String text, int line, int column) {
         super(line, column);
-        this.text = text != null ? text.toCharArray() : null;
+        this.text = text.toCharArray();
     }
 
     public Object execute(final Context context) {
@@ -24,9 +24,6 @@ public final class CharArrayTextStatment extends AbstractStatment implements Opt
     }
 
     public CharArrayTextStatment optimize() {
-        if (text != null) {
-            return this;
-        }
-        return null;
+        return text != null && text.length > 0 ? this : null;
     }
 }

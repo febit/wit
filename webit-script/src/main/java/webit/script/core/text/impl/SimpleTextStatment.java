@@ -40,9 +40,6 @@ public final class SimpleTextStatment extends AbstractStatment implements Optimi
     }
 
     public SimpleTextStatment optimize() {
-        if (text != null && text.length > 0) {
-            return this;
-        }
-        return null;
+        return text != null && text.length > 0 ? this : null;
     }
 }
