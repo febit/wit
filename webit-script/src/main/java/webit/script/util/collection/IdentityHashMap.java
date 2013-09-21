@@ -3,35 +3,39 @@ package webit.script.util.collection;
 
 public final class IdentityHashMap<V> {
 
+    private static final int DEFAULT_CAPACITY = 64;
+    private static final int MINIMUM_CAPACITY = 4;
+    private static final int MAXIMUM_CAPACITY = 1 << 29;
     private Entry<V> table[];
     private int threshold;
     private int count;
-    private final float loadFactor;
+    private int mark;
     //
     private final Object lock = new Object();
 
-    @SuppressWarnings("unchecked")
-    public IdentityHashMap(int initialCapacity, float loadFactor) {
-        if (initialCapacity < 0) {
-            throw new IllegalArgumentException("Invalid initial capacity: " + initialCapacity);
-        }
-        if (loadFactor <= 0) {
-            throw new IllegalArgumentException("Invalid load factor: " + loadFactor);
-        }
-        if (initialCapacity == 0) {
-            initialCapacity = 1;
-        }
-        this.loadFactor = loadFactor;
-        this.table = new Entry[initialCapacity];
-        this.threshold = (int) (initialCapacity * loadFactor);
-    }
-
     public IdentityHashMap(int initialCapacity) {
-        this(initialCapacity, 0.75f);
+
+        int initlen;
+        if (initialCapacity > MAXIMUM_CAPACITY || initialCapacity < 0) {
+            initlen = MAXIMUM_CAPACITY;
+        } else {
+            initlen = MINIMUM_CAPACITY;
+            while (initlen < initialCapacity) {
+                initlen <<= 1;
+            }
+        }
+        init(initlen);
     }
 
     public IdentityHashMap() {
-        this(101, 0.75f);
+        init(DEFAULT_CAPACITY);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void init(int initlen) {
+        this.table = new Entry[initlen];
+        this.mark = initlen - 1;
+        this.threshold = (int) (initlen * 0.75f);
     }
 
     public int size() {
@@ -44,8 +48,11 @@ public final class IdentityHashMap<V> {
         final int id = System.identityHashCode(key);
         //final int index = id % tab.length;
 
-        final Entry<V>[] tab = table;
-        Entry<V> e = tab[id % tab.length];
+        final Entry<V> tab[] = table;
+        //int index = id & this.mark;
+        Entry<V> e = tab[id & (tab.length - 1)];
+        //int index = id & this.mark;
+        //Entry<V> e = table[index];
         for (; e != null; e = e.next) {
             if (id == e.id) {
                 return (V) e.value;
@@ -70,9 +77,9 @@ public final class IdentityHashMap<V> {
             final int oldCapacity = table.length;
             final Entry<V> oldTable[] = table;
 
-            final int newCapacity = (oldCapacity << 1) + 1;
+            final int newCapacity = oldCapacity << 1;
+            final int newMark = newCapacity - 1;
             final Entry<V> newTable[] = new Entry[newCapacity];
-
 
             for (int i = oldCapacity; i-- > 0;) {
                 int index;
@@ -80,26 +87,27 @@ public final class IdentityHashMap<V> {
                     e = old;
                     old = old.next;
 
-                    index = e.id % newCapacity;
+                    index = e.id & newMark;
                     e.next = newTable[index];
                     newTable[index] = e;
                 }
             }
 
-            threshold = (int) (newCapacity * loadFactor);
+            this.threshold = (int) (newCapacity * 0.75f);
             //Note: must at Last
-            table = newTable;
+            this.table = newTable;
+            this.mark = newMark;
         }
     }
 
     @SuppressWarnings("unchecked")
-    public V unsafePutIfAbsent(Object key, V value) {
+    private V unsafePutIfAbsent(Object key, V value) {
 
-        Entry<V> tab[] = table;
 
         final int id = System.identityHashCode(key);
 
-        int index = id % tab.length;
+        int index = id & this.mark;
+        Entry<V> tab[] = table;
         for (Entry<V> e = tab[index]; e != null; e = e.next) {
             if (e.id == id) {
                 V old = e.value;
@@ -112,7 +120,7 @@ public final class IdentityHashMap<V> {
             resize();
 
             tab = table;
-            index = id % tab.length;
+            index = id & (tab.length - 1);
         }
 
         // creates the new entry.
