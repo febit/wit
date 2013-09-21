@@ -8,9 +8,9 @@ import java.util.List;
 import jodd.io.StringOutputStream;
 import jodd.io.findfile.ClassFinder;
 import jodd.io.findfile.ClassScanner;
-import jodd.util.StringUtil;
 import org.junit.Test;
 import webit.script.exceptions.ResourceNotFoundException;
+import webit.script.util.StringUtil;
 
 /**
  *

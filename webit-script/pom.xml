@@ -31,12 +31,6 @@
     <dependencies>
         <dependency>
             <groupId>org.jodd</groupId>
-            <artifactId>jodd-core</artifactId>
-            <version>${lib.jodd.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jodd</groupId>
             <artifactId>jodd-bean</artifactId>
             <version>${lib.jodd.version}</version>
             <scope>compile</scope>

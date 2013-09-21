@@ -1,10 +1,10 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.loaders;
 
-import jodd.io.FileNameUtil;
-import jodd.util.StringUtil;
 import webit.script.Initable;
 import webit.script.Engine;
+import webit.script.util.StringUtil;
+import webit.script.util.UnixStyleFileNameUtil;
 
 /**
  *
@@ -17,7 +17,7 @@ public abstract class AbstractLoader implements Loader, Initable {
 
     public String concat(final String parent, final String name) {
         if (parent != null) {
-            return FileNameUtil.concat(FileNameUtil.getPath(parent), name, true);
+            return UnixStyleFileNameUtil.concat(UnixStyleFileNameUtil.getPath(parent), name);
         } else {
             return name;
         }
@@ -32,11 +32,11 @@ public abstract class AbstractLoader implements Loader, Initable {
     }
 
     public String normalize(String name) {
-        return name != null ? FileNameUtil.normalize(StringUtil.prefix(name, "/"), true) : null;
+        return name != null ? UnixStyleFileNameUtil.normalize(StringUtil.prefixChar(name, '/')) : null;
     }
 
     public void setRoot(String root) {
-        root = FileNameUtil.normalizeNoEndSeparator(root, true);
+        root = UnixStyleFileNameUtil.normalizeNoEndSeparator(root);
         if (root != null && root.length() == 0) {
             root = null;
         }

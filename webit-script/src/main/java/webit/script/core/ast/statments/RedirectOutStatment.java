@@ -1,8 +1,6 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statments;
 
-import jodd.io.FastByteArrayOutputStream;
-import jodd.io.FastCharArrayWriter;
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.ResetableValue;
@@ -11,6 +9,8 @@ import webit.script.core.ast.Statment;
 import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
+import webit.script.util.FastByteArrayOutputStream;
+import webit.script.util.FastCharArrayWriter;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -44,14 +44,14 @@ public class RedirectOutStatment extends AbstractStatment {
 
             StatmentUtil.execute(srcStatment, new WriterOut(writer, (WriterOut) current), context);
             final ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
-            value.set(writer.toString());
+            value.set(writer.toCharArray());
         } else {
 
             final FastCharArrayWriter writer = new FastCharArrayWriter();
 
             StatmentUtil.execute(srcStatment, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()), context);
             final ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
-            value.set(writer.toString());
+            value.set(writer.toCharArray());
         }
         return null;
     }

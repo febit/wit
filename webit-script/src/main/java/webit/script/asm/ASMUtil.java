@@ -3,12 +3,13 @@ package webit.script.asm;
 
 import java.util.HashMap;
 import java.util.Map;
-import jodd.util.StringUtil;
 import webit.script.Context;
 import webit.script.asm3.Type;
 import webit.script.asm3.commons.Method;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ClassUtil;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -98,7 +99,7 @@ public class ASMUtil {
 
         @Override
         protected Class<?> findClass(String name) throws ClassNotFoundException {
-            return Thread.currentThread().getContextClassLoader().loadClass(name);
+            return ClassLoaderUtil.getDefaultClassLoader().loadClass(name);
         }
 
         public final Class<?> loadClass(String name, byte[] b, int off, int len)

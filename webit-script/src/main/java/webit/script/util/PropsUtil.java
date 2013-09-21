@@ -2,12 +2,10 @@
 package webit.script.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import jodd.io.findfile.ClassScanner;
 import jodd.props.Props;
-import jodd.util.StringPool;
-import jodd.util.StringUtil;
 
 /**
  *
@@ -15,25 +13,45 @@ import jodd.util.StringUtil;
  */
 public class PropsUtil {
 
-    public static List<String> loadFromClasspath(final Props p, final String... patterns) {
+    public static List<String> loadFromClasspath(final Props p, final String... pathSets) {
         final List<String> files = new LinkedList<String>();
-        final ClassScanner scanner = new ClassScanner() {
-            @Override
-            protected void onEntry(EntryData entryData) throws IOException {
-                p.load(entryData.openInputStream(),
-                        StringUtil.endsWithIgnoreCase(entryData.getName(), ".properties")
-                        ? StringPool.ISO_8859_1
-                        : StringPool.UTF_8);
-                files.add(entryData.isArchive()
-                        ? entryData.getName() + '@' + entryData.getArchiveName()
-                        : entryData.getName());
-            }
-        };
-        scanner.setIncludeResources(true);
-        scanner.setIgnoreException(true);
-        scanner.setIncludedEntries(patterns);
-        scanner.scanDefaultClasspath();
 
+
+        if (pathSets != null) {
+
+            String pathSet;
+            String[] paths;
+            String path;
+            ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
+
+            for (int i = 0; i < pathSets.length; i++) {
+                pathSet = pathSets[i];
+                if (pathSet != null && pathSet.length() > 0) {
+                    paths = StringUtil.splitc(pathSet, ',');
+                    StringUtil.trimAll(paths);
+                    for (int j = 0; j < paths.length; j++) {
+                        path = paths[j];
+                        if (path != null && path.length() > 0) {
+                            //load from classpath
+                            if (path.charAt(0) == '/') {
+                                path = path.substring(1);
+                            }
+                            InputStream in = classLoader.getResourceAsStream(path);
+                            if (in != null) {
+                                try {
+                                    p.load(in, StringUtil.endsWithIgnoreCase(path, ".properties")
+                                            ? "ISO-8859-1"
+                                            : "UTF-8");
+                                    files.add(path);
+                                } catch (IOException ex) {
+                                    //XXX:ignore
+                                }
+                            }//XXX: else ignore
+                        }
+                    }
+                }
+            }
+        }
         return files;
     }
 }

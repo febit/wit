@@ -1,10 +1,12 @@
 
 [webit.script.Engine]
 resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
+loggerClass=webit.script.loggers.impl.Slf4jLogger
 
 
 [webit.script.loaders.impl.ClasspathLoader]
 root=webit/script/test/tmpls
+
 
 [webit.script.security.impl.DefaultNativeSecurityManager]
 list +='''

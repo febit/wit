@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.loaders.Resource;
+import webit.script.util.ClassLoaderUtil;
 
 /**
  *
@@ -29,7 +30,7 @@ public class ClasspathResource implements Resource {
 
     public Reader openReader() throws IOException {
         //lastLoadTime = System.currentTimeMillis();
-        final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+        final InputStream inputStream = ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path);
         if (inputStream == null) {
             throw new ResourceNotFoundException("Not found: " + path);
         }

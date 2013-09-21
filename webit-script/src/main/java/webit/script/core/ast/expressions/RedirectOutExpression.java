@@ -1,8 +1,6 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
-import jodd.io.FastByteArrayOutputStream;
-import jodd.io.FastCharArrayWriter;
 import webit.script.Context;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
@@ -11,6 +9,8 @@ import webit.script.core.ast.ResetableValueExpression;
 import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
+import webit.script.util.FastByteArrayOutputStream;
+import webit.script.util.FastCharArrayWriter;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -45,7 +45,7 @@ public class RedirectOutExpression extends AbstractExpression {
 
             Object result = StatmentUtil.execute(srcExpr, context, new WriterOut(writer, (WriterOut) current));
             ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
-            value.set(writer.toString());
+            value.set(writer.toCharArray());
 
             return result;
         } else {
@@ -53,7 +53,7 @@ public class RedirectOutExpression extends AbstractExpression {
 
             Object result = StatmentUtil.execute(srcExpr, context, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
             ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
-            value.set(writer.toString());
+            value.set(writer.toCharArray());
 
             return result;
         }

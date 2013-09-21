@@ -213,7 +213,7 @@ public class ClassUtil {
     }
 
     private static Class<?> getClassByInternalName(String name) throws ClassNotFoundException {
-        return Class.forName(name, true, Thread.currentThread().getContextClassLoader());
+        return Class.forName(name, true, ClassLoaderUtil.getDefaultClassLoader());
     }
 
     public static boolean isStatic(Method method) {

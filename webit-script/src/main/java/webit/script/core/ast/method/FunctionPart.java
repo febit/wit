@@ -4,11 +4,11 @@ package webit.script.core.ast.method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import jodd.util.collection.IntArrayList;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.StatmentPart;
 import webit.script.core.runtime.variant.VariantUtil;
 import webit.script.util.StatmentUtil;
+import webit.script.util.collection.IntArrayList;
 
 /**
  *

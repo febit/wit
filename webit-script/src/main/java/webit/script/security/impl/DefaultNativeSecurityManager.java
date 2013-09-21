@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import jodd.util.StringUtil;
 import webit.script.Initable;
 import webit.script.Engine;
 import webit.script.security.NativeSecurityManager;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -21,6 +21,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
     private String list;
     //
     private final static String ROOT_NODE_NAME = "";
+    private final static char[] DELIMITERS = new char[]{'\n', ',', '\r'};
     private ConcurrentMap<String, Node> allNodes;
 
     public boolean access(String path) {
@@ -40,7 +41,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
 
         //do list
         if (list != null) {
-            String[] nodeRules = StringUtil.splitc(list, ",\r\n");
+            String[] nodeRules = StringUtil.splitc(list, DELIMITERS);
             StringUtil.trimAll(nodeRules);
             for (int i = 0; i < nodeRules.length; i++) {
                 String rule = nodeRules[i];
