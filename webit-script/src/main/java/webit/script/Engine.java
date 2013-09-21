@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import jodd.props.Props;
-import jodd.util.StringUtil;
 import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.filters.Filter;
@@ -18,6 +17,7 @@ import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -135,7 +135,7 @@ public final class Engine {
 
     public final void setEncoding(String encoding) {
         if (encoding != null) {
-            this.encoding = encoding.intern();
+            this.encoding = encoding.toLowerCase().intern();
         }
     }
 
