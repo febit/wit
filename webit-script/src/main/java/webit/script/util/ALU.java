@@ -691,9 +691,9 @@ public class ALU {
     public static boolean toBoolean(final Object o) {
         if (o == null) {
             return false;
-        } else if (Boolean.TRUE.equals(o)) {
+        } else if (Boolean.TRUE == o || Boolean.TRUE.equals(o)) {
             return true;
-        } else if (Boolean.FALSE.equals(o)) {
+        } else if (Boolean.FALSE == o || Boolean.FALSE.equals(o)) {
             return false;
         }
 
