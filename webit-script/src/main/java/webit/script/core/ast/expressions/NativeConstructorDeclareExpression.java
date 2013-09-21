@@ -22,7 +22,7 @@ public class NativeConstructorDeclareExpression extends AbstractExpression {
         this.constructor = constructor;
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
 
         if (context.enableAsmNative) {
             try {

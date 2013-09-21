@@ -32,7 +32,7 @@ public final class ForInStatment extends AbstractStatment implements Optimizable
         this.label = label;
     }
 
-    public void execute(final Context context) {
+    public Object execute(final Context context) {
 
         final Object collection = StatmentUtil.execute(collectionExpr, context);
         final Iter iter = CollectionUtil.toIter(collection);
@@ -68,6 +68,7 @@ public final class ForInStatment extends AbstractStatment implements Optimizable
         } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }
+        return null;
     }
 
     public Statment optimize() {

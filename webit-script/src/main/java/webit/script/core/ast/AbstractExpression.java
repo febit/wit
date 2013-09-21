@@ -1,8 +1,6 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast;
 
-import webit.script.Context;
-
 /**
  *
  * @author Zqq
@@ -23,9 +21,5 @@ public abstract class AbstractExpression implements Expression {
 
     public int getColumn() {
         return column;
-    }
-
-    public void execute(final Context context) {
-        execute(context, false);
     }
 }

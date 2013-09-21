@@ -22,7 +22,7 @@ public class NativeMethodDeclareExpression extends AbstractExpression {
         this.method = method;
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
         if (context.enableAsmNative) {
             try {
                 return new AsmNativeMethodDeclare(AsmMethodCallerManager.generateCaller(method));

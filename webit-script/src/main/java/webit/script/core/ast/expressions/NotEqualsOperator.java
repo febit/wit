@@ -18,7 +18,7 @@ public final class NotEqualsOperator extends BinaryOperator implements Optimizab
         super(leftExpr, rightExpr, line, column);
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
         return ALU.notEquals(StatmentUtil.execute(leftExpr, context), StatmentUtil.execute(rightExpr, context));
     }
 

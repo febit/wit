@@ -27,7 +27,7 @@ public final class WhileStatment extends AbstractStatment {
         this.label = label;
     }
 
-    public void execute(final Context context) {
+    public Object execute(final Context context) {
         boolean go = doWhileAtFirst ? ALU.toBoolean(StatmentUtil.execute(whileExpr, context)) : true;
         final LoopCtrl ctrl = context.loopCtrl;
         label:
@@ -55,5 +55,6 @@ public final class WhileStatment extends AbstractStatment {
             }
             go = ALU.toBoolean(StatmentUtil.execute(whileExpr, context));
         }
+        return null;
     }
 }

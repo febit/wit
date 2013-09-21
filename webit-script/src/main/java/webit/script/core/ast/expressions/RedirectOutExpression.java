@@ -28,14 +28,14 @@ public class RedirectOutExpression extends AbstractExpression {
         this.toExpr = toExpr;
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
 
         final Out current = context.getOut();
         if (current instanceof OutputStreamOut) {
 
             FastByteArrayOutputStream out = new FastByteArrayOutputStream(256);
 
-            Object result = StatmentUtil.execute(srcExpr, context, needReturn, new OutputStreamOut(out, (OutputStreamOut) current));
+            Object result = StatmentUtil.execute(srcExpr, context, new OutputStreamOut(out, (OutputStreamOut) current));
             ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(out.toByteArray());
 
@@ -43,7 +43,7 @@ public class RedirectOutExpression extends AbstractExpression {
         } else if (current instanceof WriterOut) {
             FastCharArrayWriter writer = new FastCharArrayWriter(256);
 
-            Object result = StatmentUtil.execute(srcExpr, context, needReturn, new WriterOut(writer, (WriterOut) current));
+            Object result = StatmentUtil.execute(srcExpr, context, new WriterOut(writer, (WriterOut) current));
             ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(writer.toString());
 
@@ -51,7 +51,7 @@ public class RedirectOutExpression extends AbstractExpression {
         } else {
             FastCharArrayWriter writer = new FastCharArrayWriter(256);
 
-            Object result = StatmentUtil.execute(srcExpr, context, needReturn, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
+            Object result = StatmentUtil.execute(srcExpr, context, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
             ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(writer.toString());
 

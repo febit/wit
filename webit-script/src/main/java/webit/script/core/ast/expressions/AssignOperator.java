@@ -4,7 +4,6 @@ package webit.script.core.ast.expressions;
 import webit.script.Context;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.util.StatmentUtil;
 
@@ -23,10 +22,9 @@ public final class AssignOperator extends AbstractExpression {
         this.rexpr = rexpr;
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
-        final Object result = StatmentUtil.execute(rexpr, context, needReturn);
-        final ResetableValue value = StatmentUtil.getResetableValue(lexpr, context);
-        value.set(result);
+    public Object execute(final Context context) {
+        final Object result = StatmentUtil.execute(rexpr, context);
+        StatmentUtil.getResetableValue(lexpr, context).set(result);
         return result;
     }
 }

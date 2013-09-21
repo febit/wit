@@ -26,7 +26,7 @@ public final class IfStatment extends AbstractStatment implements Optimizable {
         this.elseStatment = elseStatment;
     }
 
-    public void execute(final Context context) {
+    public Object execute(final Context context) {
         if (ALU.toBoolean(StatmentUtil.execute(ifExpr, context))) {
             if (thenStatment != null) {
                 StatmentUtil.execute(thenStatment, context);
@@ -34,6 +34,7 @@ public final class IfStatment extends AbstractStatment implements Optimizable {
         } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }
+        return null;
     }
 
     public Statment optimize() {

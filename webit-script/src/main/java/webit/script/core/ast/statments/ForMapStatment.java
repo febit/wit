@@ -35,7 +35,7 @@ public final class ForMapStatment extends AbstractStatment implements Optimizabl
     }
 
     @SuppressWarnings("unchecked")
-    public void execute(final Context context) {
+    public Object execute(final Context context) {
         final Object object = StatmentUtil.execute(mapExpr, context);
         final Iter<Map.Entry> iter;
         if (object != null) {
@@ -84,6 +84,7 @@ public final class ForMapStatment extends AbstractStatment implements Optimizabl
         } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }
+        return null;
     }
 
     public Statment optimize() {

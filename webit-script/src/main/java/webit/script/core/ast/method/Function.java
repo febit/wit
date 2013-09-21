@@ -34,8 +34,8 @@ public final class Function extends AbstractStatment {
         this.statments = statments;
     }
 
-    public void execute(final Context context) {
-        execute(context, null);
+    public Object execute(final Context context) {
+        return execute(context, null);
     }
 
     public Object execute(final Context context, final Object[] args) {

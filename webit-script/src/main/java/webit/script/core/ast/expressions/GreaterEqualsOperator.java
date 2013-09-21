@@ -18,7 +18,7 @@ public final class GreaterEqualsOperator extends BinaryOperator implements Optim
         super(leftExpr, rightExpr, line, column);
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
         return ALU.greaterEquals(StatmentUtil.execute(leftExpr, context), StatmentUtil.execute(rightExpr, context));
     }
 

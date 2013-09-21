@@ -19,11 +19,11 @@ public final class ArrayValue extends AbstractExpression {
         this.valueExprs = valueExprs;
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
         final int len = valueExprs.length;
         final Object[] value = new Object[len];
         for (int i = 0; i < len; i++) {
-            value[i] = StatmentUtil.execute(valueExprs[i], context, true);
+            value[i] = StatmentUtil.execute(valueExprs[i], context);
         }
         return value;
     }

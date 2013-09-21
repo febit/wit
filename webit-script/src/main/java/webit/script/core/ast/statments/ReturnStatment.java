@@ -19,11 +19,12 @@ public final class ReturnStatment extends AbstractStatment {
         this.expr = expr;
     }
 
-    public void execute(final Context context) {
+    public Object execute(final Context context) {
         context.loopCtrl.returnLoop(
                 expr != null
                 ? StatmentUtil.execute(expr, context)
                 : Context.VOID,
                 this);
+        return null;
     }
 }

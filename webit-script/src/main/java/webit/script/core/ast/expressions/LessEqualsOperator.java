@@ -18,7 +18,7 @@ public final class LessEqualsOperator extends BinaryOperator implements Optimiza
         super(leftExpr, rightExpr, line, column);
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
         return ALU.lessEquals(StatmentUtil.execute(leftExpr, context), StatmentUtil.execute(rightExpr, context));
     }
 

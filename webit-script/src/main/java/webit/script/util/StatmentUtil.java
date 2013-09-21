@@ -18,10 +18,10 @@ import webit.script.io.Out;
 public class StatmentUtil {
 
     @SuppressWarnings("deprecation")
-    public static Object execute(final Expression expression, final Context context, final boolean needReturn, final Out out) {
+    public static Object execute(final Expression expression, final Context context, final Out out) {
         try {
             context.pushOut(out);
-            Object result = expression.execute(context, needReturn);
+            Object result = expression.execute(context);
             context.popOut();
             return result;
         } catch (Throwable e) {
@@ -36,24 +36,9 @@ public class StatmentUtil {
         }
     }
 
-    public static Object execute(final Expression expression, final Context context, final boolean needReturn) {
-        try {
-            return expression.execute(context, needReturn);
-        } catch (Throwable e) {
-            ScriptRuntimeException scriptRuntimeException;
-            if (e instanceof ScriptRuntimeException) {
-                scriptRuntimeException = (ScriptRuntimeException) e;
-                scriptRuntimeException.registStatment(expression);
-            } else {
-                scriptRuntimeException = new ScriptRuntimeException(e, expression);
-            }
-            throw scriptRuntimeException;
-        }
-    }
-
     public static Object execute(final Expression expression, final Context context) {
         try {
-            return expression.execute(context, true);
+            return expression.execute(context);
         } catch (Throwable e) {
             ScriptRuntimeException scriptRuntimeException;
             if (e instanceof ScriptRuntimeException) {

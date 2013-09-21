@@ -25,8 +25,9 @@ public final class BlockStatment extends AbstractStatment implements Optimizable
         this.statments = statments;
     }
 
-    public void execute(final Context context) {
-        execute(context, null, null);
+    public Object execute(final Context context) {
+         execute(context, null, null);
+         return null;
     }
 
     public void execute(final Context context, final int[] indexs, final Object[] values) {

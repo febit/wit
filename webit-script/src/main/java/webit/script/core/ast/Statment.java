@@ -13,5 +13,5 @@ public interface Statment {
 
     int getColumn();
 
-    void execute(Context context);
+    Object execute(Context context);
 }

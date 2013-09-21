@@ -18,7 +18,7 @@ public final class LessOperator extends BinaryOperator implements Optimizable {
         super(leftExpr, rightExpr, line, column);
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
         return ALU.less(StatmentUtil.execute(leftExpr, context), StatmentUtil.execute(rightExpr, context));
     }
 

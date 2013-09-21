@@ -18,7 +18,7 @@ public final class DivOperator extends BinaryOperator implements Optimizable {
         super(leftExpr, rightExpr, line, column);
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
         return ALU.div(StatmentUtil.execute(leftExpr, context), StatmentUtil.execute(rightExpr, context));
     }
 

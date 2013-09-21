@@ -20,7 +20,7 @@ public final class FunctionDeclareExpression extends AbstractExpression {
         this.function = function;
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
 
         final VariantContext[] variantContexts;
         final int range = function.overflowUpstairsRange;

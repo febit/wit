@@ -24,7 +24,7 @@ public final class IfOperator extends AbstractExpression {
         this.rightValueExpr = rightValueExpr;
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
         return StatmentUtil.execute(
                 ALU.toBoolean(StatmentUtil.execute(ifExpr, context))
                 ? leftValueExpr

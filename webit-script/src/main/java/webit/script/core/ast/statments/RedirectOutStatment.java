@@ -28,7 +28,7 @@ public class RedirectOutStatment extends AbstractStatment {
         this.toExpr = toExpr;
     }
 
-    public void execute(final Context context) {
+    public Object execute(final Context context) {
 
         final Out current = context.getOut();
         if (current instanceof OutputStreamOut) {
@@ -53,5 +53,6 @@ public class RedirectOutStatment extends AbstractStatment {
             final ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(writer.toString());
         }
+        return null;
     }
 }

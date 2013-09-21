@@ -25,7 +25,7 @@ public class IncludeStatment extends AbstractStatment {
     }
 
     @SuppressWarnings("unchecked")
-    public void execute(final Context context) {
+    public Object execute(final Context context) {
         final Object templateNameObject = StatmentUtil.execute(templateNameExpr, context);
 
         if (templateNameObject != null) {
@@ -52,5 +52,6 @@ public class IncludeStatment extends AbstractStatment {
                 throw new ScriptRuntimeException(e);
             }
         }
+        return null;
     }
 }

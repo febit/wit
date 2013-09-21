@@ -28,7 +28,7 @@ public final class SwitchStatment extends AbstractStatment {
         this.hasDefaultStatment = defaultStatment != null;
     }
 
-    public void execute(final Context context) {
+    public Object execute(final Context context) {
         final Object result = StatmentUtil.execute(switchExpr, context);
         boolean run = false;
         if (result != null) {
@@ -49,5 +49,6 @@ public final class SwitchStatment extends AbstractStatment {
         if (run && context.loopCtrl.mathBreakLoop(label)) {
             context.loopCtrl.reset();
         }
+        return null;
     }
 }

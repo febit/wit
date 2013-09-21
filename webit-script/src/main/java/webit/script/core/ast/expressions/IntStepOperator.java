@@ -19,7 +19,7 @@ public class IntStepOperator extends BinaryOperator {
         super(leftExp, rightExp, line, column);
     }
 
-    public Object execute(final Context context, final boolean needReturn) {
+    public Object execute(final Context context) {
         Object result = StatmentUtil.execute(leftExpr, context);
         final int num1;
         if (result instanceof Number) {

@@ -24,7 +24,8 @@ public final class EchoStatment extends AbstractStatment {
         this.expr = expr;
     }
 
-    public void execute(final Context context) {
+    public Object execute(final Context context) {
         context.out(StatmentUtil.execute(expr, context));
+        return null;
     }
 }

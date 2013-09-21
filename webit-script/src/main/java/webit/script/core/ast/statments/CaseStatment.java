@@ -20,13 +20,14 @@ public final class CaseStatment extends AbstractStatment {
         this.next = next;
     }
 
-    public void execute(final Context context) {
+    public Object execute(final Context context) {
         if (body != null) {
             StatmentUtil.execute(body, context);
         }
         if (context.loopCtrl.goon() && next != null) {
             StatmentUtil.execute(next, context);
         }
+        return null;
     }
 
     public boolean isBodyEmpty() {
