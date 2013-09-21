@@ -265,17 +265,18 @@ public class UTF_8 {
     }
 
     public static int encode(final char[] sa, int sp, int len, final byte[] da) {
-        int sl = sp + len;
+        final int sl = sp + len;
         int dp = 0;
-        int dlASCII = dp + Math.min(len, da.length);
-        Surrogate.Parser sgp = null;
+        int dlASCII = len <= da.length ? len : da.length;   //dp + Math.min(len, da.length);
+
         // ASCII only optimized loop
         while (dp < dlASCII && sa[sp] < '\u0080') {
             da[dp++] = (byte) sa[sp++];
         }
 
+        char c;
         while (sp < sl) {
-            char c = sa[sp++];
+            c = sa[sp++];
             if (c < 0x80) {
                 // Have at most seven bits
                 da[dp++] = (byte) c;
@@ -283,23 +284,27 @@ public class UTF_8 {
                 // 2 bytes, 11 bits
                 da[dp++] = (byte) (0xc0 | (c >> 6));
                 da[dp++] = (byte) (0x80 | (c & 0x3f));
-            } else if (CharUtil.isSurrogate(c)) {
-                if (sgp == null) {
-                    sgp = new Surrogate.Parser();
-                }
-                int uc = sgp.parse(c, sa, sp - 1, sl);
-                if (uc < 0) {
-//                    if (malformedInputAction() != CodingErrorAction.REPLACE) {
-//                        return -1;
-//                    }
-                    da[dp++] = Encoder.REPLACEMENT;
+            } else if (c >= Character.MIN_HIGH_SURROGATE && c <= Character.MAX_LOW_SURROGATE) {
+
+                if (c <= Character.MAX_HIGH_SURROGATE && sp < sl) { // if is HIGH_SURROGATE && has next char
+                    final char d = sa[sp++];
+                    if (d >= Character.MIN_LOW_SURROGATE && d <= Character.MAX_LOW_SURROGATE) { // if is LOW_SURROGATE
+                        
+                        final int uc = Character.toCodePoint(c, d);
+
+                        da[dp++] = (byte) (0xf0 | ((uc >> 18)));
+                        da[dp++] = (byte) (0x80 | ((uc >> 12) & 0x3f));
+                        da[dp++] = (byte) (0x80 | ((uc >> 6) & 0x3f));
+                        da[dp++] = (byte) (0x80 | (uc & 0x3f));
+
+                    } else {
+                        sp--; // back the LOW_SURROGATE char
+                        da[dp++] = Encoder.REPLACEMENT;
+                    }
                 } else {
-                    da[dp++] = (byte) (0xf0 | ((uc >> 18)));
-                    da[dp++] = (byte) (0x80 | ((uc >> 12) & 0x3f));
-                    da[dp++] = (byte) (0x80 | ((uc >> 6) & 0x3f));
-                    da[dp++] = (byte) (0x80 | (uc & 0x3f));
-                    sp++;  // 2 chars
+                    da[dp++] = Encoder.REPLACEMENT;
                 }
+
             } else {
                 // 3 bytes, 16 bits
                 da[dp++] = (byte) (0xe0 | ((c >> 12)));

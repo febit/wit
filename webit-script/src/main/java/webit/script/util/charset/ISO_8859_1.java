@@ -1,6 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util.charset;
 
+import webit.script.io.charset.Encoder;
+
 /**
  *
  * @author Zqq
@@ -19,13 +21,13 @@ public class ISO_8859_1 {
         }
         return dp;
     }
-    private final static byte repl = (byte) '?';
 
     public static int encode(final char[] src, int sp, int len, final byte[] dst) {
         int dp = 0;
         int sl = sp + Math.min(len, dst.length);
+        char c;
         while (sp < sl) {
-            char c = src[sp++];
+            c = src[sp++];
             if (c <= '\u00FF') {
                 dst[dp++] = (byte) c;
                 continue;
@@ -38,7 +40,7 @@ public class ISO_8859_1 {
                 }
                 sp++;
             }
-            dst[dp++] = repl;
+            dst[dp++] = Encoder.REPLACEMENT;
         }
         return dp;
     }
