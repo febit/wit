@@ -1,10 +1,12 @@
-Webit Script
+Webit Script -- to be awesome
 ====
 
 
-**Webit Script** is a template-like script and engine, all writen with Java.
+A template-like script and engine, all writen with Java.
 
 It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
+
+**Download: [Jar][jar]      [Javadoc][doc]   [Sources][sources]**
 
 
 ## How to use(如何使用)
@@ -39,9 +41,9 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
  + `webit-script-joddin-[version].jar`
  + *如果您不喜欢Jodd, 并且其他组件没使用到Jodd, 可以试试这个 *
 
-### Download: [Jar][jar]      [Javadoc][doc]   [Sources][sources]  
+### About Release
  + *current version 1.0.0*
- + [webit-script-joddin-1.0.0.jar] [jar_joddin]
+ + [webit-script-joddin-1.0.0.jar] [jar_joddin] -- soon
  + Jodd here: [Download] [jodd_down]   [Site] [jodd_site]   [Doc] [jodd_doc]   [Github][jodd_github]
 
 
@@ -161,20 +163,20 @@ var books; //List
 *与Java 保持一致，顺序按优先级从高到低*
 
 ~~~~~
-[]  .  ()  @ (新增)
-=> (新增,重定向输出)
-!  ~  ++  --  – (取负)
-*  /  %
-+  -
-<<  >>  >>>
-<  <=  >  >=
-^
-|
-&&
-||
-? : (三元条件运算符)   ?: (新增: 二元操作符)
-.. (新增: 递增[减]操作符)
-=  +=  -=  *=  /=  %=  ^=  <<=  >>=  >>>=
+  []  .  ()  @ (新增)
+  => (新增,重定向输出)
+  !  ~  ++  --  – (取负)
+  *  /  %
+  +  -
+  <<  >>  >>>
+  <  <=  >  >=
+  ^
+  |
+  &&
+  ||
+  ? : (三元条件运算符)   ?: (新增: 二元操作符)
+  .. (新增: 递增[减]操作符)
+  =  +=  -=  *=  /=  %=  ^=  <<=  >>=  >>>=
 ~~~~~
 
 ### 语句
