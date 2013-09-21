@@ -12,13 +12,13 @@ import webit.script.core.ast.Optimizable;
  */
 public final class SimpleTextStatment extends AbstractStatment implements Optimizable {
 
-    private final String text;
+    private final char[] text;
     private final String encoding;
     private final byte[] textBytes;
 
     public SimpleTextStatment(String text, String encoding, int line, int column) {
         super(line, column);
-        this.text = text;
+        this.text = text.toCharArray();
         this.encoding = encoding;
         byte[] bytes;
         try {
@@ -31,7 +31,7 @@ public final class SimpleTextStatment extends AbstractStatment implements Optimi
     }
 
     public Object execute(final Context context) {
-        if (encoding.equals(context.encoding)) {
+        if (context.isByteStream && (encoding == context.encoding || encoding.equals(context.encoding))) {
             context.out(textBytes);
         } else {
             context.out(text);
@@ -40,7 +40,7 @@ public final class SimpleTextStatment extends AbstractStatment implements Optimi
     }
 
     public SimpleTextStatment optimize() {
-        if (text != null && text.length() > 0) {
+        if (text != null && text.length > 0) {
             return this;
         }
         return null;

@@ -134,7 +134,9 @@ public final class Engine {
     }
 
     public final void setEncoding(String encoding) {
-        this.encoding = encoding;
+        if (encoding != null) {
+            this.encoding = encoding.intern();
+        }
     }
 
     public final boolean isEnableAsmNative() {
@@ -212,7 +214,7 @@ public final class Engine {
         final Engine engine = new Engine(petite);
 
         petite.wireBean(engine);
-        
+
         try {
             engine.init();
         } catch (Exception ex) {

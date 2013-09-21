@@ -77,7 +77,7 @@ public final class Template {
      * @throws ParserException
      */
     public Context merge(final Map<String, Object> root, final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParserException {
-        return merge(root, new OutputStreamOut(outputStream, encoding, engine.getCoderFactory()));
+        return merge(root, new OutputStreamOut(outputStream, encoding != null ? encoding.intern() : engine.getEncoding(), engine.getCoderFactory()));
     }
 
     /**
