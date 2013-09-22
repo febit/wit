@@ -1,12 +1,11 @@
 Webit Script -- to be awesome
 ====
 
-
 A template-like script and engine, all writen with Java.
 
 It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
-**Download: [Jar][jar]      [Javadoc][doc]   [Sources][sources]**
+**Download: [Jar][jar]    [Javadoc][doc]    [Sources][sources]**
 
 
 ## How to use(如何使用)
@@ -26,24 +25,34 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
         <dependency>
             <groupId>com.github.zqq90.webit-script</groupId>
             <artifactId>webit-script</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
         ...
     </dependencies>
 ~~~~~
 
 ### Or Add jars
+
  + `webit-script-[version].jar`
- + `jodd-[version].jar`
+ + `jodd-core-[version].jar`
+ + `jodd-props-[version].jar`
 
 ### Or jodd-inside Version
 
- + `webit-script-joddin-[version].jar`
- + *如果您不喜欢Jodd, 并且其他组件没使用到Jodd, 可以试试这个 *
+~~~~~
+    <dependency>
+        <groupId>com.github.zqq90.webit-script</groupId>
+        <artifactId>webit-script-joddinside</artifactId>
+        <version>1.1.0</version>
+    </dependency>
+~~~~~
+
+ + `webit-script-joddinside-[version].jar`
+ + *我们非常推荐您尝试一下Jodd, 但如果您真的不打算直接使用Jodd, 并且您的项目没直接使用或间接引用到Jodd, 可以试试这个*
 
 ### About Release
- + *current version 1.0.0*
- + [webit-script-joddin-1.0.0.jar] [jar_joddin] -- soon
+ + *current version 1.1.0*
+ + [webit-script-joddinside-1.1.0.jar] [jar_joddin]
  + Jodd here: [Download] [jodd_down]   [Site] [jodd_site]   [Doc] [jodd_doc]   [Github][jodd_github]
 
 
@@ -67,7 +76,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 + 配置文件格式: Use Jodd-props, see:[Jodd Props doc][url_props_doc]
   `Tips: Java-Properties also works`
-+ 匹配支持  "/webit-script-*.props"
++ ~~匹配支持  "/webit-script-*.props~~
 + 多文件支持 "/webit-script-config1.props,/webit-script-config2.props"
 + 可选额外参数: extraSettingsMap 类型为Map, 支持props 宏
 + 默认配置: [webitl-default.props] [default_config]
@@ -722,10 +731,7 @@ webitscript,   1.0.0,  1219ms,  8203/s,  92%,
 
 ## Requirements(依赖)
 
-+ `Jodd-core`
-+ `Jodd-bean`
 + `Jodd-props`
-
 
 ## Contributing(贡献)
 
@@ -741,9 +747,10 @@ webitscript,   1.0.0,  1219ms,  8203/s,  92%,
 details.
 **Webit Script** 依据 BSD许可证发布。详细请看捆绑的 LICENSE 文件。
 
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.0.0/webit-script-1.0.0.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.0.0/webit-script-1.0.0-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.0.0/webit-script-1.0.0-javadoc.jar
+[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.0/webit-script-1.1.0.jar
+[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.1.0/webit-script-joddinside-1.1.0.jar
+[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.0/webit-script-1.1.0-sources.jar
+[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.0/webit-script-1.1.0-javadoc.jar
 [url_props_doc]: http://jodd.org/doc/props.html
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
 [default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webitl-default.props
