@@ -117,6 +117,18 @@ public final class Engine {
         return template;
     }
 
+    public void setNativeSecurityManagerClass(Class nativeSecurityManagerClass) {
+        this.nativeSecurityManagerClass = nativeSecurityManagerClass;
+    }
+
+    public void setCoderFactoryClass(Class coderFactoryClass) {
+        this.coderFactoryClass = coderFactoryClass;
+    }
+
+    public void setResolvers(Class[] resolvers) {
+        this.resolvers = resolvers;
+    }
+
     public final void setResourceLoaderClass(Class resourceLoaderClass) {
         this.resourceLoaderClass = resourceLoaderClass;
     }
