@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>script-parent</artifactId>
+        <groupId>com.github.zqq90.webit-script</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <artifactId>webit-script-joddinside</artifactId>
+    <packaging>jar</packaging>
+    <name>Webit Script Jodd-inside</name>
+    
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>webit-script</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jodd-props-lite</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <!-- assembly -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>joddinside-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <attach>false</attach>
+                            <descriptors>
+                                <descriptor>src/main/assembly/joddinside-jar.xml</descriptor>
+                            </descriptors>
+                            <archive>
+                                <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                                <manifestEntries>
+                                    <Built-By>zqq_90(a)163.com</Built-By>
+                                    <Debug-Info>off</Debug-Info>
+                                    <Implementation-Title>Webit</Implementation-Title>
+                                    <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
+                                    <Bundle-Name>Webit Script Bundle</Bundle-Name>
+                                    <Bundle-Version>${project.version}</Bundle-Version>
+                                    <Bundle-Description>Webit Script with jodd-props</Bundle-Description>
+                                    <!--
+                                    <Bundle-License>${project.licenses[0].url}</Bundle-License>
+                                    <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
+                                    <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
+                                    -->
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
