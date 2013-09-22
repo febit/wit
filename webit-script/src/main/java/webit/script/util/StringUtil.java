@@ -107,7 +107,7 @@ public class StringUtil {
     }
 
     public static String prefixChar(String string, char prefix) {
-        if (string != null && !string.isEmpty()) {
+        if (string != null && string.length()>0) {
             return string.charAt(0) == prefix
                     ? string
                     : prefix + string;
