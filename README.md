@@ -1,7 +1,7 @@
 Webit Script -- to be awesome
 ====
 
-A template-like script and engine, all writen with Java.
+A template-like script and engine, all writen with Java **(Java 5+)**.
 
 It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
