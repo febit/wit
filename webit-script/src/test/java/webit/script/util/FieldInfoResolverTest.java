@@ -56,8 +56,6 @@ public class FieldInfoResolverTest {
     
     @Test
     public void test(){
-        FieldInfoResolver resolver = new FieldInfoResolver(Foo.class);
-        
-        FieldInfo[] fieldInfos = resolver.resolver();
+        FieldInfoResolver.resolver(Foo.class);
     }
 }

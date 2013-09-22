@@ -58,7 +58,7 @@ public class AsmResolverGenerator implements Opcodes {
 
 
         //Prepare FieldInfo
-        final FieldInfo[] fieldInfos = new FieldInfoResolver(beanClass).resolver();
+        final FieldInfo[] fieldInfos = FieldInfoResolver.resolver(beanClass);
         if (fieldInfos.length == 0) {
             //Do nothing
         } else if (fieldInfos.length <= 2) {
@@ -160,7 +160,7 @@ public class AsmResolverGenerator implements Opcodes {
 
 
         //Prepare FieldInfo
-        final FieldInfo[] fieldInfos = new FieldInfoResolver(beanClass).resolver();
+        final FieldInfo[] fieldInfos = FieldInfoResolver.resolver(beanClass);
         if (fieldInfos.length == 0) {
             //Do nothing
         } else if (fieldInfos.length <= 2) {

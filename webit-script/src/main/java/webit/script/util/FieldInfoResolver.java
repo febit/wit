@@ -14,6 +14,9 @@ import java.util.Map;
  */
 public class FieldInfoResolver {
 
+    public static FieldInfo[] resolver(Class beanClass) {
+        return new FieldInfoResolver(beanClass).resolver();
+    }
     protected final Class beanClass;
 
     public FieldInfoResolver(Class beanClass) {
@@ -26,7 +29,7 @@ public class FieldInfoResolver {
 
         Field field;
         int modifiers;
-        
+
         for (int i = 0; i < fields.length; i++) {
             field = fields[i];
             modifiers = field.getModifiers();
