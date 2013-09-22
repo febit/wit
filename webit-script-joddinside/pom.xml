@@ -15,6 +15,16 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>webit-script</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jodd-core</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-props</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

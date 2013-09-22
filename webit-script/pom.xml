@@ -17,29 +17,18 @@
     
     <url>https://zqq90.github.com/webit-script</url>
 
-    <properties>
-        <!-- source encoding -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- java versions -->
-        <java.source.version>1.5</java.source.version>
-        <java.target.version>1.5</java.target.version>
-        
-        <lib.jodd.version>3.4.7</lib.jodd.version>
-        <lib.slf4j.version>1.7.5</lib.slf4j.version>
-    </properties>
-    
     <dependencies>
         <dependency>
             <groupId>org.jodd</groupId>
             <artifactId>jodd-props</artifactId>
-            <version>${lib.jodd.version}</version>
+            <version>3.4.7</version>
         </dependency>
 
         <!-- provided -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${lib.slf4j.version}</version>
+            <version>1.7.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -59,47 +48,15 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>${lib.slf4j.version}</version>
+            <version>1.7.5</version>
             <scope>test</scope>
         </dependency>
-    </dependencies>	
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <defaultGoal>clean package</defaultGoal>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+    </dependencies>
     
     <scm>
         <url>https://zqq90.github.com/webit-script</url>
@@ -134,7 +91,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
                 <configuration>
                     <compilerArgument> -Xlint:unchecked </compilerArgument>
                     <showWarnings>true</showWarnings>
