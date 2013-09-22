@@ -1,15 +1,15 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
-import java.io.IOException;
+import java.io.File;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import jodd.io.StringOutputStream;
-import jodd.io.findfile.ClassFinder;
-import jodd.io.findfile.ClassScanner;
 import org.junit.Test;
 import webit.script.exceptions.ResourceNotFoundException;
+import webit.script.test.util.DiscardOutputStream;
+import webit.script.util.ClassLoaderUtil;
 import webit.script.util.StringUtil;
 
 /**
@@ -18,24 +18,26 @@ import webit.script.util.StringUtil;
  */
 public class AutoTest {
 
-    private final static String AUTO_TEST_PATH = "/webit/script/test/tmpls/auto/*";
-    private final static String TEMPLATE_ROOT = "/webit/script/test/tmpls";
+    private final static String AUTO_TEST_PATH = "webit/script/test/tmpls/auto/";
 
     private List<String> collectAutoTestTemplates() {
         final List<String> templates = new LinkedList<String>();
-        final ClassScanner scanner = new ClassScanner() {
-            @Override
-            protected void onEntry(ClassFinder.EntryData entryData) throws IOException {
-                if (StringUtil.endsWithIgnoreCase(entryData.getName(), ".wtl")) {
-                    templates.add(StringUtil.cutPrefix(entryData.getName(), TEMPLATE_ROOT));
+
+        ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
+        try {
+            URL url = classLoader.getResource(AUTO_TEST_PATH);
+            File file = new File(url.getFile());
+            String[] files = file.list();
+            for (int i = 0; i < files.length; i++) {
+                String path = files[i];
+                if (StringUtil.endsWithIgnoreCase(path, ".wtl")) {
+                    templates.add("/auto/" + path);
                 }
             }
-        };
-        scanner.setIncludeResources(true);
-        scanner.setIgnoreException(true);
-        scanner.setIncludedEntries(AUTO_TEST_PATH);
-        scanner.scanDefaultClasspath();
 
+        } catch (Exception ex) {
+            //ignore
+        }
         return templates;
     }
 
@@ -47,9 +49,9 @@ public class AutoTest {
 
         for (Iterator<String> it = templates.iterator(); it.hasNext();) {
             String templatePath = it.next();
-            StringOutputStream out = new StringOutputStream();
+            DiscardOutputStream out = new DiscardOutputStream();
 
-            System.out.println("AUTO RUN: "+templatePath);
+            System.out.println("AUTO RUN: " + templatePath);
             Template template = engine.getTemplate(templatePath);
 
             template.merge(null, out);
