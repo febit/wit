@@ -10,7 +10,7 @@
 
     <artifactId>webit-script</artifactId>
     <packaging>jar</packaging>
-
+    
     <name>Webit Script</name>
     
     <description>a template-like script and engine, all writen with Java.</description>
@@ -31,15 +31,8 @@
     <dependencies>
         <dependency>
             <groupId>org.jodd</groupId>
-            <artifactId>jodd-bean</artifactId>
-            <version>${lib.jodd.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jodd</groupId>
             <artifactId>jodd-props</artifactId>
             <version>${lib.jodd.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <!-- provided -->
@@ -141,7 +134,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>2.5.1</version>
                 <configuration>
                     <compilerArgument> -Xlint:unchecked </compilerArgument>
                     <showWarnings>true</showWarnings>

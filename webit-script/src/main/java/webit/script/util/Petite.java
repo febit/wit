@@ -3,7 +3,6 @@ package webit.script.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import jodd.bean.BeanUtil;
 import jodd.props.Props;
 import webit.script.loggers.Logger;
 
@@ -36,7 +35,8 @@ public final class Petite {
             parameterName = entry.getKey();
             if (parameterName.startsWith(prefix)) {
                 try {
-                    BeanUtil.setDeclaredPropertyForced(bean, parameterName.substring(prefix_len), entry.getValue());
+                    //BeanUtil.setDeclaredPropertyForced(bean, parameterName.substring(prefix_len), entry.getValue());
+                    BeanUtil.set(bean, parameterName.substring(prefix_len), entry.getValue(), true);
                 } catch (Exception ex) {
                     //Log
                     if (logger != null) {

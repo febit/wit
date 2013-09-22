@@ -1,13 +1,13 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.resolvers.impl;
 
-import jodd.bean.BeanUtil;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
 import webit.script.resolvers.OutResolver;
+import webit.script.util.BeanUtil;
 
 /**
  *
@@ -18,16 +18,17 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver{
 
     public Object get(final Object object, final Object property) {
         try {
-            return BeanUtil.getProperty(object, String.valueOf(property));
-        } catch (jodd.bean.BeanException e) {
+            return BeanUtil.get(object, String.valueOf(property));
+        } catch (Exception e) {
             throw new ScriptRuntimeException(e.getMessage());
         }
     }
 
     public boolean set(final Object object, final Object property, final Object value) {
         try {
-            return BeanUtil.setPropertySilent(object, String.valueOf(property), value);
-        } catch (jodd.bean.BeanException e) {
+             BeanUtil.set(object, String.valueOf(property), value);
+             return true;
+        } catch (Exception e) {
             throw new ScriptRuntimeException(e.getMessage());
         }
     }
