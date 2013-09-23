@@ -62,18 +62,27 @@ public final class Engine {
     @SuppressWarnings("unchecked")
     private void init() throws Exception {
 
-        this.logger = (Logger) getBean(this.loggerClass);
-
-        this.resourceLoader = (Loader) getBean(this.resourceLoaderClass);
-        this.textStatmentFactory = (TextStatmentFactory) getBean(this.textStatmentFactoryClass);
-        this.nativeSecurityManager = (NativeSecurityManager) getBean(this.nativeSecurityManagerClass);
-        this.coderFactory = (CoderFactory) getBean(this.coderFactoryClass);
+        this.logger = (Logger) newInstance(this.loggerClass);
+        this.coderFactory = (CoderFactory) newInstance(this.coderFactoryClass);
+        this.nativeSecurityManager = (NativeSecurityManager) newInstance(this.nativeSecurityManagerClass);
+        this.textStatmentFactory = (TextStatmentFactory) newInstance(this.textStatmentFactoryClass);
+        this.resourceLoader = (Loader) newInstance(this.resourceLoaderClass);
 
         if (this.filterClass != null) {
-            this.filter = (Filter) getBean(this.filterClass);
+            this.filter = (Filter) newInstance(this.filterClass);
         }
 
+        resolveBean(this.logger);
         resolveBean(this.resolverManager);
+        resolveBean(this.coderFactory);
+        resolveBean(this.nativeSecurityManager);
+        resolveBean(this.textStatmentFactory);
+        resolveBean(this.resourceLoader);
+        if (this.filter != null) {
+            resolveBean(this.filter);
+        }
+        resolveBean(this.resolverManager);
+        
         if (this.resolvers != null) {
             Resolver[] resolverInstances = new Resolver[this.resolvers.length];
             for (int i = 0; i < this.resolvers.length; i++) {
@@ -90,12 +99,14 @@ public final class Engine {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <E> E getBean(Class<E> type) throws InstantiationException, IllegalAccessException {
+    private Object newInstance(Class type) throws InstantiationException, IllegalAccessException {
+        return type.newInstance();
+    }
 
-        Object bean = type.newInstance();
+    public Object getBean(Class type) throws InstantiationException, IllegalAccessException {
+        Object bean = newInstance(type);
         resolveBean(bean);
-        return (E) bean;
+        return bean;
     }
 
     public Template getTemplate(String parentName, String name) throws ResourceNotFoundException {
