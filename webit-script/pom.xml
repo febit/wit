@@ -86,7 +86,18 @@
         <system>GitHub</system>
         <url>https://github.com/zqq90/webit-script/issues</url>
     </issueManagement>
-    <build>
+    <build>        
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <excludePackageNames>webit.script.asm3,webit.script.asm3.*,webit.script.core.java_cup.runtime</excludePackageNames>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
