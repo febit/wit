@@ -29,7 +29,7 @@ public final class Engine {
     public static final String ENGINE = "engine";
     public static final String PETITE = "petite";
     //
-    private static final String DEFAULT_PROPERTIES = "/webitl-default.props";
+    private static final String DEFAULT_PROPERTIES = "/webit-script-default.props";
     //settings
     private Class resourceLoaderClass = webit.script.loaders.impl.ClasspathLoader.class;
     private Class textStatmentFactoryClass = webit.script.core.text.impl.SimpleTextStatmentFactory.class;
