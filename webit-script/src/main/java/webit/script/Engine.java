@@ -109,10 +109,23 @@ public final class Engine {
         return bean;
     }
 
+    /**
+     *
+     * @param parentName parent template's name
+     * @param name template's relative name 
+     * @return Template
+     * @throws ResourceNotFoundException
+     */
     public Template getTemplate(String parentName, String name) throws ResourceNotFoundException {
         return getTemplate(resourceLoader.concat(parentName, name));
     }
 
+    /**
+     * get template by name
+     * @param name template's name
+     * @return Template
+     * @throws ResourceNotFoundException
+     */
     public Template getTemplate(String name) throws ResourceNotFoundException {
         Template template = templateCache.get(name);
         if (template == null) {
