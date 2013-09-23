@@ -82,7 +82,7 @@ public final class Engine {
             resolveBean(this.filter);
         }
         resolveBean(this.resolverManager);
-        
+
         if (this.resolvers != null) {
             Resolver[] resolverInstances = new Resolver[this.resolvers.length];
             for (int i = 0; i < this.resolvers.length; i++) {
@@ -114,16 +114,27 @@ public final class Engine {
     }
 
     public Template getTemplate(String name) throws ResourceNotFoundException {
-        String normalizedName = resourceLoader.normalize(name);
-        if (normalizedName == null) {
-            throw new ResourceNotFoundException("TODO: 不合法的模板名:" + name);
-        }
-        Template template = templateCache.get(normalizedName);
+        Template template = templateCache.get(name);
         if (template == null) {
-            template = new Template(this, normalizedName, resourceLoader.get(normalizedName)); //fast
-            Template oldTemplate = templateCache.putIfAbsent(normalizedName, template);
-            if (oldTemplate != null) {
-                template = oldTemplate;
+            String normalizedName = resourceLoader.normalize(name);
+            if (normalizedName == null) {
+                throw new ResourceNotFoundException("Illegal template path" + name);
+            }
+            template = templateCache.get(normalizedName);
+            if (template == null) {
+                template = new Template(this, normalizedName, resourceLoader.get(normalizedName)); //fast
+                Template oldTemplate = templateCache.putIfAbsent(normalizedName, template);
+                if (oldTemplate != null) {
+                    template = oldTemplate;
+                }
+                
+                if (!name.equals(normalizedName)) {
+                    oldTemplate = templateCache.putIfAbsent(name, template);
+                    if (oldTemplate != null) {
+                        template = oldTemplate;
+                    }
+                }
+
             }
         }
         return template;
