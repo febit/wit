@@ -17,6 +17,7 @@ import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
+import webit.script.util.StringPool;
 import webit.script.util.StringUtil;
 
 /**
@@ -37,7 +38,7 @@ public final class Engine {
     private Class filterClass;
     private Class loggerClass = webit.script.loggers.impl.NOPLogger.class;
     private Class[] resolvers;
-    private String encoding = "UTF-8";
+    private String encoding = StringPool.UTF_8;
     private boolean enableAsmNative = true;
     private boolean looseVar = false;
     //
@@ -147,7 +148,7 @@ public final class Engine {
 
     public void setEncoding(String encoding) {
         if (encoding != null) {
-            this.encoding = encoding.toLowerCase().intern();
+            this.encoding = encoding.toUpperCase().intern();
         }
     }
 
