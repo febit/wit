@@ -20,8 +20,8 @@ public final class Context {
     public static final Object VOID = new Object();
     public static final Object UNDEFINED = new Object();
     //
-    protected Out out;
-    protected Stack<Out> outStack;
+    private Out out;
+    private Stack<Out> outStack;
     public final String encoding;
     //
     public final LoopCtrl loopCtrl;
@@ -59,7 +59,7 @@ public final class Context {
         this.logger = parent.logger;
     }
 
-    protected void checkOutStack() {
+    private void checkOutStack() {
         if (outStack == null) {
             outStack = new ArrayStack<Out>(5);
         }

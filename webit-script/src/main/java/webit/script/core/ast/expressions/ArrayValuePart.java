@@ -12,7 +12,7 @@ import webit.script.core.ast.StatmentPart;
  */
 public final class ArrayValuePart extends StatmentPart {
 
-    protected final List<Expression> valueExprs;
+    private final List<Expression> valueExprs;
 
     public ArrayValuePart(int line, int column) {
         super(line, column);

@@ -12,10 +12,10 @@ import webit.script.util.StatmentUtil;
  */
 public final class ForMapStatmentPart extends StatmentPart {
 
-    protected int keyIndex;
-    protected int valueIndex;
-    protected int iterIndex;
-    protected Expression mapExpr;
+    private int keyIndex;
+    private int valueIndex;
+    private int iterIndex;
+    private Expression mapExpr;
     private BlockStatment bodyStatment;
     private Statment elseStatment;
     private String label;

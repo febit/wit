@@ -57,7 +57,7 @@ public class AsmMethodCallerManager {
         final Object key;
         AsmMethodCaller caller;
 
-        public AsmMethodCallerBox(Object method) {
+        AsmMethodCallerBox(Object method) {
             this.key = method;
         }
 

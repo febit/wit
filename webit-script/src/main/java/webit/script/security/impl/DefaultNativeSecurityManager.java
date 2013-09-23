@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import webit.script.Initable;
 import webit.script.Engine;
+import webit.script.Initable;
 import webit.script.security.NativeSecurityManager;
 import webit.script.util.StringUtil;
 
@@ -63,17 +63,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         allNodes = new ConcurrentHashMap<String, Node>(nodes);
     }
 
-    private static Node getOrCreateNode(Map<String, Node> map, String name) {
-        Node node = map.get(name);
-        if (node == null) {
-            Node parent = getOrCreateNode(map, getParentNodeName(name));
-            node = new Node(parent, name);
-            map.put(name, node);
-        }
-        return node;
-    }
-
-    protected final Node getOrCreateNode(String name) {
+    protected final Node getOrCreateNode(final String name) {
         Node node = allNodes.get(name);
 
         if (node == null) {
@@ -87,7 +77,17 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         return node;
     }
 
-    protected static String getParentNodeName(String name) {
+    private static Node getOrCreateNode(Map<String, Node> map, String name) {
+        Node node = map.get(name);
+        if (node == null) {
+            Node parent = getOrCreateNode(map, getParentNodeName(name));
+            node = new Node(parent, name);
+            map.put(name, node);
+        }
+        return node;
+    }
+
+    private static String getParentNodeName(final String name) {
         int index = name.lastIndexOf('.');
         return index > 0 ? name.substring(0, index) : ROOT_NODE_NAME;
     }

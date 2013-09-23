@@ -12,8 +12,8 @@ import webit.script.core.ast.StatmentPart;
  */
 public final class MapValuePart extends StatmentPart {
 
-    protected final List keys;
-    protected final List<Expression> valueExprs;
+    private final List keys;
+    private final List<Expression> valueExprs;
 
     public MapValuePart(int line, int column) {
         super(line, column);

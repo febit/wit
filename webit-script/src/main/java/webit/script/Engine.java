@@ -101,7 +101,7 @@ public final class Engine {
         return getTemplate(resourceLoader.concat(parentName, name));
     }
 
-    public final Template getTemplate(String name) throws ResourceNotFoundException {
+    public Template getTemplate(String name) throws ResourceNotFoundException {
         String normalizedName = resourceLoader.normalize(name);
         if (normalizedName == null) {
             throw new ResourceNotFoundException("TODO: 不合法的模板名:" + name);
@@ -129,73 +129,73 @@ public final class Engine {
         this.resolvers = resolvers;
     }
 
-    public final void setResourceLoaderClass(Class resourceLoaderClass) {
+    public void setResourceLoaderClass(Class resourceLoaderClass) {
         this.resourceLoaderClass = resourceLoaderClass;
     }
 
-    public final void setTextStatmentFactoryClass(Class textStatmentFactoryClass) {
+    public void setTextStatmentFactoryClass(Class textStatmentFactoryClass) {
         this.textStatmentFactoryClass = textStatmentFactoryClass;
     }
 
-    public final void setResourceLoader(Loader resourceLoader) {
+    public void setResourceLoader(Loader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
-    public final String getEncoding() {
+    public String getEncoding() {
         return encoding;
     }
 
-    public final void setEncoding(String encoding) {
+    public void setEncoding(String encoding) {
         if (encoding != null) {
             this.encoding = encoding.toLowerCase().intern();
         }
     }
 
-    public final boolean isEnableAsmNative() {
+    public boolean isEnableAsmNative() {
         return enableAsmNative;
     }
 
-    public final void setEnableAsmNative(boolean enableAsmNative) {
+    public void setEnableAsmNative(boolean enableAsmNative) {
         this.enableAsmNative = enableAsmNative;
     }
 
-    public final boolean isLooseVar() {
+    public boolean isLooseVar() {
         return looseVar;
     }
 
-    public final void setLooseVar(boolean looseVar) {
+    public void setLooseVar(boolean looseVar) {
         this.looseVar = looseVar;
     }
 
-    public final NativeSecurityManager getNativeSecurityManager() {
+    public NativeSecurityManager getNativeSecurityManager() {
         return nativeSecurityManager;
     }
 
-    public final ResolverManager getResolverManager() {
+    public ResolverManager getResolverManager() {
         return resolverManager;
     }
 
-    public final TextStatmentFactory getTextStatmentFactory() {
+    public TextStatmentFactory getTextStatmentFactory() {
         return textStatmentFactory;
     }
 
-    public final CoderFactory getCoderFactory() {
+    public CoderFactory getCoderFactory() {
         return coderFactory;
     }
 
-    public final void setFilterClass(Class filterClass) {
+    public void setFilterClass(Class filterClass) {
         this.filterClass = filterClass;
     }
 
-    public final Filter getFilter() {
+    public Filter getFilter() {
         return filter;
     }
 
-    public final void setLoggerClass(Class loggerClass) {
+    public void setLoggerClass(Class loggerClass) {
         this.loggerClass = loggerClass;
     }
 
-    public final Logger getLogger() {
+    public Logger getLogger() {
         return logger;
     }
 

@@ -87,7 +87,7 @@ public class VariantManager {
         int value;
         TreeSet<Integer> overflowUpstairSet;
 
-        public VarWall(int value) {
+        VarWall(int value) {
             this.value = value;
             overflowUpstairSet = new TreeSet<Integer>();
         }

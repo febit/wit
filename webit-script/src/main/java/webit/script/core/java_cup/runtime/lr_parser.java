@@ -11,7 +11,6 @@ import webit.script.exceptions.ParserException;
 import webit.script.loggers.Logger;
 import webit.script.security.NativeSecurityManager;
 
-
 /**
  * This class implements a skeleton table driven LR parser. In general, LR
  * parsers are a form of bottom up shift-reduce parsers. Shift-reduce parsers
@@ -111,14 +110,11 @@ import webit.script.security.NativeSecurityManager;
  * report_fatal_error("Couldn't repair and continue parse", null);
  * </dl>
  *
- * @see java_cup.runtime.Symbol
- * @see java_cup.runtime.Symbol
- * @see java_cup.runtime.virtual_parse_stack
  * @version last updated: 7/3/96
  * @author Frank Flannery
  */
 public abstract class lr_parser {
-    
+
     protected lr_parser(String[] nonTerminalNames, short[][] production_tab, short[][] action_tab, short[][] reduce_tab) {
         this.nonTerminalNames = nonTerminalNames;
         this.production_tab = production_tab;
@@ -126,7 +122,6 @@ public abstract class lr_parser {
         this.reduce_tab = reduce_tab;
         symbolFactory = new DefaultSymbolFactory();
     }
-
     protected SymbolFactory symbolFactory;// = new DefaultSymbolFactory();
 
     /*-----------------------------------------------------------*/
@@ -208,8 +203,6 @@ public abstract class lr_parser {
      * The parse stack itself.
      */
     protected Stack<Symbol> stack = new ArrayStack<Symbol>();
-
-
     private final String[] nonTerminalNames;
     /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
     /**
@@ -277,18 +270,18 @@ public abstract class lr_parser {
      * not recycle objects; every call to scan() should return a fresh object.
      */
     private Symbol scan() throws Exception {
-         return lexer.next_token(); 
+        return lexer.next_token();
     }
 
-    private void report_fatal_error(String message,Object info){
+    private void report_fatal_error(String message, Object info) {
         doneParse();
         throw new ParserException(message != null ? message : "Parser stop at here, ", getLine(), getColumn());
     }
 
-    private void syntax_error(Symbol cur_token){
+    private void syntax_error(Symbol cur_token) {
     }
-    
-    private void unrecovered_syntax_error(Symbol cur_token){
+
+    private void unrecovered_syntax_error(Symbol cur_token) {
         report_fatal_error("Parser stop at here, and failed to recover ", cur_token);
     }
 
@@ -354,7 +347,7 @@ public abstract class lr_parser {
      * @param state the state index of the entry being accessed.
      * @param sym the Symbol index of the entry being accessed.
      */
-    private final short get_reduce(int state, int sym) {
+    private short get_reduce(int state, int sym) {
         short tag;
         final short[] row = reduce_tab[state];
 
@@ -414,48 +407,46 @@ public abstract class lr_parser {
 
         return lhs_sym;
     }
-
-    
     protected Template template;
     protected TextStatmentFactory textStatmentFactory;
     protected PlaceHolderStatmentFactory placeHolderStatmentFactory;
     protected NativeSecurityManager nativeSecurityManager;
     protected Logger logger;
     protected boolean locateVarForce;
-
     protected Lexer lexer;
 
     public final int getLine() {
-        return lexer!= null ?lexer.getLine():0;
+        return lexer != null ? lexer.getLine() : 0;
     }
 
     public final int getColumn() {
-        return lexer!= null ?lexer.getColumn():0;
+        return lexer != null ? lexer.getColumn() : 0;
     }
 
     /**
-     *
+     * 
      * @param in java.io.Reader
      * @param template Template
      * @return
      * @throws ParserException
      */
-    public TemplateAST parserTemplate(java.io.Reader in, Template template) throws ParserException{
-        this.lexer = new Lexer(in);
-        this.template = template;
-        Engine engine = template.engine;
-        this.logger = engine.getLogger();
-        this.textStatmentFactory = engine.getTextStatmentFactory();
-        this.nativeSecurityManager = engine.getNativeSecurityManager();
-        this.locateVarForce = !engine.isLooseVar();
-        this.placeHolderStatmentFactory = new PlaceHolderStatmentFactory(template.engine.getFilter());
+    public TemplateAST parseTemplate(java.io.Reader in, Template template) throws ParserException {
         try {
+            this.lexer = new Lexer(in);
+            this.template = template;
+            final Engine engine = template.engine;
+            this.logger = engine.getLogger();
+            this.textStatmentFactory = engine.getTextStatmentFactory();
+            this.nativeSecurityManager = engine.getNativeSecurityManager();
+            this.locateVarForce = !engine.isLooseVar();
+            this.placeHolderStatmentFactory = new PlaceHolderStatmentFactory(engine.getFilter());
+
             Symbol sym = this.parse();
             return (TemplateAST) sym.value;
         } catch (Exception e) {
             if (e instanceof ParserException) {
-                throw (ParserException)e;
-            }else{
+                throw (ParserException) e;
+            } else {
                 throw new ParserException(e);
             }
         } finally {

@@ -2,8 +2,8 @@
 package webit.script.resolvers;
 
 import java.util.ArrayList;
-import webit.script.Initable;
 import webit.script.Engine;
+import webit.script.Initable;
 import webit.script.asm.AsmResolverManager;
 import webit.script.io.Out;
 import webit.script.loggers.Logger;

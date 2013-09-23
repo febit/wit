@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
-import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.StatmentPart;

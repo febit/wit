@@ -2,8 +2,8 @@
 package webit.script.util;
 
 import java.util.Map;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *

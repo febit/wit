@@ -2,8 +2,8 @@
 package webit.script.loggers.impl;
 
 import java.util.logging.Level;
-import webit.script.Initable;
 import webit.script.Engine;
+import webit.script.Initable;
 import webit.script.loggers.Logger;
 import webit.script.util.MessageFormatter;
 

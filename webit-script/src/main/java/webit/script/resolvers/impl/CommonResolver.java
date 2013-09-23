@@ -5,8 +5,8 @@ import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
-import webit.script.resolvers.SetResolver;
 import webit.script.resolvers.OutResolver;
+import webit.script.resolvers.SetResolver;
 import webit.script.util.BeanUtil;
 
 /**

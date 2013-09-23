@@ -23,7 +23,6 @@ public class DefaultSymbolFactory implements SymbolFactory{
      * Yet since migrating has always been a critical process, You have the
      * chance of still using the oldstyle Symbols.
      *
-     * @deprecated as of CUP v11a
      * replaced by the new java_cup.runtime.ComplexSymbolFactory
      */
     //@deprecated 

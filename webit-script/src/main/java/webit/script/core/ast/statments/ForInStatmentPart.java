@@ -12,9 +12,9 @@ import webit.script.util.StatmentUtil;
  */
 public final class ForInStatmentPart extends StatmentPart {
 
-    protected int itemIndex;
-    protected int iterIndex;
-    protected Expression collectionExpr;
+    private int itemIndex;
+    private int iterIndex;
+    private Expression collectionExpr;
     private BlockStatment bodyStatment;
     private Statment elseStatment;
     private String label;

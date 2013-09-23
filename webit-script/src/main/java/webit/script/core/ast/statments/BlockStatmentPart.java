@@ -14,7 +14,7 @@ import webit.script.core.runtime.variant.VariantUtil;
  */
 public final class BlockStatmentPart extends StatmentPart {
 
-    protected List<Statment> statmentList;
+    private List<Statment> statmentList;
     private Map<String, Integer> varMap;
 
     public BlockStatmentPart(int line, int column) {

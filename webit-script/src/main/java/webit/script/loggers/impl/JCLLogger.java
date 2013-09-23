@@ -3,10 +3,9 @@ package webit.script.loggers.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import webit.script.Initable;
 import webit.script.Engine;
+import webit.script.Initable;
 import webit.script.loggers.Logger;
-import static webit.script.loggers.Logger.DEFAULT_NAME;
 import webit.script.util.MessageFormatter;
 
 /**

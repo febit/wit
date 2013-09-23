@@ -1,10 +1,9 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
-import webit.script.Initable;
 import webit.script.Engine;
+import webit.script.Initable;
 import webit.script.loggers.Logger;
-import static webit.script.loggers.Logger.DEFAULT_NAME;
 import webit.script.util.MessageFormatter;
 
 /**
@@ -64,7 +63,7 @@ public final class SimpleLogger implements Logger, Initable {
         return getMessage(MessageFormatter.format(msg, args));
     }
 
-    public final boolean isTraceEnabled() {
+    public boolean isTraceEnabled() {
         return _trace;
     }
 

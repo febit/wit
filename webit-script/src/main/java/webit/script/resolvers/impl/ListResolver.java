@@ -3,7 +3,6 @@ package webit.script.resolvers.impl;
 
 import java.util.Collection;
 import java.util.List;
-import webit.script.core.ast.Statment;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;

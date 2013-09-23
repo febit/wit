@@ -1,8 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
-import webit.script.Initable;
 import webit.script.Engine;
+import webit.script.Initable;
 import webit.script.loggers.Logger;
 
 /**

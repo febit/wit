@@ -43,7 +43,7 @@ public class AsmResolverManager {
         final Class type;
         AsmResolver resolver;
 
-        public AsmResolverBox(Class type) {
+        AsmResolverBox(Class type) {
             this.type = type;
         }
 

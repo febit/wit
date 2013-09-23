@@ -3,7 +3,6 @@ package webit.script;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.io.Writer;
 import java.util.Map;
 import webit.script.core.Parser;
@@ -26,6 +25,8 @@ public final class Template {
     public final Resource resource;
     private TemplateAST templateAst;
     private long lastModified;
+    //
+    private final Object reloadLock = new Object();
 
     public Template(Engine engine, String name, Resource resource) {
         this.engine = engine;
@@ -38,15 +39,15 @@ public final class Template {
      * @return @throws IOException
      * @throws ParserException
      */
-    protected TemplateAST prepareTemplate() throws IOException, ParserException {
+    private TemplateAST prepareTemplate() throws IOException, ParserException {
         TemplateAST tmpl = this.templateAst;
         if (tmpl == null || resource.isModified()) { //fast
-            synchronized (this) {
+            synchronized (reloadLock) {
                 tmpl = this.templateAst;
                 if (tmpl == null || resource.isModified()) { //slow
-                    Parser parser = new Parser();
-                    Reader reader = resource.openReader();
-                    tmpl = parser.parserTemplate(reader, this);
+                    tmpl = new Parser().parseTemplate(
+                            resource.openReader(),  //Parser will close reader when finish
+                            this);
                     lastModified = System.currentTimeMillis();
                     this.templateAst = tmpl;
                 }

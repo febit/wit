@@ -108,7 +108,7 @@ public class BeanUtil {
         final Getter getter;
         final Setter setter;
 
-        public FieldDescriptor(Getter getter, Setter setter) {
+        FieldDescriptor(Getter getter, Setter setter) {
             this.getter = getter;
             this.setter = setter;
         }
@@ -131,7 +131,7 @@ public class BeanUtil {
 
         private final Method method;
 
-        public MethodGetter(Method method) {
+        MethodGetter(Method method) {
             setAccessible(method);
             this.method = method;
         }
@@ -150,7 +150,7 @@ public class BeanUtil {
         private final Method method;
         private final Class fieldType;
 
-        public MethodSetter(Method method) {
+        MethodSetter(Method method) {
             setAccessible(method);
             this.method = method;
             this.fieldType = method.getParameterTypes()[0];
@@ -173,7 +173,7 @@ public class BeanUtil {
 
         private final Field field;
 
-        public FieldGetter(Field field) {
+        FieldGetter(Field field) {
             setAccessible(field);
             this.field = field;
         }
@@ -203,7 +203,7 @@ public class BeanUtil {
 
         private final Field field;
 
-        public FieldSetter(Field field) {
+        FieldSetter(Field field) {
             setAccessible(field);
             this.field = field;
         }
