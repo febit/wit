@@ -12,6 +12,7 @@
 
     <dependencySets>
         <dependencySet>
+            <scope>provided</scope>
             <unpack>true</unpack>
             <includes>
                 <include>${project.groupId}:webit-script</include>
