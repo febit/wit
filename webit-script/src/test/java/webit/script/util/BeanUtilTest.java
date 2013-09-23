@@ -17,6 +17,7 @@ public class BeanUtilTest {
         public String public2 = "public2";
         private String private0 = "private0";
         private Class private1 = String.class;
+        private boolean bool = false;
 
         public String getPrivate0() {
             return private0;
@@ -41,6 +42,14 @@ public class BeanUtilTest {
         public String getPublic2() {
             return "get:" + public2;
         }
+
+        public boolean isBool() {
+            return bool;
+        }
+
+        public void setBool(boolean bool) {
+            this.bool = bool;
+        }
     }
 
     @Test
@@ -56,12 +65,29 @@ public class BeanUtilTest {
         BeanUtil.set(foo, "public0", newStringValue);
         //BeanUtil.set(foo, "public1", "new public"); Exception
         BeanUtil.set(foo, "private0", newStringValue);
-
+        
         assertEquals(newStringValue, foo.public0);
         assertEquals(newStringValue, foo.getPrivate0());
-
+        
         BeanUtil.set(foo, "private1", Integer.class.getName(), true);
         assertEquals(Integer.class, foo.getPrivate1());
 
+        
+        assertEquals(foo.isBool(), BeanUtil.get(foo, "bool"));
+        
+        foo.setBool(false);
+        BeanUtil.set(foo, "bool", true);
+        assertEquals(true, foo.isBool());
+        
+        
+        foo.setBool(false);
+        BeanUtil.set(foo, "bool", "true", true);
+        assertEquals(true, foo.isBool());
+        
+        
+        foo.setBool(true);
+        BeanUtil.set(foo, "bool", "false", true);
+        assertEquals(false, foo.isBool());
+        
     }
 }

@@ -26,15 +26,15 @@ public class Convert {
             } else if (cls == Integer[].class) {
                 return toBooleanArray(string);
             }
-        }else{
-            
+        } else {
+
             if (cls == String.class) {
                 return string;
             } else if (cls == Class.class) {
                 return toClass(string);
-            }else if (cls == Integer.class) {
+            } else if (cls == int.class || cls == Integer.class) {
                 return toInt(string);
-            }else if (cls == Boolean.class) {
+            } else if (cls == boolean.class || cls == Boolean.class) {
                 return toBoolean(string);
             }
         }
