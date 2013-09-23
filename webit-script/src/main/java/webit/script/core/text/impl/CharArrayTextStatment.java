@@ -11,19 +11,19 @@ import webit.script.core.ast.Optimizable;
  */
 public final class CharArrayTextStatment extends AbstractStatment implements Optimizable {
 
-    private final char[] text;
+    private final char[] chars;
 
-    public CharArrayTextStatment(String text, int line, int column) {
+    public CharArrayTextStatment(char[] chars, int line, int column) {
         super(line, column);
-        this.text = text.toCharArray();
+        this.chars = chars;
     }
 
     public Object execute(final Context context) {
-        context.out(text);
+        context.out(chars);
         return null;
     }
 
     public CharArrayTextStatment optimize() {
-        return text != null && text.length > 0 ? this : null;
+        return chars != null && chars.length > 0 ? this : null;
     }
 }

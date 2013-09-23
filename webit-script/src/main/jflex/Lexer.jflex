@@ -1,7 +1,7 @@
 package webit.script.core;
 
-import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.core.java_cup.runtime.Scanner;
+import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.util.FastCharBuffer;
 import webit.script.util.RepeatChars;
 
@@ -36,10 +36,14 @@ import webit.script.util.RepeatChars;
         return (char)yychar;
     }
 
-    private String popString() {
-        String str = stringBuffer.toString();
+    private char[] popAsCharArray() {
+        char[] chars = stringBuffer.toArray();
         stringBuffer.clear();
-        return str;
+        return chars;
+    }
+
+    private String popAsString() {
+        return new String(popAsCharArray());
     }
 
     private void resetString() {
@@ -231,16 +235,16 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 
   /* if to YYSTATEMENT */
   {DelimiterStatementStartMatch}        { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){placeHolderFlag = false; yybegin(YYSTATEMENT);
-												return symbol(TEXT_STATMENT, stringLine,stringColumn, popString());} else {appendToString("<%");} }
+												return symbol(TEXT_STATMENT, stringLine,stringColumn, popAsCharArray());} else {appendToString("<%");} }
 
   /* if to PLACEHOLDER */
   {DelimiterPlaceholderStartMatch}      { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){placeHolderFlag = true; yybegin(YYSTATEMENT);
-												return symbol(TEXT_STATMENT,  stringLine,stringColumn, popString());} else {appendToString("${");} }
+												return symbol(TEXT_STATMENT,  stringLine,stringColumn, popAsCharArray());} else {appendToString("${");} }
   
 
   .|\n                                  { pullToString(); }
 
-  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(TEXT_STATMENT,  stringLine,stringColumn, popString());}
+  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(TEXT_STATMENT,  stringLine,stringColumn, popAsCharArray());}
 }
 
 
@@ -401,7 +405,7 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 
 
 <STRING> {
-  \"                             { yybegin(YYSTATEMENT); return symbol(STRING_LITERAL, stringLine,stringColumn, popString()); }
+  \"                             { yybegin(YYSTATEMENT); return symbol(STRING_LITERAL, stringLine,stringColumn, popAsString()); }
   
   {StringCharacter}+             { pullToString(); }
   

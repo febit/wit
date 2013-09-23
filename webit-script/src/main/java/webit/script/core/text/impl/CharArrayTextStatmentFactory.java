@@ -11,13 +11,13 @@ import webit.script.core.text.TextStatmentFactory;
  */
 public class CharArrayTextStatmentFactory implements TextStatmentFactory {
 
-    public void startTemplate(Template template) {
+    public void startTemplateParser(Template template) {
     }
 
-    public void finishTemplate(Template template) {
+    public void finishTemplateParser(Template template) {
     }
 
-    public Statment getTextStatment(Template template, String text, int line, int column) {
+    public Statment getTextStatment(Template template, char[] text, int line, int column) {
         return new CharArrayTextStatment(text, line, column);
     }
 }

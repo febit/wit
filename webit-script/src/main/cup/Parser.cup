@@ -3,13 +3,13 @@
 package webit.script.core;
 
 import java.util.Map;
-import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.core.VariantManager.VarAddress;
 import webit.script.core.ast.*;
 import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.method.*;
 import webit.script.core.ast.statments.*;
 import webit.script.core.java_cup.runtime.Stack;
+import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.exceptions.ParserException;
 import webit.script.util.StatmentUtil;
 
@@ -32,7 +32,7 @@ parser code {:
         this.isParseDone = true;
     }
 
-    final Statment createTextStatment(String text, int line, int column) {
+    final Statment createTextStatment(char[] text, int line, int column) {
         return StatmentUtil.optimize(textStatmentFactory.getTextStatment(template, text, line, column));
     }
     
@@ -198,7 +198,7 @@ action code {:
         return new ForMapStatmentPart(keyIndex, valueIndex, iterIndex, map, line, column);
     }
 
-    private Statment createTextStatment(String text, int line, int column) {
+    private Statment createTextStatment(char[] text, int line, int column) {
         return parser.createTextStatment(text, line, column);
     }
 
@@ -527,7 +527,7 @@ terminal            NULL_LITERAL;
 
 
 terminal Integer    PLACE_HOLDER_END; // "}"
-terminal String     TEXT_STATMENT;
+terminal char[]     TEXT_STATMENT;
 
 
 /* non terminal */

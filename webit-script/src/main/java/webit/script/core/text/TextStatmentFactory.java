@@ -10,9 +10,9 @@ import webit.script.core.ast.Statment;
  */
 public interface TextStatmentFactory {
 
-    void startTemplate(Template template);
+    void startTemplateParser(Template template);
 
-    void finishTemplate(Template template);
+    void finishTemplateParser(Template template);
 
-    Statment getTextStatment(Template template, String text, int line, int column);
+    Statment getTextStatment(Template template, char[] text, int line, int column);
 }

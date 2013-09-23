@@ -436,12 +436,15 @@ public abstract class lr_parser {
             this.template = template;
             final Engine engine = template.engine;
             this.logger = engine.getLogger();
-            this.textStatmentFactory = engine.getTextStatmentFactory();
+            TextStatmentFactory _textStatmentFactory;
+            this.textStatmentFactory = _textStatmentFactory = engine.getTextStatmentFactory();
             this.nativeSecurityManager = engine.getNativeSecurityManager();
             this.locateVarForce = !engine.isLooseVar();
             this.placeHolderStatmentFactory = new PlaceHolderStatmentFactory(engine.getFilter());
 
+            _textStatmentFactory.startTemplateParser(template);
             Symbol sym = this.parse();
+            _textStatmentFactory.finishTemplateParser(template);
             return (TemplateAST) sym.value;
         } catch (Exception e) {
             if (e instanceof ParserException) {
