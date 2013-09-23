@@ -21,6 +21,9 @@ public class UnixStyleFileNameUtilTest {
         
         assertNull(UnixStyleFileNameUtil.normalize("/../tmpl.wtl"));
         assertNull(UnixStyleFileNameUtil.normalize("../tmpl.wtl"));
-        assertNull(UnixStyleFileNameUtil.normalize("/parent/../../tmpl.wtl"));
+        assertNull(UnixStyleFileNameUtil.normalize("/parent/../../tmpl.wtl"));        
+        
+        assertEquals("/parent/", UnixStyleFileNameUtil.getPath("/parent/tmpl.wtl"));
+        assertEquals("/", UnixStyleFileNameUtil.getPath("/tmpl.wtl"));
     }
 }

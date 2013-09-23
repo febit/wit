@@ -28,16 +28,11 @@ public class UnixStyleFileNameUtil {
         if (filename == null) {
             return null;
         }
-        int prefix = getPrefixLength(filename);
-        if (prefix < 0) {
-            return null;
-        }
-        int index = filename.indexOf(UNIX_SEPARATOR);
-        int endIndex = index + 1;
-        if (prefix >= filename.length() || index < 0 || prefix >= endIndex) {
+        int index = filename.lastIndexOf(UNIX_SEPARATOR);
+        if (index < 0) {
             return "";
         }
-        return filename.substring(prefix, endIndex);
+        return filename.substring(0, index + 1);
     }
 
     public static String concat(String basePath, String fullFilenameToAdd) {
