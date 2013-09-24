@@ -71,7 +71,6 @@ public final class Context {
      * @param out
      * @deprecated
      */
-    @Deprecated
     public void pushOut(Out out) {
         checkOutStack();
         outStack.push(this.out);
@@ -81,10 +80,9 @@ public final class Context {
     /**
      * Dangerous !
      *
-     * @return
+     * @return current out
      * @deprecated
      */
-    @Deprecated
     public Out popOut() {
         checkOutStack();
         Out old = this.out;

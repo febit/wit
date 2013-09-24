@@ -427,7 +427,7 @@ public abstract class lr_parser {
      * 
      * @param in java.io.Reader
      * @param template Template
-     * @return
+     * @return TemplateAST
      * @throws ParserException
      */
     public TemplateAST parseTemplate(java.io.Reader in, Template template) throws ParserException {

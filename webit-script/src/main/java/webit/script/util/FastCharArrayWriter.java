@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Similar as {@link jodd.io.FastByteArrayOutputStream} but for {@link Writer}.
+ * Similar as {@link webit.script.util.FastByteArrayOutputStream} but for {@link Writer}.
  */
 public class FastCharArrayWriter extends Writer {
 

@@ -117,7 +117,7 @@ public class ASMUtil {
      * "java.util.Object" to "java/util/Object"
      *
      * @param className
-     * @return
+     * @return class name can be uesd in asm
      */
     public static String toAsmClassName(String className) {
         return StringUtil.replaceChar(className, '.', '/');

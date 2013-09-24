@@ -36,7 +36,8 @@ public final class Template {
 
     /**
      *
-     * @return @throws IOException
+     * @return TemplateAST
+     * @throws IOException
      * @throws ParserException
      */
     private TemplateAST prepareTemplate() throws IOException, ParserException {
@@ -46,7 +47,7 @@ public final class Template {
                 tmpl = this.templateAst;
                 if (tmpl == null || resource.isModified()) { //slow
                     tmpl = new Parser().parseTemplate(
-                            resource.openReader(),  //Parser will close reader when finish
+                            resource.openReader(), //Parser will close reader when finish
                             this);
                     lastModified = System.currentTimeMillis();
                     this.templateAst = tmpl;
@@ -60,7 +61,7 @@ public final class Template {
      *
      * @param root
      * @param outputStream
-     * @return
+     * @return Context
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
@@ -73,7 +74,7 @@ public final class Template {
      * @param root
      * @param outputStream
      * @param encoding
-     * @return
+     * @return Context
      * @throws ScriptRuntimeException
      * @throws ParserException
      */
@@ -85,7 +86,7 @@ public final class Template {
      *
      * @param root
      * @param writer
-     * @return
+     * @return Context
      * @throws ScriptRuntimeException
      * @throws ParserException
      */

@@ -7,5 +7,20 @@ package webit.script.core.runtime;
  */
 public enum LoopType {
 
-    NULL, BREAK, CONTINUE, RETURN
+    /**
+     * no loop, default loop type
+     */
+    NULL,
+    /**
+     * break
+     */
+    BREAK,
+    /**
+     * continue
+     */
+    CONTINUE,
+    /**
+     * return
+     */
+    RETURN
 }

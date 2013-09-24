@@ -6,7 +6,17 @@ package webit.script.resolvers;
  * @author Zqq
  */
 public enum MatchMode {
+
+    /**
+     * equals
+     */
     EQUALS,
+    /**
+     * instance of
+     */
     INSTANCEOF,
+    /**
+     * regist by itself
+     */
     REGIST
 }
