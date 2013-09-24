@@ -25,7 +25,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
         <dependency>
             <groupId>com.github.zqq90.webit-script</groupId>
             <artifactId>webit-script</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.2</version>
         </dependency>
         ...
     </dependencies>
@@ -43,7 +43,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
     <dependency>
         <groupId>com.github.zqq90.webit-script</groupId>
         <artifactId>webit-script-joddinside</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.2</version>
     </dependency>
 ~~~~~
 
@@ -51,8 +51,8 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
  + *我们非常推荐您尝试一下Jodd, 但如果您真的不打算直接使用Jodd, 并且您的项目没直接使用或间接引用到Jodd, 可以试试这个*
 
 ### About Release
- + *current version 1.1.0*
- + [webit-script-joddinside-1.1.0.jar] [jar_joddin]
+ + *current version 1.1.2*
+ + [webit-script-joddinside-1.1.2.jar] [jar_joddin]
  + Jodd here: [Download] [jodd_down]   [Site] [jodd_site]   [Doc] [jodd_doc]   [Github][jodd_github]
 
 
@@ -747,10 +747,10 @@ webitscript,   1.0.0,  1219ms,  8203/s,  92%,
 details.
 **Webit Script** 依据 BSD许可证发布。详细请看捆绑的 LICENSE 文件。
 
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.0/webit-script-1.1.0.jar
-[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.1.0/webit-script-joddinside-1.1.0.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.0/webit-script-1.1.0-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.0/webit-script-1.1.0-javadoc.jar
+[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.2/webit-script-1.1.2.jar
+[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.1.2/webit-script-joddinside-1.1.2.jar
+[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.2/webit-script-1.1.2-sources.jar
+[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.2/webit-script-1.1.2-javadoc.jar
 [url_props_doc]: http://jodd.org/doc/props.html
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
 [default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webitl-default.props
