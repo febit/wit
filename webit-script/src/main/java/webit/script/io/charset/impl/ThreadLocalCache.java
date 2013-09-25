@@ -4,6 +4,8 @@ package webit.script.io.charset.impl;
 import java.lang.ref.SoftReference;
 
 public class ThreadLocalCache {
+    
+    public final static int CACH_MIN_LEN = 32;
 
     public final static int CHARS_CACH_INIT_SIZE = 256;
     public final static int CHARS_CACH_MAX_SIZE = 1024 * 2;

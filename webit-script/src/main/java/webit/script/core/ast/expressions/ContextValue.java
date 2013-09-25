@@ -33,26 +33,29 @@ public final class ContextValue extends AbstractExpression implements ResetableV
         this.name = name;
     }
 
-    public Object get(Context context) {
+    public Object get(final Context context) {
         return context.vars.get(upstairs, index);
     }
 
-    public void set(Context context, Object value) {
+    public void set(final Context context, final Object value) {
         context.vars.set(upstairs, index, value);
     }
 
     public Object execute(final Context context) {
-        return get(context);
+        //return get(context);
+        return context.vars.get(upstairs, index);
     }
 
     public ResetableValue getResetableValue(final Context context) {
         return new ResetableValue() {
             public Object get() {
-                return ContextValue.this.get(context);
+                //return ContextValue.this.get(context);
+                return context.vars.get(upstairs, index);
             }
 
             public boolean set(Object value) {
-                ContextValue.this.set(context, value);
+                //ContextValue.this.set(context, value);
+                context.vars.set(upstairs, index, value);
                 return true;
             }
         };

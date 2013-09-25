@@ -7,13 +7,13 @@ import java.util.Map;
  *
  * @author Zqq
  */
-public class VariantContext {
+public final class VariantContext {
 
     private static final Object[] EMPTY_ARRAY = new Object[0];
-    private final Object[] values;
+    final Object[] values;
     private final VariantMap box;
 
-    public VariantContext(VariantMap box) {
+    public VariantContext(final VariantMap box) {
         this.box = box;
         int size = box.size();
         this.values = size != 0 ? new Object[size] : EMPTY_ARRAY;
@@ -30,9 +30,8 @@ public class VariantContext {
         return values[index];
     }
 
-    public boolean set(int index, Object value) {
+    public void set(int index, Object value) {
         values[index] = value;
-        return true;
     }
 
     public boolean set(String key, Object value) {

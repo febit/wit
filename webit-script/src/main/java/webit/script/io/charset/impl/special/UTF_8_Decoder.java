@@ -17,8 +17,8 @@ public class UTF_8_Decoder implements Decoder {
         if (bytes == null || len == 0) {
             return;
         }
-        
-        final char[] chars = ThreadLocalCache.getChars((int) (len * UTF_8.MAX_CHARS_PER_BYTE));
+        final int chars_len = (int) (len * UTF_8.MAX_CHARS_PER_BYTE);
+        final char[] chars = chars_len < ThreadLocalCache.CACH_MIN_LEN ? new char[chars_len] : ThreadLocalCache.getChars(chars_len);
 
         int used = UTF_8.decode(bytes, off, len, chars);
         writer.write(chars, 0, used);

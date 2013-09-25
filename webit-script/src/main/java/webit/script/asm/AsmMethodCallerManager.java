@@ -3,7 +3,7 @@ package webit.script.asm;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -12,18 +12,18 @@ import java.util.Map;
  */
 public class AsmMethodCallerManager {
 
-    private final static Map<Object, AsmMethodCallerBox> asmMethodCallerMap = new HashMap<Object, AsmMethodCallerBox>();
+    private final static Map<Object, AsmMethodCallerBox> asmMethodCallerMap = new IdentityHashMap<Object, AsmMethodCallerBox>();
     private final static AsmMethodCallerGenerator asmMethodCallerGenerator = new AsmMethodCallerGenerator();
 
-    public static AsmMethodCaller generateCaller(Method method) throws Exception {
-        return _generateCaller(method);
+    public static AsmMethodCaller getCaller(Method method) throws Exception {
+        return doGetCaller(method);
     }
 
-    public static AsmMethodCaller generateCaller(Constructor constructor) throws Exception {
-        return _generateCaller(constructor);
+    public static AsmMethodCaller getCaller(Constructor constructor) throws Exception {
+        return doGetCaller(constructor);
     }
 
-    private static AsmMethodCaller _generateCaller(Object method) throws Exception {
+    private static AsmMethodCaller doGetCaller(Object method) throws Exception {
         AsmMethodCallerBox box = asmMethodCallerMap.get(method);
         if (box == null) {
             synchronized (asmMethodCallerMap) {

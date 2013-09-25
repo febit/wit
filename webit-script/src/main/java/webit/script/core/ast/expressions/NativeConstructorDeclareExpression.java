@@ -8,6 +8,7 @@ import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.method.AsmNativeMethodDeclare;
 import webit.script.core.ast.method.NativeConstructorDeclare;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.util.ExceptionUtil;
 
 /**
  *
@@ -26,15 +27,9 @@ public class NativeConstructorDeclareExpression extends AbstractExpression {
 
         if (context.enableAsmNative) {
             try {
-                return new AsmNativeMethodDeclare(AsmMethodCallerManager.generateCaller(constructor));
+                return new AsmNativeMethodDeclare(AsmMethodCallerManager.getCaller(constructor));
             } catch (Throwable ex) {
-                ScriptRuntimeException scriptRuntimeException;
-                if (ex instanceof ScriptRuntimeException) {
-                    scriptRuntimeException = (ScriptRuntimeException) ex;
-                } else {
-                    scriptRuntimeException = new ScriptRuntimeException(ex);
-                }
-                throw scriptRuntimeException;
+                throw ExceptionUtil.castToScriptRuntimeException(ex);
             }
         } else {
             return new NativeConstructorDeclare(constructor);

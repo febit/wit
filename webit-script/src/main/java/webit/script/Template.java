@@ -40,7 +40,7 @@ public final class Template {
      * @throws IOException
      * @throws ParserException
      */
-    private TemplateAST prepareTemplate() throws IOException, ParserException {
+    TemplateAST prepareTemplate() throws IOException, ParserException {
         TemplateAST tmpl = this.templateAst;
         if (tmpl == null || resource.isModified()) { //fast
             synchronized (reloadLock) {
@@ -115,8 +115,9 @@ public final class Template {
             } else if (e instanceof ParserException) {
                 ((ParserException) e).registTemplate(this);
                 throw (ParserException) e;
+            } else {
+                throw new ScriptRuntimeException(e).setTemplate(this);
             }
-            throw new ScriptRuntimeException(e).setTemplate(this);
         }
     }
 

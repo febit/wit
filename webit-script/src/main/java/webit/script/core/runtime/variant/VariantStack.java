@@ -1,16 +1,14 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.runtime;
+package webit.script.core.runtime.variant;
 
 import java.util.Map;
-import webit.script.core.runtime.variant.VariantContext;
-import webit.script.core.runtime.variant.VariantMap;
 import webit.script.exceptions.ScriptRuntimeException;
 
 /**
  *
  * @author Zqq
  */
-public class VariantStack {
+public final class VariantStack {
 
     private static final int initialCapacity = 10;
     //
@@ -28,24 +26,20 @@ public class VariantStack {
     }
 
     public VariantStack(final VariantContext[] contexts) {
-        this(Math.max(initialCapacity, contexts != null ? contexts.length : 0));
-        //push(context);
-        if (contexts != null) {
-            System.arraycopy(contexts, 0, this.contexts, 0, contexts.length);
-            current = contexts.length - 1;
+        this(initialCapacity > contexts.length ? initialCapacity : contexts.length + 3);
+        System.arraycopy(contexts, 0, this.contexts, 0, contexts.length);
+        current = contexts.length - 1;
+    }
+
+    public void push(final VariantMap varMap) {
+        final int i = ++current;
+        if (i >= contexts.length) {
+            ensureCapacity(i);
         }
+        contexts[i] = new VariantContext(varMap);
     }
 
-    protected final void push(VariantContext context) {
-        ensureCapacity(current + 2);
-        contexts[++current] = context;
-    }
-
-    public final void push(VariantMap varMap) {
-        push(new VariantContext(varMap));
-    }
-
-    public final VariantContext pop() {
+    public VariantContext pop() {
         if (current < 0) {
             throw new ScriptRuntimeException("VariantContext stack overflow");
         }
@@ -54,10 +48,10 @@ public class VariantStack {
         return element;
     }
 
-    public final int setToCurrentContext(final Map<String, Object> map) {
+    public int setToCurrentContext(final Map<String, Object> map) {
         int count = 0;
         if (map != null) {
-            final VariantContext element = getCurrentContext();
+            final VariantContext element = contexts[current]; //getCurrentContext();
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 if (element.set(entry.getKey(), entry.getValue())) {
                     ++count;
@@ -67,27 +61,29 @@ public class VariantStack {
         return count;
     }
 
-    public final int set(final int[] indexs, final Object[] values) {
-        final VariantContext context = getCurrentContext();
+    public int set(final int[] indexs, final Object[] values) {
         if (indexs != null && values != null) {
             int len = values.length;
             if (len > indexs.length) {
                 len = indexs.length;
             }
+            //final VariantContext context = contexts[current]; //getCurrentContext();
+            final Object[] contextValues = contexts[current].values;
             for (int i = 0; i < len; i++) {
-                context.set(indexs[i], values[i]);
+                //context.set(indexs[i], values[i]);
+                contextValues[indexs[i]] = values[i];
             }
             return len;
         }
         return 0;
     }
 
-    public final boolean set(int upstairs, int index, Object value) {
-        getContext(upstairs).set(index, value);
-        return true;
+    public void set(int upstairs, int index, Object value) {
+        //getContext(upstairs).set(index, value);
+        contexts[current - upstairs].values[index] = value;
     }
 
-    public final boolean set(int offset, String key, Object value) {
+    public boolean set(int offset, String key, Object value) {
         for (int i = current - offset; i >= 0; i--) {
             if (contexts[i].set(key, value)) {
                 return true;
@@ -96,7 +92,7 @@ public class VariantStack {
         return false;
     }
 
-    public final boolean set(String key, Object value) {
+    public boolean set(String key, Object value) {
         for (int i = current; i >= 0; i--) {
             if (contexts[i].set(key, value)) {
                 return true;
@@ -105,11 +101,12 @@ public class VariantStack {
         return false;
     }
 
-    public final Object get(int upstairs, int index) {
-        return getContext(upstairs).get(index);
+    public Object get(int upstairs, int index) {
+        //return getContext(upstairs).get(index);
+        return contexts[current - upstairs].values[index];
     }
 
-    public final Object[] get(final String[] keys) {
+    public Object[] get(final String[] keys) {
         final Object[] results = new Object[keys.length];
         for (int i = 0; i < results.length; i++) {
             results[i] = get(keys[i], true);
@@ -117,11 +114,11 @@ public class VariantStack {
         return results;
     }
 
-    public final Object get(String key) {
+    public Object get(String key) {
         return get(key, true);
     }
 
-    public final Object get(String key, boolean force) {
+    public Object get(String key, boolean force) {
         VariantContext context;
         for (int i = current; i >= 0; i++) {
             context = contexts[i];
@@ -136,28 +133,28 @@ public class VariantStack {
         return null;
     }
 
-    public final int getCurrentIndex() {
+    public int getCurrentIndex() {
         return current;
     }
 
-    public final VariantContext getCurrentContext() {
+    public VariantContext getCurrentContext() {
         return contexts[current];
     }
 
-    public final VariantContext getContext(int offset) {
+    public VariantContext getContext(int offset) {
         final int realIndex = current - offset;
         if (realIndex < 0 || realIndex > current) {
             throw new IndexOutOfBoundsException();
         }
-        VariantContext element = (VariantContext) contexts[realIndex];
-        return element;
+        return contexts[realIndex];
     }
 
-    private void ensureCapacity(int mincap) {
-        if (mincap > contexts.length) {
+    private void ensureCapacity(int maxIndex) {
+        maxIndex++;
+        if (maxIndex > contexts.length) {
             int newcap = ((contexts.length * 3) >> 1) + 1;
             Object[] olddata = contexts;
-            contexts = new VariantContext[newcap < mincap ? mincap : newcap];
+            contexts = new VariantContext[newcap < maxIndex ? maxIndex : newcap];
             System.arraycopy(olddata, 0, contexts, 0, current + 1);
         }
     }

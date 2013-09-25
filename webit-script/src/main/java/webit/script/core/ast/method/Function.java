@@ -5,7 +5,7 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Statment;
 import webit.script.core.runtime.LoopCtrl;
-import webit.script.core.runtime.VariantStack;
+import webit.script.core.runtime.variant.VariantStack;
 import webit.script.core.runtime.variant.VariantMap;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.StatmentUtil;

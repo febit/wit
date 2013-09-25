@@ -8,7 +8,6 @@ import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.core.ast.Statment;
 import webit.script.exceptions.ParserException;
-import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 
 /**
@@ -25,29 +24,26 @@ public class StatmentUtil {
             context.popOut();
             return result;
         } catch (Throwable e) {
-            ScriptRuntimeException scriptRuntimeException;
-            if (e instanceof ScriptRuntimeException) {
-                scriptRuntimeException = (ScriptRuntimeException) e;
-                scriptRuntimeException.registStatment(expression);
-            } else {
-                scriptRuntimeException = new ScriptRuntimeException(e, expression);
-            }
-            throw scriptRuntimeException;
+            throw ExceptionUtil.castToScriptRuntimeException(e, expression);
         }
     }
 
+    @SuppressWarnings("deprecation")
+    public static void execute(final Statment statment, final Context context, final Out out) {
+        try {
+            context.pushOut(out);
+            statment.execute(context);
+            context.popOut();
+        } catch (Throwable e) {
+            throw ExceptionUtil.castToScriptRuntimeException(e, statment);
+        }
+    }
+    
     public static Object execute(final Expression expression, final Context context) {
         try {
             return expression.execute(context);
         } catch (Throwable e) {
-            ScriptRuntimeException scriptRuntimeException;
-            if (e instanceof ScriptRuntimeException) {
-                scriptRuntimeException = (ScriptRuntimeException) e;
-                scriptRuntimeException.registStatment(expression);
-            } else {
-                scriptRuntimeException = new ScriptRuntimeException(e, expression);
-            }
-            throw scriptRuntimeException;
+            throw ExceptionUtil.castToScriptRuntimeException(e, expression);
         }
     }
 
@@ -55,32 +51,7 @@ public class StatmentUtil {
         try {
             statment.execute(context);
         } catch (Throwable e) {
-            ScriptRuntimeException scriptRuntimeException;
-            if (e instanceof ScriptRuntimeException) {
-                scriptRuntimeException = (ScriptRuntimeException) e;
-                scriptRuntimeException.registStatment(statment);
-            } else {
-                scriptRuntimeException = new ScriptRuntimeException(e, statment);
-            }
-            throw scriptRuntimeException;
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void execute(final Statment statment, final Out out, final Context context) {
-        try {
-            context.pushOut(out);
-            statment.execute(context);
-            context.popOut();
-        } catch (Throwable e) {
-            ScriptRuntimeException scriptRuntimeException;
-            if (e instanceof ScriptRuntimeException) {
-                scriptRuntimeException = (ScriptRuntimeException) e;
-                scriptRuntimeException.registStatment(statment);
-            } else {
-                scriptRuntimeException = new ScriptRuntimeException(e, statment);
-            }
-            throw scriptRuntimeException;
+            throw ExceptionUtil.castToScriptRuntimeException(e, statment);
         }
     }
 
@@ -88,16 +59,10 @@ public class StatmentUtil {
         try {
             return expression.getResetableValue(context);
         } catch (Throwable e) {
-            ScriptRuntimeException scriptRuntimeException;
-            if (e instanceof ScriptRuntimeException) {
-                scriptRuntimeException = (ScriptRuntimeException) e;
-                scriptRuntimeException.registStatment(expression);
-            } else {
-                scriptRuntimeException = new ScriptRuntimeException(e, expression);
-            }
-            throw scriptRuntimeException;
+            throw ExceptionUtil.castToScriptRuntimeException(e, expression);
         }
     }
+
 
     public static Expression optimize(Expression expression) {
         try {
@@ -105,7 +70,7 @@ public class StatmentUtil {
                     ? (Expression) ((Optimizable) expression).optimize()
                     : expression;
         } catch (Throwable e) {
-            throw new ParserException("Exception(s) occur when do optimize", e, expression);
+            throw new ParserException("Exception occur when do optimization", e, expression);
         }
     }
 
@@ -115,7 +80,7 @@ public class StatmentUtil {
                     ? ((Optimizable) statment).optimize()
                     : statment;
         } catch (Throwable e) {
-            throw new ParserException("Exception(s) occur when do optimize", e, statment);
+            throw new ParserException("Exception occur when do optimization", e, statment);
         }
     }
 }

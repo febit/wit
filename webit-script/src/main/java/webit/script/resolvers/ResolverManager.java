@@ -65,7 +65,7 @@ public final class ResolverManager implements Initable {
 
                 if (resolver == null && enableAsm) {
                     try {
-                        resolver = AsmResolverManager.generateAsmResolver(type);
+                        resolver = AsmResolverManager.getAsmResolver(type);
                     } catch (Throwable e) {
                         logger.error(null, e);
                     }
@@ -102,7 +102,7 @@ public final class ResolverManager implements Initable {
 
                 if (resolver == null && enableAsm) {
                     try {
-                        resolver = AsmResolverManager.generateAsmResolver(type);
+                        resolver = AsmResolverManager.getAsmResolver(type);
                     } catch (Throwable e) {
                         logger.error(null, e);
                     }

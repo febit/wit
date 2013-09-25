@@ -34,7 +34,7 @@ public class DefaultEncoder implements Encoder {
     }
 
     public void write(final String string, final int offset, final int length, final OutputStream out) throws IOException {
-        char[] chars = ThreadLocalCache.getChars(length);
+        char[] chars = length < ThreadLocalCache.CACH_MIN_LEN ? new char[length] : ThreadLocalCache.getChars(length);
         string.getChars(offset, offset + length, chars, 0);
         write(chars, 0, length, out);
     }
@@ -43,8 +43,8 @@ public class DefaultEncoder implements Encoder {
         if (chars == null || length == 0) {
             return;
         }
-        
-        final byte[] bytes = ThreadLocalCache.getBytes((int) (length * expansionFactor)); //new byte[new_len];
+        final int bytes_len = (int) (length * expansionFactor);
+        final byte[] bytes = bytes_len < ThreadLocalCache.CACH_MIN_LEN ? new byte[bytes_len] : ThreadLocalCache.getBytes(bytes_len); //new byte[new_len];
 //        if (arrayEncoder != null) {
 //            int blen = arrayEncoder.encode(chars, off, len, bytes);
 //            out.write(bytes, 0, blen);

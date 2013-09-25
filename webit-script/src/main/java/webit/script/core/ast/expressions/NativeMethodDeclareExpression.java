@@ -25,7 +25,7 @@ public class NativeMethodDeclareExpression extends AbstractExpression {
     public Object execute(final Context context) {
         if (context.enableAsmNative) {
             try {
-                return new AsmNativeMethodDeclare(AsmMethodCallerManager.generateCaller(method));
+                return new AsmNativeMethodDeclare(AsmMethodCallerManager.getCaller(method));
             } catch (Throwable ex) {
                 ScriptRuntimeException scriptRuntimeException;
                 if (ex instanceof ScriptRuntimeException) {

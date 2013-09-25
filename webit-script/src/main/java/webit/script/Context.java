@@ -3,7 +3,7 @@ package webit.script;
 
 import java.util.Map;
 import webit.script.core.runtime.LoopCtrl;
-import webit.script.core.runtime.VariantStack;
+import webit.script.core.runtime.variant.VariantStack;
 import webit.script.core.runtime.variant.VariantContext;
 import webit.script.io.Out;
 import webit.script.loggers.Logger;
@@ -53,7 +53,7 @@ public final class Context {
         this.encoding = parent.encoding;
         this.isByteStream = parent.isByteStream;
         this.loopCtrl = new LoopCtrl();
-        this.vars = new VariantStack(parentVarContexts);
+        this.vars = parentVarContexts != null ? new VariantStack(parentVarContexts) : new VariantStack();
         this.resolverManager = parent.resolverManager;
         this.enableAsmNative = parent.enableAsmNative;
         this.logger = parent.logger;

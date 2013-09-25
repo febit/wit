@@ -31,8 +31,8 @@ public class DefaultDecoder implements Decoder {
         if (bytes == null || length == 0) {
             return;
         }
-        int new_len = (int) (length * expansionFactor);
-        char[] chars = ThreadLocalCache.getChars(new_len); //new byte[new_len];
+        int chars_len = (int) (length * expansionFactor);
+        char[] chars = chars_len < ThreadLocalCache.CACH_MIN_LEN ? new char[chars_len] : ThreadLocalCache.getChars(chars_len); //new byte[new_len];
 
         charsetDecoder.reset();
         ByteBuffer bb = ByteBuffer.wrap(bytes, offset, length);

@@ -35,21 +35,21 @@ public class RedirectOutStatment extends AbstractStatment {
 
             final FastByteArrayOutputStream out = new FastByteArrayOutputStream(128);
 
-            StatmentUtil.execute(srcStatment, new OutputStreamOut(out, (OutputStreamOut) current), context);
+            StatmentUtil.execute(srcStatment, context, new OutputStreamOut(out, (OutputStreamOut) current));
             final ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(out.toByteArray());
         } else if (current instanceof WriterOut) {
 
             final FastCharArrayWriter writer = new FastCharArrayWriter();
 
-            StatmentUtil.execute(srcStatment, new WriterOut(writer, (WriterOut) current), context);
+            StatmentUtil.execute(srcStatment, context, new WriterOut(writer, (WriterOut) current));
             final ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(writer.toCharArray());
         } else {
 
             final FastCharArrayWriter writer = new FastCharArrayWriter();
 
-            StatmentUtil.execute(srcStatment, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()), context);
+            StatmentUtil.execute(srcStatment, context, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
             final ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
             value.set(writer.toCharArray());
         }

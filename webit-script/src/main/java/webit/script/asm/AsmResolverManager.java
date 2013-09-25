@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.asm;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -10,10 +10,10 @@ import java.util.Map;
  */
 public class AsmResolverManager {
 
-    private final static Map<Class, AsmResolverBox> asmResolversMap = new HashMap<Class, AsmResolverBox>();
+    private final static Map<Class, AsmResolverBox> asmResolversMap = new IdentityHashMap<Class, AsmResolverBox>();
     private final static AsmResolverGenerator asmResolverGenerator = new AsmResolverGenerator();
 
-    public static AsmResolver generateAsmResolver(Class type) throws Throwable {
+    public static AsmResolver getAsmResolver(Class type) throws Throwable {
         AsmResolverBox box = asmResolversMap.get(type);
         if (box == null) {
             synchronized (asmResolversMap) {

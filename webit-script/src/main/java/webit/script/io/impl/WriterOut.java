@@ -24,7 +24,7 @@ public final class WriterOut implements Out {
         this.encoding = encoding;
         this.decoder = decoder;
     }
-    
+
     public WriterOut(Writer writer, final WriterOut writerOut) {
         this(writer, writerOut.encoding, writerOut.decoder);
     }
@@ -67,7 +67,7 @@ public final class WriterOut implements Out {
 
     public void write(final String string, final int offset, final int length) {
         try {
-            final char[] chars = ThreadLocalCache.getChars(length);
+            final char[] chars = length < ThreadLocalCache.CACH_MIN_LEN ? new char[length] : ThreadLocalCache.getChars(length);
             string.getChars(offset, offset + length, chars, 0);
             writer.write(chars);
         } catch (IOException ex) {
@@ -82,7 +82,7 @@ public final class WriterOut implements Out {
     public String getEncoding() {
         return encoding;
     }
-    
+
     public boolean isByteStream() {
         return false;
     }

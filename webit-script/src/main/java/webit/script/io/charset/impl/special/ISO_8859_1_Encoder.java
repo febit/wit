@@ -13,13 +13,12 @@ import webit.script.util.charset.ISO_8859_1;
  */
 public class ISO_8859_1_Encoder implements Encoder {
 
-
     public final void write(final char[] chars, final int off, final int len, final OutputStream out) throws IOException {
         if (chars == null || len == 0) {
             return;
         }
         //int new_len = len;
-        final byte[] bytes = ThreadLocalCache.getBytes(len);
+        final byte[] bytes = len < ThreadLocalCache.CACH_MIN_LEN ? new byte[len] : ThreadLocalCache.getBytes(len);
 
         int used = ISO_8859_1.encode(chars, off, len, bytes);
 
@@ -30,7 +29,7 @@ public class ISO_8859_1_Encoder implements Encoder {
         if (string == null || len == 0) {
             return;
         }
-        final char[] chars = ThreadLocalCache.getChars(len);
+        final char[] chars = len < ThreadLocalCache.CACH_MIN_LEN ? new char[len] : ThreadLocalCache.getChars(len);
 
         string.getChars(off, off + len, chars, 0);
 
