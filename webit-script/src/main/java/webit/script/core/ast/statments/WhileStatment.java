@@ -1,10 +1,15 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statments;
 
+import java.util.Iterator;
+import java.util.List;
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
-import webit.script.core.runtime.LoopCtrl;
+import webit.script.core.ast.loop.LoopCtrl;
+import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.ast.loop.LoopType;
+import webit.script.core.ast.loop.Loopable;
 import webit.script.util.ALU;
 import webit.script.util.StatmentUtil;
 
@@ -12,7 +17,7 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public final class WhileStatment extends AbstractStatment {
+public final class WhileStatment extends AbstractStatment implements Loopable {
 
     private final Expression whileExpr;
     private final BlockStatment bodyStatment;
@@ -57,4 +62,27 @@ public final class WhileStatment extends AbstractStatment {
         }
         return null;
     }
+
+    public List<LoopInfo> collectPossibleLoopsInfo() {
+        if (bodyStatment == null) {
+            return null;
+        }
+        List<LoopInfo> loopInfos = bodyStatment.collectPossibleLoopsInfo();
+        if (loopInfos == null) {
+            return null;
+        }
+        
+        for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
+            LoopInfo loopInfo = it.next();
+            if (loopInfo.matchLabel(this.label)
+                    &&(
+                    loopInfo.type == LoopType.BREAK
+                    || loopInfo.type == LoopType.CONTINUE
+                    )) {
+                it.remove();
+            }
+        }
+        return loopInfos.isEmpty()? null : loopInfos;
+    }
+    
 }

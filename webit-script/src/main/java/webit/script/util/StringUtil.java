@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -73,7 +74,7 @@ public class StringUtil {
      * Joins list of iterable elements. Separator string may be
      * <code>null</code>.
      */
-    public static String join(List<String> elements, String separator) {
+    public static String join(List elements, String separator) {
         if (elements == null) {
             return "";
         }
@@ -81,15 +82,17 @@ public class StringUtil {
         if (size == 0) {
             return "";
         } else if (size == 1) {
-            return elements.get(0);
+            return String.valueOf(elements.get(0));
         }
 
         int len = separator.length() * (size - 1);
         String[] strings = new String[size];
         int i = 0;
-        for (String string : elements) {
-            len += string.length();
-            strings[i] = string;
+        String str;
+        for (Object element : elements) {
+            str  = String.valueOf(element);
+            len += str.length();
+            strings[i] = str;
             i++;
         }
 

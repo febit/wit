@@ -40,7 +40,7 @@ public final class Template {
      * @throws IOException
      * @throws ParserException
      */
-    TemplateAST prepareTemplate() throws IOException, ParserException {
+    public TemplateAST prepareTemplate() throws IOException, ParserException {
         TemplateAST tmpl = this.templateAst;
         if (tmpl == null || resource.isModified()) { //fast
             synchronized (reloadLock) {

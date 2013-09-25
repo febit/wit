@@ -11,7 +11,7 @@ import webit.script.security.impl.DefaultNativeSecurityManager;
  */
 public class DefaultNativeSecurityManagerTest {
 
-    //@Test
+    @Test
     public void test() {
 
         String list = "-a"
@@ -25,7 +25,7 @@ public class DefaultNativeSecurityManagerTest {
 
         DefaultNativeSecurityManager manager = new DefaultNativeSecurityManager();
 
-        //manager.setList(list);
+        manager.setList(list);
         manager.init(null); //XXX:
 
         assertFalse(manager.access("a"));

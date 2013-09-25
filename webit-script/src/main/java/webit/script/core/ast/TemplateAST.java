@@ -3,10 +3,8 @@ package webit.script.core.ast;
 
 import java.util.Map;
 import webit.script.Context;
-import webit.script.core.runtime.LoopCtrl;
 import webit.script.core.runtime.variant.VariantStack;
 import webit.script.core.runtime.variant.VariantMap;
-import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -27,13 +25,9 @@ public class TemplateAST {
         final VariantStack vars = context.vars;
         vars.push(varMap);
         vars.setToCurrentContext(root);
-        final LoopCtrl ctrl = context.loopCtrl;
-        final int len = statments.length;
-        for (int i = 0; i < len && ctrl.goon(); i++) {
+        int len = statments.length;
+        for (int i = 0; i < len; i++) {
             StatmentUtil.execute(statments[i], context);
-        }
-        if (!ctrl.goon()) {
-            throw new ScriptRuntimeException("loop overflow", ctrl.getStatment());
         }
         return context;
     }

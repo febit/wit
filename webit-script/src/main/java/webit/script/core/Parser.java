@@ -6,6 +6,7 @@
 
 package webit.script.core;
 
+import webit.script.util.ClassNameBand;
 import java.util.Map;
 import webit.script.core.VariantManager.VarAddress;
 import webit.script.core.ast.*;

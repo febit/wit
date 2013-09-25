@@ -1,15 +1,18 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statments;
 
+import java.util.List;
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
+import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.ast.loop.Loopable;
 import webit.script.util.StatmentUtil;
 
 /**
  *
  * @author Zqq
  */
-public final class CaseStatment extends AbstractStatment {
+public final class CaseStatment extends AbstractStatment implements Loopable{
 
     private final BlockStatment body;
     private final CaseStatment next;
@@ -32,5 +35,9 @@ public final class CaseStatment extends AbstractStatment {
 
     public boolean isBodyEmpty() {
         return (body == null) && (next == null);
+    }
+
+    public List<LoopInfo> collectPossibleLoopsInfo() {
+        return body != null? body.collectPossibleLoopsInfo() : null;
     }
 }

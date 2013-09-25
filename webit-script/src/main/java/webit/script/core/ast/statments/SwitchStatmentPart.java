@@ -65,7 +65,7 @@ public final class SwitchStatmentPart extends StatmentPart {
 
     public Statment pop() {
         
-        if (defaultStatment.isBodyEmpty()) {
+        if (defaultStatment != null && defaultStatment.isBodyEmpty()) {
             defaultStatment = null;
         }
         

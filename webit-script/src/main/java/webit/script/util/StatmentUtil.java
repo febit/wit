@@ -1,12 +1,16 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util;
 
+import java.util.LinkedList;
+import java.util.List;
 import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.core.ast.Statment;
+import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.ast.loop.Loopable;
 import webit.script.exceptions.ParserException;
 import webit.script.io.Out;
 
@@ -38,7 +42,7 @@ public class StatmentUtil {
             throw ExceptionUtil.castToScriptRuntimeException(e, statment);
         }
     }
-    
+
     public static Object execute(final Expression expression, final Context context) {
         try {
             return expression.execute(context);
@@ -63,7 +67,6 @@ public class StatmentUtil {
         }
     }
 
-
     public static Expression optimize(Expression expression) {
         try {
             return expression instanceof Optimizable
@@ -82,5 +85,21 @@ public class StatmentUtil {
         } catch (Throwable e) {
             throw new ParserException("Exception occur when do optimization", e, statment);
         }
+    }
+
+    public static List<LoopInfo> collectPossibleLoopsInfo(Statment[] statments) {
+        if (statments != null && statments.length > 0) {
+            LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
+            for (int i = 0; i < statments.length; i++) {
+                if (statments[i] instanceof Loopable) {
+                    List<LoopInfo> list = ((Loopable) statments[i]).collectPossibleLoopsInfo();
+                    if (list != null) {
+                        loopInfos.addAll(list);
+                    }
+                }
+            }
+            return loopInfos.size() > 0 ? loopInfos : null;
+        }
+        return null;
     }
 }

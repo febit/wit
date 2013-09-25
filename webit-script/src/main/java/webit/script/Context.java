@@ -2,7 +2,7 @@
 package webit.script;
 
 import java.util.Map;
-import webit.script.core.runtime.LoopCtrl;
+import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.runtime.variant.VariantStack;
 import webit.script.core.runtime.variant.VariantContext;
 import webit.script.io.Out;

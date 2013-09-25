@@ -1,5 +1,5 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.runtime;
+package webit.script.core.ast.loop;
 
 import webit.script.core.ast.Statment;
 

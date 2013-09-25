@@ -1,5 +1,5 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.runtime;
+package webit.script.core.ast.loop;
 
 /**
  *
@@ -10,17 +10,22 @@ public enum LoopType {
     /**
      * no loop, default loop type
      */
-    NULL,
+    NULL("null"),
     /**
      * break
      */
-    BREAK,
+    BREAK("break"),
     /**
      * continue
      */
-    CONTINUE,
+    CONTINUE("continue"),
     /**
      * return
      */
-    RETURN
+    RETURN("return");
+    public final String value;
+
+    LoopType(String value) {
+        this.value = value;
+    }
 }
