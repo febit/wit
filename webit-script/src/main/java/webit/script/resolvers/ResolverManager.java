@@ -51,9 +51,11 @@ public final class ResolverManager implements Initable {
 
     @SuppressWarnings("unchecked")
     private GetResolver getGetResolver(Object bean) {
-        final Class type = bean.getClass();
-        GetResolver resolver = getResolverMap.unsafeGet(type);
-        if (resolver == null) {
+        GetResolver resolver = getResolverMap.unsafeGet(bean.getClass());
+        if (resolver != null) {
+            return resolver;
+        } else {
+            final Class type = bean.getClass();
             resolver = getResolverMap.get(type);
             if (resolver == null) {
                 for (int i = 0; i < getResolverTypes.size(); i++) {
@@ -81,16 +83,17 @@ public final class ResolverManager implements Initable {
                 //last
                 resolver = getResolverMap.putIfAbsent(type, resolver);
             }
+            return resolver;
         }
-
-        return resolver;
     }
 
     @SuppressWarnings("unchecked")
     private SetResolver getSetResolver(Object bean) {
-        final Class type = bean.getClass();
-        SetResolver resolver = setResolverMap.unsafeGet(type);
-        if (resolver == null) {
+        SetResolver resolver = setResolverMap.unsafeGet(bean.getClass());
+        if (resolver != null) {
+            return resolver;
+        } else {
+            final Class type = bean.getClass();
             resolver = setResolverMap.get(type);
             if (resolver == null) {
                 for (int i = 0; i < setResolverTypes.size(); i++) {
@@ -117,17 +120,19 @@ public final class ResolverManager implements Initable {
 
                 resolver = setResolverMap.putIfAbsent(type, resolver);
             }
+            return resolver;
         }
-        return resolver;
     }
 
     @SuppressWarnings("unchecked")
     private OutResolver getOutResolver(Object bean) {
-        final Class type = bean.getClass();
-        OutResolver resolver = outResolverMap.unsafeGet(type);
-        if (resolver == null) {
+        OutResolver resolver = outResolverMap.unsafeGet(bean.getClass());
+        if (resolver != null) {
+            return resolver;
+        } else {
+            final Class type = bean.getClass();
+            resolver = outResolverMap.get(type);
             if (resolver == null) {
-                resolver = outResolverMap.get(type);
                 for (int i = 0; i < outResolverTypes.size(); i++) {
                     if (outResolverTypes.get(i).isAssignableFrom(type)) {
                         resolver = outResolvers.get(i);
@@ -138,11 +143,10 @@ public final class ResolverManager implements Initable {
                 if (resolver == null) {
                     resolver = commonResolver;
                 }
-
                 resolver = outResolverMap.putIfAbsent(type, resolver);
             }
+            return resolver;
         }
-        return resolver;
     }
 
     public void init(Resolver[] resolvers) {

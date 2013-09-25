@@ -52,8 +52,8 @@ import webit.script.util.CharUtil;
  */
 public class UTF_8 {
 
-    public static final double MAX_CHARS_PER_BYTE = 1.0;
-    public static final double MAX_BYTES_PER_CHAR = 3.0;
+    public static final int MAX_CHARS_PER_BYTE = 1;
+    public static final int MAX_BYTES_PER_CHAR = 3;
 
     public static int decode(final byte[] sa, int sp, int len, final char[] da) {
         final int sl = sp + len;

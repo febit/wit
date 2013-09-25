@@ -113,10 +113,10 @@ public final class Context {
     }
 
     public void out(final Object object) {
-        if (object != null) {
-            if (object instanceof String) {
-                out.write((String) object);
-            } else {
+        if (object instanceof String) {
+            out.write((String) object);
+        } else {
+            if (object != null) {
                 resolverManager.render(out, object);
             }
         }

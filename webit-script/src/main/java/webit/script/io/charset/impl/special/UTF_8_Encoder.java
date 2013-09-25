@@ -15,7 +15,7 @@ public final class UTF_8_Encoder implements Encoder {
 
     public void write(final char[] chars, final int off, final int len, final OutputStream out) throws IOException {
         if (chars != null && len != 0) {
-            final int bytes_len = (int) (len * UTF_8.MAX_BYTES_PER_CHAR);
+            final int bytes_len = len * UTF_8.MAX_BYTES_PER_CHAR;
             final byte[] bytes = bytes_len < ThreadLocalCache.CACH_MIN_LEN ? new byte[bytes_len] : ThreadLocalCache.getBytes(bytes_len);
             int used = UTF_8.encode(chars, off, len, bytes);
             out.write(bytes, 0, used);
@@ -26,7 +26,7 @@ public final class UTF_8_Encoder implements Encoder {
         if (string != null) {
             final char[] chars = len < ThreadLocalCache.CACH_MIN_LEN ? new char[len] : ThreadLocalCache.getChars(len);
             string.getChars(off, off + len, chars, 0);
-            final int bytes_len = (int) (len * UTF_8.MAX_BYTES_PER_CHAR);
+            final int bytes_len = len * UTF_8.MAX_BYTES_PER_CHAR;
             final byte[] bytes = bytes_len < ThreadLocalCache.CACH_MIN_LEN ? new byte[bytes_len] : ThreadLocalCache.getBytes(bytes_len);
             int used = UTF_8.encode(chars, off, len, bytes);
             out.write(bytes, 0, used);
