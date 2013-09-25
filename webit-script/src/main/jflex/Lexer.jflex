@@ -201,7 +201,7 @@ DoubleLiteralPart = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
 FloatLiteral  = {DoubleLiteralPart} [fF]
 DoubleLiteral = {DoubleLiteralPart} [dD]
 
-FLit1    = [0-9]+ \. [0-9]* 
+FLit1    = [0-9]+ \. [0-9]+ 
 FLit2    = \. [0-9]+ 
 FLit3    = [0-9]+ 
 Exponent = [eE] [+-]? [0-9]+

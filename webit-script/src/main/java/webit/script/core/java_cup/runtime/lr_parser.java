@@ -275,7 +275,7 @@ public abstract class lr_parser {
 
     private void report_fatal_error(String message, Object info) {
         doneParse();
-        throw new ParserException(message != null ? message : "Parser stop at here, ", getLine(), getColumn());
+        throw new ParserException((message != null ? message : "Parser stop at here, ") + getLine() + "(" + getColumn() + ")", getLine(), getColumn());
     }
 
     private void syntax_error(Symbol cur_token) {
@@ -424,7 +424,7 @@ public abstract class lr_parser {
     }
 
     /**
-     * 
+     *
      * @param in java.io.Reader
      * @param template Template
      * @return TemplateAST

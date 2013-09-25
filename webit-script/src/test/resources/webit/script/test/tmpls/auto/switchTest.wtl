@@ -3,9 +3,6 @@
 import "/junit-assert.wtl";
 
 var assertEquals;
-var assertNotEquals;
-var assertSame;
-var assertNotSame;
 
 var func_switch = function(a){
     var result;
