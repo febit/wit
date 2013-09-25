@@ -1,0 +1,62 @@
+<%
+
+import "/junit-assert.wtl";
+
+var assertEquals;
+var assertNotEquals;
+var assertSame;
+var assertNotSame;
+
+var func_switch = function(a){
+    var result;
+    switch(a){
+        case 1:
+            result = "1";
+            break;
+        case 2:
+            result = "2";
+        case 4:
+        case 3:
+            result = "2|3|4";
+            break;
+        default:
+            result = "default";
+    }
+    return result;
+};
+
+assertEquals("1", func_switch(1));
+assertEquals("2|3|4", func_switch(2));
+assertEquals("2|3|4", func_switch(3));
+assertEquals("2|3|4", func_switch(4));
+assertEquals("default", func_switch(100));
+
+
+var func_switch2 = function(a,b){
+    var result;
+    outer:switch(a){
+        case 2:
+            result = "2";
+            switch(b){
+                case 1:
+                    break;
+                case 2:
+                    result = "2,2";
+                    break outer;
+                case 3:
+                    return "2,3";
+            }
+        case 3:
+            result = "2|3";
+            break;
+        default:
+            result = "default";
+    }
+    return result;
+};
+
+assertEquals("2|3", func_switch2(2,1));
+assertEquals("2,2", func_switch2(2,2));
+assertEquals("2,3", func_switch2(2,3));
+
+%>

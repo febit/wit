@@ -11,6 +11,7 @@ import webit.script.core.ast.statments.*;
 import webit.script.core.java_cup.runtime.Stack;
 import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.exceptions.ParserException;
+import webit.script.util.ClassNameBand;
 import webit.script.util.StatmentUtil;
 
 
@@ -592,6 +593,7 @@ non terminal Statment echoStat;
 non terminal Statment redirectOutStat;
 
 non terminal BlockStatmentPart caseBlockStatPart;
+non terminal BlockStatment caseBlockStat;
 non terminal SwitchStatmentPart switchStatPart, switchStatPart0;
 non terminal ForInStatmentPart forInStatPart, forInStatPart0, forInStatPart1;
 non terminal ForMapStatmentPart forMapStatPart, forMapStatPart0, forMapStatPart1;
@@ -954,12 +956,17 @@ caseBlockStatPart     ::=
                         ;
 
 
+caseBlockStat       ::= caseBlockStatPart:bodyPart
+                        {: RESULT = createBlockStatment(bodyPart); :}
+                        ;
+
+
 switchStatPart0      ::= 
                         {: RESULT = createSwitchStatmentPart(); :}
-                        | CASE:sym directValue:key COLON caseBlockStatPart:bodyPart switchStatPart0:part
-                        {: BlockStatment body = createBlockStatment(bodyPart); RESULT = part.appendCaseStatment(key, body, sym$Symbol.line, sym$Symbol.column); :}
-                        | DEFAULT:sym COLON caseBlockStatPart:bodyPart switchStatPart0:part
-                        {: BlockStatment body = createBlockStatment(bodyPart); RESULT = part.appendCaseStatment(null, body, sym$Symbol.line, sym$Symbol.column); :}
+                        | CASE:sym directValue:key COLON caseBlockStat:body switchStatPart0:part
+                        {: RESULT = part.appendCaseStatment(key, body, sym$Symbol.line, sym$Symbol.column); :}
+                        | DEFAULT:sym COLON caseBlockStat:body switchStatPart0:part
+                        {: RESULT = part.appendCaseStatment(null, body, sym$Symbol.line, sym$Symbol.column); :}
                         ;
 
 
