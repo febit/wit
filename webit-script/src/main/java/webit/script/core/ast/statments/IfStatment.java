@@ -45,19 +45,14 @@ public final class IfStatment extends AbstractStatment implements Optimizable, L
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        List<LoopInfo> list = null;
-        if (thenStatment != null && thenStatment instanceof Loopable) {
-            list = ((Loopable) thenStatment).collectPossibleLoopsInfo();
-        }
 
-        if (elseStatment != null && elseStatment instanceof Loopable) {
-            List<LoopInfo> list2 = ((Loopable) elseStatment).collectPossibleLoopsInfo();
+        List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(thenStatment);
+        List<LoopInfo> list2 = StatmentUtil.collectPossibleLoopsInfo(elseStatment);
 
-            if (list == null) {
-                list = list2;
-            } else if (list2 != null) {
-                list.addAll(list2);
-            }
+        if (list == null) {
+            return list2;
+        } else if (list2 != null) {
+            list.addAll(list2);
         }
         return list;
     }

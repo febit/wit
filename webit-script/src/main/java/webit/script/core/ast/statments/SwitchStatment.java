@@ -38,14 +38,14 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
         if (result != null) {
             final CaseStatment caseStatment = caseMap.get(result);
             if (caseStatment != null) {
-                StatmentUtil.execute(caseStatment, context);
+                caseStatment.execute(context);
                 run = true;
             }
         }
 
         //default
         if (!run && defaultStatment != null) {
-            StatmentUtil.execute(defaultStatment, context);
+            defaultStatment.execute(context);
             run = true;
         }
 
@@ -61,16 +61,14 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
         LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
 
         for (Map.Entry<Object, CaseStatment> entry : caseMap.entrySet()) {
-            List<LoopInfo> list = entry.getValue().collectPossibleLoopsInfo();
+            List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(entry.getValue());
             if (list != null) {
                 loopInfos.addAll(list);
             }
         }
-        if (defaultStatment != null) {
-            List<LoopInfo> list = defaultStatment.collectPossibleLoopsInfo();
-            if (list != null) {
-                loopInfos.addAll(list);
-            }
+        List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(defaultStatment);
+        if (list != null) {
+            loopInfos.addAll(list);
         }
 
         //check

@@ -27,7 +27,6 @@ public final class ForMapStatmentPart extends StatmentPart {
         this.iterIndex = iterIndex;
         this.mapExpr = mapExpr;
     }
-    
 
     public ForMapStatmentPart setLabel(String label) {
         this.label = label;
@@ -38,9 +37,8 @@ public final class ForMapStatmentPart extends StatmentPart {
 //        this.mapExpr = mapExpr;
 //        return this;
 //    }
-
     public ForMapStatmentPart setBodyStatment(BlockStatment bodyStatment) {
-        this.bodyStatment = bodyStatment.optimize();
+        this.bodyStatment = bodyStatment;
         return this;
     }
 
@@ -48,8 +46,14 @@ public final class ForMapStatmentPart extends StatmentPart {
         this.elseStatment = StatmentUtil.optimize(elseStatment);
         return this;
     }
-    
-    public Statment pop(){
-        return StatmentUtil.optimize(new ForMapStatment(keyIndex, valueIndex, iterIndex, mapExpr, bodyStatment, elseStatment, label, line, column));
+
+    public Statment pop() {
+
+        if (bodyStatment == null) {
+            return bodyStatment = new EmptyBlockStatment(line, column);
+        }
+        return bodyStatment.hasLoops()
+                ? new ForMapStatment(keyIndex, valueIndex, iterIndex, mapExpr, bodyStatment, elseStatment, label, line, column)
+                : new ForMapStatmentNoLoops(keyIndex, valueIndex, iterIndex, mapExpr, bodyStatment, elseStatment, line, column);
     }
 }

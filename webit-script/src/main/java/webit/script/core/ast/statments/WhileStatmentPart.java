@@ -4,7 +4,6 @@ package webit.script.core.ast.statments;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.StatmentPart;
-import webit.script.util.StatmentUtil;
 
 /**
  *
@@ -47,6 +46,12 @@ public final class WhileStatmentPart extends StatmentPart {
     }
 
     public Statment pop() {
-        return StatmentUtil.optimize(new WhileStatment(whileExpr, bodyStatment, doWhileAtFirst, label, line, column));
+        if (bodyStatment == null) {
+            return bodyStatment = new EmptyBlockStatment(line, column);
+        }
+
+        return bodyStatment.hasLoops()
+                ? new WhileStatment(whileExpr, bodyStatment, doWhileAtFirst, label, line, column)
+                : new WhileStatmentNoLoops(whileExpr, bodyStatment, doWhileAtFirst, line, column);
     }
 }

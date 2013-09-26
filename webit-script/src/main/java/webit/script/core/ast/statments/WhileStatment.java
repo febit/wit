@@ -37,7 +37,7 @@ public final class WhileStatment extends AbstractStatment implements Loopable {
         final LoopCtrl ctrl = context.loopCtrl;
         label:
         while (go) {
-            StatmentUtil.execute(bodyStatment, context);
+            bodyStatment.execute(context);
 
             if (!ctrl.goon()) {
                 if (ctrl.matchLabel(label)) {
@@ -53,7 +53,7 @@ public final class WhileStatment extends AbstractStatment implements Loopable {
                             break; //switch
                         default:
                             break label; //while
-                    }
+                        }
                 } else {
                     break;
                 }
@@ -64,25 +64,20 @@ public final class WhileStatment extends AbstractStatment implements Loopable {
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        if (bodyStatment == null) {
-            return null;
-        }
-        List<LoopInfo> loopInfos = bodyStatment.collectPossibleLoopsInfo();
+
+        List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(bodyStatment);
         if (loopInfos == null) {
             return null;
         }
-        
+
         for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
             LoopInfo loopInfo = it.next();
             if (loopInfo.matchLabel(this.label)
-                    &&(
-                    loopInfo.type == LoopType.BREAK
-                    || loopInfo.type == LoopType.CONTINUE
-                    )) {
+                    && (loopInfo.type == LoopType.BREAK
+                    || loopInfo.type == LoopType.CONTINUE)) {
                 it.remove();
             }
         }
-        return loopInfos.isEmpty()? null : loopInfos;
+        return loopInfos.isEmpty() ? null : loopInfos;
     }
-    
 }

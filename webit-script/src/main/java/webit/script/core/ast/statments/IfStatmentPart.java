@@ -32,6 +32,6 @@ public final class IfStatmentPart extends StatmentPart {
     }
 
     public Statment pop() {
-        return StatmentUtil.optimize(new IfStatment(ifExpr, thenStatment, elseStatment, line, column));
+        return new IfStatment(ifExpr, thenStatment, elseStatment, line, column);
     }
 }

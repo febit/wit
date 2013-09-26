@@ -78,24 +78,31 @@ public class StatmentUtil {
     }
 
     public static Statment optimize(Statment statment) {
-        try {
-            return statment instanceof Optimizable
-                    ? ((Optimizable) statment).optimize()
-                    : statment;
-        } catch (Throwable e) {
-            throw new ParserException("Exception occur when do optimization", e, statment);
+        if (statment != null) {
+            try {
+                return statment instanceof Optimizable
+                        ? ((Optimizable) statment).optimize()
+                        : statment;
+            } catch (Throwable e) {
+                throw new ParserException("Exception occur when do optimization", e, statment);
+            }
         }
+        return null;
+    }
+
+    public static List<LoopInfo> collectPossibleLoopsInfo(Object statment) {
+        return (statment != null && statment instanceof Loopable)
+                ? ((Loopable) statment).collectPossibleLoopsInfo()
+                : null;
     }
 
     public static List<LoopInfo> collectPossibleLoopsInfo(Statment[] statments) {
         if (statments != null && statments.length > 0) {
             LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
             for (int i = 0; i < statments.length; i++) {
-                if (statments[i] instanceof Loopable) {
-                    List<LoopInfo> list = ((Loopable) statments[i]).collectPossibleLoopsInfo();
-                    if (list != null) {
-                        loopInfos.addAll(list);
-                    }
+                List<LoopInfo> list = collectPossibleLoopsInfo(statments[i]);
+                if (list != null) {
+                    loopInfos.addAll(list);
                 }
             }
             return loopInfos.size() > 0 ? loopInfos : null;

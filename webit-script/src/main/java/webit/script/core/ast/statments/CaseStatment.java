@@ -3,7 +3,6 @@ package webit.script.core.ast.statments;
 
 import java.util.List;
 import webit.script.Context;
-import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.util.StatmentUtil;
@@ -12,23 +11,22 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public final class CaseStatment extends AbstractStatment implements Loopable{
+public final class CaseStatment implements Loopable {
 
     private final BlockStatment body;
     private final CaseStatment next;
 
-    public CaseStatment(BlockStatment body, CaseStatment next, int line, int column) {
-        super(line, column);
+    public CaseStatment(BlockStatment body, CaseStatment next) {
         this.body = body;
         this.next = next;
     }
 
     public Object execute(final Context context) {
         if (body != null) {
-            StatmentUtil.execute(body, context);
+            body.execute(context);
         }
         if (context.loopCtrl.goon() && next != null) {
-            StatmentUtil.execute(next, context);
+            next.execute(context);
         }
         return null;
     }
@@ -38,6 +36,6 @@ public final class CaseStatment extends AbstractStatment implements Loopable{
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        return body != null? body.collectPossibleLoopsInfo() : null;
+        return StatmentUtil.collectPossibleLoopsInfo(body);
     }
 }

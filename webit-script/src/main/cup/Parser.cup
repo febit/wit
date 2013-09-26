@@ -138,7 +138,7 @@ action code {:
     //================ >> Statment
     
     private Statment createIncludeStatment(Expression expr,Expression paramExpr, int line, int column){
-        return StatmentUtil.optimize(new IncludeStatment(expr, paramExpr, line, column));
+        return new IncludeStatment(expr, paramExpr, line, column);
     }
                 
     private ImportStatmentPart createImportStatmentPart(Expression expr, int line, int column){
@@ -146,15 +146,15 @@ action code {:
     }
         
     private Statment createEchoStatment(Expression expr, int line, int column){
-        return StatmentUtil.optimize(new EchoStatment(expr, line, column));
+        return new EchoStatment(expr, line, column);
     }
     
     private Statment createReturnStatment(Expression expr, int line, int column){
-        return StatmentUtil.optimize(new ReturnStatment(expr, line, column));
+        return new ReturnStatment(expr, line, column);
     }
 
     private Statment createBreakStatment(String label, int line, int column) {
-        return StatmentUtil.optimize(new BreakStatment(label, line, column));
+        return new BreakStatment(label, line, column);
     }
 
     private Statment createPlaceHolderStatment(Expression expr) {
@@ -162,7 +162,7 @@ action code {:
     }
 
     private Statment createContinueStatment(String label, int line, int column) {
-        return StatmentUtil.optimize(new ContinueStatment(label, line, column));
+        return new ContinueStatment(label, line, column);
     }
 
     private SwitchStatmentPart createSwitchStatmentPart(){

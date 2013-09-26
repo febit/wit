@@ -7,7 +7,6 @@ import java.util.Map;
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
@@ -22,7 +21,7 @@ import webit.script.util.collection.Iter;
  *
  * @author Zqq
  */
-public final class ForMapStatment extends AbstractStatment implements Optimizable, Loopable {
+public final class ForMapStatment extends AbstractStatment implements Loopable {
 
     private final int[] paramIndexs;
     private final Expression mapExpr;
@@ -47,19 +46,19 @@ public final class ForMapStatment extends AbstractStatment implements Optimizabl
             if (object instanceof Map) {
                 iter = CollectionUtil.toIter(((Map) object).entrySet());
             } else {
-                throw new ScriptRuntimeException("not a instance of java.util.Map");
+                throw new ScriptRuntimeException("Not a instance of java.util.Map");
             }
         } else {
             iter = null;
         }
-        if (iter != null && iter.hasNext() && bodyStatment != null) {
-            final LoopCtrl ctrl = context.loopCtrl;
+        if (iter != null && iter.hasNext()) {
             final Object[] params = new Object[3];
             params[2] = iter;
             Map.Entry entry;
-            label:
-            while (iter.hasNext()) {
 
+            final LoopCtrl ctrl = context.loopCtrl;
+            label:
+            do {
                 entry = iter.next();
                 params[0] = entry.getKey();
                 params[1] = entry.getValue();
@@ -80,12 +79,13 @@ public final class ForMapStatment extends AbstractStatment implements Optimizabl
                                 break; //switch
                             default:
                                 break label; //while
-                        }
+                            }
                     } else {
                         break; //while
                     }
                 }
-            }
+            } while (iter.hasNext());
+
         } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }
@@ -93,39 +93,34 @@ public final class ForMapStatment extends AbstractStatment implements Optimizabl
     }
 
     public Statment optimize() {
-        return bodyStatment != null || elseStatment != null ? this : null;
+        //XXX: allow empty??
+        //return StatmentUtil.optimize(bodyStatment) != null || StatmentUtil.optimize(elseStatment) != null ? this : null;
+        return this;
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
 
-        List<LoopInfo> list = null;
-        if (bodyStatment != null) {
-            list = bodyStatment.collectPossibleLoopsInfo();
-            if (list != null) {
-
-                for (Iterator<LoopInfo> it = list.iterator(); it.hasNext();) {
-                    LoopInfo loopInfo = it.next();
-                    if (loopInfo.matchLabel(this.label)
-                            && (loopInfo.type == LoopType.BREAK
-                            || loopInfo.type == LoopType.CONTINUE)) {
-                        it.remove();
-                    }
+        List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(bodyStatment);
+        if (list != null) {
+            for (Iterator<LoopInfo> it = list.iterator(); it.hasNext();) {
+                LoopInfo loopInfo = it.next();
+                if (loopInfo.matchLabel(this.label)
+                        && (loopInfo.type == LoopType.BREAK
+                        || loopInfo.type == LoopType.CONTINUE)) {
+                    it.remove();
                 }
-
-                list = list.isEmpty() ? null : list;
             }
+            list = list.isEmpty() ? null : list;
         }
 
         //
-        if (elseStatment != null && elseStatment instanceof Loopable) {
-            List<LoopInfo> list2 = ((Loopable) elseStatment).collectPossibleLoopsInfo();
-
-            if (list == null) {
-                list = list2;
-            } else if (list2 != null) {
-                list.addAll(list2);
-            }
+        List<LoopInfo> list2 = StatmentUtil.collectPossibleLoopsInfo(elseStatment);
+        if (list == null) {
+            return list2;
+        } else if (list2 != null) {
+            list.addAll(list2);
         }
+
         return list;
     }
 }

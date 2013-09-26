@@ -25,7 +25,6 @@ public final class ForInStatmentPart extends StatmentPart {
         this.iterIndex = iterIndex;
         this.collectionExpr = collectionExpr;
     }
-    
 
     public ForInStatmentPart setLabel(String label) {
         this.label = label;
@@ -33,7 +32,7 @@ public final class ForInStatmentPart extends StatmentPart {
     }
 
     public ForInStatmentPart setBodyStatment(BlockStatment bodyStatment) {
-        this.bodyStatment = bodyStatment.optimize();
+        this.bodyStatment = bodyStatment;
         return this;
     }
 
@@ -41,8 +40,13 @@ public final class ForInStatmentPart extends StatmentPart {
         this.elseStatment = StatmentUtil.optimize(elseStatment);
         return this;
     }
-    
-    public Statment pop(){
-        return StatmentUtil.optimize(new ForInStatment(itemIndex, iterIndex, collectionExpr, bodyStatment, elseStatment, label, line, column));
+
+    public Statment pop() {
+        if (bodyStatment == null) {
+            return bodyStatment = new EmptyBlockStatment(line, column);
+        }
+        return bodyStatment.hasLoops()
+                ? new ForInStatment(itemIndex, iterIndex, collectionExpr, bodyStatment, elseStatment, label, line, column)
+                : new ForInStatmentNoLoops(itemIndex, iterIndex, collectionExpr, bodyStatment, elseStatment, line, column);
     }
 }

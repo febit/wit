@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.StatmentPart;
+import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.runtime.variant.VariantMap;
 import webit.script.core.runtime.variant.VariantUtil;
+import webit.script.util.StatmentUtil;
 
 /**
  *
@@ -28,6 +31,7 @@ public final class BlockStatmentPart extends StatmentPart {
     }
 
     public BlockStatmentPart append(Statment stat) {
+        stat = StatmentUtil.optimize(stat);
         if (stat != null) {
             statmentList.add(stat);
         }
@@ -35,12 +39,18 @@ public final class BlockStatmentPart extends StatmentPart {
     }
 
     public BlockStatment pop() {
+        if (statmentList.isEmpty()) {
+            return new EmptyBlockStatment(line, column);
+        }
+        Statment[] statments = statmentList.toArray(new Statment[statmentList.size()]);
+        VariantMap variantMap = VariantUtil.toVariantMap(varMap);
 
-        return statmentList.isEmpty()
-                ? new BlockStatment(null, null, line, column)
-                : new BlockStatment(VariantUtil.toVariantMap(varMap),
-                statmentList.toArray(new Statment[statmentList.size()]),
-                line, column)
-                .optimize();
+        List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
+        if (loopInfos == null || loopInfos.isEmpty()) {
+            return new BlockStatmentNoLoops(variantMap, statments, line, column);
+        } else {
+            return new BlockStatmentWithLoops(variantMap, statments, line, column,
+                    loopInfos.toArray(new LoopInfo[loopInfos.size()]));
+        }
     }
 }

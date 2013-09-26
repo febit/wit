@@ -3,6 +3,8 @@
 import "/junit-assert.wtl";
 
 var assertEquals;
+var assertNull;
+var assertNotNull;
 
 {
     var s = "";
@@ -10,5 +12,25 @@ var assertEquals;
         s +=  for.iter.isOdd? "1":"0";
     }
     assertEquals("1010", s);
+}
+{
+    var i = 0;
+    var counter = 3; 
+    for(i : 3..6){
+        assertEquals(i, counter);
+        counter++;
+    }else{
+        //assert shouldn't run here
+        assertNotNull(null);
+    }
+    assertEquals(i, 0);
+    assertEquals(counter, 7);
+}
+{
+    for(i : 3..6){
+    }else{
+        //assert shouldn't run here
+        assertNotNull(null);
+    }
 }
 %>

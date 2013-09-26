@@ -43,10 +43,8 @@ public final class SwitchStatmentPart extends StatmentPart {
     }
 
     public SwitchStatmentPart appendCaseStatment(Object key, BlockStatment body, int line, int column) {
-        
-        body = body.optimize();
-        
-        currentCaseStatment = new CaseStatment(body, currentCaseStatment, line, column);
+
+        currentCaseStatment = new CaseStatment(body, currentCaseStatment);
         if (key == null) {
             if (defaultStatment != null) {
                 throw new ParserException("multi default block in one swith", line, column);
