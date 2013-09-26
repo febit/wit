@@ -5,9 +5,9 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopCtrl;
+import webit.script.core.ast.loop.LoopType;
 import webit.script.core.runtime.variant.VariantStack;
 import webit.script.core.runtime.variant.VariantMap;
-import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -22,8 +22,9 @@ public final class Function extends AbstractStatment {
     public final int overflowUpstairsRange;
     private final VariantMap varMap;
     private final Statment[] statments;
+    private final boolean hasReturnLoops;
 
-    public Function(int argsIndex, int[] argIndexs, int[] overflowUpstairs, VariantMap varMap, Statment[] statments, int line, int column) {
+    public Function(int argsIndex, int[] argIndexs, int[] overflowUpstairs, VariantMap varMap, Statment[] statments, boolean hasReturnLoops, int line, int column) {
         super(line, column);
         this.argIndexs = argIndexs;
         this.argsIndex = argsIndex;
@@ -32,6 +33,7 @@ public final class Function extends AbstractStatment {
         this.overflowUpstairsRange = overflowUpstairs != null ? overflowUpstairs[overflowUpstairs.length - 1] - overflowUpstairs[0] : -1;
         this.varMap = varMap;
         this.statments = statments;
+        this.hasReturnLoops = hasReturnLoops;
     }
 
     public Object execute(final Context context) {
@@ -45,23 +47,25 @@ public final class Function extends AbstractStatment {
         vars.set(0, argsIndex, args);
         vars.set(argIndexs, args);
         final int len = statments.length;
-        final LoopCtrl ctrl = context.loopCtrl;
-        for (int i = 0; i < len && ctrl.goon(); i++) {
-            StatmentUtil.execute(statments[i], context);
-        }
-        vars.pop();
 
-        if (!ctrl.goon()) {
-            switch (ctrl.getLoopType()) {
-                case BREAK:
-                    throw new ScriptRuntimeException("break loop overflow");
-                case RETURN:
-                    return ctrl.getLoopValue(); //return
-                case CONTINUE:
-                    throw new ScriptRuntimeException("continue loop overflow");
-                default:
-                    break;
+        if (hasReturnLoops) {
+
+            final LoopCtrl ctrl = context.loopCtrl;
+            for (int i = 0; i < len && ctrl.goon(); i++) {
+                StatmentUtil.execute(statments[i], context);
             }
+            vars.pop();
+
+            if (!ctrl.goon() && ctrl.getLoopType() == LoopType.RETURN) {
+                Object result = ctrl.getLoopValue();
+                ctrl.reset();
+                return result;
+            }
+        } else {
+            for (int i = 0; i < len; i++) {
+                StatmentUtil.execute(statments[i], context);
+            }
+            vars.pop();
         }
         return Context.VOID;
     }

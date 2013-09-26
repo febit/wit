@@ -27,21 +27,16 @@ public final class FunctionMethodDeclare implements MethodDeclare {
             return function.execute(new Context(context, template, parentVarContexts), args);
         } catch (Throwable e) {
 
-            ScriptRuntimeException old;
-            if (e instanceof ScriptRuntimeException) {
-                old = (ScriptRuntimeException) e;
-            } else {
-                old = new ScriptRuntimeException(e, function);
-            }
+            ScriptRuntimeException runtimeException = e instanceof ScriptRuntimeException
+                    ? (ScriptRuntimeException) e
+                    : new ScriptRuntimeException(e, function);
 
-            ScriptRuntimeException exception;
             if (template == context.template) {
-                exception = old;
+                throw runtimeException;
             } else {
-                old.setTemplate(template);
-                exception = new ScriptRuntimeException(e);
+                runtimeException.setTemplate(template);
+                throw new ScriptRuntimeException(e);
             }
-            throw exception;
         }
     }
 }

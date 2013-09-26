@@ -1,0 +1,10 @@
+<%
+var func = function(){
+    cantDealLabel:
+    switch(2){
+        case 1:
+            continue cantDealLabel;
+        default:
+    }
+};
+%>

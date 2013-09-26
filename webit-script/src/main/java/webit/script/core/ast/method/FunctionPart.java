@@ -1,13 +1,18 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.method;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.Position;
+import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.ast.loop.LoopType;
 import webit.script.core.runtime.variant.VariantUtil;
+import webit.script.exceptions.ParserException;
 import webit.script.util.StatmentUtil;
+import webit.script.util.StringUtil;
 import webit.script.util.collection.IntArrayList;
 
 /**
@@ -59,11 +64,31 @@ public final class FunctionPart extends Position {
     }
 
     public Function pop() {
+        Statment[] statments = statmentList.toArray(new Statment[statmentList.size()]);
+
+        boolean hasReturnLoops = false;
+        List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
+
+        if (loopInfos != null && loopInfos.size() > 0) {
+
+            for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
+                LoopInfo loopInfo = it.next();
+                if (loopInfo.type == LoopType.RETURN) {
+                    hasReturnLoops = true;
+                    it.remove();
+                }
+            }
+            if (loopInfos.size() > 0) {
+                throw new ParserException("Loops overflow in function body: " + StringUtil.join(loopInfos, ","));
+            }
+        }
+
         return new Function(argsIndex,
                 argIndexList.isEmpty() ? null : argIndexList.toArray(),
                 overflowUpstairs,
                 VariantUtil.toVariantMap(varMap),
-                statmentList.toArray(new Statment[statmentList.size()]),
+                statments,
+                hasReturnLoops,
                 line, column);
     }
 }

@@ -1,0 +1,7 @@
+<%
+var func = function(){
+    for(i : 3 .. 4){
+        break notExistLabel;
+    }
+};
+%>
