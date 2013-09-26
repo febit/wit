@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
-import webit.script.core.ast.StatmentPart;
+import webit.script.core.ast.Position;
 import webit.script.exceptions.ParserException;
 import webit.script.util.StatmentUtil;
 
@@ -13,7 +13,7 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public final class SwitchStatmentPart extends StatmentPart {
+public final class SwitchStatmentPart extends Position {
 
     private Expression switchExpr;
     private CaseStatment defaultStatment;

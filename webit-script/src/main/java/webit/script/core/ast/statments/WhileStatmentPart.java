@@ -3,13 +3,13 @@ package webit.script.core.ast.statments;
 
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
-import webit.script.core.ast.StatmentPart;
+import webit.script.core.ast.Position;
 
 /**
  *
  * @author Zqq
  */
-public final class WhileStatmentPart extends StatmentPart {
+public final class WhileStatmentPart extends Position {
 
     private Expression whileExpr;
     private BlockStatment bodyStatment;

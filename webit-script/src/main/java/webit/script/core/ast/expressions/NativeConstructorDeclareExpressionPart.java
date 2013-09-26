@@ -3,7 +3,7 @@ package webit.script.core.ast.expressions;
 
 import java.util.LinkedList;
 import java.util.List;
-import webit.script.core.ast.StatmentPart;
+import webit.script.core.ast.Position;
 import webit.script.exceptions.NativeSecurityException;
 import webit.script.exceptions.ParserException;
 import webit.script.security.NativeSecurityManager;
@@ -13,7 +13,7 @@ import webit.script.util.NativeSecurityManagerUtil;
  *
  * @author Zqq
  */
-public class NativeConstructorDeclareExpressionPart extends StatmentPart {
+public class NativeConstructorDeclareExpressionPart extends Position {
 
     private Class clazz;
     private List<Class> paramTypeList;

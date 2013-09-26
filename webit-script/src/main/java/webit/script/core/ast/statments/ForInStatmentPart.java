@@ -3,14 +3,14 @@ package webit.script.core.ast.statments;
 
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
-import webit.script.core.ast.StatmentPart;
+import webit.script.core.ast.Position;
 import webit.script.util.StatmentUtil;
 
 /**
  *
  * @author Zqq
  */
-public final class ForInStatmentPart extends StatmentPart {
+public final class ForInStatmentPart extends Position {
 
     private int itemIndex;
     private int iterIndex;

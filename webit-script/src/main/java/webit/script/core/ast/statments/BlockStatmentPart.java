@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import webit.script.core.ast.Statment;
-import webit.script.core.ast.StatmentPart;
+import webit.script.core.ast.Position;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.runtime.variant.VariantMap;
 import webit.script.core.runtime.variant.VariantUtil;
@@ -15,7 +15,7 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public final class BlockStatmentPart extends StatmentPart {
+public final class BlockStatmentPart extends Position {
 
     private List<Statment> statmentList;
     private Map<String, Integer> varMap;

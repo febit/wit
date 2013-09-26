@@ -116,7 +116,7 @@ import webit.script.security.NativeSecurityManager;
 public abstract class lr_parser {
 
     protected lr_parser(String[] nonTerminalNames, short[][] production_tab, short[][] action_tab, short[][] reduce_tab) {
-        this.nonTerminalNames = nonTerminalNames;
+        //this.nonTerminalNames = nonTerminalNames;
         this.production_tab = production_tab;
         this.action_tab = action_tab;
         this.reduce_tab = reduce_tab;
@@ -203,7 +203,7 @@ public abstract class lr_parser {
      * The parse stack itself.
      */
     protected Stack<Symbol> stack = new ArrayStack<Symbol>();
-    private final String[] nonTerminalNames;
+    //private final String[] nonTerminalNames;
     /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
     /**
      * Direct reference to the production table.
@@ -377,7 +377,7 @@ public abstract class lr_parser {
         int lhs_sym_id = production_tab[action][0];
         int handle_size = production_tab[action][1];
 
-        String symbolName = nonTerminalNames[lhs_sym_id];
+        String symbolName = null;//XXX: nonTerminalNames[lhs_sym_id];
 
         if (symbolNoRightLeft || handle_size == 0) {
             lhs_sym = symbolFactory.newSymbol(symbolName, lhs_sym_id, result);

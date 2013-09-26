@@ -7,7 +7,6 @@ import java.util.Map;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.runtime.variant.VariantUtil;
 import webit.script.exceptions.ParserException;
-import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.StatmentUtil;
 import webit.script.util.StringUtil;
 
@@ -15,21 +14,21 @@ import webit.script.util.StringUtil;
  *
  * @author Zqq
  */
-public class TemplatePart {
+public class TemplateASTPart {
 
     protected final List<Statment> statmentList;
     private Map<String, Integer> varMap;
 
-    public TemplatePart() {
+    public TemplateASTPart() {
         this.statmentList = new LinkedList<Statment>();
     }
 
-    public TemplatePart setVarMap(Map<String, Integer> varMap) {
+    public TemplateASTPart setVarMap(Map<String, Integer> varMap) {
         this.varMap = varMap;
         return this;
     }
 
-    public TemplatePart append(Statment stat) {
+    public TemplateASTPart append(Statment stat) {
 
         stat = StatmentUtil.optimize(stat);
 

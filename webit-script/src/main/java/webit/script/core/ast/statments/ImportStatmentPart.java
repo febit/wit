@@ -4,14 +4,14 @@ package webit.script.core.ast.statments;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.StatmentPart;
+import webit.script.core.ast.Position;
 import webit.script.core.ast.expressions.ContextValue;
 
 /**
  *
  * @author Zqq
  */
-public class ImportStatmentPart extends StatmentPart {
+public class ImportStatmentPart extends Position {
 
     private Expression expr;
     private Expression paramsExpr;

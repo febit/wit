@@ -4,13 +4,13 @@ package webit.script.core.ast.expressions;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.StatmentPart;
+import webit.script.core.ast.Position;
 
 /**
  *
  * @author Zqq
  */
-public final class ArrayValuePart extends StatmentPart {
+public final class ArrayValuePart extends Position {
 
     private final List<Expression> valueExprs;
 

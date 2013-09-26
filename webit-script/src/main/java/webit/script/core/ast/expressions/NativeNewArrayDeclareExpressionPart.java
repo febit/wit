@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
-import webit.script.core.ast.StatmentPart;
+import webit.script.core.ast.Position;
 import webit.script.exceptions.NativeSecurityException;
 import webit.script.exceptions.ParserException;
 import webit.script.security.NativeSecurityManager;
@@ -11,7 +11,7 @@ import webit.script.util.NativeSecurityManagerUtil;
  *
  * @author Zqq
  */
-public class NativeNewArrayDeclareExpressionPart extends StatmentPart {
+public class NativeNewArrayDeclareExpressionPart extends Position {
 
     private Class componentType;
 

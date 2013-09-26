@@ -127,11 +127,11 @@ action code {:
 
     //================ >> TemplateAST
 
-    private TemplatePart createTemplatePart() {
-        return new TemplatePart();
+    private TemplateASTPart createTemplateASTPart() {
+        return new TemplateASTPart();
     }
 
-    private TemplateAST createTemplate(TemplatePart part) {
+    private TemplateAST createTemplateAST(TemplateASTPart part) {
         return part.setVarMap(varmgr.pop()).pop();
     }
 
@@ -538,8 +538,8 @@ non terminal ClassNameBand classPureName;
 non terminal ClassNameBand className;
 
 /* TemplateAST */
-non terminal TemplateAST template;
-non terminal TemplatePart templatePart;
+non terminal TemplateAST templateAST;
+non terminal TemplateASTPart templateASTPart;
 
 
 /* function */
@@ -699,17 +699,17 @@ precedence left     DOT, LBRACK, LPAREN, LBRACE, AT; // . [ ( { @
 
 
 
-/* template */
+/* templateAST */
 
-template            ::= templatePart:part
-                        {: RESULT = createTemplate(part); :}
+templateAST            ::= templateASTPart:part
+                        {: RESULT = createTemplateAST(part); :}
                         ;
 
 
-templatePart        ::= templatePart:part statment:stat
+templateASTPart        ::= templateASTPart:part statment:stat
                         {: RESULT = part.append(stat); :}
                         |
-                        {: RESULT = createTemplatePart(); :}
+                        {: RESULT = createTemplateASTPart(); :}
                         ;
 
 

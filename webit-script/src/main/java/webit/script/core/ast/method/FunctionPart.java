@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import webit.script.core.ast.Statment;
-import webit.script.core.ast.StatmentPart;
+import webit.script.core.ast.Position;
 import webit.script.core.runtime.variant.VariantUtil;
 import webit.script.util.StatmentUtil;
 import webit.script.util.collection.IntArrayList;
@@ -14,7 +14,7 @@ import webit.script.util.collection.IntArrayList;
  *
  * @author Zqq
  */
-public final class FunctionPart extends StatmentPart {
+public final class FunctionPart extends Position {
 
     private IntArrayList argIndexList; //with arguments at first
     private List<Statment> statmentList;
