@@ -92,12 +92,6 @@ public final class ForMapStatment extends AbstractStatment implements Loopable {
         return null;
     }
 
-    public Statment optimize() {
-        //XXX: allow empty??
-        //return StatmentUtil.optimize(bodyStatment) != null || StatmentUtil.optimize(elseStatment) != null ? this : null;
-        return this;
-    }
-
     public List<LoopInfo> collectPossibleLoopsInfo() {
 
         List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(bodyStatment);

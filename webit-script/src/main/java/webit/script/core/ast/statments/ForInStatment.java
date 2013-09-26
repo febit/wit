@@ -75,11 +75,6 @@ public final class ForInStatment extends AbstractStatment implements Loopable {
         return null;
     }
 
-    public Statment optimize() {
-
-        return this;
-    }
-
     public List<LoopInfo> collectPossibleLoopsInfo() {
 
         List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(bodyStatment);

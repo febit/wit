@@ -9,6 +9,7 @@ import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.ast.loop.Loopable;
 import webit.script.core.runtime.variant.VariantMap;
 import webit.script.core.runtime.variant.VariantStack;
 import webit.script.util.StatmentUtil;
@@ -17,7 +18,7 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public class BlockStatmentWithLoops extends AbstractStatment implements BlockStatment {
+public class BlockStatmentWithLoops extends AbstractStatment implements BlockStatment, Loopable {
 
     private final VariantMap varMap;
     private final Statment[] statments;
