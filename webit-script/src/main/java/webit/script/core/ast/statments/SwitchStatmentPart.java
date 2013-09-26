@@ -6,6 +6,7 @@ import java.util.Map;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.Position;
+import webit.script.core.ast.statments.SwitchStatment.CaseEntry;
 import webit.script.exceptions.ParserException;
 import webit.script.util.StatmentUtil;
 
@@ -16,13 +17,13 @@ import webit.script.util.StatmentUtil;
 public final class SwitchStatmentPart extends Position {
 
     private Expression switchExpr;
-    private CaseStatment defaultStatment;
-    private Map<Object, CaseStatment> caseMap;
-    private CaseStatment currentCaseStatment;
+    private CaseEntry defaultStatment;
+    private Map<Object, CaseEntry> caseMap;
+    private CaseEntry currentCaseStatment = null;
     private String label;
 
     public SwitchStatmentPart() {
-        this.caseMap = new HashMap<Object, CaseStatment>();
+        this.caseMap = new HashMap<Object, CaseEntry>();
     }
 
     @Override
@@ -44,7 +45,10 @@ public final class SwitchStatmentPart extends Position {
 
     public SwitchStatmentPart appendCaseStatment(Object key, BlockStatment body, int line, int column) {
 
-        currentCaseStatment = new CaseStatment(body, currentCaseStatment);
+        if (body != null && !(body instanceof EmptyBlockStatment)) {
+            currentCaseStatment = new CaseEntry(body, currentCaseStatment);
+        }
+
         if (key == null) {
             if (defaultStatment != null) {
                 throw new ParserException("multi default block in one swith", line, column);
@@ -62,13 +66,9 @@ public final class SwitchStatmentPart extends Position {
     }
 
     public Statment pop() {
-        
-        if (defaultStatment != null && defaultStatment.isBodyEmpty()) {
-            defaultStatment = null;
-        }
-        
-        Map<Object, CaseStatment> newCaseMap = new HashMap<Object, CaseStatment>((caseMap.size()+1)*4/3 ,0.75f);
-        
+
+        Map<Object, CaseEntry> newCaseMap = new HashMap<Object, CaseEntry>((caseMap.size() + 1) * 4 / 3, 0.75f);
+
         newCaseMap.putAll(caseMap);
 
         return StatmentUtil.optimize(new SwitchStatment(switchExpr, defaultStatment, newCaseMap, label, line, column));

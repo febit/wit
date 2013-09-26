@@ -20,11 +20,11 @@ import webit.script.util.StatmentUtil;
 public final class SwitchStatment extends AbstractStatment implements Loopable {
 
     private final Expression switchExpr;
-    private final CaseStatment defaultStatment;
-    private final Map<Object, CaseStatment> caseMap;//TODO: 可实现不可变map
+    private final CaseEntry defaultStatment;
+    private final Map<Object, CaseEntry> caseMap;//TODO: 可实现不可变map
     private final String label;
 
-    public SwitchStatment(Expression switchExpr, CaseStatment defaultStatment, Map<Object, CaseStatment> caseMap, String label, int line, int column) {
+    SwitchStatment(Expression switchExpr, CaseEntry defaultStatment, Map<Object, CaseEntry> caseMap, String label, int line, int column) {
         super(line, column);
         this.switchExpr = switchExpr;
         this.defaultStatment = defaultStatment;
@@ -36,7 +36,7 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
         final Object result = StatmentUtil.execute(switchExpr, context);
         boolean run = false;
         if (result != null) {
-            final CaseStatment caseStatment = caseMap.get(result);
+            final CaseEntry caseStatment = caseMap.get(result);
             if (caseStatment != null) {
                 caseStatment.execute(context);
                 run = true;
@@ -60,15 +60,18 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
         //collect
         LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
 
-        for (Map.Entry<Object, CaseStatment> entry : caseMap.entrySet()) {
-            List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(entry.getValue());
+        //XXX: May have duplicated LoopInfo caused by duplicated CaseEntry
+        for (Map.Entry<Object, CaseEntry> entry : caseMap.entrySet()) {
+            List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(entry.getValue().body);
             if (list != null) {
                 loopInfos.addAll(list);
             }
         }
-        List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(defaultStatment);
-        if (list != null) {
-            loopInfos.addAll(list);
+        if (defaultStatment != null) {
+            List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(defaultStatment.body);
+            if (list != null) {
+                loopInfos.addAll(list);
+            }
         }
 
         //check
@@ -81,5 +84,24 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
         }
         return loopInfos.isEmpty() ? null : loopInfos;
 
+    }
+
+    static final class CaseEntry {
+
+        final BlockStatment body;
+        final CaseEntry next;
+
+        CaseEntry(BlockStatment body, CaseEntry next) {
+            this.body = body;
+            this.next = next;
+        }
+
+        Object execute(final Context context) {
+            body.execute(context);
+            if (context.loopCtrl.goon() && next != null) {
+                next.execute(context);
+            }
+            return null;
+        }
     }
 }

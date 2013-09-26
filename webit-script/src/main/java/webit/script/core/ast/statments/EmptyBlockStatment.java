@@ -27,7 +27,7 @@ public class EmptyBlockStatment extends AbstractStatment implements BlockStatmen
         return null;
     }
 
-    public Statment optimize() throws Throwable {
+    public Statment optimize(){
         return null;
     }
 }

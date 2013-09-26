@@ -90,7 +90,7 @@ public class StatmentUtil {
         return null;
     }
 
-    public static List<LoopInfo> collectPossibleLoopsInfo(Object statment) {
+    public static List<LoopInfo> collectPossibleLoopsInfo(Statment statment) {
         return (statment != null && statment instanceof Loopable)
                 ? ((Loopable) statment).collectPossibleLoopsInfo()
                 : null;
