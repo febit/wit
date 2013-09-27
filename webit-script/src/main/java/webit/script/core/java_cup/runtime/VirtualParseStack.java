@@ -15,12 +15,12 @@ package webit.script.core.java_cup.runtime;
  * @version last updated: 7/3/96
  * @author Frank Flannery
  */
-final class virtual_parse_stack {
+final class VirtualParseStack {
 
-    public virtual_parse_stack(Stack<Symbol> shadowing_stack) throws java.lang.Exception {
+    VirtualParseStack(Stack<Symbol> shadowing_stack) {
 
         real_stack = shadowing_stack;
-        vstack = new ArrayStack<Integer>();
+        vstack = new Stack<Integer>();
         real_next = 0;
 
         get_from_real();
@@ -34,7 +34,7 @@ final class virtual_parse_stack {
      * bottom of the virtual portion of the stack, but is always line
      * unmodified.
      */
-    protected Stack<Symbol> real_stack;
+    private Stack<Symbol> real_stack;
 
     /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
     /**
@@ -42,7 +42,7 @@ final class virtual_parse_stack {
      * measured from top of stack, so 0 would indicate that no elements have
      * been "moved" from the real to virtual stack.
      */
-    protected int real_next;
+    private int real_next;
 
     /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
     /**
@@ -52,7 +52,7 @@ final class virtual_parse_stack {
      * stack). When this portion of the stack becomes empty we transfer elements
      * from the underlying stack onto this stack.
      */
-    protected Stack<Integer> vstack;
+    private Stack<Integer> vstack;
 
     /*-----------------------------------------------------------*/
     /*--- General Methods ---------------------------------------*/
@@ -61,7 +61,7 @@ final class virtual_parse_stack {
      * Transfer an element from the real to the virtual stack. This assumes that
      * the virtual stack is currently empty.
      */
-    protected void get_from_real() {
+    private void get_from_real() {
         /* don't transfer if the real stack is empty */
         if (real_next >= real_stack.size()) {
             return;
@@ -77,15 +77,15 @@ final class virtual_parse_stack {
         vstack.push(stack_sym.parse_state);
     }
 
-    public boolean empty() {
+    boolean empty() {
         return vstack.empty();
     }
 
-    public int top() throws java.lang.Exception {
-        return vstack.peek().intValue();
+    int top() {
+        return vstack.peek();
     }
 
-    public void pop() {
+    void pop() {
         /* pop it */
         vstack.pop();
 
@@ -95,7 +95,7 @@ final class virtual_parse_stack {
         }
     }
 
-    public void push(int state_num) {
+    void push(int state_num) {
         vstack.push(state_num);
     }
 }

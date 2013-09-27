@@ -202,7 +202,7 @@ public abstract class lr_parser {
     /**
      * The parse stack itself.
      */
-    protected Stack<Symbol> stack = new ArrayStack<Symbol>();
+    protected Stack<Symbol> stack = new Stack<Symbol>();
     //private final String[] nonTerminalNames;
     /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
     /**
@@ -735,7 +735,7 @@ public abstract class lr_parser {
         short lhs, rhs_size;
 
         /* create a virtual stack from the real parse stack */
-        virtual_parse_stack vstack = new virtual_parse_stack(stack);
+        VirtualParseStack vstack = new VirtualParseStack(stack);
 
         /* parse until we fail or get past the lookahead input */
         for (;;) {
