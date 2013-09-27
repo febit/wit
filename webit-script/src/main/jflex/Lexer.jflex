@@ -1,6 +1,5 @@
 package webit.script.core;
 
-import webit.script.core.java_cup.runtime.Scanner;
 import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.util.FastCharBuffer;
 import webit.script.util.RepeatChars;
@@ -10,11 +9,12 @@ import webit.script.util.RepeatChars;
 %public
 %class Lexer
 /* %cup */
-%implements Tokens,Scanner
-%function next_token
+%implements Tokens
+%function nextToken
 %type Symbol
 %line
 %column
+%buffer 8192
 
 %{
     //================ >> user code

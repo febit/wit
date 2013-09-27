@@ -5,7 +5,7 @@ package webit.script.core.java_cup.runtime;
  *
  * @author Zqq
  */
-public class ArrayStack<T> implements Stack<T> {
+class ArrayStack<T> implements Stack<T> {
 
     private Object[] elements;
     private int size;

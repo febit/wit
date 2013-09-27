@@ -270,7 +270,7 @@ public abstract class lr_parser {
      * not recycle objects; every call to scan() should return a fresh object.
      */
     private Symbol scan() throws Exception {
-        return lexer.next_token();
+        return lexer.nextToken();
     }
 
     private void report_fatal_error(String message, Object info) {
@@ -295,7 +295,7 @@ public abstract class lr_parser {
      * binary search (depending on the size of the row).
      *
      * @param state the state index of the action being accessed.
-     * @param sym the Symbol index of the action being accessed.
+     * @param id the Symbol index of the action being accessed.
      */
     private short get_action(int state, int sym) {
         short tag;
@@ -345,7 +345,7 @@ public abstract class lr_parser {
      * linear search.
      *
      * @param state the state index of the entry being accessed.
-     * @param sym the Symbol index of the entry being accessed.
+     * @param id the Symbol index of the entry being accessed.
      */
     private short get_reduce(int state, int sym) {
         short tag;
@@ -401,7 +401,6 @@ public abstract class lr_parser {
 
         /* shift to that state */
         lhs_sym.parse_state = parse_state;
-        lhs_sym.used_by_parser = true;
         stack.push(lhs_sym);
         tos++;
 
@@ -495,21 +494,16 @@ public abstract class lr_parser {
         /* continue until we are told to stop */
         isParseDone = false;
         while (!isParseDone) {
-            /* Check current token for freshness. */
-            if (cur_token.used_by_parser) {
-                throw new Error("Symbol recycling detected (fix your scanner).");
-            }
 
             /* current state is always on the top of the stack */
 
             /* look up action out of the current state with the current input */
-            act = get_action(stack.peek().parse_state, cur_token.sym);
+            act = get_action(stack.peek().parse_state, cur_token.id);
 
             /* decode the action -- > 0 encodes shift */
             if (act > 0) {
                 /* shift to the encoded state by pushing it on the stack */
                 cur_token.parse_state = act - 1;
-                cur_token.used_by_parser = true;
                 stack.push(cur_token);
                 tos++;
 
@@ -582,7 +576,7 @@ public abstract class lr_parser {
             }
 
             /* if we are now at EOF, we have failed */
-            if (lookahead[0].sym == EOF_sym()) {
+            if (lookahead[0].id == EOF_sym()) {
                 return false;
             }
 
@@ -647,7 +641,6 @@ public abstract class lr_parser {
         /* build and shift a special error Symbol */
         error_token = symbolFactory.newSymbol("ERROR", error_sym(), left, right);
         error_token.parse_state = act - 1;
-        error_token.used_by_parser = true;
         stack.push(error_token);
         tos++;
 
@@ -747,7 +740,7 @@ public abstract class lr_parser {
         /* parse until we fail or get past the lookahead input */
         for (;;) {
             /* look up the action from the current state (on top of stack) */
-            act = get_action(vstack.top(), cur_err_token().sym);
+            act = get_action(vstack.top(), cur_err_token().id);
 
             /* if its an error, we fail */
             if (act == 0) {
@@ -814,13 +807,12 @@ public abstract class lr_parser {
 
             cur_err_token = cur_err_token();
             /* look up action out of the current state with the current input */
-            act = get_action(stack.peek().parse_state, cur_err_token.sym);
+            act = get_action(stack.peek().parse_state, cur_err_token.id);
 
             /* decode the action -- > 0 encodes shift */
             if (act > 0) {
                 /* shift to the encoded state by pushing it on the stack */
                 cur_err_token.parse_state = act - 1;
-                cur_err_token.used_by_parser = true;
 
                 stack.push(cur_err_token);
                 tos++;
