@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.Position;
 import webit.script.exceptions.NativeSecurityException;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.security.NativeSecurityManager;
 import webit.script.util.NativeSecurityManagerUtil;
 
@@ -43,11 +43,11 @@ public class NativeConstructorDeclareExpressionPart extends Position {
                     clazz.getConstructor(paramTypeList.toArray(new Class[paramTypeList.size()])),
                     line, column);
         } catch (NoSuchMethodException ex) {
-            throw new ParserException(ex.getMessage(), line, column);
+            throw new ParseException(ex.getMessage(), line, column);
         } catch (SecurityException ex) {
-            throw new ParserException(ex.getMessage(), line, column);
+            throw new ParseException(ex.getMessage(), line, column);
         } catch (NativeSecurityException ex) {
-            throw new ParserException(ex.getMessage(), line, column);
+            throw new ParseException(ex.getMessage(), line, column);
         }
     }
 }

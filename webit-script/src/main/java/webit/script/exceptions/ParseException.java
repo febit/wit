@@ -10,7 +10,7 @@ import webit.script.core.ast.Statment;
  *
  * @author Zqq
  */
-public class ParserException extends RuntimeException {
+public class ParseException extends RuntimeException {
 
     private int line = -1;
     private int column = -1;
@@ -43,7 +43,7 @@ public class ParserException extends RuntimeException {
         }
     }
 
-    public ParserException setPosition(int line, int column) {
+    public ParseException setPosition(int line, int column) {
         this.line = line;
         this.column = column;
         return this;
@@ -87,44 +87,44 @@ public class ParserException extends RuntimeException {
         }
     }
 
-    public ParserException() {
+    public ParseException() {
         super();
     }
 
-    public ParserException(Statment statment) {
+    public ParseException(Statment statment) {
         this();
         initByStatment(statment);
     }
 
-    public ParserException(String message) {
+    public ParseException(String message) {
         super(message);
     }
 
-    public ParserException(String message, int line, int column) {
+    public ParseException(String message, int line, int column) {
         this(message);
         this.line = line;
         this.column = column;
     }
 
-    public ParserException(String message, Statment statment) {
+    public ParseException(String message, Statment statment) {
         this(message);
         initByStatment(statment);
     }
 
-    public ParserException(String message, Throwable cause) {
+    public ParseException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ParserException(String message, Throwable cause, Statment statment) {
+    public ParseException(String message, Throwable cause, Statment statment) {
         this(message, cause);
         initByStatment(statment);
     }
 
-    public ParserException(Throwable cause) {
+    public ParseException(Throwable cause) {
         this(null, cause);
     }
 
-    public ParserException(Throwable cause, Statment statment) {
+    public ParseException(Throwable cause, Statment statment) {
         this(cause);
         initByStatment(statment);
     }

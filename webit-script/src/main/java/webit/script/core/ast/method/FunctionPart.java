@@ -10,7 +10,7 @@ import webit.script.core.ast.Position;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.LoopType;
 import webit.script.core.runtime.variant.VariantUtil;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.util.StatmentUtil;
 import webit.script.util.StringUtil;
 import webit.script.util.collection.IntArrayList;
@@ -79,7 +79,7 @@ public final class FunctionPart extends Position {
                 }
             }
             if (loopInfos.size() > 0) {
-                throw new ParserException("Loops overflow in function body: " + StringUtil.join(loopInfos, ","));
+                throw new ParseException("Loops overflow in function body: " + StringUtil.join(loopInfos, ","));
             }
         }
 

@@ -11,7 +11,7 @@ import webit.script.core.ast.ResetableValueExpression;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.io.Out;
 
 /**
@@ -73,7 +73,7 @@ public class StatmentUtil {
                     ? (Expression) ((Optimizable) expression).optimize()
                     : expression;
         } catch (Throwable e) {
-            throw new ParserException("Exception occur when do optimization", e, expression);
+            throw new ParseException("Exception occur when do optimization", e, expression);
         }
     }
 
@@ -84,7 +84,7 @@ public class StatmentUtil {
                         ? ((Optimizable) statment).optimize()
                         : statment;
             } catch (Throwable e) {
-                throw new ParserException("Exception occur when do optimization", e, statment);
+                throw new ParseException("Exception occur when do optimization", e, statment);
             }
         }
         return null;

@@ -7,7 +7,7 @@ import java.io.Writer;
 import java.util.Map;
 import webit.script.core.Parser;
 import webit.script.core.ast.TemplateAST;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
@@ -38,9 +38,9 @@ public final class Template {
      *
      * @return TemplateAST
      * @throws IOException
-     * @throws ParserException
+     * @throws ParseException
      */
-    public TemplateAST prepareTemplate() throws IOException, ParserException {
+    public TemplateAST prepareTemplate() throws IOException, ParseException {
         TemplateAST tmpl = this.templateAst;
         if (tmpl == null || resource.isModified()) { //fast
             synchronized (reloadLock) {
@@ -63,9 +63,9 @@ public final class Template {
      * @param outputStream
      * @return Context
      * @throws ScriptRuntimeException
-     * @throws ParserException
+     * @throws ParseException
      */
-    public Context merge(final Map<String, Object> root, final OutputStream outputStream) throws ScriptRuntimeException, ParserException {
+    public Context merge(final Map<String, Object> root, final OutputStream outputStream) throws ScriptRuntimeException, ParseException {
         return merge(root, new OutputStreamOut(outputStream, engine.getEncoding(), engine.getCoderFactory()));
     }
 
@@ -76,9 +76,9 @@ public final class Template {
      * @param encoding
      * @return Context
      * @throws ScriptRuntimeException
-     * @throws ParserException
+     * @throws ParseException
      */
-    public Context merge(final Map<String, Object> root, final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParserException {
+    public Context merge(final Map<String, Object> root, final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParseException {
         return merge(root, new OutputStreamOut(outputStream, encoding != null ? encoding.toUpperCase().intern() : engine.getEncoding(), engine.getCoderFactory()));
     }
 
@@ -88,9 +88,9 @@ public final class Template {
      * @param writer
      * @return Context
      * @throws ScriptRuntimeException
-     * @throws ParserException
+     * @throws ParseException
      */
-    public Context merge(final Map<String, Object> root, final Writer writer) throws ScriptRuntimeException, ParserException {
+    public Context merge(final Map<String, Object> root, final Writer writer) throws ScriptRuntimeException, ParseException {
         return merge(root, new WriterOut(writer, engine.getEncoding(), engine.getCoderFactory()));
     }
 
@@ -100,9 +100,9 @@ public final class Template {
      * @param out
      * @return Context
      * @throws ScriptRuntimeException
-     * @throws ParserException
+     * @throws ParseException
      */
-    public Context merge(final Map<String, Object> root, final Out out) throws ScriptRuntimeException, ParserException {
+    public Context merge(final Map<String, Object> root, final Out out) throws ScriptRuntimeException, ParseException {
         try {
             final TemplateAST tmpl = prepareTemplate();
             final Context context = new Context(this, out);
@@ -112,9 +112,9 @@ public final class Template {
             if (e instanceof ScriptRuntimeException) {
                 ((ScriptRuntimeException) e).setTemplate(this);
                 throw (ScriptRuntimeException) e;
-            } else if (e instanceof ParserException) {
-                ((ParserException) e).registTemplate(this);
-                throw (ParserException) e;
+            } else if (e instanceof ParseException) {
+                ((ParseException) e).registTemplate(this);
+                throw (ParseException) e;
             } else {
                 throw new ScriptRuntimeException(e).setTemplate(this);
             }

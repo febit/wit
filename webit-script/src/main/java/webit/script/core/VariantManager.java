@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.util.ArrayStack;
 import webit.script.util.Stack;
 
@@ -114,7 +114,7 @@ public class VariantManager {
 
     public Map<String, Integer> pop() {
         if (currentElementIndex < 0) {
-            throw new ParserException("Variant stack overflow");
+            throw new ParseException("Variant stack overflow");
         }
 
         Map<String, Integer> element = elements[currentElementIndex]; //the one need pop 
@@ -128,7 +128,7 @@ public class VariantManager {
     public int assignVariant(String name) {
         Map<String, Integer> current = current();
         if (current.containsKey(name)) {
-            throw new ParserException("Duplicate Variant declare: " + name);
+            throw new ParseException("Duplicate Variant declare: " + name);
         }
         int address = current.size();
         current.put(name, address);
@@ -139,7 +139,7 @@ public class VariantManager {
         int topindex = varWallStack.peek().value;
         Map<String, Integer> top = elements[topindex];
         if (top.containsKey(name)) {
-            throw new ParserException("Duplicate Variant declare: " + name);
+            throw new ParseException("Duplicate Variant declare: " + name);
         }
         int address = top.size();
         top.put(name, address);
@@ -149,7 +149,7 @@ public class VariantManager {
     public int assignVariantForNextBlock(String name) {
         Map<String, Integer> next = next();
         if (next.containsKey(name)) {
-            throw new ParserException("Duplicate Variant declare: " + name);
+            throw new ParseException("Duplicate Variant declare: " + name);
         }
         int address = next.size();
         next.put(name, address);
@@ -166,12 +166,12 @@ public class VariantManager {
                 return index;
             }
             if (force) {
-                throw new ParserException("Can't locate variant: " + name);
+                throw new ParseException("Can't locate variant: " + name);
             } else {
                 return -1;
             }
         } else {
-            throw new ParserException("Stack overflow when locate variant in given upstair: " + name + '-' + upstair);
+            throw new ParseException("Stack overflow when locate variant in given upstair: " + name + '-' + upstair);
         }
     }
 
@@ -185,7 +185,7 @@ public class VariantManager {
             }
         }
         if (force) {
-            throw new ParserException("Can't locate variant: " + name);
+            throw new ParseException("Can't locate variant: " + name);
         } else {
             return assignVariantAtTopWall(name);
         }

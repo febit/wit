@@ -7,7 +7,7 @@ import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.statments.SwitchStatment.CaseEntry;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -51,14 +51,14 @@ public final class SwitchStatmentPart extends Position {
 
         if (key == null) {
             if (defaultStatment != null) {
-                throw new ParserException("multi default block in one swith", line, column);
+                throw new ParseException("multi default block in one swith", line, column);
             }
             defaultStatment = currentCaseStatment;
         } else {
             if (!caseMap.containsKey(key)) {
                 caseMap.put(key, currentCaseStatment);
             } else {
-                throw new ParserException("duplicated case value in one swith", line, column);
+                throw new ParseException("duplicated case value in one swith", line, column);
             }
         }
 

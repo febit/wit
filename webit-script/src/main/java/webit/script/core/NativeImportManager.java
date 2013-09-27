@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import webit.script.util.ClassNameBand;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.util.ClassUtil;
 
 /**
@@ -29,18 +29,18 @@ public class NativeImportManager {
 
         boolean result = pkgs.add(pkgName);
         if (result == false) {
-            throw new ParserException("Duplicate package register: " + pkgName);
+            throw new ParseException("Duplicate package register: " + pkgName);
         }
         return result;
     }
 
-    public boolean registClass(ClassNameBand classNameBand) throws ParserException {
+    public boolean registClass(ClassNameBand classNameBand) throws ParseException {
         final String className = classNameBand.getClassSimpleName();
         if (ClassUtil.getCachedClass(className) != null) {
-            throw new ParserException("Duplicate class simple name:" + classNameBand.getClassPureName());
+            throw new ParseException("Duplicate class simple name:" + classNameBand.getClassPureName());
         }
         if (classes.containsKey(className)) {
-            throw new ParserException("Duplicate class register:" + classNameBand.getClassPureName());
+            throw new ParseException("Duplicate class register:" + classNameBand.getClassPureName());
         }
         String classFullName = classNameBand.getClassPureName();
 
@@ -92,7 +92,7 @@ public class NativeImportManager {
         try {
             return ClassUtil.getClass(classPureName, classNameBand.getArrayDepth());
         } catch (ClassNotFoundException ex) {
-            throw new ParserException(ex);
+            throw new ParseException(ex);
         }
     }
     

@@ -3,7 +3,7 @@ package webit.script.core.ast.expressions;
 
 import webit.script.core.ast.Position;
 import webit.script.exceptions.NativeSecurityException;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.security.NativeSecurityManager;
 import webit.script.util.NativeSecurityManagerUtil;
 
@@ -30,10 +30,10 @@ public class NativeNewArrayDeclareExpressionPart extends Position {
                 NativeSecurityManagerUtil.checkAccess(securityManager, classWaitCheck.getName() + ".[]");
                 return new NativeNewArrayDeclareExpression(componentType, line, column);
             } catch (NativeSecurityException ex) {
-                throw new ParserException(ex.getMessage(), line, column);
+                throw new ParseException(ex.getMessage(), line, column);
             }
         } else {
-            throw new ParserException("componentType must not Void.class", line, column);
+            throw new ParseException("componentType must not Void.class", line, column);
         }
     }
 }

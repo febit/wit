@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.runtime.variant.VariantUtil;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.util.StatmentUtil;
 import webit.script.util.StringUtil;
 
@@ -44,7 +44,7 @@ public class TemplateASTPart {
 
         List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
         if (loopInfos != null && loopInfos.size() > 0) {
-            throw new ParserException("loop overflow: " + StringUtil.join(loopInfos, ","));
+            throw new ParseException("loop overflow: " + StringUtil.join(loopInfos, ","));
         }
 
         return new TemplateAST(VariantUtil.toVariantMap(varMap), statments);

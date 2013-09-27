@@ -7,7 +7,7 @@ import webit.script.core.Lexer;
 import webit.script.core.ast.TemplateAST;
 import webit.script.core.ast.statments.PlaceHolderStatmentFactory;
 import webit.script.core.text.TextStatmentFactory;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.loggers.Logger;
 import webit.script.security.NativeSecurityManager;
 
@@ -275,7 +275,7 @@ public abstract class lr_parser {
 
     private void report_fatal_error(String message, Object info) {
         doneParse();
-        throw new ParserException((message != null ? message : "Parser stop at here, ") + getLine() + "(" + getColumn() + ")", getLine(), getColumn());
+        throw new ParseException((message != null ? message : "Parser stop at here, ") + getLine() + "(" + getColumn() + ")", getLine(), getColumn());
     }
 
     private void syntax_error(Symbol cur_token) {
@@ -427,9 +427,9 @@ public abstract class lr_parser {
      * @param in java.io.Reader
      * @param template Template
      * @return TemplateAST
-     * @throws ParserException
+     * @throws ParseException
      */
-    public TemplateAST parseTemplate(java.io.Reader in, Template template) throws ParserException {
+    public TemplateAST parseTemplate(java.io.Reader in, Template template) throws ParseException {
         try {
             this.lexer = new Lexer(in);
             this.template = template;
@@ -446,10 +446,10 @@ public abstract class lr_parser {
             _textStatmentFactory.finishTemplateParser(template);
             return (TemplateAST) sym.value;
         } catch (Exception e) {
-            if (e instanceof ParserException) {
-                throw (ParserException) e;
+            if (e instanceof ParseException) {
+                throw (ParseException) e;
             } else {
-                throw new ParserException(e);
+                throw new ParseException(e);
             }
         } finally {
             try {

@@ -14,7 +14,7 @@ import webit.script.core.ast.method.*;
 import webit.script.core.ast.statments.*;
 import webit.script.core.java_cup.runtime.Stack;
 import webit.script.core.java_cup.runtime.Symbol;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.util.ClassNameBand;
 import webit.script.util.StatmentUtil;
 
@@ -3056,7 +3056,7 @@ class CUP$Parser$actions {
     private void registPackage(ClassNameBand classNameBand, int line, int column) {
         try {
             nativeImportMgr.registPackage(classNameBand.getClassPureName());
-        } catch (ParserException e) {
+        } catch (ParseException e) {
             throw e.setPosition(line, column);
         }
     }
@@ -3064,7 +3064,7 @@ class CUP$Parser$actions {
     private void registClass(ClassNameBand classNameBand, int line, int column) {
         try {
             nativeImportMgr.registClass(classNameBand);
-        } catch (ParserException e) {
+        } catch (ParseException e) {
             throw e.setPosition(line, column);
         }
     }
@@ -3072,7 +3072,7 @@ class CUP$Parser$actions {
     private Class<?> toClass(ClassNameBand classNameBand, int line, int column) {
         try {
             return nativeImportMgr.toClass(classNameBand);
-        } catch (ParserException e) {
+        } catch (ParseException e) {
             throw e.setPosition(line, column);
         }
     }
@@ -3089,7 +3089,7 @@ class CUP$Parser$actions {
     private int assignVariant(String ident, int line, int column) {
         try {
             return varmgr.assignVariant(ident);
-        } catch (ParserException e) {
+        } catch (ParseException e) {
             throw e.setPosition(line, column);
         }
     }
@@ -3097,7 +3097,7 @@ class CUP$Parser$actions {
     private int assignVariantForNextBlock(String name, int line, int column) {
         try {
             return varmgr.assignVariantForNextBlock(name);
-        } catch (ParserException e) {
+        } catch (ParseException e) {
             throw e.setPosition(line, column);
         }
     }
@@ -3105,7 +3105,7 @@ class CUP$Parser$actions {
     private int locateVarAtUpstairForce(String name, int upstair, int line, int column) {
         try {
             return varmgr.locateAtUpstair(name, upstair, true);
-        } catch (ParserException e) {
+        } catch (ParseException e) {
             throw e.setPosition(line, column);
         }
     }
@@ -3113,7 +3113,7 @@ class CUP$Parser$actions {
     private VarAddress locateVar(String name, int line, int column) {
         try {
             return varmgr.locate(name, parser.isLocateVarForce());
-        } catch (ParserException e) {
+        } catch (ParseException e) {
             throw e.setPosition(line, column);
         }
     }
@@ -3233,7 +3233,7 @@ class CUP$Parser$actions {
             ResetableValueExpression outExpr = (ResetableValueExpression) rexpr;
             return new RedirectOutExpression(srcExpr, outExpr, line, column);
         }else{
-            throw new ParserException("Invalid expression to redirect out stream to, must be rewriteable", line, column);
+            throw new ParseException("Invalid expression to redirect out stream to, must be rewriteable", line, column);
         }
     }
 
@@ -3242,7 +3242,7 @@ class CUP$Parser$actions {
             ResetableValueExpression outExpr = (ResetableValueExpression) rexpr;
             return new RedirectOutStatment(srcStatment, outExpr, line, column);
         }else{
-            throw new ParserException("Invalid expression to redirect out stream to, must be rewriteable", line, column);
+            throw new ParseException("Invalid expression to redirect out stream to, must be rewriteable", line, column);
         }
     }
 
@@ -3314,12 +3314,12 @@ class CUP$Parser$actions {
                     break;
 
                 default:
-                    throw new ParserException("Unsupported Operator", line, column);
+                    throw new ParseException("Unsupported Operator", line, column);
             }
             
             return StatmentUtil.optimize(oper);
         }else{
-            throw new ParserException("Invalid left expression, must be rewriteable", line, column);
+            throw new ParseException("Invalid left expression, must be rewriteable", line, column);
         }
     }
 
@@ -3391,7 +3391,7 @@ class CUP$Parser$actions {
                 oper = new IntStepOperator(leftExpr, rightExpr, line, column);
                 break;
             default:
-                throw new ParserException("Unsupported Operator", line, column);
+                throw new ParseException("Unsupported Operator", line, column);
         }
         return StatmentUtil.optimize(oper);
     }
@@ -3416,7 +3416,7 @@ class CUP$Parser$actions {
         if(lexpr instanceof ResetableValueExpression){
             return StatmentUtil.optimize(new AssignOperator((ResetableValueExpression)lexpr, expr, line, column));
         }else{
-            throw new ParserException("Invalid left expression, must be rewriteable", line, column);
+            throw new ParseException("Invalid left expression, must be rewriteable", line, column);
         }
     }
 
@@ -3448,7 +3448,7 @@ class CUP$Parser$actions {
         if(expr instanceof ResetableValueExpression){
             return StatmentUtil.optimize(new PlusPlusOperator((ResetableValueExpression) expr, executeAtFirst, line, column));
         }else{
-            throw new ParserException("Invalid expression, must be rewriteable", line, column);
+            throw new ParseException("Invalid expression, must be rewriteable", line, column);
         }
     }
 
@@ -3456,7 +3456,7 @@ class CUP$Parser$actions {
         if(expr instanceof ResetableValueExpression){
             return StatmentUtil.optimize(new MinusMinusOperator((ResetableValueExpression) expr, executeAtFirst, line, column));
         }else{
-            throw new ParserException("Invalid expression, must be rewriteable", line, column);
+            throw new ParseException("Invalid expression, must be rewriteable", line, column);
         }
     }
 

@@ -4,7 +4,7 @@ package webit.script;
 import java.io.IOException;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import webit.script.exceptions.ParserException;
+import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ResourceNotFoundException;
 
 /**
@@ -16,13 +16,13 @@ public class FunctionLoopOverflowTest {
     @Test
     public void test() throws ResourceNotFoundException, IOException {
         Template template;
-        ParserException exception;
+        ParseException exception;
         //
         exception = null;
         template = EngineManager.getTemplate("/function/loopOverflow1.wtl");
         try {
             template.prepareTemplate();
-        } catch (ParserException e) {
+        } catch (ParseException e) {
             exception = e;
         }
         assertNotNull(exception);
@@ -32,7 +32,7 @@ public class FunctionLoopOverflowTest {
         template = EngineManager.getTemplate("/function/loopOverflow2.wtl");
         try {
             template.prepareTemplate();
-        } catch (ParserException e) {
+        } catch (ParseException e) {
             exception = e;
         }
         assertNotNull(exception);
@@ -42,7 +42,7 @@ public class FunctionLoopOverflowTest {
         template = EngineManager.getTemplate("/function/loopOverflow3.wtl");
         try {
             template.prepareTemplate();
-        } catch (ParserException e) {
+        } catch (ParseException e) {
             exception = e;
         }
         assertNotNull(exception);
