@@ -33,9 +33,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import webit.script.asm3.ClassVisitor;
+import webit.script.asm3.ClassWriter;
 import webit.script.asm3.Label;
-import webit.script.asm3.MethodVisitor;
+import webit.script.asm3.MethodWriter;
 import webit.script.asm3.Opcodes;
 import webit.script.asm3.Type;
 
@@ -79,30 +79,30 @@ import webit.script.asm3.Type;
  * @author Chris Nokleberg
  * @author Eric Bruneton
  */
-public class GeneratorAdapter extends LocalVariablesSorter {
+public class GeneratorAdapter{
 
     private static final String CLDESC = "Ljava/lang/Class;";
 
-    private static final Type BYTE_TYPE = Type.getObjectType("java/lang/Byte");
+    public static final Type BYTE_TYPE = Type.getObjectType("java/lang/Byte");
 
-    private static final Type BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
+    public static final Type BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
 
-    private static final Type SHORT_TYPE = Type.getObjectType("java/lang/Short");
+    public static final Type SHORT_TYPE = Type.getObjectType("java/lang/Short");
 
-    private static final Type CHARACTER_TYPE = Type.getObjectType("java/lang/Character");
+    public static final Type CHARACTER_TYPE = Type.getObjectType("java/lang/Character");
 
-    private static final Type INTEGER_TYPE = Type.getObjectType("java/lang/Integer");
+    public static final Type INTEGER_TYPE = Type.getObjectType("java/lang/Integer");
 
-    private static final Type FLOAT_TYPE = Type.getObjectType("java/lang/Float");
+    public static final Type FLOAT_TYPE = Type.getObjectType("java/lang/Float");
 
-    private static final Type LONG_TYPE = Type.getObjectType("java/lang/Long");
+    public static final Type LONG_TYPE = Type.getObjectType("java/lang/Long");
 
-    private static final Type DOUBLE_TYPE = Type.getObjectType("java/lang/Double");
+    public static final Type DOUBLE_TYPE = Type.getObjectType("java/lang/Double");
 
-    private static final Type NUMBER_TYPE = Type.getObjectType("java/lang/Number");
+    public static final Type NUMBER_TYPE = Type.getObjectType("java/lang/Number");
 
-    private static final Type OBJECT_TYPE = Type.getObjectType("java/lang/Object");
-
+    public static final Type OBJECT_TYPE = Type.getObjectType("java/lang/Object");
+    
     private static final Method BOOLEAN_VALUE = Method.getMethod("boolean booleanValue()");
 
     private static final Method CHAR_VALUE = Method.getMethod("char charValue()");
@@ -234,15 +234,12 @@ public class GeneratorAdapter extends LocalVariablesSorter {
      * @param desc the method's descriptor (see {@link Type Type}).
      */
     public GeneratorAdapter(
-        final MethodVisitor mv,
+        final MethodWriter mv,
         final int access,
         final String name,
         final String desc)
     {
-        super(access, desc, mv);
-        this.access = access;
-        this.returnType = Type.getReturnType(desc);
-        this.argumentTypes = Type.getArgumentTypes(desc);
+        this(access, desc, mv, Type.getReturnType(desc), Type.getArgumentTypes(desc));
     }
 
     /**
@@ -255,12 +252,30 @@ public class GeneratorAdapter extends LocalVariablesSorter {
     public GeneratorAdapter(
         final int access,
         final Method method,
-        final MethodVisitor mv)
+        final MethodWriter mv)
     {
-        super(access, method.getDescriptor(), mv);
+        this(access, method.getDescriptor(), mv, method.getReturnType(), method.getArgumentTypes());
+    }
+    
+     private GeneratorAdapter(
+        final int access,
+        final String desc,
+        final MethodWriter mv,
+        Type returnType,
+        Type[] argumentTypes)
+    {
+        //super(mv);
+        this.mv = mv;
+        Type[] args = Type.getArgumentTypes(desc);
+        nextLocal = (Opcodes.ACC_STATIC & access) == 0 ? 1 : 0;
+        for (int i = 0; i < args.length; i++) {
+            nextLocal += args[i].getSize();
+        }
+        firstLocal = nextLocal;
+
         this.access = access;
-        this.returnType = method.getReturnType();
-        this.argumentTypes = method.getArgumentTypes();
+        this.returnType = returnType;
+        this.argumentTypes = argumentTypes;
     }
 
     /**
@@ -279,7 +294,7 @@ public class GeneratorAdapter extends LocalVariablesSorter {
         final Method method,
         final String signature,
         final Type[] exceptions,
-        final ClassVisitor cv)
+        final ClassWriter cv)
     {
         this(access, method, cv.visitMethod(access,
                 method.getName(),
@@ -577,7 +592,7 @@ public class GeneratorAdapter extends LocalVariablesSorter {
         return (Type) localTypes.get(local - firstLocal);
     }
 
-    protected void setLocalType(final int local, final Type type) {
+    private void setLocalType(final int local, final Type type) {
         int index = local - firstLocal;
         while (localTypes.size() < index + 1) {
             localTypes.add(null);
@@ -1502,5 +1517,322 @@ public class GeneratorAdapter extends LocalVariablesSorter {
         } else {
             mv.visitTryCatchBlock(start, end, mark(), exception.getInternalName());
         }
+    }
+
+    private MethodWriter mv;
+    /**
+     * Mapping from old to new local variable indexes. A local variable at index
+     * i of size 1 is remapped to 'mapping[2*i]', while a local variable at
+     * index i of size 2 is remapped to 'mapping[2*i+1]'.
+     */
+    private int[] mapping = new int[40];
+
+    /**
+     * Array used to store stack map local variable types after remapping.
+     */
+    private Object[] newLocals = new Object[20];
+
+    /**
+     * Index of the first local variable, after formal parameters.
+     */
+    private final int firstLocal;
+
+    /**
+     * Index of the next local variable to be created by {@link #newLocal}.
+     */
+    private int nextLocal;
+
+    /**
+     * Indicates if at least one local variable has moved due to remapping.
+     */
+    private boolean changed;
+
+    public void visitVarInsn(final int opcode, final int var) {
+        Type type;
+        switch (opcode) {
+            case Opcodes.LLOAD:
+            case Opcodes.LSTORE:
+                type = Type.LONG_TYPE;
+                break;
+
+            case Opcodes.DLOAD:
+            case Opcodes.DSTORE:
+                type = Type.DOUBLE_TYPE;
+                break;
+
+            case Opcodes.FLOAD:
+            case Opcodes.FSTORE:
+                type = Type.FLOAT_TYPE;
+                break;
+
+            case Opcodes.ILOAD:
+            case Opcodes.ISTORE:
+                type = Type.INT_TYPE;
+                break;
+
+            default:
+            // case Opcodes.ALOAD:
+            // case Opcodes.ASTORE:
+            // case RET:
+                type = OBJECT_TYPE;
+                break;
+        }
+        mv.visitVarInsn(opcode, remap(var, type));
+    }
+
+    public void visitIincInsn(final int var, final int increment) {
+        mv.visitIincInsn(remap(var, Type.INT_TYPE), increment);
+    }
+
+    public void visitMaxs(final int maxStack, final int maxLocals) {
+        mv.visitMaxs(maxStack, nextLocal);
+    }
+
+    public void visitLocalVariable(
+        final String name,
+        final String desc,
+        final String signature,
+        final Label start,
+        final Label end,
+        final int index)
+    {
+        int newIndex = remap(index, Type.getType(desc));
+        mv.visitLocalVariable(name, desc, signature, start, end, newIndex);
+    }
+
+    public void visitFrame(
+        final int type,
+        final int nLocal,
+        final Object[] local,
+        final int nStack,
+        final Object[] stack)
+    {
+        if (type != Opcodes.F_NEW) { // uncompressed frame
+            throw new IllegalStateException("ClassReader.accept() should be called with EXPAND_FRAMES flag");
+        }
+
+        if (!changed) { // optimization for the case where mapping = identity
+            mv.visitFrame(type, nLocal, local, nStack, stack);
+            return;
+        }
+
+        // creates a copy of newLocals
+        Object[] oldLocals = new Object[newLocals.length];
+        System.arraycopy(newLocals, 0, oldLocals, 0, oldLocals.length);
+
+        // copies types from 'local' to 'newLocals'
+        // 'newLocals' already contains the variables added with 'newLocal'
+
+        int index = 0; // old local variable index
+        int number = 0; // old local variable number
+        for (; number < nLocal; ++number) {
+            Object t = local[number];
+            int size = t == Opcodes.LONG || t == Opcodes.DOUBLE ? 2 : 1;
+            if (t != Opcodes.TOP) {
+                Type typ = OBJECT_TYPE;
+                if (t == Opcodes.INTEGER) {
+                    typ = Type.INT_TYPE;
+                } else if (t == Opcodes.FLOAT) {
+                    typ = Type.FLOAT_TYPE;
+                } else if (t == Opcodes.LONG) {
+                    typ = Type.LONG_TYPE;
+                } else if (t == Opcodes.DOUBLE) {
+                    typ = Type.DOUBLE_TYPE;
+                } else if (t instanceof String) {
+                    typ = Type.getObjectType((String) t);
+                }
+                setFrameLocal(remap(index, typ), t);
+            }
+            index += size;
+        }
+
+        // removes TOP after long and double types as well as trailing TOPs
+
+        index = 0;
+        number = 0;
+        for (int i = 0; index < newLocals.length; ++i) {
+            Object t = newLocals[index++];
+            if (t != null && t != Opcodes.TOP) {
+                newLocals[i] = t;
+                number = i + 1;
+                if (t == Opcodes.LONG || t == Opcodes.DOUBLE) {
+                    index += 1;
+                }
+            } else {
+                newLocals[i] = Opcodes.TOP;
+            }
+        }
+
+        // visits remapped frame
+        mv.visitFrame(type, number, newLocals, nStack, stack);
+
+        // restores original value of 'newLocals'
+        newLocals = oldLocals;
+    }
+
+    // -------------
+
+    /**
+     * Creates a new local variable of the given type.
+     *
+     * @param type the type of the local variable to be created.
+     * @return the identifier of the newly created local variable.
+     */
+    public int newLocal(final Type type) {
+        Object t;
+        switch (type.getSort()) {
+            case Type.BOOLEAN:
+            case Type.CHAR:
+            case Type.BYTE:
+            case Type.SHORT:
+            case Type.INT:
+                t = Opcodes.INTEGER;
+                break;
+            case Type.FLOAT:
+                t = Opcodes.FLOAT;
+                break;
+            case Type.LONG:
+                t = Opcodes.LONG;
+                break;
+            case Type.DOUBLE:
+                t = Opcodes.DOUBLE;
+                break;
+            case Type.ARRAY:
+                t = type.getDescriptor();
+                break;
+            // case Type.OBJECT:
+            default:
+                t = type.getInternalName();
+                break;
+        }
+        int local = nextLocal;
+        nextLocal += type.getSize();
+        setLocalType(local, type);
+        setFrameLocal(local, t);
+        return local;
+    }
+
+    private void setFrameLocal(final int local, final Object type) {
+        int l = newLocals.length;
+        if (local >= l) {
+            Object[] a = new Object[Math.max(2 * l, local + 1)];
+            System.arraycopy(newLocals, 0, a, 0, l);
+            newLocals = a;
+        }
+        newLocals[local] = type;
+    }
+
+    private int remap(final int var, final Type type) {
+        if (var + type.getSize() <= firstLocal) {
+            return var;
+        }
+        int key = 2 * var + type.getSize() - 1;
+        int size = mapping.length;
+        if (key >= size) {
+            int[] newMapping = new int[Math.max(2 * size, key + 1)];
+            System.arraycopy(mapping, 0, newMapping, 0, size);
+            mapping = newMapping;
+        }
+        int value = mapping[key];
+        if (value == 0) {
+            value = newLocalMapping(type);
+            setLocalType(value, type);
+            mapping[key] = value + 1;
+        } else {
+            value--;
+        }
+        if (value != var) {
+            changed = true;
+        }
+        return value;
+    }
+
+    private int newLocalMapping(final Type type) {
+        int local = nextLocal;
+        nextLocal += type.getSize();
+        return local;
+    }
+    public void visitCode() {
+        mv.visitCode();
+    }
+
+    public void visitInsn(final int opcode) {
+        mv.visitInsn(opcode);
+    }
+
+    public void visitIntInsn(final int opcode, final int operand) {
+        mv.visitIntInsn(opcode, operand);
+    }
+
+    public void visitTypeInsn(final int opcode, final String type) {
+        mv.visitTypeInsn(opcode, type);
+    }
+
+    public void visitFieldInsn(
+        final int opcode,
+        final String owner,
+        final String name,
+        final String desc)
+    {
+        mv.visitFieldInsn(opcode, owner, name, desc);
+    }
+
+    public void visitMethodInsn(
+        final int opcode,
+        final String owner,
+        final String name,
+        final String desc)
+    {
+        mv.visitMethodInsn(opcode, owner, name, desc);
+    }
+
+    public void visitJumpInsn(final int opcode, final Label label) {
+        mv.visitJumpInsn(opcode, label);
+    }
+
+    public void visitLabel(final Label label) {
+        mv.visitLabel(label);
+    }
+
+    public void visitLdcInsn(final Object cst) {
+        mv.visitLdcInsn(cst);
+    }
+
+    public void visitTableSwitchInsn(
+        final int min,
+        final int max,
+        final Label dflt,
+        final Label[] labels)
+    {
+        mv.visitTableSwitchInsn(min, max, dflt, labels);
+    }
+
+    public void visitLookupSwitchInsn(
+        final Label dflt,
+        final int[] keys,
+        final Label[] labels)
+    {
+        mv.visitLookupSwitchInsn(dflt, keys, labels);
+    }
+
+    public void visitMultiANewArrayInsn(final String desc, final int dims) {
+        mv.visitMultiANewArrayInsn(desc, dims);
+    }
+
+    public void visitTryCatchBlock(
+        final Label start,
+        final Label end,
+        final Label handler,
+        final String type)
+    {
+        mv.visitTryCatchBlock(start, end, handler, type);
+    }
+
+    public void visitLineNumber(final int line, final Label start) {
+        mv.visitLineNumber(line, start);
+    }
+
+    public void visitEnd() {
+        mv.visitEnd();
     }
 }

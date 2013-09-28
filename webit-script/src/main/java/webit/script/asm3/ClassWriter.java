@@ -38,13 +38,13 @@ package webit.script.asm3;
  *
  * @author Eric Bruneton
  */
-public class ClassWriter implements ClassVisitor {
+public class ClassWriter{
 
     /**
      * Flag to automatically compute the maximum stack size and the maximum
      * number of local variables of methods. If this flag is set, then the
-     * arguments of the {@link MethodVisitor#visitMaxs visitMaxs} method of the
-     * {@link MethodVisitor} returned by the {@link #visitMethod visitMethod}
+     * arguments of the {@link MethodWriter#visitMaxs visitMaxs} method of the
+     * {@link MethodWriter} returned by the {@link #visitMethod visitMethod}
      * method will be ignored, and computed automatically from the signature and
      * the bytecode of each method.
      *
@@ -55,9 +55,9 @@ public class ClassWriter implements ClassVisitor {
     /**
      * Flag to automatically compute the stack map frames of methods from
      * scratch. If this flag is set, then the calls to the
-     * {@link MethodVisitor#visitFrame} method are ignored, and the stack map
+     * {@link MethodWriter#visitFrame} method are ignored, and the stack map
      * frames are recomputed from the methods bytecode. The arguments of the
-     * {@link MethodVisitor#visitMaxs visitMaxs} method are also ignored and
+     * {@link MethodWriter#visitMaxs visitMaxs} method are also ignored and
      * recomputed from the bytecode. In other words, computeFrames implies
      * computeMaxs.
      *
@@ -579,7 +579,7 @@ public class ClassWriter implements ClassVisitor {
         innerClasses.putShort(access);
     }
 
-    public MethodVisitor visitMethod(
+    public MethodWriter visitMethod(
         final int access,
         final String name,
         final String desc,

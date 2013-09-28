@@ -21,10 +21,8 @@ import webit.script.util.FieldInfoResolver;
  */
 public class AsmResolverGenerator implements Opcodes {
 
-    private static final String RESOLVERS_CLASS_NAME_PRE = AsmResolver.class.getName() + '_';
-    //
-    private static final String ASM_RESILVER = ASMUtil.toAsmClassName(AsmResolver.class.getName());
-    //
+    private static final String RESOLVERS_CLASS_NAME_PRE = "webit.script.asm.AsmResolver_";
+    private static final String ASM_RESILVER = "webit/script/asm/AsmResolver";
 
     protected static String generateClassName(Class beanClass) {
         return RESOLVERS_CLASS_NAME_PRE + beanClass.getSimpleName() + '_' + ASMUtil.getSn();
@@ -44,7 +42,6 @@ public class AsmResolverGenerator implements Opcodes {
         classWriter.visitEnd();
         return classWriter.toByteArray();
     }
-    //
 
     private void attach_get_Method(ClassWriter classWriter, Class beanClass) {
         final GeneratorAdapter mg = new GeneratorAdapter(ACC_PUBLIC, ASMUtil.METHOD_ASM_RESOLVER_GET, null, null, classWriter);
@@ -355,11 +352,11 @@ public class AsmResolverGenerator implements Opcodes {
     public Class generateResolver(Class beanClass) throws Exception {
 
         if (!ClassUtil.isPublic(beanClass)) {
-            throw new Exception("Class ["+beanClass.getName()+"] is not a public class");
+            throw new Exception("Class [" + beanClass.getName() + "] is not a public class");
         }
         String className = generateClassName(beanClass);
         byte[] code = generateClassBody(className, beanClass);
 
-        return ASMUtil.loadClass(className, code, 0, code.length);
+        return ASMUtil.loadClass(className, code);
     }
 }

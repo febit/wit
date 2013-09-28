@@ -3,12 +3,9 @@ package webit.script.asm;
 
 import java.util.HashMap;
 import java.util.Map;
-import webit.script.Context;
 import webit.script.asm3.Type;
 import webit.script.asm3.commons.Method;
-import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.ClassLoaderUtil;
-import webit.script.util.ClassUtil;
 import webit.script.util.StringUtil;
 
 /**
@@ -17,25 +14,16 @@ import webit.script.util.StringUtil;
  */
 public class ASMUtil {
 
-    public static final Type BOOLEAN_BOXED_TYPE = Type.getType(Boolean.class);
-    public static final Type CHAR_BOXED_TYPE = Type.getType(Character.class);
-    public static final Type BYTE_BOXED_TYPE = Type.getType(Byte.class);
-    public static final Type SHORT_BOXED_TYPE = Type.getType(Short.class);
-    public static final Type INT_BOXED_TYPE = Type.getType(Integer.class);
-    public static final Type LONG_BOXED_TYPE = Type.getType(Long.class);
-    public static final Type FLOAT_BOXED_TYPE = Type.getType(Float.class);
-    public static final Type DOUBLE_BOXED_TYPE = Type.getType(Double.class);
-    public static final Type TYPE_CLASS_UTIL = Type.getType(ClassUtil.class);
+    public static final Type TYPE_CLASS_UTIL = Type.getObjectType("webit/script/util/ClassUtil");
     //
-    public static final Type TYPE_STRING = Type.getType(String.class);
-    public static final Type TYPE_OBJECT = Type.getType(Object.class);
-    public static final Type TYPE_SCRIPT_RUNTIME_EXCEPTION = Type.getType(ScriptRuntimeException.class);
+    public static final Type TYPE_STRING = Type.getObjectType("java/lang/String");
+    public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
     //
-    public static final Type TYPE_ASM_CALLER = Type.getType(AsmMethodCaller.class);
-    public static final Type TYPE_CONTEXT = Type.getType(Context.class);
-    public static final Type TYPE_SYSTEM = Type.getType(System.class);
-    public static final Type TYPE_OBJECT_ARR = Type.getType(Object[].class);
-    public static final Type TYPE_ASM_RESOLVER = Type.getType(AsmResolver.class);
+    public static final Type TYPE_ASM_CALLER = Type.getObjectType("webit/script/asm/AsmMethodCaller");
+    public static final Type TYPE_CONTEXT = Type.getObjectType("webit/script/Context");
+    public static final Type TYPE_SYSTEM = Type.getObjectType("java/lang/System");
+    public static final Type TYPE_OBJECT_ARR = Type.getObjectType("[Ljava/lang/Object;");
+    public static final Type TYPE_ASM_RESOLVER = Type.getObjectType("webit/script/asm/AsmResolver");
     //
     public static final Method METHOD_HASH_CODE = new Method("hashCode", "()I");
     public static final Method METHOD_EQUALS = new Method("equals", "(Ljava/lang/Object;)Z");
@@ -95,22 +83,22 @@ public class ASMUtil {
         return UNBOX_METHDO_MAP.get(type);
     }
 
-    private static class AsmClassLoader extends ClassLoader {
+    private final static class AsmClassLoader extends ClassLoader {
 
         @Override
         protected Class<?> findClass(String name) throws ClassNotFoundException {
             return ClassLoaderUtil.getDefaultClassLoader().loadClass(name);
         }
 
-        public final Class<?> loadClass(String name, byte[] b, int off, int len)
+        Class<?> loadClass(String name, byte[] b, int off, int len)
                 throws ClassFormatError {
             return defineClass(name, b, off, len, null);
         }
     };
     private static AsmClassLoader classLoader = new AsmClassLoader();
 
-    public static Class loadClass(String name, byte[] b, int off, int len) {
-        return classLoader.loadClass(name, b, off, len);
+    public static Class loadClass(String name, byte[] b) {
+        return classLoader.loadClass(name, b, 0, b.length);
     }
 
     /**

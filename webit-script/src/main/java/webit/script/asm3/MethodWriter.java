@@ -37,7 +37,7 @@ package webit.script.asm3;
  * @author Eric Bruneton
  * @author Eugene Kuleshov
  */
-public class MethodWriter implements MethodVisitor{
+public class MethodWriter{
 
     /**
      * Pseudo access flag used to denote constructors.

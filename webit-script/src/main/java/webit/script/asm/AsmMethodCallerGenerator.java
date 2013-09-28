@@ -16,9 +16,8 @@ import webit.script.util.ClassUtil;
  */
 public class AsmMethodCallerGenerator {
 
-    //
-    private static final String CALLER_CLASS_NAME_PRE = AsmMethodCaller.class.getName() + '_';
-    private static final String ASM_METHOD_CALLER = ASMUtil.toAsmClassName(AsmMethodCaller.class.getName());
+    private static final String CALLER_CLASS_NAME_PRE = "webit.script.asm.AsmMethodCaller_";
+    private static final String ASM_METHOD_CALLER = "webit/script/asm/AsmMethodCaller";
 
     protected static String generateClassName(java.lang.reflect.Method method) {
         return CALLER_CLASS_NAME_PRE + method.getName() + '_' + ASMUtil.getSn();
@@ -71,26 +70,14 @@ public class AsmMethodCallerGenerator {
         String className = generateClassName(method);
 
         byte[] code = generateClassBody(className, method);
-        /*
-         try {
-         FileUtil.writeBytes("F:/temp_" + method.getName() + ".class", code);
-         } catch (IOException ex) {
-         //ignore
-         }*/
-        return ASMUtil.loadClass(className, code, 0, code.length);
+        return ASMUtil.loadClass(className, code);
     }
 
     public Class generateCaller(Constructor constructor) {
         String className = generateClassName(constructor);
 
         byte[] code = generateClassBody(className, constructor);
-        /*
-         try {
-         FileUtil.writeBytes("F:/temp_" + method.getName() + ".class", code);
-         } catch (IOException ex) {
-         //ignore
-         }*/
-        return ASMUtil.loadClass(className, code, 0, code.length);
+        return ASMUtil.loadClass(className, code);
     }
 
     private void attach_execute_Method(ClassWriter classWriter, Constructor constructor) {
