@@ -1,4 +1,5 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2003-2013, Jodd Team (jodd.org). All Rights Reserved.
+
 package jodd.util;
 
 /**
@@ -117,7 +118,7 @@ public class StringUtil {
     public static String trimLeft(String src) {
         int len = src.length();
         int st = 0;
-        while ((st < len) && (CharUtil.isWhitespace(src.charAt(st)))) {
+        while ((st < len) && (isWhitespace(src.charAt(st)))) {
             st++;
         }
         return st > 0 ? src.substring(st) : src;
@@ -129,7 +130,7 @@ public class StringUtil {
     public static String trimRight(String src) {
         int len = src.length();
         int count = len;
-        while ((len > 0) && (CharUtil.isWhitespace(src.charAt(len - 1)))) {
+        while ((len > 0) && (isWhitespace(src.charAt(len - 1)))) {
             len--;
         }
         return (len < count) ? src.substring(0, len) : src;
@@ -140,7 +141,7 @@ public class StringUtil {
         int size = string.length();
         for (int i = 0; i < size; i++) {
             char c = string.charAt(i);
-            if (CharUtil.isWhitespace(c) == false) {
+            if (isWhitespace(c) == false) {
                 return false;
             }
         }
@@ -149,5 +150,9 @@ public class StringUtil {
 
     public static boolean isBlank(String string) {
         return ((string == null) || containsOnlyWhitespaces(string));
+    }
+    
+    public static boolean isWhitespace(char c) {
+        return c <= ' ';
     }
 }
