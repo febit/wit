@@ -6,14 +6,6 @@ package webit.script.util;
  */
 public class ArrayTemplateParser {
 
-    private static ArrayTemplateParser _instance = null;
-
-    public static ArrayTemplateParser getInstance() {
-        if (_instance == null) {
-            _instance = new ArrayTemplateParser();
-        }
-        return _instance;
-    }
     // ---------------------------------------------------------------- properties
     private final static char macroStart = '{';
     private final static char macroEnd = '}';
@@ -25,7 +17,7 @@ public class ArrayTemplateParser {
     /**
      * Parses string template and replaces macros with resolved values.
      */
-    public String parse(String template, MacroResolver macroResolver) {
+    public static String parse(String template, Object... array) {
         StringBuilder result = new StringBuilder(template.length());
 
         int i = 0;
@@ -33,6 +25,10 @@ public class ArrayTemplateParser {
 
         int startLen = 1;
         int endLen = 1;
+
+        int currentIndex = 0;
+        int index;
+        int arrayLen = array != null ? array.length : 0;
 
         while (i < len) {
             int ndx = template.indexOf(macroStart, i);
@@ -58,8 +54,6 @@ public class ArrayTemplateParser {
             } else {
                 result.append(template.substring(i, ndx));
             }
-            //resolveEscapes
-            result.append(template.substring(i, ndx - count));
             if (escape == true) {
                 result.append(macroStart);
                 i = ndx + startLen;
@@ -83,23 +77,39 @@ public class ArrayTemplateParser {
                 ndx1 = n + startLen;
             }
 
-            String name = template.substring(ndx1, ndx2);
+            //String name = template.substring(ndx1, ndx2);
+            //resolve index
+            if (ndx1 == ndx2) {
+                index = currentIndex++;
+            } else {
+                try {
+                    index = 0;
+                    index = template.charAt(ndx1) - '0';
+                    for (int k = ndx1 + 1; k < ndx2; k++) {
+                        index *= 10;
+                        index += template.charAt(k) - '0';
+                    }
+                } catch (Exception e) {
+                    index = -1;
+                }
+            }
 
             // find value and append
             Object value;
-
-            value = macroResolver.resolve(name);
-            if (value == null) {
-                value = "";
+            if (index < arrayLen && index >= 0) {
+                value = array[index];
+                if (value == null) {
+                    value = StringPool.EMPTY;
+                }
+            } else {
+                value = StringPool.EMPTY;
             }
-
 
             if (ndx == ndx1) {
                 String stringValue = value.toString();
-                if (parseValues == true) {
-                    //parseValues
+                if (parseValues) {
                     if (stringValue.indexOf(macroStart) >= 0) {
-                        stringValue = parse(stringValue, macroResolver);
+                        stringValue = parse(stringValue, array);
                     }
                 }
                 result.append(stringValue);
@@ -112,59 +122,5 @@ public class ArrayTemplateParser {
             }
         }
         return result.toString();
-    }
-
-    // ---------------------------------------------------------------- resolver
-    /**
-     * Macro value resolver.
-     */
-    public interface MacroResolver {
-
-        /**
-         * Resolves macro value for macro name founded in string template.
-         * <code>null</code> values will be replaced with empty strings.
-         */
-        String resolve(String macroName);
-    }
-
-    public String parse(final String template, final Object... context) {
-        return parse(template, createArrayMacroResolver(context));
-    }
-    private static final MacroResolver EMPTY = new MacroResolver() {
-        public String resolve(String macroName) {
-            return null;
-        }
-    };
-
-    public static MacroResolver createArrayMacroResolver(final Object[] array) {
-        if (array == null || array.length == 0) {
-            return EMPTY;
-        }
-        return new MacroResolver() {
-            private final int len = array.length;
-            private int current = 0;
-
-            public String resolve(String macroName) {
-                int index;
-                if (macroName.length() == 0) {
-                    index = current;
-                    current++;
-                } else {
-                    try {
-                        index = Integer.parseInt(macroName);
-                    } catch (Throwable e) {
-                        return null;
-                    }
-                }
-                if (index >= 0 && index < len) {
-                    Object value = array[index];
-                    if (value == null) {
-                        return null;
-                    }
-                    return value.toString();
-                }
-                return null;
-            }
-        };
     }
 }

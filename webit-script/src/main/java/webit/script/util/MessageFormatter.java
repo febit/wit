@@ -7,9 +7,7 @@ package webit.script.util;
  */
 public class MessageFormatter {
 
-    private final static ArrayTemplateParser PARSER = new ArrayTemplateParser();
-
     public static String format(final String format, final Object... args) {
-        return format != null ? PARSER.parse(format, args) : null;
+        return format != null ? ArrayTemplateParser.parse(format, args) : null;
     }
 }
