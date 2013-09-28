@@ -114,15 +114,15 @@ import webit.script.security.NativeSecurityManager;
  * @author Frank Flannery
  */
 public abstract class lr_parser {
+    
+    private final static int stackInitialCapacity = 24;
 
     protected lr_parser(String[] nonTerminalNames, short[][] production_tab, short[][] action_tab, short[][] reduce_tab) {
         //this.nonTerminalNames = nonTerminalNames;
         this.production_tab = production_tab;
         this.action_tab = action_tab;
         this.reduce_tab = reduce_tab;
-        symbolFactory = new DefaultSymbolFactory();
     }
-    protected SymbolFactory symbolFactory;// = new DefaultSymbolFactory();
 
     /*-----------------------------------------------------------*/
     /*--- (Access to) Static (Class) Variables ------------------*/
@@ -174,16 +174,6 @@ public abstract class lr_parser {
     protected boolean isParseDone = false;
 
     /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
-    /**
-     * This method is called to indicate that the parser should quit. This is
-     * normally called by an accept action, but can be used to cancel parsing
-     * early in other circumstances if desired.
-     */
-    private void doneParse() {
-        isParseDone = true;
-    }
-
-    /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
     /* Global parse state shared by parse(), error recovery, and 
      * debugging routines */
     /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -202,7 +192,7 @@ public abstract class lr_parser {
     /**
      * The parse stack itself.
      */
-    protected Stack<Symbol> stack = new Stack<Symbol>();
+    protected Stack<Symbol> stack = new Stack<Symbol>(stackInitialCapacity);
     //private final String[] nonTerminalNames;
     /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
     /**
@@ -274,7 +264,8 @@ public abstract class lr_parser {
     }
 
     private void report_fatal_error(String message, Object info) {
-        doneParse();
+        //doneParse();
+        this.isParseDone = true;
         throw new ParseException((message != null ? message : "Parser stop at here, ") + getLine() + "(" + getColumn() + ")", getLine(), getColumn());
     }
 
@@ -371,20 +362,19 @@ public abstract class lr_parser {
 
     private Symbol reduce_action(int action) throws Exception {
         Object result = do_action(action);
-        //SymbolFactory symbolFactory = this.getSymbolFactory();
         Symbol lhs_sym;
 
         int lhs_sym_id = production_tab[action][0];
         int handle_size = production_tab[action][1];
 
-        String symbolName = null;//XXX: nonTerminalNames[lhs_sym_id];
+        //String symbolName = nonTerminalNames[lhs_sym_id];
 
         if (symbolNoRightLeft || handle_size == 0) {
-            lhs_sym = symbolFactory.newSymbol(symbolName, lhs_sym_id, result);
+            lhs_sym = newSymbol(lhs_sym_id, result);
         } else {
             Symbol right = stack.peek();
             Symbol left = handle_size <= 1 ? right : stack.peek(handle_size - 1);
-            lhs_sym = symbolFactory.newSymbol(symbolName, lhs_sym_id, left, right, result);
+            lhs_sym = newSymbol(lhs_sym_id, left, right, result);
         }
 
         /* look up information about the production */
@@ -488,7 +478,8 @@ public abstract class lr_parser {
 
         /* push dummy Symbol with start state to get us underway */
         stack.clear();
-        stack.push(symbolFactory.startSymbol("START", 0, start_state()));
+        //stack.push(newSymbol("START", 0, start_state()));
+        stack.push(newSymbol(0, start_state()));
         tos = 0;
 
         /* continue until we are told to stop */
@@ -522,7 +513,8 @@ public abstract class lr_parser {
                     unrecovered_syntax_error(cur_token);
 
                     /* just in case that wasn't fatal enough, end parse */
-                    doneParse();
+                    //doneParse();
+                    this.isParseDone = true;
                 } else {
                     lhs_sym = stack.peek();
                 }
@@ -639,7 +631,7 @@ public abstract class lr_parser {
         act = get_action(stack.peek().parse_state, error_sym());
 
         /* build and shift a special error Symbol */
-        error_token = symbolFactory.newSymbol("ERROR", error_sym(), left, right);
+        error_token = newSymbol(error_sym(), left, right);
         error_token.parse_state = act - 1;
         stack.push(error_token);
         tos++;
@@ -872,5 +864,112 @@ public abstract class lr_parser {
             }
         }
         return result;
+    }
+
+    private final static class VirtualParseStack {
+
+        VirtualParseStack(Stack<Symbol> shadowing_stack) {
+
+            real_stack = shadowing_stack;
+            vstack = new Stack<Integer>(16);
+            real_next = 0;
+
+            get_from_real();
+        }
+
+        /*-----------------------------------------------------------*/
+        /*--- (Access to) Instance Variables ------------------------*/
+        /*-----------------------------------------------------------*/
+        /**
+         * The real stack that we shadow. This is accessed when we move off the
+         * bottom of the virtual portion of the stack, but is always line
+         * unmodified.
+         */
+        private Stack<Symbol> real_stack;
+
+        /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
+        /**
+         * Top of stack indicator for where we leave off in the real stack. This
+         * is measured from top of stack, so 0 would indicate that no elements
+         * have been "moved" from the real to virtual stack.
+         */
+        private int real_next;
+
+        /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
+        /**
+         * The virtual top portion of the stack. This stack contains Integer
+         * objects with state numbers. This stack shadows the top portion of the
+         * real stack within the area that has been modified (via operations on
+         * the virtual stack). When this portion of the stack becomes empty we
+         * transfer elements from the underlying stack onto this stack.
+         */
+        private Stack<Integer> vstack;
+
+        /*-----------------------------------------------------------*/
+        /*--- General Methods ---------------------------------------*/
+        /*-----------------------------------------------------------*/
+        /**
+         * Transfer an element from the real to the virtual stack. This assumes
+         * that the virtual stack is currently empty.
+         */
+        private void get_from_real() {
+            /* don't transfer if the real stack is empty */
+            if (real_next >= real_stack.size()) {
+                return;
+            }
+
+            /* get a copy of the first Symbol we have not transfered */
+            Symbol stack_sym = real_stack.peek(real_next);
+
+            /* record the transfer */
+            real_next++;
+
+            /* put the state number from the Symbol onto the virtual stack */
+            vstack.push(stack_sym.parse_state);
+        }
+
+        boolean empty() {
+            return vstack.empty();
+        }
+
+        int top() {
+            return vstack.peek();
+        }
+
+        void pop() {
+            /* pop it */
+            vstack.pop();
+
+            /* if we are now empty transfer an element (if there is one) */
+            if (vstack.empty()) {
+                get_from_real();
+            }
+        }
+
+        void push(int state_num) {
+            vstack.push(state_num);
+        }
+    }
+
+    protected static Symbol newSymbol(int id, Symbol left, Symbol right, Object value) {
+        return new Symbol(id, left.line, left.column, value);
+    }
+
+    protected static Symbol newSymbol(int id, Symbol left, Symbol right) {
+        return newSymbol(id, left, right, null);
+    }
+
+    protected static Symbol newSymbol(int id, int state) {
+        Symbol symbol = newSymbol(id);
+        symbol.parse_state = state;
+        return symbol;
+    }
+
+    protected static Symbol newSymbol(int id) {
+        return new Symbol(id, -1, -1, null);
+    }
+
+    protected static Symbol newSymbol(int id, Object value) {
+        return new Symbol(id, -1, -1, value);
     }
 }

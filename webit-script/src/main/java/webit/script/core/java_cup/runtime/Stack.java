@@ -7,43 +7,45 @@ package webit.script.core.java_cup.runtime;
  */
 public final class Stack<T> {
 
-    public static int initialCapacity = 16;
     private Object[] elements;
     private int size;
 
-    public Stack() {
-        this(initialCapacity);
-    }
-
-    public Stack(int initialCapacity) {
-        if (initialCapacity < 0) {
-            throw new IllegalArgumentException("Invalid capacity: " + initialCapacity);
-        }
+    Stack(int initialCapacity) {
         elements = new Object[initialCapacity];
         size = 0;
     }
 
     public T push(T element) {
-        ensureCapacity(size + 1);
+        //ensureNext
+        if (size >= elements.length) {
+            int newcap = elements.length << 1;
+            Object[] olddata = elements;
+            elements = new Object[newcap];
+            System.arraycopy(olddata, 0, elements, 0, size);
+        }
+        
         elements[size++] = element;
         return element;
     }
 
     @SuppressWarnings("unchecked")
     public T pop() {
-        if (size == 0) {
+        if (size != 0) {
+            T element = (T) elements[--size];
+            elements[size] = null;
+            return element;
+        } else {
             return null;
         }
-        T element = (T) elements[--size];
-        elements[size] = null;
-        return element;
     }
 
     @SuppressWarnings("unchecked")
     public T peek(int offset) {
-        int realIndex = size - offset - 1;
-        checkRange(realIndex);
-        return (T) elements[realIndex];
+        //int realIndex = size - offset - 1;
+        //if (realIndex < 0 || realIndex >= size) {
+        //    throw new IndexOutOfBoundsException();
+        //}
+        return (T) elements[size - offset - 1];
     }
 
     public T peek() {
@@ -64,20 +66,5 @@ public final class Stack<T> {
             elements[i] = null;
         }
         size = 0;
-    }
-
-    private void checkRange(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
-    }
-
-    private void ensureCapacity(int mincap) {
-        if (mincap > elements.length) {
-            int newcap = ((elements.length * 3) >> 1) + 1;
-            Object[] olddata = elements;
-            elements = new Object[newcap < mincap ? mincap : newcap];
-            System.arraycopy(olddata, 0, elements, 0, size);
-        }
     }
 }

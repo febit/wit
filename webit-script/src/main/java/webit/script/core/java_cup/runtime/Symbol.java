@@ -7,8 +7,6 @@ public class Symbol {
     public final int line;
     public final int column;
     public final Object value;
-    
-    /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
     /**
      * The parse state to be recorded on the parse stack with this symbol. This
      * field is for the convenience of the parser and shouldn't be modified
@@ -22,14 +20,7 @@ public class Symbol {
         this.column = column;
         this.value = value;
     }
-
-    public Symbol(int id, int line, int column, Object value, int parse_state) {
-        this(id, line, column, value);
-        this.parse_state = parse_state;
-    }
     
-    
-
     @Override
     public String toString() {
         return "Symbol{" + "id=" + id + ", line=" + line + ", column=" + column + '}';

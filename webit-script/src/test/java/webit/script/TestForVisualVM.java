@@ -10,9 +10,9 @@ import webit.script.test.util.DiscardOutputStream;
  */
 public class TestForVisualVM {
 
-    //@Test
+    @Test
     public void test() {
-        int times = 10000;
+        int times = 10;
         Engine engine = EngineManager.getEngine();
 
         try {
@@ -21,7 +21,9 @@ public class TestForVisualVM {
             DiscardOutputStream out = new DiscardOutputStream();
             //TemplateAST result = template.prepareTemplate();
             for (int i = 0; i < times; i++) {
-                template.merge(null, out);
+                
+            template.prepareTemplate();
+                //template.merge(null, out);
             }
         } catch (Exception e) {
             e.printStackTrace();
