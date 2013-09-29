@@ -402,106 +402,106 @@ public class MethodWriter{
     // Implementation of the MethodVisitor interface
     // ------------------------------------------------------------------------
 
-    public void visitCode() {
-    }
-
-    public void visitFrame(
-        final int type,
-        final int nLocal,
-        final Object[] local,
-        final int nStack,
-        final Object[] stack)
-    {
-
-        if (type == Opcodes.F_NEW) {
-            startFrame(code.length, nLocal, nStack);
-            for (int i = 0; i < nLocal; ++i) {
-                if (local[i] instanceof String) {
-                    frame[frameIndex++] = Frame.OBJECT
-                            | cw.addType((String) local[i]);
-                } else if (local[i] instanceof Integer) {
-                    frame[frameIndex++] = ((Integer) local[i]).intValue();
-                } else {
-                    frame[frameIndex++] = Frame.UNINITIALIZED
-                            | cw.addUninitializedType("",
-                                    ((Label) local[i]).position);
-                }
-            }
-            for (int i = 0; i < nStack; ++i) {
-                if (stack[i] instanceof String) {
-                    frame[frameIndex++] = Frame.OBJECT
-                            | cw.addType((String) stack[i]);
-                } else if (stack[i] instanceof Integer) {
-                    frame[frameIndex++] = ((Integer) stack[i]).intValue();
-                } else {
-                    frame[frameIndex++] = Frame.UNINITIALIZED
-                            | cw.addUninitializedType("",
-                                    ((Label) stack[i]).position);
-                }
-            }
-            endFrame();
-        } else {
-            int delta;
-            if (stackMap == null) {
-                stackMap = new ByteVector();
-                delta = code.length;
-            } else {
-                delta = code.length - previousFrameOffset - 1;
-                if (delta < 0) {
-                    if (type == Opcodes.F_SAME) {
-                        return;
-                    } else {
-                        throw new IllegalStateException();
-                    }
-                }
-            }
-
-            switch (type) {
-                case Opcodes.F_FULL:
-                    stackMap.putByte(FULL_FRAME)
-                            .putShort(delta)
-                            .putShort(nLocal);
-                    for (int i = 0; i < nLocal; ++i) {
-                        writeFrameType(local[i]);
-                    }
-                    stackMap.putShort(nStack);
-                    for (int i = 0; i < nStack; ++i) {
-                        writeFrameType(stack[i]);
-                    }
-                    break;
-                case Opcodes.F_APPEND:
-                    stackMap.putByte(SAME_FRAME_EXTENDED + nLocal)
-                            .putShort(delta);
-                    for (int i = 0; i < nLocal; ++i) {
-                        writeFrameType(local[i]);
-                    }
-                    break;
-                case Opcodes.F_CHOP:
-                    stackMap.putByte(SAME_FRAME_EXTENDED - nLocal)
-                            .putShort(delta);
-                    break;
-                case Opcodes.F_SAME:
-                    if (delta < 64) {
-                        stackMap.putByte(delta);
-                    } else {
-                        stackMap.putByte(SAME_FRAME_EXTENDED).putShort(delta);
-                    }
-                    break;
-                case Opcodes.F_SAME1:
-                    if (delta < 64) {
-                        stackMap.putByte(SAME_LOCALS_1_STACK_ITEM_FRAME + delta);
-                    } else {
-                        stackMap.putByte(SAME_LOCALS_1_STACK_ITEM_FRAME_EXTENDED)
-                                .putShort(delta);
-                    }
-                    writeFrameType(stack[0]);
-                    break;
-            }
-
-            previousFrameOffset = code.length;
-            ++frameCount;
-        }
-    }
+//    public void visitCode() {
+//    }
+//
+//    public void visitFrame(
+//        final int type,
+//        final int nLocal,
+//        final Object[] local,
+//        final int nStack,
+//        final Object[] stack)
+//    {
+//
+//        if (type == Opcodes.F_NEW) {
+//            startFrame(code.length, nLocal, nStack);
+//            for (int i = 0; i < nLocal; ++i) {
+//                if (local[i] instanceof String) {
+//                    frame[frameIndex++] = Frame.OBJECT
+//                            | cw.addType((String) local[i]);
+//                } else if (local[i] instanceof Integer) {
+//                    frame[frameIndex++] = ((Integer) local[i]).intValue();
+//                } else {
+//                    frame[frameIndex++] = Frame.UNINITIALIZED
+//                            | cw.addUninitializedType("",
+//                                    ((Label) local[i]).position);
+//                }
+//            }
+//            for (int i = 0; i < nStack; ++i) {
+//                if (stack[i] instanceof String) {
+//                    frame[frameIndex++] = Frame.OBJECT
+//                            | cw.addType((String) stack[i]);
+//                } else if (stack[i] instanceof Integer) {
+//                    frame[frameIndex++] = ((Integer) stack[i]).intValue();
+//                } else {
+//                    frame[frameIndex++] = Frame.UNINITIALIZED
+//                            | cw.addUninitializedType("",
+//                                    ((Label) stack[i]).position);
+//                }
+//            }
+//            endFrame();
+//        } else {
+//            int delta;
+//            if (stackMap == null) {
+//                stackMap = new ByteVector();
+//                delta = code.length;
+//            } else {
+//                delta = code.length - previousFrameOffset - 1;
+//                if (delta < 0) {
+//                    if (type == Opcodes.F_SAME) {
+//                        return;
+//                    } else {
+//                        throw new IllegalStateException();
+//                    }
+//                }
+//            }
+//
+//            switch (type) {
+//                case Opcodes.F_FULL:
+//                    stackMap.putByte(FULL_FRAME)
+//                            .putShort(delta)
+//                            .putShort(nLocal);
+//                    for (int i = 0; i < nLocal; ++i) {
+//                        writeFrameType(local[i]);
+//                    }
+//                    stackMap.putShort(nStack);
+//                    for (int i = 0; i < nStack; ++i) {
+//                        writeFrameType(stack[i]);
+//                    }
+//                    break;
+//                case Opcodes.F_APPEND:
+//                    stackMap.putByte(SAME_FRAME_EXTENDED + nLocal)
+//                            .putShort(delta);
+//                    for (int i = 0; i < nLocal; ++i) {
+//                        writeFrameType(local[i]);
+//                    }
+//                    break;
+//                case Opcodes.F_CHOP:
+//                    stackMap.putByte(SAME_FRAME_EXTENDED - nLocal)
+//                            .putShort(delta);
+//                    break;
+//                case Opcodes.F_SAME:
+//                    if (delta < 64) {
+//                        stackMap.putByte(delta);
+//                    } else {
+//                        stackMap.putByte(SAME_FRAME_EXTENDED).putShort(delta);
+//                    }
+//                    break;
+//                case Opcodes.F_SAME1:
+//                    if (delta < 64) {
+//                        stackMap.putByte(SAME_LOCALS_1_STACK_ITEM_FRAME + delta);
+//                    } else {
+//                        stackMap.putByte(SAME_LOCALS_1_STACK_ITEM_FRAME_EXTENDED)
+//                                .putShort(delta);
+//                    }
+//                    writeFrameType(stack[0]);
+//                    break;
+//            }
+//
+//            previousFrameOffset = code.length;
+//            ++frameCount;
+//        }
+//    }
 
     public void visitInsn(final int opcode) {
         // adds the instruction to the bytecode of the method
@@ -908,28 +908,28 @@ public class MethodWriter{
         }
     }
 
-    public void visitIincInsn(final int var, final int increment) {
-        if (currentBlock != null) {
-            if (compute == FRAMES) {
-                currentBlock.frame.execute(Opcodes.IINC, var, null, null);
-            }
-        }
-        if (compute != NOTHING) {
-            // updates max locals
-            int n = var + 1;
-            if (n > maxLocals) {
-                maxLocals = n;
-            }
-        }
-        // adds the instruction to the bytecode of the method
-        if ((var > 255) || (increment > 127) || (increment < -128)) {
-            code.putByte(196 /* WIDE */)
-                    .put12(Opcodes.IINC, var)
-                    .putShort(increment);
-        } else {
-            code.putByte(Opcodes.IINC).put11(var, increment);
-        }
-    }
+//    public void visitIincInsn(final int var, final int increment) {
+//        if (currentBlock != null) {
+//            if (compute == FRAMES) {
+//                currentBlock.frame.execute(Opcodes.IINC, var, null, null);
+//            }
+//        }
+//        if (compute != NOTHING) {
+//            // updates max locals
+//            int n = var + 1;
+//            if (n > maxLocals) {
+//                maxLocals = n;
+//            }
+//        }
+//        // adds the instruction to the bytecode of the method
+//        if ((var > 255) || (increment > 127) || (increment < -128)) {
+//            code.putByte(196 /* WIDE */)
+//                    .put12(Opcodes.IINC, var)
+//                    .putShort(increment);
+//        } else {
+//            code.putByte(Opcodes.IINC).put11(var, increment);
+//        }
+//    }
 
     public void visitTableSwitchInsn(
         final int min,
@@ -995,89 +995,89 @@ public class MethodWriter{
         }
     }
 
-    public void visitMultiANewArrayInsn(final String desc, final int dims) {
-        Item i = cw.newClassItem(desc);
-        // Label currentBlock = this.currentBlock;
-        if (currentBlock != null) {
-            if (compute == FRAMES) {
-                currentBlock.frame.execute(Opcodes.MULTIANEWARRAY, dims, cw, i);
-            } else {
-                // updates current stack size (max stack size unchanged because
-                // stack size variation always negative or null)
-                stackSize += 1 - dims;
-            }
-        }
-        // adds the instruction to the bytecode of the method
-        code.put12(Opcodes.MULTIANEWARRAY, i.index).putByte(dims);
-    }
+//    public void visitMultiANewArrayInsn(final String desc, final int dims) {
+//        Item i = cw.newClassItem(desc);
+//        // Label currentBlock = this.currentBlock;
+//        if (currentBlock != null) {
+//            if (compute == FRAMES) {
+//                currentBlock.frame.execute(Opcodes.MULTIANEWARRAY, dims, cw, i);
+//            } else {
+//                // updates current stack size (max stack size unchanged because
+//                // stack size variation always negative or null)
+//                stackSize += 1 - dims;
+//            }
+//        }
+//        // adds the instruction to the bytecode of the method
+//        code.put12(Opcodes.MULTIANEWARRAY, i.index).putByte(dims);
+//    }
 
-    public void visitTryCatchBlock(
-        final Label start,
-        final Label end,
-        final Label handler,
-        final String type)
-    {
-        ++handlerCount;
-        Handler h = new Handler();
-        h.start = start;
-        h.end = end;
-        h.handler = handler;
-        h.desc = type;
-        h.type = type != null ? cw.newClass(type) : 0;
-        if (lastHandler == null) {
-            firstHandler = h;
-        } else {
-            lastHandler.next = h;
-        }
-        lastHandler = h;
-    }
+//    public void visitTryCatchBlock(
+//        final Label start,
+//        final Label end,
+//        final Label handler,
+//        final String type)
+//    {
+//        ++handlerCount;
+//        Handler h = new Handler();
+//        h.start = start;
+//        h.end = end;
+//        h.handler = handler;
+//        h.desc = type;
+//        h.type = type != null ? cw.newClass(type) : 0;
+//        if (lastHandler == null) {
+//            firstHandler = h;
+//        } else {
+//            lastHandler.next = h;
+//        }
+//        lastHandler = h;
+//    }
 
-    public void visitLocalVariable(
-        final String name,
-        final String desc,
-        final String signature,
-        final Label start,
-        final Label end,
-        final int index)
-    {
-        if (signature != null) {
-            if (localVarType == null) {
-                localVarType = new ByteVector();
-            }
-            ++localVarTypeCount;
-            localVarType.putShort(start.position)
-                    .putShort(end.position - start.position)
-                    .putShort(cw.newUTF8(name))
-                    .putShort(cw.newUTF8(signature))
-                    .putShort(index);
-        }
-        if (localVar == null) {
-            localVar = new ByteVector();
-        }
-        ++localVarCount;
-        localVar.putShort(start.position)
-                .putShort(end.position - start.position)
-                .putShort(cw.newUTF8(name))
-                .putShort(cw.newUTF8(desc))
-                .putShort(index);
-        if (compute != NOTHING) {
-            // updates max locals
-            char c = desc.charAt(0);
-            int n = index + (c == 'J' || c == 'D' ? 2 : 1);
-            if (n > maxLocals) {
-                maxLocals = n;
-            }
-        }
-    }
+//    public void visitLocalVariable(
+//        final String name,
+//        final String desc,
+//        final String signature,
+//        final Label start,
+//        final Label end,
+//        final int index)
+//    {
+//        if (signature != null) {
+//            if (localVarType == null) {
+//                localVarType = new ByteVector();
+//            }
+//            ++localVarTypeCount;
+//            localVarType.putShort(start.position)
+//                    .putShort(end.position - start.position)
+//                    .putShort(cw.newUTF8(name))
+//                    .putShort(cw.newUTF8(signature))
+//                    .putShort(index);
+//        }
+//        if (localVar == null) {
+//            localVar = new ByteVector();
+//        }
+//        ++localVarCount;
+//        localVar.putShort(start.position)
+//                .putShort(end.position - start.position)
+//                .putShort(cw.newUTF8(name))
+//                .putShort(cw.newUTF8(desc))
+//                .putShort(index);
+//        if (compute != NOTHING) {
+//            // updates max locals
+//            char c = desc.charAt(0);
+//            int n = index + (c == 'J' || c == 'D' ? 2 : 1);
+//            if (n > maxLocals) {
+//                maxLocals = n;
+//            }
+//        }
+//    }
 
-    public void visitLineNumber(final int line, final Label start) {
-        if (lineNumber == null) {
-            lineNumber = new ByteVector();
-        }
-        ++lineNumberCount;
-        lineNumber.putShort(start.position);
-        lineNumber.putShort(line);
-    }
+//    public void visitLineNumber(final int line, final Label start) {
+//        if (lineNumber == null) {
+//            lineNumber = new ByteVector();
+//        }
+//        ++lineNumberCount;
+//        lineNumber.putShort(start.position);
+//        lineNumber.putShort(line);
+//    }
 
     public void visitMaxs(final int maxStack, final int maxLocals) {
         if (compute == FRAMES) {
@@ -1603,15 +1603,15 @@ public class MethodWriter{
         }
     }
 
-    private void writeFrameType(final Object type) {
-        if (type instanceof String) {
-            stackMap.putByte(7).putShort(cw.newClass((String) type));
-        } else if (type instanceof Integer) {
-            stackMap.putByte(((Integer) type).intValue());
-        } else {
-            stackMap.putByte(8).putShort(((Label) type).position);
-        }
-    }
+//    private void writeFrameType(final Object type) {
+//        if (type instanceof String) {
+//            stackMap.putByte(7).putShort(cw.newClass((String) type));
+//        } else if (type instanceof Integer) {
+//            stackMap.putByte(((Integer) type).intValue());
+//        } else {
+//            stackMap.putByte(8).putShort(((Label) type).position);
+//        }
+//    }
 
     // ------------------------------------------------------------------------
     // Utility methods: dump bytecode array

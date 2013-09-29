@@ -260,7 +260,10 @@ public class Type {
      *         method descriptor.
      */
     public static Type[] getArgumentTypes(final String methodDescriptor) {
-        char[] buf = methodDescriptor.toCharArray();
+        return getArgumentTypes(methodDescriptor.toCharArray());
+    }
+    public static Type[] getArgumentTypes(final char[] buf) {
+        //char[] buf = methodDescriptor.toCharArray();
         int off = 1;
         int size = 0;
         while (true) {
@@ -286,47 +289,47 @@ public class Type {
         return args;
     }
 
-    /**
-     * Returns the Java types corresponding to the argument types of the given
-     * method.
-     * 
-     * @param method a method.
-     * @return the Java types corresponding to the argument types of the given
-     *         method.
-     */
-    public static Type[] getArgumentTypes(final Method method) {
-        Class[] classes = method.getParameterTypes();
-        Type[] types = new Type[classes.length];
-        for (int i = classes.length - 1; i >= 0; --i) {
-            types[i] = getType(classes[i]);
-        }
-        return types;
-    }
+//    /**
+//     * Returns the Java types corresponding to the argument types of the given
+//     * method.
+//     * 
+//     * @param method a method.
+//     * @return the Java types corresponding to the argument types of the given
+//     *         method.
+//     */
+//    public static Type[] getArgumentTypes(final Method method) {
+//        Class[] classes = method.getParameterTypes();
+//        Type[] types = new Type[classes.length];
+//        for (int i = classes.length - 1; i >= 0; --i) {
+//            types[i] = getType(classes[i]);
+//        }
+//        return types;
+//    }
 
-    /**
-     * Returns the Java type corresponding to the return type of the given
-     * method descriptor.
-     * 
-     * @param methodDescriptor a method descriptor.
-     * @return the Java type corresponding to the return type of the given
-     *         method descriptor.
-     */
-    public static Type getReturnType(final String methodDescriptor) {
-        char[] buf = methodDescriptor.toCharArray();
-        return getType(buf, methodDescriptor.indexOf(')') + 1);
-    }
+//    /**
+//     * Returns the Java type corresponding to the return type of the given
+//     * method descriptor.
+//     * 
+//     * @param methodDescriptor a method descriptor.
+//     * @return the Java type corresponding to the return type of the given
+//     *         method descriptor.
+//     */
+//    public static Type getReturnType(final String methodDescriptor) {
+//        char[] buf = methodDescriptor.toCharArray();
+//        return getType(buf, methodDescriptor.indexOf(')') + 1);
+//    }
 
-    /**
-     * Returns the Java type corresponding to the return type of the given
-     * method.
-     * 
-     * @param method a method.
-     * @return the Java type corresponding to the return type of the given
-     *         method.
-     */
-    public static Type getReturnType(final Method method) {
-        return getType(method.getReturnType());
-    }
+//    /**
+//     * Returns the Java type corresponding to the return type of the given
+//     * method.
+//     * 
+//     * @param method a method.
+//     * @return the Java type corresponding to the return type of the given
+//     *         method.
+//     */
+//    public static Type getReturnType(final Method method) {
+//        return getType(method.getReturnType());
+//    }
 
     /**
      * Computes the size of the arguments and of the return value of a method.
@@ -373,7 +376,7 @@ public class Type {
      * @param off the offset of this descriptor in the previous buffer.
      * @return the Java type corresponding to the given type descriptor.
      */
-    private static Type getType(final char[] buf, final int off) {
+    public static Type getType(final char[] buf, final int off) {
         int len;
         switch (buf[off]) {
             case 'V':
@@ -457,42 +460,42 @@ public class Type {
         return getType(buf, off + getDimensions());
     }
 
-    /**
-     * Returns the name of the class corresponding to this type.
-     * 
-     * @return the fully qualified name of the class corresponding to this type.
-     */
-    public String getClassName() {
-        switch (sort) {
-            case VOID:
-                return "void";
-            case BOOLEAN:
-                return "boolean";
-            case CHAR:
-                return "char";
-            case BYTE:
-                return "byte";
-            case SHORT:
-                return "short";
-            case INT:
-                return "int";
-            case FLOAT:
-                return "float";
-            case LONG:
-                return "long";
-            case DOUBLE:
-                return "double";
-            case ARRAY:
-                StringBuilder b = new StringBuilder(getElementType().getClassName());
-                for (int i = getDimensions(); i > 0; --i) {
-                    b.append("[]");
-                }
-                return b.toString();
-                // case OBJECT:
-            default:
-                return new String(buf, off, len).replace('/', '.');
-        }
-    }
+//    /**
+//     * Returns the name of the class corresponding to this type.
+//     * 
+//     * @return the fully qualified name of the class corresponding to this type.
+//     */
+//    public String getClassName() {
+//        switch (sort) {
+//            case VOID:
+//                return "void";
+//            case BOOLEAN:
+//                return "boolean";
+//            case CHAR:
+//                return "char";
+//            case BYTE:
+//                return "byte";
+//            case SHORT:
+//                return "short";
+//            case INT:
+//                return "int";
+//            case FLOAT:
+//                return "float";
+//            case LONG:
+//                return "long";
+//            case DOUBLE:
+//                return "double";
+//            case ARRAY:
+//                StringBuilder b = new StringBuilder(getElementType().getClassName());
+//                for (int i = getDimensions(); i > 0; --i) {
+//                    b.append("[]");
+//                }
+//                return b.toString();
+//                // case OBJECT:
+//            default:
+//                return new String(buf, off, len).replace('/', '.');
+//        }
+//    }
 
     /**
      * Returns the internal name of the class corresponding to this object or

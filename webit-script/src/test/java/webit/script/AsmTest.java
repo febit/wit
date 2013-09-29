@@ -3,6 +3,7 @@ package webit.script;
 
 import java.io.PrintStream;
 import org.junit.Test;
+import webit.script.asm.ASMUtil;
 import webit.script.asm3.ClassWriter;
 import webit.script.asm3.Opcodes;
 import webit.script.asm3.Type;
@@ -28,7 +29,7 @@ public class AsmTest extends ClassLoader implements Opcodes {
         cw.visit(V1_5, ACC_PUBLIC, "Example", null, "java/lang/Object", null);
 
         // creates a GeneratorAdapter for the (implicit) constructor
-        Method m = Method.getMethod("void <init> ()");
+        Method m = ASMUtil.METHOD_DEFAULT_CONSTRUCTOR;
 
         final GeneratorAdapter mg_init = new GeneratorAdapter(ACC_PUBLIC, m, null, null,
                 cw);
@@ -38,7 +39,7 @@ public class AsmTest extends ClassLoader implements Opcodes {
         mg_init.endMethod();
 
         // creates a GeneratorAdapter for the 'main' method
-        m = Method.getMethod("void main (int)");
+        m = new Method("main", "(I)V");
         final GeneratorAdapter mg = new GeneratorAdapter(ACC_PUBLIC + ACC_STATIC, m, null, null, cw);
 
         final int var_str = mg.newLocal(Type.getType(String.class));
@@ -80,7 +81,7 @@ public class AsmTest extends ClassLoader implements Opcodes {
         mg.loadLocal(var_class);
 
         mg.invokeVirtual(Type.getType(PrintStream.class),
-                Method.getMethod("void println (Object)"));
+                new Method("println", "(Ljava/lang/Object;)V"));
         
 //        mg.loadLocal(var_out);
 //        mg.loadLocal(var_enum);

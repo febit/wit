@@ -83,37 +83,37 @@ public class GeneratorAdapter{
 
     private static final String CLDESC = "Ljava/lang/Class;";
 
-    public static final Type BYTE_TYPE = Type.getObjectType("java/lang/Byte");
+//    private static final Type BYTE_TYPE = Type.getObjectType("java/lang/Byte");
+//
+//    private static final Type BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
+//
+//    private static final Type SHORT_TYPE = Type.getObjectType("java/lang/Short");
+//
+//    private static final Type CHARACTER_TYPE = Type.getObjectType("java/lang/Character");
+//
+//    private static final Type INTEGER_TYPE = Type.getObjectType("java/lang/Integer");
+//
+//    private static final Type FLOAT_TYPE = Type.getObjectType("java/lang/Float");
+//
+//    private static final Type LONG_TYPE = Type.getObjectType("java/lang/Long");
+//
+//    private static final Type DOUBLE_TYPE = Type.getObjectType("java/lang/Double");
+//
+//    private static final Type NUMBER_TYPE = Type.getObjectType("java/lang/Number");
 
-    public static final Type BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
-
-    public static final Type SHORT_TYPE = Type.getObjectType("java/lang/Short");
-
-    public static final Type CHARACTER_TYPE = Type.getObjectType("java/lang/Character");
-
-    public static final Type INTEGER_TYPE = Type.getObjectType("java/lang/Integer");
-
-    public static final Type FLOAT_TYPE = Type.getObjectType("java/lang/Float");
-
-    public static final Type LONG_TYPE = Type.getObjectType("java/lang/Long");
-
-    public static final Type DOUBLE_TYPE = Type.getObjectType("java/lang/Double");
-
-    public static final Type NUMBER_TYPE = Type.getObjectType("java/lang/Number");
-
-    public static final Type OBJECT_TYPE = Type.getObjectType("java/lang/Object");
+    private static final Type OBJECT_TYPE = Type.getObjectType("java/lang/Object");
     
-    private static final Method BOOLEAN_VALUE = Method.getMethod("boolean booleanValue()");
-
-    private static final Method CHAR_VALUE = Method.getMethod("char charValue()");
-
-    private static final Method INT_VALUE = Method.getMethod("int intValue()");
-
-    private static final Method FLOAT_VALUE = Method.getMethod("float floatValue()");
-
-    private static final Method LONG_VALUE = Method.getMethod("long longValue()");
-
-    private static final Method DOUBLE_VALUE = Method.getMethod("double doubleValue()");
+//    private static final Method BOOLEAN_VALUE = Method.getMethod("boolean booleanValue()");
+//
+//    private static final Method CHAR_VALUE = Method.getMethod("char charValue()");
+//
+//    private static final Method INT_VALUE = Method.getMethod("int intValue()");
+//
+//    private static final Method FLOAT_VALUE = Method.getMethod("float floatValue()");
+//
+//    private static final Method LONG_VALUE = Method.getMethod("long longValue()");
+//
+//    private static final Method DOUBLE_VALUE = Method.getMethod("double doubleValue()");
 
     /**
      * Constant for the {@link #math math} method.
@@ -225,22 +225,22 @@ public class GeneratorAdapter{
      */
     private final List<Type> localTypes = new ArrayList<Type>();
 
-    /**
-     * Creates a new {@link GeneratorAdapter}.
-     * 
-     * @param mv the method visitor to which this adapter delegates calls.
-     * @param access the method's access flags (see {@link Opcodes}).
-     * @param name the method's name.
-     * @param desc the method's descriptor (see {@link Type Type}).
-     */
-    public GeneratorAdapter(
-        final MethodWriter mv,
-        final int access,
-        final String name,
-        final String desc)
-    {
-        this(access, desc, mv, Type.getReturnType(desc), Type.getArgumentTypes(desc));
-    }
+//    /**
+//     * Creates a new {@link GeneratorAdapter}.
+//     * 
+//     * @param mv the method visitor to which this adapter delegates calls.
+//     * @param access the method's access flags (see {@link Opcodes}).
+//     * @param name the method's name.
+//     * @param desc the method's descriptor (see {@link Type Type}).
+//     */
+//    public GeneratorAdapter(
+//        final MethodWriter mv,
+//        final int access,
+//        final String name,
+//        final String desc)
+//    {
+//        this(access, desc, mv, Type.getReturnType(desc), Type.getArgumentTypes(desc));
+//    }
 
     /**
      * Creates a new {@link GeneratorAdapter}.
@@ -350,46 +350,46 @@ public class GeneratorAdapter{
         }
     }
 
-    /**
-     * Generates the instruction to push the given value on the stack.
-     * 
-     * @param value the value to be pushed on the stack.
-     */
-    public void push(final long value) {
-        if (value == 0L || value == 1L) {
-            mv.visitInsn(Opcodes.LCONST_0 + (int) value);
-        } else {
-            mv.visitLdcInsn(new Long(value));
-        }
-    }
+//    /**
+//     * Generates the instruction to push the given value on the stack.
+//     * 
+//     * @param value the value to be pushed on the stack.
+//     */
+//    public void push(final long value) {
+//        if (value == 0L || value == 1L) {
+//            mv.visitInsn(Opcodes.LCONST_0 + (int) value);
+//        } else {
+//            mv.visitLdcInsn(new Long(value));
+//        }
+//    }
 
-    /**
-     * Generates the instruction to push the given value on the stack.
-     * 
-     * @param value the value to be pushed on the stack.
-     */
-    public void push(final float value) {
-        int bits = Float.floatToIntBits(value);
-        if (bits == 0L || bits == 0x3f800000 || bits == 0x40000000) { // 0..2
-            mv.visitInsn(Opcodes.FCONST_0 + (int) value);
-        } else {
-            mv.visitLdcInsn(new Float(value));
-        }
-    }
+//    /**
+//     * Generates the instruction to push the given value on the stack.
+//     * 
+//     * @param value the value to be pushed on the stack.
+//     */
+//    public void push(final float value) {
+//        int bits = Float.floatToIntBits(value);
+//        if (bits == 0L || bits == 0x3f800000 || bits == 0x40000000) { // 0..2
+//            mv.visitInsn(Opcodes.FCONST_0 + (int) value);
+//        } else {
+//            mv.visitLdcInsn(new Float(value));
+//        }
+//    }
 
-    /**
-     * Generates the instruction to push the given value on the stack.
-     * 
-     * @param value the value to be pushed on the stack.
-     */
-    public void push(final double value) {
-        long bits = Double.doubleToLongBits(value);
-        if (bits == 0L || bits == 0x3ff0000000000000L) { // +0.0d and 1.0d
-            mv.visitInsn(Opcodes.DCONST_0 + (int) value);
-        } else {
-            mv.visitLdcInsn(new Double(value));
-        }
-    }
+//    /**
+//     * Generates the instruction to push the given value on the stack.
+//     * 
+//     * @param value the value to be pushed on the stack.
+//     */
+//    public void push(final double value) {
+//        long bits = Double.doubleToLongBits(value);
+//        if (bits == 0L || bits == 0x3ff0000000000000L) { // +0.0d and 1.0d
+//            mv.visitInsn(Opcodes.DCONST_0 + (int) value);
+//        } else {
+//            mv.visitLdcInsn(new Double(value));
+//        }
+//    }
 
     /**
      * Generates the instruction to push the given value on the stack.
@@ -528,54 +528,54 @@ public class GeneratorAdapter{
         loadInsn(argumentTypes[arg], getArgIndex(arg));
     }
 
-    /**
-     * Generates the instructions to load the given method arguments on the
-     * stack.
-     * 
-     * @param arg the index of the first method argument to be loaded.
-     * @param count the number of method arguments to be loaded.
-     */
-    public void loadArgs(final int arg, final int count) {
-        int index = getArgIndex(arg);
-        for (int i = 0; i < count; ++i) {
-            Type t = argumentTypes[arg + i];
-            loadInsn(t, index);
-            index += t.getSize();
-        }
-    }
+//    /**
+//     * Generates the instructions to load the given method arguments on the
+//     * stack.
+//     * 
+//     * @param arg the index of the first method argument to be loaded.
+//     * @param count the number of method arguments to be loaded.
+//     */
+//    public void loadArgs(final int arg, final int count) {
+//        int index = getArgIndex(arg);
+//        for (int i = 0; i < count; ++i) {
+//            Type t = argumentTypes[arg + i];
+//            loadInsn(t, index);
+//            index += t.getSize();
+//        }
+//    }
 
-    /**
-     * Generates the instructions to load all the method arguments on the stack.
-     */
-    public void loadArgs() {
-        loadArgs(0, argumentTypes.length);
-    }
+//    /**
+//     * Generates the instructions to load all the method arguments on the stack.
+//     */
+//    public void loadArgs() {
+//        loadArgs(0, argumentTypes.length);
+//    }
 
-    /**
-     * Generates the instructions to load all the method arguments on the stack,
-     * as a single object array.
-     */
-    public void loadArgArray() {
-        push(argumentTypes.length);
-        newArray(OBJECT_TYPE);
-        for (int i = 0; i < argumentTypes.length; i++) {
-            dup();
-            push(i);
-            loadArg(i);
-            box(argumentTypes[i]);
-            arrayStore(OBJECT_TYPE);
-        }
-    }
+//    /**
+//     * Generates the instructions to load all the method arguments on the stack,
+//     * as a single object array.
+//     */
+//    public void loadArgArray() {
+//        push(argumentTypes.length);
+//        newArray(OBJECT_TYPE);
+//        for (int i = 0; i < argumentTypes.length; i++) {
+//            dup();
+//            push(i);
+//            loadArg(i);
+//            box(argumentTypes[i]);
+//            arrayStore(OBJECT_TYPE);
+//        }
+//    }
 
-    /**
-     * Generates the instruction to store the top stack value in the given
-     * method argument.
-     * 
-     * @param arg the index of a method argument.
-     */
-    public void storeArg(final int arg) {
-        storeInsn(argumentTypes[arg], getArgIndex(arg));
-    }
+//    /**
+//     * Generates the instruction to store the top stack value in the given
+//     * method argument.
+//     * 
+//     * @param arg the index of a method argument.
+//     */
+//    public void storeArg(final int arg) {
+//        storeInsn(argumentTypes[arg], getArgIndex(arg));
+//    }
 
     // ------------------------------------------------------------------------
     // Instructions to load and store local variables
@@ -610,17 +610,17 @@ public class GeneratorAdapter{
         loadInsn(getLocalType(local), local);
     }
 
-    /**
-     * Generates the instruction to load the given local variable on the stack.
-     * 
-     * @param local a local variable identifier, as returned by
-     *        {@link LocalVariablesSorter#newLocal(Type) newLocal()}.
-     * @param type the type of this local variable.
-     */
-    public void loadLocal(final int local, final Type type) {
-        setLocalType(local, type);
-        loadInsn(type, local);
-    }
+//    /**
+//     * Generates the instruction to load the given local variable on the stack.
+//     * 
+//     * @param local a local variable identifier, as returned by
+//     *        {@link LocalVariablesSorter#newLocal(Type) newLocal()}.
+//     * @param type the type of this local variable.
+//     */
+//    public void loadLocal(final int local, final Type type) {
+//        setLocalType(local, type);
+//        loadInsn(type, local);
+//    }
 
     /**
      * Generates the instruction to store the top stack value in the given local
@@ -633,18 +633,18 @@ public class GeneratorAdapter{
         storeInsn(getLocalType(local), local);
     }
 
-    /**
-     * Generates the instruction to store the top stack value in the given local
-     * variable.
-     * 
-     * @param local a local variable identifier, as returned by
-     *        {@link LocalVariablesSorter#newLocal(Type) newLocal()}.
-     * @param type the type of this local variable.
-     */
-    public void storeLocal(final int local, final Type type) {
-        setLocalType(local, type);
-        storeInsn(type, local);
-    }
+//    /**
+//     * Generates the instruction to store the top stack value in the given local
+//     * variable.
+//     * 
+//     * @param local a local variable identifier, as returned by
+//     *        {@link LocalVariablesSorter#newLocal(Type) newLocal()}.
+//     * @param type the type of this local variable.
+//     */
+//    public void storeLocal(final int local, final Type type) {
+//        setLocalType(local, type);
+//        storeInsn(type, local);
+//    }
 
     /**
      * Generates the instruction to load an element from an array.
@@ -655,32 +655,32 @@ public class GeneratorAdapter{
         mv.visitInsn(type.getOpcode(Opcodes.IALOAD));
     }
 
-    /**
-     * Generates the instruction to store an element in an array.
-     * 
-     * @param type the type of the array element to be stored.
-     */
-    public void arrayStore(final Type type) {
-        mv.visitInsn(type.getOpcode(Opcodes.IASTORE));
-    }
+//    /**
+//     * Generates the instruction to store an element in an array.
+//     * 
+//     * @param type the type of the array element to be stored.
+//     */
+//    public void arrayStore(final Type type) {
+//        mv.visitInsn(type.getOpcode(Opcodes.IASTORE));
+//    }
 
     // ------------------------------------------------------------------------
     // Instructions to manage the stack
     // ------------------------------------------------------------------------
 
-    /**
-     * Generates a POP instruction.
-     */
-    public void pop() {
-        mv.visitInsn(Opcodes.POP);
-    }
+//    /**
+//     * Generates a POP instruction.
+//     */
+//    public void pop() {
+//        mv.visitInsn(Opcodes.POP);
+//    }
 
-    /**
-     * Generates a POP2 instruction.
-     */
-    public void pop2() {
-        mv.visitInsn(Opcodes.POP2);
-    }
+//    /**
+//     * Generates a POP2 instruction.
+//     */
+//    public void pop2() {
+//        mv.visitInsn(Opcodes.POP2);
+//    }
 
     /**
      * Generates a DUP instruction.
@@ -689,40 +689,40 @@ public class GeneratorAdapter{
         mv.visitInsn(Opcodes.DUP);
     }
 
-    /**
-     * Generates a DUP2 instruction.
-     */
-    public void dup2() {
-        mv.visitInsn(Opcodes.DUP2);
-    }
+//    /**
+//     * Generates a DUP2 instruction.
+//     */
+//    public void dup2() {
+//        mv.visitInsn(Opcodes.DUP2);
+//    }
 
-    /**
-     * Generates a DUP_X1 instruction.
-     */
-    public void dupX1() {
-        mv.visitInsn(Opcodes.DUP_X1);
-    }
+//    /**
+//     * Generates a DUP_X1 instruction.
+//     */
+//    public void dupX1() {
+//        mv.visitInsn(Opcodes.DUP_X1);
+//    }
+//
+//    /**
+//     * Generates a DUP_X2 instruction.
+//     */
+//    public void dupX2() {
+//        mv.visitInsn(Opcodes.DUP_X2);
+//    }
 
-    /**
-     * Generates a DUP_X2 instruction.
-     */
-    public void dupX2() {
-        mv.visitInsn(Opcodes.DUP_X2);
-    }
+//    /**
+//     * Generates a DUP2_X1 instruction.
+//     */
+//    public void dup2X1() {
+//        mv.visitInsn(Opcodes.DUP2_X1);
+//    }
 
-    /**
-     * Generates a DUP2_X1 instruction.
-     */
-    public void dup2X1() {
-        mv.visitInsn(Opcodes.DUP2_X1);
-    }
-
-    /**
-     * Generates a DUP2_X2 instruction.
-     */
-    public void dup2X2() {
-        mv.visitInsn(Opcodes.DUP2_X2);
-    }
+//    /**
+//     * Generates a DUP2_X2 instruction.
+//     */
+//    public void dup2X2() {
+//        mv.visitInsn(Opcodes.DUP2_X2);
+//    }
 
     /**
      * Generates a SWAP instruction.
@@ -731,65 +731,65 @@ public class GeneratorAdapter{
         mv.visitInsn(Opcodes.SWAP);
     }
 
-    /**
-     * Generates the instructions to swap the top two stack values.
-     * 
-     * @param prev type of the top - 1 stack value.
-     * @param type type of the top stack value.
-     */
-    public void swap(final Type prev, final Type type) {
-        if (type.getSize() == 1) {
-            if (prev.getSize() == 1) {
-                swap(); // same as dupX1(), pop();
-            } else {
-                dupX2();
-                pop();
-            }
-        } else {
-            if (prev.getSize() == 1) {
-                dup2X1();
-                pop2();
-            } else {
-                dup2X2();
-                pop2();
-            }
-        }
-    }
+//    /**
+//     * Generates the instructions to swap the top two stack values.
+//     * 
+//     * @param prev type of the top - 1 stack value.
+//     * @param type type of the top stack value.
+//     */
+//    public void swap(final Type prev, final Type type) {
+//        if (type.getSize() == 1) {
+//            if (prev.getSize() == 1) {
+//                swap(); // same as dupX1(), pop();
+//            } else {
+//                dupX2();
+//                pop();
+//            }
+//        } else {
+//            if (prev.getSize() == 1) {
+//                dup2X1();
+//                pop2();
+//            } else {
+//                dup2X2();
+//                pop2();
+//            }
+//        }
+//    }
 
     // ------------------------------------------------------------------------
     // Instructions to do mathematical and logical operations
     // ------------------------------------------------------------------------
 
-    /**
-     * Generates the instruction to do the specified mathematical or logical
-     * operation.
-     * 
-     * @param op a mathematical or logical operation. Must be one of ADD, SUB,
-     *        MUL, DIV, REM, NEG, SHL, SHR, USHR, AND, OR, XOR.
-     * @param type the type of the operand(s) for this operation.
-     */
-    public void math(final int op, final Type type) {
-        mv.visitInsn(type.getOpcode(op));
-    }
+//    /**
+//     * Generates the instruction to do the specified mathematical or logical
+//     * operation.
+//     * 
+//     * @param op a mathematical or logical operation. Must be one of ADD, SUB,
+//     *        MUL, DIV, REM, NEG, SHL, SHR, USHR, AND, OR, XOR.
+//     * @param type the type of the operand(s) for this operation.
+//     */
+//    public void math(final int op, final Type type) {
+//        mv.visitInsn(type.getOpcode(op));
+//    }
 
-    /**
-     * Generates the instructions to compute the bitwise negation of the top
-     * stack value.
-     */
-    public void not() {
-        mv.visitInsn(Opcodes.ICONST_1);
-        mv.visitInsn(Opcodes.IXOR);
-    }
+//    /**
+//     * Generates the instructions to compute the bitwise negation of the top
+//     * stack value.
+//     */
+//    public void not() {
+//        mv.visitInsn(Opcodes.ICONST_1);
+//        mv.visitInsn(Opcodes.IXOR);
+//    }
 
-    /**
-     * Generates the instruction to increment the given local variable.
-     * 
-     * @param local the local variable to be incremented.
-     * @param amount the amount by which the local variable must be incremented.
-     */
-    public void iinc(final int local, final int amount) {
-        mv.visitIincInsn(local, amount);
-    }
+//    /**
+//     * Generates the instruction to increment the given local variable.
+//     * 
+//     * @param local the local variable to be incremented.
+//     * @param amount the amount by which the local variable must be incremented.
+//     */
+//    public void iinc(final int local, final int amount) {
+//        mv.visitIincInsn(local, amount);
+//    }
 
     /**
      * Generates the instructions to cast a numerical value from one type to
@@ -849,122 +849,122 @@ public class GeneratorAdapter{
     // Instructions to do boxing and unboxing operations
     // ------------------------------------------------------------------------
 
-    private static Type getBoxedType(final Type type) {
-        switch (type.getSort()) {
-            case Type.BYTE:
-                return BYTE_TYPE;
-            case Type.BOOLEAN:
-                return BOOLEAN_TYPE;
-            case Type.SHORT:
-                return SHORT_TYPE;
-            case Type.CHAR:
-                return CHARACTER_TYPE;
-            case Type.INT:
-                return INTEGER_TYPE;
-            case Type.FLOAT:
-                return FLOAT_TYPE;
-            case Type.LONG:
-                return LONG_TYPE;
-            case Type.DOUBLE:
-                return DOUBLE_TYPE;
-        }
-        return type;
-    }
+//    private static Type getBoxedType(final Type type) {
+//        switch (type.getSort()) {
+//            case Type.BYTE:
+//                return BYTE_TYPE;
+//            case Type.BOOLEAN:
+//                return BOOLEAN_TYPE;
+//            case Type.SHORT:
+//                return SHORT_TYPE;
+//            case Type.CHAR:
+//                return CHARACTER_TYPE;
+//            case Type.INT:
+//                return INTEGER_TYPE;
+//            case Type.FLOAT:
+//                return FLOAT_TYPE;
+//            case Type.LONG:
+//                return LONG_TYPE;
+//            case Type.DOUBLE:
+//                return DOUBLE_TYPE;
+//        }
+//        return type;
+//    }
     
-    /**
-     * Generates the instructions to box the top stack value. This value is
-     * replaced by its boxed equivalent on top of the stack.
-     * 
-     * @param type the type of the top stack value.
-     */
-    public void box(final Type type) {
-        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
-            return;
-        }
-        if (type == Type.VOID_TYPE) {
-            push((String) null);
-        } else {
-            Type boxed = getBoxedType(type);
-            newInstance(boxed);
-            if (type.getSize() == 2) {
-                // Pp -> Ppo -> oPpo -> ooPpo -> ooPp -> o
-                dupX2();
-                dupX2();
-                pop();
-            } else {
-                // p -> po -> opo -> oop -> o
-                dupX1();
-                swap();
-            }
-            invokeConstructor(boxed, new Method("<init>",
-                    Type.VOID_TYPE,
-                    new Type[] { type }));
-        }
-    }
+//    /**
+//     * Generates the instructions to box the top stack value. This value is
+//     * replaced by its boxed equivalent on top of the stack.
+//     * 
+//     * @param type the type of the top stack value.
+//     */
+//    public void box(final Type type) {
+//        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
+//            return;
+//        }
+//        if (type == Type.VOID_TYPE) {
+//            push((String) null);
+//        } else {
+//            Type boxed = getBoxedType(type);
+//            newInstance(boxed);
+//            if (type.getSize() == 2) {
+//                // Pp -> Ppo -> oPpo -> ooPpo -> ooPp -> o
+//                dupX2();
+//                dupX2();
+//                pop();
+//            } else {
+//                // p -> po -> opo -> oop -> o
+//                dupX1();
+//                swap();
+//            }
+//            invokeConstructor(boxed, new Method("<init>",
+//                    Type.VOID_TYPE,
+//                    new Type[] { type }));
+//        }
+//    }
 
-    /**
-     * Generates the instructions to box the top stack value using Java 5's
-     * valueOf() method. This value is replaced by its boxed equivalent on top
-     * of the stack.
-     * 
-     * @param type the type of the top stack value.
-     * @author Prashant Deva
-     */
-    public void valueOf(final Type type) {
-        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
-            return;
-        }
-        if (type == Type.VOID_TYPE) {
-            push((String) null);
-        } else {
-            Type boxed = getBoxedType(type);
-            invokeStatic(boxed, new Method("valueOf",
-                    boxed,
-                    new Type[] { type }));
-        }
-    }
+//    /**
+//     * Generates the instructions to box the top stack value using Java 5's
+//     * valueOf() method. This value is replaced by its boxed equivalent on top
+//     * of the stack.
+//     * 
+//     * @param type the type of the top stack value.
+//     * @author Prashant Deva
+//     */
+//    public void valueOf(final Type type) {
+//        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
+//            return;
+//        }
+//        if (type == Type.VOID_TYPE) {
+//            push((String) null);
+//        } else {
+//            Type boxed = getBoxedType(type);
+//            invokeStatic(boxed, new Method("valueOf",
+//                    boxed,
+//                    new Type[] { type }));
+//        }
+//    }
     
-    /**
-     * Generates the instructions to unbox the top stack value. This value is
-     * replaced by its unboxed equivalent on top of the stack.
-     * 
-     * @param type the type of the top stack value.
-     */
-    public void unbox(final Type type) {
-        Type t = NUMBER_TYPE;
-        Method sig = null;
-        switch (type.getSort()) {
-            case Type.VOID:
-                return;
-            case Type.CHAR:
-                t = CHARACTER_TYPE;
-                sig = CHAR_VALUE;
-                break;
-            case Type.BOOLEAN:
-                t = BOOLEAN_TYPE;
-                sig = BOOLEAN_VALUE;
-                break;
-            case Type.DOUBLE:
-                sig = DOUBLE_VALUE;
-                break;
-            case Type.FLOAT:
-                sig = FLOAT_VALUE;
-                break;
-            case Type.LONG:
-                sig = LONG_VALUE;
-                break;
-            case Type.INT:
-            case Type.SHORT:
-            case Type.BYTE:
-                sig = INT_VALUE;
-        }
-        if (sig == null) {
-            checkCast(type);
-        } else {
-            checkCast(t);
-            invokeVirtual(t, sig);
-        }
-    }
+//    /**
+//     * Generates the instructions to unbox the top stack value. This value is
+//     * replaced by its unboxed equivalent on top of the stack.
+//     * 
+//     * @param type the type of the top stack value.
+//     */
+//    public void unbox(final Type type) {
+//        Type t = NUMBER_TYPE;
+//        Method sig = null;
+//        switch (type.getSort()) {
+//            case Type.VOID:
+//                return;
+//            case Type.CHAR:
+//                t = CHARACTER_TYPE;
+//                sig = CHAR_VALUE;
+//                break;
+//            case Type.BOOLEAN:
+//                t = BOOLEAN_TYPE;
+//                sig = BOOLEAN_VALUE;
+//                break;
+//            case Type.DOUBLE:
+//                sig = DOUBLE_VALUE;
+//                break;
+//            case Type.FLOAT:
+//                sig = FLOAT_VALUE;
+//                break;
+//            case Type.LONG:
+//                sig = LONG_VALUE;
+//                break;
+//            case Type.INT:
+//            case Type.SHORT:
+//            case Type.BYTE:
+//                sig = INT_VALUE;
+//        }
+//        if (sig == null) {
+//            checkCast(type);
+//        } else {
+//            checkCast(t);
+//            invokeVirtual(t, sig);
+//        }
+//    }
 
     // ------------------------------------------------------------------------
     // Instructions to jump to other instructions
@@ -988,16 +988,16 @@ public class GeneratorAdapter{
         mv.visitLabel(label);
     }
 
-    /**
-     * Marks the current code position with a new label.
-     * 
-     * @return the label that was created to mark the current code position.
-     */
-    public Label mark() {
-        Label label = new Label();
-        mv.visitLabel(label);
-        return label;
-    }
+//    /**
+//     * Marks the current code position with a new label.
+//     * 
+//     * @return the label that was created to mark the current code position.
+//     */
+//    public Label mark() {
+//        Label label = new Label();
+//        mv.visitLabel(label);
+//        return label;
+//    }
 
     /**
      * Generates the instructions to jump to a label based on the comparison of
@@ -1112,15 +1112,15 @@ public class GeneratorAdapter{
         mv.visitJumpInsn(Opcodes.GOTO, label);
     }
 
-    /**
-     * Generates a RET instruction.
-     * 
-     * @param local a local variable identifier, as returned by
-     *        {@link LocalVariablesSorter#newLocal(Type) newLocal()}.
-     */
-    public void ret(final int local) {
-        mv.visitVarInsn(Opcodes.RET, local);
-    }
+//    /**
+//     * Generates a RET instruction.
+//     * 
+//     * @param local a local variable identifier, as returned by
+//     *        {@link LocalVariablesSorter#newLocal(Type) newLocal()}.
+//     */
+//    public void ret(final int local) {
+//        mv.visitVarInsn(Opcodes.RET, local);
+//    }
 
     /**
      * Generates the instructions for a switch statement.
@@ -1242,17 +1242,17 @@ public class GeneratorAdapter{
         fieldInsn(Opcodes.GETSTATIC, owner, name, type);
     }
 
-    /**
-     * Generates the instruction to store the top stack value in a static field.
-     * 
-     * @param owner the class in which the field is defined.
-     * @param name the name of the field.
-     * @param type the type of the field.
-     */
-    public void putStatic(final Type owner, final String name, final Type type)
-    {
-        fieldInsn(Opcodes.PUTSTATIC, owner, name, type);
-    }
+//    /**
+//     * Generates the instruction to store the top stack value in a static field.
+//     * 
+//     * @param owner the class in which the field is defined.
+//     * @param name the name of the field.
+//     * @param type the type of the field.
+//     */
+//    public void putStatic(final Type owner, final String name, final Type type)
+//    {
+//        fieldInsn(Opcodes.PUTSTATIC, owner, name, type);
+//    }
 
     /**
      * Generates the instruction to push the value of a non static field on the
@@ -1343,16 +1343,16 @@ public class GeneratorAdapter{
         invokeInsn(Opcodes.INVOKEINTERFACE, owner, method);
     }
     
-    /**
-     * Generates the instruction to invoke a dynamic method.
-     * 
-     * @param method the method to be invoked.
-     */
-    public void invokeDynamic(final Method method) {
-        invokeInsn(Opcodes.INVOKEDYNAMIC,
-                Type.getObjectType(Opcodes.INVOKEDYNAMIC_OWNER),
-                method);
-    }
+//    /**
+//     * Generates the instruction to invoke a dynamic method.
+//     * 
+//     * @param method the method to be invoked.
+//     */
+//    public void invokeDynamic(final Method method) {
+//        invokeInsn(Opcodes.INVOKEDYNAMIC,
+//                Type.getObjectType(Opcodes.INVOKEDYNAMIC_OWNER),
+//                method);
+//    }
 
     // ------------------------------------------------------------------------
     // Instructions to create objects and arrays
@@ -1434,20 +1434,20 @@ public class GeneratorAdapter{
         mv.visitInsn(Opcodes.ATHROW);
     }
 
-    /**
-     * Generates the instructions to create and throw an exception. The
-     * exception class must have a constructor with a single String argument.
-     * 
-     * @param type the class of the exception to be thrown.
-     * @param msg the detailed message of the exception.
-     */
-    public void throwException(final Type type, final String msg) {
-        newInstance(type);
-        dup();
-        push(msg);
-        invokeConstructor(type, Method.getMethod("void <init> (String)"));
-        throwException();
-    }
+//    /**
+//     * Generates the instructions to create and throw an exception. The
+//     * exception class must have a constructor with a single String argument.
+//     * 
+//     * @param type the class of the exception to be thrown.
+//     * @param msg the detailed message of the exception.
+//     */
+//    public void throwException(final Type type, final String msg) {
+//        newInstance(type);
+//        dup();
+//        push(msg);
+//        invokeConstructor(type, Method.getMethod("void <init> (String)"));
+//        throwException();
+//    }
 
     /**
      * Generates the instruction to check that the top stack value is of the
@@ -1461,29 +1461,29 @@ public class GeneratorAdapter{
         }
     }
 
-    /**
-     * Generates the instruction to test if the top stack value is of the given
-     * type.
-     * 
-     * @param type a class or interface type.
-     */
-    public void instanceOf(final Type type) {
-        typeInsn(Opcodes.INSTANCEOF, type);
-    }
+//    /**
+//     * Generates the instruction to test if the top stack value is of the given
+//     * type.
+//     * 
+//     * @param type a class or interface type.
+//     */
+//    public void instanceOf(final Type type) {
+//        typeInsn(Opcodes.INSTANCEOF, type);
+//    }
 
-    /**
-     * Generates the instruction to get the monitor of the top stack value.
-     */
-    public void monitorEnter() {
-        mv.visitInsn(Opcodes.MONITORENTER);
-    }
-
-    /**
-     * Generates the instruction to release the monitor of the top stack value.
-     */
-    public void monitorExit() {
-        mv.visitInsn(Opcodes.MONITOREXIT);
-    }
+//    /**
+//     * Generates the instruction to get the monitor of the top stack value.
+//     */
+//    public void monitorEnter() {
+//        mv.visitInsn(Opcodes.MONITORENTER);
+//    }
+//
+//    /**
+//     * Generates the instruction to release the monitor of the top stack value.
+//     */
+//    public void monitorExit() {
+//        mv.visitInsn(Opcodes.MONITOREXIT);
+//    }
 
     // ------------------------------------------------------------------------
     // Non instructions
@@ -1499,33 +1499,33 @@ public class GeneratorAdapter{
         mv.visitEnd();
     }
 
-    /**
-     * Marks the start of an exception handler.
-     * 
-     * @param start beginning of the exception handler's scope (inclusive).
-     * @param end end of the exception handler's scope (exclusive).
-     * @param exception internal name of the type of exceptions handled by the
-     *        handler.
-     */
-    public void catchException(
-        final Label start,
-        final Label end,
-        final Type exception)
-    {
-        if (exception == null) {
-            mv.visitTryCatchBlock(start, end, mark(), null);            
-        } else {
-            mv.visitTryCatchBlock(start, end, mark(), exception.getInternalName());
-        }
-    }
+//    /**
+//     * Marks the start of an exception handler.
+//     * 
+//     * @param start beginning of the exception handler's scope (inclusive).
+//     * @param end end of the exception handler's scope (exclusive).
+//     * @param exception internal name of the type of exceptions handled by the
+//     *        handler.
+//     */
+//    public void catchException(
+//        final Label start,
+//        final Label end,
+//        final Type exception)
+//    {
+//        if (exception == null) {
+//            mv.visitTryCatchBlock(start, end, mark(), null);            
+//        } else {
+//            mv.visitTryCatchBlock(start, end, mark(), exception.getInternalName());
+//        }
+//    }
 
     private MethodWriter mv;
-    /**
-     * Mapping from old to new local variable indexes. A local variable at index
-     * i of size 1 is remapped to 'mapping[2*i]', while a local variable at
-     * index i of size 2 is remapped to 'mapping[2*i+1]'.
-     */
-    private int[] mapping = new int[40];
+//    /**
+//     * Mapping from old to new local variable indexes. A local variable at index
+//     * i of size 1 is remapped to 'mapping[2*i]', while a local variable at
+//     * index i of size 2 is remapped to 'mapping[2*i+1]'.
+//     */
+//    private int[] mapping = new int[40];
 
     /**
      * Array used to store stack map local variable types after remapping.
@@ -1545,130 +1545,130 @@ public class GeneratorAdapter{
     /**
      * Indicates if at least one local variable has moved due to remapping.
      */
-    private boolean changed;
+//    private boolean changed;
 
-    public void visitVarInsn(final int opcode, final int var) {
-        Type type;
-        switch (opcode) {
-            case Opcodes.LLOAD:
-            case Opcodes.LSTORE:
-                type = Type.LONG_TYPE;
-                break;
+//    public void visitVarInsn(final int opcode, final int var) {
+//        Type type;
+//        switch (opcode) {
+//            case Opcodes.LLOAD:
+//            case Opcodes.LSTORE:
+//                type = Type.LONG_TYPE;
+//                break;
+//
+//            case Opcodes.DLOAD:
+//            case Opcodes.DSTORE:
+//                type = Type.DOUBLE_TYPE;
+//                break;
+//
+//            case Opcodes.FLOAD:
+//            case Opcodes.FSTORE:
+//                type = Type.FLOAT_TYPE;
+//                break;
+//
+//            case Opcodes.ILOAD:
+//            case Opcodes.ISTORE:
+//                type = Type.INT_TYPE;
+//                break;
+//
+//            default:
+//            // case Opcodes.ALOAD:
+//            // case Opcodes.ASTORE:
+//            // case RET:
+//                type = OBJECT_TYPE;
+//                break;
+//        }
+//        mv.visitVarInsn(opcode, remap(var, type));
+//    }
 
-            case Opcodes.DLOAD:
-            case Opcodes.DSTORE:
-                type = Type.DOUBLE_TYPE;
-                break;
+//    public void visitIincInsn(final int var, final int increment) {
+//        mv.visitIincInsn(remap(var, Type.INT_TYPE), increment);
+//    }
 
-            case Opcodes.FLOAD:
-            case Opcodes.FSTORE:
-                type = Type.FLOAT_TYPE;
-                break;
+//    public void visitMaxs(final int maxStack, final int maxLocals) {
+//        mv.visitMaxs(maxStack, nextLocal);
+//    }
 
-            case Opcodes.ILOAD:
-            case Opcodes.ISTORE:
-                type = Type.INT_TYPE;
-                break;
-
-            default:
-            // case Opcodes.ALOAD:
-            // case Opcodes.ASTORE:
-            // case RET:
-                type = OBJECT_TYPE;
-                break;
-        }
-        mv.visitVarInsn(opcode, remap(var, type));
-    }
-
-    public void visitIincInsn(final int var, final int increment) {
-        mv.visitIincInsn(remap(var, Type.INT_TYPE), increment);
-    }
-
-    public void visitMaxs(final int maxStack, final int maxLocals) {
-        mv.visitMaxs(maxStack, nextLocal);
-    }
-
-    public void visitLocalVariable(
-        final String name,
-        final String desc,
-        final String signature,
-        final Label start,
-        final Label end,
-        final int index)
-    {
-        int newIndex = remap(index, Type.getType(desc));
-        mv.visitLocalVariable(name, desc, signature, start, end, newIndex);
-    }
-
-    public void visitFrame(
-        final int type,
-        final int nLocal,
-        final Object[] local,
-        final int nStack,
-        final Object[] stack)
-    {
-        if (type != Opcodes.F_NEW) { // uncompressed frame
-            throw new IllegalStateException("ClassReader.accept() should be called with EXPAND_FRAMES flag");
-        }
-
-        if (!changed) { // optimization for the case where mapping = identity
-            mv.visitFrame(type, nLocal, local, nStack, stack);
-            return;
-        }
-
-        // creates a copy of newLocals
-        Object[] oldLocals = new Object[newLocals.length];
-        System.arraycopy(newLocals, 0, oldLocals, 0, oldLocals.length);
-
-        // copies types from 'local' to 'newLocals'
-        // 'newLocals' already contains the variables added with 'newLocal'
-
-        int index = 0; // old local variable index
-        int number = 0; // old local variable number
-        for (; number < nLocal; ++number) {
-            Object t = local[number];
-            int size = t == Opcodes.LONG || t == Opcodes.DOUBLE ? 2 : 1;
-            if (t != Opcodes.TOP) {
-                Type typ = OBJECT_TYPE;
-                if (t == Opcodes.INTEGER) {
-                    typ = Type.INT_TYPE;
-                } else if (t == Opcodes.FLOAT) {
-                    typ = Type.FLOAT_TYPE;
-                } else if (t == Opcodes.LONG) {
-                    typ = Type.LONG_TYPE;
-                } else if (t == Opcodes.DOUBLE) {
-                    typ = Type.DOUBLE_TYPE;
-                } else if (t instanceof String) {
-                    typ = Type.getObjectType((String) t);
-                }
-                setFrameLocal(remap(index, typ), t);
-            }
-            index += size;
-        }
-
-        // removes TOP after long and double types as well as trailing TOPs
-
-        index = 0;
-        number = 0;
-        for (int i = 0; index < newLocals.length; ++i) {
-            Object t = newLocals[index++];
-            if (t != null && t != Opcodes.TOP) {
-                newLocals[i] = t;
-                number = i + 1;
-                if (t == Opcodes.LONG || t == Opcodes.DOUBLE) {
-                    index += 1;
-                }
-            } else {
-                newLocals[i] = Opcodes.TOP;
-            }
-        }
-
-        // visits remapped frame
-        mv.visitFrame(type, number, newLocals, nStack, stack);
-
-        // restores original value of 'newLocals'
-        newLocals = oldLocals;
-    }
+//    public void visitLocalVariable(
+//        final String name,
+//        final String desc,
+//        final String signature,
+//        final Label start,
+//        final Label end,
+//        final int index)
+//    {
+//        int newIndex = remap(index, Type.getType(desc));
+//        mv.visitLocalVariable(name, desc, signature, start, end, newIndex);
+//    }
+//
+//    public void visitFrame(
+//        final int type,
+//        final int nLocal,
+//        final Object[] local,
+//        final int nStack,
+//        final Object[] stack)
+//    {
+//        if (type != Opcodes.F_NEW) { // uncompressed frame
+//            throw new IllegalStateException("ClassReader.accept() should be called with EXPAND_FRAMES flag");
+//        }
+//
+//        if (!changed) { // optimization for the case where mapping = identity
+//            mv.visitFrame(type, nLocal, local, nStack, stack);
+//            return;
+//        }
+//
+//        // creates a copy of newLocals
+//        Object[] oldLocals = new Object[newLocals.length];
+//        System.arraycopy(newLocals, 0, oldLocals, 0, oldLocals.length);
+//
+//        // copies types from 'local' to 'newLocals'
+//        // 'newLocals' already contains the variables added with 'newLocal'
+//
+//        int index = 0; // old local variable index
+//        int number = 0; // old local variable number
+//        for (; number < nLocal; ++number) {
+//            Object t = local[number];
+//            int size = t == Opcodes.LONG || t == Opcodes.DOUBLE ? 2 : 1;
+//            if (t != Opcodes.TOP) {
+//                Type typ = OBJECT_TYPE;
+//                if (t == Opcodes.INTEGER) {
+//                    typ = Type.INT_TYPE;
+//                } else if (t == Opcodes.FLOAT) {
+//                    typ = Type.FLOAT_TYPE;
+//                } else if (t == Opcodes.LONG) {
+//                    typ = Type.LONG_TYPE;
+//                } else if (t == Opcodes.DOUBLE) {
+//                    typ = Type.DOUBLE_TYPE;
+//                } else if (t instanceof String) {
+//                    typ = Type.getObjectType((String) t);
+//                }
+//                setFrameLocal(remap(index, typ), t);
+//            }
+//            index += size;
+//        }
+//
+//        // removes TOP after long and double types as well as trailing TOPs
+//
+//        index = 0;
+//        number = 0;
+//        for (int i = 0; index < newLocals.length; ++i) {
+//            Object t = newLocals[index++];
+//            if (t != null && t != Opcodes.TOP) {
+//                newLocals[i] = t;
+//                number = i + 1;
+//                if (t == Opcodes.LONG || t == Opcodes.DOUBLE) {
+//                    index += 1;
+//                }
+//            } else {
+//                newLocals[i] = Opcodes.TOP;
+//            }
+//        }
+//
+//        // visits remapped frame
+//        mv.visitFrame(type, number, newLocals, nStack, stack);
+//
+//        // restores original value of 'newLocals'
+//        newLocals = oldLocals;
+//    }
 
     // -------------
 
@@ -1722,117 +1722,117 @@ public class GeneratorAdapter{
         newLocals[local] = type;
     }
 
-    private int remap(final int var, final Type type) {
-        if (var + type.getSize() <= firstLocal) {
-            return var;
-        }
-        int key = 2 * var + type.getSize() - 1;
-        int size = mapping.length;
-        if (key >= size) {
-            int[] newMapping = new int[Math.max(2 * size, key + 1)];
-            System.arraycopy(mapping, 0, newMapping, 0, size);
-            mapping = newMapping;
-        }
-        int value = mapping[key];
-        if (value == 0) {
-            value = newLocalMapping(type);
-            setLocalType(value, type);
-            mapping[key] = value + 1;
-        } else {
-            value--;
-        }
-        if (value != var) {
-            changed = true;
-        }
-        return value;
-    }
+//    private int remap(final int var, final Type type) {
+//        if (var + type.getSize() <= firstLocal) {
+//            return var;
+//        }
+//        int key = 2 * var + type.getSize() - 1;
+//        int size = mapping.length;
+//        if (key >= size) {
+//            int[] newMapping = new int[Math.max(2 * size, key + 1)];
+//            System.arraycopy(mapping, 0, newMapping, 0, size);
+//            mapping = newMapping;
+//        }
+//        int value = mapping[key];
+//        if (value == 0) {
+//            value = newLocalMapping(type);
+//            setLocalType(value, type);
+//            mapping[key] = value + 1;
+//        } else {
+//            value--;
+//        }
+//        if (value != var) {
+//            changed = true;
+//        }
+//        return value;
+//    }
 
-    private int newLocalMapping(final Type type) {
-        int local = nextLocal;
-        nextLocal += type.getSize();
-        return local;
-    }
-    public void visitCode() {
-        mv.visitCode();
-    }
-
-    public void visitInsn(final int opcode) {
-        mv.visitInsn(opcode);
-    }
-
-    public void visitIntInsn(final int opcode, final int operand) {
-        mv.visitIntInsn(opcode, operand);
-    }
-
-    public void visitTypeInsn(final int opcode, final String type) {
-        mv.visitTypeInsn(opcode, type);
-    }
-
-    public void visitFieldInsn(
-        final int opcode,
-        final String owner,
-        final String name,
-        final String desc)
-    {
-        mv.visitFieldInsn(opcode, owner, name, desc);
-    }
-
-    public void visitMethodInsn(
-        final int opcode,
-        final String owner,
-        final String name,
-        final String desc)
-    {
-        mv.visitMethodInsn(opcode, owner, name, desc);
-    }
-
-    public void visitJumpInsn(final int opcode, final Label label) {
-        mv.visitJumpInsn(opcode, label);
-    }
-
-    public void visitLabel(final Label label) {
-        mv.visitLabel(label);
-    }
-
-    public void visitLdcInsn(final Object cst) {
-        mv.visitLdcInsn(cst);
-    }
-
-    public void visitTableSwitchInsn(
-        final int min,
-        final int max,
-        final Label dflt,
-        final Label[] labels)
-    {
-        mv.visitTableSwitchInsn(min, max, dflt, labels);
-    }
-
-    public void visitLookupSwitchInsn(
-        final Label dflt,
-        final int[] keys,
-        final Label[] labels)
-    {
-        mv.visitLookupSwitchInsn(dflt, keys, labels);
-    }
-
-    public void visitMultiANewArrayInsn(final String desc, final int dims) {
-        mv.visitMultiANewArrayInsn(desc, dims);
-    }
-
-    public void visitTryCatchBlock(
-        final Label start,
-        final Label end,
-        final Label handler,
-        final String type)
-    {
-        mv.visitTryCatchBlock(start, end, handler, type);
-    }
-
-    public void visitLineNumber(final int line, final Label start) {
-        mv.visitLineNumber(line, start);
-    }
-
-    public void visitEnd() {
-        mv.visitEnd();
-    }
+//    private int newLocalMapping(final Type type) {
+//        int local = nextLocal;
+//        nextLocal += type.getSize();
+//        return local;
+//    }
+//    public void visitCode() {
+//        mv.visitCode();
+//    }
+//
+//    public void visitInsn(final int opcode) {
+//        mv.visitInsn(opcode);
+//    }
+//
+//    public void visitIntInsn(final int opcode, final int operand) {
+//        mv.visitIntInsn(opcode, operand);
+//    }
+//
+//    public void visitTypeInsn(final int opcode, final String type) {
+//        mv.visitTypeInsn(opcode, type);
+//    }
+//
+//    public void visitFieldInsn(
+//        final int opcode,
+//        final String owner,
+//        final String name,
+//        final String desc)
+//    {
+//        mv.visitFieldInsn(opcode, owner, name, desc);
+//    }
+//
+//    public void visitMethodInsn(
+//        final int opcode,
+//        final String owner,
+//        final String name,
+//        final String desc)
+//    {
+//        mv.visitMethodInsn(opcode, owner, name, desc);
+//    }
+//
+//    public void visitJumpInsn(final int opcode, final Label label) {
+//        mv.visitJumpInsn(opcode, label);
+//    }
+//
+//    public void visitLabel(final Label label) {
+//        mv.visitLabel(label);
+//    }
+//
+//    public void visitLdcInsn(final Object cst) {
+//        mv.visitLdcInsn(cst);
+//    }
+//
+//    public void visitTableSwitchInsn(
+//        final int min,
+//        final int max,
+//        final Label dflt,
+//        final Label[] labels)
+//    {
+//        mv.visitTableSwitchInsn(min, max, dflt, labels);
+//    }
+//
+//    public void visitLookupSwitchInsn(
+//        final Label dflt,
+//        final int[] keys,
+//        final Label[] labels)
+//    {
+//        mv.visitLookupSwitchInsn(dflt, keys, labels);
+//    }
+//
+//    public void visitMultiANewArrayInsn(final String desc, final int dims) {
+//        mv.visitMultiANewArrayInsn(desc, dims);
+//    }
+//
+//    public void visitTryCatchBlock(
+//        final Label start,
+//        final Label end,
+//        final Label handler,
+//        final String type)
+//    {
+//        mv.visitTryCatchBlock(start, end, handler, type);
+//    }
+//
+//    public void visitLineNumber(final int line, final Label start) {
+//        mv.visitLineNumber(line, start);
+//    }
+//
+//    public void visitEnd() {
+//        mv.visitEnd();
+//    }
 }

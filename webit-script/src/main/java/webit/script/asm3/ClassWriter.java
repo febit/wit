@@ -543,41 +543,41 @@ public class ClassWriter{
         }
     }
 
-    public void visitSource(final String file, final String debug) {
-        if (file != null) {
-            sourceFile = newUTF8(file);
-        }
-        if (debug != null) {
-            sourceDebug = new ByteVector().putUTF8(debug);
-        }
-    }
+//    public void visitSource(final String file, final String debug) {
+//        if (file != null) {
+//            sourceFile = newUTF8(file);
+//        }
+//        if (debug != null) {
+//            sourceDebug = new ByteVector().putUTF8(debug);
+//        }
+//    }
 
-    public void visitOuterClass(
-        final String owner,
-        final String name,
-        final String desc)
-    {
-        enclosingMethodOwner = newClass(owner);
-        if (name != null && desc != null) {
-            enclosingMethod = newNameType(name, desc);
-        }
-    }
-
-    public void visitInnerClass(
-        final String name,
-        final String outerName,
-        final String innerName,
-        final int access)
-    {
-        if (innerClasses == null) {
-            innerClasses = new ByteVector();
-        }
-        ++innerClassesCount;
-        innerClasses.putShort(name == null ? 0 : newClass(name));
-        innerClasses.putShort(outerName == null ? 0 : newClass(outerName));
-        innerClasses.putShort(innerName == null ? 0 : newUTF8(innerName));
-        innerClasses.putShort(access);
-    }
+//    public void visitOuterClass(
+//        final String owner,
+//        final String name,
+//        final String desc)
+//    {
+//        enclosingMethodOwner = newClass(owner);
+//        if (name != null && desc != null) {
+//            enclosingMethod = newNameType(name, desc);
+//        }
+//    }
+//
+//    public void visitInnerClass(
+//        final String name,
+//        final String outerName,
+//        final String innerName,
+//        final int access)
+//    {
+//        if (innerClasses == null) {
+//            innerClasses = new ByteVector();
+//        }
+//        ++innerClassesCount;
+//        innerClasses.putShort(name == null ? 0 : newClass(name));
+//        innerClasses.putShort(outerName == null ? 0 : newClass(outerName));
+//        innerClasses.putShort(innerName == null ? 0 : newUTF8(innerName));
+//        innerClasses.putShort(access);
+//    }
 
     public MethodWriter visitMethod(
         final int access,
@@ -767,21 +767,21 @@ public class ClassWriter{
         }
     }
 
-    /**
-     * Adds a number or string constant to the constant pool of the class being
-     * build. Does nothing if the constant pool already contains a similar item.
-     * <i>This method is intended for {@link Attribute} sub classes, and is
-     * normally not needed by class generators or adapters.</i>
-     *
-     * @param cst the value of the constant to be added to the constant pool.
-     *        This parameter must be an {@link Integer}, a {@link Float}, a
-     *        {@link Long}, a {@link Double} or a {@link String}.
-     * @return the index of a new or already existing constant item with the
-     *         given value.
-     */
-    public int newConst(final Object cst) {
-        return newConstItem(cst).index;
-    }
+//    /**
+//     * Adds a number or string constant to the constant pool of the class being
+//     * build. Does nothing if the constant pool already contains a similar item.
+//     * <i>This method is intended for {@link Attribute} sub classes, and is
+//     * normally not needed by class generators or adapters.</i>
+//     *
+//     * @param cst the value of the constant to be added to the constant pool.
+//     *        This parameter must be an {@link Integer}, a {@link Float}, a
+//     *        {@link Long}, a {@link Double} or a {@link String}.
+//     * @return the index of a new or already existing constant item with the
+//     *         given value.
+//     */
+//    public int newConst(final Object cst) {
+//        return newConstItem(cst).index;
+//    }
 
     /**
      * Adds an UTF8 string to the constant pool of the class being build. Does
@@ -857,21 +857,21 @@ public class ClassWriter{
         return result;
     }
 
-    /**
-     * Adds a field reference to the constant pool of the class being build.
-     * Does nothing if the constant pool already contains a similar item.
-     * <i>This method is intended for {@link Attribute} sub classes, and is
-     * normally not needed by class generators or adapters.</i>
-     *
-     * @param owner the internal name of the field's owner class.
-     * @param name the field's name.
-     * @param desc the field's descriptor.
-     * @return the index of a new or already existing field reference item.
-     */
-    public int newField(final String owner, final String name, final String desc)
-    {
-        return newFieldItem(owner, name, desc).index;
-    }
+//    /**
+//     * Adds a field reference to the constant pool of the class being build.
+//     * Does nothing if the constant pool already contains a similar item.
+//     * <i>This method is intended for {@link Attribute} sub classes, and is
+//     * normally not needed by class generators or adapters.</i>
+//     *
+//     * @param owner the internal name of the field's owner class.
+//     * @param name the field's name.
+//     * @param desc the field's descriptor.
+//     * @return the index of a new or already existing field reference item.
+//     */
+//    public int newField(final String owner, final String name, final String desc)
+//    {
+//        return newFieldItem(owner, name, desc).index;
+//    }
 
     /**
      * Adds a method reference to the constant pool of the class being build.
@@ -900,26 +900,26 @@ public class ClassWriter{
         return result;
     }
 
-    /**
-     * Adds a method reference to the constant pool of the class being build.
-     * Does nothing if the constant pool already contains a similar item.
-     * <i>This method is intended for {@link Attribute} sub classes, and is
-     * normally not needed by class generators or adapters.</i>
-     *
-     * @param owner the internal name of the method's owner class.
-     * @param name the method's name.
-     * @param desc the method's descriptor.
-     * @param itf <tt>true</tt> if <tt>owner</tt> is an interface.
-     * @return the index of a new or already existing method reference item.
-     */
-    public int newMethod(
-        final String owner,
-        final String name,
-        final String desc,
-        final boolean itf)
-    {
-        return newMethodItem(owner, name, desc, itf).index;
-    }
+//    /**
+//     * Adds a method reference to the constant pool of the class being build.
+//     * Does nothing if the constant pool already contains a similar item.
+//     * <i>This method is intended for {@link Attribute} sub classes, and is
+//     * normally not needed by class generators or adapters.</i>
+//     *
+//     * @param owner the internal name of the method's owner class.
+//     * @param name the method's name.
+//     * @param desc the method's descriptor.
+//     * @param itf <tt>true</tt> if <tt>owner</tt> is an interface.
+//     * @return the index of a new or already existing method reference item.
+//     */
+//    public int newMethod(
+//        final String owner,
+//        final String name,
+//        final String desc,
+//        final boolean itf)
+//    {
+//        return newMethodItem(owner, name, desc, itf).index;
+//    }
 
     /**
      * Adds an integer to the constant pool of the class being build. Does
