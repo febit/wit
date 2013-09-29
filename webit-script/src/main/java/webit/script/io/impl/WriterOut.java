@@ -69,7 +69,7 @@ public final class WriterOut implements Out {
         try {
             final char[] chars = length < ThreadLocalCache.CACH_MIN_LEN ? new char[length] : ThreadLocalCache.getChars(length);
             string.getChars(offset, offset + length, chars, 0);
-            writer.write(chars);
+            writer.write(chars, 0 ,length);
         } catch (IOException ex) {
             throw new ScriptRuntimeException(ex);
         }
