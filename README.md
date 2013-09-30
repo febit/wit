@@ -655,68 +655,26 @@ outter: for(i: 6..3){
 + 性能测试结果比较理想, 待比较权威的模版测试程序;
 + 使用OutputStream 输出时, 选择 SimpleTextStatmentFactory 将会预先将纯文本根据缺省编码编码成字节流. 
 
-+ HTTL BenchmarkTest 的测试结果
-
-OutputStream:
-~~~~~
-====================test environment=====================
-os: Windows 7 6.1 x86, cpu: 2 cores, jvm: 1.7.0_17, 
-mem: max: 247M, total: 21M, free: 9M, use: 12M
-====================test parameters======================
-count: 10000, warm: 100, list: 30, stream: true,
-engines: java,httl,webitScript,velocity
-====================test result==========================
-     engine, version,    time,     tps, rate,
-       java,1.7.0_17,  2700ms,  3703/s, 100%,
-       httl,  1.0.10,  1592ms,  6281/s, 169%,
-webitscript,   1.0.0,  2004ms,  4990/s, 134%,
-   velocity,     1.7,  5022ms,  1991/s,  53%,
-=========================================================
-====================test environment=====================
-os: Windows 7 6.1 x86, cpu: 2 cores, jvm: 1.6.0_37, 
-mem: max: 247M, total: 15M, free: 4M, use: 11M
-====================test parameters======================
-count: 10000, warm: 100, list: 30, stream: true,
-engines: java,httl,webitScript,velocity
-====================test result==========================
-     engine, version,    time,     tps, rate,
-       java,1.6.0_37,  2620ms,  3816/s, 100%,
-       httl,  1.0.10,  1542ms,  6485/s, 169%,
-webitscript,   1.0.0,  2292ms,  4363/s, 114%,
-   velocity,     1.7,  5102ms,  1960/s,  51%,
-=========================================================
-~~~~~
-Writer:
-~~~~~
-====================test environment=====================
-os: Windows 7 6.1 x86, cpu: 2 cores, jvm: 1.6.0_37, 
-mem: max: 455M, total: 122M, free: 108M, use: 14M
-====================test parameters======================
-count: 10000, warm: 100, list: 30, stream: false,
-engines: java,httl,webitScript,velocity
-====================test result==========================
-     engine, version,    time,     tps, rate,
-       java,1.6.0_37,  1273ms,  7855/s, 100%,
-       httl,  1.0.10,   700ms, 14285/s, 181%,
-webitscript,   1.0.0,  1240ms,  8064/s, 102%,
-   velocity,     1.7,  2028ms,  4930/s,  62%,
-=========================================================
-
-====================test environment=====================
-os: Windows 7 6.1 x86, cpu: 2 cores, jvm: 1.7.0_17, 
-mem: max: 455M, total: 122M, free: 90M, use: 32M
-====================test parameters======================
-count: 10000, warm: 100, list: 30, stream: false,
-engines: java,httl,webitScript,velocity
-====================test result==========================
-     engine, version,    time,     tps, rate,
-       java,1.7.0_17,  1124ms,  8896/s, 100%,
-       httl,  1.0.10,   684ms, 14619/s, 164%,
-webitscript,   1.0.0,  1219ms,  8203/s,  92%,
-   velocity,     1.7,  1941ms,  5151/s,  57%,
-=========================================================
++ boilit/ebm 测试结果 [boilit/ebm] [https://github.com/boilit/ebm]
 
 ~~~~~
+===============================================================================
+OsName:Windows 7, OsVersion:6.1, OsArch:amd64, CpuCore:4
+JreVersion:1.7.0_40, MaxMem:1795M, FreeMem:119M, UsedMem:2M
+JvmMode:DEFAULT, OutputEncoding:UTF-8, OutputMode:BYTES
+Items:20, WarmCount:10, LoopCount:50000, Buffered:false
+===============================================================================
+Engine              Version             Time(ms)  Size(b)   Tps       Rate(%)   
+StringBuilder       jdk1.7.0_40         1935      6733      25839     100.00    
+Bsl                 1.1.0               2510      6803      19920     77.09     
+Httl                1.0.11              2689      6805      18594     71.96     
+Webit               1.1.3               2602      7351      19215     74.37     
+Beetl               1.25.01             3376      6807      14810     57.32     
+Velocity            1.7                 6447      7498      7755      30.01     
+FreeMarker          2.3.19              7565      6809      6609      25.58     
+===============================================================================
+~~~~~
+
 
 ## SPI
 
