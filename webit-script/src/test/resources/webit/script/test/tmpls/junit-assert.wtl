@@ -9,6 +9,7 @@ var assertNotNull;
 var assertSame;
 var assertNotSame;
 var assertArrayEquals;
+var assertArrayEquals_chars;
 
 {
 
@@ -23,6 +24,7 @@ var assertArrayEquals;
     var _assertSame = native Assert.assertSame(String, Object, Object);
     var _assertNotSame = native Assert.assertNotSame(String, Object, Object);
     var _assertArrayEquals = native Assert.assertArrayEquals(String, Object[], Object[]);
+    var _assertArrayEquals_chars = native Assert.assertArrayEquals(String, char[], char[]);
 
     
     assertTrue = function(object, msg){
@@ -60,6 +62,12 @@ var assertArrayEquals;
     assertArrayEquals = function(first, second, msg){
         _assertArrayEquals(msg, first, second);
     };
+
+    assertArrayEquals_chars = function(first, second, msg){
+        _assertArrayEquals_chars(msg, first, second);
+    };
+
+
 
 }
 

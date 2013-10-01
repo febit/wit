@@ -89,7 +89,7 @@ public class StringUtil {
         int i = 0;
         String str;
         for (Object element : elements) {
-            str  = String.valueOf(element);
+            str = String.valueOf(element);
             len += str.length();
             strings[i] = str;
             i++;
@@ -109,7 +109,7 @@ public class StringUtil {
     }
 
     public static String prefixChar(String string, char prefix) {
-        if (string != null && string.length()>0) {
+        if (string != null && string.length() > 0) {
             return string.charAt(0) == prefix
                     ? string
                     : prefix + string;

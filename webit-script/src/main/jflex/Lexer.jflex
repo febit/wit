@@ -19,11 +19,16 @@ import webit.script.util.RepeatChars;
 %{
     //================ >> user code
 
-    public boolean placeHolderFlag = false;
+    private boolean placeHolderFlag = false;
 
+    private boolean trimTextStatmentRightBlankLine = false;
     private FastCharBuffer stringBuffer = new FastCharBuffer(256);
     private int stringLine = 0;
     private int stringColumn = 0;
+    
+    public void setTrimTextStatmentRightBlankLine(boolean flag){
+        trimTextStatmentRightBlankLine = flag;
+    }
     
     public int getColumn(){
         return yycolumn+1;
@@ -32,6 +37,7 @@ import webit.script.util.RepeatChars;
     public int getLine(){
         return yyline+1;
     }
+
     public char yychar(){
         return (char)yychar;
     }
@@ -94,6 +100,15 @@ import webit.script.util.RepeatChars;
     
     private Symbol symbol(int sym, int line, int column, Object val) {
         return new Symbol(sym, line, column, val);
+    }
+
+    private Symbol popTextStatmentSymbol(boolean placeHolderFlag){
+        this.placeHolderFlag = placeHolderFlag;
+        yybegin(YYSTATEMENT);
+        if(!placeHolderFlag && trimTextStatmentRightBlankLine){
+            stringBuffer.trimRightBlankLine();
+        }
+        return symbol(TEXT_STATMENT,  stringLine,stringColumn, popAsCharArray());
     }
 
     public final String yytext(int startOffset, int endOffset) {
@@ -223,9 +238,6 @@ DelimiterStatementStartMatch   = [\\]* {DelimiterStatementStart}
 DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 
 
-
-
-
 %state  YYSTATEMENT, STRING, CHARLITERAL, END_OF_FILE
 
 %%
@@ -234,12 +246,10 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 <YYINITIAL>{
 
   /* if to YYSTATEMENT */
-  {DelimiterStatementStartMatch}        { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){placeHolderFlag = false; yybegin(YYSTATEMENT);
-												return symbol(TEXT_STATMENT, stringLine,stringColumn, popAsCharArray());} else {appendToString("<%");} }
+  {DelimiterStatementStartMatch}        { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatmentSymbol(false);} else {appendToString("<%");} }
 
   /* if to PLACEHOLDER */
-  {DelimiterPlaceholderStartMatch}      { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){placeHolderFlag = true; yybegin(YYSTATEMENT);
-												return symbol(TEXT_STATMENT,  stringLine,stringColumn, popAsCharArray());} else {appendToString("${");} }
+  {DelimiterPlaceholderStartMatch}      { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatmentSymbol(true);} else {appendToString("${");} }
   
 
   .|\n                                  { pullToString(); }
@@ -449,21 +459,4 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 .|\n                             { throw new RuntimeException("Illegal character \""+yytext()+
                                                               "\" at line "+yyline+", column "+yycolumn); }
 <<EOF>>                          { return symbol(EOF); }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

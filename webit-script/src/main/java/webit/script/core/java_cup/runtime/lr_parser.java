@@ -114,7 +114,7 @@ import webit.script.security.NativeSecurityManager;
  * @author Frank Flannery
  */
 public abstract class lr_parser {
-    
+
     private final static int stackInitialCapacity = 24;
 
     protected lr_parser(String[] nonTerminalNames, short[][] production_tab, short[][] action_tab, short[][] reduce_tab) {
@@ -402,6 +402,7 @@ public abstract class lr_parser {
     protected NativeSecurityManager nativeSecurityManager;
     protected Logger logger;
     protected boolean locateVarForce;
+    protected boolean trimTextStatmentRightBlankLine;
     protected Lexer lexer;
 
     public final int getLine() {
@@ -424,6 +425,7 @@ public abstract class lr_parser {
             this.lexer = new Lexer(in);
             this.template = template;
             final Engine engine = template.engine;
+            this.lexer.setTrimTextStatmentRightBlankLine(engine.isTrimTextStatmentRightBlankLine());
             this.logger = engine.getLogger();
             TextStatmentFactory _textStatmentFactory;
             this.textStatmentFactory = _textStatmentFactory = engine.getTextStatmentFactory();

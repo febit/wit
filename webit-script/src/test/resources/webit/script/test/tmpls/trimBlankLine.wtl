@@ -1,0 +1,41 @@
+<%
+import "/junit-assert.wtl";
+
+var assertEquals;
+var assertNotEquals;
+var assertNull;
+var assertNotNull;
+var assertTrue;
+var assertFalse;
+var assertArrayEquals;
+var assertArrayEquals_chars;
+var trimBlankLine;
+
+var out, out2;
+
+{
+    assertNotNull(trimBlankLine);
+}
+
+{
+    { %>aa <% } => out;
+    assertEquals(3, out.size);
+}
+
+{
+    { %>aa
+    ${null}<% } => out;
+    { %>aa
+    <% } => out2;
+    if(trimBlankLine){
+        assertTrue(out.size>3);
+        assertEquals(2, out2.size);
+        assertEquals('a', out2[1]);
+    }else{
+        assertTrue(out.size>3);
+        assertArrayEquals_chars(out, out2);
+    }
+}
+
+
+%>

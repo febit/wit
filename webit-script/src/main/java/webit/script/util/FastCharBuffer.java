@@ -316,4 +316,62 @@ public class FastCharBuffer implements CharSequence, Appendable {
         }
         return this;
     }
+
+    public void trimRightBlankLine() {
+        int tmp_offset;
+        int tmp_count = this.count;
+        char[] tmp_buf; // = this.currentBuffer;
+        int tmp_currentBufferIndex = this.currentBufferIndex;
+        boolean notLastOne = false;
+        for (; tmp_currentBufferIndex >= 0; tmp_currentBufferIndex--) {
+            tmp_buf = buffers[tmp_currentBufferIndex];
+            if (notLastOne) {
+                tmp_offset = tmp_buf.length;
+            } else {
+                tmp_offset = this.offset;
+                notLastOne = true;
+            }
+            int pos = CharArrayUtil.lastNotWhitespaceOrNewLine(tmp_buf, 0, tmp_offset);
+            if (pos < 0) {
+                //All blank
+                tmp_count -= tmp_offset;
+            } else if (tmp_buf[pos] == '\n') {
+                //linux or windows new line
+                if (pos == 0 && tmp_currentBufferIndex != 0) {
+                    //when the first one and has pre buffer
+                    char[] pre_buf = this.buffers[tmp_currentBufferIndex - 1];
+                    if (pre_buf[pre_buf.length - 1] == '\r') {
+                        //pre buffer has the pre-part of new line
+                        count = tmp_count - tmp_offset - 1;
+                        offset = pre_buf.length - 1;
+                        currentBufferIndex = tmp_currentBufferIndex - 1;
+                        currentBuffer = pre_buf;
+                        return;
+                    }
+                }
+
+                //when not the first one
+                if (pos != 0 && tmp_buf[pos - 1] == '\r') {
+                    pos--; //Windows new line
+                }
+
+                count = tmp_count - tmp_offset + pos;
+                offset = pos;
+                currentBufferIndex = tmp_currentBufferIndex;
+                currentBuffer = tmp_buf;
+                return;
+
+            } else if (tmp_buf[pos] == '\r') {
+
+                count = tmp_count - tmp_offset + pos;
+                offset = pos;
+                currentBufferIndex = tmp_currentBufferIndex;
+                currentBuffer = tmp_buf;
+                return;
+            } else {
+                //Not new Line
+                break;
+            }
+        }
+    }
 }
