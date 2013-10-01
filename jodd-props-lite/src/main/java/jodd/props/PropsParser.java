@@ -3,12 +3,11 @@
 package jodd.props;
 
 import java.util.ArrayList;
-import jodd.util.StringUtil;
 
 /**
  * {@link Props} parser.
  */
-public class PropsParser implements Cloneable {
+class PropsParser implements Cloneable {
 
 	protected static final String PROFILE_LEFT = "<";
 

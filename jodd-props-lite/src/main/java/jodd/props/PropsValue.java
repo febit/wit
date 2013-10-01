@@ -5,7 +5,7 @@ package jodd.props;
 /**
  * Holds original props value and generated one.
  */
-public class PropsValue {
+class PropsValue {
 
 	/**
 	 * Original value.

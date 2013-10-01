@@ -2,9 +2,6 @@
 
 package jodd.props;
 
-import jodd.util.StringTemplateParser;
-import jodd.util.Wildcard;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,7 +12,7 @@ import java.util.Map;
  * Properties can be lookuped and modified only through this
  * class.
  */
-public class PropsData implements Cloneable {
+class PropsData implements Cloneable {
 
 	private static final int MAX_INNER_MACROS = 100;
 
@@ -251,13 +248,13 @@ public class PropsData implements Cloneable {
 	/**
 	 * Extract props to target map.
 	 */
-	public void extract(final Map target, final String[] profiles, final String[] wildcardPatterns) {
+	public void extract(final Map target, final String[] profiles) {
 		if (profiles != null) {
 			for (String profile : profiles) {
 				while (true) {
 					final Map<String, PropsValue> map = this.profileProperties.get(profile);
 					if (map != null) {
-						extractMap(target, map, wildcardPatterns);
+						extractMap(target, map);
 					}
 
 					final int ndx = profile.indexOf('.');
@@ -268,19 +265,13 @@ public class PropsData implements Cloneable {
 				}
 			}
 		}
-		extractMap(target, this.baseProperties, wildcardPatterns);
+		extractMap(target, this.baseProperties);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void extractMap(final Map target, final Map<String, PropsValue> map, final String[] wildcardPatterns) {
+	protected void extractMap(final Map target, final Map<String, PropsValue> map) {
 		for (Map.Entry<String, PropsValue> entry : map.entrySet()) {
 			final String key = entry.getKey();
-
-			if (wildcardPatterns != null) {
-				if (Wildcard.matchOne(key, wildcardPatterns) == -1) {
-					continue;
-				}
-			}
 
 			if (!target.containsKey(key)) {
 				target.put(key, entry.getValue().getValue());

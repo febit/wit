@@ -9,7 +9,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.Map;
 import java.util.Properties;
-import jodd.util.StringUtil;
 import webit.script.util.FastCharArrayWriter;
 
 
@@ -254,14 +253,6 @@ public class Props implements Cloneable {
 		return data.countBaseProperties() + data.countProfileProperties();
 	}
 
-	/**
-	 * Returns <code>string</code> value of base property.
-	 * Returns <code>null</code> if property doesn't exist.
-	 */
-	@SuppressWarnings({"NullArgumentToVariableArgMethod"})
-	public String getBaseValue(final String key) {
-		return getValue(key, null);
-	}
 
 	/**
 	 * Returns value of property, using active profiles.
@@ -306,18 +297,11 @@ public class Props implements Cloneable {
 	}
 
 	/**
-	 * Extract base props (no profiles).
-	 */
-	public void extractBaseProps(final Map target) {
-		extractProps(target, null);
-	}
-
-	/**
 	 * Extracts props belonging to active profiles.
 	 */
 	public void extractProps(final Map target) {
 		initialize();
-		data.extract(target, activeProfiles, null);
+		data.extract(target, activeProfiles);
 	}
 
 	/**
@@ -325,25 +309,7 @@ public class Props implements Cloneable {
 	 */
 	public void extractProps(final Map target, final String... profiles) {
 		initialize();
-		data.extract(target, profiles, null);
-	}
-
-	public void extractBaseSubProps(final Map target, final String... wildcardPatterns) {
-		initialize();
-		data.extract(target, null, wildcardPatterns);
-	}
-
-	public void extractSubProps(final Map target, final String... wildcardPatterns) {
-		initialize();
-		data.extract(target, activeProfiles, wildcardPatterns);
-	}
-
-
-	// ---------------------------------------------------------------- initialize
-
-	public void extractSubProps(final Map target, final String[] profiles, final String[] wildcardPatterns) {
-		initialize();
-		data.extract(target, profiles, wildcardPatterns);
+		data.extract(target, profiles);
 	}
 
 	/**
@@ -386,7 +352,7 @@ public class Props implements Cloneable {
 		webit.script.util.StringUtil.trimAll(activeProfiles);
 	}
         
-        public static void copy(InputStream input, Writer output, String encoding) throws IOException {
+        private static void copy(InputStream input, Writer output, String encoding) throws IOException {
 
                 Reader reader = new InputStreamReader(input, encoding);
                 		char[] buffer = new char[2048];
@@ -396,6 +362,4 @@ public class Props implements Cloneable {
 		}
 		output.flush();
 	}
-
-
 }
