@@ -24,10 +24,10 @@ public final class PlusPlusOperator extends AbstractExpression {
     }
 
     public Object execute(final Context context) {
-        final ResetableValue resetableValue = StatmentUtil.getResetableValue(expr, context);
-        final Object value = resetableValue.get();
-
-        final Object result = ALU.plusOne(value);
+        final ResetableValue resetableValue;
+        final Object value;
+        final Object result;
+        result = ALU.plusOne(value = (resetableValue = StatmentUtil.getResetableValue(expr, context)).get());
         resetableValue.set(result);
         return executeAtFirst ? result : value;
     }

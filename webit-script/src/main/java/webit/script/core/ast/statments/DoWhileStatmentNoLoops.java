@@ -14,13 +14,13 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public final class WhileStatmentNoLoops extends AbstractStatment {
+public final class DoWhileStatmentNoLoops extends AbstractStatment {
 
     private final Expression whileExpr;
     private final VariantMap varMap;
     private final Statment[] statments;
 
-    public WhileStatmentNoLoops(Expression whileExpr, VariantMap varMap, Statment[] statments, int line, int column) {
+    public DoWhileStatmentNoLoops(Expression whileExpr, VariantMap varMap, Statment[] statments, int line, int column) {
         super(line, column);
         this.whileExpr = whileExpr;
         this.varMap = varMap;
@@ -28,13 +28,13 @@ public final class WhileStatmentNoLoops extends AbstractStatment {
     }
 
     public Object execute(final Context context) {
+        final Statment[] statments = this.statments;
         final VariantStack vars;
         (vars = context.vars).push(varMap);
-        final Statment[] statments = this.statments;
-        while (ALU.toBoolean(StatmentUtil.execute(whileExpr, context))) {
+        do {
             StatmentUtil.execute(statments, context);
             vars.resetCurrent();
-        }
+        } while (ALU.toBoolean(StatmentUtil.execute(whileExpr, context)));
         vars.pop();
         return null;
     }

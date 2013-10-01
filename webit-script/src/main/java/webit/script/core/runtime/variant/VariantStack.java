@@ -10,42 +10,38 @@ import webit.script.exceptions.ScriptRuntimeException;
  */
 public final class VariantStack {
 
-    private static final int initialCapacity = 10;
+    private static final int initialCapacity = 16;
     //
-    protected VariantContext[] contexts;
+    private VariantContext[] contexts;
     //
-    protected int current;
+    private int current;
 
-    public VariantStack(int initialCapacity) {
+    public VariantStack() {
         contexts = new VariantContext[initialCapacity];
         current = -1;
     }
 
-    public VariantStack() {
-        this(initialCapacity);
-    }
-
     public VariantStack(final VariantContext[] contexts) {
-        this(initialCapacity > contexts.length ? initialCapacity : contexts.length + 3);
-        System.arraycopy(contexts, 0, this.contexts, 0, contexts.length);
-        current = contexts.length - 1;
+        final int len;
+        System.arraycopy(contexts, 0,
+                this.contexts = new VariantContext[initialCapacity > (len = contexts.length) ? initialCapacity : len + 3],
+                0, len);
+        current = len - 1;
     }
 
     public void push(final VariantMap varMap) {
-        final int i = ++current;
-        if (i >= contexts.length) {
-            ensureCapacity(i);
+        final int i;
+        VariantContext[] cnts;
+        if ((i = ++current) >= (cnts = this.contexts).length) {
+            System.arraycopy(cnts, 0,
+                    cnts = contexts = new VariantContext[i << 1],
+                    0, current + 1);
         }
-        contexts[i] = new VariantContext(varMap);
+        cnts[i] = new VariantContext(varMap);
     }
 
-    public VariantContext pop() {
-        if (current < 0) {
-            throw new ScriptRuntimeException("VariantContext stack overflow");
-        }
-        VariantContext element = contexts[current];
+    public void pop() {
         contexts[current--] = null;
-        return element;
     }
 
     public int setToCurrentContext(final Map<String, Object> map) {
@@ -76,6 +72,37 @@ public final class VariantStack {
             return len;
         }
         return 0;
+    }
+
+    public void set(int index, Object value) {
+        //getContext(upstairs).set(index, value);
+        contexts[current].values[index] = value;
+    }
+
+    public void resetCurrent() {
+        final Object[] contextValues;
+        for (int i = (contextValues = contexts[current].values).length - 1; i >= 0; i--) {
+            contextValues[i] = null;
+        }
+    }
+
+    public void resetCurrentWith(int index, Object value, int index2, Object value2) {
+        final Object[] contextValues;
+        for (int i = (contextValues = contexts[current].values).length - 1; i >= 0; i--) {
+            contextValues[i] = null;
+        }
+        contextValues[index] = value;
+        contextValues[index2] = value2;
+    }
+
+    public void resetCurrentWith(int index, Object value, int index2, Object value2, int index3, Object value3) {
+        final Object[] contextValues;
+        for (int i = (contextValues = contexts[current].values).length - 1; i >= 0; i--) {
+            contextValues[i] = null;
+        }
+        contextValues[index] = value;
+        contextValues[index2] = value2;
+        contextValues[index3] = value3;
     }
 
     public void set(int upstairs, int index, Object value) {
@@ -120,10 +147,9 @@ public final class VariantStack {
 
     public Object get(String key, boolean force) {
         VariantContext context;
+        int index;
         for (int i = current; i >= 0; i++) {
-            context = contexts[i];
-            int index = context.getIndex(key);
-            if (index >= 0) {
+            if ((index = (context = contexts[i]).getIndex(key)) >= 0) {
                 return context.get(index);
             }
         }
@@ -133,29 +159,15 @@ public final class VariantStack {
         return null;
     }
 
-    public int getCurrentIndex() {
-        return current;
-    }
-
     public VariantContext getCurrentContext() {
         return contexts[current];
     }
 
     public VariantContext getContext(int offset) {
-        final int realIndex = current - offset;
-        if (realIndex < 0 || realIndex > current) {
+        final int realIndex;
+        if ((realIndex = current - offset) < 0 || realIndex > current) {
             throw new IndexOutOfBoundsException();
         }
         return contexts[realIndex];
-    }
-
-    private void ensureCapacity(int maxIndex) {
-        maxIndex++;
-        if (maxIndex > contexts.length) {
-            int newcap = ((contexts.length * 3) >> 1) + 1;
-            Object[] olddata = contexts;
-            contexts = new VariantContext[newcap < maxIndex ? maxIndex : newcap];
-            System.arraycopy(olddata, 0, contexts, 0, current + 1);
-        }
     }
 }

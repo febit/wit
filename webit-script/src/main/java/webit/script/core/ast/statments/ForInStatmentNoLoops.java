@@ -5,6 +5,8 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
+import webit.script.core.runtime.variant.VariantMap;
+import webit.script.core.runtime.variant.VariantStack;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatmentUtil;
 import webit.script.util.collection.Iter;
@@ -15,32 +17,38 @@ import webit.script.util.collection.Iter;
  */
 public final class ForInStatmentNoLoops extends AbstractStatment {
 
-    private final int[] paramIndexs;
+    private final int iterIndex;
+    private final int itemIndex;
     private final Expression collectionExpr;
-    private final BlockStatment bodyStatment;
+    private final VariantMap varMap;
+    private final Statment[] statments;
     private final Statment elseStatment;
 
-    public ForInStatmentNoLoops(int itemIndex, int iterIndex, Expression collectionExpr, BlockStatment bodyStatment, Statment elseStatment, int line, int column) {
+    public ForInStatmentNoLoops(int iterIndex, int itemIndex, Expression collectionExpr, VariantMap varMap, Statment[] statments, Statment elseStatment, int line, int column) {
         super(line, column);
-        this.paramIndexs = new int[]{itemIndex, iterIndex};
+        this.iterIndex = iterIndex;
+        this.itemIndex = itemIndex;
         this.collectionExpr = collectionExpr;
-        this.bodyStatment = bodyStatment;
+        this.varMap = varMap;
+        this.statments = statments;
         this.elseStatment = elseStatment;
     }
 
     public Object execute(final Context context) {
+        final Iter iter;
 
-        final Iter iter = CollectionUtil.toIter(
-                StatmentUtil.execute(collectionExpr, context));
+        if ((iter = CollectionUtil.toIter(
+                StatmentUtil.execute(collectionExpr, context))) != null
+                && iter.hasNext()) {
 
-        if (iter != null && iter.hasNext()) {
-            final Object[] params = new Object[2];
-            params[1] = iter;
+            final Statment[] statments = this.statments;
+            final VariantStack vars;
+            (vars = context.vars).push(varMap);
             do {
-                params[0] = iter.next();
-                bodyStatment.execute(context, paramIndexs, params);
+                vars.resetCurrentWith(iterIndex, iter, itemIndex, iter.next());
+                StatmentUtil.execute(statments, context);
             } while (iter.hasNext());
-
+            vars.pop();
         } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }

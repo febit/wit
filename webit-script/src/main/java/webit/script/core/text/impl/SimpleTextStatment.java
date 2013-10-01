@@ -23,7 +23,7 @@ public final class SimpleTextStatment extends AbstractStatment implements Optimi
     }
 
     public Object execute(final Context context) {
-        if (context.isByteStream && (encoding == context.encoding || encoding.equals(context.encoding))) {
+        if (context.isByteStream && encoding == context.encoding) {
             context.out(textBytes);
         } else {
             context.out(text);

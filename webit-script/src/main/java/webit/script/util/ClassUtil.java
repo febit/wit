@@ -78,8 +78,8 @@ public class ClassUtil {
     }
 
     public static Class<?> getBoxedClass(Class<?> type) {
-        Class boxed = BOX_MAP.get(type);
-        return boxed != null ? boxed : type;
+        Class boxed;
+        return (boxed = BOX_MAP.get(type)) != null ? boxed : type;
     }
 
     public static char getAliasOfBaseType(final String name) {
@@ -208,8 +208,8 @@ public class ClassUtil {
     }
 
     public static Class<?> getClass(final String name) throws ClassNotFoundException {
-        Class cls = CLASS_CACHE.get(name);
-        return cls != null ? cls : getClassByInternalName(name);
+        Class cls;
+        return (cls = CLASS_CACHE.get(name)) != null ? cls : getClassByInternalName(name);
     }
 
     private static Class<?> getClassByInternalName(String name) throws ClassNotFoundException {

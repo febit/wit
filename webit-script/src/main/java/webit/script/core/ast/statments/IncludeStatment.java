@@ -13,7 +13,7 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public class IncludeStatment extends AbstractStatment {
+public final class IncludeStatment extends AbstractStatment {
 
     private final Expression templateNameExpr;
     private final Expression paramsExpr;

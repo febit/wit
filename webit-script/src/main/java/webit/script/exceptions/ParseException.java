@@ -49,10 +49,11 @@ public class ParseException extends RuntimeException {
         return this;
     }
 
-    public void registTemplate(Template template) {
+    public ParseException registTemplate(Template template) {
         if (this.template == null) {
             this.template = template;
         }
+        return this;
     }
 
     @Override

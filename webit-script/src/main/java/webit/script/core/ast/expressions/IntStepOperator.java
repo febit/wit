@@ -20,16 +20,15 @@ public class IntStepOperator extends BinaryOperator {
     }
 
     public Object execute(final Context context) {
-        Object result = StatmentUtil.execute(leftExpr, context);
+        Object result;
         final int num1;
-        if (result instanceof Number) {
+        if ((result = StatmentUtil.execute(leftExpr, context)) instanceof Number) {
             num1 = ((Number) result).intValue();
         } else {
             throw new ScriptRuntimeException("left need a int, but found " + (result != null ? result.getClass().getName() : "[null]"));
         }
-        result = StatmentUtil.execute(rightExpr, context);
         final int num2;
-        if (result instanceof Number) {
+        if ((result = StatmentUtil.execute(rightExpr, context)) instanceof Number) {
             num2 = ((Number) result).intValue();
         } else {
             throw new ScriptRuntimeException("right need a int, but found " + (result != null ? result.getClass().getName() : "[null]"));

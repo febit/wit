@@ -17,8 +17,8 @@ public class BeanUtil {
 
     public static Object get(final Object bean, final String name) throws BeanUtilException {
 
-        Getter getter = getFieldDescriptor(bean.getClass(), name).getter;
-        if (getter == null) {
+        Getter getter;
+        if ((getter = getFieldDescriptor(bean.getClass(), name).getter) == null) {
             throw new BeanUtilException("Unable to get getter for " + bean.getClass().getName() + "#" + name);
         }
         return getter.get(bean);
@@ -30,39 +30,35 @@ public class BeanUtil {
 
     public static void set(final Object bean, final String name, Object value, boolean convertIfNeed) throws BeanUtilException {
 
-        Setter setter = getFieldDescriptor(bean.getClass(), name).setter;
-
-        if (setter == null) {
+        Setter setter;
+        if ((setter = getFieldDescriptor(bean.getClass(), name).setter) == null) {
             throw new BeanUtilException("Unable to get setter for " + bean.getClass().getName() + "#" + name);
         }
 
         if (convertIfNeed && value != null && value instanceof String) {
-            Class needType = setter.getPropertyType();
-            value = Convert.convert((String) value, needType);
+            value = Convert.convert((String) value, setter.getPropertyType());
         }
 
         setter.set(bean, value);
     }
 
     private static FieldDescriptor getFieldDescriptor(final Class cls, final String name) {
-        FieldDescriptorsBox box = CACHE.unsafeGet(cls);
-        if (box == null) {
+        FieldDescriptorsBox box;
+        if ((box = CACHE.unsafeGet(cls)) == null) {
             box = CACHE.putIfAbsent(cls, new FieldDescriptorsBox());
         }
-        Map<String, FieldDescriptor> descriptors = box.descriptors;
-        if (descriptors == null) {
+        Map<String, FieldDescriptor> descriptors;
+        if ((descriptors = box.descriptors) == null) {
             synchronized (box) {
-                descriptors = box.descriptors;
-                if (descriptors == null) {
+                if ((descriptors = box.descriptors) == null) {
                     descriptors = resolveClassDescriptor(cls);
                     box.descriptors = descriptors;
                 }
             }
         }
 
-        FieldDescriptor fieldDescriptor = descriptors.get(name);
-
-        if (fieldDescriptor == null) {
+        FieldDescriptor fieldDescriptor;
+        if ((fieldDescriptor = descriptors.get(name)) == null) {
             throw new BeanUtilException("Unable to get field: " + cls.getName() + "#" + name);
         }
         return fieldDescriptor;
@@ -85,7 +81,7 @@ public class BeanUtil {
             }
 
             final Setter setter;
-            if (fieldInfo.getSetterMethod()!= null) {
+            if (fieldInfo.getSetterMethod() != null) {
                 setter = new MethodSetter(fieldInfo.getSetterMethod());
             } else if (fieldInfo.getField() != null && fieldInfo.isIsFinal() == false) {
                 setter = new FieldSetter(fieldInfo.getField());

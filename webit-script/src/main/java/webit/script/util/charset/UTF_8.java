@@ -287,8 +287,8 @@ public class UTF_8 {
             } else if (c >= Character.MIN_HIGH_SURROGATE && c <= Character.MAX_LOW_SURROGATE) {
 
                 if (c <= Character.MAX_HIGH_SURROGATE && sp < sl) { // if is HIGH_SURROGATE && has next char
-                    final char d = sa[sp++];
-                    if (d >= Character.MIN_LOW_SURROGATE && d <= Character.MAX_LOW_SURROGATE) { // if is LOW_SURROGATE
+                    final char d;
+                    if ((d = sa[sp++]) >= Character.MIN_LOW_SURROGATE && d <= Character.MAX_LOW_SURROGATE) { // if is LOW_SURROGATE
                         
                         final int uc = Character.toCodePoint(c, d);
 

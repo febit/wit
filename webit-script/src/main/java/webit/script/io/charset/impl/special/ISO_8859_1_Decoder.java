@@ -18,9 +18,9 @@ public final class ISO_8859_1_Decoder implements Decoder {
             return;
         }
         //int new_len = len;
-        char[] chars = len < ThreadLocalCache.CACH_MIN_LEN ? new char[len] : ThreadLocalCache.getChars(len);
-
-        int used = ISO_8859_1.decode(bytes, off, len, chars);
+        char[] chars;
+        int used = ISO_8859_1.decode(bytes, off, len,
+                chars = len < ThreadLocalCache.CACH_MIN_LEN ? new char[len] : ThreadLocalCache.getChars(len));
         writer.write(chars, 0, used);
     }
 }

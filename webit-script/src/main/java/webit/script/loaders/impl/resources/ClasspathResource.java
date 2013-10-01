@@ -30,8 +30,8 @@ public class ClasspathResource implements Resource {
 
     public Reader openReader() throws IOException {
         //lastLoadTime = System.currentTimeMillis();
-        final InputStream inputStream = ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path);
-        if (inputStream == null) {
+        final InputStream inputStream;
+        if ((inputStream = ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path)) == null) {
             throw new ResourceNotFoundException("Not found: " + path);
         }
         return encoding == null

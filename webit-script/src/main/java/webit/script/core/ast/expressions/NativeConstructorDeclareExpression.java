@@ -7,7 +7,6 @@ import webit.script.asm.AsmMethodCallerManager;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.method.AsmNativeMethodDeclare;
 import webit.script.core.ast.method.NativeConstructorDeclare;
-import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.ExceptionUtil;
 
 /**

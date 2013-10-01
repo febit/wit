@@ -20,10 +20,9 @@ public class NativeNewArrayDeclare implements MethodDeclare {
     public Object execute(final Context context, final Object[] args) {
         int len = 0;
         if (args != null && args.length > 0) {
-            Object lenObject = args[0];
-            if (lenObject instanceof Number) {
-                len = ((Number) lenObject).intValue();
-                if (len < 0) {
+            Object lenObject;
+            if ((lenObject = args[0]) instanceof Number) {
+                if ((len = ((Number) lenObject).intValue()) < 0) {
                     throw new ScriptRuntimeException("must given a nonnegative number as array's length: " + len);
                 }
             } else {

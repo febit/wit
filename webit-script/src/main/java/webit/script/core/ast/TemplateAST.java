@@ -3,8 +3,8 @@ package webit.script.core.ast;
 
 import java.util.Map;
 import webit.script.Context;
-import webit.script.core.runtime.variant.VariantStack;
 import webit.script.core.runtime.variant.VariantMap;
+import webit.script.core.runtime.variant.VariantStack;
 import webit.script.util.StatmentUtil;
 
 /**

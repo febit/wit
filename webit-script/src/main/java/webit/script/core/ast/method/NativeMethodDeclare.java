@@ -22,8 +22,8 @@ public final class NativeMethodDeclare implements MethodDeclare {
         this.method = method;
         this.argsCount = method.getParameterTypes().length;
         this.isStatic = ClassUtil.isStatic(method);
-        Class returnType = method.getReturnType();
-        this.noVoid = (returnType != void.class) && (returnType != Void.class);
+        Class returnType;
+        this.noVoid = ((returnType = method.getReturnType()) != void.class) && (returnType != Void.class);
     }
 
     public Object execute(final Context context, final Object[] args) {
@@ -32,17 +32,15 @@ public final class NativeMethodDeclare implements MethodDeclare {
         if (isStatic) {
             obj = null;
             if (args != null) {
-                int copyLen = args.length;
-
-                if (copyLen == argsCount) {
+                int copyLen;
+                if ((copyLen = args.length) == argsCount) {
                     methodArgs = args;
                 } else {
                     //TODO: Warning 参数个数不一致
                     if (copyLen > argsCount) {
                         copyLen = argsCount;
                     }
-                    methodArgs = new Object[argsCount];
-                    System.arraycopy(args, 0, methodArgs, 0, copyLen);
+                    System.arraycopy(args, 0, methodArgs = new Object[argsCount], 0, copyLen);
                 }
             } else {
                 methodArgs = new Object[argsCount];
@@ -52,13 +50,12 @@ public final class NativeMethodDeclare implements MethodDeclare {
                 throw new ScriptRuntimeException("this method need one argument at least");
             }
             obj = args[0];
-            int copyLen = args.length - 1;
+            int copyLen;
             //TODO: Warning 参数个数不一致
-            if (copyLen > argsCount) {
+            if ((copyLen = args.length - 1) > argsCount) {
                 copyLen = argsCount;
             }
-            methodArgs = new Object[argsCount];
-            System.arraycopy(args, 1, methodArgs, 0, copyLen);
+            System.arraycopy(args, 1, methodArgs = new Object[argsCount], 0, copyLen);
         }
         try {
             return noVoid ? method.invoke(obj, methodArgs) : Context.VOID;

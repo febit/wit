@@ -34,8 +34,8 @@ public final class ReturnStatment extends AbstractStatment implements Loopable {
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        LinkedList<LoopInfo> list = new LinkedList<LoopInfo>();
-        list.add(new LoopInfo(LoopType.RETURN, null, line, column));
+        LinkedList<LoopInfo> list;
+        (list = new LinkedList<LoopInfo>()).add(new LoopInfo(LoopType.RETURN, null, line, column));
         return list;
     }
 }

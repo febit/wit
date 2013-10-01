@@ -15,14 +15,14 @@ import webit.script.util.StringPool;
 public class DefaultCoderFactory implements CoderFactory {
 
     public Encoder newEncoder(final String encoding) {
-        if (encoding == StringPool.UTF_8 || encoding.equalsIgnoreCase(StringPool.UTF_8)) {
+        if (encoding == StringPool.UTF_8) {
             return new UTF_8_Encoder();
         }
         return new DefaultEncoder(encoding);
     }
 
     public Decoder newDecoder(final String encoding) {
-        if (encoding == StringPool.UTF_8 || encoding.equalsIgnoreCase(StringPool.UTF_8)) {
+        if (encoding == StringPool.UTF_8) {
             return new UTF_8_Decoder();
         }
         return new DefaultDecoder(encoding);

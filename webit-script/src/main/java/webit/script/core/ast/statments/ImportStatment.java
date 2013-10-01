@@ -15,7 +15,7 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public class ImportStatment extends AbstractStatment {
+public final class ImportStatment extends AbstractStatment {
 
     private final Expression templateNameExpr;
     private final Expression paramsExpr;
@@ -71,7 +71,7 @@ public class ImportStatment extends AbstractStatment {
                 } else {
                     final Object[] vars = childContext.vars.get(exportNames);
                     for (int i = 0; i < vars.length; i++) {
-                        toContextValues[i].set(context, vars[i]);
+                        toContextValues[i].setValue(context, vars[i]);
                     }
                 }
 

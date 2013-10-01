@@ -6,8 +6,8 @@ import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopType;
-import webit.script.core.runtime.variant.VariantStack;
 import webit.script.core.runtime.variant.VariantMap;
+import webit.script.core.runtime.variant.VariantStack;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -42,29 +42,24 @@ public final class Function extends AbstractStatment {
 
     public Object execute(final Context context, final Object[] args) {
 
-        final VariantStack vars = context.vars;
-        vars.push(varMap);
+        final VariantStack vars;
+        (vars = context.vars).push(varMap);
         vars.set(0, argsIndex, args);
         vars.set(argIndexs, args);
-        final int len = statments.length;
 
         if (hasReturnLoops) {
 
-            final LoopCtrl ctrl = context.loopCtrl;
-            for (int i = 0; i < len && ctrl.goon(); i++) {
-                StatmentUtil.execute(statments[i], context);
-            }
+            StatmentUtil.executeAndCheckLoops(statments, context);
             vars.pop();
 
-            if (!ctrl.goon() && ctrl.getLoopType() == LoopType.RETURN) {
+            final LoopCtrl ctrl;
+            if (!(ctrl = context.loopCtrl).goon() && ctrl.getLoopType() == LoopType.RETURN) {
                 Object result = ctrl.getLoopValue();
                 ctrl.reset();
                 return result;
             }
         } else {
-            for (int i = 0; i < len; i++) {
-                StatmentUtil.execute(statments[i], context);
-            }
+            StatmentUtil.execute(statments, context);
             vars.pop();
         }
         return Context.VOID;

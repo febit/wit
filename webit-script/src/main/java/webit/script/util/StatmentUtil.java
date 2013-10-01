@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
@@ -9,7 +10,9 @@ import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.core.ast.Statment;
+import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.ast.loop.LoopType;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.exceptions.ParseException;
 import webit.script.io.Out;
@@ -51,11 +54,42 @@ public class StatmentUtil {
         }
     }
 
+    public static void executeSetValue(final ResetableValueExpression expression, final Context context, final Object value) {
+        try {
+            expression.setValue(context, value);
+        } catch (Throwable e) {
+            throw ExceptionUtil.castToScriptRuntimeException(e, expression);
+        }
+    }
+
     public static void execute(final Statment statment, final Context context) {
         try {
             statment.execute(context);
         } catch (Throwable e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statment);
+        }
+    }
+
+    public static void execute(final Statment[] statments, final Context context) {
+        int i = 0;
+        try {
+            for (int len = statments.length; i < len; i++) {
+                statments[i].execute(context);
+            }
+        } catch (Throwable e) {
+            throw ExceptionUtil.castToScriptRuntimeException(e, statments[i]);
+        }
+    }
+
+    public static void executeAndCheckLoops(final Statment[] statments, final Context context) {
+        int i = 0;
+        try {
+            final LoopCtrl ctrl = context.loopCtrl;
+            for (int len = statments.length; i < len && ctrl.goon(); i++) {
+                statments[i].execute(context);
+            }
+        } catch (Throwable e) {
+            throw ExceptionUtil.castToScriptRuntimeException(e, statments[i]);
         }
     }
 
@@ -108,5 +142,33 @@ public class StatmentUtil {
             return loopInfos.size() > 0 ? loopInfos : null;
         }
         return null;
+    }
+
+    public static LoopInfo[] collectPossibleLoopsInfoForWhileStatments(Statment bodyStatment, Statment elseStatment, String label) {
+
+        List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(bodyStatment);
+        if (list != null) {
+            for (Iterator<LoopInfo> it = list.iterator(); it.hasNext();) {
+                LoopInfo loopInfo = it.next();
+                if (loopInfo.matchLabel(label)
+                        && (loopInfo.type == LoopType.BREAK
+                        || loopInfo.type == LoopType.CONTINUE)) {
+                    it.remove();
+                }
+            }
+            list = list.isEmpty() ? null : list;
+        }
+
+        if (elseStatment != null) {
+            List<LoopInfo> list2 = StatmentUtil.collectPossibleLoopsInfo(elseStatment);
+            if (list == null) {
+                list = list2;
+            } else if (list2 != null) {
+                list.addAll(list2);
+            }
+        }
+        return list != null && list.size() > 0
+                ? list.toArray(new LoopInfo[list.size()])
+                : null;
     }
 }

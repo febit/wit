@@ -104,15 +104,15 @@ public final class Engine {
     }
 
     public Object getBean(Class type) throws InstantiationException, IllegalAccessException {
-        Object bean = newInstance(type);
-        resolveBean(bean);
+        Object bean;
+        resolveBean(bean = newInstance(type));
         return bean;
     }
 
     /**
      *
      * @param parentName parent template's name
-     * @param name template's relative name 
+     * @param name template's relative name
      * @return Template
      * @throws ResourceNotFoundException
      */
@@ -122,32 +122,29 @@ public final class Engine {
 
     /**
      * get template by name
+     *
      * @param name template's name
      * @return Template
      * @throws ResourceNotFoundException
      */
-    public Template getTemplate(String name) throws ResourceNotFoundException {
-        Template template = templateCache.get(name);
-        if (template == null) {
-            String normalizedName = resourceLoader.normalize(name);
-            if (normalizedName == null) {
+    public Template getTemplate(final String name) throws ResourceNotFoundException {
+        Template template;
+        if ((template = templateCache.get(name)) == null) {
+            final String normalizedName;
+            if ((normalizedName = resourceLoader.normalize(name)) == null) {
                 throw new ResourceNotFoundException("Illegal template path" + name);
             }
-            template = templateCache.get(normalizedName);
-            if (template == null) {
-                template = new Template(this, normalizedName, resourceLoader.get(normalizedName)); //fast
-                Template oldTemplate = templateCache.putIfAbsent(normalizedName, template);
-                if (oldTemplate != null) {
+            if ((template = templateCache.get(normalizedName)) == null) {
+                Template oldTemplate;
+                if ((oldTemplate = templateCache.putIfAbsent(normalizedName,
+                        template = new Template(this, normalizedName,
+                        resourceLoader.get(normalizedName)))) != null) {
                     template = oldTemplate;
                 }
-                
-                if (!name.equals(normalizedName)) {
-                    oldTemplate = templateCache.putIfAbsent(name, template);
-                    if (oldTemplate != null) {
-                        template = oldTemplate;
-                    }
+                if (!name.equals(normalizedName)
+                        && (oldTemplate = templateCache.putIfAbsent(name, template)) != null) {
+                    template = oldTemplate;
                 }
-
             }
         }
         return template;
@@ -270,8 +267,8 @@ public final class Engine {
         }
 
         //Log props file name
-        final Logger logger = engine.getLogger();
-        petite.setLogger(logger);
+        final Logger logger;
+        petite.setLogger(logger = engine.getLogger());
         if (logger != null && logger.isInfoEnabled()) {
             logger.info("Loaded props files from classpath: {}", StringUtil.join(propsFiles, ", "));
         }

@@ -19,8 +19,10 @@ public final class AndOperator extends BinaryOperator implements Optimizable {
     }
 
     public Object execute(final Context context) {
-        Object left = StatmentUtil.execute(leftExpr, context);
-        return ALU.toBoolean(left) ? StatmentUtil.execute(rightExpr, context) : left;
+        Object left;
+        return ALU.toBoolean(left = StatmentUtil.execute(leftExpr, context))
+                ? StatmentUtil.execute(rightExpr, context)
+                : left;
     }
 
     public Expression optimize() {

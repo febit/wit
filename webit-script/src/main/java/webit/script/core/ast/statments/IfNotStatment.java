@@ -16,25 +16,25 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public final class IfStatment extends AbstractStatment implements Loopable {
+public final class IfNotStatment extends AbstractStatment implements Loopable {
 
     private final Expression ifExpr;
-    private final Statment thenStatment;
+    private final Statment elseStatment;
 
-    public IfStatment(Expression ifExpr, Statment thenStatment, int line, int column) {
+    public IfNotStatment(Expression ifExpr, Statment elseStatment, int line, int column) {
         super(line, column);
         this.ifExpr = ifExpr;
-        this.thenStatment = thenStatment;
+        this.elseStatment = elseStatment;
     }
 
     public Object execute(final Context context) {
-        if (ALU.toBoolean(StatmentUtil.execute(ifExpr, context))) {
-            StatmentUtil.execute(thenStatment, context);
+        if (!ALU.toBoolean(StatmentUtil.execute(ifExpr, context))) {
+            StatmentUtil.execute(elseStatment, context);
         }
         return null;
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        return StatmentUtil.collectPossibleLoopsInfo(thenStatment);
+        return StatmentUtil.collectPossibleLoopsInfo(elseStatment);
     }
 }

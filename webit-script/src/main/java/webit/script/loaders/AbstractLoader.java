@@ -16,11 +16,7 @@ public abstract class AbstractLoader implements Loader, Initable {
     protected String root = null;
 
     public String concat(final String parent, final String name) {
-        if (parent != null) {
-            return UnixStyleFileNameUtil.concat(UnixStyleFileNameUtil.getPath(parent), name);
-        } else {
-            return name;
-        }
+        return parent != null ? UnixStyleFileNameUtil.concat(UnixStyleFileNameUtil.getPath(parent), name) : name;
     }
 
     protected String getRealPath(final String name) {

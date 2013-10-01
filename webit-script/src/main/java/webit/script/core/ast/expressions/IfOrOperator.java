@@ -18,8 +18,8 @@ public final class IfOrOperator extends BinaryOperator {
     }
 
     public Object execute(final Context context) {
-        final Object ifResult = StatmentUtil.execute(leftExpr, context);
-        return ALU.toBoolean(ifResult)
+        Object ifResult;
+        return ALU.toBoolean(ifResult = StatmentUtil.execute(leftExpr, context))
                 ? ifResult
                 : StatmentUtil.execute(rightExpr, context);
     }

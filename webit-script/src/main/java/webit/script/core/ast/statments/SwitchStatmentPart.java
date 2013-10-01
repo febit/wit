@@ -4,8 +4,8 @@ package webit.script.core.ast.statments;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Statment;
 import webit.script.core.ast.Position;
+import webit.script.core.ast.Statment;
 import webit.script.core.ast.statments.SwitchStatment.CaseEntry;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatmentUtil;
@@ -43,9 +43,9 @@ public final class SwitchStatmentPart extends Position {
         return this;
     }
 
-    public SwitchStatmentPart appendCaseStatment(Object key, BlockStatment body, int line, int column) {
-
-        if (body != null && !(body instanceof EmptyBlockStatment)) {
+    public SwitchStatmentPart appendCaseStatment(Object key, Statment body, int line, int column) {
+        body = StatmentUtil.optimize(body);
+        if (body != null) {
             currentCaseStatment = new CaseEntry(body, currentCaseStatment);
         }
 

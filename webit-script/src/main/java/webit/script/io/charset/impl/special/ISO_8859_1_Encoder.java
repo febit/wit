@@ -18,9 +18,10 @@ public class ISO_8859_1_Encoder implements Encoder {
             return;
         }
         //int new_len = len;
-        final byte[] bytes = len < ThreadLocalCache.CACH_MIN_LEN ? new byte[len] : ThreadLocalCache.getBytes(len);
+        final byte[] bytes;
 
-        int used = ISO_8859_1.encode(chars, off, len, bytes);
+        int used = ISO_8859_1.encode(chars, off, len,
+                bytes = len < ThreadLocalCache.CACH_MIN_LEN ? new byte[len] : ThreadLocalCache.getBytes(len));
 
         out.write(bytes, 0, used);
     }
@@ -29,9 +30,10 @@ public class ISO_8859_1_Encoder implements Encoder {
         if (string == null || len == 0) {
             return;
         }
-        final char[] chars = len < ThreadLocalCache.CACH_MIN_LEN ? new char[len] : ThreadLocalCache.getChars(len);
+        final char[] chars;
 
-        string.getChars(off, off + len, chars, 0);
+        string.getChars(off, off + len,
+                chars = len < ThreadLocalCache.CACH_MIN_LEN ? new char[len] : ThreadLocalCache.getChars(len), 0);
 
         write(chars, 0, len, out);
     }

@@ -9,12 +9,12 @@ package webit.script.util;
 public class NumberUtil {
 
     private final static ThreadLocal<char[]> charsBufLocal = new ThreadLocal<char[]>();
+    public final static int SIZE = 20;
 
     public static char[] get() {
-        char[] buf = charsBufLocal.get();
-        if (buf == null) {
-            buf = new char[20];
-            charsBufLocal.set(buf);
+        char[] buf;
+        if ((buf = charsBufLocal.get()) == null) {
+            charsBufLocal.set(buf = new char[SIZE]);
         }
         return buf;
     }
@@ -106,33 +106,33 @@ public class NumberUtil {
         return charPos;
     }
 
-    public static int getChars(byte b, int index, char[] buf) {
-        int i = b;
-        int q, r;
-        int charPos = index;
-        char sign = 0;
-
-        if (i < 0) {
-            sign = '-';
-            i = -i;
-        }
-
-        // Fall thru to fast mode for smaller numbers
-        // assert(i <= 65536, i);
-        for (;;) {
-            q = (i * 52429) >>> (16 + 3);
-            r = i - ((q << 3) + (q << 1)); // r = i-(q*10) ...
-            buf[--charPos] = digits[r];
-            i = q;
-            if (i == 0) {
-                break;
-            }
-        }
-        if (sign != 0) {
-            buf[--charPos] = sign;
-        }
-        return charPos;
-    }
+//    public static int getChars(byte b, int index, char[] buf) {
+//        int i = b;
+//        int q, r;
+//        int charPos = index;
+//        char sign = 0;
+//
+//        if (i < 0) {
+//            sign = '-';
+//            i = -i;
+//        }
+//
+//        // Fall thru to fast mode for smaller numbers
+//        // assert(i <= 65536, i);
+//        for (;;) {
+//            q = (i * 52429) >>> (16 + 3);
+//            r = i - ((q << 3) + (q << 1)); // r = i-(q*10) ...
+//            buf[--charPos] = digits[r];
+//            i = q;
+//            if (i == 0) {
+//                break;
+//            }
+//        }
+//        if (sign != 0) {
+//            buf[--charPos] = sign;
+//        }
+//        return charPos;
+//    }
     /**
      * All possible chars for representing a number as a String
      */
@@ -159,24 +159,4 @@ public class NumberUtil {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    final static int[] sizeTable = {9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE};
-
-    public static int stringSize(int x) {
-        for (int i = 0;; i++) {
-            if (x <= sizeTable[i]) {
-                return i + 1;
-            }
-        }
-    }
-
-    public static int stringSize(long x) {
-        long p = 10;
-        for (int i = 1; i < 19; i++) {
-            if (x < p) {
-                return i;
-            }
-            p = 10 * p;
-        }
-        return 19;
-    }
 }

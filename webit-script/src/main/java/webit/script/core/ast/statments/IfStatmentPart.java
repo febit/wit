@@ -2,8 +2,8 @@
 package webit.script.core.ast.statments;
 
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Statment;
 import webit.script.core.ast.Position;
+import webit.script.core.ast.Statment;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -32,6 +32,16 @@ public final class IfStatmentPart extends Position {
     }
 
     public Statment pop() {
-        return new IfStatment(ifExpr, thenStatment, elseStatment, line, column);
+        if (this.thenStatment != null) {
+            if (elseStatment != null) {
+                return new IfElseStatment(ifExpr, thenStatment, elseStatment, line, column);
+            } else {
+                return new IfStatment(ifExpr, thenStatment, line, column);
+            }
+        } else if (elseStatment != null) {
+            return new IfNotStatment(ifExpr, elseStatment, line, column);
+        } else {
+            return NoneStatment.getInstance();
+        }
     }
 }

@@ -25,9 +25,9 @@ public final class FunctionExecuteExpression extends AbstractExpression {
 
     public Object execute(final Context context) {
 
-        final Object funcObject = StatmentUtil.execute(funcExpr, context);
+        final Object funcObject;
 
-        if (funcObject instanceof MethodDeclare) {
+        if ((funcObject = StatmentUtil.execute(funcExpr, context)) instanceof MethodDeclare) {
             final Object[] args = new Object[paramExprs.length];
 
             for (int i = 0; i < args.length; i++) {

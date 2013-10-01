@@ -2,8 +2,8 @@
 package webit.script.core.ast.statments;
 
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Statment;
 import webit.script.core.ast.Position;
+import webit.script.core.ast.Statment;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -33,10 +33,6 @@ public final class ForMapStatmentPart extends Position {
         return this;
     }
 
-//    public ForMapStatmentPart setMapExpr(Expression mapExpr) {
-//        this.mapExpr = mapExpr;
-//        return this;
-//    }
     public ForMapStatmentPart setBodyStatment(BlockStatment bodyStatment) {
         this.bodyStatment = bodyStatment;
         return this;
@@ -48,12 +44,12 @@ public final class ForMapStatmentPart extends Position {
     }
 
     public Statment pop() {
-
-        if (bodyStatment == null) {
-            return bodyStatment = new EmptyBlockStatment(line, column);
+        if (bodyStatment.hasLoops()) {
+            return new ForMapStatment(iterIndex, keyIndex, valueIndex, mapExpr, bodyStatment.varMap, bodyStatment.statments,
+                    StatmentUtil.collectPossibleLoopsInfoForWhileStatments(bodyStatment, elseStatment, label),
+                    elseStatment, label, line, column);
+        } else {
+            return new ForMapStatmentNoLoops(iterIndex, keyIndex, valueIndex, mapExpr, bodyStatment.varMap, bodyStatment.statments, elseStatment, line, column);
         }
-        return bodyStatment.hasLoops()
-                ? new ForMapStatment(keyIndex, valueIndex, iterIndex, mapExpr, bodyStatment, elseStatment, label, line, column)
-                : new ForMapStatmentNoLoops(keyIndex, valueIndex, iterIndex, mapExpr, bodyStatment, elseStatment, line, column);
     }
 }

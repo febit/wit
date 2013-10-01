@@ -41,16 +41,14 @@ public final class Template {
      * @throws ParseException
      */
     public TemplateAST prepareTemplate() throws IOException, ParseException {
-        TemplateAST tmpl = this.templateAst;
-        if (tmpl == null || resource.isModified()) { //fast
+        TemplateAST tmpl;
+        if ((tmpl = this.templateAst) == null || resource.isModified()) { //fast
             synchronized (reloadLock) {
-                tmpl = this.templateAst;
-                if (tmpl == null || resource.isModified()) { //slow
-                    tmpl = new Parser().parseTemplate(
+                if ((tmpl = this.templateAst) == null || resource.isModified()) { //slow
+                    this.templateAst = tmpl = new Parser().parseTemplate(
                             resource.openReader(), //Parser will close reader when finish
                             this);
                     lastModified = System.currentTimeMillis();
-                    this.templateAst = tmpl;
                 }
             }
         }
@@ -104,17 +102,14 @@ public final class Template {
      */
     public Context merge(final Map<String, Object> root, final Out out) throws ScriptRuntimeException, ParseException {
         try {
-            final TemplateAST tmpl = prepareTemplate();
-            final Context context = new Context(this, out);
-            tmpl.execute(context, root);
+            final Context context;
+            prepareTemplate().execute((context = new Context(this, out)), root);
             return context;
         } catch (Throwable e) {
             if (e instanceof ScriptRuntimeException) {
-                ((ScriptRuntimeException) e).setTemplate(this);
-                throw (ScriptRuntimeException) e;
+                throw ((ScriptRuntimeException) e).setTemplate(this);
             } else if (e instanceof ParseException) {
-                ((ParseException) e).registTemplate(this);
-                throw (ParseException) e;
+                throw ((ParseException) e).registTemplate(this);
             } else {
                 throw new ScriptRuntimeException(e).setTemplate(this);
             }

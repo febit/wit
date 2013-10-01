@@ -6,6 +6,8 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
+import webit.script.core.runtime.variant.VariantMap;
+import webit.script.core.runtime.variant.VariantStack;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatmentUtil;
@@ -17,16 +19,22 @@ import webit.script.util.collection.Iter;
  */
 public final class ForMapStatmentNoLoops extends AbstractStatment {
 
-    private final int[] paramIndexs;
+    private final int iterIndex;
+    private final int keyIndex;
+    private final int valueIndex;
     private final Expression mapExpr;
-    private final BlockStatment bodyStatment;
+    private final VariantMap varMap;
+    private final Statment[] statments;
     private final Statment elseStatment;
 
-    public ForMapStatmentNoLoops(int keyIndex, int valueIndex, int iterIndex, Expression mapExpr, BlockStatment bodyStatment, Statment elseStatment, int line, int column) {
+    public ForMapStatmentNoLoops(int iterIndex, int keyIndex, int valueIndex, Expression mapExpr, VariantMap varMap, Statment[] statments, Statment elseStatment, int line, int column) {
         super(line, column);
-        this.paramIndexs = new int[]{keyIndex, valueIndex, iterIndex};
+        this.iterIndex = iterIndex;
+        this.keyIndex = keyIndex;
+        this.valueIndex = valueIndex;
         this.mapExpr = mapExpr;
-        this.bodyStatment = bodyStatment;
+        this.varMap = varMap;
+        this.statments = statments;
         this.elseStatment = elseStatment;
     }
 
@@ -44,16 +52,16 @@ public final class ForMapStatmentNoLoops extends AbstractStatment {
             iter = null;
         }
         if (iter != null && iter.hasNext()) {
-            final Object[] params = new Object[3];
-            params[2] = iter;
             Map.Entry entry;
+            final Statment[] statments = this.statments;
+            final VariantStack vars;
+            (vars = context.vars).push(varMap);
             do {
                 entry = iter.next();
-                params[0] = entry.getKey();
-                params[1] = entry.getValue();
-                bodyStatment.execute(context, paramIndexs, params);
+                vars.resetCurrentWith(iterIndex, iter, keyIndex, entry.getKey(), valueIndex, entry.getValue());
+                StatmentUtil.execute(statments, context);
             } while (iter.hasNext());
-
+            vars.pop();
         } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }

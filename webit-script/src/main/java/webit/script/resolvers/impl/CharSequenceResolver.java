@@ -20,18 +20,17 @@ public class CharSequenceResolver implements GetResolver {
     }
 
     public Object get(final Object object, final Object property) {
-        final CharSequence charSequence = (CharSequence) object;
         if (property instanceof Number) {
             try {
-                return charSequence.charAt(((Number) property).intValue());
+                return ((CharSequence) object).charAt(((Number) property).intValue());
             } catch (IndexOutOfBoundsException e) {
                 throw new  ScriptRuntimeException("index out of bounds:"+property);
             }
         } else {
             if ("size".equals(property)) {
-                return charSequence.length();
+                return ((CharSequence) object).length();
             } else if ("isEmpty".equals(property)) {
-                return charSequence.length() == 0;
+                return ((CharSequence) object).length() == 0;
             }
             throw new ScriptRuntimeException("Invalid property or can't read: java.lang.CharSequence#" + property);
         }

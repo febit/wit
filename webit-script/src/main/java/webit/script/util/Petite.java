@@ -28,9 +28,10 @@ public final class Petite {
     }
 
     public void wireBean(String beanName, final Object bean) {
-        final String prefix = beanName + '.';
-        final int prefix_len = prefix.length();
+        final String prefix;
+        final int prefix_len;
         String parameterName;
+        prefix_len = (prefix = beanName + '.').length();
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             parameterName = entry.getKey();
             if (parameterName.startsWith(prefix)) {

@@ -9,7 +9,6 @@ public final class IdentityHashMap<V> {
     private Entry<V> table[];
     private int threshold;
     private int count;
-    private int mark;
     //
     private final Object lock = new Object();
 
@@ -34,7 +33,6 @@ public final class IdentityHashMap<V> {
     @SuppressWarnings("unchecked")
     private void init(int initlen) {
         this.table = new Entry[initlen];
-        this.mark = initlen - 1;
         this.threshold = (int) (initlen * 0.75f);
     }
 
@@ -45,12 +43,13 @@ public final class IdentityHashMap<V> {
     @SuppressWarnings("unchecked")
     public V unsafeGet(final Object key) {
 
-        final int id = System.identityHashCode(key);
+        final int id;
         //final int index = id % tab.length;
 
-        final Entry<V> tab[] = table;
+        final Entry<V>[] tab;
+        tab = table;
         //int index = id & this.mark;
-        Entry<V> e = tab[id & (tab.length - 1)];
+        Entry<V> e = tab[(id = System.identityHashCode(key)) & (tab.length - 1)];
         //int index = id & this.mark;
         //Entry<V> e = table[index];
         for (; e != null; e = e.next) {
@@ -74,8 +73,8 @@ public final class IdentityHashMap<V> {
             if (count < threshold) {
                 return;
             }
-            final int oldCapacity = table.length;
-            final Entry<V> oldTable[] = table;
+            final Entry<V>[] oldTable = table;
+            final int oldCapacity = oldTable.length;
 
             final int newCapacity = oldCapacity << 1;
             final int newMark = newCapacity - 1;
@@ -96,18 +95,16 @@ public final class IdentityHashMap<V> {
             this.threshold = (int) (newCapacity * 0.75f);
             //Note: must at Last
             this.table = newTable;
-            this.mark = newMark;
         }
     }
 
     @SuppressWarnings("unchecked")
     private V unsafePutIfAbsent(Object key, V value) {
 
-
         final int id = System.identityHashCode(key);
 
-        int index = id & this.mark;
-        Entry<V> tab[] = table;
+        Entry<V>[] tab = table;
+        int index = id & (tab.length - 1);
         for (Entry<V> e = tab[index]; e != null; e = e.next) {
             if (e.id == id) {
                 V old = e.value;
@@ -118,7 +115,6 @@ public final class IdentityHashMap<V> {
 
         if (count >= threshold) {
             resize();
-
             tab = table;
             index = id & (tab.length - 1);
         }

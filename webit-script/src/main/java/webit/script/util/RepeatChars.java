@@ -30,8 +30,10 @@ public class RepeatChars implements CharSequence {
     }
 
     public char[] toChars() {
-        int len = length;
-        char[] chars = new char[len];
+        int len;
+        char c;
+        c = this.c;
+        char[] chars = new char[len = length];
         for (int i = 0; i < len; i++) {
             chars[i] = c;
         }

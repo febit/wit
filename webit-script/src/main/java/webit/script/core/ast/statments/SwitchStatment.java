@@ -8,6 +8,7 @@ import java.util.Map;
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
+import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.LoopType;
 import webit.script.core.ast.loop.Loopable;
@@ -33,9 +34,9 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
     }
 
     public Object execute(final Context context) {
-        final Object result = StatmentUtil.execute(switchExpr, context);
+        final Object result;
         boolean run = false;
-        if (result != null) {
+        if ((result = StatmentUtil.execute(switchExpr, context)) != null) {
             final CaseEntry caseStatment = caseMap.get(result);
             if (caseStatment != null) {
                 caseStatment.execute(context);
@@ -88,10 +89,10 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
 
     static final class CaseEntry {
 
-        final BlockStatment body;
+        final Statment body;
         final CaseEntry next;
 
-        CaseEntry(BlockStatment body, CaseEntry next) {
+        CaseEntry(Statment body, CaseEntry next) {
             this.body = body;
             this.next = next;
         }

@@ -49,104 +49,111 @@ public final class ResolverManager implements Initable {
         commonResolver = new CommonResolver();
     }
 
-    @SuppressWarnings("unchecked")
-    private GetResolver getGetResolver(Object bean) {
-        GetResolver resolver = getResolverMap.unsafeGet(bean.getClass());
-        if (resolver != null) {
-            return resolver;
-        } else {
-            final Class type = bean.getClass();
-            resolver = getResolverMap.get(type);
-            if (resolver == null) {
-                for (int i = 0; i < getResolverTypes.size(); i++) {
-                    if (getResolverTypes.get(i).isAssignableFrom(type)) {
-                        resolver = getResolvers.get(i);
-                        break;
-                    }
-                }
-
-                if (resolver == null && enableAsm) {
-                    try {
-                        resolver = AsmResolverManager.getAsmResolver(type);
-                    } catch (Throwable e) {
-                        logger.error(null, e);
-                    }
-                    if (resolver == null) {
-                        logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
-                    }
-                }
-
-                if (resolver == null) {
-                    resolver = commonResolver;
-                }
-
-                //last
-                resolver = getResolverMap.putIfAbsent(type, resolver);
-            }
-            return resolver;
-        }
+    private GetResolver getGetResolver(final Class type) {
+        GetResolver resolver;
+        return (resolver = getResolverMap.unsafeGet(type)) != null
+                ? resolver
+                : resolveGetResolver(type);
     }
 
     @SuppressWarnings("unchecked")
-    private SetResolver getSetResolver(Object bean) {
-        SetResolver resolver = setResolverMap.unsafeGet(bean.getClass());
-        if (resolver != null) {
-            return resolver;
-        } else {
-            final Class type = bean.getClass();
-            resolver = setResolverMap.get(type);
-            if (resolver == null) {
-                for (int i = 0; i < setResolverTypes.size(); i++) {
-                    if (setResolverTypes.get(i).isAssignableFrom(type)) {
-                        resolver = setResolvers.get(i);
-                        break;
-                    }
-                }
+    private GetResolver resolveGetResolver(final Class type) {
+        GetResolver resolver;
 
-                if (resolver == null && enableAsm) {
-                    try {
-                        resolver = AsmResolverManager.getAsmResolver(type);
-                    } catch (Throwable e) {
-                        logger.error(null, e);
-                    }
-                    if (resolver == null) {
-                        logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
-                    }
+        resolver = getResolverMap.get(type);
+        if (resolver == null) {
+            for (int i = 0; i < getResolverTypes.size(); i++) {
+                if (getResolverTypes.get(i).isAssignableFrom(type)) {
+                    resolver = getResolvers.get(i);
+                    break;
                 }
-
-                if (resolver == null) {
-                    resolver = commonResolver;
-                }
-
-                resolver = setResolverMap.putIfAbsent(type, resolver);
             }
-            return resolver;
+
+            if (resolver == null && enableAsm) {
+                try {
+                    resolver = AsmResolverManager.getAsmResolver(type);
+                } catch (Throwable e) {
+                    logger.error(null, e);
+                }
+                if (resolver == null) {
+                    logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
+                }
+            }
+
+            if (resolver == null) {
+                resolver = commonResolver;
+            }
+
+            //last
+            resolver = getResolverMap.putIfAbsent(type, resolver);
         }
+        return resolver;
+    }
+
+    private SetResolver getSetResolver(final Class type) {
+        SetResolver resolver;
+        return (resolver = setResolverMap.unsafeGet(type)) != null
+                ? resolver
+                : resolveSetResolver(type);
     }
 
     @SuppressWarnings("unchecked")
-    private OutResolver getOutResolver(Object bean) {
-        OutResolver resolver = outResolverMap.unsafeGet(bean.getClass());
-        if (resolver != null) {
-            return resolver;
-        } else {
-            final Class type = bean.getClass();
-            resolver = outResolverMap.get(type);
-            if (resolver == null) {
-                for (int i = 0; i < outResolverTypes.size(); i++) {
-                    if (outResolverTypes.get(i).isAssignableFrom(type)) {
-                        resolver = outResolvers.get(i);
-                        break;
-                    }
+    private SetResolver resolveSetResolver(final Class type) {
+        SetResolver resolver;
+        resolver = setResolverMap.get(type);
+        if (resolver == null) {
+            for (int i = 0; i < setResolverTypes.size(); i++) {
+                if (setResolverTypes.get(i).isAssignableFrom(type)) {
+                    resolver = setResolvers.get(i);
+                    break;
                 }
-
-                if (resolver == null) {
-                    resolver = commonResolver;
-                }
-                resolver = outResolverMap.putIfAbsent(type, resolver);
             }
-            return resolver;
+
+            if (resolver == null && enableAsm) {
+                try {
+                    resolver = AsmResolverManager.getAsmResolver(type);
+                } catch (Throwable e) {
+                    logger.error(null, e);
+                }
+                if (resolver == null) {
+                    logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
+                }
+            }
+
+            if (resolver == null) {
+                resolver = commonResolver;
+            }
+
+            resolver = setResolverMap.putIfAbsent(type, resolver);
         }
+        return resolver;
+    }
+
+    private OutResolver getOutResolver(final Class type) {
+        OutResolver resolver;
+        return (resolver = outResolverMap.unsafeGet(type)) != null
+                ? resolver
+                : resolveOutResolver(type);
+    }
+
+    @SuppressWarnings("unchecked")
+    private OutResolver resolveOutResolver(final Class type) {
+        OutResolver resolver;
+        resolver = outResolverMap.get(type);
+        if (resolver == null) {
+            for (int i = 0; i < outResolverTypes.size(); i++) {
+                if (outResolverTypes.get(i).isAssignableFrom(type)) {
+                    resolver = outResolvers.get(i);
+                    break;
+                }
+            }
+
+            if (resolver == null) {
+                resolver = commonResolver;
+            }
+            resolver = outResolverMap.putIfAbsent(type, resolver);
+        }
+        return resolver;
     }
 
     public void init(Resolver[] resolvers) {
@@ -207,15 +214,15 @@ public final class ResolverManager implements Initable {
     }
 
     public Object get(Object bean, Object property) {
-        return bean != null ? getGetResolver(bean).get(bean, property) : null;
+        return bean != null ? getGetResolver(bean.getClass()).get(bean, property) : null;
     }
 
     public boolean set(Object bean, Object property, Object value) {
-        return bean != null ? getSetResolver(bean).set(bean, property, value) : false;
+        return bean != null ? getSetResolver(bean.getClass()).set(bean, property, value) : false;
     }
 
     public void render(final Out out, final Object bean) {
-        getOutResolver(bean).render(out, bean);
+        getOutResolver(bean.getClass()).render(out, bean);
     }
 
     public void setEnableAsm(boolean enableAsm) {

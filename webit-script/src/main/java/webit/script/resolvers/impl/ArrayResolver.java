@@ -9,6 +9,7 @@ import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.RegistModeResolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.resolvers.SetResolver;
+import webit.script.util.ArrayUtil;
 import webit.script.util.CollectionUtil;
 
 /**
@@ -27,12 +28,16 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
 
     public Object get(Object object, Object property) {
         if (property instanceof Number) {
-            return CollectionUtil.getByIndex(object, property);
+            return ArrayUtil.getByIndex(object, ((Number) property).intValue());
         } else {
-            if ("size".equals(property) || "length".equals(property)) {
-                return CollectionUtil.getSize(object);
+            if ("length" == property || "size" == property) {
+                return ArrayUtil.getSize(object);
+            } else if ("isEmpty" == property) {
+                return ArrayUtil.getSize(object) == 0;
+            } else if ("length".equals(property) || "size".equals(property)) {
+                return ArrayUtil.getSize(object);
             } else if ("isEmpty".equals(property)) {
-                return CollectionUtil.getSize(object) == 0;
+                return ArrayUtil.getSize(object) == 0;
             }
             throw new ScriptRuntimeException("Invalid property or can't read: array#" + property);
         }
@@ -40,7 +45,7 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
 
     public boolean set(Object object, Object property, Object value) {
         if (property instanceof Number) {
-            CollectionUtil.setByIndex(object, property, value);
+            ArrayUtil.setByIndex(object, ((Number) property).intValue(), value);
             return true;
         } else {
             throw new ScriptRuntimeException("Invalid property or can't write: array#" + property);
@@ -60,13 +65,13 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
     }
 
     public void render(final Out out, Object bean) {
-        final Class objClass = bean.getClass();
-        if (objClass == char[].class) {
+        final Class objClass;
+        if ((objClass = bean.getClass()) == char[].class) {
             out.write((char[]) bean);
         } else if (objClass == byte[].class) {
             out.write((byte[]) bean);
         } else {
-            out.write(CollectionUtil.arrayToString(bean));
+            out.write(ArrayUtil.arrayToString(bean));
         }
     }
 }

@@ -15,13 +15,11 @@ import webit.script.util.NumberUtil;
 public class IntegerOutResolver implements OutResolver, RegistModeResolver {
 
     public void render(final Out out, final Object bean) {
-        final int i = ((Number) bean).intValue();
-
-        if (i != Integer.MIN_VALUE) {
-            //int size = (i < 0) ? NumberUtil.stringSize(-i) + 1 : NumberUtil.stringSize(i);
-            final char[] buf = (i > 99 || i < -9) ? NumberUtil.get() : new char[2];
-            final int pos = NumberUtil.getChars(i, buf.length, buf);
-            out.write(buf, pos, buf.length - pos);
+        final int i;
+        if ((i = ((Number) bean).intValue()) != Integer.MIN_VALUE) {
+            final char[] buf;
+            final int pos = NumberUtil.getChars(i, NumberUtil.SIZE, (buf = NumberUtil.get()));
+            out.write(buf, pos, NumberUtil.SIZE - pos);
         } else {
             out.write("-2147483648");
         }

@@ -25,7 +25,15 @@ public final class PropertyOperator extends AbstractExpression implements Reseta
     }
 
     public Object execute(final Context context) {
-        return context.resolverManager.get(StatmentUtil.execute(expr, context), property);
+        return context.resolverManager.get(
+                StatmentUtil.execute(expr, context),
+                property);
+    }
+
+    public void setValue(final Context context, final Object value) {
+        context.resolverManager.set(
+                StatmentUtil.execute(expr, context),
+                property, value);
     }
 
     public ResetableValue getResetableValue(Context context) {

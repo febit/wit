@@ -4,7 +4,6 @@ package webit.script.core.ast.expressions;
 import webit.script.Context;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
@@ -36,24 +35,21 @@ public class RedirectOutExpression extends AbstractExpression {
             FastByteArrayOutputStream out = new FastByteArrayOutputStream(256);
 
             Object result = StatmentUtil.execute(srcExpr, context, new OutputStreamOut(out, (OutputStreamOut) current));
-            ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
-            value.set(out.toByteArray());
+            StatmentUtil.executeSetValue(toExpr, context, out.toByteArray());
 
             return result;
         } else if (current instanceof WriterOut) {
             FastCharArrayWriter writer = new FastCharArrayWriter(256);
 
             Object result = StatmentUtil.execute(srcExpr, context, new WriterOut(writer, (WriterOut) current));
-            ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
-            value.set(writer.toCharArray());
-
+            StatmentUtil.executeSetValue(toExpr, context, writer.toCharArray());
+            
             return result;
         } else {
             FastCharArrayWriter writer = new FastCharArrayWriter(256);
 
             Object result = StatmentUtil.execute(srcExpr, context, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
-            ResetableValue value = StatmentUtil.getResetableValue(toExpr, context);
-            value.set(writer.toCharArray());
+            StatmentUtil.executeSetValue(toExpr, context, writer.toCharArray());
 
             return result;
         }

@@ -20,8 +20,8 @@ public class SimpleTextStatmentFactory implements TextStatmentFactory, Initable 
 
     private String encoding;
     private CoderFactory coderFactory;
-    private ThreadLocal<Encoder> encoders = new ThreadLocal<Encoder>();
-    private ThreadLocal<FastByteArrayOutputStream> outputs = new ThreadLocal<FastByteArrayOutputStream>();
+    private final ThreadLocal<Encoder> encoders = new ThreadLocal<Encoder>();
+    private final ThreadLocal<FastByteArrayOutputStream> outputs = new ThreadLocal<FastByteArrayOutputStream>();
 
     public void init(Engine engine) {
         encoding = engine.getEncoding();
@@ -29,8 +29,7 @@ public class SimpleTextStatmentFactory implements TextStatmentFactory, Initable 
     }
 
     public void startTemplateParser(Template template) {
-        encoders.set(
-                coderFactory.newEncoder(encoding));
+        encoders.set(coderFactory.newEncoder(encoding));
         outputs.set(new FastByteArrayOutputStream(256));
     }
 
@@ -42,8 +41,8 @@ public class SimpleTextStatmentFactory implements TextStatmentFactory, Initable 
     private byte[] getBytes(char[] text) {
         if (text != null) {
             try {
-                FastByteArrayOutputStream outputStream = outputs.get();
-                encoders.get().write(text, 0, text.length, outputStream);
+                FastByteArrayOutputStream outputStream;
+                encoders.get().write(text, 0, text.length, outputStream = outputs.get());
                 byte[] bytes = outputStream.toByteArray();
                 outputStream.reset();
                 return bytes;

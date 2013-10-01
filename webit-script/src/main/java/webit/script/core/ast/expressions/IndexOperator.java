@@ -23,6 +23,13 @@ public final class IndexOperator extends BinaryOperator implements ResetableValu
         return context.resolverManager.get(StatmentUtil.execute(leftExpr, context), StatmentUtil.execute(rightExpr, context));
     }
 
+    public void setValue(final Context context, final Object value) {
+        context.resolverManager.set(
+                StatmentUtil.execute(leftExpr, context),
+                StatmentUtil.execute(rightExpr, context),
+                value);
+    }
+
     public ResetableValue getResetableValue(Context context) {
         final Object bean = StatmentUtil.execute(leftExpr, context);
         final Object key = StatmentUtil.execute(rightExpr, context);

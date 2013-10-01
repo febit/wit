@@ -20,7 +20,7 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public final class WhileStatment extends AbstractStatment implements Loopable {
+public final class DoWhileStatment extends AbstractStatment implements Loopable {
 
     private final Expression whileExpr;
     private final VariantMap varMap;
@@ -28,7 +28,7 @@ public final class WhileStatment extends AbstractStatment implements Loopable {
     public final LoopInfo[] possibleLoopsInfo;
     private final String label;
 
-    public WhileStatment(Expression whileExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, String label, int line, int column) {
+    public DoWhileStatment(Expression whileExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, String label, int line, int column) {
         super(line, column);
         this.whileExpr = whileExpr;
         this.varMap = varMap;
@@ -43,7 +43,7 @@ public final class WhileStatment extends AbstractStatment implements Loopable {
         final VariantStack vars;
         (vars = context.vars).push(varMap);
         label:
-        while (ALU.toBoolean(StatmentUtil.execute(whileExpr, context))) {
+        do {
             StatmentUtil.executeAndCheckLoops(statments, context);
             if (!ctrl.goon()) {
                 if (ctrl.matchLabel(label)) {
@@ -65,7 +65,7 @@ public final class WhileStatment extends AbstractStatment implements Loopable {
                 }
             }
             vars.resetCurrent();
-        }
+        } while (ALU.toBoolean(StatmentUtil.execute(whileExpr, context)));
         vars.pop();
         return null;
     }

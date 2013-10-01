@@ -4,10 +4,9 @@ package webit.script.core.ast.statments;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import webit.script.core.ast.Statment;
 import webit.script.core.ast.Position;
+import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
-import webit.script.core.runtime.variant.VariantMap;
 import webit.script.core.runtime.variant.VariantUtil;
 import webit.script.util.StatmentUtil;
 
@@ -31,26 +30,22 @@ public final class BlockStatmentPart extends Position {
     }
 
     public BlockStatmentPart append(Statment stat) {
-        stat = StatmentUtil.optimize(stat);
-        if (stat != null) {
+        if ((stat = StatmentUtil.optimize(stat)) != null) {
             statmentList.add(stat);
         }
         return this;
     }
 
     public BlockStatment pop() {
-        if (statmentList.isEmpty()) {
-            return new EmptyBlockStatment(line, column);
-        }
-        Statment[] statments = statmentList.toArray(new Statment[statmentList.size()]);
-        VariantMap variantMap = VariantUtil.toVariantMap(varMap);
+        Statment[] statments;
 
-        List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
-        if (loopInfos == null || loopInfos.isEmpty()) {
-            return new BlockStatmentNoLoops(variantMap, statments, line, column);
-        } else {
-            return new BlockStatmentWithLoops(variantMap, statments, line, column,
-                    loopInfos.toArray(new LoopInfo[loopInfos.size()]));
-        }
+        List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(
+                statments = statmentList.toArray(new Statment[statmentList.size()]));
+
+        return new BlockStatment(
+                VariantUtil.toVariantMap(varMap),
+                statments,
+                loopInfos == null ? null : loopInfos.toArray(new LoopInfo[loopInfos.size()]),
+                line, column);
     }
 }

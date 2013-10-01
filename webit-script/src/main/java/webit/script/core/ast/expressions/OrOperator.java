@@ -6,7 +6,6 @@ import webit.script.core.ast.BinaryOperator;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
 import webit.script.util.ALU;
-import static webit.script.util.ALU.toBoolean;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -20,8 +19,10 @@ public final class OrOperator extends BinaryOperator implements Optimizable {
     }
 
     public Object execute(final Context context) {
-        Object left = StatmentUtil.execute(leftExpr, context);
-        return toBoolean(left) ? left : StatmentUtil.execute(rightExpr, context);
+        Object left;
+        return ALU.toBoolean(left = StatmentUtil.execute(leftExpr, context))
+                ? left
+                : StatmentUtil.execute(rightExpr, context);
     }
 
     public Expression optimize() {

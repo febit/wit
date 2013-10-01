@@ -10,9 +10,8 @@ public class Convert {
     public static Object convert(String string, Class cls) {
         if (string == null) {
             return null;
-        }
-
-        if (cls.isArray()) {
+        }//
+        else if (cls.isArray()) {
             if (cls == Class[].class) {
                 return toClassArray(string);
             } else if (cls == String[].class) {
@@ -26,17 +25,15 @@ public class Convert {
             } else if (cls == Integer[].class) {
                 return toBooleanArray(string);
             }
-        } else {
-
-            if (cls == String.class) {
-                return string;
-            } else if (cls == Class.class) {
-                return toClass(string);
-            } else if (cls == int.class || cls == Integer.class) {
-                return toInt(string);
-            } else if (cls == boolean.class || cls == Boolean.class) {
-                return toBoolean(string);
-            }
+        }//
+        else if (cls == String.class) {
+            return string;
+        } else if (cls == Class.class) {
+            return toClass(string);
+        } else if (cls == int.class || cls == Integer.class) {
+            return toInt(string);
+        } else if (cls == boolean.class || cls == Boolean.class) {
+            return toBoolean(string);
         }
 
         return string;
@@ -59,8 +56,8 @@ public class Convert {
     }
 
     public static String[] toStringArray(String string) {
-        String[] strings = StringUtil.splitc(string, ',');
-        StringUtil.trimAll(strings);
+        String[] strings;
+        StringUtil.trimAll(strings = StringUtil.splitc(string, ','));
         return strings;
     }
 

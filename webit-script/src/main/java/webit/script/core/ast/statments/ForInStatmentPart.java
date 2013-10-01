@@ -2,8 +2,8 @@
 package webit.script.core.ast.statments;
 
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Statment;
 import webit.script.core.ast.Position;
+import webit.script.core.ast.Statment;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -42,11 +42,12 @@ public final class ForInStatmentPart extends Position {
     }
 
     public Statment pop() {
-        if (bodyStatment == null) {
-            return bodyStatment = new EmptyBlockStatment(line, column);
+        if (bodyStatment.hasLoops()) {
+            return new ForInStatment(iterIndex, itemIndex, collectionExpr, bodyStatment.varMap, bodyStatment.statments,
+                    StatmentUtil.collectPossibleLoopsInfoForWhileStatments(bodyStatment, elseStatment, label),
+                    elseStatment, label, line, column);
+        } else {
+            return new ForInStatmentNoLoops(iterIndex, itemIndex, collectionExpr, bodyStatment.varMap, bodyStatment.statments, elseStatment, line, column);
         }
-        return bodyStatment.hasLoops()
-                ? new ForInStatment(itemIndex, iterIndex, collectionExpr, bodyStatment, elseStatment, label, line, column)
-                : new ForInStatmentNoLoops(itemIndex, iterIndex, collectionExpr, bodyStatment, elseStatment, line, column);
     }
 }

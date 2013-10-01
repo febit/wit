@@ -17,9 +17,9 @@ public class MutiFilter implements Filter, Initable {
     private Filter[] _Filters;
 
     public Object process(Object object) {
-        final Filter[] filters = this._Filters;
-        if (filters != null) {
-            for (int i = 0; i < filters.length; i++) {
+        final Filter[] filters;
+        if ((filters = this._Filters) != null) {
+            for (int i = 0, len = filters.length; i < len; i++) {
                 object = filters[i].process(object);
             }
         }

@@ -3,8 +3,8 @@ package webit.script;
 
 import java.util.Map;
 import webit.script.core.ast.loop.LoopCtrl;
-import webit.script.core.runtime.variant.VariantStack;
 import webit.script.core.runtime.variant.VariantContext;
+import webit.script.core.runtime.variant.VariantStack;
 import webit.script.io.Out;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.ResolverManager;
@@ -37,13 +37,13 @@ public final class Context {
         this.template = template;
         this.out = out;
         this.encoding = out.getEncoding();
-        this.loopCtrl = new LoopCtrl();
-        this.vars = new VariantStack();
         this.isByteStream = out.isByteStream();
-        final Engine engine = template.engine;
-        this.resolverManager = engine.getResolverManager();
+        final Engine engine;
+        this.resolverManager = (engine = template.engine).getResolverManager();
         this.enableAsmNative = engine.isEnableAsmNative();
         this.logger = engine.getLogger();
+        this.loopCtrl = new LoopCtrl();
+        this.vars = new VariantStack();
     }
 
     public Context(final Context parent, final Template template, final VariantContext[] parentVarContexts) {
@@ -52,11 +52,11 @@ public final class Context {
         this.out = parent.out;
         this.encoding = parent.encoding;
         this.isByteStream = parent.isByteStream;
-        this.loopCtrl = new LoopCtrl();
-        this.vars = parentVarContexts != null ? new VariantStack(parentVarContexts) : new VariantStack();
         this.resolverManager = parent.resolverManager;
         this.enableAsmNative = parent.enableAsmNative;
         this.logger = parent.logger;
+        this.loopCtrl = new LoopCtrl();
+        this.vars = parentVarContexts != null ? new VariantStack(parentVarContexts) : new VariantStack();
     }
 
     private void checkOutStack() {
@@ -83,11 +83,9 @@ public final class Context {
      * @return current out
      * @deprecated
      */
-    public Out popOut() {
-        checkOutStack();
-        Out old = this.out;
+    public void popOut() {
+        //checkOutStack();
         this.out = outStack.pop();
-        return old;
     }
 
     public Out getOut() {

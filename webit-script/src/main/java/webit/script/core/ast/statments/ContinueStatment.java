@@ -28,8 +28,8 @@ public final class ContinueStatment extends AbstractStatment implements Loopable
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        LinkedList<LoopInfo> list = new LinkedList<LoopInfo>();
-        list.add(new LoopInfo(LoopType.CONTINUE, label, line, column));
+        LinkedList<LoopInfo> list;
+        (list = new LinkedList<LoopInfo>()).add(new LoopInfo(LoopType.CONTINUE, label, line, column));
         return list;
     }
 }

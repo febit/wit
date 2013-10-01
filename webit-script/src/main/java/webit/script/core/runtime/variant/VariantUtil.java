@@ -9,25 +9,14 @@ import java.util.Map;
  */
 public class VariantUtil {
 
-    public final static VariantMap EMPTY = new VariantMap() {
-        public int getIndex(String name) {
-            return -1;
-        }
-
-        public String getName(int index) {
-            return null;
-        }
-
-        public int size() {
-            return 0;
-        }
-    };
+    private final static int MAX_OF_NORMAL_VAR_MAP = Integer.MAX_VALUE;//XXX: size this smaller when real need HashVariantMap
+    public final static VariantMap EMPTY = new VariantMap(new String[0]);
 
     public static VariantMap toVariantMap(final Map<String, Integer> map) {
         if (map == null || map.isEmpty()) {
             return EMPTY;
-        } else if (map.size() < 7) {
-            return new ArrayVariantMap(map);
+        } else if (map.size() <= MAX_OF_NORMAL_VAR_MAP) {
+            return new VariantMap(map);
         } else {
             return new HashVariantMap(map);
         }

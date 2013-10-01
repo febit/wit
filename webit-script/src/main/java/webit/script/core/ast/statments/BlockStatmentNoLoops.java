@@ -12,7 +12,7 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public class BlockStatmentNoLoops extends AbstractStatment implements BlockStatment {
+public class BlockStatmentNoLoops extends AbstractStatment {
 
     private final VariantMap varMap;
     private final Statment[] statments;
@@ -24,28 +24,10 @@ public class BlockStatmentNoLoops extends AbstractStatment implements BlockStatm
     }
 
     public Object execute(final Context context) {
-        final VariantStack vars = context.vars;
-        vars.push(varMap);
-        final int len = statments.length;
-        for (int i = 0; i < len; i++) {
-            StatmentUtil.execute(statments[i], context);
-        }
+        final VariantStack vars;
+        (vars = context.vars).push(varMap);
+        StatmentUtil.execute(statments, context);
         vars.pop();
         return null;
-    }
-
-    public void execute(final Context context, final int[] indexs, final Object[] values) {
-        final VariantStack vars = context.vars;
-        vars.push(varMap);
-        vars.set(indexs, values);
-        final int len = statments.length;
-        for (int i = 0; i < len; i++) {
-            StatmentUtil.execute(statments[i], context);
-        }
-        vars.pop();
-    }
-
-    public boolean hasLoops() {
-        return false;
     }
 }

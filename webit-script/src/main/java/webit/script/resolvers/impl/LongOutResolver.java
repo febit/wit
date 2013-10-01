@@ -13,12 +13,11 @@ import webit.script.util.NumberUtil;
 public class LongOutResolver implements OutResolver {
 
     public void render(final Out out, Object bean) {
-        final long i = ((Long) bean).longValue();
-
-        if (i != Long.MIN_VALUE) {
-            final char[] buf = (i > 99 || i < -9) ? NumberUtil.get() : new char[2];
-            final int pos = NumberUtil.getChars(i, buf.length, buf);
-            out.write(buf, pos, buf.length - pos);
+        final long i;
+        if ((i = ((Long) bean).longValue()) != Long.MIN_VALUE) {
+            final char[] buf;
+            final int pos = NumberUtil.getChars(i, NumberUtil.SIZE, (buf = NumberUtil.get()));
+            out.write(buf, pos, NumberUtil.SIZE - pos);
         } else {
             out.write("-9223372036854775808");
         }

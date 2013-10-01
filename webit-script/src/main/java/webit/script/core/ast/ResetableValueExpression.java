@@ -7,7 +7,9 @@ import webit.script.Context;
  *
  * @author Zqq
  */
-public interface ResetableValueExpression extends Expression{
+public interface ResetableValueExpression extends Expression {
 
     ResetableValue getResetableValue(Context context);
+
+    void setValue(Context context, Object value);
 }

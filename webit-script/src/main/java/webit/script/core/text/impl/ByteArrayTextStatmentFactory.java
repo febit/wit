@@ -20,8 +20,8 @@ public class ByteArrayTextStatmentFactory implements TextStatmentFactory, Initab
 
     private String encoding;
     private CoderFactory coderFactory;
-    private ThreadLocal<Encoder> encoders = new ThreadLocal<Encoder>();
-    private ThreadLocal<FastByteArrayOutputStream> outputs = new ThreadLocal<FastByteArrayOutputStream>();
+    private final ThreadLocal<Encoder> encoders = new ThreadLocal<Encoder>();
+    private final ThreadLocal<FastByteArrayOutputStream> outputs = new ThreadLocal<FastByteArrayOutputStream>();
 
     public void init(Engine engine) {
         encoding = engine.getEncoding();
@@ -41,8 +41,8 @@ public class ByteArrayTextStatmentFactory implements TextStatmentFactory, Initab
     private byte[] getBytes(char[] text) {
         if (text != null) {
             try {
-                FastByteArrayOutputStream outputStream = outputs.get();
-                encoders.get().write(text, 0, text.length, outputStream);
+                FastByteArrayOutputStream outputStream;
+                encoders.get().write(text, 0, text.length, outputStream = outputs.get());
                 byte[] bytes = outputStream.toByteArray();
                 outputStream.reset();
                 return bytes;

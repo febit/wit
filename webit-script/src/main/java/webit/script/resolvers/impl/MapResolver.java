@@ -21,8 +21,7 @@ public class MapResolver implements GetResolver, SetResolver {
     }
 
     public Object get(Object object, Object property) {
-        Map map = (Map) object;
-        return map.get(property);
+        return ((Map) object).get(property);
     }
 
     @SuppressWarnings("unchecked")

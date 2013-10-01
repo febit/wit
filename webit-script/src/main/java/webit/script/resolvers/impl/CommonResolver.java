@@ -13,8 +13,7 @@ import webit.script.util.BeanUtil;
  *
  * @author Zqq
  */
-public class CommonResolver implements GetResolver, SetResolver, OutResolver{
-
+public class CommonResolver implements GetResolver, SetResolver, OutResolver {
 
     public Object get(final Object object, final Object property) {
         try {
@@ -26,8 +25,8 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver{
 
     public boolean set(final Object object, final Object property, final Object value) {
         try {
-             BeanUtil.set(object, String.valueOf(property), value);
-             return true;
+            BeanUtil.set(object, String.valueOf(property), value);
+            return true;
         } catch (Exception e) {
             throw new ScriptRuntimeException(e.getMessage());
         }
@@ -44,6 +43,4 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver{
     public Class<?> getMatchClass() {
         return Object.class;
     }
-
-
 }

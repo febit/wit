@@ -22,10 +22,10 @@ public class ALU {
 
     public static int getBaseType(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
-            final Class cls1 = o1.getClass();
-            final Class cls2 = o2.getClass();
+            final Class cls1;
+            final Class cls2;
 
-            if (cls1 == String.class || cls2 == String.class) {
+            if ((cls1 = o1.getClass()) == String.class || (cls2 = o2.getClass()) == String.class) {
                 return STRING;
             } //
             else if (cls1 == Character.class && cls2 == Character.class) {
@@ -60,8 +60,8 @@ public class ALU {
 
     public static int getNumberType(final Number o1) {
         if (o1 != null) {
-            final Class cls = o1.getClass();
-            if (cls == Integer.class) {
+            final Class cls;
+            if ((cls = o1.getClass()) == Integer.class) {
                 return INTEGER;
             } else if (cls == Long.class) {
                 return LONG;
@@ -78,8 +78,8 @@ public class ALU {
 
     public static int getBaseType(final Object o1) {
         if (o1 != null) {
-            final Class cls = o1.getClass();
-            if (cls == String.class) {
+            final Class cls;
+            if ((cls = o1.getClass()) == String.class) {
                 return STRING;
             } else if (cls == Integer.class) {
                 return INTEGER;
@@ -106,8 +106,8 @@ public class ALU {
     public static Object plusOne(final Object o1) {
         if (o1 != null) {
             if (o1 instanceof Number) {
-                final Number num = (Number) o1;
-                switch (getNumberType(num)) {
+                final Number num;
+                switch (getNumberType(num = (Number) o1)) {
                     case INTEGER:
                         return Integer.valueOf(num.intValue() + 1);
                     case LONG:
@@ -130,8 +130,8 @@ public class ALU {
     public static Object minusOne(final Object o1) {
         if (o1 != null) {
             if (o1 instanceof Number) {
-                final Number num = (Number) o1;
-                switch (getNumberType(num)) {
+                final Number num;
+                switch (getNumberType(num = (Number) o1)) {
                     case INTEGER:
                         return Integer.valueOf(num.intValue() - 1);
                     case LONG:

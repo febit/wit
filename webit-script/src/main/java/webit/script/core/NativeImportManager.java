@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import webit.script.util.ClassNameBand;
 import webit.script.exceptions.ParseException;
+import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
 
 /**

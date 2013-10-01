@@ -24,10 +24,11 @@ public final class MinusMinusOperator extends AbstractExpression {
     }
 
     public Object execute(final Context context) {
-        final ResetableValue resetableValue = StatmentUtil.getResetableValue(expr, context);
-        final Object value = resetableValue.get();
-
-        final Object result = ALU.minusOne(value);
+        final ResetableValue resetableValue;
+        final Object value;
+        final Object result;
+        result = ALU.minusOne(
+                value = (resetableValue = StatmentUtil.getResetableValue(expr, context)).get());
         resetableValue.set(result);
         return executeAtFirst ? result : value;
     }

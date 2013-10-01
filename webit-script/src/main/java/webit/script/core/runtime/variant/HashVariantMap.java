@@ -8,35 +8,26 @@ import java.util.Map;
  *
  * @author Zqq
  */
-public class HashVariantMap implements VariantMap {
+public final class HashVariantMap extends VariantMap {
 
-    private final String[] array;
     private final Map<String, Integer> varMap;
 
     public HashVariantMap(Map<String, Integer> map) {
-        int size = map.size();
-        array = new String[size];
-        varMap = new HashMap<String, Integer>((size + 1) * 4 / 3, 0.75f);
-
+        super(new String[map.size()]);
+        varMap = new HashMap<String, Integer>((map.size() + 1) * 4 / 3, 0.75f);
+        String name;
+        Integer index;
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            String name = entry.getKey();
-            Integer index = entry.getValue();
-
+            name = entry.getKey();
+            index = entry.getValue();
             array[index] = name;
             varMap.put(name, index);
         }
     }
 
+    @Override
     public int getIndex(final String name) {
-        final Integer index = varMap.get(name);
-        return index != null ? index : -1;
-    }
-
-    public String getName(int index) {
-        return array[index];
-    }
-
-    public int size() {
-        return array.length;
+        Integer index;
+        return (index = varMap.get(name)) != null ? index : -1;
     }
 }

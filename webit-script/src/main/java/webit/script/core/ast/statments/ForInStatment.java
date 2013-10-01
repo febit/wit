@@ -1,7 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statments;
 
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
@@ -9,8 +10,9 @@ import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
-import webit.script.core.ast.loop.LoopType;
 import webit.script.core.ast.loop.Loopable;
+import webit.script.core.runtime.variant.VariantMap;
+import webit.script.core.runtime.variant.VariantStack;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatmentUtil;
 import webit.script.util.collection.Iter;
@@ -21,34 +23,41 @@ import webit.script.util.collection.Iter;
  */
 public final class ForInStatment extends AbstractStatment implements Loopable {
 
-    private final int[] paramIndexs;
+    private final int iterIndex;
+    private final int itemIndex;
     private final Expression collectionExpr;
-    private final BlockStatment bodyStatment;
+    private final VariantMap varMap;
+    private final Statment[] statments;
+    public final LoopInfo[] possibleLoopsInfo;
     private final Statment elseStatment;
     private final String label;
 
-    public ForInStatment(int itemIndex, int iterIndex, Expression collectionExpr, BlockStatment bodyStatment, Statment elseStatment, String label, int line, int column) {
+    public ForInStatment(int iterIndex, int itemIndex, Expression collectionExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, Statment elseStatment, String label, int line, int column) {
         super(line, column);
-        this.paramIndexs = new int[]{itemIndex, iterIndex};
+        this.iterIndex = iterIndex;
+        this.itemIndex = itemIndex;
         this.collectionExpr = collectionExpr;
-        this.bodyStatment = bodyStatment;
+        this.varMap = varMap;
+        this.statments = statments;
+        this.possibleLoopsInfo = possibleLoopsInfo;
         this.elseStatment = elseStatment;
         this.label = label;
     }
 
     public Object execute(final Context context) {
+        final Iter iter;
+        if ((iter = CollectionUtil.toIter(
+                StatmentUtil.execute(collectionExpr, context))) != null
+                && iter.hasNext()) {
 
-        final Iter iter = CollectionUtil.toIter(
-                StatmentUtil.execute(collectionExpr, context));
-
-        if (iter != null && iter.hasNext()) {
-            final Object[] params = new Object[2];
-            params[1] = iter;
+            final VariantStack vars;
             final LoopCtrl ctrl = context.loopCtrl;
+            final Statment[] statments = this.statments;
+            (vars = context.vars).push(varMap);
             label:
             do {
-                params[0] = iter.next();
-                bodyStatment.execute(context, paramIndexs, params);
+                vars.resetCurrentWith(iterIndex, iter, itemIndex, iter.next());
+                StatmentUtil.executeAndCheckLoops(statments, context);
                 if (!ctrl.goon()) {
                     if (ctrl.matchLabel(label)) {
                         switch (ctrl.getLoopType()) {
@@ -69,6 +78,7 @@ public final class ForInStatment extends AbstractStatment implements Loopable {
                     }
                 }
             } while (iter.hasNext());
+            vars.pop();
         } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }
@@ -76,28 +86,6 @@ public final class ForInStatment extends AbstractStatment implements Loopable {
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
-
-        List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(bodyStatment);
-        if (list != null) {
-            for (Iterator<LoopInfo> it = list.iterator(); it.hasNext();) {
-                LoopInfo loopInfo = it.next();
-                if (loopInfo.matchLabel(this.label)
-                        && (loopInfo.type == LoopType.BREAK
-                        || loopInfo.type == LoopType.CONTINUE)) {
-                    it.remove();
-                }
-            }
-            list = list.isEmpty() ? null : list;
-        }
-
-        //
-        List<LoopInfo> list2 = StatmentUtil.collectPossibleLoopsInfo(elseStatment);
-        if (list == null) {
-            return list2;
-        } else if (list2 != null) {
-            list.addAll(list2);
-        }
-
-        return list;
+        return possibleLoopsInfo != null ? new LinkedList<LoopInfo>(Arrays.asList(possibleLoopsInfo)) : null;
     }
 }

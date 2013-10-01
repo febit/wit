@@ -15,8 +15,8 @@ public final class VariantContext {
 
     public VariantContext(final VariantMap box) {
         this.box = box;
-        int size = box.size();
-        this.values = size != 0 ? new Object[size] : EMPTY_ARRAY;
+        int size;
+        this.values = (size = box.size()) != 0 ? new Object[size] : EMPTY_ARRAY;
     }
 
     @SuppressWarnings("unchecked")
@@ -35,8 +35,8 @@ public final class VariantContext {
     }
 
     public boolean set(String key, Object value) {
-        int index = box.getIndex(key);
-        if (index >= 0) {
+        int index;
+        if ((index = box.getIndex(key)) >= 0) {
             values[index] = value;
             return true;
         }
@@ -48,8 +48,7 @@ public final class VariantContext {
     }
 
     public boolean hasKey(String key) {
-        int index = box.getIndex(key);
-        return index >= 0;
+        return box.getIndex(key) >= 0;
     }
 
     public int size() {
