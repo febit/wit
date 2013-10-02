@@ -10,7 +10,6 @@ import webit.script.resolvers.RegistModeResolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.resolvers.SetResolver;
 import webit.script.util.ArrayUtil;
-import webit.script.util.CollectionUtil;
 
 /**
  *

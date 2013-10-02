@@ -3,7 +3,6 @@ package webit.script.core.ast.statments;
 
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
-import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.core.ast.Statment;
 import webit.script.io.Out;

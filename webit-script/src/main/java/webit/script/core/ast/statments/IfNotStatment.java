@@ -5,7 +5,6 @@ import java.util.List;
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
