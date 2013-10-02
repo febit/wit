@@ -233,20 +233,4 @@ public class StringUtil {
         }
         return result;
     }
-
-    public static int indexOf(String src, char c, int startIndex, int endIndex) {
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        int srclen = src.length();
-        if (endIndex > srclen) {
-            endIndex = srclen;
-        }
-        for (int i = startIndex; i < endIndex; i++) {
-            if (src.charAt(i) == c) {
-                return i;
-            }
-        }
-        return -1;
-    }
 }
