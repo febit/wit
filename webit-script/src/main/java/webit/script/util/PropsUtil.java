@@ -3,15 +3,30 @@ package webit.script.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
-import jodd.props.Props;
+import webit.script.util.props.Props;
 
 /**
  *
  * @author zqq90
  */
 public class PropsUtil {
+
+    private final static int BUFFER_SIZE = 3072;
+
+    private static void copy(InputStream input, String encoding) throws IOException {
+
+        FastCharBuffer charsBuffer = new FastCharBuffer();
+        Reader reader = new InputStreamReader(input, encoding);
+        char[] buffer = new char[3072];
+        int read;
+        while ((read = reader.read(buffer, 0, 3072)) >= 0) {
+            charsBuffer.append(buffer, 0, read);
+        }
+    }
 
     public static List<String> loadFromClasspath(final Props p, final String... pathSets) {
         final List<String> files = new LinkedList<String>();
@@ -23,6 +38,10 @@ public class PropsUtil {
             String[] paths;
             String path;
             ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
+
+            FastCharBuffer charsBuffer = new FastCharBuffer();
+            char[] buffer = new char[BUFFER_SIZE];
+            int read;
 
             for (int i = 0; i < pathSets.length; i++) {
                 pathSet = pathSets[i];
@@ -39,12 +58,28 @@ public class PropsUtil {
                             InputStream in = classLoader.getResourceAsStream(path);
                             if (in != null) {
                                 try {
-                                    p.load(in, StringUtil.endsWithIgnoreCase(path, ".properties")
-                                            ? "ISO-8859-1"
-                                            : "UTF-8");
+
+                                    Reader reader = new InputStreamReader(in, StringUtil.endsWithIgnoreCase(path, ".properties")
+                                            ? StringPool.ISO_8859_1
+                                            : StringPool.UTF_8);
+
+                                    charsBuffer.clear();
+
+                                    while ((read = reader.read(buffer, 0, 3072)) >= 0) {
+                                        charsBuffer.append(buffer, 0, read);
+                                    }
+
+                                    p.load(charsBuffer.toString());
                                     files.add(path);
-                                } catch (IOException ex) {
+                                } catch (IOException ignore) {
                                     //XXX:ignore
+                                } finally {
+                                    try {
+                                        in.close();
+                                    } catch (Exception ignore) {
+                                        //XXX:ignore
+                                    }
+                                    charsBuffer.clear();
                                 }
                             }//XXX: else ignore
                         }

@@ -3,8 +3,8 @@ package webit.script.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import jodd.props.Props;
 import webit.script.loggers.Logger;
+import webit.script.util.props.Props;
 
 /**
  *

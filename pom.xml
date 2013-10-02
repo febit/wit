@@ -14,8 +14,6 @@
     
     <modules>
         <module>webit-script</module>
-        <module>jodd-props-lite</module>
-        <module>webit-script-joddinside</module>
     </modules>
     
     <scm>

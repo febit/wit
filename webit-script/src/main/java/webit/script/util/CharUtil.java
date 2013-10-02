@@ -75,4 +75,8 @@ public class CharUtil {
         }
         return c;
     }
+    
+    public static boolean isWhitespace(char c) {
+        return c <= ' ';
+    }
 }

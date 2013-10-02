@@ -233,4 +233,16 @@ public class StringUtil {
         }
         return result;
     }
+
+    public static boolean isBlank(String string) {
+        if (string == null) {
+            return true;
+        }
+        for (int i = 0, size = string.length(); i < size; i++) {
+            if (CharUtil.isWhitespace(string.charAt(i)) == false) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

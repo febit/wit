@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import jodd.props.Props;
 import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.filters.Filter;
@@ -18,8 +17,8 @@ import webit.script.security.NativeSecurityManager;
 import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
-import webit.script.util.StringPool;
 import webit.script.util.StringUtil;
+import webit.script.util.props.Props;
 
 /**
  *
