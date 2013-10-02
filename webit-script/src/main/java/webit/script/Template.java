@@ -13,6 +13,7 @@ import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.loaders.Resource;
+import webit.script.util.EncodingPool;
 
 /**
  *
@@ -77,7 +78,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> root, final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParseException {
-        return merge(root, new OutputStreamOut(outputStream, encoding != null ? encoding.toUpperCase().intern() : engine.getEncoding(), engine.getCoderFactory()));
+        return merge(root, new OutputStreamOut(outputStream, encoding != null ? EncodingPool.intern(encoding) : engine.getEncoding(), engine.getCoderFactory()));
     }
 
     /**

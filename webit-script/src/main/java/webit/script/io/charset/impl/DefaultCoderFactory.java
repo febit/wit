@@ -6,7 +6,7 @@ import webit.script.io.charset.Decoder;
 import webit.script.io.charset.Encoder;
 import webit.script.io.charset.impl.special.UTF_8_Decoder;
 import webit.script.io.charset.impl.special.UTF_8_Encoder;
-import webit.script.util.StringPool;
+import webit.script.util.EncodingPool;
 
 /**
  *
@@ -15,16 +15,18 @@ import webit.script.util.StringPool;
 public class DefaultCoderFactory implements CoderFactory {
 
     public Encoder newEncoder(final String encoding) {
-        if (encoding == StringPool.UTF_8) {
+        if (encoding == EncodingPool.UTF_8) {
             return new UTF_8_Encoder();
+        } else {
+            return new DefaultEncoder(encoding);
         }
-        return new DefaultEncoder(encoding);
     }
 
     public Decoder newDecoder(final String encoding) {
-        if (encoding == StringPool.UTF_8) {
+        if (encoding == EncodingPool.UTF_8) {
             return new UTF_8_Decoder();
+        } else {
+            return new DefaultDecoder(encoding);
         }
-        return new DefaultDecoder(encoding);
     }
 }
