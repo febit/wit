@@ -10,19 +10,27 @@ import webit.script.test.util.DiscardOutputStream;
  */
 public class TestForVisualVM {
 
-    @Test
+    public static class Start {
+
+        public static void start() {
+        }
+    }
+
+    //@Test
     public void test() {
         int times = 10000;
         Engine engine = EngineManager.getEngine();
 
         try {
             Template template = engine.getTemplate("/firstTmpl.wtl");
-            template.prepareTemplate();
             DiscardOutputStream out = new DiscardOutputStream();
-            //TemplateAST result = template.prepareTemplate();
+            template.prepareTemplate();
+            
+            //webit.script.TestForVisualVM.Start
+            TestForVisualVM.Start.start();
             for (int i = 0; i < times; i++) {
-                
-            //template.prepareTemplate();
+                //template.reset();
+                //template.prepareTemplate();
                 template.merge(null, out);
             }
         } catch (Exception e) {

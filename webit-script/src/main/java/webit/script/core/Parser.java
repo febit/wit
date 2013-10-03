@@ -3017,11 +3017,11 @@ public class Parser extends webit.script.core.java_cup.runtime.lr_parser {
     }
     
     final Stack<Symbol> getStack() {
-        return this.stack;
+        return this._stack;
     }
 
     final void done_parsing() {
-        this.isParseDone = true;
+        this.goonParse = false;
     }
 
     final Statment createTextStatment(char[] text, int line, int column) {

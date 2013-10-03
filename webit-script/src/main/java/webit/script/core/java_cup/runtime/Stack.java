@@ -15,17 +15,14 @@ public final class Stack<T> {
         size = 0;
     }
 
-    T push(T element) {
+    void push(T element) {
         //ensureNext
         if (size >= elements.length) {
-            int newcap = elements.length << 1;
             Object[] olddata = elements;
-            elements = new Object[newcap];
+            elements = new Object[olddata.length<<1];
             System.arraycopy(olddata, 0, elements, 0, size);
         }
-
         elements[size++] = element;
-        return element;
     }
 
     @SuppressWarnings("unchecked")
@@ -55,8 +52,9 @@ public final class Stack<T> {
         return (T) elements[size - offset - 1];
     }
 
+    @SuppressWarnings("unchecked")
     public T peek() {
-        return peek(0);
+        return (T) elements[size - 1];
     }
 
     public int size() {

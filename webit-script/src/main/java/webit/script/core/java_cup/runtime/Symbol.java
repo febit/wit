@@ -12,7 +12,7 @@ public class Symbol {
      * field is for the convenience of the parser and shouldn't be modified
      * except by the parser.
      */
-    int parse_state;
+    int state;
 
     public Symbol(int id, int line, int column, Object value) {
         this.id = id;
