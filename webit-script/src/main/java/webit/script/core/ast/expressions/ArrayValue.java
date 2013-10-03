@@ -25,7 +25,8 @@ public final class ArrayValue extends AbstractExpression {
         final Object[] value = new Object[len = (valueExprs = this.valueExprs).length];
         int i = 0;
         while (i < len) {
-            value[i++] = StatmentUtil.execute(valueExprs[i], context);
+            value[i] = StatmentUtil.execute(valueExprs[i], context);
+            i++;
         }
         return value;
     }
