@@ -23,6 +23,11 @@ class StringTemplateParser {
      * Parses string template and replaces macros with resolved values.
      */
     static String parse(String template, MacroResolver macroResolver) {
+
+        if (template.indexOf(macroStart) < 0) {
+            return template;
+        }
+
         StringBuilder result = new StringBuilder(template.length());
 
         int i = 0;
