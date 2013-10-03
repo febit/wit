@@ -18,8 +18,12 @@ import webit.script.util.StatmentUtil;
 parser code {:
 
     public Parser() {
-        super(start_state(), start_production(), EOF_sym(), error_sym(), _production_table, _action_table, _reduce_table);
+        super(start_state(), _production_table, _action_table, _reduce_table);
     }
+    
+//    public Parser() {
+//        super(start_state(), start_production(), EOF_sym(), error_sym(), _production_table, _action_table, _reduce_table);
+//    }
 
     final boolean isLocateVarForce() {
         return this.locateVarForce;

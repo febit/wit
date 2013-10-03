@@ -3005,9 +3005,13 @@ public class Parser extends webit.script.core.java_cup.runtime.lr_parser {
   private static int error_sym() {return 1;}
 
     public Parser() {
-        super(start_state(), start_production(), EOF_sym(), error_sym(), _production_table, _action_table, _reduce_table);
+        super(start_state(), _production_table, _action_table, _reduce_table);
     }
-
+    
+//    public Parser() {
+//        super(start_state(), start_production(), EOF_sym(), error_sym(), _production_table, _action_table, _reduce_table);
+//    }
+    
     final boolean isLocateVarForce() {
         return this.locateVarForce;
     }
