@@ -14,7 +14,7 @@ import webit.script.util.StatmentUtil;
 public final class WhileStatmentPart extends Position {
 
     private Expression whileExpr;
-    private BlockStatment bodyStatment;
+    private IBlockStatment bodyStatment;
     private boolean doWhileAtFirst;
     private String label;
 
@@ -26,7 +26,7 @@ public final class WhileStatmentPart extends Position {
         return this;
     }
 
-    public WhileStatmentPart setBodyStatment(BlockStatment bodyStatment) {
+    public WhileStatmentPart setBodyStatment(IBlockStatment bodyStatment) {
         this.bodyStatment = bodyStatment;
         return this;
     }
@@ -51,12 +51,12 @@ public final class WhileStatmentPart extends Position {
         if (bodyStatment.hasLoops()) {
             LoopInfo[] loopInfos = StatmentUtil.collectPossibleLoopsInfoForWhileStatments(bodyStatment, null, label);
             return doWhileAtFirst
-                    ? new WhileStatment(whileExpr, bodyStatment.varMap, bodyStatment.statments, loopInfos, label, line, column)
-                    : new DoWhileStatment(whileExpr, bodyStatment.varMap, bodyStatment.statments, loopInfos, label, line, column);
+                    ? new WhileStatment(whileExpr, bodyStatment.getVarMap(), bodyStatment.getStatments(), loopInfos, label, line, column)
+                    : new DoWhileStatment(whileExpr, bodyStatment.getVarMap(), bodyStatment.getStatments(), loopInfos, label, line, column);
         } else {
             return doWhileAtFirst
-                    ? new WhileStatmentNoLoops(whileExpr, bodyStatment.varMap, bodyStatment.statments, line, column)
-                    : new DoWhileStatmentNoLoops(whileExpr, bodyStatment.varMap, bodyStatment.statments, line, column);
+                    ? new WhileStatmentNoLoops(whileExpr, bodyStatment.getVarMap(), bodyStatment.getStatments(), line, column)
+                    : new DoWhileStatmentNoLoops(whileExpr, bodyStatment.getVarMap(), bodyStatment.getStatments(), line, column);
         }
     }
 }

@@ -72,22 +72,25 @@ public class StatmentUtil {
 
     public static void execute(final Statment[] statments, final Context context) {
         int i = 0;
+        final int len = statments.length;
         try {
-            for (int len = statments.length; i < len; i++) {
-                statments[i].execute(context);
+            while (i < len) {
+                statments[i++].execute(context);
             }
         } catch (Throwable e) {
-            throw ExceptionUtil.castToScriptRuntimeException(e, statments[i]);
+            throw ExceptionUtil.castToScriptRuntimeException(e, statments[i - 1]);
         }
     }
 
     public static void executeAndCheckLoops(final Statment[] statments, final Context context) {
         int i = 0;
+        final LoopCtrl ctrl = context.loopCtrl;
+        final int len = statments.length;
+        //assert len >0;
         try {
-            final LoopCtrl ctrl = context.loopCtrl;
-            for (int len = statments.length; i < len && ctrl.goon(); i++) {
-                statments[i].execute(context);
-            }
+            do {
+                statments[i++].execute(context);
+            } while (i < len && ctrl.goon());
         } catch (Throwable e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statments[i]);
         }

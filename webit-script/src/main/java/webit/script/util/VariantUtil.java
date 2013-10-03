@@ -1,7 +1,9 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.runtime.variant;
+package webit.script.util;
 
 import java.util.Map;
+import webit.script.core.runtime.variant.HashVariantMap;
+import webit.script.core.runtime.variant.VariantMap;
 
 /**
  *
@@ -9,12 +11,11 @@ import java.util.Map;
  */
 public class VariantUtil {
 
-    private final static int MAX_OF_NORMAL_VAR_MAP = Integer.MAX_VALUE;//XXX: size this smaller when real need HashVariantMap
-    public final static VariantMap EMPTY = new VariantMap(new String[0]);
+    private final static int MAX_OF_NORMAL_VAR_MAP = Integer.MAX_VALUE;//XXX: resize this smaller when real need HashVariantMap
 
     public static VariantMap toVariantMap(final Map<String, Integer> map) {
         if (map == null || map.isEmpty()) {
-            return EMPTY;
+            return VariantMap.EMPTY;
         } else if (map.size() <= MAX_OF_NORMAL_VAR_MAP) {
             return new VariantMap(map);
         } else {

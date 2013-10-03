@@ -12,7 +12,7 @@ public interface Encoder {
 
     public static final byte REPLACEMENT = (byte) '?';
 
-    public void write(char[] chars, int offset, int length, OutputStream out) throws IOException;
+    void write(char[] chars, int offset, int length, OutputStream out) throws IOException;
 
-    public void write(String string, int offset, int length, OutputStream out) throws IOException;
+    void write(String string, int offset, int length, OutputStream out) throws IOException;
 }

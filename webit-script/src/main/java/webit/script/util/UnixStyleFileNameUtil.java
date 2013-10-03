@@ -25,33 +25,33 @@ public class UnixStyleFileNameUtil {
     }
 
     public static String getPath(String filename) {
-        if (filename == null) {
+        if (filename != null) {
+            int index;
+            return (index = filename.lastIndexOf(UNIX_SEPARATOR)) >= 0
+                    ? filename.substring(0, index + 1)
+                    : StringPool.EMPTY;
+        } else {
             return null;
         }
-        int index = filename.lastIndexOf(UNIX_SEPARATOR);
-        if (index < 0) {
-            return "";
-        }
-        return filename.substring(0, index + 1);
     }
 
+    //XXX:
     public static String concat(String basePath, String fullFilenameToAdd) {
-        int prefix = getPrefixLength(fullFilenameToAdd);
-        if (prefix < 0) {
+        if (basePath == null) {
+            return null;
+        }
+        int prefix;
+        if ((prefix = getPrefixLength(fullFilenameToAdd)) < 0) {
             return null;
         }
         if (prefix > 0) {
             return doNormalize(fullFilenameToAdd, true);
         }
-        if (basePath == null) {
-            return null;
-        }
-        int len = basePath.length();
-        if (len == 0) {
+        int len;
+        if ((len = basePath.length()) == 0) {
             return doNormalize(fullFilenameToAdd, true);
         }
-        char ch = basePath.charAt(len - 1);
-        if (isSeparator(ch)) {
+        if (isSeparator(basePath.charAt(len - 1))) {
             return doNormalize(basePath + fullFilenameToAdd, true);
         } else {
             return doNormalize(basePath + '/' + fullFilenameToAdd, true);

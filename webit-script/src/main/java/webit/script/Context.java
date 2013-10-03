@@ -59,12 +59,6 @@ public final class Context {
         this.vars = parentVarContexts != null ? new VariantStack(parentVarContexts) : new VariantStack();
     }
 
-    private void checkOutStack() {
-        if (outStack == null) {
-            outStack = new ArrayStack<Out>(5);
-        }
-    }
-
     /**
      * Dangerous !
      *
@@ -72,7 +66,9 @@ public final class Context {
      * @deprecated
      */
     public void pushOut(Out out) {
-        checkOutStack();
+        if (outStack == null) {
+            outStack = new ArrayStack<Out>(5);
+        }
         outStack.push(this.out);
         this.out = out;
     }
@@ -110,10 +106,11 @@ public final class Context {
     }
 
     public void out(final Object object) {
-        if (object instanceof String) {
-            out.write((String) object);
-        } else {
-            if (object != null) {
+        if (object != null) {
+            if (object.getClass() == String.class) {
+                //if (object instanceof String) {
+                out.write((String) object);
+            } else {
                 resolverManager.render(out, object);
             }
         }

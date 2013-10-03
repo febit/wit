@@ -5,6 +5,7 @@ import webit.script.Context;
 import webit.script.Template;
 import webit.script.core.runtime.variant.VariantContext;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.util.ExceptionUtil;
 
 /**
  *
@@ -26,17 +27,9 @@ public final class FunctionMethodDeclare implements MethodDeclare {
         try {
             return function.execute(new Context(context, template, parentVarContexts), args);
         } catch (Throwable e) {
-
-            ScriptRuntimeException runtimeException = e instanceof ScriptRuntimeException
-                    ? (ScriptRuntimeException) e
-                    : new ScriptRuntimeException(e, function);
-
-            if (template == context.template) {
-                throw runtimeException;
-            } else {
-                runtimeException.setTemplate(template);
-                throw new ScriptRuntimeException(e);
-            }
+            throw template == context.template
+                    ? ExceptionUtil.castToScriptRuntimeException(e, function)
+                    : new ScriptRuntimeException(ExceptionUtil.castToScriptRuntimeException(e, function).setTemplate(template));
         }
     }
 }

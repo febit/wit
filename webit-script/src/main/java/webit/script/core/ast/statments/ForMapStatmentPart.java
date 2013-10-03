@@ -16,7 +16,7 @@ public final class ForMapStatmentPart extends Position {
     private int valueIndex;
     private int iterIndex;
     private Expression mapExpr;
-    private BlockStatment bodyStatment;
+    private IBlockStatment bodyStatment;
     private Statment elseStatment;
     private String label;
 
@@ -33,7 +33,7 @@ public final class ForMapStatmentPart extends Position {
         return this;
     }
 
-    public ForMapStatmentPart setBodyStatment(BlockStatment bodyStatment) {
+    public ForMapStatmentPart setBodyStatment(IBlockStatment bodyStatment) {
         this.bodyStatment = bodyStatment;
         return this;
     }
@@ -45,11 +45,11 @@ public final class ForMapStatmentPart extends Position {
 
     public Statment pop() {
         if (bodyStatment.hasLoops()) {
-            return new ForMapStatment(iterIndex, keyIndex, valueIndex, mapExpr, bodyStatment.varMap, bodyStatment.statments,
+            return new ForMapStatment(iterIndex, keyIndex, valueIndex, mapExpr, bodyStatment.getVarMap(), bodyStatment.getStatments(),
                     StatmentUtil.collectPossibleLoopsInfoForWhileStatments(bodyStatment, elseStatment, label),
                     elseStatment, label, line, column);
         } else {
-            return new ForMapStatmentNoLoops(iterIndex, keyIndex, valueIndex, mapExpr, bodyStatment.varMap, bodyStatment.statments, elseStatment, line, column);
+            return new ForMapStatmentNoLoops(iterIndex, keyIndex, valueIndex, mapExpr, bodyStatment.getVarMap(), bodyStatment.getStatments(), elseStatment, line, column);
         }
     }
 }

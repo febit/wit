@@ -17,17 +17,6 @@ public class PropsUtil {
 
     private final static int BUFFER_SIZE = 3072;
 
-    private static void copy(InputStream input, String encoding) throws IOException {
-
-        FastCharBuffer charsBuffer = new FastCharBuffer();
-        Reader reader = new InputStreamReader(input, encoding);
-        char[] buffer = new char[3072];
-        int read;
-        while ((read = reader.read(buffer, 0, 3072)) >= 0) {
-            charsBuffer.append(buffer, 0, read);
-        }
-    }
-
     public static List<String> loadFromClasspath(final Props p, final String... pathSets) {
         final List<String> files = new LinkedList<String>();
 
@@ -37,9 +26,12 @@ public class PropsUtil {
             String pathSet;
             String[] paths;
             String path;
+            
             ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
 
             FastCharBuffer charsBuffer = new FastCharBuffer();
+            Reader reader;
+            InputStream in;
             char[] buffer = new char[BUFFER_SIZE];
             int read;
 
@@ -55,17 +47,16 @@ public class PropsUtil {
                             if (path.charAt(0) == '/') {
                                 path = path.substring(1);
                             }
-                            InputStream in = classLoader.getResourceAsStream(path);
-                            if (in != null) {
+                            if ((in = classLoader.getResourceAsStream(path)) != null) {
                                 try {
 
-                                    Reader reader = new InputStreamReader(in, StringUtil.endsWithIgnoreCase(path, ".properties")
+                                    reader = new InputStreamReader(in, StringUtil.endsWithIgnoreCase(path, ".properties")
                                             ? StringPool.ISO_8859_1
                                             : StringPool.UTF_8);
 
                                     charsBuffer.clear();
 
-                                    while ((read = reader.read(buffer, 0, 3072)) >= 0) {
+                                    while ((read = reader.read(buffer, 0, BUFFER_SIZE)) >= 0) {
                                         charsBuffer.append(buffer, 0, read);
                                     }
 

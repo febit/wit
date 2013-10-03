@@ -7,7 +7,7 @@ package webit.script.io.charset;
  */
 public interface CoderFactory {
 
-    public Encoder newEncoder(String encoding);
+    Encoder newEncoder(String encoding);
 
-    public Decoder newDecoder(String encoding);
+    Decoder newDecoder(String encoding);
 }

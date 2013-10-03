@@ -6,7 +6,8 @@ package webit.script.util;
  * @author Zqq
  */
 public class ClassLoaderUtil {
-    public static ClassLoader getDefaultClassLoader(){
+
+    public static ClassLoader getDefaultClassLoader() {
         return Thread.currentThread().getContextClassLoader();
     }
 }

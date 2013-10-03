@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import webit.script.core.ast.loop.LoopInfo;
-import webit.script.core.runtime.variant.VariantUtil;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatmentUtil;
 import webit.script.util.StringUtil;
+import webit.script.util.VariantUtil;
 
 /**
  *
@@ -43,7 +43,7 @@ public class TemplateASTPart {
         statmentList.toArray(statments);
 
         List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
-        if (loopInfos != null && loopInfos.size() > 0) {
+        if (loopInfos != null) {
             throw new ParseException("loop overflow: " + StringUtil.join(loopInfos, ","));
         }
 

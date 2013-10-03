@@ -57,8 +57,8 @@ public class ScriptRuntimeException extends RuntimeException {
                 Statment statment = statmentStack.peek(i);
                 s.println("\tat line " + statment.getLine() + "(" + statment.getColumn() + ") " + statment.getClass().getSimpleName());
             }
-            Throwable ourCause = getCause();
-            if (ourCause != null) {
+            Throwable ourCause;
+            if ((ourCause = getCause()) != null) {
                 s.println("Caused by: ");
                 ourCause.printStackTrace(s);
             }
@@ -76,8 +76,8 @@ public class ScriptRuntimeException extends RuntimeException {
                 Statment statment = statmentStack.peek(i);
                 s.println("\tat line " + statment.getLine() + "(" + statment.getColumn() + ") " + statment.getClass().getSimpleName());
             }
-            Throwable ourCause = getCause();
-            if (ourCause != null) {
+            Throwable ourCause;
+            if ((ourCause = getCause()) != null) {
                 s.println("Caused by: ");
                 ourCause.printStackTrace(s);
             }

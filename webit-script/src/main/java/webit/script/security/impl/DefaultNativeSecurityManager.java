@@ -43,12 +43,14 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         if (list != null) {
             String[] nodeRules = StringUtil.splitc(list, DELIMITERS);
             StringUtil.trimAll(nodeRules);
+            char firstChar;
+            String nodeName;
+            boolean access;
+            String rule;
             for (int i = 0; i < nodeRules.length; i++) {
-                String rule = nodeRules[i];
+                rule = nodeRules[i];
                 if (rule.length() > 0) {
-                    char firstChar = rule.charAt(0);
-                    String nodeName;
-                    boolean access;
+                    firstChar = rule.charAt(0);
                     if (firstChar == '+' || firstChar == '-') {
                         access = firstChar == '+';
                         nodeName = rule.substring(1).trim();
@@ -64,11 +66,12 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
     }
 
     protected final Node getOrCreateNode(final String name) {
-        Node node = allNodes.get(name);
+        Node node;
 
-        if (node == null) {
-            Node parent = getOrCreateNode(getParentNodeName(name));
-            node = new Node(parent, name);
+        if ((node = allNodes.get(name)) == null) {
+            node = new Node(
+                    getOrCreateNode(getParentNodeName(name)),
+                    name);
             Node old = allNodes.putIfAbsent(name, node);
             if (old != null) {
                 node = old;
@@ -78,18 +81,19 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
     }
 
     private static Node getOrCreateNode(Map<String, Node> map, String name) {
-        Node node = map.get(name);
-        if (node == null) {
-            Node parent = getOrCreateNode(map, getParentNodeName(name));
-            node = new Node(parent, name);
+        Node node;
+        if ((node = map.get(name)) == null) {
+            node = new Node(
+                    getOrCreateNode(map, getParentNodeName(name)),
+                    name);
             map.put(name, node);
         }
         return node;
     }
 
     private static String getParentNodeName(final String name) {
-        int index = name.lastIndexOf('.');
-        return index > 0 ? name.substring(0, index) : ROOT_NODE_NAME;
+        int index;
+        return (index = name.lastIndexOf('.')) > 0 ? name.substring(0, index) : ROOT_NODE_NAME;
     }
 
     protected static class Node {

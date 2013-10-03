@@ -28,8 +28,7 @@ public final class Function extends AbstractStatment {
         super(line, column);
         this.argIndexs = argIndexs;
         this.argsIndex = argsIndex;
-        overflowUpstairs = overflowUpstairs != null && overflowUpstairs.length > 0 ? overflowUpstairs : null;
-        this.overflowUpstairs = overflowUpstairs != null ? overflowUpstairs : null;
+        this.overflowUpstairs = overflowUpstairs;
         this.overflowUpstairsRange = overflowUpstairs != null ? overflowUpstairs[overflowUpstairs.length - 1] - overflowUpstairs[0] : -1;
         this.varMap = varMap;
         this.statments = statments;

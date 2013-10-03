@@ -15,7 +15,7 @@ public final class Stack<T> {
         size = 0;
     }
 
-    public T push(T element) {
+    T push(T element) {
         //ensureNext
         if (size >= elements.length) {
             int newcap = elements.length << 1;
@@ -23,19 +23,26 @@ public final class Stack<T> {
             elements = new Object[newcap];
             System.arraycopy(olddata, 0, elements, 0, size);
         }
-        
+
         elements[size++] = element;
         return element;
     }
 
     @SuppressWarnings("unchecked")
-    public T pop() {
+    T pop() {
         if (size != 0) {
             T element = (T) elements[--size];
             elements[size] = null;
             return element;
         } else {
             return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    void pops(int len) {
+        for (; len > 0; len--) {
+            elements[--size] = null;
         }
     }
 
@@ -60,7 +67,7 @@ public final class Stack<T> {
         return size == 0;
     }
 
-    public void clear() {
+    void clear() {
         for (int i = size - 1; i >= 0; i--) {
             Object element = elements[i];
             elements[i] = null;

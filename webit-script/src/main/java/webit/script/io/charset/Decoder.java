@@ -12,5 +12,5 @@ public interface Decoder {
 
     public static final char REPLACEMENT = '\uFFFD';
 
-    public void write(byte[] bytes, int off, int len, Writer writer) throws IOException;
+    void write(byte[] bytes, int off, int len, Writer writer) throws IOException;
 }

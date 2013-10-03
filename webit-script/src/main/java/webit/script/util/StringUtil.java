@@ -199,7 +199,7 @@ public class StringUtil {
 
         start[0] = 0;
         int s = 0, e;
-        if (CharUtil.equalsOne(srcc[0], delimiters) == true) {	// string starts with delimiter
+        if (CharUtil.equalsOne(srcc[0], delimiters)) {	// string starts with delimiter
             end[0] = 0;
             count++;
             s = CharUtil.findFirstDiff(srcc, 1, delimiters);

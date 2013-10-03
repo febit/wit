@@ -7,7 +7,8 @@ import java.io.IOException;
  *
  * @author Zqq
  */
-public class ResourceNotFoundException extends IOException{
+public class ResourceNotFoundException extends IOException {
+
     public ResourceNotFoundException() {
         super();
     }
@@ -15,7 +16,6 @@ public class ResourceNotFoundException extends IOException{
     public ResourceNotFoundException(String message) {
         super(message);
     }
-
 //    public ResourceNotFoundException(String message, Throwable cause) {
 //        super(message, cause);
 //    }

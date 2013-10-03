@@ -3,7 +3,6 @@ package webit.script.core;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import webit.script.exceptions.ParseException;
@@ -25,13 +24,10 @@ public class NativeImportManager {
         registPackage("java.lang");
     }
 
-    public final boolean registPackage(String pkgName) {
-
-        boolean result = pkgs.add(pkgName);
-        if (result == false) {
+    public final void registPackage(String pkgName) throws ParseException {
+        if (pkgs.add(pkgName) == false) {
             throw new ParseException("Duplicate package register: " + pkgName);
         }
-        return result;
     }
 
     public boolean registClass(ClassNameBand classNameBand) throws ParseException {
@@ -52,27 +48,25 @@ public class NativeImportManager {
     protected String findFullClassName(String simpleName) {
         String classPureName;
 
-        classPureName = classes.get(simpleName);
-        if (classPureName != null) {
+        if ((classPureName = classes.get(simpleName)) != null) {
             return classPureName;
         }
 
         //TODO:冲突检查
-        for (Iterator<String> it = pkgs.iterator(); it.hasNext();) {
-            String pkg = it.next();
-
+        for (String pkg : pkgs) {
             try {
                 classPureName = pkg + "." + simpleName;
                 ClassUtil.getClass(classPureName);
+                classes.put(simpleName, classPureName); //put to cache
                 return classPureName;
             } catch (ClassNotFoundException e) {
                 //ignore
             }
         }
-
         return simpleName;
     }
 
+    //XXX:need rewrite
     public Class<?> toClass(ClassNameBand classNameBand) {
         String classPureName;
         if (classNameBand.isSimpleName()) {
@@ -95,5 +89,4 @@ public class NativeImportManager {
             throw new ParseException(ex);
         }
     }
-    
 }

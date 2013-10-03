@@ -15,7 +15,7 @@ public interface Loader {
     Resource get(String name) throws ResourceNotFoundException;
 
     /**
-     * get child template name by parent template name and relative name
+     * get child template name by parent template name and relative name.
      *
      * <pre>
      * example:
@@ -32,7 +32,7 @@ public interface Loader {
     String concat(String parent, String name);
 
     /**
-     * normalize a template's name 
+     * normalize a template's name.
      * 
      * <pre>
      * example:

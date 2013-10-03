@@ -14,12 +14,8 @@ public final class ContextValue extends AbstractExpression implements ResetableV
 
     private final int upstairs;
     private final int index;
-    private final String name;
-    private final boolean withSuper;
-
-    public ContextValue(int upstairs, int index, int line, int column) {
-        this(upstairs, index, null, false, line, column);
-    }
+//    private final String name;
+//    private final boolean withSuper;
 
     public ContextValue(int upstairs, int index, String name, int line, int column) {
         this(upstairs, index, name, false, line, column);
@@ -29,12 +25,11 @@ public final class ContextValue extends AbstractExpression implements ResetableV
         super(line, column);
         this.upstairs = upstairs;
         this.index = index;
-        this.withSuper = withSuper;
-        this.name = name;
+//        this.withSuper = withSuper;
+//        this.name = name;
     }
 
     public Object execute(final Context context) {
-        //return get(context);
         return context.vars.get(upstairs, index);
     }
 
@@ -45,12 +40,10 @@ public final class ContextValue extends AbstractExpression implements ResetableV
     public ResetableValue getResetableValue(final Context context) {
         return new ResetableValue() {
             public Object get() {
-                //return ContextValue.this.get(context);
                 return context.vars.get(upstairs, index);
             }
 
             public boolean set(Object value) {
-                //ContextValue.this.set(context, value);
                 context.vars.set(upstairs, index, value);
                 return true;
             }

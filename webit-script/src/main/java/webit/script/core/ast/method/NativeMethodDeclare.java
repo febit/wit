@@ -32,30 +32,25 @@ public final class NativeMethodDeclare implements MethodDeclare {
         if (isStatic) {
             obj = null;
             if (args != null) {
-                int copyLen;
-                if ((copyLen = args.length) == argsCount) {
+                int argsLen;
+                if ((argsLen = args.length) == argsCount) {
                     methodArgs = args;
                 } else {
-                    //TODO: Warning 参数个数不一致
-                    if (copyLen > argsCount) {
-                        copyLen = argsCount;
-                    }
-                    System.arraycopy(args, 0, methodArgs = new Object[argsCount], 0, copyLen);
+                    //XXX: Warning 参数个数不一致
+                    System.arraycopy(args, 0, methodArgs = new Object[argsCount], 0, argsLen <= argsCount ? argsLen : argsCount);
                 }
             } else {
                 methodArgs = new Object[argsCount];
             }
         } else {
-            if (args == null || args.length < 1 || args[0] == null) {
+            if (args != null && args.length != 0 && args[0] != null) {
+                obj = args[0];
+                int copyLen;
+                //TODO: Warning 参数个数不一致
+                System.arraycopy(args, 1, methodArgs = new Object[argsCount], 0, ((copyLen = args.length - 1) <= argsCount) ? copyLen : argsCount);
+            } else {
                 throw new ScriptRuntimeException("this method need one argument at least");
             }
-            obj = args[0];
-            int copyLen;
-            //TODO: Warning 参数个数不一致
-            if ((copyLen = args.length - 1) > argsCount) {
-                copyLen = argsCount;
-            }
-            System.arraycopy(args, 1, methodArgs = new Object[argsCount], 0, copyLen);
         }
         try {
             return noVoid ? method.invoke(obj, methodArgs) : Context.VOID;
@@ -64,7 +59,7 @@ public final class NativeMethodDeclare implements MethodDeclare {
         } catch (IllegalArgumentException ex) {
             throw new ScriptRuntimeException("illegal argument: " + ex.getLocalizedMessage());
         } catch (InvocationTargetException ex) {
-            throw new ScriptRuntimeException("this method throws an exception", ex);
+            throw new ScriptRuntimeException("this method throws an exception", ex.getTargetException());
         }
     }
 }

@@ -20,12 +20,13 @@ public final class ArrayValue extends AbstractExpression {
     }
 
     public Object execute(final Context context) {
-        final int len = valueExprs.length;
-        final Object[] value = new Object[len];
-        for (int i = 0; i < len; i++) {
-            value[i] = StatmentUtil.execute(valueExprs[i], context);
+        final Expression[] valueExprs;
+        final int len;
+        final Object[] value = new Object[len = (valueExprs = this.valueExprs).length];
+        int i = 0;
+        while (i < len) {
+            value[i++] = StatmentUtil.execute(valueExprs[i], context);
         }
         return value;
     }
-    //TODO:可优化成 CloneDirectValue
 }

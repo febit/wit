@@ -14,11 +14,11 @@ public class MutiFilter implements Filter, Initable {
     //settings
     private Class[] filterClasses;
     //
-    private Filter[] _Filters;
+    private Filter[] _filters;
 
     public Object process(Object object) {
         final Filter[] filters;
-        if ((filters = this._Filters) != null) {
+        if ((filters = this._filters) != null) {
             for (int i = 0, len = filters.length; i < len; i++) {
                 object = filters[i].process(object);
             }
@@ -28,11 +28,14 @@ public class MutiFilter implements Filter, Initable {
 
     @SuppressWarnings("unchecked")
     public void init(Engine engine) {
-        if (filterClasses != null) {
-            _Filters = new Filter[filterClasses.length];
+        Class[] classes;
+        if ((classes = filterClasses) != null) {
+            final int len;
+            final Filter[] filters;
+            _filters = filters = new Filter[len = classes.length];
             try {
-                for (int i = 0; i < filterClasses.length; i++) {
-                    _Filters[i] = (Filter) engine.getBean(filterClasses[i]);
+                for (int i = 0; i < len; i++) {
+                    filters[i] = (Filter) engine.getBean(classes[i]);
                 }
             } catch (Throwable ex) {
                 throw new RuntimeException(ex);

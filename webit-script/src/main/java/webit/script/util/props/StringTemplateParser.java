@@ -55,7 +55,7 @@ class StringTemplateParser {
             } else {
                 result.append(template.substring(i, ndx));
             }
-            if (escape == true) {
+            if (escape) {
                 result.append(macroStart);
                 i = ndx + startLen;
                 continue;
@@ -90,7 +90,7 @@ class StringTemplateParser {
             }
 
             if (ndx == ndx1) {
-                if (parseValues == true) {
+                if (parseValues) {
                     if (value.contains(macroStart)) {
                         value = parse(value, macroResolver);
                     }

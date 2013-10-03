@@ -11,20 +11,25 @@ import java.io.PrintWriter;
 public class NativeSecurityException extends Exception {
 
     public NativeSecurityException(String path) {
-        super("Not accessable: "+path);
+        super("Not accessable: " + path);
     }
 
     @Override
     public void printStackTrace(PrintStream s) {
         synchronized (s) {
-            s.println(this);
+            s.println(getMessage());
         }
     }
 
     @Override
     public void printStackTrace(PrintWriter s) {
         synchronized (s) {
-            s.println(this);
+            s.println(getMessage());
         }
+    }
+
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return this;
     }
 }

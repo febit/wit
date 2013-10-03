@@ -15,7 +15,7 @@ public final class ForInStatmentPart extends Position {
     private int itemIndex;
     private int iterIndex;
     private Expression collectionExpr;
-    private BlockStatment bodyStatment;
+    private IBlockStatment bodyStatment;
     private Statment elseStatment;
     private String label;
 
@@ -31,7 +31,7 @@ public final class ForInStatmentPart extends Position {
         return this;
     }
 
-    public ForInStatmentPart setBodyStatment(BlockStatment bodyStatment) {
+    public ForInStatmentPart setBodyStatment(IBlockStatment bodyStatment) {
         this.bodyStatment = bodyStatment;
         return this;
     }
@@ -43,11 +43,11 @@ public final class ForInStatmentPart extends Position {
 
     public Statment pop() {
         if (bodyStatment.hasLoops()) {
-            return new ForInStatment(iterIndex, itemIndex, collectionExpr, bodyStatment.varMap, bodyStatment.statments,
+            return new ForInStatment(iterIndex, itemIndex, collectionExpr, bodyStatment.getVarMap(), bodyStatment.getStatments(),
                     StatmentUtil.collectPossibleLoopsInfoForWhileStatments(bodyStatment, elseStatment, label),
                     elseStatment, label, line, column);
         } else {
-            return new ForInStatmentNoLoops(iterIndex, itemIndex, collectionExpr, bodyStatment.varMap, bodyStatment.statments, elseStatment, line, column);
+            return new ForInStatmentNoLoops(iterIndex, itemIndex, collectionExpr, bodyStatment.getVarMap(), bodyStatment.getStatments(), elseStatment, line, column);
         }
     }
 }

@@ -9,10 +9,10 @@ import webit.script.core.ast.Position;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.LoopType;
-import webit.script.core.runtime.variant.VariantUtil;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatmentUtil;
 import webit.script.util.StringUtil;
+import webit.script.util.VariantUtil;
 import webit.script.util.collection.IntArrayList;
 
 /**
@@ -69,7 +69,7 @@ public final class FunctionPart extends Position {
         boolean hasReturnLoops = false;
         List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
 
-        if (loopInfos != null && loopInfos.size() > 0) {
+        if (loopInfos != null) {
 
             for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
                 LoopInfo loopInfo = it.next();
@@ -85,7 +85,7 @@ public final class FunctionPart extends Position {
 
         return new Function(argsIndex,
                 argIndexList.isEmpty() ? null : argIndexList.toArray(),
-                overflowUpstairs,
+                overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null,
                 VariantUtil.toVariantMap(varMap),
                 statments,
                 hasReturnLoops,

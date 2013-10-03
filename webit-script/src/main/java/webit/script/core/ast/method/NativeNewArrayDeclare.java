@@ -18,7 +18,7 @@ public class NativeNewArrayDeclare implements MethodDeclare {
     }
 
     public Object execute(final Context context, final Object[] args) {
-        int len = 0;
+        final int len;
         if (args != null && args.length > 0) {
             Object lenObject;
             if ((lenObject = args[0]) instanceof Number) {
@@ -28,6 +28,8 @@ public class NativeNewArrayDeclare implements MethodDeclare {
             } else {
                 throw new ScriptRuntimeException("must given a number as array's length, but get a: " + lenObject != null ? lenObject.getClass().getName() : "null");
             }
+        }else{
+            len = 0;
         }
 
         return Array.newInstance(componentType, len);

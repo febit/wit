@@ -111,6 +111,7 @@ public final class Engine {
     }
 
     /**
+     * get template by parent template's name and it's relative name.
      *
      * @param parentName parent template's name
      * @param name template's relative name
@@ -122,7 +123,7 @@ public final class Engine {
     }
 
     /**
-     * get template by name
+     * get template by name.
      *
      * @param name template's name
      * @return Template

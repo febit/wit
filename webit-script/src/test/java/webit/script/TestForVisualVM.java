@@ -10,9 +10,9 @@ import webit.script.test.util.DiscardOutputStream;
  */
 public class TestForVisualVM {
 
-    //@Test
+    @Test
     public void test() {
-        int times = 10;
+        int times = 10000;
         Engine engine = EngineManager.getEngine();
 
         try {

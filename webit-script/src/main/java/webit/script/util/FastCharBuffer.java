@@ -331,7 +331,7 @@ public class FastCharBuffer implements CharSequence, Appendable {
                 tmp_offset = this.offset;
                 notLastOne = true;
             }
-            int pos = CharArrayUtil.lastNotWhitespaceOrNewLine(tmp_buf, 0, tmp_offset);
+            int pos = CharUtil.lastNotWhitespaceOrNewLine(tmp_buf, 0, tmp_offset);
             if (pos < 0) {
                 //All blank
                 tmp_count -= tmp_offset;

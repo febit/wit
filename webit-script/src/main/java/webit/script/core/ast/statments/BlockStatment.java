@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
-import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
@@ -18,7 +17,7 @@ import webit.script.util.StatmentUtil;
  *
  * @author Zqq
  */
-public final class BlockStatment extends AbstractStatment implements Loopable, Optimizable {
+public final class BlockStatment extends AbstractStatment implements Loopable, IBlockStatment {
 
     public final VariantMap varMap;
     public final Statment[] statments;
@@ -39,29 +38,19 @@ public final class BlockStatment extends AbstractStatment implements Loopable, O
         return null;
     }
 
-    public void execute(final Context context, final int[] indexs, final Object[] values) {
-        final VariantStack vars;
-        (vars = context.vars).push(varMap);
-        vars.set(indexs, values);
-        StatmentUtil.executeAndCheckLoops(statments, context);
-        vars.pop();
-    }
-
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        return possibleLoopsInfo != null ? new LinkedList<LoopInfo>(Arrays.asList(possibleLoopsInfo)) : null;
+        return new LinkedList<LoopInfo>(Arrays.asList(possibleLoopsInfo));
     }
 
     public boolean hasLoops() {
-        return possibleLoopsInfo != null && possibleLoopsInfo.length > 0;
+        return true;
     }
 
-    public Statment optimize() throws Throwable {
-        if (statments.length == 0) {
-            return null;
-        } else if (possibleLoopsInfo == null || possibleLoopsInfo.length == 0) {
-            return new BlockStatmentNoLoops(varMap, statments, line, column);
-        } else {
-            return this;
-        }
+    public VariantMap getVarMap() {
+        return varMap;
+    }
+
+    public Statment[] getStatments() {
+        return statments;
     }
 }

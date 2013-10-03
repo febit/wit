@@ -55,8 +55,8 @@ public final class ArrayStack<T> implements Stack<T> {
 
     @SuppressWarnings("unchecked")
     public T peek(int offset) {
-        final int realIndex = size - offset - 1;
-        checkRange(realIndex);
+        final int realIndex;
+        checkRange(realIndex = size - offset - 1);
         return (T) elements[realIndex];
     }
 

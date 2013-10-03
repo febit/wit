@@ -62,7 +62,7 @@ public class CharUtil {
 
     public static int findFirstEqual(char[] source, int index, char[] match) {
         for (int i = index; i < source.length; i++) {
-            if (equalsOne(source[i], match) == true) {
+            if (equalsOne(source[i], match)) {
                 return i;
             }
         }
@@ -75,8 +75,26 @@ public class CharUtil {
         }
         return c;
     }
-    
+
     public static boolean isWhitespace(char c) {
         return c <= ' ';
+    }
+
+    public static int lastNotWhitespaceOrNewLine(final char[] buf, final int from, final int end) {
+        int pos;
+        finish:
+        for (pos = end - 1; pos >= from; pos--) {
+            switch (buf[pos]) {
+                case ' ':
+                case '\t':
+                case '\b':
+                case '\f':
+                    continue finish;
+                default:
+                    // not a blank line
+                    return pos;
+            }
+        }
+        return pos;
     }
 }

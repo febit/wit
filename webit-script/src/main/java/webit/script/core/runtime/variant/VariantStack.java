@@ -81,15 +81,17 @@ public final class VariantStack {
 
     public void resetCurrent() {
         final Object[] contextValues;
-        for (int i = (contextValues = contexts[current].values).length - 1; i >= 0; i--) {
-            contextValues[i] = null;
+        int i = (contextValues = contexts[current].values).length - 1;
+        while (i >= 0) {
+            contextValues[i--] = null;
         }
     }
 
     public void resetCurrentWith(int index, Object value, int index2, Object value2) {
         final Object[] contextValues;
-        for (int i = (contextValues = contexts[current].values).length - 1; i >= 0; i--) {
-            contextValues[i] = null;
+        int i = (contextValues = contexts[current].values).length - 1;
+        while (i >= 0) {
+            contextValues[i--] = null;
         }
         contextValues[index] = value;
         contextValues[index2] = value2;
@@ -97,8 +99,9 @@ public final class VariantStack {
 
     public void resetCurrentWith(int index, Object value, int index2, Object value2, int index3, Object value3) {
         final Object[] contextValues;
-        for (int i = (contextValues = contexts[current].values).length - 1; i >= 0; i--) {
-            contextValues[i] = null;
+        int i = (contextValues = contexts[current].values).length - 1;
+        while (i >= 0) {
+            contextValues[i--] = null;
         }
         contextValues[index] = value;
         contextValues[index2] = value2;

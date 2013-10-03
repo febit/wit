@@ -7,8 +7,8 @@ import java.util.Map;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
-import webit.script.core.runtime.variant.VariantUtil;
 import webit.script.util.StatmentUtil;
+import webit.script.util.VariantUtil;
 
 /**
  *
@@ -36,16 +36,18 @@ public final class BlockStatmentPart extends Position {
         return this;
     }
 
-    public BlockStatment pop() {
+    public IBlockStatment pop() {
         Statment[] statments;
 
-        List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(
+        List<LoopInfo> loopInfoList = StatmentUtil.collectPossibleLoopsInfo(
                 statments = statmentList.toArray(new Statment[statmentList.size()]));
 
-        return new BlockStatment(
-                VariantUtil.toVariantMap(varMap),
-                statments,
-                loopInfos == null ? null : loopInfos.toArray(new LoopInfo[loopInfos.size()]),
-                line, column);
+        LoopInfo[] loopInfos = loopInfoList != null
+                ? loopInfoList.toArray(new LoopInfo[loopInfoList.size()])
+                : null;
+
+        return loopInfos != null
+                ? new BlockStatment(VariantUtil.toVariantMap(varMap), statments, loopInfos, line, column)
+                : new BlockStatmentNoLoops(VariantUtil.toVariantMap(varMap), statments, line, column);
     }
 }

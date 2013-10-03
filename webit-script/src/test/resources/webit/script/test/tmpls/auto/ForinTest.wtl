@@ -5,7 +5,16 @@ import "/junit-assert.wtl";
 var assertEquals;
 var assertNull;
 var assertNotNull;
-
+{
+    //empty block
+}
+{
+    for(i : 3..6){
+        //empty block
+    }else{
+        //empty block
+    }
+}
 {
     var s = "";
     for(i : 3..6){
