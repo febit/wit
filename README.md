@@ -25,7 +25,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
         <dependency>
             <groupId>com.github.zqq90.webit-script</groupId>
             <artifactId>webit-script</artifactId>
-            <version>1.1.3</version>
+            <version>1.1.4</version>
         </dependency>
         ...
     </dependencies>
@@ -33,28 +33,8 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ### Or Add jars
 
- + `webit-script-[version].jar`
- + `jodd-core-[version].jar`
- + `jodd-props-[version].jar`
-
-### Or jodd-inside Version
-
-~~~~~
-    <dependency>
-        <groupId>com.github.zqq90.webit-script</groupId>
-        <artifactId>webit-script-joddinside</artifactId>
-        <version>1.1.3</version>
-    </dependency>
-~~~~~
-
- + `webit-script-joddinside-[version].jar`
- + *我们非常推荐您尝试一下Jodd, 但如果您真的不打算直接使用Jodd, 并且您的项目没直接使用或间接引用到Jodd, 可以试试这个*
-
-### About Release
- + *current version 1.1.3*
- + [webit-script-joddinside-1.1.3.jar] [jar_joddin]
- + Jodd here: [Download] [jodd_down]   [Site] [jodd_site]   [Doc] [jodd_doc]   [Github][jodd_github]
-
+ + `webit-script-1.1.4.jar`
+ + **we had put mini-Jodd-props inside, with a very small size, and changed the package's name, so, without dependent traps, enjoy this version!**
 
 ### Code in Java like this
 
@@ -76,7 +56,6 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 + 配置文件格式: Use Jodd-props, see:[Jodd Props doc][url_props_doc]
   `Tips: Java-Properties also works`
-+ ~~匹配支持  "/webit-script-*.props~~
 + 多文件支持 "/webit-script-config1.props,/webit-script-config2.props"
 + 可选额外参数: extraSettingsMap 类型为Map, 支持props 宏
 + 默认配置: [webitl-default.props] [default_config]
@@ -648,7 +627,7 @@ outter: for(i: 6..3){
 
 
 
-## 性能
+## Performance(性能)
 
 + 缺省开启ASM构建Native 调用减少反射, 不同于将整个模板编译成Java字节码,该方法不会造成无限制的perm溢出;
 + 解析之后的Template AST会放入缓存, 检测到模板源文件改变时将重新加载资源并解析;
@@ -689,11 +668,11 @@ FreeMarker          2.3.19              7565      6809      6609      25.58
 
 ## Requirements(依赖)
 
-+ `Jodd-props`
++ ~~`Jodd-props`~~ thinks a lot
 
 ## Contributing(贡献)
 
-+ 国际化: 联系我
++ Translation works
 + code & doc: fork -> pull requests
 + idea & bug report: [github-issue] [new_issue]
 + donate:
@@ -703,21 +682,30 @@ FreeMarker          2.3.19              7565      6809      6609      25.58
  
 **Webit Script** is released under the BSD License. See the bundled LICENSE file for
 details.
-**Webit Script** 依据 BSD许可证发布。详细请看捆绑的 LICENSE 文件。
+**Webit Script** 依据 BSD许可证发布。详细请看捆绑的 [LICENSE][license] 文件。
 
-[version]: 1.1.3
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.3/webit-script-1.1.3.jar
-[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.1.3/webit-script-joddinside-1.1.3.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.3/webit-script-1.1.3-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.3/webit-script-1.1.3-javadoc.jar
+## Other License
+
++ **Jodd**  under the BSD License. [License file][jodd_license]
++ **ASM-3.3.1**  under the BSD License.[License file][asm_license]
+
+
+
+[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.4/webit-script-1.1.4.jar
+[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.1.4/webit-script-joddinside-1.1.4.jar
+[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.4/webit-script-1.1.4-sources.jar
+[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.4/webit-script-1.1.4-javadoc.jar
 [url_props_doc]: http://jodd.org/doc/props.html
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
 [default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webitl-default.props
 [new_issue]: https://github.com/zqq90/webit-script/issues/new
+[license]: https://github.com/zqq90/webit-script/blob/master/LICENSE
 
 [jodd_down]: http://jodd.org/download/index.html
 [jodd_site]: http://jodd.org/index.html
 [jodd_doc]: http://jodd.org/doc/index.html
 [jodd_github]: https://github.com/oblac/jodd
+[jodd_license]: http://jodd.org/license.html
+[asm_license]: http://asm.ow2.org/license.html
 
 
