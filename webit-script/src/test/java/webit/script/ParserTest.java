@@ -2,6 +2,7 @@
 package webit.script;
 
 import org.junit.Test;
+import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.test.util.DiscardOutputStream;
 
 /**
@@ -11,17 +12,13 @@ import webit.script.test.util.DiscardOutputStream;
 public class ParserTest {
 
     @Test
-    public void test() {
-        
+    public void test() throws ResourceNotFoundException {
+
         Engine engine = EngineManager.getEngine();
 
-        try {
-            DiscardOutputStream out = new DiscardOutputStream();
-            Template template = engine.getTemplate("/firstTmpl.wtl");
-            //TemplateAST result = template.prepareTemplate();
-            template.merge(null, out);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        DiscardOutputStream out = new DiscardOutputStream();
+        Template template = engine.getTemplate("/firstTmpl.wtl");
+        //TemplateAST result = template.prepareTemplate();
+        template.merge(null, out);
     }
 }
