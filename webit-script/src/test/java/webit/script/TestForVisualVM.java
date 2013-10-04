@@ -1,7 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
-import org.junit.Test;
+import java.io.IOException;
+import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.test.util.DiscardOutputStream;
 
 /**
@@ -17,24 +18,20 @@ public class TestForVisualVM {
     }
 
     //@Test
-    public void test() {
+    public void test() throws ResourceNotFoundException, IOException {
         int times = 10000;
         Engine engine = EngineManager.getEngine();
 
-        try {
-            Template template = engine.getTemplate("/firstTmpl.wtl");
-            DiscardOutputStream out = new DiscardOutputStream();
-            template.prepareTemplate();
-            
-            //webit.script.TestForVisualVM.Start
-            TestForVisualVM.Start.start();
-            for (int i = 0; i < times; i++) {
-                //template.reset();
-                //template.prepareTemplate();
-                template.merge(null, out);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        Template template = engine.getTemplate("/firstTmpl.wtl");
+        DiscardOutputStream out = new DiscardOutputStream();
+        template.prepareTemplate();
+
+        //webit.script.TestForVisualVM.Start
+        TestForVisualVM.Start.start();
+        for (int i = 0; i < times; i++) {
+            //template.reset();
+            //template.prepareTemplate();
+            template.merge(null, out);
         }
     }
 }

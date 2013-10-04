@@ -32,7 +32,6 @@ package webit.script.asm3.commons;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import webit.script.asm3.ClassWriter;
 import webit.script.asm3.Label;
 import webit.script.asm3.MethodWriter;
