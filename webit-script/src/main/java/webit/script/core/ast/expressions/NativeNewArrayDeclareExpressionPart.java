@@ -1,11 +1,10 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
+import webit.script.Engine;
 import webit.script.core.ast.Position;
-import webit.script.exceptions.NativeSecurityException;
+import webit.script.core.ast.method.NativeNewArrayDeclare;
 import webit.script.exceptions.ParseException;
-import webit.script.security.NativeSecurityManager;
-import webit.script.util.NativeSecurityManagerUtil;
 
 /**
  *
@@ -20,20 +19,21 @@ public class NativeNewArrayDeclareExpressionPart extends Position {
         this.componentType = componentType;
     }
 
-    public NativeNewArrayDeclareExpression pop(NativeSecurityManager securityManager) {
-        if (componentType != Void.class) {
-            try {
-                Class classWaitCheck = componentType;
-                while (classWaitCheck.isArray()) {
-                    classWaitCheck = classWaitCheck.getComponentType();
-                }
-                NativeSecurityManagerUtil.checkAccess(securityManager, classWaitCheck.getName() + ".[]");
-                return new NativeNewArrayDeclareExpression(componentType, line, column);
-            } catch (NativeSecurityException ex) {
-                throw new ParseException(ex.getMessage(), line, column);
-            }
-        } else {
-            throw new ParseException("componentType must not Void.class", line, column);
+    public CommonMethodDeclareExpression pop(Engine _engine) {
+        Class classWaitCheck = componentType;
+        while (classWaitCheck.isArray()) {
+            classWaitCheck = classWaitCheck.getComponentType();
         }
+
+        if (classWaitCheck == Void.class || classWaitCheck == Void.TYPE) {
+            throw new ParseException("ComponentType must not Void.class", line, column);
+        }
+
+        final String path;
+        if (_engine.checkNativeAccess(path = (classWaitCheck.getName() + ".[]")) == false) {
+            throw new ParseException("Not accessable of native path: " + path, line, column);
+        }
+
+        return new CommonMethodDeclareExpression(new NativeNewArrayDeclare(componentType), line, column);
     }
 }

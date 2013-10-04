@@ -45,16 +45,16 @@ parser code {:
         return StatmentUtil.optimize(placeHolderStatmentFactory.creatPlaceHolderStatment(expr));
     }
     
-    final NativeNewArrayDeclareExpression pop(NativeNewArrayDeclareExpressionPart part){
-        return part.pop(this.nativeSecurityManager);
+    final Expression pop(NativeNewArrayDeclareExpressionPart part){
+        return part.pop(this.engine);
     }
 
-    final NativeConstructorDeclareExpression pop(NativeConstructorDeclareExpressionPart part) {
-        return part.pop(this.nativeSecurityManager);
+    final Expression pop(NativeConstructorDeclareExpressionPart part) {
+        return part.pop(this.engine);
     }
     
-    final NativeMethodDeclareExpression pop(NativeMethodDeclareExpressionPart part) {
-        return part.pop(this.nativeSecurityManager);
+    final Expression pop(NativeMethodDeclareExpressionPart part) {
+        return part.pop(this.engine);
     }
 :}; 
 
@@ -273,7 +273,7 @@ action code {:
         return new NativeConstructorDeclareExpressionPart(line, column);
     }
 
-    private NativeNewArrayDeclareExpression createNativeNewArrayDeclareExpression(Class componentType, int line, int column){
+    private Expression createNativeNewArrayDeclareExpression(Class componentType, int line, int column){
         return parser.pop(new NativeNewArrayDeclareExpressionPart(componentType, line, column));
     }
 
@@ -556,13 +556,13 @@ non terminal Expression funcExecuteExpr;
 non terminal FunctionExecuteExpressionPart funcExecuteExprPart0, funcExecuteExprPart1;
 
 
-non terminal NativeMethodDeclareExpression nativeMethodExpr;
+non terminal Expression nativeMethodExpr;
 non terminal NativeMethodDeclareExpressionPart nativeMethodExprPart, nativeMethodExprPart1;
 
-non terminal NativeConstructorDeclareExpression nativeConstructorExpr;
+non terminal Expression nativeConstructorExpr;
 non terminal NativeConstructorDeclareExpressionPart nativeConstructorExprPart1, nativeConstructorExprPart;
 
-non terminal NativeNewArrayDeclareExpression nativeNewArrayExpr;
+non terminal Expression nativeNewArrayExpr;
 
 /* Statment */
 

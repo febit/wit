@@ -224,6 +224,7 @@ public class ClassUtil {
         return Modifier.isPublic(cls.getModifiers());
     }
 
+    //XXX: rewrite
     public static Method searchMethod(Class<?> currentClass, String name, Class<?>[] parameterTypes, boolean boxed) throws NoSuchMethodException {
         if (currentClass == null) {
             throw new NoSuchMethodException("class == null");

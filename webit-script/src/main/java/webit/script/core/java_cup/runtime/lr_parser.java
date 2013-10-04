@@ -10,7 +10,6 @@ import webit.script.core.ast.statments.PlaceHolderStatmentFactory;
 import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ParseException;
 import webit.script.loggers.Logger;
-import webit.script.security.NativeSecurityManager;
 
 /**
  * This class implements a skeleton table driven LR parser. In general, LR
@@ -346,13 +345,12 @@ public abstract class lr_parser {
 
         //return sym;
     }
+    protected Engine engine;
     protected Template template;
     protected TextStatmentFactory textStatmentFactory;
     protected PlaceHolderStatmentFactory placeHolderStatmentFactory;
-    protected NativeSecurityManager nativeSecurityManager;
     protected Logger logger;
     protected boolean locateVarForce;
-    protected boolean trimTextStatmentRightBlankLine;
     protected Lexer lexer;
 
     public final int getLine() {
@@ -374,14 +372,14 @@ public abstract class lr_parser {
         try {
             this.lexer = new Lexer(in);
             this.template = template;
-            final Engine engine = template.engine;
-            this.lexer.setTrimTextStatmentRightBlankLine(engine.isTrimTextStatmentRightBlankLine());
-            this.logger = engine.getLogger();
+            final Engine _engine;
+            this.engine = _engine = template.engine;
+            this.lexer.setTrimTextStatmentRightBlankLine(_engine.isTrimTextStatmentRightBlankLine());
+            this.logger = _engine.getLogger();
             TextStatmentFactory _textStatmentFactory;
-            this.textStatmentFactory = _textStatmentFactory = engine.getTextStatmentFactory();
-            this.nativeSecurityManager = engine.getNativeSecurityManager();
-            this.locateVarForce = !engine.isLooseVar();
-            this.placeHolderStatmentFactory = new PlaceHolderStatmentFactory(engine.getFilter());
+            this.textStatmentFactory = _textStatmentFactory = _engine.getTextStatmentFactory();
+            this.locateVarForce = !_engine.isLooseVar();
+            this.placeHolderStatmentFactory = new PlaceHolderStatmentFactory(_engine.getFilter());
 
             _textStatmentFactory.startTemplateParser(template);
             Symbol sym = this.parse();

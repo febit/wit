@@ -1,14 +1,17 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
+import webit.script.Engine;
+import webit.script.asm.AsmMethodCaller;
+import webit.script.asm.AsmMethodCallerManager;
 import webit.script.core.ast.Position;
-import webit.script.exceptions.NativeSecurityException;
+import webit.script.core.ast.method.AsmNativeMethodDeclare;
+import webit.script.core.ast.method.NativeMethodDeclare;
 import webit.script.exceptions.ParseException;
-import webit.script.security.NativeSecurityManager;
 import webit.script.util.ClassUtil;
-import webit.script.util.NativeSecurityManagerUtil;
 
 /**
  *
@@ -40,16 +43,37 @@ public class NativeMethodDeclareExpressionPart extends Position {
         return this;
     }
 
-    public NativeMethodDeclareExpression pop(NativeSecurityManager securityManager) {
-        try {
-            NativeSecurityManagerUtil.checkAccess(securityManager, clazz.getName() + "." + methodName);
+    public CommonMethodDeclareExpression pop(Engine _engine) {
 
-            return new NativeMethodDeclareExpression(
-                    ClassUtil.searchMethod(clazz, methodName, paramTypeList.toArray(new Class[paramTypeList.size()]), false),
+        final String path;
+        if (_engine.checkNativeAccess(path = (clazz.getName() + '.' + methodName)) == false) {
+            throw new ParseException("Not accessable of native path: " + path, line, column);
+        }
+
+        try {
+            final Method method = ClassUtil.searchMethod(clazz, methodName, paramTypeList.toArray(new Class[paramTypeList.size()]), false);
+            AsmMethodCaller caller;
+            if (_engine.isEnableAsmNative()) {
+                try {
+                    if ((caller = AsmMethodCallerManager.getCaller(method)) == null) {
+                        _engine.getLogger().error("AsmMethodCaller for '" + method.toString() + "' is null, and instead by NativeMethodDeclare");
+                    }
+                } catch (Throwable ex) {
+                    caller = null;
+                    _engine.getLogger().error("Generate AsmMethodCaller for '" + method.toString() + "' failed, and instead by NativeMethodDeclare", ex);
+                }
+            } else {
+                caller = null;
+            }
+
+            return new CommonMethodDeclareExpression(caller != null
+                    ? new AsmNativeMethodDeclare(caller)
+                    : new NativeMethodDeclare(method),
                     line, column);
+
         } catch (NoSuchMethodException ex) {
             throw new ParseException(ex.getMessage(), line, column);
-        } catch (NativeSecurityException ex) {
+        } catch (SecurityException ex) {
             throw new ParseException(ex.getMessage(), line, column);
         }
     }

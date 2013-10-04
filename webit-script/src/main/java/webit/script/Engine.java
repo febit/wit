@@ -151,6 +151,10 @@ public final class Engine {
         }
         return template;
     }
+    
+    public boolean checkNativeAccess(String path){
+        return this.nativeSecurityManager.access(path);
+    }
 
     public void setNativeSecurityManagerClass(Class nativeSecurityManagerClass) {
         this.nativeSecurityManagerClass = nativeSecurityManagerClass;
