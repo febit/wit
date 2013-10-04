@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util.collection;
 
-public final class IdentityHashMap<V> {
+public final class ClassIdentityHashMap<V> {
 
     private static final int DEFAULT_CAPACITY = 64;
     private static final int MINIMUM_CAPACITY = 4;
@@ -12,7 +12,7 @@ public final class IdentityHashMap<V> {
     //
     private final Object lock = new Object();
 
-    public IdentityHashMap(int initialCapacity) {
+    public ClassIdentityHashMap(int initialCapacity) {
 
         int initlen;
         if (initialCapacity > MAXIMUM_CAPACITY || initialCapacity < 0) {
@@ -26,7 +26,7 @@ public final class IdentityHashMap<V> {
         init(initlen);
     }
 
-    public IdentityHashMap() {
+    public ClassIdentityHashMap() {
         init(DEFAULT_CAPACITY);
     }
 
@@ -40,28 +40,25 @@ public final class IdentityHashMap<V> {
         return count;
     }
 
-    @SuppressWarnings("unchecked")
-    public V unsafeGet(final Object key) {
+    public V unsafeGet(final Class key) {
 
-        final int id;
-        //final int index = id % tab.length;
-
+        //final int id;
+        //id = key.hashCode();
         final Entry<V>[] tab;
-        tab = table;
-        //int index = id & this.mark;
-        Entry<V> e = tab[(id = System.identityHashCode(key)) & (tab.length - 1)];
-        //int index = id & this.mark;
+        //tab = table;
+        //final int index = id % tab.length;
+        //Entry<V> e = tab[(id = System.identityHashCode(key)) & (tab.length - 1)];
         //Entry<V> e = table[index];
-        for (; e != null; e = e.next) {
-            if (id == e.id) {
-                return (V) e.value;
+        for (Entry<V> e = (tab = table)[key.hashCode() & (tab.length - 1)]; e != null; e = e.next) {
+            if (key == e.key) {
+                return e.value;
             }
         }
 
         return null;
     }
 
-    public V get(Object key) {
+    public V get(Class key) {
         synchronized (lock) {
             return unsafeGet(key);
         }
@@ -77,6 +74,13 @@ public final class IdentityHashMap<V> {
             final int oldCapacity = oldTable.length;
 
             final int newCapacity = oldCapacity << 1;
+            if (newCapacity > MAXIMUM_CAPACITY) {
+                if (threshold == MAXIMUM_CAPACITY - 1) {
+                    throw new IllegalStateException("Capacity exhausted.");
+                }
+                threshold = MAXIMUM_CAPACITY - 1;  // Gigantic map!
+                return;
+            }
             final int newMark = newCapacity - 1;
             final Entry<V> newTable[] = new Entry[newCapacity];
 
@@ -99,17 +103,22 @@ public final class IdentityHashMap<V> {
     }
 
     @SuppressWarnings("unchecked")
-    private V unsafePutIfAbsent(Object key, V value) {
+    private V unsafePutIfAbsent(Class key, V value) {
 
-        final int id = System.identityHashCode(key);
+        final int id;
+        //id = key.hashCode();
+        int index;
+        //final int index = id % tab.length;
 
-        Entry<V>[] tab = table;
-        int index = id & (tab.length - 1);
-        for (Entry<V> e = tab[index]; e != null; e = e.next) {
+        Entry<V>[] tab;
+        //tab = table;
+        Entry<V> e = (tab = table)[index = (id = key.hashCode()) & (tab.length - 1)];
+        //Entry<V> e = table[index];
+        for (; e != null; e = e.next) {
             if (e.id == id) {
-                V old = e.value;
+                //V old = e.value;
                 //e.value = value;
-                return old;
+                return e.value;
             }
         }
 
@@ -125,7 +134,7 @@ public final class IdentityHashMap<V> {
         return value;
     }
 
-    public V putIfAbsent(Object key, V value) {
+    public V putIfAbsent(Class key, V value) {
         synchronized (lock) {
             return unsafePutIfAbsent(key, value);
         }
@@ -134,11 +143,11 @@ public final class IdentityHashMap<V> {
     private static final class Entry<V> {
 
         final int id;
-        final Object key;
+        final Class key;
         final V value;
         Entry<V> next;
 
-        Entry(int id, Object key, V value, Entry<V> next) {
+        Entry(int id, Class key, V value, Entry<V> next) {
             this.value = value;
             this.id = id;
             this.key = key;

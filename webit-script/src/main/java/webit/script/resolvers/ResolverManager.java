@@ -8,7 +8,7 @@ import webit.script.asm.AsmResolverManager;
 import webit.script.io.Out;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.impl.CommonResolver;
-import webit.script.util.collection.IdentityHashMap;
+import webit.script.util.collection.ClassIdentityHashMap;
 
 /**
  *
@@ -18,9 +18,9 @@ public final class ResolverManager implements Initable {
 
     private Logger logger;
     //
-    private final IdentityHashMap<GetResolver> getResolverMap;
-    private final IdentityHashMap<SetResolver> setResolverMap;
-    private final IdentityHashMap<OutResolver> outResolverMap;
+    private final ClassIdentityHashMap<GetResolver> getResolverMap;
+    private final ClassIdentityHashMap<SetResolver> setResolverMap;
+    private final ClassIdentityHashMap<OutResolver> outResolverMap;
     //
     private final ArrayList<GetResolver> getResolvers;
     private final ArrayList<SetResolver> setResolvers;
@@ -35,9 +35,9 @@ public final class ResolverManager implements Initable {
     //
 
     public ResolverManager() {
-        getResolverMap = new IdentityHashMap<GetResolver>();
-        setResolverMap = new IdentityHashMap<SetResolver>();
-        outResolverMap = new IdentityHashMap<OutResolver>();
+        getResolverMap = new ClassIdentityHashMap<GetResolver>();
+        setResolverMap = new ClassIdentityHashMap<SetResolver>();
+        outResolverMap = new ClassIdentityHashMap<OutResolver>();
 
         getResolvers = new ArrayList<GetResolver>();
         setResolvers = new ArrayList<SetResolver>();

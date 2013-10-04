@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import webit.script.util.collection.IdentityHashMap;
+import webit.script.util.collection.ClassIdentityHashMap;
 
 /**
  *
@@ -13,7 +13,7 @@ import webit.script.util.collection.IdentityHashMap;
  */
 public class BeanUtil {
 
-    private final static IdentityHashMap<FieldDescriptorsBox> CACHE = new IdentityHashMap<FieldDescriptorsBox>();
+    private final static ClassIdentityHashMap<FieldDescriptorsBox> CACHE = new ClassIdentityHashMap<FieldDescriptorsBox>();
 
     public static Object get(final Object bean, final String name) throws BeanUtilException {
 
