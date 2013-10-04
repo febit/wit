@@ -22,16 +22,20 @@ resolvers=\
 
 # enableAsmNative=true
 # looseVar=false
-# trimTextStatmentRightBlankLine=false
+# trimTextStatmentRightBlankLine=true
 
+
+### MutiFilter
 # [webit.script.filters.impl.MutiFilter]
 # filtersClass=
 
-# loggerClass=webit.script.loggers.impl.Slf4jLogger
+
+### Logger
+# loggerClass=webit.script.loggers.impl.NOPLogger
 
 
-[webit.script.resolvers.ResolverManager]
-enableAsm=true
+# [webit.script.resolvers.ResolverManager]
+# enableAsm=true
 
 
 [webit.script.loaders.impl.ClasspathLoader]

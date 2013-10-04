@@ -41,7 +41,7 @@ public final class Engine {
     private String encoding = EncodingPool.UTF_8;
     private boolean enableAsmNative = true;
     private boolean looseVar = false;
-    private boolean trimTextStatmentRightBlankLine = false;
+    private boolean trimTextStatmentRightBlankLine = true;
     //
     private Logger logger;
     private Loader resourceLoader;
