@@ -43,8 +43,8 @@ public final class Function extends AbstractStatment {
 
         final VariantStack vars;
         (vars = context.vars).push(varMap);
-        vars.set(0, argsIndex, args);
-        vars.set(argIndexs, args);
+       
+        vars.setArgumentsForFunction(argsIndex, argIndexs, args);
 
         if (hasReturnLoops) {
 

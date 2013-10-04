@@ -16,7 +16,6 @@ import webit.script.util.StatmentUtil;
 
 
 parser code {:
-
     public Parser() {
         super(start_state(), _production_table, _action_table, _reduce_table);
     }
@@ -221,18 +220,18 @@ action code {:
 
     //================ >> Expression
 
-    private ContextValue createContextValue(String name, int line, int column) {
-
+    private ResetableValueExpression createContextValue(String name, int line, int column) {
         VarAddress addr = locateVar(name, line, column);
-
-        return new ContextValue(addr.upstairs, addr.index, name, line, column);
+        return addr.upstairs == 0
+                ? new CurrentContextValue(addr.index, name, line, column)
+                : new ContextValue(addr.upstairs, addr.index, name, line, column);
     }
 
-    private ContextValue createContextValue(int upstair, String name, int line, int column) {
-
+    private ResetableValueExpression createContextValue(int upstair, String name, int line, int column) {
         int index = locateVarAtUpstairForce(name, upstair, line, column);
-
-        return new ContextValue(upstair, index, name, true, line, column);
+        return upstair == 0
+                ? new CurrentContextValue(index, name, line, column)
+                : new ContextValue(upstair, index, name, true, line, column);
     }
 
     private DirectValue createDirectValue(Object value, int line, int column) {
@@ -667,7 +666,7 @@ non terminal Expression selfBitOrOper;  // |=
 
 non terminal String contextValueIdent;
 non terminal Integer superCount;
-non terminal ContextValue contextValueExpr; // 
+non terminal ResetableValueExpression contextValueExpr; // 
 
 
 non terminal Expression redirectOutExpr; // 
@@ -1253,7 +1252,7 @@ ifOrOper            ::= expression:lexpr QUESTION_COLON:sym expression:rexpr
 assignOper          ::= expression:lexpr EQ:sym expression:expr
                         {: RESULT =  createAssignOperator(lexpr,expr, sym$Symbol.line, sym$Symbol.column); :}
                         | VAR IDENTIFIER:ident EQ:sym expression:expr
-                        {: assignVariant(ident,ident$Symbol.line,ident$Symbol.column); ContextValue valueExpr = createContextValue(ident, ident$Symbol.line, ident$Symbol.column); RESULT = createAssignOperator(valueExpr,expr, sym$Symbol.line, sym$Symbol.column); :}
+                        {: assignVariant(ident,ident$Symbol.line,ident$Symbol.column); ResetableValueExpression valueExpr = createContextValue(ident, ident$Symbol.line, ident$Symbol.column); RESULT = createAssignOperator(valueExpr,expr, sym$Symbol.line, sym$Symbol.column); :}
                         ;
 
 // (+ - * / %)=
