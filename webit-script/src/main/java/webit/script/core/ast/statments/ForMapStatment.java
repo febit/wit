@@ -93,7 +93,7 @@ public final class ForMapStatment extends AbstractStatment implements Loopable {
                 }
             } while (iter.hasNext());
             vars.pop();
-
+            return null;
         } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }

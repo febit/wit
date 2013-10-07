@@ -1,8 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.asm;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
+import webit.script.util.collection.ClassIdentityHashMap;
 
 /**
  *
@@ -10,28 +9,19 @@ import java.util.Map;
  */
 public class AsmResolverManager {
 
-    private final static Map<Class, AsmResolverBox> asmResolversMap = new IdentityHashMap<Class, AsmResolverBox>();
-    private final static AsmResolverGenerator asmResolverGenerator = new AsmResolverGenerator();
+    private final static ClassIdentityHashMap<AsmResolverBox> asmResolversMap = new ClassIdentityHashMap<AsmResolverBox>();
 
     public static AsmResolver getAsmResolver(Class type) throws Throwable {
-        AsmResolverBox box = asmResolversMap.get(type);
-        if (box == null) {
-            synchronized (asmResolversMap) {
-                box = asmResolversMap.get(type);
-                if (box == null) {
-                    box = new AsmResolverBox(type);
-                    asmResolversMap.put(type, box);
-                }
-            }
+        AsmResolverBox box;
+        if ((box = asmResolversMap.get(type)) == null) {
+            box = asmResolversMap.putIfAbsent(type, new AsmResolverBox());
         }
         //
-        AsmResolver resolver = box.resolver;
-        if (resolver == null) {
+        AsmResolver resolver;
+        if ((resolver = box.resolver) == null) {
             synchronized (box) {
-                resolver = box.resolver;
-                if (resolver == null) {
-                    resolver = (AsmResolver) asmResolverGenerator.generateResolver(type).newInstance();
-                    box.resolver = resolver;
+                if ((resolver = box.resolver) == null) {
+                    box.resolver = resolver = (AsmResolver) AsmResolverGenerator.generateResolver(type).newInstance();
                 }
             }
         }
@@ -39,32 +29,6 @@ public class AsmResolverManager {
     }
 
     private static class AsmResolverBox {
-
-        final Class type;
         AsmResolver resolver;
-
-        AsmResolverBox(Class type) {
-            this.type = type;
-        }
-
-        @Override
-        public int hashCode() {
-            return this.type != null ? this.type.hashCode() : 0;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final AsmResolverBox other = (AsmResolverBox) obj;
-            if (this.type != other.type && (this.type == null || !this.type.equals(other.type))) {
-                return false;
-            }
-            return true;
-        }
     }
 }

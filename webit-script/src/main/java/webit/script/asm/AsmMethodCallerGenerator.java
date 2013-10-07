@@ -17,23 +17,37 @@ import webit.script.util.ClassUtil;
 public class AsmMethodCallerGenerator {
 
     private static final String CALLER_CLASS_NAME_PRE = "webit.script.asm.AsmMethodCaller_";
-    private static final String ASM_METHOD_CALLER = "webit/script/asm/AsmMethodCaller";
+    private static final String[] ASM_METHOD_CALLER = new String[]{"webit/script/asm/AsmMethodCaller"};
 
-    protected static String generateClassName(java.lang.reflect.Method method) {
+    public static Class generateCaller(java.lang.reflect.Method method) {
+        String className = generateClassName(method);
+
+        byte[] code = generateClassBody(className, method);
+        return ASMUtil.loadClass(className, code);
+    }
+
+    public static Class generateCaller(Constructor constructor) {
+        String className = generateClassName(constructor);
+
+        byte[] code = generateClassBody(className, constructor);
+        return ASMUtil.loadClass(className, code);
+    }
+
+    private static String generateClassName(java.lang.reflect.Method method) {
         return CALLER_CLASS_NAME_PRE + method.getName() + '_' + ASMUtil.getSn();
     }
 
-    protected static String generateClassName(Constructor constructor) {
+    private static String generateClassName(Constructor constructor) {
         return CALLER_CLASS_NAME_PRE + constructor.getDeclaringClass().getSimpleName() + '_' + ASMUtil.getSn();
     }
 
-    protected byte[] generateClassBody(String className, Constructor constructor) {
+    private static byte[] generateClassBody(String className, Constructor constructor) {
 
         final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, ASMUtil.toAsmClassName(className), null, ASM_METHOD_CALLER, null);
+        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_METHOD_CALLER);
 
         //Default Constructor
-        attachDefaultConstructorMethod(classWriter);
+        ASMUtil.attachDefaultConstructorMethod(classWriter);
 
         attach_execute_Method(classWriter, constructor);
 
@@ -42,13 +56,13 @@ public class AsmMethodCallerGenerator {
         return classWriter.toByteArray();
     }
 
-    protected byte[] generateClassBody(String className, java.lang.reflect.Method method) {
+    private static byte[] generateClassBody(String className, java.lang.reflect.Method method) {
 
         final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, ASMUtil.toAsmClassName(className), null, ASM_METHOD_CALLER, null);
+        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_METHOD_CALLER);
 
         //Default Constructor
-        attachDefaultConstructorMethod(classWriter);
+        ASMUtil.attachDefaultConstructorMethod(classWriter);
 
         attach_execute_Method(classWriter, method);
 
@@ -57,30 +71,7 @@ public class AsmMethodCallerGenerator {
         return classWriter.toByteArray();
     }
 
-    private void attachDefaultConstructorMethod(ClassWriter classWriter) {
-        final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR, null, null, classWriter);
-
-        mg.loadThis();
-        mg.invokeConstructor(ASMUtil.TYPE_ASM_CALLER, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR);
-        mg.returnValue();
-        mg.endMethod();
-    }
-
-    public Class generateCaller(java.lang.reflect.Method method) {
-        String className = generateClassName(method);
-
-        byte[] code = generateClassBody(className, method);
-        return ASMUtil.loadClass(className, code);
-    }
-
-    public Class generateCaller(Constructor constructor) {
-        String className = generateClassName(constructor);
-
-        byte[] code = generateClassBody(className, constructor);
-        return ASMUtil.loadClass(className, code);
-    }
-
-    private void attach_execute_Method(ClassWriter classWriter, Constructor constructor) {
+    private static void attach_execute_Method(ClassWriter classWriter, Constructor constructor) {
 
         final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_EXECUTE, null, null, classWriter);
 
@@ -140,18 +131,16 @@ public class AsmMethodCallerGenerator {
             //
             mg.mark(pushArgs);
 
+            Class paramType;
             for (int i = 0; i < argsNeed; i++) {
 
-                Class paramType = paramTypes[i];
-                Class boxedParamType = ClassUtil.getBoxedClass(paramType);
+                paramType = paramTypes[i];
 
                 mg.loadLocal(var_args);
                 mg.push(i);
                 mg.arrayLoad(ASMUtil.TYPE_OBJECT);
-                mg.checkCast(Type.getType(boxedParamType));
-                if (paramType != boxedParamType) {
-                    mg.invokeStatic(ASMUtil.TYPE_CLASS_UTIL, ASMUtil.getUnBoxMethod(paramType));
-                }
+                mg.checkCast(ASMUtil.getBoxedType(paramType));
+                ASMUtil.attachUnBoxCodeIfNeed(mg, paramType);
             }
         }
 
@@ -162,7 +151,7 @@ public class AsmMethodCallerGenerator {
         mg.endMethod();
     }
 
-    private void attach_execute_Method(ClassWriter classWriter, java.lang.reflect.Method method) {
+    private static void attach_execute_Method(ClassWriter classWriter, java.lang.reflect.Method method) {
 
         final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_EXECUTE, null, null, classWriter);
 
@@ -232,9 +221,7 @@ public class AsmMethodCallerGenerator {
                 mg.storeLocal(var_args);
             } else {
                 mg.mark(firstIsNullException);
-                mg.push("The first argument of this method can't be null");
-                mg.invokeStatic(ASMUtil.TYPE_ASM_CALLER, ASMUtil.METHOD_CREATE_EXCEPTION);
-                mg.throwException();
+                ASMUtil.attachThrowScriptRuntimeException(mg, "The first argument of this method can't be null");
             }
 
             //
@@ -249,18 +236,16 @@ public class AsmMethodCallerGenerator {
                 i_args = 1;
             }
 
+            Class paramType;
             for (int i_paramType = 0; i_paramType < paramTypes.length; i_args++, i_paramType++) {
 
-                Class paramType = paramTypes[i_paramType];
-                Class boxedParamType = ClassUtil.getBoxedClass(paramType);
+                paramType = paramTypes[i_paramType];
 
                 mg.loadLocal(var_args);
                 mg.push(i_args);
                 mg.arrayLoad(ASMUtil.TYPE_OBJECT);
-                mg.checkCast(Type.getType(boxedParamType));
-                if (paramType != boxedParamType) {
-                    mg.invokeStatic(ASMUtil.TYPE_CLASS_UTIL, ASMUtil.getUnBoxMethod(paramType));
-                }
+                mg.checkCast(ASMUtil.getBoxedType(paramType));
+                ASMUtil.attachUnBoxCodeIfNeed(mg, paramType);
             }
 
             //Call Method
@@ -275,16 +260,7 @@ public class AsmMethodCallerGenerator {
             }
         }
         // return result; //  void, Boxed Object
-        Class methodReturnType = method.getReturnType();
-        if (methodReturnType == void.class) {
-            // return Context.VOID;
-            mg.getStatic(ASMUtil.TYPE_CONTEXT, "VOID", ASMUtil.TYPE_OBJECT);
-        } else {
-            Method boxMethod = ASMUtil.getBoxMethod(methodReturnType);
-            if (boxMethod != null) {
-                mg.invokeStatic(ASMUtil.TYPE_CLASS_UTIL, boxMethod);
-            }
-        }
+        ASMUtil.attachBoxCodeIfNeed(mg, method.getReturnType());
         mg.returnValue();
         mg.endMethod();
     }

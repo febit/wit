@@ -65,7 +65,7 @@ public final class DoWhileStatment extends AbstractStatment implements Loopable 
                 }
             }
             vars.resetCurrent();
-        } while (ALU.toBoolean(StatmentUtil.execute(whileExpr, context)));
+        } while (ALU.isTrue(StatmentUtil.execute(whileExpr, context)));
         vars.pop();
         return null;
     }

@@ -10,6 +10,7 @@ import webit.script.core.ast.statments.PlaceHolderStatmentFactory;
 import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ParseException;
 import webit.script.loggers.Logger;
+import webit.script.util.ExceptionUtil;
 
 /**
  * This class implements a skeleton table driven LR parser. In general, LR
@@ -385,10 +386,8 @@ public abstract class lr_parser {
             Symbol sym = this.parse();
             _textStatmentFactory.finishTemplateParser(template);
             return (TemplateAST) sym.value;
-        } catch (Exception e) {
-            throw (e instanceof ParseException)
-                    ? (ParseException) e
-                    : new ParseException(e);
+        } catch (Throwable e) {
+            throw ExceptionUtil.castToParseException(e);
         } finally {
             try {
                 this.lexer.yyclose();
@@ -413,14 +412,11 @@ public abstract class lr_parser {
 //        /* the Symbol/stack element returned by a reduce */
 //        Symbol lhs_sym = null;
 
-        /* set up direct reference to tables to drive the parser */
-
         /* initialize the action encapsulation object */
         init_actions();
         
-        final Stack<Symbol> stack = this._stack;
-        /* push dummy Symbol with start state to get us underway */
-        stack.clear();
+        final Stack<Symbol> stack;
+        (stack = this._stack).clear();
         //stack.push(newSymbol("START", 0, start_state()));
         {
             Symbol START;
@@ -433,7 +429,7 @@ public abstract class lr_parser {
 
         /* continue until we are told to stop */
         goonParse = true;
-        while (goonParse) {
+        do {
 
             /* current state is always on the top of the _stack */
 
@@ -453,7 +449,7 @@ public abstract class lr_parser {
                 /* perform the action for the reduce */
                 //lhs_sym = reduceAction((-act) - 1);
                 reduceAction((-act) - 1);
-            } else if (act == 0) {
+            } /*else if (act == 0) */else{
                 /* finally if the entry is zero, we have an error */
 
 //                syntax_error(cur_token);
@@ -461,16 +457,15 @@ public abstract class lr_parser {
 //                /* try to error recover */
 //                if (!error_recovery()) {
                     /* if that fails give up with a fatal syntax error */
+                this.goonParse = false;
                 unrecoveredSyntaxError(cur_token);
 
-                /* just in case that wasn't fatal enough, end parse */
-                //doneParse();
-                this.goonParse = false;
 //                } else {
 //                    lhs_sym = _stack.peek();
 //                }
             }
-        }
+        }while (goonParse);
+        
         return stack.peek();//lhs_sym;
     }
 

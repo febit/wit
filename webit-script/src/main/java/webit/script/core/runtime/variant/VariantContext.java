@@ -23,7 +23,7 @@ public final class VariantContext {
     @SuppressWarnings("unchecked")
     public void exportTo(final Map map) {
         final Object[] vars;
-        final String[] keys = varMap.names;
+        final String[] keys = this.varMap.names;
         for (int i = 0, len = (vars = this.values).length; i < len; i++) {
             map.put(keys[i], vars[i]);
         }
@@ -39,19 +39,30 @@ public final class VariantContext {
 
     public boolean set(String key, Object value) {
         int index;
-        if ((index = varMap.getIndex(key)) >= 0) {
+        if ((index = this.varMap.getIndex(key)) >= 0) {
             values[index] = value;
             return true;
         }
         return false;
     }
 
+    public void set(final Map<String, Object> map) {
+        int index;
+        final VariantMap _varMap = this.varMap;
+        final Object[] _values = this.values;
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if ((index = _varMap.getIndex(entry.getKey())) >= 0) {
+                _values[index] = entry.getValue();
+            }
+        }
+    }
+
     public int getIndex(String key) {
-        return varMap.getIndex(key);
+        return this.varMap.getIndex(key);
     }
 
     public boolean hasKey(String key) {
-        return varMap.getIndex(key) >= 0;
+        return this.varMap.getIndex(key) >= 0;
     }
 
     public int size() {

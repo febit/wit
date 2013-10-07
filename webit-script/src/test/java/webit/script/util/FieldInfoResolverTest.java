@@ -2,6 +2,7 @@
 package webit.script.util;
 
 import org.junit.Test;
+import webit.script.util.bean.FieldInfoResolver;
 
 /**
  *

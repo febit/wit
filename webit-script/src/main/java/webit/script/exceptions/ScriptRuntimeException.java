@@ -5,8 +5,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import webit.script.Template;
 import webit.script.core.ast.Statment;
-import webit.script.util.ArrayStack;
-import webit.script.util.Stack;
+import webit.script.util.collection.ArrayStack;
+import webit.script.util.collection.Stack;
 
 /**
  *

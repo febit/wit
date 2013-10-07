@@ -20,7 +20,7 @@ public final class OrOperator extends BinaryOperator implements Optimizable {
 
     public Object execute(final Context context) {
         Object left;
-        return ALU.toBoolean(left = StatmentUtil.execute(leftExpr, context))
+        return ALU.isTrue(left = StatmentUtil.execute(leftExpr, context))
                 ? left
                 : StatmentUtil.execute(rightExpr, context);
     }

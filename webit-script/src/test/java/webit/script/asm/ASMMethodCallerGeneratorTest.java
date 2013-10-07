@@ -17,17 +17,16 @@ public class ASMMethodCallerGeneratorTest {
     @Test
     @SuppressWarnings("unchecked")
     public void test() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
-        AsmMethodCallerGenerator generator = new AsmMethodCallerGenerator();
         //System.currentTimeMillis();
-        Class currentTimeMillisClass = generator.generateCaller(System.class.getMethod("currentTimeMillis", new Class[0]));
-        Class arraycopyClass = generator.generateCaller(System.class.getMethod("arraycopy", new Class[]{Object.class, int.class, Object.class, int.class, int.class}));
+        Class currentTimeMillisClass = AsmMethodCallerGenerator.generateCaller(System.class.getMethod("currentTimeMillis", new Class[0]));
+        Class arraycopyClass = AsmMethodCallerGenerator.generateCaller(System.class.getMethod("arraycopy", new Class[]{Object.class, int.class, Object.class, int.class, int.class}));
 
-        Class newListClass = generator.generateCaller(ArrayList.class.getConstructor());
-        Class newListWithInitSizeClass = generator.generateCaller(ArrayList.class.getConstructor(new Class[]{int.class}));
+        Class newListClass = AsmMethodCallerGenerator.generateCaller(ArrayList.class.getConstructor());
+        Class newListWithInitSizeClass = AsmMethodCallerGenerator.generateCaller(ArrayList.class.getConstructor(new Class[]{int.class}));
         
-        Class listSizeClass = generator.generateCaller(ArrayList.class.getMethod("size", new Class[0]));
-        Class listAddClass = generator.generateCaller(List.class.getMethod("add", new Class[]{Object.class}));
-        Class listAddToIndexClass = generator.generateCaller(List.class.getMethod("add", new Class[]{int.class, Object.class}));
+        Class listSizeClass = AsmMethodCallerGenerator.generateCaller(ArrayList.class.getMethod("size", new Class[0]));
+        Class listAddClass = AsmMethodCallerGenerator.generateCaller(List.class.getMethod("add", new Class[]{Object.class}));
+        Class listAddToIndexClass = AsmMethodCallerGenerator.generateCaller(List.class.getMethod("add", new Class[]{int.class, Object.class}));
         
         
         AsmMethodCaller currentTimeMillis = (AsmMethodCaller) currentTimeMillisClass.newInstance();

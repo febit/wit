@@ -11,7 +11,7 @@ import webit.script.core.runtime.variant.VariantMap;
  */
 public class VariantUtil {
 
-    private final static int MAX_OF_NORMAL_VAR_MAP = Integer.MAX_VALUE;//XXX: resize this smaller when real need HashVariantMap
+    private final static int MAX_OF_NORMAL_VAR_MAP = 6;//Integer.MAX_VALUE;//XXX: resize this smaller when real need HashVariantMap
 
     public static VariantMap toVariantMap(final Map<String, Integer> map) {
         if (map == null || map.isEmpty()) {

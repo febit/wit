@@ -6,10 +6,9 @@ import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.runtime.variant.VariantContext;
 import webit.script.core.runtime.variant.VariantStack;
 import webit.script.io.Out;
-import webit.script.loggers.Logger;
 import webit.script.resolvers.ResolverManager;
-import webit.script.util.ArrayStack;
-import webit.script.util.Stack;
+import webit.script.util.collection.ArrayStack;
+import webit.script.util.collection.Stack;
 
 /**
  *
@@ -18,7 +17,6 @@ import webit.script.util.Stack;
 public final class Context {
 
     public static final Object VOID = new Object();
-    public static final Object UNDEFINED = new Object();
     //
     private Out out;
     private Stack<Out> outStack;
@@ -28,8 +26,6 @@ public final class Context {
     public final VariantStack vars;
     public final Template template;
     public final ResolverManager resolverManager;
-    public final boolean enableAsmNative;
-    public final Logger logger;
     public final boolean isByteStream;
 
     public Context(final Template template, final Out out) {
@@ -38,10 +34,7 @@ public final class Context {
         this.out = out;
         this.encoding = out.getEncoding();
         this.isByteStream = out.isByteStream();
-        final Engine engine;
-        this.resolverManager = (engine = template.engine).getResolverManager();
-        this.enableAsmNative = engine.isEnableAsmNative();
-        this.logger = engine.getLogger();
+        this.resolverManager = template.engine.getResolverManager();
         this.loopCtrl = new LoopCtrl();
         this.vars = new VariantStack();
     }
@@ -53,8 +46,6 @@ public final class Context {
         this.encoding = parent.encoding;
         this.isByteStream = parent.isByteStream;
         this.resolverManager = parent.resolverManager;
-        this.enableAsmNative = parent.enableAsmNative;
-        this.logger = parent.logger;
         this.loopCtrl = new LoopCtrl();
         this.vars = parentVarContexts != null ? new VariantStack(parentVarContexts) : new VariantStack();
     }

@@ -3,6 +3,7 @@ package webit.script.util;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
+import webit.script.util.bean.BeanUtil;
 
 /**
  *

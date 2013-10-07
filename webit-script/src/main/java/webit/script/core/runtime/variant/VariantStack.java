@@ -44,21 +44,16 @@ public final class VariantStack {
     }
 
     public void pop() {
-        contexts[current--] = null;
-        currentContext = contexts[current];
+        VariantContext[] _contexts;
+        (_contexts = this.contexts)[current--] = null;
+        currentContext = _contexts[current];
     }
 
-    public int setToCurrentContext(final Map<String, Object> map) {
-        int count = 0;
+    public void setToCurrentContext(final Map<String, Object> map) {
         final VariantContext element;
         if (map != null && (element = currentContext) != null) {
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                if (element.set(entry.getKey(), entry.getValue())) {
-                    ++count;
-                }
-            }
+            element.set(map);
         }
-        return count;
     }
 
     public void setArgumentsForFunction(final int argsIndex, final int[] indexs, final Object[] values) {
@@ -80,31 +75,32 @@ public final class VariantStack {
     }
 
     public void resetCurrent() {
-        if (currentContext != null) {
+        final VariantContext context;
+        if ((context = currentContext) != null) {
             final Object[] contextValues;
-            int i = (contextValues = currentContext.values).length - 1;
-            while (i >= 0) {
-                contextValues[i--] = null;
+            int i = (contextValues = context.values).length;
+            while (i != 0) {
+                contextValues[--i] = null;
             }
         }
     }
 
     public void resetCurrentWith(int index, Object value, int index2, Object value2) {
         final Object[] contextValues;
-        int i = (contextValues = currentContext.values).length - 1;
-        while (i >= 0) {
-            contextValues[i--] = null;
-        }
+        int i = (contextValues = currentContext.values).length;
+        do {
+            contextValues[--i] = null;
+        } while (i != 0);
         contextValues[index] = value;
         contextValues[index2] = value2;
     }
 
     public void resetCurrentWith(int index, Object value, int index2, Object value2, int index3, Object value3) {
         final Object[] contextValues;
-        int i = (contextValues = currentContext.values).length - 1;
-        while (i >= 0) {
-            contextValues[i--] = null;
-        }
+        int i = (contextValues = currentContext.values).length;
+        do {
+            contextValues[--i] = null;
+        } while (i != 0);
         contextValues[index] = value;
         contextValues[index2] = value2;
         contextValues[index3] = value3;
@@ -166,9 +162,10 @@ public final class VariantStack {
 
     public VariantContext getContext(int offset) {
         final int realIndex;
-        if ((realIndex = current - offset) < 1 || realIndex > current) {//XXX:skip top
+        if (offset >= 0 && (realIndex = current - offset) > 0) {//XXX:skip top
+            return contexts[realIndex];
+        } else {
             throw new IndexOutOfBoundsException();
         }
-        return contexts[realIndex];
     }
 }

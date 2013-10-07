@@ -31,7 +31,7 @@ public final class WhileStatmentNoLoops extends AbstractStatment {
         final VariantStack vars;
         (vars = context.vars).push(varMap);
         final Statment[] statments = this.statments;
-        while (ALU.toBoolean(StatmentUtil.execute(whileExpr, context))) {
+        while (ALU.isTrue(StatmentUtil.execute(whileExpr, context))) {
             StatmentUtil.execute(statments, context);
             vars.resetCurrent();
         }

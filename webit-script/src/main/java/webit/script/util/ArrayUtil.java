@@ -86,7 +86,7 @@ public class ArrayUtil {
                 return;
             }//
             else if (clazz == boolean[].class) {
-                ((boolean[]) o1)[index] = ALU.toBoolean(value);
+                ((boolean[]) o1)[index] = ALU.isTrue(value);
                 return;
             }//
             else if (clazz == char[].class) {

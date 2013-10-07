@@ -85,8 +85,9 @@ public final class Engine {
         resolveBean(this.resolverManager);
 
         if (this.resolvers != null) {
-            Resolver[] resolverInstances = new Resolver[this.resolvers.length];
-            for (int i = 0; i < this.resolvers.length; i++) {
+            final int resolversLength = this.resolvers.length;
+            Resolver[] resolverInstances = new Resolver[resolversLength];
+            for (int i = 0; i < resolversLength; i++) {
                 resolverInstances[i] = (Resolver) getBean(this.resolvers[i]);
             }
             this.resolverManager.init(resolverInstances);

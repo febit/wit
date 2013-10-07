@@ -1,10 +1,10 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -13,73 +13,30 @@ import java.util.Map;
  */
 public class ClassUtil {
 
-    public static boolean unBox(Boolean b) {
-        return b.booleanValue();
-    }
-
-    public static char unBox(Character b) {
-        return b.charValue();
-    }
-
-    public static byte unBox(Byte b) {
-        return b.byteValue();
-    }
-
-    public static short unBox(Short b) {
-        return b.shortValue();
-    }
-
-    public static int unBox(Integer b) {
-        return b.intValue();
-    }
-
-    public static long unBox(Long b) {
-        return b.longValue();
-    }
-
-    public static float unBox(Float b) {
-        return b.floatValue();
-    }
-
-    public static double unBox(Double b) {
-        return b.doubleValue();
-    }
-
-    public static Boolean box(boolean b) {
-        return b ? Boolean.TRUE : Boolean.FALSE;
-    }
-
-    public static Character box(char c) {
-        return Character.valueOf(c);
-    }
-
-    public static Byte box(byte c) {
-        return Byte.valueOf(c);
-    }
-
-    public static Short box(short c) {
-        return Short.valueOf(c);
-    }
-
-    public static Integer box(int c) {
-        return Integer.valueOf(c);
-    }
-
-    public static Long box(long c) {
-        return Long.valueOf(c);
-    }
-
-    public static Float box(float c) {
-        return Float.valueOf(c);
-    }
-
-    public static Double box(double c) {
-        return Double.valueOf(c);
-    }
-
-    public static Class<?> getBoxedClass(Class<?> type) {
-        Class boxed;
-        return (boxed = BOX_MAP.get(type)) != null ? boxed : type;
+    public static Class<?> getBoxedClass(final Class<?> type) {
+        if (type.isPrimitive()) {
+            if (type == int.class) {
+                return Integer.class;
+            } else if (type == boolean.class) {
+                return Boolean.class;
+            } else if (type == long.class) {
+                return Long.class;
+            } else if (type == double.class) {
+                return Double.class;
+            } else if (type == float.class) {
+                return Float.class;
+            } else if (type == short.class) {
+                return Short.class;
+            } else if (type == char.class) {
+                return Character.class;
+            } else if (type == byte.class) {
+                return Byte.class;
+            } else /* if (type == void.class) */ {
+                return Void.class;
+            }
+        } else {
+            return type;
+        }
     }
 
     public static char getAliasOfBaseType(final String name) {
@@ -160,23 +117,11 @@ public class ClassUtil {
         }
         return getClassByInternalName(new String(chars));
     }
-    private static final Map<Class, Class> BOX_MAP;
     private static final Map<String, Class<?>> CLASS_CACHE;
 
     static {
 
-        Map<Class, Class> boxMap = new IdentityHashMap<Class, Class>(8);
-        boxMap.put(boolean.class, Boolean.class);
-        boxMap.put(char.class, Character.class);
-        boxMap.put(byte.class, Byte.class);
-        boxMap.put(short.class, Short.class);
-        boxMap.put(int.class, Integer.class);
-        boxMap.put(long.class, Long.class);
-        boxMap.put(float.class, Float.class);
-        boxMap.put(double.class, Double.class);
-        BOX_MAP = boxMap;
-
-        Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> classes = new HashMap<String, Class<?>>(32, 0.75f); //24*4/3
         classes.put("boolean", boolean.class);
         classes.put("char", char.class);
         classes.put("byte", byte.class);
@@ -224,55 +169,61 @@ public class ClassUtil {
         return Modifier.isPublic(cls.getModifiers());
     }
 
+    public static boolean isPublic(Method method) {
+        return Modifier.isPublic(method.getModifiers());
+    }
+
+    public static boolean isPublic(Constructor constructor) {
+        return Modifier.isPublic(constructor.getModifiers());
+    }
+
     //XXX: rewrite
     public static Method searchMethod(Class<?> currentClass, String name, Class<?>[] parameterTypes, boolean boxed) throws NoSuchMethodException {
-        if (currentClass == null) {
-            throw new NoSuchMethodException("class == null");
-        }
-        try {
-            return currentClass.getMethod(name, parameterTypes);
-        } catch (NoSuchMethodException e) {
-            Method likeMethod = null;
-            for (Method method : currentClass.getMethods()) {
-                if (method.getName().equals(name)
-                        && parameterTypes.length == method.getParameterTypes().length
-                        && Modifier.isPublic(method.getModifiers())) {
-                    if (parameterTypes.length > 0) {
-                        Class<?>[] types = method.getParameterTypes();
-                        boolean eq = true;
-                        boolean like = true;
-                        for (int i = 0; i < parameterTypes.length; i++) {
-                            Class<?> type = types[i];
-                            Class<?> parameterType = parameterTypes[i];
-                            if (type != null && parameterType != null
-                                    && !type.equals(parameterType)) {
-                                eq = false;
-                                if (boxed) {
-                                    type = ClassUtil.getBoxedClass(type);
-                                    parameterType = ClassUtil.getBoxedClass(parameterType);
-                                }
-                                if (!type.isAssignableFrom(parameterType)) {
-                                    eq = false;
-                                    like = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!eq) {
-                            if (like && (likeMethod == null || likeMethod.getParameterTypes()[0]
-                                    .isAssignableFrom(method.getParameterTypes()[0]))) {
-                                likeMethod = method;
-                            }
-                            continue;
-                        }
-                    }
-                    return method;
-                }
-            }
-            if (likeMethod != null) {
-                return likeMethod;
-            }
-            throw e;
-        }
+//        try {
+        return currentClass.getMethod(name, parameterTypes);
+//        } catch (NoSuchMethodException e) {
+//            Method likeMethod = null;
+//            final int parameterTypesLength = parameterTypes.length;
+//            for (Method method : currentClass.getMethods()) {
+//                if (method.getName().equals(name)
+//                        && parameterTypesLength == method.getParameterTypes().length
+//                        && Modifier.isPublic(method.getModifiers())) {
+//                    if (parameterTypesLength > 0) {
+//                        final Class<?>[] types = method.getParameterTypes();
+//                        boolean eq = true;
+//                        boolean like = true;
+//                        for (int i = 0; i < parameterTypesLength; i++) {
+//                            Class<?> type = types[i];
+//                            Class<?> parameterType = parameterTypes[i];
+//                            if (type != null && parameterType != null
+//                                    && !type.equals(parameterType)) {
+//                                eq = false;
+//                                if (boxed) {
+//                                    type = ClassUtil.getBoxedClass(type);
+//                                    parameterType = ClassUtil.getBoxedClass(parameterType);
+//                                }
+//                                if (!type.isAssignableFrom(parameterType)) {
+//                                    eq = false;
+//                                    like = false;
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                        if (!eq) {
+//                            if (like && (likeMethod == null || likeMethod.getParameterTypes()[0]
+//                                    .isAssignableFrom(method.getParameterTypes()[0]))) {
+//                                likeMethod = method;
+//                            }
+//                            continue;
+//                        }
+//                    }
+//                    return method;
+//                }
+//            }
+//            if (likeMethod != null) {
+//                return likeMethod;
+//            }
+//            throw e;
+//        }
     }
 }

@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util;
 
-
 /**
  *
  * @author zqq90
@@ -13,10 +12,12 @@ public class NumberUtil {
 
     public static char[] get() {
         char[] buf;
-        if ((buf = charsBufLocal.get()) == null) {
+        if ((buf = charsBufLocal.get()) != null) {
+            return buf;
+        } else {
             charsBufLocal.set(buf = new char[SIZE]);
+            return buf;
         }
-        return buf;
     }
 
     public static int getChars(long i, int index, char[] buf) {
@@ -105,7 +106,6 @@ public class NumberUtil {
         }
         return charPos;
     }
-
 //    public static int getChars(byte b, int index, char[] buf) {
 //        int i = b;
 //        int q, r;

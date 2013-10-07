@@ -13,7 +13,6 @@ import java.util.Map;
 public class AsmMethodCallerManager {
 
     private final static Map<Object, AsmMethodCallerBox> asmMethodCallerMap = new IdentityHashMap<Object, AsmMethodCallerBox>();
-    private final static AsmMethodCallerGenerator asmMethodCallerGenerator = new AsmMethodCallerGenerator();
 
     public static AsmMethodCaller getCaller(Method method) throws Exception {
         return doGetCaller(method);
@@ -24,28 +23,24 @@ public class AsmMethodCallerManager {
     }
 
     private static AsmMethodCaller doGetCaller(Object method) throws Exception {
-        AsmMethodCallerBox box = asmMethodCallerMap.get(method);
-        if (box == null) {
+        AsmMethodCallerBox box;
+        if ((box = asmMethodCallerMap.get(method)) == null) {
             synchronized (asmMethodCallerMap) {
-                box = asmMethodCallerMap.get(method);
-                if (box == null) {
-                    box = new AsmMethodCallerBox(method);
-                    asmMethodCallerMap.put(method, box);
+                if ((box = asmMethodCallerMap.get(method)) == null) {
+                    asmMethodCallerMap.put(method, box = new AsmMethodCallerBox());
                 }
             }
         }
         //
-        AsmMethodCaller caller = box.caller;
-        if (caller == null) {
+        AsmMethodCaller caller;
+        if ((caller = box.caller) == null) {
             synchronized (box) {
-                caller = box.caller;
-                if (caller == null) {
+                if ((caller = box.caller) == null) {
                     if (method instanceof Method) {
-                        caller = (AsmMethodCaller) asmMethodCallerGenerator.generateCaller((Method) method).newInstance();
+                        box.caller = caller = (AsmMethodCaller) AsmMethodCallerGenerator.generateCaller((Method) method).newInstance();
                     } else if (method instanceof Constructor) {
-                        caller = (AsmMethodCaller) asmMethodCallerGenerator.generateCaller((Constructor) method).newInstance();
+                        box.caller = caller = (AsmMethodCaller) AsmMethodCallerGenerator.generateCaller((Constructor) method).newInstance();
                     }
-                    box.caller = caller;
                 }
             }
         }
@@ -54,31 +49,6 @@ public class AsmMethodCallerManager {
 
     private static class AsmMethodCallerBox {
 
-        final Object key;
         AsmMethodCaller caller;
-
-        AsmMethodCallerBox(Object method) {
-            this.key = method;
-        }
-
-        @Override
-        public int hashCode() {
-            return this.key != null ? this.key.hashCode() : 0;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final AsmMethodCallerBox other = (AsmMethodCallerBox) obj;
-            if (this.key != other.key && (this.key == null || !this.key.equals(other.key))) {
-                return false;
-            }
-            return true;
-        }
     }
 }

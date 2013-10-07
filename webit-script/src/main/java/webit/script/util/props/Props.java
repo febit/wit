@@ -46,7 +46,7 @@ import webit.script.util.StringUtil;
  * base props context.
  * </ul>
  */
-public final class Props /* implements Cloneable */{
+public final class Props /* implements Cloneable */ {
 
     private static final String activeProfilesProp = "@profiles";
     private final PropsParser parser;
@@ -88,7 +88,11 @@ public final class Props /* implements Cloneable */{
 
     // ---------------------------------------------------------------- configuration
     /**
-     * Overrides active profiles.
+     * Sets new active profiles and overrides existing ones. By setting
+     * <code>null</code>, no active profile will be set.
+     * <pr>
+     * Note that if some props file is loaded <b>after</b>
+     * this method, it might override this value in the same way.
      */
     public void setActiveProfiles(final String... activeProfiles) {
         initialize();
@@ -181,7 +185,6 @@ public final class Props /* implements Cloneable */{
 //        copy(in, out, encoding);
 //        parse(out.toString());
 //    }
-
     /**
      * Loads base properties from the provided java properties. Null values are
      * ignored.
@@ -305,17 +308,18 @@ public final class Props /* implements Cloneable */{
             //synchronized (this) {
             //    if (initialized == false) {
 
-                    data.resolveMacros();
-                    resolveActiveProfiles();
+            data.resolveMacros();
+            resolveActiveProfiles();
 
-                    initialized = true;
+            initialized = true;
             //    }
             //}
         }
     }
 
     /**
-     * Resolves active profiles from property.
+     * Resolves active profiles from property. If default active property is not
+     * defined, nothing happens. Otherwise,
      */
     private void resolveActiveProfiles() {
 //        if (activeProfilesProp == null) {
@@ -324,7 +328,7 @@ public final class Props /* implements Cloneable */{
 //        }
         final PropsValue pv = data.getBaseProperty(activeProfilesProp);
         if (pv == null) {
-            activeProfiles = null;
+            // no active profile set as the property, exit
             return;
         }
         final String value = pv.getValue();

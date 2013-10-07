@@ -62,6 +62,7 @@ public final class ForMapStatmentNoLoops extends AbstractStatment {
                 StatmentUtil.execute(statments, context);
             } while (iter.hasNext());
             vars.pop();
+            return null;
         } else if (elseStatment != null) {
             StatmentUtil.execute(elseStatment, context);
         }

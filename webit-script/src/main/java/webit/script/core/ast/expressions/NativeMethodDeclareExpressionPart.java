@@ -54,13 +54,23 @@ public class NativeMethodDeclareExpressionPart extends Position {
             final Method method = ClassUtil.searchMethod(clazz, methodName, paramTypeList.toArray(new Class[paramTypeList.size()]), false);
             AsmMethodCaller caller;
             if (_engine.isEnableAsmNative()) {
-                try {
-                    if ((caller = AsmMethodCallerManager.getCaller(method)) == null) {
-                        _engine.getLogger().error("AsmMethodCaller for '" + method.toString() + "' is null, and instead by NativeMethodDeclare");
+                if (ClassUtil.isPublic(clazz)) {
+                    if (ClassUtil.isPublic(method)) {
+                        try {
+                            if ((caller = AsmMethodCallerManager.getCaller(method)) == null) {
+                                _engine.getLogger().error("AsmMethodCaller for '" + method.toString() + "' is null, and instead by NativeMethodDeclare");
+                            }
+                        } catch (Throwable ex) {
+                            caller = null;
+                            _engine.getLogger().error("Generate AsmMethodCaller for '" + method.toString() + "' failed, and instead by NativeMethodDeclare", ex);
+                        }
+                    } else {
+                        _engine.getLogger().warn("'" + method.toString() + "' will not use asm, since this method is not public, and instead by NativeMethodDeclare");
+                        caller = null;
                     }
-                } catch (Throwable ex) {
+                } else {
+                    _engine.getLogger().warn("'" + method.toString() + "' will not use asm, since class is not public, and instead by NativeMethodDeclare");
                     caller = null;
-                    _engine.getLogger().error("Generate AsmMethodCaller for '" + method.toString() + "' failed, and instead by NativeMethodDeclare", ex);
                 }
             } else {
                 caller = null;

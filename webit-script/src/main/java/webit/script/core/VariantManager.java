@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 import webit.script.exceptions.ParseException;
-import webit.script.util.ArrayStack;
-import webit.script.util.Stack;
+import webit.script.util.collection.ArrayStack;
+import webit.script.util.collection.Stack;
 
 /**
  *
@@ -17,20 +17,14 @@ public class VariantManager {
 
     private Map<String, Integer>[] elements;
     private int currentElementIndex;
-    //private Stack<TreeSet<Integer>> overflowUpstairSetStack = new ArrayStack<TreeSet<Integer>>();
-    //private TreeSet<Integer> overflowUpstairSet = new TreeSet<Integer>();
-    //private int currentVarWall = 0;
-    //private Stack<Integer> varWallStack = new ArrayStack<Integer>();
     private Stack<VarWall> varWallStack = new ArrayStack<VarWall>();
 
-    public final int pushVarWall() {
+    public final void pushVarWall() {
         varWallStack.push(new VarWall(currentElementIndex));
-        return currentElementIndex;
     }
 
     public int[] popVarWall() {
-        VarWall varWall = varWallStack.pop();
-        return varWall.getOverflowUpstairs();
+        return varWallStack.pop().getOverflowUpstairs();
     }
 
     @SuppressWarnings("unchecked")
@@ -75,7 +69,7 @@ public class VariantManager {
     }
 
     public void checkVarWall(int index) {
-        for (int i = 0; i < varWallStack.size(); i++) {
+        for (int i = 0, len = varWallStack.size(); i < len; i++) {
             if (varWallStack.peek(i).checkOverflow(index) == false) {
                 break;
             }
@@ -89,7 +83,7 @@ public class VariantManager {
 
         VarWall(int value) {
             this.value = value;
-            overflowUpstairSet = new TreeSet<Integer>();
+            this.overflowUpstairSet = new TreeSet<Integer>();
         }
 
         public boolean checkOverflow(int index) {
@@ -113,28 +107,30 @@ public class VariantManager {
     }
 
     public Map<String, Integer> pop() {
-        if (currentElementIndex < 0) {
+        int index;
+        if ((index = currentElementIndex) >= 0) {
+            Map<String, Integer>[] _elements;
+            Map<String, Integer> element = (_elements = elements)[index]; //the one need pop 
+            _elements[index + 1] = null; // clear old next
+            _elements[index] = createNewMap(); // this is 'next' now
+            currentElementIndex = index - 1; //back point
+            return element;
+        } else {
             throw new ParseException("Variant stack overflow");
         }
-
-        Map<String, Integer> element = elements[currentElementIndex]; //the one need pop 
-        elements[currentElementIndex + 1] = null; // clear old next
-        elements[currentElementIndex] = createNewMap(); // this is 'next' now
-        --currentElementIndex; //back point
-
-        return element;
     }
 
     public int assignVariant(String name) {
-        Map<String, Integer> current = current();
-        if (current.containsKey(name)) {
+        Map<String, Integer> current;
+        if (!(current = current()).containsKey(name)) {
+            int address;
+            current.put(name, (address = current.size()));
+            return address;
+        } else {
             throw new ParseException("Duplicate Variant declare: " + name);
         }
-        int address = current.size();
-        current.put(name, address);
-        return address;
     }
-    
+
     public VarAddress assignVariantAtTopWall(String name) {
         int topindex = varWallStack.peek().value;
         Map<String, Integer> top = elements[topindex];
@@ -177,8 +173,7 @@ public class VariantManager {
 
     public VarAddress locate(String name, boolean force) {
         for (int i = currentElementIndex; i >= 0; --i) {
-            Map<String, Integer> map = elements[i];
-            Integer index = map.get(name);
+            Integer index = elements[i].get(name);
             if (index != null) {
                 checkVarWall(i);
                 return new VarAddress(currentElementIndex - i, index);

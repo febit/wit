@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.collection.*;
 
@@ -90,7 +89,7 @@ public class CollectionUtil {
         throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());
     }
 
-    public static <T> Iter<T> toIter(final Set<T> o1) {
+    public static <T> Iter<T> toIter(final Iterable<T> o1) {
         return new IteratorIterAdapter<T>(o1.iterator());
     }
 

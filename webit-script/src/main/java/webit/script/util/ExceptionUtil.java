@@ -2,6 +2,7 @@
 package webit.script.util;
 
 import webit.script.core.ast.Statment;
+import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;
 
 /**
@@ -20,5 +21,11 @@ public class ExceptionUtil {
         return (e instanceof ScriptRuntimeException)
                 ? ((ScriptRuntimeException) e)
                 : new ScriptRuntimeException(e);
+    }
+
+    public static ParseException castToParseException(final Throwable e) {
+        return (e instanceof ParseException)
+                ? ((ParseException) e)
+                : new ParseException(e);
     }
 }

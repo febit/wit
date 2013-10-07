@@ -1,8 +1,9 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.util;
+package webit.script.util.bean;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  *
@@ -10,9 +11,9 @@ import java.lang.reflect.Method;
  */
 public final class FieldInfo implements Comparable<FieldInfo> {
 
-    private final String name;
-    private final int hashCode;
-    private final Class parent;
+    public final String name;
+    public final int hashCode;
+    public final Class parent;
     private Method getterMethod;
     private Field field;
     private Method setterMethod;
@@ -22,18 +23,6 @@ public final class FieldInfo implements Comparable<FieldInfo> {
         this.parent = parent;
         this.name = name;
         this.hashCode = name.hashCode();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getHashCode() {
-        return hashCode;
-    }
-
-    public Class getParent() {
-        return parent;
     }
 
     public Method getGetterMethod() {
@@ -58,14 +47,11 @@ public final class FieldInfo implements Comparable<FieldInfo> {
 
     public void setField(Field field) {
         this.field = field;
+        this.isFinal = Modifier.isFinal(field.getModifiers());
     }
 
     public boolean isIsFinal() {
         return isFinal;
-    }
-
-    public void setIsFinal(boolean isFinal) {
-        this.isFinal = isFinal;
     }
 
     public int compareTo(FieldInfo o) {

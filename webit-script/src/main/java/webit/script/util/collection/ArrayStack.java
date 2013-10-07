@@ -1,22 +1,41 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.java_cup.runtime;
+package webit.script.util.collection;
 
 /**
  *
  * @author Zqq
  */
-public final class Stack<T> {
+public final class ArrayStack<T> implements Stack<T> {
 
     private Object[] elements;
     private int size;
+    public final static int initialCapacity = 16;
 
-    Stack(int initialCapacity) {
+    public ArrayStack() {
+        this(initialCapacity);
+    }
+
+    public ArrayStack(int initialCapacity) {
         elements = new Object[initialCapacity];
         size = 0;
     }
 
-    void push(T element) {
-        //ensureNext
+    public boolean empty() {
+        return size == 0;
+    }
+
+    public void clear() {
+        for (int i = size; i > 0;) {
+            elements[--i] = null;
+        }
+        size = 0;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public void push(final T element) {
         final int i;
         Object[] _elements;
         if ((i = size++) >= (_elements = elements).length) {
@@ -27,7 +46,7 @@ public final class Stack<T> {
     }
 
     @SuppressWarnings("unchecked")
-    T pop() {
+    public T pop() {
         int i;
         if ((i = --size) >= 0) {
             T element = (T) elements[i];
@@ -39,38 +58,17 @@ public final class Stack<T> {
     }
 
     @SuppressWarnings("unchecked")
-    void pops(int len) {
-        for (; len > 0; len--) {
-            elements[--size] = null;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
     public T peek(int offset) {
-        //int realIndex = size - offset - 1;
-        //if (realIndex < 0 || realIndex >= size) {
-        //    throw new IndexOutOfBoundsException();
-        //}
-        return (T) elements[size - offset - 1];
+        final int realIndex;
+        if (offset >= 0 && (realIndex = size - offset - 1) >= 0) {
+            return (T) elements[realIndex];
+        } else {
+            throw new IndexOutOfBoundsException("offset=" + offset);
+        }
     }
 
     @SuppressWarnings("unchecked")
     public T peek() {
         return (T) elements[size - 1];
-    }
-
-    public int size() {
-        return size;
-    }
-
-    public boolean empty() {
-        return size == 0;
-    }
-
-    void clear() {
-        for (int i = size; i > 0;) {
-            elements[--i] = null;
-        }
-        size = 0;
     }
 }

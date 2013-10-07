@@ -323,17 +323,17 @@ public class ALU {
     /////////////////
     // &&
     public static Object and(final Object o1, final Object o2) {
-        return toBoolean(o1) ? o2 : o1;
+        return isTrue(o1) ? o2 : o1;
     }
 
     // ||
     public static Object or(final Object o1, final Object o2) {
-        return toBoolean(o1) ? o1 : o2;
+        return isTrue(o1) ? o1 : o2;
     }
 
     // !
     public static boolean not(final Object o1) {
-        return !toBoolean(o1);
+        return !isTrue(o1);
     }
 
     // ==
@@ -688,7 +688,7 @@ public class ALU {
     }
 
     ////////////////////////////
-    public static boolean toBoolean(final Object o) {
+    public static boolean isTrue(final Object o) {
         if (o == null) {
             return false;
         } else if (Boolean.TRUE == o || Boolean.TRUE.equals(o)) {

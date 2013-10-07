@@ -11,6 +11,7 @@ import webit.script.core.ast.Position;
 import webit.script.core.ast.method.AsmNativeMethodDeclare;
 import webit.script.core.ast.method.NativeConstructorDeclare;
 import webit.script.exceptions.ParseException;
+import webit.script.util.ClassUtil;
 
 /**
  *
@@ -48,13 +49,23 @@ public class NativeConstructorDeclareExpressionPart extends Position {
             final Constructor constructor = clazz.getConstructor(paramTypeList.toArray(new Class[paramTypeList.size()]));
             AsmMethodCaller caller;
             if (_engine.isEnableAsmNative()) {
-                try {
-                    if ((caller = AsmMethodCallerManager.getCaller(constructor)) == null) {
-                        _engine.getLogger().error("AsmMethodCaller for '" + constructor.toString() + "' is null, and instead by NativeConstructorDeclare");
+                if (ClassUtil.isPublic(clazz)) {
+                    if (ClassUtil.isPublic(constructor)) {
+                        try {
+                            if ((caller = AsmMethodCallerManager.getCaller(constructor)) == null) {
+                                _engine.getLogger().error("AsmMethodCaller for '" + constructor.toString() + "' is null, and instead by NativeConstructorDeclare");
+                            }
+                        } catch (Throwable ex) {
+                            caller = null;
+                            _engine.getLogger().error("Generate AsmMethodCaller for '" + constructor.toString() + "' failed, and instead by NativeConstructorDeclare", ex);
+                        }
+                    } else {
+                        _engine.getLogger().warn("'" + constructor.toString() + "' will not use asm, since this method is not public, and instead by NativeConstructorDeclare");
+                        caller = null;
                     }
-                } catch (Throwable ex) {
+                } else {
+                    _engine.getLogger().warn("'" + constructor.toString() + "' will not use asm, since class is not public, and instead by NativeConstructorDeclare");
                     caller = null;
-                    _engine.getLogger().error("Generate AsmMethodCaller for '" + constructor.toString() + "' failed, and instead by NativeConstructorDeclare", ex);
                 }
             } else {
                 caller = null;

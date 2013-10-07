@@ -25,10 +25,8 @@ public class TemplateAST {
         final VariantStack vars = context.vars;
         vars.push(varMap);
         vars.setToCurrentContext(root);
-        int len = statments.length;
-        for (int i = 0; i < len; i++) {
-            StatmentUtil.execute(statments[i], context);
-        }
+        StatmentUtil.execute(statments, context);
+        //Note: don't vars.pop(), to keep the top variant(s)
         return context;
     }
 }

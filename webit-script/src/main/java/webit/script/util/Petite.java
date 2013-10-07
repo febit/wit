@@ -4,6 +4,7 @@ package webit.script.util;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.loggers.Logger;
+import webit.script.util.bean.BeanUtil;
 import webit.script.util.props.Props;
 
 /**

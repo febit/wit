@@ -41,6 +41,7 @@ public class StatmentUtil {
             context.pushOut(out);
             statment.execute(context);
             context.popOut();
+            return;
         } catch (Throwable e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statment);
         }
@@ -57,6 +58,7 @@ public class StatmentUtil {
     public static void executeSetValue(final ResetableValueExpression expression, final Context context, final Object value) {
         try {
             expression.setValue(context, value);
+            return;
         } catch (Throwable e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, expression);
         }
@@ -65,6 +67,7 @@ public class StatmentUtil {
     public static void execute(final Statment statment, final Context context) {
         try {
             statment.execute(context);
+            return;
         } catch (Throwable e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statment);
         }
@@ -77,6 +80,7 @@ public class StatmentUtil {
             while (i < len) {
                 statments[i++].execute(context);
             }
+            return;
         } catch (Throwable e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statments[i - 1]);
         }
@@ -91,6 +95,7 @@ public class StatmentUtil {
             do {
                 statments[i++].execute(context);
             } while (i < len && ctrl.goon());
+            return;
         } catch (Throwable e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statments[i]);
         }
@@ -106,7 +111,7 @@ public class StatmentUtil {
 
     public static Expression optimize(Expression expression) {
         try {
-            return expression instanceof Optimizable
+            return expression != null && expression instanceof Optimizable
                     ? (Expression) ((Optimizable) expression).optimize()
                     : expression;
         } catch (Throwable e) {
@@ -115,16 +120,13 @@ public class StatmentUtil {
     }
 
     public static Statment optimize(Statment statment) {
-        if (statment != null) {
-            try {
-                return statment instanceof Optimizable
-                        ? ((Optimizable) statment).optimize()
-                        : statment;
-            } catch (Throwable e) {
-                throw new ParseException("Exception occur when do optimization", e, statment);
-            }
+        try {
+            return statment != null && statment instanceof Optimizable
+                    ? ((Optimizable) statment).optimize()
+                    : statment;
+        } catch (Throwable e) {
+            throw new ParseException("Exception occur when do optimization", e, statment);
         }
-        return null;
     }
 
     public static List<LoopInfo> collectPossibleLoopsInfo(Statment statment) {
@@ -134,11 +136,13 @@ public class StatmentUtil {
     }
 
     public static List<LoopInfo> collectPossibleLoopsInfo(Statment[] statments) {
-        if (statments != null && statments.length > 0) {
+        final int len;
+        if (statments != null && (len = statments.length) > 0) {
             LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
-            for (int i = 0; i < statments.length; i++) {
-                List<LoopInfo> list = collectPossibleLoopsInfo(statments[i]);
-                if (list != null) {
+            List<LoopInfo> list;
+            int i = 0;
+            while (i < len) {
+                if ((list = collectPossibleLoopsInfo(statments[i++])) != null) {
                     loopInfos.addAll(list);
                 }
             }
@@ -149,11 +153,11 @@ public class StatmentUtil {
 
     public static LoopInfo[] collectPossibleLoopsInfoForWhileStatments(Statment bodyStatment, Statment elseStatment, String label) {
 
-        List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(bodyStatment);
-        if (list != null) {
+        List<LoopInfo> list;
+        LoopInfo loopInfo;
+        if ((list = StatmentUtil.collectPossibleLoopsInfo(bodyStatment)) != null) {
             for (Iterator<LoopInfo> it = list.iterator(); it.hasNext();) {
-                LoopInfo loopInfo = it.next();
-                if (loopInfo.matchLabel(label)
+                if ((loopInfo = it.next()).matchLabel(label)
                         && (loopInfo.type == LoopType.BREAK
                         || loopInfo.type == LoopType.CONTINUE)) {
                     it.remove();

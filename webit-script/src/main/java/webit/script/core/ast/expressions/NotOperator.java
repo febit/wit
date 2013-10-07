@@ -22,7 +22,7 @@ public final class NotOperator extends AbstractExpression implements Optimizable
     }
 
     public Object execute(final Context context) {
-        return !ALU.toBoolean(StatmentUtil.execute(expr, context));
+        return !ALU.isTrue(StatmentUtil.execute(expr, context));
     }
 
     public Expression optimize() {

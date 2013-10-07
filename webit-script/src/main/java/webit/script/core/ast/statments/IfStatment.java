@@ -27,7 +27,7 @@ public final class IfStatment extends AbstractStatment implements Loopable {
     }
 
     public Object execute(final Context context) {
-        if (ALU.toBoolean(StatmentUtil.execute(ifExpr, context))) {
+        if (ALU.isTrue(StatmentUtil.execute(ifExpr, context))) {
             StatmentUtil.execute(thenStatment, context);
         }
         return null;

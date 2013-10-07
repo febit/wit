@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Map;
@@ -14,6 +13,7 @@ import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.loaders.Resource;
 import webit.script.util.EncodingPool;
+import webit.script.util.ExceptionUtil;
 
 /**
  *
@@ -38,17 +38,21 @@ public final class Template {
     /**
      *
      * @return TemplateAST
-     * @throws IOException
      * @throws ParseException
      */
-    public TemplateAST prepareTemplate() throws IOException, ParseException {
+    public TemplateAST prepareTemplate() throws ParseException {
         TemplateAST tmpl;
         if ((tmpl = this.templateAst) == null || resource.isModified()) { //fast
             synchronized (reloadLock) {
                 if ((tmpl = this.templateAst) == null || resource.isModified()) { //slow
-                    this.templateAst = tmpl = new Parser().parseTemplate(
-                            resource.openReader(), //Parser will close reader when finish
-                            this);
+                    try {
+                        this.templateAst = tmpl = new Parser()
+                                .parseTemplate(
+                                resource.openReader(), //Parser will close reader when finish
+                                this);
+                    } catch (Exception e) {
+                        throw ExceptionUtil.castToParseException(e);
+                    }
                     lastModified = System.currentTimeMillis();
                 }
             }
@@ -103,17 +107,10 @@ public final class Template {
      */
     public Context merge(final Map<String, Object> root, final Out out) throws ScriptRuntimeException, ParseException {
         try {
-            final Context context;
-            prepareTemplate().execute((context = new Context(this, out)), root);
-            return context;
+            return prepareTemplate()
+                    .execute(new Context(this, out), root);
         } catch (Throwable e) {
-            if (e instanceof ScriptRuntimeException) {
-                throw ((ScriptRuntimeException) e).setTemplate(this);
-            } else if (e instanceof ParseException) {
-                throw ((ParseException) e).registTemplate(this);
-            } else {
-                throw new ScriptRuntimeException(e).setTemplate(this);
-            }
+            throw wrapThrowable(e);
         }
     }
 
@@ -133,13 +130,23 @@ public final class Template {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+        if (obj == this) {
+            return true;
         }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || obj.getClass() != Template.class) {
             return false;
         }
         Template other = (Template) obj;
         return (this.engine == other.engine) && (this.name.equals(other.name));
+    }
+
+    private RuntimeException wrapThrowable(final Throwable exception) throws ScriptRuntimeException, ParseException {
+        if (exception instanceof ScriptRuntimeException) {
+            return ((ScriptRuntimeException) exception).setTemplate(this);
+        } else if (exception instanceof ParseException) {
+            return ((ParseException) exception).registTemplate(this);
+        } else {
+            return new ScriptRuntimeException(exception).setTemplate(this);
+        }
     }
 }

@@ -8,15 +8,14 @@ import java.util.Map;
  * @author Zqq
  */
 public class VariantMap {
-    
-    public final static VariantMap EMPTY = new VariantMap(new String[0]);
 
+    public final static VariantMap EMPTY = new VariantMap(new String[0]);
     protected final String[] names;
     protected final int _size;
 
     VariantMap(String[] names) {
         this.names = names;
-        this._size = names != null ? names.length : 0;
+        this._size = names.length;
     }
 
     public VariantMap(Map<String, Integer> map) {
@@ -29,8 +28,10 @@ public class VariantMap {
     }
 
     public int getIndex(final String name) {
-        for (int i = 0; i < _size; i++) {
-            if (names[i].equals(name)) {
+        final String[] _names;
+        int i = (_names = this.names).length;
+        while (i > 0) {
+            if (_names[--i].equals(name)) {
                 return i;
             }
         }

@@ -2,7 +2,6 @@
 package webit.script;
 
 import java.io.PrintStream;
-import org.junit.Test;
 import webit.script.asm.ASMUtil;
 import webit.script.asm3.ClassWriter;
 import webit.script.asm3.Opcodes;

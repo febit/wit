@@ -1,5 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.util;
+package webit.script.util.bean;
+
+import webit.script.util.ClassUtil;
+import webit.script.util.StringUtil;
 
 /**
  *
