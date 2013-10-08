@@ -44,7 +44,7 @@ public class AsmMethodCallerGenerator {
     private static byte[] generateClassBody(String className, Constructor constructor) {
 
         final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_METHOD_CALLER);
+        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_METHOD_CALLER);
 
         //Default Constructor
         ASMUtil.attachDefaultConstructorMethod(classWriter);
@@ -59,7 +59,7 @@ public class AsmMethodCallerGenerator {
     private static byte[] generateClassBody(String className, java.lang.reflect.Method method) {
 
         final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_METHOD_CALLER);
+        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_METHOD_CALLER);
 
         //Default Constructor
         ASMUtil.attachDefaultConstructorMethod(classWriter);

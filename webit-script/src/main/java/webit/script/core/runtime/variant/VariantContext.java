@@ -10,7 +10,7 @@ import java.util.Map;
 public final class VariantContext {
 
     //private static final Object[] EMPTY_ARRAY = new Object[0];
-    final Object[] values;
+    Object[] values;
     private final VariantMap varMap;
 
     public VariantContext(final VariantMap varMap) {
@@ -37,14 +37,14 @@ public final class VariantContext {
         values[index] = value;
     }
 
-    public boolean set(String key, Object value) {
-        int index;
-        if ((index = this.varMap.getIndex(key)) >= 0) {
-            values[index] = value;
-            return true;
-        }
-        return false;
-    }
+//    public boolean set(String key, Object value) {
+//        int index;
+//        if ((index = this.varMap.getIndex(key)) >= 0) {
+//            values[index] = value;
+//            return true;
+//        }
+//        return false;
+//    }
 
     public void set(final Map<String, Object> map) {
         int index;

@@ -9,7 +9,5 @@ import webit.script.Context;
  */
 public interface ResetableValueExpression extends Expression {
 
-    ResetableValue getResetableValue(Context context);
-
-    void setValue(Context context, Object value);
+    Object setValue(Context context, Object value);
 }

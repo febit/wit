@@ -63,7 +63,7 @@ public class ClassWriter{
      *
      * @see #ClassWriter(int)
      */
-    public static final int COMPUTE_FRAMES = 2;
+//    public static final int COMPUTE_FRAMES = 2;
 
     /**
      * Pseudo access flag to distinguish between the synthetic attribute and
@@ -389,20 +389,20 @@ public class ClassWriter{
      */
     private final boolean computeMaxs;
 
-    /**
-     * <tt>true</tt> if the stack map frames must be recomputed from scratch.
-     */
-    private final boolean computeFrames;
-
-    /**
-     * <tt>true</tt> if the stack map tables of this class are invalid. The
-     * {@link MethodWriter#resizeInstructions} method cannot transform existing
-     * stack map tables, and so produces potentially invalid classes when it is
-     * executed. In this case the class is reread and rewritten with the
-     * {@link #COMPUTE_FRAMES} option (the resizeInstructions method can resize
-     * stack map tables when this option is used).
-     */
-    boolean invalidFrames;
+//    /**
+//     * <tt>true</tt> if the stack map frames must be recomputed from scratch.
+//     */
+//    private final boolean computeFrames;
+//
+//    /**
+//     * <tt>true</tt> if the stack map tables of this class are invalid. The
+//     * {@link MethodWriter#resizeInstructions} method cannot transform existing
+//     * stack map tables, and so produces potentially invalid classes when it is
+//     * executed. In this case the class is reread and rewritten with the
+//     * {@link #COMPUTE_FRAMES} option (the resizeInstructions method can resize
+//     * stack map tables when this option is used).
+//     */
+//    boolean invalidFrames;
 
     // ------------------------------------------------------------------------
     // Static initializer
@@ -511,7 +511,7 @@ public class ClassWriter{
         key2 = new Item();
         key3 = new Item();
         this.computeMaxs = (flags & COMPUTE_MAXS) != 0;
-        this.computeFrames = (flags & COMPUTE_FRAMES) != 0;
+//        this.computeFrames = (flags & COMPUTE_FRAMES) != 0;
     }
 
     // ------------------------------------------------------------------------
@@ -593,7 +593,7 @@ public class ClassWriter{
                 signature,
                 exceptions,
                 computeMaxs,
-                computeFrames);
+                false/*computeFrames*/);
     }
 
     public void visitEnd() {

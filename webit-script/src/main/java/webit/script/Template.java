@@ -41,20 +41,27 @@ public final class Template {
      * @throws ParseException
      */
     public TemplateAST prepareTemplate() throws ParseException {
+        final TemplateAST tmpl;
+        if ((tmpl = this.templateAst) != null && !resource.isModified()) {
+            return tmpl;
+        } else {
+            return parseAST();
+        }
+    }
+
+    private TemplateAST parseAST() throws ParseException {
         TemplateAST tmpl;
-        if ((tmpl = this.templateAst) == null || resource.isModified()) { //fast
-            synchronized (reloadLock) {
-                if ((tmpl = this.templateAst) == null || resource.isModified()) { //slow
-                    try {
-                        this.templateAst = tmpl = new Parser()
-                                .parseTemplate(
-                                resource.openReader(), //Parser will close reader when finish
-                                this);
-                    } catch (Exception e) {
-                        throw ExceptionUtil.castToParseException(e);
-                    }
-                    lastModified = System.currentTimeMillis();
+        synchronized (reloadLock) {
+            if ((tmpl = this.templateAst) == null || resource.isModified()) {
+                try {
+                    this.templateAst = tmpl = new Parser()
+                            .parseTemplate(
+                            resource.openReader(), //Parser will close reader when finish
+                            this);
+                } catch (Exception e) {
+                    throw ExceptionUtil.castToParseException(e);
                 }
+                lastModified = System.currentTimeMillis();
             }
         }
         return tmpl;
@@ -107,8 +114,11 @@ public final class Template {
      */
     public Context merge(final Map<String, Object> root, final Out out) throws ScriptRuntimeException, ParseException {
         try {
-            return prepareTemplate()
-                    .execute(new Context(this, out), root);
+            TemplateAST tmpl;
+            if ((tmpl = this.templateAst) == null || resource.isModified()) {
+                tmpl = parseAST();
+            }
+            return tmpl.execute(new Context(this, out), root);
         } catch (Throwable e) {
             throw wrapThrowable(e);
         }

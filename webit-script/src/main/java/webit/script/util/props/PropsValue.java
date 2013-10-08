@@ -9,7 +9,7 @@ final class PropsValue {
     /**
      * Original value.
      */
-    String value;
+    final String value;
     /**
      * Value with all macros resolved. May be
      * <code>null</code> when value doesn't contain anything to resolve.

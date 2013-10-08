@@ -46,7 +46,7 @@ public final class ForInStatmentNoLoops extends AbstractStatment {
             (vars = context.vars).push(varMap);
             do {
                 vars.resetCurrentWith(iterIndex, iter, itemIndex, iter.next());
-                StatmentUtil.execute(statments, context);
+                StatmentUtil.executeInverted(statments, context);
             } while (iter.hasNext());
             vars.pop();
             return null;

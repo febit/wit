@@ -3,7 +3,6 @@ package webit.script.core.ast.expressions;
 
 import webit.script.Context;
 import webit.script.core.ast.AbstractExpression;
-import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
 
 /**
@@ -25,20 +24,8 @@ public final class CurrentContextValue extends AbstractExpression implements Res
         return context.vars.get(index);
     }
 
-    public void setValue(final Context context, final Object value) {
+    public Object setValue(final Context context, final Object value) {
         context.vars.set(index, value);
-    }
-
-    public ResetableValue getResetableValue(final Context context) {
-        return new ResetableValue() {
-            public Object get() {
-                return context.vars.get(index);
-            }
-
-            public boolean set(Object value) {
-                context.vars.set(index, value);
-                return true;
-            }
-        };
+        return value;
     }
 }

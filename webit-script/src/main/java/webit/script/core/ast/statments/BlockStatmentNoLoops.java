@@ -27,7 +27,7 @@ public class BlockStatmentNoLoops extends AbstractStatment implements IBlockStat
     public Object execute(final Context context) {
         final VariantStack vars;
         (vars = context.vars).push(varMap);
-        StatmentUtil.execute(statments, context);
+        StatmentUtil.executeInverted(statments, context);
         vars.pop();
         return null;
     }

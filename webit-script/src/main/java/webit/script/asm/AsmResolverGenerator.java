@@ -46,7 +46,7 @@ public class AsmResolverGenerator {
 
     private static byte[] generateClassBody(String className, Class beanClass) {
         final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_RESOLVER);
+        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC+ Opcodes.ACC_FINAL, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_RESOLVER);
 
         //Default Constructor
         ASMUtil.attachDefaultConstructorMethod(classWriter);

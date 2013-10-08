@@ -44,7 +44,7 @@ public final class DoWhileStatment extends AbstractStatment implements Loopable 
         (vars = context.vars).push(varMap);
         label:
         do {
-            StatmentUtil.executeAndCheckLoops(statments, context);
+            StatmentUtil.executeInvertedAndCheckLoops(statments, context);
             if (!ctrl.goon()) {
                 if (ctrl.matchLabel(label)) {
                     switch (ctrl.getLoopType()) {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.exceptions.ParseException;
+import webit.script.util.ArrayUtil;
 import webit.script.util.StatmentUtil;
 import webit.script.util.StringUtil;
 import webit.script.util.VariantUtil;
@@ -39,8 +40,10 @@ public class TemplateASTPart {
     }
 
     public TemplateAST pop() {
-        Statment[] statments = new Statment[statmentList.size()];
-        statmentList.toArray(statments);
+        Statment[] statments =
+                statmentList.toArray(new Statment[statmentList.size()]);
+
+        ArrayUtil.invert(statments);
 
         List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
         if (loopInfos != null) {

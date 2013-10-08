@@ -7,6 +7,7 @@ import java.util.Map;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
+import webit.script.util.ArrayUtil;
 import webit.script.util.StatmentUtil;
 import webit.script.util.VariantUtil;
 
@@ -42,6 +43,8 @@ public final class BlockStatmentPart extends Position {
         List<LoopInfo> loopInfoList = StatmentUtil.collectPossibleLoopsInfo(
                 statments = statmentList.toArray(new Statment[statmentList.size()]));
 
+        ArrayUtil.invert(statments);
+        
         LoopInfo[] loopInfos = loopInfoList != null
                 ? loopInfoList.toArray(new LoopInfo[loopInfoList.size()])
                 : null;

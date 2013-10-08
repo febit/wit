@@ -32,7 +32,7 @@ public final class DoWhileStatmentNoLoops extends AbstractStatment {
         final VariantStack vars;
         (vars = context.vars).push(varMap);
         do {
-            StatmentUtil.execute(statments, context);
+            StatmentUtil.executeInverted(statments, context);
             vars.resetCurrent();
         } while (ALU.isTrue(StatmentUtil.execute(whileExpr, context)));
         vars.pop();

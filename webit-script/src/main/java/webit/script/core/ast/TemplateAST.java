@@ -25,7 +25,7 @@ public class TemplateAST {
         final VariantStack vars = context.vars;
         vars.push(varMap);
         vars.setToCurrentContext(root);
-        StatmentUtil.execute(statments, context);
+        StatmentUtil.executeInverted(statments, context);
         //Note: don't vars.pop(), to keep the top variant(s)
         return context;
     }

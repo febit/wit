@@ -7,7 +7,6 @@ import java.util.List;
 import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
-import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopCtrl;
@@ -55,10 +54,9 @@ public class StatmentUtil {
         }
     }
 
-    public static void executeSetValue(final ResetableValueExpression expression, final Context context, final Object value) {
+    public static Object executeSetValue(final ResetableValueExpression expression, final Context context, final Object value) {
         try {
-            expression.setValue(context, value);
-            return;
+            return expression.setValue(context, value);
         } catch (Throwable e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, expression);
         }
@@ -73,39 +71,28 @@ public class StatmentUtil {
         }
     }
 
-    public static void execute(final Statment[] statments, final Context context) {
-        int i = 0;
-        final int len = statments.length;
+    public static void executeInverted(final Statment[] statments, final Context context) {
+        int i = statments.length;
         try {
-            while (i < len) {
-                statments[i++].execute(context);
+            while (i != 0) {
+                statments[--i].execute(context);
             }
-            return;
-        } catch (Throwable e) {
-            throw ExceptionUtil.castToScriptRuntimeException(e, statments[i - 1]);
-        }
-    }
-
-    public static void executeAndCheckLoops(final Statment[] statments, final Context context) {
-        int i = 0;
-        final LoopCtrl ctrl = context.loopCtrl;
-        final int len = statments.length;
-        //assert len >0;
-        try {
-            do {
-                statments[i++].execute(context);
-            } while (i < len && ctrl.goon());
             return;
         } catch (Throwable e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statments[i]);
         }
     }
 
-    public static ResetableValue getResetableValue(final ResetableValueExpression expression, final Context context) {
+    public static void executeInvertedAndCheckLoops(final Statment[] statments, final Context context) {
+        int i = statments.length; //assert >0;
+        final LoopCtrl ctrl = context.loopCtrl;
         try {
-            return expression.getResetableValue(context);
+            do {
+                statments[--i].execute(context);
+            } while (i != 0 && ctrl.goon());
+            return;
         } catch (Throwable e) {
-            throw ExceptionUtil.castToScriptRuntimeException(e, expression);
+            throw ExceptionUtil.castToScriptRuntimeException(e, statments[i]);
         }
     }
 
@@ -136,16 +123,15 @@ public class StatmentUtil {
     }
 
     public static List<LoopInfo> collectPossibleLoopsInfo(Statment[] statments) {
-        final int len;
-        if (statments != null && (len = statments.length) > 0) {
+        int i;
+        if (statments != null && (i = statments.length) > 0) {
             LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
             List<LoopInfo> list;
-            int i = 0;
-            while (i < len) {
-                if ((list = collectPossibleLoopsInfo(statments[i++])) != null) {
+            do {
+                if ((list = collectPossibleLoopsInfo(statments[--i])) != null) {
                     loopInfos.addAll(list);
                 }
-            }
+            } while (i != 0);
             return loopInfos.size() > 0 ? loopInfos : null;
         }
         return null;

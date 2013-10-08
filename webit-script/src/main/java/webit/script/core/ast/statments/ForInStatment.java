@@ -57,7 +57,7 @@ public final class ForInStatment extends AbstractStatment implements Loopable {
             label:
             do {
                 vars.resetCurrentWith(iterIndex, iter, itemIndex, iter.next());
-                StatmentUtil.executeAndCheckLoops(statments, context);
+                StatmentUtil.executeInvertedAndCheckLoops(statments, context);
                 if (!ctrl.goon()) {
                     if (ctrl.matchLabel(label)) {
                         switch (ctrl.getLoopType()) {

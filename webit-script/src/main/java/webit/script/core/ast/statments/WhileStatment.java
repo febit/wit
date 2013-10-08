@@ -44,7 +44,7 @@ public final class WhileStatment extends AbstractStatment implements Loopable {
         (vars = context.vars).push(varMap);
         label:
         while (ALU.isTrue(StatmentUtil.execute(whileExpr, context))) {
-            StatmentUtil.executeAndCheckLoops(statments, context);
+            StatmentUtil.executeInvertedAndCheckLoops(statments, context);
             if (!ctrl.goon()) {
                 if (ctrl.matchLabel(label)) {
                     switch (ctrl.getLoopType()) {

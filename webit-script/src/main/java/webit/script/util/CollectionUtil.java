@@ -41,14 +41,8 @@ public class CollectionUtil {
         if (o1 == null) {
             return null;
         }//
-        else if (o1 instanceof Iter) {
-            return (Iter) o1;
-        }//
         else if (o1 instanceof Iterable) {
             return new IteratorIterAdapter(((Iterable) o1).iterator());
-        }//
-        else if (o1 instanceof Iterator) {
-            return new IteratorIterAdapter((Iterator) o1);
         }//
         else if ((clazz = o1.getClass()).isArray()) {
             if (o1 instanceof Object[]) {
@@ -78,6 +72,12 @@ public class CollectionUtil {
             else if (clazz == byte[].class) {
                 return new ByteArrayIterAdapter((byte[]) o1);
             }//
+        }//
+        else if (o1 instanceof Iterator) {
+            return new IteratorIterAdapter((Iterator) o1);
+        }//
+        else if (o1 instanceof Iter) {
+            return (Iter) o1;
         }//
         else if (o1 instanceof Enumeration) {
             return new EnumerationIterAdapter((Enumeration) o1);

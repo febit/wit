@@ -28,8 +28,9 @@ public class VariantMap {
     }
 
     public int getIndex(final String name) {
+        int i;
         final String[] _names;
-        int i = (_names = this.names).length;
+        i = (_names = this.names).length;
         while (i > 0) {
             if (_names[--i].equals(name)) {
                 return i;

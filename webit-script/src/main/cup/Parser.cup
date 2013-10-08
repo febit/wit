@@ -454,17 +454,21 @@ action code {:
         return StatmentUtil.optimize(new PropertyOperator(expr, ident, line, column));
     }
 
-    private Expression createPlusPlusOperator(Expression expr, boolean executeAtFirst, int line, int column){
-        if(expr instanceof ResetableValueExpression){
-            return StatmentUtil.optimize(new PlusPlusOperator((ResetableValueExpression) expr, executeAtFirst, line, column));
+    private Expression createPlusPlusOperator(Expression expr, boolean executeAtFirst, int line, int column) {
+        if(expr instanceof ResetableValueExpression){            
+            return executeAtFirst
+                    ? new PlusPlusBeforeOperator((ResetableValueExpression)expr, line, column)
+                    : new PlusPlusAfterOperator((ResetableValueExpression)expr, line, column);
         }else{
             throw new ParseException("Invalid expression, must be rewriteable", line, column);
         }
     }
 
-    private Expression createMinusMinusOperator(Expression expr, boolean executeAtFirst, int line, int column){
+    private Expression createMinusMinusOperator(Expression expr, boolean executeAtFirst, int line, int column) {
         if(expr instanceof ResetableValueExpression){
-            return StatmentUtil.optimize(new MinusMinusOperator((ResetableValueExpression) expr, executeAtFirst, line, column));
+            return executeAtFirst
+                    ? new MinusMinusBeforeOperator((ResetableValueExpression)expr, line, column)
+                    : new MinusMinusAfterOperator((ResetableValueExpression)expr, line, column);
         }else{
             throw new ParseException("Invalid expression, must be rewriteable", line, column);
         }

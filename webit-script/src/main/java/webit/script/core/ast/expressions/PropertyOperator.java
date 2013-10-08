@@ -4,9 +4,7 @@ package webit.script.core.ast.expressions;
 import webit.script.Context;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.ResetableValue;
 import webit.script.core.ast.ResetableValueExpression;
-import webit.script.resolvers.ResolverManager;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -30,23 +28,10 @@ public final class PropertyOperator extends AbstractExpression implements Reseta
                 property);
     }
 
-    public void setValue(final Context context, final Object value) {
+    public Object setValue(final Context context, final Object value) {
         context.resolverManager.set(
                 StatmentUtil.execute(expr, context),
                 property, value);
-    }
-
-    public ResetableValue getResetableValue(Context context) {
-        final Object parent = StatmentUtil.execute(expr, context);
-        final ResolverManager resolverManager = context.resolverManager;
-        return new ResetableValue() {
-            public Object get() {
-                return resolverManager.get(parent, property);
-            }
-
-            public boolean set(Object value) {
-                return resolverManager.set(parent, property, value);
-            }
-        };
+        return value;
     }
 }

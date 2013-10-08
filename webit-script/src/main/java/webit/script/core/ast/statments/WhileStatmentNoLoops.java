@@ -32,7 +32,7 @@ public final class WhileStatmentNoLoops extends AbstractStatment {
         (vars = context.vars).push(varMap);
         final Statment[] statments = this.statments;
         while (ALU.isTrue(StatmentUtil.execute(whileExpr, context))) {
-            StatmentUtil.execute(statments, context);
+            StatmentUtil.executeInverted(statments, context);
             vars.resetCurrent();
         }
         vars.pop();

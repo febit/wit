@@ -98,7 +98,7 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
         }
 
         Object execute(final Context context) {
-            body.execute(context);
+            StatmentUtil.execute(body, context);
             if (context.loopCtrl.goon() && next != null) {
                 next.execute(context);
             }

@@ -132,11 +132,17 @@ public final class Engine {
      */
     public Template getTemplate(final String name) throws ResourceNotFoundException {
         Template template;
-        if ((template = templateCache.get(name)) == null) {
-            final String normalizedName;
-            if ((normalizedName = resourceLoader.normalize(name)) == null) {
-                throw new ResourceNotFoundException("Illegal template path" + name);
-            }
+        if ((template = templateCache.get(name)) != null) {
+            return template;
+        } else {
+            return createTemplateIfAbsent(name);
+        }
+    }
+
+    private Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
+        Template template;
+        final String normalizedName;
+        if ((normalizedName = resourceLoader.normalize(name)) != null) {
             if ((template = templateCache.get(normalizedName)) == null) {
                 Template oldTemplate;
                 if ((oldTemplate = templateCache.putIfAbsent(normalizedName,
@@ -149,11 +155,13 @@ public final class Engine {
                     template = oldTemplate;
                 }
             }
+        } else {
+            throw new ResourceNotFoundException("Illegal template path" + name);
         }
         return template;
     }
-    
-    public boolean checkNativeAccess(String path){
+
+    public boolean checkNativeAccess(String path) {
         return this.nativeSecurityManager.access(path);
     }
 
@@ -214,7 +222,7 @@ public final class Engine {
     public void setTrimTextStatmentRightBlankLine(boolean trimTextStatmentRightBlankLine) {
         this.trimTextStatmentRightBlankLine = trimTextStatmentRightBlankLine;
     }
-    
+
     public NativeSecurityManager getNativeSecurityManager() {
         return nativeSecurityManager;
     }

@@ -24,22 +24,22 @@ import webit.script.util.StatmentUtil;
 public class Parser extends webit.script.core.java_cup.runtime.lr_parser {
 
 
-  private static final String[] _nonTerminalNames = new String[]{
-"directValue","classPureName","className","templateAST","templateASTPart","func","funcPart","funcPart0","funcPart1","funcDeclareExpr",
-"funcExecuteExpr","funcExecuteExprPart0","funcExecuteExprPart1","nativeMethodExpr","nativeMethodExprPart","nativeMethodExprPart1","nativeConstructorExpr","nativeConstructorExprPart1","nativeConstructorExprPart","nativeNewArrayExpr",
-"statment","varStatment","varStatmentPart","nativeImportStat","includeStat","importStat","importStatPart1","importStatPart2","elseStatPart","elseIfStatPart",
-"blockStatPart","blockStat","breakStat","continueStat","forInStat","ifStat","forMapStat","textStat","returnStat","whileStat",
-"switchStat","echoStat","redirectOutStat","caseBlockStatPart","caseBlockStat","switchStatPart","switchStatPart0","forInStatPart","forInStatPart0","forInStatPart1",
-"forMapStatPart","forMapStatPart0","forMapStatPart1","whileStatPart","whileStatPart0","ifStatPart","ifStatPart0","expression","expression_stat","parenOperator",
-"arrayValuePart","arrayValue","mapValuePart","mapValue","andOper","assignOper","bitAndOper","bitOrOper","bitXorOper","bitNotOper",
-"divOper","equalsOper","greaterEqualsOper","greaterOper","lessEqualsOper","lessOper","lShiftOper","minusOper","modOper","mulOper",
-"negativeOper","notEqualsOper","notOper","orOper","plusOper","propertyOper","rShiftOper","uRShiftOper","ifOper","ifOrOper",
-"indexOper","plusPlusOper","minusMinusOper","intStepOper","selfPlusOper","selfMinusOper","selfMultOper","selfDivOper","selfModOper","selfLShiftOper",
-"selfRShiftOper","selfURShiftOper","selfBitAndOper","selfBitXorOper","selfBitOrOper","contextValueIdent","superCount","contextValueExpr","redirectOutExpr","directValueExpr"
-  };
-
-  /** Access to <code>reduce_goto</code> table. */
-  protected String[] nonTerminalNames(){return _nonTerminalNames;}
+//  private static final String[] _nonTerminalNames = new String[]{
+//"directValue","classPureName","className","templateAST","templateASTPart","func","funcPart","funcPart0","funcPart1","funcDeclareExpr",
+//"funcExecuteExpr","funcExecuteExprPart0","funcExecuteExprPart1","nativeMethodExpr","nativeMethodExprPart","nativeMethodExprPart1","nativeConstructorExpr","nativeConstructorExprPart1","nativeConstructorExprPart","nativeNewArrayExpr",
+//"statment","varStatment","varStatmentPart","nativeImportStat","includeStat","importStat","importStatPart1","importStatPart2","elseStatPart","elseIfStatPart",
+//"blockStatPart","blockStat","breakStat","continueStat","forInStat","ifStat","forMapStat","textStat","returnStat","whileStat",
+//"switchStat","echoStat","redirectOutStat","caseBlockStatPart","caseBlockStat","switchStatPart","switchStatPart0","forInStatPart","forInStatPart0","forInStatPart1",
+//"forMapStatPart","forMapStatPart0","forMapStatPart1","whileStatPart","whileStatPart0","ifStatPart","ifStatPart0","expression","expression_stat","parenOperator",
+//"arrayValuePart","arrayValue","mapValuePart","mapValue","andOper","assignOper","bitAndOper","bitOrOper","bitXorOper","bitNotOper",
+//"divOper","equalsOper","greaterEqualsOper","greaterOper","lessEqualsOper","lessOper","lShiftOper","minusOper","modOper","mulOper",
+//"negativeOper","notEqualsOper","notOper","orOper","plusOper","propertyOper","rShiftOper","uRShiftOper","ifOper","ifOrOper",
+//"indexOper","plusPlusOper","minusMinusOper","intStepOper","selfPlusOper","selfMinusOper","selfMultOper","selfDivOper","selfModOper","selfLShiftOper",
+//"selfRShiftOper","selfURShiftOper","selfBitAndOper","selfBitXorOper","selfBitOrOper","contextValueIdent","superCount","contextValueExpr","redirectOutExpr","directValueExpr"
+//  };
+//
+//  /** Access to <code>reduce_goto</code> table. */
+//  protected String[] nonTerminalNames(){return _nonTerminalNames;}
 
 
   /** Production table. */
@@ -3446,17 +3446,21 @@ class CUP$Parser$actions {
         return StatmentUtil.optimize(new PropertyOperator(expr, ident, line, column));
     }
 
-    private Expression createPlusPlusOperator(Expression expr, boolean executeAtFirst, int line, int column){
-        if(expr instanceof ResetableValueExpression){
-            return StatmentUtil.optimize(new PlusPlusOperator((ResetableValueExpression) expr, executeAtFirst, line, column));
+    private Expression createPlusPlusOperator(Expression expr, boolean executeAtFirst, int line, int column) {
+        if(expr instanceof ResetableValueExpression){            
+            return executeAtFirst
+                    ? new PlusPlusBeforeOperator((ResetableValueExpression)expr, line, column)
+                    : new PlusPlusAfterOperator((ResetableValueExpression)expr, line, column);
         }else{
             throw new ParseException("Invalid expression, must be rewriteable", line, column);
         }
     }
 
-    private Expression createMinusMinusOperator(Expression expr, boolean executeAtFirst, int line, int column){
+    private Expression createMinusMinusOperator(Expression expr, boolean executeAtFirst, int line, int column) {
         if(expr instanceof ResetableValueExpression){
-            return StatmentUtil.optimize(new MinusMinusOperator((ResetableValueExpression) expr, executeAtFirst, line, column));
+            return executeAtFirst
+                    ? new MinusMinusBeforeOperator((ResetableValueExpression)expr, line, column)
+                    : new MinusMinusAfterOperator((ResetableValueExpression)expr, line, column);
         }else{
             throw new ParseException("Invalid expression, must be rewriteable", line, column);
         }

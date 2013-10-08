@@ -17,7 +17,7 @@ public final class SelfPlusOperator extends SelfOperator{
     }
 
     @Override
-    protected Object doOperate(final Object left, final Object right) {
+    protected Object doOperate(final Object right, final Object left) {
         return ALU.plus(left, right);
     }
 }

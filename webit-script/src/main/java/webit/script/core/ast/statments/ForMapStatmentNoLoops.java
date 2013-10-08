@@ -59,7 +59,7 @@ public final class ForMapStatmentNoLoops extends AbstractStatment {
             do {
                 entry = iter.next();
                 vars.resetCurrentWith(iterIndex, iter, keyIndex, entry.getKey(), valueIndex, entry.getValue());
-                StatmentUtil.execute(statments, context);
+                StatmentUtil.executeInverted(statments, context);
             } while (iter.hasNext());
             vars.pop();
             return null;

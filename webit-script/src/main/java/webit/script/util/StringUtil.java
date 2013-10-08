@@ -17,8 +17,8 @@ public class StringUtil {
      * @param with character to replace with
      */
     public static String replaceChar(String s, char sub, char with) {
-        int startIndex = s.indexOf(sub);
-        if (startIndex == -1) {
+        int startIndex;
+        if ((startIndex = s.indexOf(sub)) < 0) {
             return s;
         }
         char[] str = s.toCharArray();

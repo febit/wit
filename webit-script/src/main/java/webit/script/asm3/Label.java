@@ -212,12 +212,12 @@ public class Label {
      */
     int outputStackMax;
 
-    /**
-     * Information about the input and output stack map frames of this basic
-     * block. This field is only used when {@link ClassWriter#COMPUTE_FRAMES}
-     * option is used.
-     */
-    Frame frame;
+//    /**
+//     * Information about the input and output stack map frames of this basic
+//     * block. This field is only used when {@link ClassWriter#COMPUTE_FRAMES}
+//     * option is used.
+//     */
+//    Frame frame;
 
     /**
      * The successor of this label, in the order they are visited. This linked
@@ -412,17 +412,17 @@ public class Label {
         return needUpdate;
     }
 
-    /**
-     * Returns the first label of the series to which this label belongs. For an
-     * isolated label or for the first label in a series of successive labels,
-     * this method returns the label itself. For other labels it returns the
-     * first label of the series.
-     * 
-     * @return the first label of the series to which this label belongs.
-     */
-    Label getFirst() {
-        return frame == null ? this : frame.owner;
-    }
+//    /**
+//     * Returns the first label of the series to which this label belongs. For an
+//     * isolated label or for the first label in a series of successive labels,
+//     * this method returns the label itself. For other labels it returns the
+//     * first label of the series.
+//     * 
+//     * @return the first label of the series to which this label belongs.
+//     */
+//    Label getFirst() {
+//        return frame == null ? this : frame.owner;
+//    }
 
     // ------------------------------------------------------------------------
     // Methods related to subroutines

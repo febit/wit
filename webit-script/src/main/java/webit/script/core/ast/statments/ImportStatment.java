@@ -71,7 +71,7 @@ public final class ImportStatment extends AbstractStatment {
                 } else {
                     final Object[] vars = childContext.vars.get(exportNames);
                     for (int i = 0; i < vars.length; i++) {
-                        toResetableValues[i].setValue(context, vars[i]);
+                        StatmentUtil.executeSetValue(toResetableValues[i], context, vars[i]);
                     }
                 }
 

@@ -33,7 +33,7 @@ public final class BlockStatment extends AbstractStatment implements Loopable, I
     public Object execute(final Context context) {
         final VariantStack vars;
         (vars = context.vars).push(varMap);
-        StatmentUtil.executeAndCheckLoops(statments, context);
+        StatmentUtil.executeInvertedAndCheckLoops(statments, context);
         vars.pop();
         return null;
     }

@@ -23,8 +23,6 @@ public final class AssignOperator extends AbstractExpression {
     }
 
     public Object execute(final Context context) {
-        final Object result = StatmentUtil.execute(rexpr, context);
-        StatmentUtil.executeSetValue(lexpr, context, result);
-        return result;
+        return StatmentUtil.executeSetValue(lexpr, context, StatmentUtil.execute(rexpr, context));
     }
 }

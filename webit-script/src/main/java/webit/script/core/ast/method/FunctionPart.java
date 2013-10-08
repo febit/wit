@@ -10,6 +10,7 @@ import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.LoopType;
 import webit.script.exceptions.ParseException;
+import webit.script.util.ArrayUtil;
 import webit.script.util.StatmentUtil;
 import webit.script.util.StringUtil;
 import webit.script.util.VariantUtil;
@@ -66,6 +67,8 @@ public final class FunctionPart extends Position {
     public Function pop() {
         Statment[] statments = statmentList.toArray(new Statment[statmentList.size()]);
 
+        ArrayUtil.invert(statments);
+        
         boolean hasReturnLoops = false;
         List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
 
@@ -82,7 +85,7 @@ public final class FunctionPart extends Position {
                 throw new ParseException("Loops overflow in function body: " + StringUtil.join(loopInfos, ","));
             }
         }
-
+        
         return new Function(argsIndex,
                 argIndexList.isEmpty() ? null : argIndexList.toArray(),
                 overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null,

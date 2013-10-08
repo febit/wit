@@ -152,4 +152,13 @@ public class ArrayUtil {
         }//
         throw new ScriptRuntimeException("Not an array: " + o1.getClass().getName());
     }
+
+    public static void invert(Object[] array) {
+        Object cell;
+        for (int i = 0, j = array.length - 1; i < j; i++, j--) {
+            cell = array[i];
+            array[i] = array[j];
+            array[j] = cell;
+        }
+    }
 }

@@ -36,21 +36,18 @@ public class RedirectOutStatment extends AbstractStatment {
 
             StatmentUtil.execute(srcStatment, context, new OutputStreamOut(out, (OutputStreamOut) current));
             StatmentUtil.executeSetValue(toExpr, context, out.toByteArray());
-            
-        } else if (current instanceof WriterOut) {
 
-            final FastCharArrayWriter writer = new FastCharArrayWriter();
-
-            StatmentUtil.execute(srcStatment, context, new WriterOut(writer, (WriterOut) current));
-            StatmentUtil.executeSetValue(toExpr, context, writer.toCharArray());
-            
         } else {
 
             final FastCharArrayWriter writer = new FastCharArrayWriter();
 
-            StatmentUtil.execute(srcStatment, context, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
-            StatmentUtil.executeSetValue(toExpr, context, writer.toCharArray());
+            StatmentUtil.execute(srcStatment, context,
+                    current instanceof WriterOut
+                    ? new WriterOut(writer, (WriterOut) current)
+                    : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
             
+            StatmentUtil.executeSetValue(toExpr, context, writer.toCharArray());
+
         }
         return null;
     }

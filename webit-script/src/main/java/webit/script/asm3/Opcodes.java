@@ -45,34 +45,34 @@ public interface Opcodes {
 
     // versions
 
-    int V1_1 = 3 << 16 | 45;
-    int V1_2 = 0 << 16 | 46;
-    int V1_3 = 0 << 16 | 47;
-    int V1_4 = 0 << 16 | 48;
+//    int V1_1 = 3 << 16 | 45;
+//    int V1_2 = 0 << 16 | 46;
+//    int V1_3 = 0 << 16 | 47;
+//    int V1_4 = 0 << 16 | 48;
     int V1_5 = 0 << 16 | 49;
     int V1_6 = 0 << 16 | 50;
-    int V1_7 = 0 << 16 | 51;
+//    int V1_7 = 0 << 16 | 51;
 
     // access flags
 
     int ACC_PUBLIC = 0x0001; // class, field, method
-    int ACC_PRIVATE = 0x0002; // class, field, method
-    int ACC_PROTECTED = 0x0004; // class, field, method
+//    int ACC_PRIVATE = 0x0002; // class, field, method
+//    int ACC_PROTECTED = 0x0004; // class, field, method
     int ACC_STATIC = 0x0008; // field, method
     int ACC_FINAL = 0x0010; // class, field, method
-    int ACC_SUPER = 0x0020; // class
-    int ACC_SYNCHRONIZED = 0x0020; // method
-    int ACC_VOLATILE = 0x0040; // field
-    int ACC_BRIDGE = 0x0040; // method
-    int ACC_VARARGS = 0x0080; // method
-    int ACC_TRANSIENT = 0x0080; // field
-    int ACC_NATIVE = 0x0100; // method
-    int ACC_INTERFACE = 0x0200; // class
+//    int ACC_SUPER = 0x0020; // class
+//    int ACC_SYNCHRONIZED = 0x0020; // method
+//    int ACC_VOLATILE = 0x0040; // field
+//    int ACC_BRIDGE = 0x0040; // method
+//    int ACC_VARARGS = 0x0080; // method
+//    int ACC_TRANSIENT = 0x0080; // field
+//    int ACC_NATIVE = 0x0100; // method
+//    int ACC_INTERFACE = 0x0200; // class
     int ACC_ABSTRACT = 0x0400; // class, method
-    int ACC_STRICT = 0x0800; // method
+//    int ACC_STRICT = 0x0800; // method
     int ACC_SYNTHETIC = 0x1000; // class, field, method
-    int ACC_ANNOTATION = 0x2000; // class
-    int ACC_ENUM = 0x4000; // class(?) field inner
+//    int ACC_ANNOTATION = 0x2000; // class
+//    int ACC_ENUM = 0x4000; // class(?) field inner
 
     // ASM specific pseudo access flags
 
@@ -91,54 +91,54 @@ public interface Opcodes {
 
     // stack map frame types
 
-    /**
-     * Represents an expanded frame. See {@link ClassReader#EXPAND_FRAMES}.
-     */
-    int F_NEW = -1;
+//    /**
+//     * Represents an expanded frame. See {@link ClassReader#EXPAND_FRAMES}.
+//     */
+//    int F_NEW = -1;
+//
+//    /**
+//     * Represents a compressed frame with complete frame data.
+//     */
+//    int F_FULL = 0;
+//
+//    /**
+//     * Represents a compressed frame where locals are the same as the locals in
+//     * the previous frame, except that additional 1-3 locals are defined, and
+//     * with an empty stack.
+//     */
+//    int F_APPEND = 1;
+//
+//    /**
+//     * Represents a compressed frame where locals are the same as the locals in
+//     * the previous frame, except that the last 1-3 locals are absent and with
+//     * an empty stack.
+//     */
+//    int F_CHOP = 2;
+//
+//    /**
+//     * Represents a compressed frame with exactly the same locals as the
+//     * previous frame and with an empty stack.
+//     */
+//    int F_SAME = 3;
+//
+//    /**
+//     * Represents a compressed frame with exactly the same locals as the
+//     * previous frame and with a single value on the stack.
+//     */
+//    int F_SAME1 = 4;
 
-    /**
-     * Represents a compressed frame with complete frame data.
-     */
-    int F_FULL = 0;
+    Integer TOP = Integer.valueOf(0); //new Integer(0);
+    Integer INTEGER = Integer.valueOf(1); //new Integer(1);
+    Integer FLOAT = Integer.valueOf(2); //new Integer(2);
+    Integer DOUBLE = Integer.valueOf(3); //new Integer(3);
+    Integer LONG = Integer.valueOf(4); //new Integer(4);
+//    Integer NULL = new Integer(5);
+//    Integer UNINITIALIZED_THIS = new Integer(6);
 
-    /**
-     * Represents a compressed frame where locals are the same as the locals in
-     * the previous frame, except that additional 1-3 locals are defined, and
-     * with an empty stack.
-     */
-    int F_APPEND = 1;
-
-    /**
-     * Represents a compressed frame where locals are the same as the locals in
-     * the previous frame, except that the last 1-3 locals are absent and with
-     * an empty stack.
-     */
-    int F_CHOP = 2;
-
-    /**
-     * Represents a compressed frame with exactly the same locals as the
-     * previous frame and with an empty stack.
-     */
-    int F_SAME = 3;
-
-    /**
-     * Represents a compressed frame with exactly the same locals as the
-     * previous frame and with a single value on the stack.
-     */
-    int F_SAME1 = 4;
-
-    Integer TOP = new Integer(0);
-    Integer INTEGER = new Integer(1);
-    Integer FLOAT = new Integer(2);
-    Integer DOUBLE = new Integer(3);
-    Integer LONG = new Integer(4);
-    Integer NULL = new Integer(5);
-    Integer UNINITIALIZED_THIS = new Integer(6);
-
-    /** 
-     * Represents a owner of an invokedynamic call.
-     */
-    String INVOKEDYNAMIC_OWNER = "java/lang/dyn/Dynamic";
+//    /** 
+//     * Represents a owner of an invokedynamic call.
+//     */
+//    String INVOKEDYNAMIC_OWNER = "java/lang/dyn/Dynamic";
     
     // opcodes // visit method (- = idem)
 

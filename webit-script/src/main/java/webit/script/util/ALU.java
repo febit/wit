@@ -687,17 +687,16 @@ public class ALU {
         }
     }
 
-    ////////////////////////////
     public static boolean isTrue(final Object o) {
-        if (o == null) {
-            return false;
-        } else if (Boolean.TRUE == o || Boolean.TRUE.equals(o)) {
+        if (Boolean.TRUE == o) {
             return true;
-        } else if (Boolean.FALSE == o || Boolean.FALSE.equals(o)) {
+        } else if (Boolean.FALSE == o || o == null) {
             return false;
+        } else if (o instanceof Boolean) {
+            return ((Boolean) o).booleanValue();
+        } else {
+            //if Collection empty 
+            return CollectionUtil.notEmpty(o, true);
         }
-
-        //if Collection empty 
-        return CollectionUtil.notEmpty(o, true);
     }
 }

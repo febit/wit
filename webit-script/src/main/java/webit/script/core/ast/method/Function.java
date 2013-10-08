@@ -48,7 +48,7 @@ public final class Function extends AbstractStatment {
 
         if (hasReturnLoops) {
 
-            StatmentUtil.executeAndCheckLoops(statments, context);
+            StatmentUtil.executeInvertedAndCheckLoops(statments, context);
             vars.pop();
 
             final LoopCtrl ctrl;
@@ -58,7 +58,7 @@ public final class Function extends AbstractStatment {
                 return result;
             }
         } else {
-            StatmentUtil.execute(statments, context);
+            StatmentUtil.executeInverted(statments, context);
             vars.pop();
         }
         return Context.VOID;

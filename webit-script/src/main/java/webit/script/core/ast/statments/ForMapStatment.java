@@ -71,7 +71,7 @@ public final class ForMapStatment extends AbstractStatment implements Loopable {
             do {
                 entry = iter.next();
                 vars.resetCurrentWith(iterIndex, iter, keyIndex, entry.getKey(), valueIndex, entry.getValue());
-                StatmentUtil.executeAndCheckLoops(statments, context);
+                StatmentUtil.executeInvertedAndCheckLoops(statments, context);
                 if (!ctrl.goon()) {
                     if (ctrl.matchLabel(label)) {
                         switch (ctrl.getLoopType()) {

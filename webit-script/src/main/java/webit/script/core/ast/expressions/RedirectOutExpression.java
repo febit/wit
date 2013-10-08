@@ -38,17 +38,14 @@ public class RedirectOutExpression extends AbstractExpression {
             StatmentUtil.executeSetValue(toExpr, context, out.toByteArray());
 
             return result;
-        } else if (current instanceof WriterOut) {
-            FastCharArrayWriter writer = new FastCharArrayWriter(256);
-
-            Object result = StatmentUtil.execute(srcExpr, context, new WriterOut(writer, (WriterOut) current));
-            StatmentUtil.executeSetValue(toExpr, context, writer.toCharArray());
-            
-            return result;
         } else {
             FastCharArrayWriter writer = new FastCharArrayWriter(256);
 
-            Object result = StatmentUtil.execute(srcExpr, context, new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
+            Object result = StatmentUtil.execute(srcExpr, context,
+                    current instanceof WriterOut
+                    ? new WriterOut(writer, (WriterOut) current)
+                    : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
+            
             StatmentUtil.executeSetValue(toExpr, context, writer.toCharArray());
 
             return result;
