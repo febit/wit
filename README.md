@@ -25,7 +25,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
         <dependency>
             <groupId>com.github.zqq90.webit-script</groupId>
             <artifactId>webit-script</artifactId>
-            <version>1.1.4</version>
+            <version>1.1.5</version>
         </dependency>
         ...
     </dependencies>
@@ -33,8 +33,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ### Or Add jars
 
- + `webit-script-1.1.4.jar`
- + **we had put mini-Jodd-props inside, with a very small size, and changed the package's name, so, without dependent traps, enjoy this version!**
+ + `webit-script-1.1.5.jar`
 
 ### Code in Java like this
 
@@ -637,21 +636,16 @@ outter: for(i: 6..3){
 + boilit/ebm 测试结果 [boilit/ebm] [https://github.com/boilit/ebm]
 
 ~~~~~
-===============================================================================
-OsName:Windows 7, OsVersion:6.1, OsArch:amd64, CpuCore:4
-JreVersion:1.7.0_40, MaxMem:1795M, FreeMem:119M, UsedMem:2M
-JvmMode:DEFAULT, OutputEncoding:UTF-8, OutputMode:BYTES
-Items:20, WarmCount:10, LoopCount:50000, Buffered:false
-===============================================================================
-Engine              Version             Time(ms)  Size(b)   Tps       Rate(%)   
-StringBuilder       jdk1.7.0_40         1935      6733      25839     100.00    
-Bsl                 1.1.0               2510      6803      19920     77.09     
-Httl                1.0.11              2689      6805      18594     71.96     
-Webit               1.1.3               2602      7351      19215     74.37     
-Beetl               1.25.01             3376      6807      14810     57.32     
-Velocity            1.7                 6447      7498      7755      30.01     
-FreeMarker          2.3.19              7565      6809      6609      25.58     
-===============================================================================
+Engine                                Time            Size
+BSL-2.0.0                              559        68118050
+webit-script-1.1.4                     590        68318250
+HTTL-1.0.11                            958        68118050
+BeeTL-1.25.01                          958        68138070
+Rythm-1.0.0-b10-SNAPSHOT              1624        48728680
+Velocity-1.7                          1834        75046912
+FreeMarker-2.3.19                     2369        68157440
+JdkStringBuffer-1.7.0_40               606        67395584
+JdkStringBuilder-1.7.0_40              735        67395584
 ~~~~~
 
 
@@ -691,10 +685,10 @@ details.
 
 
 
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.4/webit-script-1.1.4.jar
-[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.1.4/webit-script-joddinside-1.1.4.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.4/webit-script-1.1.4-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.4/webit-script-1.1.4-javadoc.jar
+[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.5/webit-script-1.1.5.jar
+[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.1.5/webit-script-joddinside-1.1.5.jar
+[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.5/webit-script-1.1.5-sources.jar
+[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.5/webit-script-1.1.5-javadoc.jar
 [url_props_doc]: http://jodd.org/doc/props.html
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
 [default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webitl-default.props
