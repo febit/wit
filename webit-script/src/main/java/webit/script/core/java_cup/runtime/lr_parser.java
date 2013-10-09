@@ -375,7 +375,7 @@ public abstract class lr_parser {
             this.template = template;
             final Engine _engine;
             this.engine = _engine = template.engine;
-            this.lexer.setTrimTextStatmentRightBlankLine(_engine.isTrimTextStatmentRightBlankLine());
+            this.lexer.setTrimCodeBlockBlankLine(_engine.isTrimCodeBlockBlankLine());
             this.logger = _engine.getLogger();
             TextStatmentFactory _textStatmentFactory;
             this.textStatmentFactory = _textStatmentFactory = _engine.getTextStatmentFactory();

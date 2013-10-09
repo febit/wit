@@ -210,6 +210,55 @@ public class FastCharBuffer implements CharSequence, Appendable {
 
     /**
      * Creates
+     * <code>char</code> array from buffered content.
+     */
+    public char[] toArraySkipIfLeftNewLine() {
+        if (count > 0) {
+            final int skip;
+            char[] first = buffers[0];
+            if (first[0] == '\n') {
+                skip = 1;
+            } else if (first[0] == '\r') {
+                if (count > 1) {
+                    if (first[1] == '\n') {
+                        skip = 2;
+                    } else {
+                        skip = 1;
+                    }
+                } else {
+                    return new char[0];
+                }
+            } else {
+                skip = 0;
+            }
+            if (skip == 0) {
+                return toArray();
+            } else {
+                //
+                int remaining = count - skip;
+                int pos = 0;
+                char[] array = new char[remaining];
+                //first
+                int c = Math.min(first.length - skip, remaining);
+                System.arraycopy(first, skip, array, pos, c);
+                pos += c;
+                remaining -= c;
+                for (int i = 1; remaining > 0 && i < buffers.length;) {
+                    char[] buf = buffers[i++];
+                    c = Math.min(buf.length, remaining);
+                    System.arraycopy(buf, 0, array, pos, c);
+                    pos += c;
+                    remaining -= c;
+                }
+                return array;
+            }
+        } else {
+            return new char[0];
+        }
+    }
+
+    /**
+     * Creates
      * <code>char</code> subarray from buffered content.
      */
     public char[] toArray(int start, int len) {
@@ -317,7 +366,7 @@ public class FastCharBuffer implements CharSequence, Appendable {
         return this;
     }
 
-    public void trimRightBlankLine() {
+    public void trimRightBlankToNewLine() {
         int tmp_offset;
         int tmp_count = this.count;
         char[] tmp_buf; // = this.currentBuffer;
@@ -335,36 +384,9 @@ public class FastCharBuffer implements CharSequence, Appendable {
             if (pos < 0) {
                 //All blank
                 tmp_count -= tmp_offset;
-            } else if (tmp_buf[pos] == '\n') {
-                //linux or windows new line
-                if (pos == 0 && tmp_currentBufferIndex != 0) {
-                    //when the first one and has pre buffer
-                    char[] pre_buf = this.buffers[tmp_currentBufferIndex - 1];
-                    if (pre_buf[pre_buf.length - 1] == '\r') {
-                        //pre buffer has the pre-part of new line
-                        count = tmp_count - tmp_offset - 1;
-                        offset = pre_buf.length - 1;
-                        currentBufferIndex = tmp_currentBufferIndex - 1;
-                        currentBuffer = pre_buf;
-                        return;
-                    }
-                }
-
-                //when not the first one
-                if (pos != 0 && tmp_buf[pos - 1] == '\r') {
-                    pos--; //Windows new line
-                }
-
-                count = tmp_count - tmp_offset + pos;
-                offset = pos;
-                currentBufferIndex = tmp_currentBufferIndex;
-                currentBuffer = tmp_buf;
-                return;
-
-            } else if (tmp_buf[pos] == '\r') {
-
-                count = tmp_count - tmp_offset + pos;
-                offset = pos;
+            } else if (tmp_buf[pos] == '\n' || tmp_buf[pos] == '\r') {
+                count = tmp_count - tmp_offset + pos + 1;
+                offset = pos + 1;
                 currentBufferIndex = tmp_currentBufferIndex;
                 currentBuffer = tmp_buf;
                 return;

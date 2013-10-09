@@ -14,7 +14,7 @@ import webit.script.exceptions.ScriptRuntimeException;
  */
 public class ASMMethodCallerGeneratorTest {
 
-    @Test
+    //@Test
     @SuppressWarnings("unchecked")
     public void test() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
         //System.currentTimeMillis();

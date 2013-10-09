@@ -20,14 +20,15 @@ import webit.script.util.RepeatChars;
     //================ >> user code
 
     private boolean placeHolderFlag = false;
+    private boolean leftPlaceHolderFlag = false;
 
-    private boolean trimTextStatmentRightBlankLine = false;
+    private boolean trimCodeBlockBlankLine = false;
     private FastCharBuffer stringBuffer = new FastCharBuffer(256);
     private int stringLine = 0;
     private int stringColumn = 0;
     
-    public void setTrimTextStatmentRightBlankLine(boolean flag){
-        trimTextStatmentRightBlankLine = flag;
+    public void setTrimCodeBlockBlankLine(boolean flag){
+        trimCodeBlockBlankLine = flag;
     }
     
     public int getColumn(){
@@ -44,6 +45,12 @@ import webit.script.util.RepeatChars;
 
     private char[] popAsCharArray() {
         char[] chars = stringBuffer.toArray();
+        stringBuffer.clear();
+        return chars;
+    }
+
+    private char[] popAsCharArraySkipIfLeftNewLine() {
+        char[] chars = stringBuffer.toArraySkipIfLeftNewLine();
         stringBuffer.clear();
         return chars;
     }
@@ -105,10 +112,18 @@ import webit.script.util.RepeatChars;
     private Symbol popTextStatmentSymbol(boolean placeHolderFlag){
         this.placeHolderFlag = placeHolderFlag;
         yybegin(YYSTATEMENT);
-        if(!placeHolderFlag && trimTextStatmentRightBlankLine){
-            stringBuffer.trimRightBlankLine();
+        final char[] chars;
+        if(trimCodeBlockBlankLine){
+            if(!placeHolderFlag){
+                stringBuffer.trimRightBlankToNewLine();
+            }
+            chars = this.leftPlaceHolderFlag
+                    ? popAsCharArray()
+                    : popAsCharArraySkipIfLeftNewLine();
+        }else{
+            chars = popAsCharArray();
         }
-        return symbol(TEXT_STATMENT,  stringLine,stringColumn, popAsCharArray());
+        return symbol(TEXT_STATMENT,  stringLine,stringColumn, chars);
     }
 
     public final String yytext(int startOffset, int endOffset) {
@@ -314,7 +329,7 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   "("                            { return symbol(LPAREN); }
   ")"                            { return symbol(RPAREN); }
   "{"                            { return symbol(LBRACE); }
-  "}"                            { if(!placeHolderFlag){return symbol(RBRACE);}else{yybegin(YYINITIAL); return symbol(PLACE_HOLDER_END);} }
+  "}"                            { if(!placeHolderFlag){return symbol(RBRACE);}else{yybegin(YYINITIAL); leftPlaceHolderFlag = true;return symbol(PLACE_HOLDER_END);} }
   "["                            { return symbol(LBRACK); }
   "]"                            { return symbol(RBRACK); }
   ";"                            { return symbol(SEMICOLON); }
@@ -405,7 +420,7 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   {Identifier}                   { return symbol(IDENTIFIER, yytext().intern()); }
 
   /* %> */
-  {DelimiterStatementEnd}        { yybegin(YYINITIAL); }
+  {DelimiterStatementEnd}        { leftPlaceHolderFlag = false; yybegin(YYINITIAL); }
 
 
 }

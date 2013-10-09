@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 import webit.script.exceptions.ResourceNotFoundException;
+import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.test.util.DiscardWriter;
 
 /**
@@ -18,18 +19,23 @@ public class TrimBlankLineTest {
         Engine engine = EngineManager.getEngine();
         DiscardWriter out = new DiscardWriter();
 
-        engine.setTrimTextStatmentRightBlankLine(true);
+        engine.setTrimCodeBlockBlankLine(true);
         Template template = engine.getTemplate("/trimBlankLine.wtl");
 
-        Map<String, Object> param = new HashMap<String, Object>(4);
-        param.put("trimBlankLine", true);
-        template.merge(param, out);
+        try {
 
-        engine.setTrimTextStatmentRightBlankLine(false);
-        template.reset();
+            Map<String, Object> param = new HashMap<String, Object>(4);
+            param.put("trimBlankLine", true);
+            template.merge(param, out);
 
-        param.put("trimBlankLine", false);
-        template.merge(param, out);
+            engine.setTrimCodeBlockBlankLine(false);
+            template.reset();
+
+            param.put("trimBlankLine", false);
+            template.merge(param, out);
+        } catch (ScriptRuntimeException e) {
+            e.printStackTrace();
+        }
 
     }
 }

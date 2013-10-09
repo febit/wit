@@ -10,7 +10,7 @@ import org.junit.Test;
  */
 public class MessageFormatterTest {
 
-    @Test
+    //@Test
     public void test() {
         assertEquals("\\abcd", MessageFormatter.format("\\ab{}cd{1}"));
         assertEquals("ab-123-cd-456|ab-456-cd-123|ab-{1}-cd-123|ab-\\456-cd-123|\\\\123", 

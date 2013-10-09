@@ -41,7 +41,7 @@ public final class Engine {
     private String encoding = EncodingPool.UTF_8;
     private boolean enableAsmNative = true;
     private boolean looseVar = false;
-    private boolean trimTextStatmentRightBlankLine = true;
+    private boolean trimCodeBlockBlankLine = true;
     //
     private Logger logger;
     private Loader resourceLoader;
@@ -215,12 +215,12 @@ public final class Engine {
         this.looseVar = looseVar;
     }
 
-    public boolean isTrimTextStatmentRightBlankLine() {
-        return trimTextStatmentRightBlankLine;
+    public boolean isTrimCodeBlockBlankLine() {
+        return trimCodeBlockBlankLine;
     }
 
-    public void setTrimTextStatmentRightBlankLine(boolean trimTextStatmentRightBlankLine) {
-        this.trimTextStatmentRightBlankLine = trimTextStatmentRightBlankLine;
+    public void setTrimCodeBlockBlankLine(boolean trimCodeBlockBlankLine) {
+        this.trimCodeBlockBlankLine = trimCodeBlockBlankLine;
     }
 
     public NativeSecurityManager getNativeSecurityManager() {

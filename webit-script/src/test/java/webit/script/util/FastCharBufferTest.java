@@ -10,7 +10,7 @@ import org.junit.Test;
  */
 public class FastCharBufferTest {
 
-    @Test
+    //@Test
     public void trimRightBlankLineTest() {
         FastCharBuffer buffer;
 
@@ -18,7 +18,7 @@ public class FastCharBufferTest {
         buffer = new FastCharBuffer(3);
         buffer.append("\t\t\t")
                 .append("\t\t\t");
-        buffer.trimRightBlankLine();
+        buffer.trimRightBlankToNewLine();
         assertEquals(1, buffer.index());
         assertEquals(3, buffer.offset());
         assertEquals(6, buffer.size());
@@ -28,93 +28,80 @@ public class FastCharBufferTest {
         buffer = new FastCharBuffer(3);
         buffer.append("abc")
                 .append("def");
-        buffer.trimRightBlankLine();
+        buffer.trimRightBlankToNewLine();
         assertEquals(6, buffer.size());
         
         //
         buffer = new FastCharBuffer(3);
         buffer.append("\n\t\t")
                 .append("\t\t\t");
-        buffer.trimRightBlankLine();
-        assertEquals(0, buffer.size());
+        buffer.trimRightBlankToNewLine();
+        assertEquals(1, buffer.size());
         
         //
         buffer = new FastCharBuffer(3);
         buffer.append("\r\n\t")
                 .append("\t\t\t");
-        buffer.trimRightBlankLine();
-        assertEquals(0, buffer.size());
-        
-        
+        buffer.trimRightBlankToNewLine();
+        assertEquals(2, buffer.size());
+
         //
         buffer = new FastCharBuffer(3);
-        buffer.append("\r\t\t")
+        buffer.append("\t\n\n")
                 .append("\t\t\t");
-        buffer.trimRightBlankLine();
-        assertEquals(0, buffer.size());
-        
-
+        buffer.trimRightBlankToNewLine();
+        assertEquals("\t\n\n",buffer.toString());
         //
+        
+        
+        char [] chars;
         buffer = new FastCharBuffer(3);
-        buffer.append("\t\r\t")
+        buffer.append("\t\n\n")
                 .append("\t\t\t");
-        buffer.trimRightBlankLine();
-        assertEquals("\t",buffer.toString());
         
-
-        //
+        chars = buffer.toArraySkipIfLeftNewLine();
+        assertEquals(6, chars.length);
+        assertEquals('\t', chars[0]);
+        assertEquals('\t', chars[5]);
+        
+        
         buffer = new FastCharBuffer(3);
-        buffer.append("\t\r\t")
-                .append("\r\t\t");
-        buffer.trimRightBlankLine();
-        assertEquals("\t\r\t",buffer.toString());
+        buffer.append("\n\n\t")
+                .append("\t\t\t");
         
-        //
+        chars = buffer.toArraySkipIfLeftNewLine();
+        assertEquals(5, chars.length);
+        assertEquals('\n', chars[0]);
+        assertEquals('\t', chars[4]);
+        
         buffer = new FastCharBuffer(3);
-        buffer.append("\t\r\t")
-                .append("\n\t\t");
-        buffer.trimRightBlankLine();
-        assertEquals("\t\r\t",buffer.toString());
+        buffer.append("\r\n\t")
+                .append("\t\t\t");
+        
+        chars = buffer.toArraySkipIfLeftNewLine();
+        assertEquals(4, chars.length);
+        assertEquals('\t', chars[0]);
+        assertEquals('\t', chars[3]);
         
         
-        //
         buffer = new FastCharBuffer(3);
-        buffer.append("\t\r\t")
-                .append("\r\n\t\t");
-        buffer.trimRightBlankLine();
-        assertEquals("\t\r\t",buffer.toString());
+        buffer.append("\r\n\n")
+                .append("\t\t\t");
         
         
-        //
-        buffer = new FastCharBuffer(3);
-        buffer.append("\t\r\r")
-                .append("\n\t\t");
-        buffer.trimRightBlankLine();
-        assertEquals("\t\r",buffer.toString());
+        buffer.trimRightBlankToNewLine();
         
-        
-        //
-        buffer = new FastCharBuffer(3);
-        buffer.append("\t\r\t")
-                .append("\t\n\t\t");
-        buffer.trimRightBlankLine();
-        assertEquals("\t\r\t\t",buffer.toString());
-        
+        chars = buffer.toArraySkipIfLeftNewLine();
+        assertEquals(1, chars.length);
+        assertEquals('\n', chars[0]);
         
         //
         buffer = new FastCharBuffer(3);
-        buffer.append("\t\r\t")
-                .append("\t\r\t\t");
-        buffer.trimRightBlankLine();
-        assertEquals("\t\r\t\t",buffer.toString());
+        buffer.append("\r\n\t")
+                .append("\t\t\t");
         
-        
-        //
-        buffer = new FastCharBuffer(3);
-        buffer.append("\t\r\t")
-                .append("\t\r\n\t");
-        buffer.trimRightBlankLine();
-        assertEquals("\t\r\t\t",buffer.toString());
-
+        buffer.trimRightBlankToNewLine();
+        chars = buffer.toArraySkipIfLeftNewLine();
+        assertEquals(0, chars.length);
     }
 }

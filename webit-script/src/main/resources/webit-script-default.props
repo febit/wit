@@ -22,7 +22,7 @@ resolvers=\
 
 # enableAsmNative=true
 # looseVar=false
-# trimTextStatmentRightBlankLine=true
+# trimCodeBlockBlankLine=true
 
 
 ### MutiFilter

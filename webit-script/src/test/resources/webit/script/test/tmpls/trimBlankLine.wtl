@@ -11,7 +11,7 @@ var assertArrayEquals;
 var assertArrayEquals_chars;
 var trimBlankLine;
 
-var out, out2;
+var out, out2, out3;
 
 {
     assertNotNull(trimBlankLine);
@@ -23,16 +23,24 @@ var out, out2;
 }
 
 {
-    { %>aa
-    ${null}<% } => out;
-    { %>aa
-    <% } => out2;
+    { %>
+ aa
+   ${null}<% } => out;
+    { %>
+ aa
+   <% } => out2;
+    { %>
+ aa
+<% } => out3;
     if(trimBlankLine){
-        assertTrue(out.size>3);
-        assertEquals(2, out2.size);
+        assertEquals(8, out.size); // \r\n
+        assertEquals(5, out2.size); // \r\n
+        assertEquals(' ', out2[0]);
         assertEquals('a', out2[1]);
+        assertEquals('\n', out2[4]);
+        assertArrayEquals_chars(out2, out3);
     }else{
-        assertTrue(out.size>3);
+        assertEquals(10, out.size); // \r\n
         assertArrayEquals_chars(out, out2);
     }
 }
