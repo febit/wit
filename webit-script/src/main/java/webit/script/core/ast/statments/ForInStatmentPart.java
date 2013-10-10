@@ -17,7 +17,7 @@ public final class ForInStatmentPart extends Position {
     private Expression collectionExpr;
     private IBlockStatment bodyStatment;
     private Statment elseStatment;
-    private String label;
+    private int label = 0;
 
     public ForInStatmentPart(int itemIndex, int iterIndex, Expression collectionExpr, int line, int column) {
         super(line, column);
@@ -26,7 +26,7 @@ public final class ForInStatmentPart extends Position {
         this.collectionExpr = collectionExpr;
     }
 
-    public ForInStatmentPart setLabel(String label) {
+    public ForInStatmentPart setLabel(int label) {
         this.label = label;
         return this;
     }

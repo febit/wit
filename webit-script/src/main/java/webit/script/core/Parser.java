@@ -6,6 +6,7 @@
 
 package webit.script.core;
 
+import java.util.HashMap;
 import java.util.Map;
 import webit.script.core.VariantManager.VarAddress;
 import webit.script.core.ast.*;
@@ -3053,6 +3054,19 @@ class CUP$Parser$actions {
  
 
     //================ >> 
+    private Map<String, Integer> labelsIndexMap = new HashMap<String, Integer>();
+    {
+        labelsIndexMap.put(null, 0);
+    }
+    private int currentLabelIndex = 0;
+    private int getLabelIndex(String label){
+        Integer index;
+        if ((index = labelsIndexMap.get(label)) == null) {
+            labelsIndexMap.put(label, index = ++currentLabelIndex);
+        }
+        return index;
+    }
+    
     NativeImportManager nativeImportMgr = new NativeImportManager();
     
     private void registPackage(ClassNameBand classNameBand, int line, int column) {
@@ -3149,7 +3163,7 @@ class CUP$Parser$actions {
     }
 
     private Statment createBreakStatment(String label, int line, int column) {
-        return new BreakStatment(label, line, column);
+        return new BreakStatment(getLabelIndex(label), line, column);
     }
 
     private Statment createPlaceHolderStatment(Expression expr) {
@@ -3157,7 +3171,7 @@ class CUP$Parser$actions {
     }
 
     private Statment createContinueStatment(String label, int line, int column) {
-        return new ContinueStatment(label, line, column);
+        return new ContinueStatment(getLabelIndex(label), line, column);
     }
 
     private SwitchStatmentPart createSwitchStatmentPart(){
@@ -4085,7 +4099,7 @@ class CUP$Parser$actions {
 		String label = (String) label$Symbol.value;
 		webit.script.core.java_cup.runtime.Symbol part$Symbol = CUP$Parser$stack.peek(0);
 		ForInStatmentPart part = (ForInStatmentPart) part$Symbol.value;
-		 RESULT = part.setLabel(label); 
+		 RESULT = part.setLabel(getLabelIndex(label)); 
 		return RESULT;
 	}
 
@@ -4151,7 +4165,7 @@ class CUP$Parser$actions {
 		String label = (String) label$Symbol.value;
 		webit.script.core.java_cup.runtime.Symbol part$Symbol = CUP$Parser$stack.peek(0);
 		ForMapStatmentPart part = (ForMapStatmentPart) part$Symbol.value;
-		 RESULT = part.setLabel(label); 
+		 RESULT = part.setLabel(getLabelIndex(label)); 
 		return RESULT;
 	}
 
@@ -4237,7 +4251,7 @@ class CUP$Parser$actions {
 		String label = (String) label$Symbol.value;
 		webit.script.core.java_cup.runtime.Symbol part$Symbol = CUP$Parser$stack.peek(0);
 		WhileStatmentPart part = (WhileStatmentPart) part$Symbol.value;
-		 RESULT = part.setLabel(label).pop(); 
+		 RESULT = part.setLabel(getLabelIndex(label)).pop(); 
 		return RESULT;
 	}
 
@@ -4332,7 +4346,7 @@ class CUP$Parser$actions {
 		String label = (String) label$Symbol.value;
 		webit.script.core.java_cup.runtime.Symbol part$Symbol = CUP$Parser$stack.peek(0);
 		SwitchStatmentPart part = (SwitchStatmentPart) part$Symbol.value;
-		 RESULT = part.setLabel(label).pop(); 
+		 RESULT = part.setLabel(getLabelIndex(label)).pop(); 
 		return RESULT;
 	}
 

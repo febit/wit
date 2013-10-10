@@ -10,7 +10,6 @@ import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
-import webit.script.core.ast.loop.LoopType;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.util.StatmentUtil;
 
@@ -22,10 +21,10 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
 
     private final Expression switchExpr;
     private final CaseEntry defaultStatment;
-    private final Map<Object, CaseEntry> caseMap;//TODO: 可实现不可变map
-    private final String label;
+    private final Map<Object, CaseEntry> caseMap;  //Note: key == null will be default also
+    private final int label;
 
-    SwitchStatment(Expression switchExpr, CaseEntry defaultStatment, Map<Object, CaseEntry> caseMap, String label, int line, int column) {
+    SwitchStatment(Expression switchExpr, CaseEntry defaultStatment, Map<Object, CaseEntry> caseMap, int label, int line, int column) {
         super(line, column);
         this.switchExpr = switchExpr;
         this.defaultStatment = defaultStatment;
@@ -34,57 +33,37 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
     }
 
     public Object execute(final Context context) {
-        final Object result;
-        boolean run = false;
-        if ((result = StatmentUtil.execute(switchExpr, context)) != null) {
-            final CaseEntry caseStatment = caseMap.get(result);
-            if (caseStatment != null) {
-                caseStatment.execute(context);
-                run = true;
-            }
+        CaseEntry caseStatment;
+        if ((caseStatment = caseMap.get(StatmentUtil.execute(switchExpr, context))) == null) {
+            caseStatment = defaultStatment; //default
         }
-
-        //default
-        if (!run && defaultStatment != null) {
-            defaultStatment.execute(context);
-            run = true;
-        }
-
-        //clear break status
-        if (run && context.loopCtrl.mathBreakLoop(label)) {
-            context.loopCtrl.reset();
+        if (caseStatment != null) {
+            caseStatment.execute(context);
+            context.loopCtrl.resetBreakLoopIfMatch(label);
         }
         return null;
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        //collect
+        
         LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
-
+        List<LoopInfo> list;
         //XXX: May have duplicated LoopInfo caused by duplicated CaseEntry
         for (Map.Entry<Object, CaseEntry> entry : caseMap.entrySet()) {
-            List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(entry.getValue().body);
-            if (list != null) {
-                loopInfos.addAll(list);
-            }
-        }
-        if (defaultStatment != null) {
-            List<LoopInfo> list = StatmentUtil.collectPossibleLoopsInfo(defaultStatment.body);
-            if (list != null) {
+            if ((list = StatmentUtil.collectPossibleLoopsInfo(entry.getValue().body)) != null) {
                 loopInfos.addAll(list);
             }
         }
 
-        //check
+        //remove loops for this switch
+        LoopInfo loopInfo;
         for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
-            LoopInfo loopInfo = it.next();
-            if (loopInfo.matchLabel(this.label)
-                    && loopInfo.type == LoopType.BREAK) {
+            if ((loopInfo = it.next()).matchLabel(this.label)
+                    && loopInfo.type == LoopInfo.BREAK) {
                 it.remove();
             }
         }
         return loopInfos.isEmpty() ? null : loopInfos;
-
     }
 
     static final class CaseEntry {
@@ -99,7 +78,7 @@ public final class SwitchStatment extends AbstractStatment implements Loopable {
 
         Object execute(final Context context) {
             StatmentUtil.execute(body, context);
-            if (context.loopCtrl.goon() && next != null) {
+            if (context.loopCtrl.getLoopType() == LoopInfo.NO_LOOP && next != null) {
                 next.execute(context);
             }
             return null;

@@ -5,7 +5,7 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopCtrl;
-import webit.script.core.ast.loop.LoopType;
+import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.runtime.variant.VariantMap;
 import webit.script.core.runtime.variant.VariantStack;
 import webit.script.util.StatmentUtil;
@@ -43,7 +43,7 @@ public final class Function extends AbstractStatment {
 
         final VariantStack vars;
         (vars = context.vars).push(varMap);
-       
+
         vars.setArgumentsForFunction(argsIndex, argIndexs, args);
 
         if (hasReturnLoops) {
@@ -51,12 +51,7 @@ public final class Function extends AbstractStatment {
             StatmentUtil.executeInvertedAndCheckLoops(statments, context);
             vars.pop();
 
-            final LoopCtrl ctrl;
-            if (!(ctrl = context.loopCtrl).goon() && ctrl.getLoopType() == LoopType.RETURN) {
-                Object result = ctrl.getLoopValue();
-                ctrl.reset();
-                return result;
-            }
+            return context.loopCtrl.resetReturnLoop();
         } else {
             StatmentUtil.executeInverted(statments, context);
             vars.pop();

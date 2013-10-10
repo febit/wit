@@ -60,7 +60,20 @@ parser code {:
 
 action code {: 
 
-    //================ >> 
+    //================ >>
+    private Map<String, Integer> labelsIndexMap = new HashMap<String, Integer>();
+    {
+        labelsIndexMap.put(null, 0);
+    }
+    private int currentLabelIndex = 0;
+    private int getLabelIndex(String label){
+        Integer index;
+        if ((index = labelsIndexMap.get(label)) == null) {
+            labelsIndexMap.put(label, index = ++currentLabelIndex);
+        }
+        return index;
+    }
+    
     NativeImportManager nativeImportMgr = new NativeImportManager();
     
     private void registPackage(ClassNameBand classNameBand, int line, int column) {
@@ -157,7 +170,7 @@ action code {:
     }
 
     private Statment createBreakStatment(String label, int line, int column) {
-        return new BreakStatment(label, line, column);
+        return new BreakStatment(getLabelIndex(label), line, column);
     }
 
     private Statment createPlaceHolderStatment(Expression expr) {
@@ -165,7 +178,7 @@ action code {:
     }
 
     private Statment createContinueStatment(String label, int line, int column) {
-        return new ContinueStatment(label, line, column);
+        return new ContinueStatment(getLabelIndex(label), line, column);
     }
 
     private SwitchStatmentPart createSwitchStatmentPart(){
@@ -898,7 +911,7 @@ forInStatPart0        ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items 
 forInStatPart1     ::= forInStatPart0:part
                         {: RESULT = part; :}
                         |IDENTIFIER:label COLON forInStatPart0:part
-                        {: RESULT = part.setLabel(label); :}
+                        {: RESULT = part.setLabel(getLabelIndex(label)); :}
                         ;
 
 
@@ -921,7 +934,7 @@ forMapStatPart0     ::= FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COL
 forMapStatPart1     ::= forMapStatPart0:part
                         {: RESULT = part; :}
                         |IDENTIFIER:label COLON forMapStatPart0:part
-                        {: RESULT = part.setLabel(label); :}
+                        {: RESULT = part.setLabel(getLabelIndex(label)); :}
                         ;
 
 
@@ -952,7 +965,7 @@ whileStatPart       ::= whileStatPart0:part blockStat:body
 whileStat           ::= whileStatPart:part
                         {: RESULT = part.pop(); :}
                         |IDENTIFIER:label whileStatPart:part
-                        {: RESULT = part.setLabel(label).pop(); :}
+                        {: RESULT = part.setLabel(getLabelIndex(label)).pop(); :}
                         ;
 
 
@@ -985,7 +998,7 @@ switchStatPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE sw
 switchStat          ::= switchStatPart:part
                         {: RESULT = part.pop(); :}
                         |IDENTIFIER:label COLON switchStatPart:part
-                        {: RESULT = part.setLabel(label).pop(); :}
+                        {: RESULT = part.setLabel(getLabelIndex(label)).pop(); :}
                         ;
 
 

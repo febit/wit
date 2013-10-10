@@ -33,9 +33,9 @@ public final class ForMapStatment extends AbstractStatment implements Loopable {
     private final Statment[] statments;
     public final LoopInfo[] possibleLoopsInfo;
     private final Statment elseStatment;
-    private final String label;
+    private final int label;
 
-    public ForMapStatment(int iterIndex, int keyIndex, int valueIndex, Expression mapExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, Statment elseStatment, String label, int line, int column) {
+    public ForMapStatment(int iterIndex, int keyIndex, int valueIndex, Expression mapExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, Statment elseStatment, int label, int line, int column) {
         super(line, column);
         this.iterIndex = iterIndex;
         this.keyIndex = keyIndex;
@@ -72,16 +72,16 @@ public final class ForMapStatment extends AbstractStatment implements Loopable {
                 entry = iter.next();
                 vars.resetCurrentWith(iterIndex, iter, keyIndex, entry.getKey(), valueIndex, entry.getValue());
                 StatmentUtil.executeInvertedAndCheckLoops(statments, context);
-                if (!ctrl.goon()) {
+                if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                     if (ctrl.matchLabel(label)) {
                         switch (ctrl.getLoopType()) {
-                            case BREAK:
+                            case LoopInfo.BREAK:
                                 ctrl.reset();
                                 break label; // while
-                            case RETURN:
+                            case LoopInfo.RETURN:
                                 //can't deal
                                 break label; //while
-                            case CONTINUE:
+                            case LoopInfo.CONTINUE:
                                 ctrl.reset();
                                 break; //switch
                             default:

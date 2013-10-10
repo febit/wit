@@ -20,7 +20,7 @@ public final class SwitchStatmentPart extends Position {
     private CaseEntry defaultStatment;
     private Map<Object, CaseEntry> caseMap;
     private CaseEntry currentCaseStatment = null;
-    private String label;
+    private int label = 0;
 
     public SwitchStatmentPart() {
         this.caseMap = new HashMap<Object, CaseEntry>();
@@ -33,7 +33,7 @@ public final class SwitchStatmentPart extends Position {
         return this;
     }
 
-    public SwitchStatmentPart setLabel(String label) {
+    public SwitchStatmentPart setLabel(int label) {
         this.label = label;
         return this;
     }
@@ -45,23 +45,21 @@ public final class SwitchStatmentPart extends Position {
 
     public SwitchStatmentPart appendCaseStatment(Object key, Statment body, int line, int column) {
         body = StatmentUtil.optimize(body);
+        CaseEntry current = currentCaseStatment;
         if (body != null) {
-            currentCaseStatment = new CaseEntry(body, currentCaseStatment);
-        }
+            current = currentCaseStatment = new CaseEntry(body, current);
+        } // else use last as current for this key
 
         if (key == null) {
             if (defaultStatment != null) {
                 throw new ParseException("multi default block in one swith", line, column);
             }
-            defaultStatment = currentCaseStatment;
-        } else {
-            if (!caseMap.containsKey(key)) {
-                caseMap.put(key, currentCaseStatment);
-            } else {
-                throw new ParseException("duplicated case value in one swith", line, column);
-            }
+            defaultStatment = current;
+        } else if (caseMap.containsKey(key)) {
+            throw new ParseException("duplicated case value in one swith", line, column);
         }
 
+        caseMap.put(key, current);
         return this;
     }
 

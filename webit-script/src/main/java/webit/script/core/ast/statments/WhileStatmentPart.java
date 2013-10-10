@@ -16,7 +16,7 @@ public final class WhileStatmentPart extends Position {
     private Expression whileExpr;
     private IBlockStatment bodyStatment;
     private boolean doWhileAtFirst;
-    private String label;
+    private int label = 0;
 
     public WhileStatmentPart() {
     }
@@ -36,7 +36,7 @@ public final class WhileStatmentPart extends Position {
         return this;
     }
 
-    public WhileStatmentPart setLabel(String label) {
+    public WhileStatmentPart setLabel(int label) {
         this.label = label;
         return this;
     }

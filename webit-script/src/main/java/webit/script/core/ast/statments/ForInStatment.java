@@ -30,9 +30,9 @@ public final class ForInStatment extends AbstractStatment implements Loopable {
     private final Statment[] statments;
     public final LoopInfo[] possibleLoopsInfo;
     private final Statment elseStatment;
-    private final String label;
+    private final int label;
 
-    public ForInStatment(int iterIndex, int itemIndex, Expression collectionExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, Statment elseStatment, String label, int line, int column) {
+    public ForInStatment(int iterIndex, int itemIndex, Expression collectionExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, Statment elseStatment, int label, int line, int column) {
         super(line, column);
         this.iterIndex = iterIndex;
         this.itemIndex = itemIndex;
@@ -58,16 +58,16 @@ public final class ForInStatment extends AbstractStatment implements Loopable {
             do {
                 vars.resetCurrentWith(iterIndex, iter, itemIndex, iter.next());
                 StatmentUtil.executeInvertedAndCheckLoops(statments, context);
-                if (!ctrl.goon()) {
+                if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                     if (ctrl.matchLabel(label)) {
                         switch (ctrl.getLoopType()) {
-                            case BREAK:
+                            case LoopInfo.BREAK:
                                 ctrl.reset();
                                 break label; // while
-                            case RETURN:
+                            case LoopInfo.RETURN:
                                 //can't deal
                                 break label; //while
-                            case CONTINUE:
+                            case LoopInfo.CONTINUE:
                                 ctrl.reset();
                                 break; //switch
                             default:

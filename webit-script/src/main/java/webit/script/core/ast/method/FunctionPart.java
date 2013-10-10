@@ -8,7 +8,6 @@ import java.util.Map;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
-import webit.script.core.ast.loop.LoopType;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ArrayUtil;
 import webit.script.util.StatmentUtil;
@@ -76,7 +75,7 @@ public final class FunctionPart extends Position {
 
             for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
                 LoopInfo loopInfo = it.next();
-                if (loopInfo.type == LoopType.RETURN) {
+                if (loopInfo.type == LoopInfo.RETURN) {
                     hasReturnLoops = true;
                     it.remove();
                 }

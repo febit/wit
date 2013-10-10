@@ -6,7 +6,6 @@ import java.util.List;
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.loop.LoopInfo;
-import webit.script.core.ast.loop.LoopType;
 import webit.script.core.ast.loop.Loopable;
 
 /**
@@ -15,21 +14,21 @@ import webit.script.core.ast.loop.Loopable;
  */
 public final class ContinueStatment extends AbstractStatment implements Loopable {
 
-    private final String label;
+    private final int label;
 
-    public ContinueStatment(String label, int line, int column) {
+    public ContinueStatment(int label, int line, int column) {
         super(line, column);
         this.label = label;
     }
 
     public Object execute(final Context context) {
-        context.loopCtrl.continueLoop(label, this);
+        context.loopCtrl.continueLoop(label);
         return null;
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
         LinkedList<LoopInfo> list;
-        (list = new LinkedList<LoopInfo>()).add(new LoopInfo(LoopType.CONTINUE, label, line, column));
+        (list = new LinkedList<LoopInfo>()).add(new LoopInfo(LoopInfo.CONTINUE, label, line, column));
         return list;
     }
 }

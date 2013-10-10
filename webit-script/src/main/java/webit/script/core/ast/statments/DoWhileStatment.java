@@ -26,9 +26,9 @@ public final class DoWhileStatment extends AbstractStatment implements Loopable 
     private final VariantMap varMap;
     private final Statment[] statments;
     public final LoopInfo[] possibleLoopsInfo;
-    private final String label;
+    private final int label;
 
-    public DoWhileStatment(Expression whileExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, String label, int line, int column) {
+    public DoWhileStatment(Expression whileExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, int label, int line, int column) {
         super(line, column);
         this.whileExpr = whileExpr;
         this.varMap = varMap;
@@ -45,16 +45,16 @@ public final class DoWhileStatment extends AbstractStatment implements Loopable 
         label:
         do {
             StatmentUtil.executeInvertedAndCheckLoops(statments, context);
-            if (!ctrl.goon()) {
+            if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                 if (ctrl.matchLabel(label)) {
                     switch (ctrl.getLoopType()) {
-                        case BREAK:
+                        case LoopInfo.BREAK:
                             ctrl.reset();
                             break label; // while
-                        case RETURN:
+                        case LoopInfo.RETURN:
                             //can't deal
                             break label; //while
-                        case CONTINUE:
+                        case LoopInfo.CONTINUE:
                             ctrl.reset();
                             break; //switch
                         default:

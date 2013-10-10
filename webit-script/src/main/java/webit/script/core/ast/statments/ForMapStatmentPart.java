@@ -18,7 +18,7 @@ public final class ForMapStatmentPart extends Position {
     private Expression mapExpr;
     private IBlockStatment bodyStatment;
     private Statment elseStatment;
-    private String label;
+    private int label = 0;
 
     public ForMapStatmentPart(int keyIndex, int valueIndex, int iterIndex, Expression mapExpr, int line, int column) {
         super(line, column);
@@ -28,7 +28,7 @@ public final class ForMapStatmentPart extends Position {
         this.mapExpr = mapExpr;
     }
 
-    public ForMapStatmentPart setLabel(String label) {
+    public ForMapStatmentPart setLabel(int label) {
         this.label = label;
         return this;
     }

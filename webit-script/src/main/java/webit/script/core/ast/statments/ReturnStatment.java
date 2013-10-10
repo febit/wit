@@ -7,7 +7,6 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.loop.LoopInfo;
-import webit.script.core.ast.loop.LoopType;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.util.StatmentUtil;
 
@@ -28,14 +27,13 @@ public final class ReturnStatment extends AbstractStatment implements Loopable {
         context.loopCtrl.returnLoop(
                 expr != null
                 ? StatmentUtil.execute(expr, context)
-                : Context.VOID,
-                this);
+                : Context.VOID);
         return null;
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
         LinkedList<LoopInfo> list;
-        (list = new LinkedList<LoopInfo>()).add(new LoopInfo(LoopType.RETURN, null, line, column));
+        (list = new LinkedList<LoopInfo>()).add(new LoopInfo(LoopInfo.RETURN, 0, line, column));
         return list;
     }
 }

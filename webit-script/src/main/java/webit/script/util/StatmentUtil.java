@@ -11,7 +11,6 @@ import webit.script.core.ast.ResetableValueExpression;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
-import webit.script.core.ast.loop.LoopType;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.exceptions.ParseException;
 import webit.script.io.Out;
@@ -89,7 +88,7 @@ public class StatmentUtil {
         try {
             do {
                 statments[--i].execute(context);
-            } while (i != 0 && ctrl.goon());
+            } while (i != 0 && ctrl.getLoopType() == LoopInfo.NO_LOOP);
             return;
         } catch (Throwable e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statments[i]);
@@ -137,15 +136,15 @@ public class StatmentUtil {
         return null;
     }
 
-    public static LoopInfo[] collectPossibleLoopsInfoForWhileStatments(Statment bodyStatment, Statment elseStatment, String label) {
+    public static LoopInfo[] collectPossibleLoopsInfoForWhileStatments(Statment bodyStatment, Statment elseStatment, int label) {
 
         List<LoopInfo> list;
         LoopInfo loopInfo;
         if ((list = StatmentUtil.collectPossibleLoopsInfo(bodyStatment)) != null) {
             for (Iterator<LoopInfo> it = list.iterator(); it.hasNext();) {
                 if ((loopInfo = it.next()).matchLabel(label)
-                        && (loopInfo.type == LoopType.BREAK
-                        || loopInfo.type == LoopType.CONTINUE)) {
+                        && (loopInfo.type == LoopInfo.BREAK
+                        || loopInfo.type == LoopInfo.CONTINUE)) {
                     it.remove();
                 }
             }
