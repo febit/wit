@@ -25,17 +25,17 @@ import webit.script.util.ExceptionUtil;
  * To control the decision of whether to shift or reduce at any given point, the
  * parser uses a state machine (the "viable prefix recognition machine" built by
  * the parser generator). The current state of the machine is placed on top of
- * the parse _stack (stored as part of a Symbol object representing a terminal or
- * non terminal). The parse action table is consulted (using the current state
- * and the current lookahead Symbol as indexes) to determine whether to shift or
- * to reduce. When the parser shifts, it changes to a new state by pushing a new
- * Symbol (containing a new state) onto the _stack. When the parser reduces, it
- * pops the handle (column hand side of a production) off the _stack. This leaves
- * the parser in the state it was in before any of those Symbols were matched.
- * Next the reduce-goto table is consulted (using the new state and current
- * lookahead Symbol as indexes) to determine a new state to go to. The parser
- * then shifts to this goto state by pushing the line hand side Symbol of the
- * production (also containing the new state) onto the _stack.<p>
+ * the parse _stack (stored as part of a Symbol object representing a terminal
+ * or non terminal). The parse action table is consulted (using the current
+ * state and the current lookahead Symbol as indexes) to determine whether to
+ * shift or to reduce. When the parser shifts, it changes to a new state by
+ * pushing a new Symbol (containing a new state) onto the _stack. When the
+ * parser reduces, it pops the handle (column hand side of a production) off the
+ * _stack. This leaves the parser in the state it was in before any of those
+ * Symbols were matched. Next the reduce-goto table is consulted (using the new
+ * state and current lookahead Symbol as indexes) to determine a new state to go
+ * to. The parser then shifts to this goto state by pushing the line hand side
+ * Symbol of the production (also containing the new state) onto the _stack.<p>
  *
  * This class actually provides four LR parsers. The methods parse() and
  * debug_parse() provide two versions of the main parser (the only difference
@@ -56,8 +56,8 @@ import webit.script.util.ExceptionUtil;
  * <dt> Symbol do_action()
  * <dd> Executes a piece of user supplied action code. This always comes at the
  * point of a reduce in the parse, so this code also allocates and fills in the
- * line hand side non terminal Symbol object that is to be pushed onto the _stack
- * for the reduce.
+ * line hand side non terminal Symbol object that is to be pushed onto the
+ * _stack for the reduce.
  * <dt> void init_actions()
  * <dd> Code to initialize a special object that encapsulates user supplied
  * actions (this object is used by do_action() to actually carry out the
@@ -300,15 +300,14 @@ public abstract class lr_parser {
      * @param id the Symbol index of the entry being accessed.
      */
     private short getReduce(int state, int sym) {
+        int probe, len;
         short tag;
         final short[] row;
-        if ((row = reduceTable[state]) != null) {
-            for (int probe = 0, len = row.length; probe < len; probe++) {
-                /* is this entry labeled with our Symbol or the default? */
-                if ((tag = row[probe++]) == sym || tag == -1) {
-                    /* return the next entry */
-                    return row[probe];
-                }
+        for (probe = 0, len = (row = reduceTable[state]).length; probe < len; probe++) {
+            /* is this entry labeled with our Symbol or the default? */
+            if ((tag = row[probe++]) == sym || tag == -1) {
+                /* return the next entry */
+                return row[probe];
             }
         }
         /* if we run off the end we return the default (error == -1) */
@@ -317,11 +316,11 @@ public abstract class lr_parser {
     //protected boolean symbolNoRightLeft = false;
 
     private void reduceAction(int action) throws Exception {
-
+        final int symId, handleSize;
         final Object result = do_action(action);
         final short[] row;
-        final int symId = (row = productionTable[action])[0];
-        final int handleSize = row[1];
+        symId = (row = productionTable[action])[0];
+        handleSize = row[1];
 
         //String symbolName = nonTerminalNames[symId];
 
@@ -414,7 +413,7 @@ public abstract class lr_parser {
 
         /* initialize the action encapsulation object */
         init_actions();
-        
+
         final Stack<Symbol> stack;
         (stack = this._stack).clear();
         //stack.push(newSymbol("START", 0, start_state()));
@@ -449,7 +448,7 @@ public abstract class lr_parser {
                 /* perform the action for the reduce */
                 //lhs_sym = reduceAction((-act) - 1);
                 reduceAction((-act) - 1);
-            } /*else if (act == 0) */else{
+            } /*else if (act == 0) */ else {
                 /* finally if the entry is zero, we have an error */
 
 //                syntax_error(cur_token);
@@ -464,8 +463,8 @@ public abstract class lr_parser {
 //                    lhs_sym = _stack.peek();
 //                }
             }
-        }while (goonParse);
-        
+        } while (goonParse);
+
         return stack.peek();//lhs_sym;
     }
 
@@ -771,15 +770,19 @@ public abstract class lr_parser {
      */
     protected static short[][] unpackFromStrings(String pack) {
         // Concatanate initialization strings.
-        int n = 0; // location in initialization string
+        // location in initialization string
+        int n, i, j, size2;
+        short[] row;
+        n = 0;
         int size1 = (((int) pack.charAt(n++)) << 16) | ((int) pack.charAt(n++));
         short[][] result = new short[size1][];
-        int i, j, size2;
-        for (i = 0; i < size1; i++) {
+        i = 0;
+        while (i < size1) {
             size2 = (((int) pack.charAt(n++)) << 16) | ((int) pack.charAt(n++));
-            result[i] = new short[size2];
-            for (j = 0; j < size2;) {
-                result[i][j++] = (short) (pack.charAt(n++) - 2);
+            result[i++] = row = new short[size2];
+            j = 0;
+            while (j < size2) {
+                row[j++] = (short) (pack.charAt(n++) - 2);
             }
         }
         return result;
@@ -879,7 +882,6 @@ public abstract class lr_parser {
 //    private static Symbol newSymbol(int id, Symbol left) {
 //        return newSymbol(id, left);
 //    }
-
     private static Symbol newSymbol(int id) {
         return new Symbol(id, -1, -1, null);
     }
