@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 public class NativeSecurityException extends Exception {
 
     public NativeSecurityException(String path) {
-        super("Not accessable: " + path);
+        super("Not accessable: ".concat(path));
     }
 
     @Override

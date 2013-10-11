@@ -31,11 +31,12 @@ public class ClasspathResource implements Resource {
     public Reader openReader() throws IOException {
         //lastLoadTime = System.currentTimeMillis();
         final InputStream inputStream;
-        if ((inputStream = ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path)) == null) {
-            throw new ResourceNotFoundException("Not found: " + path);
+        if ((inputStream = ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path)) != null) {
+            return encoding == null
+                    ? new InputStreamReader(inputStream)
+                    : new InputStreamReader(inputStream, encoding);
+        } else {
+            throw new ResourceNotFoundException("Not found: ".concat(path));
         }
-        return encoding == null
-                ? new InputStreamReader(inputStream)
-                : new InputStreamReader(inputStream, encoding);
     }
 }

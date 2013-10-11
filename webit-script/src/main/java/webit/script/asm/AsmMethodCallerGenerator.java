@@ -9,6 +9,7 @@ import webit.script.asm3.Type;
 import webit.script.asm3.commons.GeneratorAdapter;
 import webit.script.asm3.commons.Method;
 import webit.script.util.ClassUtil;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -34,11 +35,11 @@ public class AsmMethodCallerGenerator {
     }
 
     private static String generateClassName(java.lang.reflect.Method method) {
-        return CALLER_CLASS_NAME_PRE + method.getName() + '_' + ASMUtil.getSn();
+        return StringUtil.concat(CALLER_CLASS_NAME_PRE, method.getName(), "_", Integer.toString(ASMUtil.getSn()));
     }
 
     private static String generateClassName(Constructor constructor) {
-        return CALLER_CLASS_NAME_PRE + constructor.getDeclaringClass().getSimpleName() + '_' + ASMUtil.getSn();
+        return StringUtil.concat(CALLER_CLASS_NAME_PRE, constructor.getDeclaringClass().getSimpleName(), "_", Integer.toString(ASMUtil.getSn()));
     }
 
     private static byte[] generateClassBody(String className, Constructor constructor) {

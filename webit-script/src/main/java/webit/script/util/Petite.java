@@ -42,7 +42,7 @@ public final class Petite {
                 } catch (Exception ex) {
                     //Log
                     if (logger != null) {
-                        logger.warn("Failed to set declared property: " + parameterName, ex);
+                        logger.warn("Failed to set declared property: ".concat(parameterName), ex);
                     }
                 }
             }

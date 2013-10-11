@@ -2,6 +2,7 @@
 package webit.script.util.props;
 
 import java.util.ArrayList;
+import webit.script.util.StringUtil;
 
 /**
  * {@link Props} parser.
@@ -283,7 +284,7 @@ final class PropsParser /* implements Cloneable*/ {
         String fullKey = key;
 
         if (section != null) {
-            fullKey = section + '.' + fullKey;
+            fullKey = StringUtil.concat(section, ".", fullKey);
         }
         String v = value.toString();
 

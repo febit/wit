@@ -67,7 +67,7 @@ public class MessageFormatter {
             ndx += 1;
             int ndx_end = template.indexOf(macroEnd, ndx);
             if (ndx_end == -1) {
-                throw new IllegalArgumentException("Invalid string template, unclosed macro at: " + (ndx - 1));
+                throw new IllegalArgumentException(StringUtil.concat("Invalid string template, unclosed macro at: ", (ndx - 1)));
             }
 
             if (ndx == ndx_end) {

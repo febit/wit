@@ -67,7 +67,7 @@ public final class FunctionPart extends Position {
         Statment[] statments = statmentList.toArray(new Statment[statmentList.size()]);
 
         ArrayUtil.invert(statments);
-        
+
         boolean hasReturnLoops = false;
         List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
 
@@ -81,10 +81,10 @@ public final class FunctionPart extends Position {
                 }
             }
             if (loopInfos.size() > 0) {
-                throw new ParseException("Loops overflow in function body: " + StringUtil.join(loopInfos, ","));
+                throw new ParseException("Loops overflow in function body: ".concat(StringUtil.join(loopInfos, ",")));
             }
         }
-        
+
         return new Function(argsIndex,
                 argIndexList.isEmpty() ? null : argIndexList.toArray(),
                 overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null,

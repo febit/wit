@@ -35,7 +35,7 @@ public class FastCharBuffer implements CharSequence, Appendable {
      */
     public FastCharBuffer(int size) {
         if (size < 0) {
-            throw new IllegalArgumentException("Invalid size: " + size);
+            throw new IllegalArgumentException(StringUtil.concat("Invalid size: ", size));
         }
         needNewBuffer(size);
     }

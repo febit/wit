@@ -86,7 +86,7 @@ public class CollectionUtil {
             return new CharSequenceIterAdapter((CharSequence) o1);
         }
 
-        throw new ScriptRuntimeException("Unsupported type: " + o1.getClass().getName());
+        throw new ScriptRuntimeException("Unsupported type: ".concat(o1.getClass().getName()));
     }
 
     public static <T> Iter<T> toIter(final Iterable<T> o1) {

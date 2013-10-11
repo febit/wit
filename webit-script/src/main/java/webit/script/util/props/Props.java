@@ -206,15 +206,14 @@ public final class Props /* implements Cloneable */ {
      */
     @SuppressWarnings("unchecked")
     public void load(final Map<?, ?> map, final String prefix) {
-        String realPrefix = prefix;
-        realPrefix += '.';
+        String realPrefix = prefix.concat(".");
         for (final Map.Entry entry : map.entrySet()) {
             final String name = entry.getKey().toString();
             final Object value = entry.getValue();
             if (value == null) {
                 continue;
             }
-            data.putBaseProperty(realPrefix + name, value.toString(), false);
+            data.putBaseProperty(realPrefix.concat(name) , value.toString(), false);
         }
     }
 

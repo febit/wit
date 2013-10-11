@@ -12,6 +12,7 @@ import webit.script.core.ast.method.AsmNativeMethodDeclare;
 import webit.script.core.ast.method.NativeConstructorDeclare;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ClassUtil;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -42,7 +43,7 @@ public class NativeConstructorDeclareExpressionPart extends Position {
 
         final String path;
         if (_engine.checkNativeAccess(path = (clazz.getName() + ".<init>")) == false) {
-            throw new ParseException("Not accessable of native path: " + path, line, column);
+            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
 
         try {
@@ -53,18 +54,18 @@ public class NativeConstructorDeclareExpressionPart extends Position {
                     if (ClassUtil.isPublic(constructor)) {
                         try {
                             if ((caller = AsmMethodCallerManager.getCaller(constructor)) == null) {
-                                _engine.getLogger().error("AsmMethodCaller for '" + constructor.toString() + "' is null, and instead by NativeConstructorDeclare");
+                                _engine.getLogger().error(StringUtil.concat("AsmMethodCaller for '", constructor.toString(), "' is null, and instead by NativeConstructorDeclare"));
                             }
                         } catch (Throwable ex) {
                             caller = null;
-                            _engine.getLogger().error("Generate AsmMethodCaller for '" + constructor.toString() + "' failed, and instead by NativeConstructorDeclare", ex);
+                            _engine.getLogger().error(StringUtil.concat("Generate AsmMethodCaller for '", constructor.toString(), "' failed, and instead by NativeConstructorDeclare"), ex);
                         }
                     } else {
-                        _engine.getLogger().warn("'" + constructor.toString() + "' will not use asm, since this method is not public, and instead by NativeConstructorDeclare");
+                        _engine.getLogger().warn(StringUtil.concat("'", constructor.toString(), "' will not use asm, since this method is not public, and instead by NativeConstructorDeclare"));
                         caller = null;
                     }
                 } else {
-                    _engine.getLogger().warn("'" + constructor.toString() + "' will not use asm, since class is not public, and instead by NativeConstructorDeclare");
+                    _engine.getLogger().warn(StringUtil.concat("'" + constructor.toString() + "' will not use asm, since class is not public, and instead by NativeConstructorDeclare"));
                     caller = null;
                 }
             } else {

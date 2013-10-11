@@ -61,7 +61,7 @@ public class ParseException extends RuntimeException {
         synchronized (s) {
             s.println(this);
             if (this.template != null) {
-                s.println("template:" + this.template.name);
+                s.println("template:".concat(this.template.name));
             }
             s.println("\tat line " + line + "(" + column + ") ");
             Throwable ourCause = getCause();
@@ -77,7 +77,7 @@ public class ParseException extends RuntimeException {
         synchronized (s) {
             s.println(this);
             if (this.template != null) {
-                s.println("template:" + this.template.name);
+                s.println("template:".concat(this.template.name));
             }
             s.println("\tat line " + line + "(" + column + ") ");
             Throwable ourCause = getCause();

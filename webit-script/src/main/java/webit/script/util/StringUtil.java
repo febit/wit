@@ -9,6 +9,45 @@ import java.util.List;
  */
 public class StringUtil {
 
+    public static String concat(String s1, String s2, String s3) {
+        return s1.concat(s2).concat(s3);
+    }
+
+    public static String concat(String... strings) {
+        int len = 0;
+        int i;
+        for (i = strings.length; i != 0;) {
+            len += strings[--i].length();
+        }
+        StringBuilder sb = new StringBuilder(len);
+        for (i = 0; i < strings.length; i++) {
+            sb.append(strings[i]);
+        }
+        return sb.toString();
+    }
+
+    public static String concat(String s1, String s2, String s3, String s4) {
+        int len = s1.length() + s2.length() + s3.length() + s4.length();
+        return new StringBuilder(len)
+                .append(s1)
+                .append(s2)
+                .append(s3)
+                .append(s4)
+                .toString();
+    }
+
+    public static String concat(String string, int number) {
+        return string.concat(Integer.toString(number));
+    }
+
+    public static String concatObjectClass(String string, Object object) {
+        return string.concat(object != null ? object.getClass().getName() : "[null]");
+    }
+
+    public static String concat(String string, Object object) {
+        return string.concat(object != null ? object.toString() : "null");
+    }
+
     /**
      * Replaces all occurrences of a character in a string.
      *

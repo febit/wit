@@ -1,6 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.java_cup.runtime;
 
+import webit.script.util.StringUtil;
+
 /**
  *
  * @author Zqq
@@ -34,7 +36,7 @@ public final class Stack<T> {
             elements[i] = null;
             return element;
         } else {
-            throw new IndexOutOfBoundsException("index=" + i);
+            throw new IndexOutOfBoundsException(StringUtil.concat("index=", i));
         }
     }
 

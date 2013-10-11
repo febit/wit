@@ -30,10 +30,7 @@ public class TemplateASTPart {
     }
 
     public TemplateASTPart append(Statment stat) {
-
-        stat = StatmentUtil.optimize(stat);
-
-        if (stat != null) {
+        if ((stat = StatmentUtil.optimize(stat)) != null) {
             statmentList.add(stat);
         }
         return this;
@@ -45,11 +42,11 @@ public class TemplateASTPart {
 
         ArrayUtil.invert(statments);
 
-        List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
-        if (loopInfos != null) {
-            throw new ParseException("loop overflow: " + StringUtil.join(loopInfos, ","));
+        List<LoopInfo> loopInfos;
+        if ((loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments)) == null) {
+            return new TemplateAST(VariantUtil.toVariantMap(varMap), statments);
+        } else {
+            throw new ParseException("loop overflow: ".concat(StringUtil.join(loopInfos, ",")));
         }
-
-        return new TemplateAST(VariantUtil.toVariantMap(varMap), statments);
     }
 }

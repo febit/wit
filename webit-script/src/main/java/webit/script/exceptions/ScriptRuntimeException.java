@@ -51,7 +51,7 @@ public class ScriptRuntimeException extends RuntimeException {
         synchronized (s) {
             s.println(this);
             if (this.template != null) {
-                s.println("template:" + this.template.name);
+                s.println("template:".concat(this.template.name));
             }
             for (int i = statmentStack.size() - 1; i >= 0; i--) {
                 Statment statment = statmentStack.peek(i);
@@ -70,7 +70,7 @@ public class ScriptRuntimeException extends RuntimeException {
         synchronized (s) {
             s.println(this);
             if (this.template != null) {
-                s.println("template:" + this.template.name);
+                s.println("template:".concat(this.template.name));
             }
             for (int i = statmentStack.size() - 1; i >= 0; i--) {
                 Statment statment = statmentStack.peek(i);

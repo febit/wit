@@ -54,7 +54,7 @@ public class UnixStyleFileNameUtil {
         if (isSeparator(basePath.charAt(len - 1))) {
             return doNormalize(basePath + fullFilenameToAdd, true);
         } else {
-            return doNormalize(basePath + '/' + fullFilenameToAdd, true);
+            return doNormalize(StringUtil.concat(basePath, "/", fullFilenameToAdd), true);
         }
     }
 

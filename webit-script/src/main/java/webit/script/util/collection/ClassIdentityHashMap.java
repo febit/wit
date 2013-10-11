@@ -42,6 +42,7 @@ public final class ClassIdentityHashMap<V> {
 
     public V unsafeGet(final Class key) {
 
+        Entry<V> e;
         //final int id;
         //id = key.hashCode();
         final Entry<V>[] tab;
@@ -49,12 +50,13 @@ public final class ClassIdentityHashMap<V> {
         //final int index = id % tab.length;
         //Entry<V> e = tab[(id = System.identityHashCode(key)) & (tab.length - 1)];
         //Entry<V> e = table[index];
-        for (Entry<V> e = (tab = table)[key.hashCode() & (tab.length - 1)]; e != null; e = e.next) {
+        e = (tab = table)[key.hashCode() & (tab.length - 1)];
+        while (e != null) {
             if (key == e.key) {
                 return e.value;
             }
+            e = e.next;
         }
-
         return null;
     }
 

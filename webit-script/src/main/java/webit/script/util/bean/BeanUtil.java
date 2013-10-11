@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import webit.script.util.StringUtil;
 import webit.script.util.collection.ClassIdentityHashMap;
 
 /**
@@ -21,7 +22,7 @@ public class BeanUtil {
         if ((getter = getFieldDescriptor(bean.getClass(), name).getter) != null) {
             return getter.get(bean);
         } else {
-            throw new BeanUtilException("Unable to get getter for " + bean.getClass().getName() + "#" + name);
+            throw new BeanUtilException(StringUtil.concat("Unable to get getter for ", bean.getClass().getName(), "#", name));
         }
     }
 
@@ -38,7 +39,7 @@ public class BeanUtil {
             }
             setter.set(bean, value);
         } else {
-            throw new BeanUtilException("Unable to get setter for " + bean.getClass().getName() + "#" + name);
+            throw new BeanUtilException(StringUtil.concat("Unable to get setter for ", bean.getClass().getName(), "#", name));
         }
     }
 
@@ -61,7 +62,7 @@ public class BeanUtil {
         if ((fieldDescriptor = descriptors.get(name)) != null) {
             return fieldDescriptor;
         } else {
-            throw new BeanUtilException("Unable to get field: " + cls.getName() + "#" + name);
+            throw new BeanUtilException(StringUtil.concat("Unable to get field: ", cls.getName(), "#", name));
         }
     }
 

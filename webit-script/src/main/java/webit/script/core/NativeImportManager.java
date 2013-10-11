@@ -8,6 +8,7 @@ import java.util.Set;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -26,17 +27,17 @@ public class NativeImportManager {
 
     public final void registPackage(String pkgName) throws ParseException {
         if (pkgs.add(pkgName) == false) {
-            throw new ParseException("Duplicate package register: " + pkgName);
+            throw new ParseException("Duplicate package register: ".concat(pkgName));
         }
     }
 
     public boolean registClass(ClassNameBand classNameBand) throws ParseException {
         final String className = classNameBand.getClassSimpleName();
         if (ClassUtil.getCachedClass(className) != null) {
-            throw new ParseException("Duplicate class simple name:" + classNameBand.getClassPureName());
+            throw new ParseException("Duplicate class simple name:".concat(classNameBand.getClassPureName()));
         }
         if (classes.containsKey(className)) {
-            throw new ParseException("Duplicate class register:" + classNameBand.getClassPureName());
+            throw new ParseException("Duplicate class register:".concat(classNameBand.getClassPureName()));
         }
         String classFullName = classNameBand.getClassPureName();
 
@@ -55,7 +56,7 @@ public class NativeImportManager {
         //TODO:冲突检查
         for (String pkg : pkgs) {
             try {
-                classPureName = pkg + "." + simpleName;
+                classPureName = StringUtil.concat(pkg, ".", simpleName);
                 ClassUtil.getClass(classPureName);
                 classes.put(simpleName, classPureName); //put to cache
                 return classPureName;

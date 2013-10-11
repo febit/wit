@@ -7,6 +7,7 @@ import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -27,7 +28,7 @@ public class ListResolver implements GetResolver, SetResolver {
             try {
                 return ((List) object).get(((Number) property).intValue());
             } catch (IndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException("index out of bounds:" + property);
+                throw new ScriptRuntimeException(StringUtil.concat("index out of bounds:", property));
             }
         } else {
             if (property == "size" || "size".equals(property)) {
@@ -35,7 +36,7 @@ public class ListResolver implements GetResolver, SetResolver {
             } else if (property == "isEmpty" || "isEmpty".equals(property)) {
                 return ((List) object).isEmpty();
             }
-            throw new ScriptRuntimeException("Invalid property or can't read: java.util.List#" + property);
+            throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: java.util.List#", property));
         }
     }
 
@@ -44,12 +45,12 @@ public class ListResolver implements GetResolver, SetResolver {
         if (property instanceof Number) {
             try {
                 ((List) object).set(((Number) property).intValue(), value);
+                return true;
             } catch (IndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException("index out of bounds:" + property);
+                throw new ScriptRuntimeException(StringUtil.concat("index out of bounds:", property));
             }
-            return true;
         } else {
-            throw new ScriptRuntimeException("Invalid property or can't write: java.util.List#" + property);
+            throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: java.util.List#", property));
         }
     }
 }

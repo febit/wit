@@ -1,6 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util.collection;
 
+import webit.script.util.StringUtil;
+
 /**
  *
  * @author Zqq
@@ -23,7 +25,7 @@ public class IntArrayList {
      */
     public IntArrayList(int initialCapacity) {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException("Invalid capacity: " + initialCapacity);
+            throw new IllegalArgumentException(StringUtil.concat("Invalid capacity: ", initialCapacity));
         }
         array = new int[initialCapacity];
         size = 0;

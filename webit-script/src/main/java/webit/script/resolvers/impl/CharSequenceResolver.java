@@ -4,6 +4,7 @@ package webit.script.resolvers.impl;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -24,7 +25,7 @@ public class CharSequenceResolver implements GetResolver {
             try {
                 return ((CharSequence) object).charAt(((Number) property).intValue());
             } catch (IndexOutOfBoundsException e) {
-                throw new  ScriptRuntimeException("index out of bounds:"+property);
+                throw new ScriptRuntimeException(StringUtil.concat("index out of bounds:", property));
             }
         } else {
             if ("size".equals(property)) {
@@ -32,7 +33,7 @@ public class CharSequenceResolver implements GetResolver {
             } else if ("isEmpty".equals(property)) {
                 return ((CharSequence) object).length() == 0;
             }
-            throw new ScriptRuntimeException("Invalid property or can't read: java.lang.CharSequence#" + property);
+            throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: java.lang.CharSequence#", property));
         }
     }
 }

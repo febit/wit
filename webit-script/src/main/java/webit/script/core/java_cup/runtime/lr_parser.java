@@ -11,6 +11,7 @@ import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ParseException;
 import webit.script.loggers.Logger;
 import webit.script.util.ExceptionUtil;
+import webit.script.util.StringUtil;
 
 /**
  * This class implements a skeleton table driven LR parser. In general, LR
@@ -231,7 +232,7 @@ public abstract class lr_parser {
 //    private void syntax_error(Symbol cur_token) {
 //    }
     private void unrecoveredSyntaxError(Symbol cur_token) {
-        throw new ParseException("Parser stop at here, " + getLine() + "(" + getColumn() + ")", getLine(), getColumn());
+        throw new ParseException(StringUtil.concat("Parser stop at here, ", Integer.toString(getLine()), "(", Integer.toString(getColumn()), ")"), getLine(), getColumn());
     }
 
     /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/

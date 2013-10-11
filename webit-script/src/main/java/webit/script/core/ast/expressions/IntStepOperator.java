@@ -6,6 +6,7 @@ import webit.script.core.ast.BinaryOperator;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.StatmentUtil;
+import webit.script.util.StringUtil;
 import webit.script.util.collection.IntegerAscStepIter;
 import webit.script.util.collection.IntegerDescStepIter;
 
@@ -25,13 +26,13 @@ public class IntStepOperator extends BinaryOperator {
         if ((result = StatmentUtil.execute(leftExpr, context)) instanceof Number) {
             num1 = ((Number) result).intValue();
         } else {
-            throw new ScriptRuntimeException("left need a int, but found " + (result != null ? result.getClass().getName() : "[null]"));
+            throw new ScriptRuntimeException(StringUtil.concatObjectClass("left need a int, but found ", result));
         }
         final int num2;
         if ((result = StatmentUtil.execute(rightExpr, context)) instanceof Number) {
             num2 = ((Number) result).intValue();
         } else {
-            throw new ScriptRuntimeException("right need a int, but found " + (result != null ? result.getClass().getName() : "[null]"));
+            throw new ScriptRuntimeException(StringUtil.concatObjectClass("right need a int, but found ", result));
         }
         if (num1 < num2) {
             return new IntegerAscStepIter(num1, num2);

@@ -21,7 +21,7 @@ public class IntegerDescStepIter implements Iter<Integer> {
             from = int2;
             to = int1;
         }
-        current = from+1;
+        current = from + 1;
     }
 
     public boolean hasNext() {
@@ -29,10 +29,11 @@ public class IntegerDescStepIter implements Iter<Integer> {
     }
 
     public Integer next() {
-        if (current <= to) {
+        if (current > to) {
+            return --current;
+        } else {
             throw new NoSuchElementException("no more next");
         }
-        return --current;
     }
 
     public boolean isFirst() {

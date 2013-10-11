@@ -60,12 +60,12 @@ public final class VariantStack {
         final Object[] contextValues;
         (contextValues = currentContext.values)[argsIndex] = values;
         if (indexs != null && values != null) {
-            int len = values.length;
-            if (len > indexs.length) {
-                len = indexs.length;
+            int i = values.length;
+            if (i > indexs.length) {
+                i = indexs.length;
             }
-            for (int i = 0; i < len; i++) {
-                contextValues[indexs[i]] = values[i];
+            while (i != 0) {
+                contextValues[indexs[--i]] = values[i];
             }
         }
     }
@@ -123,7 +123,6 @@ public final class VariantStack {
 //        }
 //        return false;
 //    }
-
     public Object get(int index) {
         return currentContext.values[index];
     }
@@ -133,9 +132,10 @@ public final class VariantStack {
     }
 
     public Object[] get(final String[] keys) {
-        final Object[] results = new Object[keys.length];
-        for (int i = 0; i < results.length; i++) {
-            results[i] = get(keys[i], true);
+        int i;
+        final Object[] results = new Object[i = keys.length];
+        while (i != 0) {
+            results[--i] = get(keys[i], true);
         }
         return results;
     }
@@ -154,7 +154,7 @@ public final class VariantStack {
             }
         }
         if (force) {
-            throw new ScriptRuntimeException("Not found key named:" + key);
+            throw new ScriptRuntimeException("Not found key named:".concat(key));
         }
         return null;
     }

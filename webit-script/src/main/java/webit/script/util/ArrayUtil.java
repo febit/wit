@@ -67,9 +67,9 @@ public class ArrayUtil {
                 return ((byte[]) o1)[index];
             }//
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new ScriptRuntimeException("Array index out of bounds, index=" + index);
+            throw new ScriptRuntimeException(StringUtil.concat("Array index out of bounds, index=", index));
         }
-        throw new ScriptRuntimeException("Not an array: " + o1.getClass().getName());
+        throw new ScriptRuntimeException("Not an array: ".concat(o1.getClass().getName()));
     }
 
     @SuppressWarnings("unchecked")
@@ -114,11 +114,11 @@ public class ArrayUtil {
                 return;
             }//
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new ScriptRuntimeException("Array index out of bounds, index=" + index);
+            throw new ScriptRuntimeException(StringUtil.concat("Array index out of bounds, index=", index));
         } catch (ClassCastException e) {
             throw new ScriptRuntimeException(e.getMessage());
         }
-        throw new ScriptRuntimeException("Not an array: " + o1.getClass().getName());
+        throw new ScriptRuntimeException(StringUtil.concatObjectClass("Not an array: ", o1));
     }
 
     public static String arrayToString(final Object o1) {
@@ -150,12 +150,13 @@ public class ArrayUtil {
         else if (clazz == byte[].class) {
             return Arrays.toString((byte[]) o1);
         }//
-        throw new ScriptRuntimeException("Not an array: " + o1.getClass().getName());
+        throw new ScriptRuntimeException(StringUtil.concatObjectClass("Not an array: ", o1));
     }
 
     public static void invert(Object[] array) {
+        int i, j;
         Object cell;
-        for (int i = 0, j = array.length - 1; i < j; i++, j--) {
+        for (i = 0, j = array.length - 1; i < j; i++, j--) {
             cell = array[i];
             array[i] = array[j];
             array[j] = cell;

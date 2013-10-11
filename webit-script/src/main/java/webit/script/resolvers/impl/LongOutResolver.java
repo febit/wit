@@ -18,8 +18,10 @@ public class LongOutResolver implements OutResolver {
             final char[] buf;
             final int pos = NumberUtil.getChars(i, NumberUtil.SIZE, (buf = NumberUtil.get()));
             out.write(buf, pos, NumberUtil.SIZE - pos);
+            return;
         } else {
             out.write("-9223372036854775808");
+            return;
         }
     }
 

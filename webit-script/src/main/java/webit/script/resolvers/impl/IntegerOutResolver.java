@@ -20,8 +20,10 @@ public class IntegerOutResolver implements OutResolver, RegistModeResolver {
             final char[] buf;
             final int pos = NumberUtil.getChars(i, NumberUtil.SIZE, (buf = NumberUtil.get()));
             out.write(buf, pos, NumberUtil.SIZE - pos);
+            return;
         } else {
             out.write("-2147483648");
+            return;
         }
     }
 

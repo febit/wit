@@ -4,6 +4,7 @@ package webit.script.resolvers.impl;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
+import webit.script.util.StringUtil;
 import webit.script.util.collection.Iter;
 
 /**
@@ -55,6 +56,6 @@ public class IterGetResolver implements GetResolver {
                 break;
         }
 
-        throw new ScriptRuntimeException("Invalid property or can't read: webit.tl.util.collection.Iter#" + property);
+        throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: webit.tl.util.collection.Iter#", property));
     }
 }

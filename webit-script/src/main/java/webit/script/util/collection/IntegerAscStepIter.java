@@ -29,10 +29,11 @@ public class IntegerAscStepIter implements Iter<Integer> {
     }
 
     public Integer next() {
-        if (current >= to) {
+        if (current < to) {
+            return ++current;
+        } else {
             throw new NoSuchElementException("no more next");
         }
-        return ++current;
     }
 
     public boolean isFirst() {

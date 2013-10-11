@@ -78,7 +78,7 @@ public final class FieldInfoResolver {
     private Map<String, FieldInfo> fieldInfos = new HashMap<String, FieldInfo>();
 
     private static String lowerFirst(String string) {
-        return CharUtil.toLowerAscii(string.charAt(0)) + string.substring(1);
+        return String.valueOf(CharUtil.toLowerAscii(string.charAt(0))).concat(string.substring(1));
     }
 
     private FieldInfo getOrCreateFieldInfo(String name) {

@@ -101,8 +101,10 @@ public final class Context {
             if (object.getClass() == String.class) {
                 //if (object instanceof String) {
                 out.write((String) object);
+                return;
             } else {
                 resolverManager.render(out, object);
+                return;
             }
         }
     }

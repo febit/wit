@@ -156,7 +156,7 @@ public final class Engine {
                 }
             }
         } else {
-            throw new ResourceNotFoundException("Illegal template path" + name);
+            throw new ResourceNotFoundException("Illegal template path".concat(name));
         }
         return template;
     }
@@ -293,7 +293,7 @@ public final class Engine {
         final Logger logger;
         petite.setLogger(logger = engine.getLogger());
         if (logger != null && logger.isInfoEnabled()) {
-            logger.info("Loaded props files from classpath: {}", StringUtil.join(propsFiles, ", "));
+            logger.info("Loaded props files from classpath: ".concat(StringUtil.join(propsFiles, ", ")));
         }
 
         return engine;

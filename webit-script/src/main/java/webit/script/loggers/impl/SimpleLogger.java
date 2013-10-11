@@ -5,6 +5,7 @@ import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.loggers.Logger;
 import webit.script.util.MessageFormatter;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -30,7 +31,7 @@ public final class SimpleLogger implements Logger, Initable {
     private boolean _error = false;
 
     public void init(Engine engine) {
-        prefix = "[" + name + "] ";
+        prefix = StringUtil.concat("[", name, "] ");
         level = level.trim().toLowerCase();
 
         _error = true;
@@ -56,7 +57,7 @@ public final class SimpleLogger implements Logger, Initable {
         if (prefix == null) {
             return msg;
         }
-        return prefix + msg;
+        return prefix.concat(msg != null ? msg : "null");
     }
 
     private String getMessage(String msg, Object... args) {

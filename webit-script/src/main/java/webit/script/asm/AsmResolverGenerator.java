@@ -14,6 +14,7 @@ import webit.script.asm3.commons.GeneratorAdapter;
 import webit.script.asm3.commons.Method;
 import webit.script.asm3.commons.TableSwitchGenerator;
 import webit.script.util.ClassUtil;
+import webit.script.util.StringUtil;
 import webit.script.util.bean.FieldInfo;
 import webit.script.util.bean.FieldInfoResolver;
 import webit.script.util.collection.IntArrayList;
@@ -29,7 +30,7 @@ public class AsmResolverGenerator {
     private static final int MIN_SIZE_TO_SWITH = 4;
 
     private static String generateClassName(Class beanClass) {
-        return RESOLVERS_CLASS_NAME_PRE + beanClass.getSimpleName() + '_' + ASMUtil.getSn();
+        return StringUtil.concat(RESOLVERS_CLASS_NAME_PRE, beanClass.getSimpleName(), "_", Integer.toString(ASMUtil.getSn()));
     }
 
     public static Class generateResolver(Class beanClass) throws Exception {
@@ -40,13 +41,13 @@ public class AsmResolverGenerator {
 
             return ASMUtil.loadClass(className, code);
         } else {
-            throw new Exception("Class [" + beanClass.getName() + "] is not a public class");
+            throw new Exception(StringUtil.concat("Class [", beanClass.getName(), "] is not a public class"));
         }
     }
 
     private static byte[] generateClassBody(String className, Class beanClass) {
         final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC+ Opcodes.ACC_FINAL, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_RESOLVER);
+        classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_RESOLVER);
 
         //Default Constructor
         ASMUtil.attachDefaultConstructorMethod(classWriter);
@@ -277,17 +278,17 @@ public class AsmResolverGenerator {
     }
 
     private static void attachThrowUnreadableException(final GeneratorAdapter mg, final FieldInfo fieldInfo) {
-        ASMUtil.attachThrowScriptRuntimeException(mg, "Unreadable property " + fieldInfo.parent.getName() + "#" + fieldInfo.name);
+        ASMUtil.attachThrowScriptRuntimeException(mg, StringUtil.concat("Unreadable property ", fieldInfo.parent.getName(), "#", fieldInfo.name));
     }
 
     private static void attachThrowUnwriteableException(final GeneratorAdapter mg, final FieldInfo fieldInfo) {
-        ASMUtil.attachThrowScriptRuntimeException(mg, "Unwriteable property " + fieldInfo.parent.getName() + "#" + fieldInfo.name);
+        ASMUtil.attachThrowScriptRuntimeException(mg, StringUtil.concat("Unwriteable property ", fieldInfo.parent.getName(), "#", fieldInfo.name));
     }
 
     private static void attachThrowNoSuchPropertyException(final GeneratorAdapter mg, final Class beanClass) {
         mg.newInstance(ASMUtil.TYPE_SCRIPT_RUNTIME_EXCEPTION);
         mg.dup();
-        mg.push("Invalid property " + beanClass.getName() + "#");
+        mg.push(StringUtil.concat("Invalid property ", beanClass.getName(), "#"));
         mg.loadArg(1);
         mg.invokeVirtual(ASMUtil.TYPE_OBJECT, ASMUtil.METHOD_TO_STRING);
         mg.invokeVirtual(ASMUtil.TYPE_STRING, ASMUtil.METHOD_CONCAT);

@@ -4,6 +4,7 @@ package webit.script.core.ast.method;
 import java.lang.reflect.Array;
 import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -23,12 +24,12 @@ public class NativeNewArrayDeclare implements MethodDeclare {
             Object lenObject;
             if ((lenObject = args[0]) instanceof Number) {
                 if ((len = ((Number) lenObject).intValue()) < 0) {
-                    throw new ScriptRuntimeException("must given a nonnegative number as array's length: " + len);
+                    throw new ScriptRuntimeException(StringUtil.concat("must given a nonnegative number as array's length: ", len));
                 }
             } else {
-                throw new ScriptRuntimeException("must given a number as array's length, but get a: " + lenObject != null ? lenObject.getClass().getName() : "null");
+                throw new ScriptRuntimeException(StringUtil.concatObjectClass("must given a number as array's length, but get a: ", lenObject));
             }
-        }else{
+        } else {
             len = 0;
         }
 

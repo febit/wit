@@ -20,7 +20,7 @@ public abstract class AbstractLoader implements Loader, Initable {
     }
 
     protected String getRealPath(final String name) {
-        return root != null ? (root + name) : name.substring(1, name.length());
+        return root != null ? (root.concat(name)) : name.substring(1, name.length());
     }
 
     public String getRoot() {

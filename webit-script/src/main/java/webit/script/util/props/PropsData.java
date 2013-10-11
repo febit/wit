@@ -4,6 +4,7 @@ package webit.script.util.props;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import webit.script.util.StringUtil;
 
 /**
  * Props data storage for base and profile properties. Properties can be
@@ -63,7 +64,7 @@ class PropsData implements Cloneable {
         if (append || appendDuplicateProps) {
             PropsValue pv = map.get(key);
             if (pv != null) {
-                realValue = pv.value + APPEND_SEPARATOR + realValue;
+                realValue = StringUtil.concat(pv.value, APPEND_SEPARATOR, realValue);
             }
         }
         map.put(key, new PropsValue(realValue));
@@ -76,7 +77,6 @@ class PropsData implements Cloneable {
 //    public int countBaseProperties() {
 //        return baseProperties.size();
 //    }
-
     /**
      * Adds base property.
      */

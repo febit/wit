@@ -30,8 +30,8 @@ public class NativeNewArrayDeclareExpressionPart extends Position {
         }
 
         final String path;
-        if (_engine.checkNativeAccess(path = (classWaitCheck.getName() + ".[]")) == false) {
-            throw new ParseException("Not accessable of native path: " + path, line, column);
+        if (_engine.checkNativeAccess(path = (classWaitCheck.getName().concat(".[]"))) == false) {
+            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
 
         return new CommonMethodDeclareExpression(new NativeNewArrayDeclare(componentType), line, column);

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 import webit.script.exceptions.ParseException;
+import webit.script.util.StringUtil;
 import webit.script.util.collection.ArrayStack;
 import webit.script.util.collection.Stack;
 
@@ -127,7 +128,7 @@ public class VariantManager {
             current.put(name, (address = current.size()));
             return address;
         } else {
-            throw new ParseException("Duplicate Variant declare: " + name);
+            throw new ParseException("Duplicate Variant declare: ".concat(name));
         }
     }
 
@@ -135,7 +136,7 @@ public class VariantManager {
         int topindex = varWallStack.peek().value;
         Map<String, Integer> top = elements[topindex];
         if (top.containsKey(name)) {
-            throw new ParseException("Duplicate Variant declare: " + name);
+            throw new ParseException("Duplicate Variant declare: ".concat(name));
         }
         int address = top.size();
         top.put(name, address);
@@ -145,7 +146,7 @@ public class VariantManager {
     public int assignVariantForNextBlock(String name) {
         Map<String, Integer> next = next();
         if (next.containsKey(name)) {
-            throw new ParseException("Duplicate Variant declare: " + name);
+            throw new ParseException("Duplicate Variant declare: ".concat(name));
         }
         int address = next.size();
         next.put(name, address);
@@ -162,12 +163,12 @@ public class VariantManager {
                 return index;
             }
             if (force) {
-                throw new ParseException("Can't locate variant: " + name);
+                throw new ParseException("Can't locate variant: ".concat(name));
             } else {
                 return -1;
             }
         } else {
-            throw new ParseException("Stack overflow when locate variant in given upstair: " + name + '-' + upstair);
+            throw new ParseException(StringUtil.concat("Stack overflow when locate variant in given upstair: ", name, "-", Integer.toString(upstair)));
         }
     }
 
@@ -180,7 +181,7 @@ public class VariantManager {
             }
         }
         if (force) {
-            throw new ParseException("Can't locate variant: " + name);
+            throw new ParseException("Can't locate variant: ".concat(name));
         } else {
             return assignVariantAtTopWall(name);
         }

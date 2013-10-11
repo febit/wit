@@ -156,7 +156,7 @@ public class ALU {
         if (o1 != null && o2 != null) {
             switch (getBaseType(o1, o2)) {
                 case STRING:
-                    return String.valueOf(o1) + String.valueOf(o2);
+                    return String.valueOf(o1).concat(String.valueOf(o2));
                 case INTEGER:
                     return Integer.valueOf(((Number) o1).intValue() + ((Number) o2).intValue());
                 case LONG:
@@ -572,7 +572,7 @@ public class ALU {
                 //case DOUBLE:
                 //case FLOAT:
                 default:
-                    throw new ScriptRuntimeException("unsupported type:" + o1.getClass().getName());
+                    throw new ScriptRuntimeException(StringUtil.concatObjectClass("unsupported type:", o1));
             }
         } else {
             throw ValueIsNullException(o1);
@@ -599,7 +599,7 @@ public class ALU {
                     //case DOUBLE:
                     //case FLOAT:
                     default:
-                        throw new ScriptRuntimeException("left value type is unsupported:" + o1.getClass().getName());
+                        throw new ScriptRuntimeException(StringUtil.concatObjectClass("left value type is unsupported:", o1));
                 }
             }
             throw new ScriptRuntimeException("right value not a number");
@@ -627,7 +627,7 @@ public class ALU {
                     //case DOUBLE:
                     //case FLOAT:
                     default:
-                        throw new ScriptRuntimeException("left value type is unsupported:" + o1.getClass().getName());
+                        throw new ScriptRuntimeException(StringUtil.concatObjectClass("left value type is unsupported:", o1));
                 }
             }
             throw new ScriptRuntimeException("right value not a number");
@@ -655,7 +655,7 @@ public class ALU {
                     //case DOUBLE:
                     //case FLOAT:
                     default:
-                        throw new ScriptRuntimeException("left value type is unsupported:" + o1.getClass().getName());
+                        throw new ScriptRuntimeException(StringUtil.concatObjectClass("left value type is unsupported:", o1));
                 }
             }
             throw new ScriptRuntimeException("right value not a number");
@@ -666,7 +666,7 @@ public class ALU {
     //*******************
 
     private static ScriptRuntimeException UnsupportedTypeException(final Object o1, final Object o2) {
-        return new ScriptRuntimeException("Unsupported type: left[" + o1.getClass().getName() + "], right[" + o2.getClass().getName() + "]");
+        return new ScriptRuntimeException(StringUtil.concat("Unsupported type: left[", o1.getClass().getName(), "], right[", o2.getClass().getName(), "]"));
     }
 
     private static ScriptRuntimeException ValueIsNullException(final Object o1) {

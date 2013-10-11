@@ -1,6 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util.collection;
 
+import webit.script.util.StringUtil;
+
 /**
  *
  * @author Zqq
@@ -53,7 +55,7 @@ public final class ArrayStack<T> implements Stack<T> {
             elements[i] = null;
             return element;
         } else {
-            throw new IndexOutOfBoundsException("index=" + i);
+            throw new IndexOutOfBoundsException(StringUtil.concat("index=", i));
         }
     }
 
@@ -63,7 +65,7 @@ public final class ArrayStack<T> implements Stack<T> {
         if (offset >= 0 && (realIndex = size - offset - 1) >= 0) {
             return (T) elements[realIndex];
         } else {
-            throw new IndexOutOfBoundsException("offset=" + offset);
+            throw new IndexOutOfBoundsException(StringUtil.concat("offset=", offset));
         }
     }
 

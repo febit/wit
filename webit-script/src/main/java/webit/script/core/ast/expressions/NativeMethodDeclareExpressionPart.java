@@ -12,6 +12,7 @@ import webit.script.core.ast.method.AsmNativeMethodDeclare;
 import webit.script.core.ast.method.NativeMethodDeclare;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ClassUtil;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -46,8 +47,8 @@ public class NativeMethodDeclareExpressionPart extends Position {
     public CommonMethodDeclareExpression pop(Engine _engine) {
 
         final String path;
-        if (_engine.checkNativeAccess(path = (clazz.getName() + '.' + methodName)) == false) {
-            throw new ParseException("Not accessable of native path: " + path, line, column);
+        if (_engine.checkNativeAccess(path = (StringUtil.concat(clazz.getName(), ".", methodName))) == false) {
+            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
 
         try {
@@ -58,18 +59,18 @@ public class NativeMethodDeclareExpressionPart extends Position {
                     if (ClassUtil.isPublic(method)) {
                         try {
                             if ((caller = AsmMethodCallerManager.getCaller(method)) == null) {
-                                _engine.getLogger().error("AsmMethodCaller for '" + method.toString() + "' is null, and instead by NativeMethodDeclare");
+                                _engine.getLogger().error(StringUtil.concat("AsmMethodCaller for '", method.toString(), "' is null, and instead by NativeMethodDeclare"));
                             }
                         } catch (Throwable ex) {
                             caller = null;
-                            _engine.getLogger().error("Generate AsmMethodCaller for '" + method.toString() + "' failed, and instead by NativeMethodDeclare", ex);
+                            _engine.getLogger().error(StringUtil.concat("Generate AsmMethodCaller for '", method.toString(), "' failed, and instead by NativeMethodDeclare"), ex);
                         }
                     } else {
-                        _engine.getLogger().warn("'" + method.toString() + "' will not use asm, since this method is not public, and instead by NativeMethodDeclare");
+                        _engine.getLogger().warn(StringUtil.concat("'", method.toString(), "' will not use asm, since this method is not public, and instead by NativeMethodDeclare"));
                         caller = null;
                     }
                 } else {
-                    _engine.getLogger().warn("'" + method.toString() + "' will not use asm, since class is not public, and instead by NativeMethodDeclare");
+                    _engine.getLogger().warn(StringUtil.concat("'", method.toString(), "' will not use asm, since class is not public, and instead by NativeMethodDeclare"));
                     caller = null;
                 }
             } else {

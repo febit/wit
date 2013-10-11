@@ -10,6 +10,7 @@ import webit.script.resolvers.RegistModeResolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.resolvers.SetResolver;
 import webit.script.util.ArrayUtil;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -38,7 +39,7 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
             } else if ("isEmpty".equals(property)) {
                 return ArrayUtil.getSize(object) == 0;
             }
-            throw new ScriptRuntimeException("Invalid property or can't read: array#" + property);
+            throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: array#", property));
         }
     }
 
@@ -47,7 +48,7 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
             ArrayUtil.setByIndex(object, ((Number) property).intValue(), value);
             return true;
         } else {
-            throw new ScriptRuntimeException("Invalid property or can't write: array#" + property);
+            throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: array#", property));
         }
     }
 
@@ -67,10 +68,13 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
         final Class objClass;
         if ((objClass = bean.getClass()) == char[].class) {
             out.write((char[]) bean);
+            return;
         } else if (objClass == byte[].class) {
             out.write((byte[]) bean);
+            return;
         } else {
             out.write(ArrayUtil.arrayToString(bean));
+            return;
         }
     }
 }
