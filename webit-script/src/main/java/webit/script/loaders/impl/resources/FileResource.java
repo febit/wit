@@ -15,25 +15,25 @@ import webit.script.loaders.Resource;
  */
 public class FileResource implements Resource {
 
-    private final String path;
+    //private final String path;
+    private final File file;
     private final String encoding;
-    private long lastLoadTime;
+    private long lastModified;
 
     public FileResource(String path, String encoding) {
-        this.path = path;
+        //this.path = path;
         this.encoding = encoding;
+        this.file = new File(path);
     }
 
     public boolean isModified() {
-        return lastLoadTime > new File(this.path).lastModified();
+        return lastModified != file.lastModified();
     }
 
     public Reader openReader() throws IOException {
-        lastLoadTime = System.currentTimeMillis();
-        final InputStream inputStream = new FileInputStream(this.path);
-
-        return encoding == null
-                ? new InputStreamReader(inputStream)
-                : new InputStreamReader(inputStream, encoding);
+        lastModified = file.lastModified();
+        return new InputStreamReader(
+                new FileInputStream(file),
+                encoding);
     }
 }
