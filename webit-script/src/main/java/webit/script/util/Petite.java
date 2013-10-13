@@ -53,10 +53,15 @@ public final class Petite {
         parameters.putAll(parameters);
     }
 
-    public void defineParameters(Props props) {
-        //XXX: profiles support
-        //extractProps(final Map target, final String... profiles)
-        props.extractProps(this.parameters);
+    public void defineParameters(Props props, Map<String, Object> extraDirectParameters) {
+        if (props != null) {
+            //XXX: profiles support
+            //extractProps(final Map target, final String... profiles)
+            props.extractProps(this.parameters);
+        }
+        if (extraDirectParameters != null) {
+            this.parameters.putAll(extraDirectParameters);
+        }
     }
 
     public void defineParameter(String name, Object value) {

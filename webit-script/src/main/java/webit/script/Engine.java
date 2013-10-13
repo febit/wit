@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -259,7 +260,7 @@ public final class Engine {
         return createEngine(configPath, null);
     }
 
-    public static Engine createEngine(String configPath, Map parameters) {
+    public static Engine createEngine(String configPath, Map<Object, Object> parameters) {
 
         final Props props = new Props();
         //props.loadSystemProperties("sys");
@@ -272,12 +273,23 @@ public final class Engine {
             propsFiles = PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES);
         }
 
+        final Map<String, Object> extraDirectParameters = new HashMap<String, Object>();
         if (parameters != null) {
-            props.load(parameters);
+            String name;
+            Object value;
+            for (Map.Entry entry : parameters.entrySet()) {
+                name = String.valueOf(entry.getKey());
+                value = entry.getValue();
+                if (value instanceof String) {
+                    props.load(name, (String) value);
+                } else {
+                    extraDirectParameters.put(name, value);
+                }
+            }
         }
 
         Petite petite = new Petite();
-        petite.defineParameters(props);
+        petite.defineParameters(props, extraDirectParameters);
 
         final Engine engine = new Engine(petite);
 

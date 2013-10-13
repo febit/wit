@@ -17,7 +17,7 @@ public class PropsUtil {
 
     private final static int BUFFER_SIZE = 3072;
 
-    public static List<String> loadFromClasspath(final Props p, final String... pathSets) {
+    public static List<String> loadFromClasspath(final Props props, final String... pathSets) {
         final List<String> files = new LinkedList<String>();
 
 
@@ -60,7 +60,7 @@ public class PropsUtil {
                                         charsBuffer.append(buffer, 0, read);
                                     }
 
-                                    p.load(charsBuffer.toString());
+                                    props.load(charsBuffer.toString());
                                     files.add(path);
                                 } catch (IOException ignore) {
                                     //XXX:ignore
