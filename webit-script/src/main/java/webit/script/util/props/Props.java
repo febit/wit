@@ -200,6 +200,10 @@ public final class Props /* implements Cloneable */ {
         }
     }
 
+    public void load(final String name, final String value) {
+        data.putBaseProperty(name, value, false);
+    }
+
     /**
      * Loads base properties from java Map using provided prefix. Null values
      * are ignored.
@@ -213,7 +217,7 @@ public final class Props /* implements Cloneable */ {
             if (value == null) {
                 continue;
             }
-            data.putBaseProperty(realPrefix.concat(name) , value.toString(), false);
+            data.putBaseProperty(realPrefix.concat(name), value.toString(), false);
         }
     }
 
