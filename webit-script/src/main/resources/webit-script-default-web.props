@@ -1,0 +1,23 @@
+
+
+
+[webit.script.Engine]
+
+resourceLoaderClass=webit.script.web.loaders.ServletLoader
+
+resolvers +=webit.script.web.resolvers.HttpSessionResolver,\
+    webit.script.web.resolvers.HttpServletRequestResolver,\
+    webit.script.web.resolvers.HttpServletRequestParametersResolver,\
+    webit.script.web.resolvers.HttpServletRequestAttributesResolver
+
+
+
+[webit.script.web.loaders.ServletLoader]
+
+encoding=${DEFAULT_ENCODING}
+# root=/WEB-INF/you/template/path
+
+### servletContext will be setted by WebEngineUtil
+## servletContext=
+
+

@@ -1,9 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.loaders.impl;
+package webit.script.web.loaders;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.loaders.AbstractLoader;
 import webit.script.loaders.Resource;
@@ -13,7 +11,7 @@ import webit.script.loaders.impl.resources.FileResource;
  *
  * @author Zqq
  */
-public class ServletLoader extends AbstractLoader implements ServletContextListener {
+public class ServletLoader extends AbstractLoader {
 
     private ServletContext servletContext;
 
@@ -26,11 +24,7 @@ public class ServletLoader extends AbstractLoader implements ServletContextListe
         }
     }
 
-    public void contextInitialized(ServletContextEvent sce) {
-        servletContext = sce.getServletContext();
-    }
-
-    public void contextDestroyed(ServletContextEvent sce) {
-        servletContext = null;
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 }
