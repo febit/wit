@@ -19,18 +19,18 @@ import webit.script.util.props.Props;
  *
  * @author Zqq
  */
-public class WebEngineUtil {
+public class ServletEngineUtil {
 
     private final static int BUFFER_SIZE = 3072;
     private final static String DEFAULT_WEB_PROPERTIES = "/webit-script-default-web.props";
     private final static String SERVLET_LOADER_SERVLETCONTEXT = "webit.script.web.loaders.ServletLoader.servletContext";
 
-    public static Engine createEngine(ServletContext servletContext, String configFiles) {
+    public static Engine createEngine(final ServletContext servletContext, final String configFiles) {
         return createEngine(servletContext, configFiles, null);
     }
 
     @SuppressWarnings("unchecked")
-    public static Engine createEngine(ServletContext servletContext, String configFiles, Map extraSettings) {
+    public static Engine createEngine(final ServletContext servletContext, final String configFiles, final Map extraSettings) {
         //if (servletContext == null)  return null;
         final Map settings;
         final Props props;
@@ -43,7 +43,7 @@ public class WebEngineUtil {
         return Engine.createEngine(DEFAULT_WEB_PROPERTIES, settings);
     }
 
-    public static List<String> loadFromServletContextPath(final Props props, final String pathSet, ServletContext servletContext) {
+    public static List<String> loadFromServletContextPath(final Props props, final String pathSet, final ServletContext servletContext) {
         final List<String> files = new LinkedList<String>();
 
         String[] paths;
