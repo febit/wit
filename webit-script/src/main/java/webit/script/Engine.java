@@ -43,6 +43,8 @@ public final class Engine {
     private boolean enableAsmNative = true;
     private boolean looseVar = false;
     private boolean trimCodeBlockBlankLine = true;
+    private boolean appendLostFileNameExtension = false;
+    private String fileNameExtension = ".wtl";
     //
     private Logger logger;
     private Loader resourceLoader;
@@ -254,6 +256,22 @@ public final class Engine {
 
     public Logger getLogger() {
         return logger;
+    }
+
+    public boolean isAppendLostFileNameExtension() {
+        return appendLostFileNameExtension;
+    }
+
+    public void setAppendLostFileNameExtension(boolean appendLostFileNameExtension) {
+        this.appendLostFileNameExtension = appendLostFileNameExtension;
+    }
+
+    public String getFileNameExtension() {
+        return fileNameExtension;
+    }
+
+    public void setFileNameExtension(String fileNameExtension) {
+        this.fileNameExtension = fileNameExtension;
     }
 
     public static Engine createEngine(String configPath) {

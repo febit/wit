@@ -23,6 +23,8 @@ resolvers=\
 # enableAsmNative=true
 # looseVar=false
 # trimCodeBlockBlankLine=true
+# appendLostFileNameExtension=false
+# fileNameExtension=.wtl
 
 
 ### MutiFilter

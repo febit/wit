@@ -14,6 +14,10 @@ public abstract class AbstractLoader implements Loader, Initable {
 
     protected String encoding;
     protected String root = null;
+    protected boolean dontAppendLostFileNameExtension;
+    protected String fileNameExtension;
+    //
+    private boolean dontAppendLostFileNameExtensionSettedFlag = false;
 
     public String concat(final String parent, final String name) {
         return parent != null ? UnixStyleFileNameUtil.concat(UnixStyleFileNameUtil.getPath(parent), name) : name;
@@ -23,12 +27,17 @@ public abstract class AbstractLoader implements Loader, Initable {
         return root != null ? (root.concat(name)) : name.substring(1, name.length());
     }
 
-    public String getRoot() {
-        return root;
-    }
-
     public String normalize(String name) {
-        return name != null ? UnixStyleFileNameUtil.normalize(StringUtil.prefixChar(name, '/')) : null;
+        if (name != null) {
+            final String newName;
+            newName = UnixStyleFileNameUtil.normalize(StringUtil.prefixChar(name, '/'));
+            if (dontAppendLostFileNameExtension || newName.charAt(newName.length() - 1) == '/' || newName.endsWith(fileNameExtension)) {
+                return newName;
+            } else {
+                return newName.concat(fileNameExtension);
+            }
+        }
+        return null;
     }
 
     public void setRoot(String root) {
@@ -39,17 +48,28 @@ public abstract class AbstractLoader implements Loader, Initable {
         this.root = root;
     }
 
-    public String getEncoding() {
-        return encoding;
-    }
-
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public void setAppendLostFileNameExtension(boolean appendLostFileNameExtension) {
+        this.dontAppendLostFileNameExtension = !appendLostFileNameExtension;
+        dontAppendLostFileNameExtensionSettedFlag = true;
+    }
+
+    public void setFileNameExtension(String fileNameExtension) {
+        this.fileNameExtension = fileNameExtension;
     }
 
     public void init(Engine engine) {
         if (encoding == null) {
             encoding = engine.getEncoding();
+        }
+        if (dontAppendLostFileNameExtensionSettedFlag == false) {
+            dontAppendLostFileNameExtension = !engine.isAppendLostFileNameExtension();
+        }
+        if (fileNameExtension == null) {
+            fileNameExtension = engine.getFileNameExtension();
         }
     }
 }
