@@ -2,6 +2,7 @@
 
 package webit.script.core;
 
+import java.util.HashMap;
 import java.util.Map;
 import webit.script.core.VariantManager.VarAddress;
 import webit.script.core.ast.*;
@@ -797,9 +798,9 @@ nativeImportStat    ::= NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
 
 
 varStatmentPart     ::= VAR IDENTIFIER:ident
-                        {: assignVariant(ident,ident$Symbol.line,ident$Symbol.column); :}
+                        {: assignVariant(ident,ident$Symbol.line,ident$Symbol.column); RESULT = null;:}
                         |varStatmentPart COMMA IDENTIFIER:ident
-                        {: assignVariant(ident,ident$Symbol.line,ident$Symbol.column); :}
+                        {: assignVariant(ident,ident$Symbol.line,ident$Symbol.column); RESULT = null;:}
                         ;
 
 
@@ -823,7 +824,7 @@ importStatPart1     ::= IMPORT:sym expression:expr
                         ;
 
 
-importStatPart2     ::= |importStatPart1:part IDENTIFIER:ident
+importStatPart2     ::= importStatPart1:part IDENTIFIER:ident
                         {: RESULT = part.append(ident, createContextValue(ident, ident$Symbol.line, ident$Symbol.column)); :}
                         |importStatPart1:part contextValueExpr:valueExpr EQ IDENTIFIER:ident
                         {: RESULT = part.append(ident, valueExpr); :}
