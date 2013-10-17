@@ -5,12 +5,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CoderResult;
 import java.nio.charset.UnsupportedCharsetException;
 import webit.script.io.charset.Decoder;
+import webit.script.util.BufferPeers;
 
 /**
  *
@@ -20,39 +19,25 @@ public class DefaultDecoder implements Decoder {
 
     private final CharsetDecoder charsetDecoder;
     private final double expansionFactor;
+    private final BufferPeers bufferPeers;
 
-    public DefaultDecoder(String encoding) {
-        CharsetDecoder cd = newDecoder(encoding);
-        this.expansionFactor = (double) cd.maxCharsPerByte();
-        this.charsetDecoder = cd;
+    public DefaultDecoder(String encoding, BufferPeers bufferPeers) {
+        this.expansionFactor = (double) (this.charsetDecoder = newDecoder(encoding)).maxCharsPerByte();
+        this.bufferPeers = bufferPeers;
     }
 
     public void write(final byte[] bytes, final int offset, final int length, final Writer writer) throws IOException {
-        if (bytes == null || length == 0) {
-            return;
+        if (bytes != null && length != 0) {
+            final char[] chars; //new byte[new_len];
+            final CharsetDecoder decoder;
+            final CharBuffer cb;
+            (decoder = this.charsetDecoder).reset().decode(
+                    ByteBuffer.wrap(bytes, offset, length),
+                    cb = CharBuffer.wrap(chars = this.bufferPeers.getChars((int) (length * this.expansionFactor))),
+                    true);
+            decoder.flush(cb);
+            writer.write(chars, 0, cb.position());
         }
-        int chars_len = (int) (length * expansionFactor);
-        char[] chars = chars_len < ThreadLocalCache.CACH_MIN_LEN ? new char[chars_len] : ThreadLocalCache.getChars(chars_len); //new byte[new_len];
-
-        charsetDecoder.reset();
-        ByteBuffer bb = ByteBuffer.wrap(bytes, offset, length);
-        CharBuffer cb = CharBuffer.wrap(chars);
-        try {
-            CoderResult cr = charsetDecoder.decode(bb, cb, true);
-            if (!cr.isUnderflow()) {
-                cr.throwException();
-            }
-            cr = charsetDecoder.flush(cb);
-            if (!cr.isUnderflow()) {
-                cr.throwException();
-            }
-        } catch (CharacterCodingException x) {
-            // Substitution is always enabled,
-            // so this shouldn't happen
-            throw new Error(x);
-        }
-
-        writer.write(chars, 0, bb.position());
     }
 
     private static CharsetDecoder newDecoder(String csn) throws UnsupportedCharsetException {

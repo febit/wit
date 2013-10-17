@@ -17,7 +17,7 @@ public class UTF_8Test {
 
         byte[] expr = string.getBytes("utf-8");
         
-        int used = UTF_8.encode(string.toCharArray(), 0, string.length(), buffer);
+        int used = UTF_8.encode(buffer, string.toCharArray(), 0, string.length());
 
         if (used != expr.length) {
             return false;
