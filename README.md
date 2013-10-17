@@ -25,7 +25,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
         <dependency>
             <groupId>com.github.zqq90.webit-script</groupId>
             <artifactId>webit-script</artifactId>
-            <version>1.1.5</version>
+            <version>1.1.6</version>
         </dependency>
         ...
     </dependencies>
@@ -33,7 +33,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ### Or Add jars
 
- + `webit-script-1.1.5.jar`
+ + `webit-script-1.1.6.jar`
 
 ### Code in Java like this
 
@@ -57,7 +57,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
   `Tips: Java-Properties also works`
 + 多文件支持 "/webit-script-config1.props,/webit-script-config2.props"
 + 可选额外参数: extraSettingsMap 类型为Map, 支持props 宏
-+ 默认配置: [webitl-default.props] [default_config]
++ 默认配置: [webit-script-default.props] [default_config]
 
 ## Grammar(语法)
 
@@ -465,38 +465,15 @@ var a1 = isTrue ? "Yes" : "No";
 
 //简写
 var a2 = value ?: defaultValue; //取默认值
-// 在不严格意义上相当于 value ?  value  : defaultValue
-// 如果 value 是个表达式什么的(例如包含 ++ -- 或者 .next()), 
-// 我想你知道为什么说是"不严格意义上"
- 
-var a3 = list1 ?: list2;  // list1为空时 取 list2, !当然 list2是否为空什么的
-var a4 = list1 ?: list2 ?: list3; // 这样 就判断 list2 了, list3 就是终极defaultValue
-
 
 //自右向左 结合
-
-//这里很重要！相信你能搞明白！
 var x =  expr1 ?  expr3 :  expr2 ? expr4 : expr5;
 //这个等同于
 var x =  expr1 ?  expr3 :  (expr2 ? expr4 : expr5);
 // 如果 是 自左向右 就会变成这样
 var x =  (expr1 ?  expr3 :  expr2) ? expr4 : expr5;
-// 这么看 结果 肯定有出入了吧，
-//前者 候选人 expr3 expr4 expr5； 评委 expr1  expr2
-//后者 候选人 expr4 expr5；评委 expr1 expr3 expr2
-//PS: 后者 expr1 就是传说中的"V神" 啊有木有，前者的 expr2 顶多是 吃expr1 剩下的, 话说高考的话 第二志愿能录取 也不错，总比被V了好
 
-//来个更复杂的
-var x =  expr1 ?  expr3? expr6 : expr7 :  expr2 ? expr4 : expr5;
-// 自右向左 结合
-var x = expr1 ?  (expr3? expr6 : expr7) :  (expr2 ? expr4 : expr5);
-// 自左向右 结合
-var x = (expr1 ? (expr3 ? expr6 : expr7) :  expr2) ? expr4 : expr5;
-// What?  java里要求 expr1 expr3  expr6 expr7 expr2 都是 boolean(评委) ??!! java里不会出现这么变态的结合吧? 一堆boolean 用 ?: 有意义么？
-//是的 这下就明白了后者 真是 天外有天 V神中的V神, 评委海选选拔赛, 括弧笑
-
-
-//简写这个 你就按 从左向右 “执行”  别管结合性了
+//简写 就按 从左向右 “执行” 
 var a4 = list1 ?: list2 ?: list3;
 ~~~~~
 
@@ -685,13 +662,13 @@ details.
 
 
 
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.5/webit-script-1.1.5.jar
-[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.1.5/webit-script-joddinside-1.1.5.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.5/webit-script-1.1.5-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.5/webit-script-1.1.5-javadoc.jar
+[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.6/webit-script-1.1.6.jar
+[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.1.6/webit-script-joddinside-1.1.6.jar
+[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.6/webit-script-1.1.6-sources.jar
+[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.6/webit-script-1.1.6-javadoc.jar
 [url_props_doc]: http://jodd.org/doc/props.html
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
-[default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webitl-default.props
+[default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webit-script-default.props
 [new_issue]: https://github.com/zqq90/webit-script/issues/new
 [license]: https://github.com/zqq90/webit-script/blob/master/LICENSE
 
