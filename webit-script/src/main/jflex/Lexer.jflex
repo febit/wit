@@ -365,17 +365,17 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   "<<"                           { return symbol(LSHIFT); }
   ">>"                           { return symbol(RSHIFT); }
   ">>>"                          { return symbol(URSHIFT); }
-  "+="                           { return symbol(PLUSEQ); }
-  "-="                           { return symbol(MINUSEQ); }
-  "*="                           { return symbol(MULTEQ); }
-  "/="                           { return symbol(DIVEQ); }
-  "&="                           { return symbol(ANDEQ); }
-  "|="                           { return symbol(OREQ); }
-  "^="                           { return symbol(XOREQ); }
-  "%="                           { return symbol(MODEQ); }
-  "<<="                          { return symbol(LSHIFTEQ); }
-  ">>="                          { return symbol(RSHIFTEQ); }
-  ">>>="                         { return symbol(URSHIFTEQ); }
+  "+="                           { return symbol(SELFEQ, Operators.PLUSEQ); }
+  "-="                           { return symbol(SELFEQ, Operators.MINUSEQ); }
+  "*="                           { return symbol(SELFEQ, Operators.MULTEQ); }
+  "/="                           { return symbol(SELFEQ, Operators.DIVEQ); }
+  "&="                           { return symbol(SELFEQ, Operators.ANDEQ); }
+  "|="                           { return symbol(SELFEQ, Operators.OREQ); }
+  "^="                           { return symbol(SELFEQ, Operators.XOREQ); }
+  "%="                           { return symbol(SELFEQ, Operators.MODEQ); }
+  "<<="                          { return symbol(SELFEQ, Operators.LSHIFTEQ); }
+  ">>="                          { return symbol(SELFEQ, Operators.RSHIFTEQ); }
+  ">>>="                         { return symbol(SELFEQ, Operators.URSHIFTEQ); }
 
   "@"                            { return symbol(AT); }
   "=>"                           { return symbol(EQGT); }
