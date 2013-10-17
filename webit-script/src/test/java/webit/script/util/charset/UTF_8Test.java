@@ -61,7 +61,8 @@ public class UTF_8Test {
         assertTrue(matchEncode("中文"));
         assertTrue(matchEncode("┯┰┱╂╁┾"));
         assertTrue(matchEncode("ⅠⅡⅢⅣ㈣㈢⒈⒐⑽"));
-
+        assertTrue(matchEncode("\uD856\uDC65\uD866\uDC66"));
+        
     }
     
     
@@ -73,6 +74,7 @@ public class UTF_8Test {
         assertTrue(matchDencode("中文"));
         assertTrue(matchDencode("┯┰┱╂╁┾"));
         assertTrue(matchDencode("ⅠⅡⅢⅣ㈣㈢⒈⒐⑽"));
+        assertTrue(matchDencode("\uD856\uDC65\uD866\uDC66"));
 
     }
 }
