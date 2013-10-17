@@ -207,7 +207,8 @@ public class HttpServletRequestResolver implements GetResolver {
                 break;
             case -947967646:
                 if ("requestedSessionIdFromUrl" == property || "requestedSessionIdFromUrl".equals(property)) {
-                    return ((HttpServletRequest) bean).isRequestedSessionIdFromUrl();
+                    //return ((HttpServletRequest) bean).isRequestedSessionIdFromUrl();
+                    return ((HttpServletRequest) bean).isRequestedSessionIdFromURL();
                 }
                 break;
 //            case -934979389:
