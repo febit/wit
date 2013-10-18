@@ -2,6 +2,7 @@
 package webit.script.util;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -161,20 +162,16 @@ public class ClassUtil {
         return Class.forName(name, true, ClassLoaderUtil.getDefaultClassLoader());
     }
 
-    public static boolean isStatic(Method method) {
-        return Modifier.isStatic(method.getModifiers());
+    public static boolean isStatic(Member member) {
+        return Modifier.isStatic(member.getModifiers());
     }
 
     public static boolean isPublic(Class cls) {
         return Modifier.isPublic(cls.getModifiers());
     }
 
-    public static boolean isPublic(Method method) {
-        return Modifier.isPublic(method.getModifiers());
-    }
-
-    public static boolean isPublic(Constructor constructor) {
-        return Modifier.isPublic(constructor.getModifiers());
+    public static boolean isPublic(Member member) {
+        return Modifier.isPublic(member.getModifiers());
     }
 
     //XXX: rewrite

@@ -108,6 +108,10 @@ public class StringUtil {
         return string;
     }
 
+    public static String cutAndLowerFirst(String string, int from) {
+        return String.valueOf(CharUtil.toLowerAscii(string.charAt(from))).concat(string.substring(from + 1));
+    }
+
     /**
      * Joins list of iterable elements. Separator string may be
      * <code>null</code>.

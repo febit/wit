@@ -3,11 +3,11 @@ package webit.script.util.bean;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import webit.script.util.CharUtil;
+import webit.script.util.ClassUtil;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -19,25 +19,22 @@ public final class FieldInfoResolver {
         return new FieldInfoResolver(beanClass).resolver();
     }
     private final Class beanClass;
+    private final Map<String, FieldInfo> fieldInfos;
 
     public FieldInfoResolver(Class beanClass) {
+        this.fieldInfos = new HashMap<String, FieldInfo>();
         this.beanClass = beanClass;
     }
 
     public FieldInfo[] resolver() {
+        int i;
 
         Field[] fields = beanClass.getFields();
-
         Field field;
-        int modifiers;
-
-        for (int i = 0, len = fields.length; i < len; i++) {
-            field = fields[i];
-            modifiers = field.getModifiers();
-            if (Modifier.isStatic(modifiers) == false) {
+        i = fields.length;
+        while (i != 0) {
+            if (ClassUtil.isStatic(field = fields[--i]) == false) {
                 registField(field);
-            } else {
-                continue;
             }
         }
 
@@ -45,27 +42,29 @@ public final class FieldInfoResolver {
         Method method;
         String methodName;
         int argsCount;
-        for (int i = 0, len = methods.length; i < len; i++) {
-            method = methods[i];
-            modifiers = method.getModifiers();
-            if (Modifier.isStatic(modifiers) == false) {
+        int methodNameLength;
+        i = methods.length;
+        while (i != 0) {
+            if (ClassUtil.isStatic(method = methods[--i]) == false
+                    && method.getDeclaringClass() != Object.class) {
                 argsCount = method.getParameterTypes().length;
-                if (argsCount == 1 && method.getReturnType() == void.class) {
-                    methodName = method.getName();
-                    if (methodName.length() > 3
+                methodName = method.getName();
+                methodNameLength = methodName.length();
+                if (method.getReturnType() == void.class) {
+                    if (argsCount == 1
+                            && methodNameLength > 3
                             && methodName.startsWith("set")) {
-                        registSetterMethod(lowerFirst(methodName.substring(3)), method);
+                        registSetterMethod(StringUtil.cutAndLowerFirst(methodName, 3), method);
                     }
-                } else if (argsCount == 0) {
-                    methodName = method.getName();
-                    if (methodName.length() > 3
-                            && methodName.startsWith("get")
-                            && (methodName.equals("getClass") == false)) {
-
-                        registGetterMethod(lowerFirst(methodName.substring(3)), method);
-                    } else if (methodName.length() > 2
-                            && methodName.startsWith("is")) {
-                        registGetterMethod(lowerFirst(methodName.substring(2)), method);
+                } else {
+                    if (argsCount == 0) {
+                        if (methodNameLength > 3
+                                && methodName.startsWith("get")) {
+                            registGetterMethod(StringUtil.cutAndLowerFirst(methodName, 3), method);
+                        } else if (methodNameLength > 2
+                                && methodName.startsWith("is")) {
+                            registGetterMethod(StringUtil.cutAndLowerFirst(methodName, 2), method);
+                        }
                     }
                 }
             }
@@ -74,11 +73,6 @@ public final class FieldInfoResolver {
         final FieldInfo[] fieldInfoArray;
         Arrays.sort(fieldInfoArray = fieldInfos.values().toArray(new FieldInfo[fieldInfos.size()]));
         return fieldInfoArray;
-    }
-    private Map<String, FieldInfo> fieldInfos = new HashMap<String, FieldInfo>();
-
-    private static String lowerFirst(String string) {
-        return String.valueOf(CharUtil.toLowerAscii(string.charAt(0))).concat(string.substring(1));
     }
 
     private FieldInfo getOrCreateFieldInfo(String name) {
