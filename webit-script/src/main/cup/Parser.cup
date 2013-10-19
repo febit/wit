@@ -76,14 +76,6 @@ action code {:
     }
     
     NativeImportManager nativeImportMgr = new NativeImportManager();
-    
-    private void registPackage(ClassNameBand classNameBand, int line, int column) {
-        try {
-            nativeImportMgr.registPackage(classNameBand.getClassPureName());
-        } catch (ParseException e) {
-            throw e.setPosition(line, column);
-        }
-    }
 
     private void registClass(ClassNameBand classNameBand, int line, int column) {
         try {
@@ -726,8 +718,8 @@ statment            ::= expression_stat:expr SEMICOLON
                         //@import
                         |NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
                         {: registClass(nameBand, sym$Symbol.line, sym$Symbol.column); RESULT = NoneStatment.getInstance(); :}
-                        |NATIVE_IMPORT:sym classPureName:nameBand DOT MULT SEMICOLON
-                        {: registPackage(nameBand, sym$Symbol.line, sym$Symbol.column); RESULT = NoneStatment.getInstance(); :}
+                        //|NATIVE_IMPORT:sym classPureName:nameBand DOT MULT SEMICOLON
+                        //{: registPackage(nameBand, sym$Symbol.line, sym$Symbol.column); RESULT = NoneStatment.getInstance(); :}
                         
                         //BREAK
                         |BREAK:sym SEMICOLON

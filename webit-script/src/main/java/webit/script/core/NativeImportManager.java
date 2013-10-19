@@ -2,13 +2,10 @@
 package webit.script.core;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
-import webit.script.util.StringUtil;
 
 /**
  *
@@ -17,18 +14,9 @@ import webit.script.util.StringUtil;
 public class NativeImportManager {
 
     public Map<String, String> classes;
-    public Set<String> pkgs;
 
     public NativeImportManager() {
         classes = new HashMap<String, String>();
-        pkgs = new HashSet<String>();
-        registPackage("java.lang");
-    }
-
-    public final void registPackage(String pkgName) throws ParseException {
-        if (pkgs.add(pkgName) == false) {
-            throw new ParseException("Duplicate package register: ".concat(pkgName));
-        }
     }
 
     public boolean registClass(ClassNameBand classNameBand) throws ParseException {
@@ -46,41 +34,28 @@ public class NativeImportManager {
 
     }
 
-    protected String findFullClassName(String simpleName) {
-        String classPureName;
-
-        if ((classPureName = classes.get(simpleName)) != null) {
-            return classPureName;
-        }
-
-        //TODO:冲突检查
-        for (String pkg : pkgs) {
-            try {
-                classPureName = StringUtil.concat(pkg, ".", simpleName);
-                ClassUtil.getClass(classPureName);
-                classes.put(simpleName, classPureName); //put to cache
-                return classPureName;
-            } catch (ClassNotFoundException e) {
-                //ignore
-            }
-        }
-        return simpleName;
-    }
-
-    //XXX:need rewrite
     public Class<?> toClass(ClassNameBand classNameBand) {
         String classPureName;
         if (classNameBand.isSimpleName()) {
-
+            //1. find from @imports
+            //2. if not array, find from cached
+            //3. find from java.lang.*
+            //4. use simpleName
             String simpleName = classNameBand.getClassSimpleName();
-            if (classNameBand.isArray() == false) {
-                Class cls = ClassUtil.getCachedClass(simpleName);
-                if (cls != null) {
-                    return cls;
+            if ((classPureName = classes.get(simpleName)) == null) {
+                if (classNameBand.isArray() == false) {
+                    Class cls;
+                    if ((cls = ClassUtil.getCachedClass(simpleName)) != null) {
+                        return cls;
+                    }
+                }
+                try {
+                    classPureName = "java.lang.".concat(simpleName);
+                    ClassUtil.getClass(classPureName);
+                } catch (ClassNotFoundException e) {
+                    classPureName = simpleName;
                 }
             }
-            classPureName = findFullClassName(simpleName);
-
         } else {
             classPureName = classNameBand.getClassPureName();
         }

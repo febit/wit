@@ -22,3 +22,6 @@ webit\.script\.core\.java_cup\.runtime\.Symbol ([a-zA-Z_$]*?)\$Symbol = CUP\$Par
 =>
 return CUP\$Parser\$stack.peek($2).value;
 
+
+4. Optimize 3:
+//Object RESULT;
