@@ -2,6 +2,7 @@
 package webit.script.core.java_cup.runtime;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import webit.script.Engine;
 import webit.script.Template;
 import webit.script.core.Lexer;
@@ -10,6 +11,8 @@ import webit.script.core.ast.statments.PlaceHolderStatmentFactory;
 import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ParseException;
 import webit.script.loggers.Logger;
+import webit.script.util.ClassLoaderUtil;
+import webit.script.util.ClassUtil;
 import webit.script.util.ExceptionUtil;
 import webit.script.util.StringUtil;
 
@@ -21,7 +24,8 @@ import webit.script.util.StringUtil;
  * occurs, a reduce is performed. This involves removing the Symbols
  * corresponding to the column hand side of the production (the so called
  * "handle") and replacing them with the non-terminal from the line hand side of
- * the production. <p>
+ * the production.
+ * <p>
  *
  * To control the decision of whether to shift or reduce at any given point, the
  * parser uses a state machine (the "viable prefix recognition machine" built by
@@ -324,7 +328,6 @@ public abstract class lr_parser {
         handleSize = row[1];
 
         //String symbolName = nonTerminalNames[symId];
-
         final Symbol sym;
         final Stack<Symbol> stack = this._stack;
         //if (symbolNoRightLeft || handleSize == 0) {
@@ -765,28 +768,49 @@ public abstract class lr_parser {
 //
 //    }
 
-    /*-----------------------------------------------------------*/
-    /**
-     * Utility function: unpacks parse tables from strings
-     */
-    protected static short[][] unpackFromStrings(String pack) {
+//    /*-----------------------------------------------------------*/;
+//    /**
+//     * Utility function: unpacks parse tables from strings
+//     */
+//    protected static short[][] unpackFromStrings(String pack) {
+//        // Concatanate initialization strings.
+//        // location in initialization string
+//        int n, i, j, size2;
+//        short[] row;
+//        n = 0;
+//        int size1 = (((int) pack.charAt(n++)) << 16) | ((int) pack.charAt(n++));
+//        short[][] result = new short[size1][];
+//        i = 0;
+//        while (i < size1) {
+//            size2 = (((int) pack.charAt(n++)) << 16) | ((int) pack.charAt(n++));
+//            result[i++] = row = new short[size2];
+//            j = 0;
+//            while (j < size2) {
+//                row[j++] = (short) (pack.charAt(n++) - 2);
+//            }
+//        }
+//        return result;
+//    }
+
+    protected static short[][] loadFromDataFile(String name) {
         // Concatanate initialization strings.
         // location in initialization string
-        int n, i, j, size2;
-        short[] row;
-        n = 0;
-        int size1 = (((int) pack.charAt(n++)) << 16) | ((int) pack.charAt(n++));
-        short[][] result = new short[size1][];
-        i = 0;
-        while (i < size1) {
-            size2 = (((int) pack.charAt(n++)) << 16) | ((int) pack.charAt(n++));
-            result[i++] = row = new short[size2];
-            j = 0;
-            while (j < size2) {
-                row[j++] = (short) (pack.charAt(n++) - 2);
+        ObjectInputStream in = null;
+        try {
+            return (short[][]) (in = new ObjectInputStream(ClassLoaderUtil
+                    .getDefaultClassLoader()
+                    .getResourceAsStream(StringUtil.concat("webit/script/core/Parser$", name, ".data"))))
+                    .readObject();
+        } catch (Exception e) {
+            throw new Error(e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception e) {
+                }
             }
         }
-        return result;
     }
 
 //    private final static class VirtualParseStack {
