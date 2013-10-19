@@ -31,7 +31,6 @@ public class ServletEngineUtil {
 
     @SuppressWarnings("unchecked")
     public static Engine createEngine(final ServletContext servletContext, final String configFiles, final Map extraSettings) {
-        //if (servletContext == null)  return null;
         final Map settings;
         final Props props;
         loadFromServletContextPath(props = new Props(), configFiles, servletContext);
@@ -61,7 +60,7 @@ public class ServletEngineUtil {
             for (int j = 0; j < paths.length; j++) {
                 path = paths[j];
                 if (path != null && path.length() > 0) {
-                    //load from classpath
+                    //load from servletContext
                     if (path.charAt(0) == '/') {
                         path = path.substring(1);
                     }
@@ -81,16 +80,15 @@ public class ServletEngineUtil {
                             props.load(charsBuffer.toString());
                             files.add(path);
                         } catch (IOException ignore) {
-                            //XXX:ignore
+                            //XXX:ignore props IOException
                         } finally {
                             try {
                                 in.close();
                             } catch (Exception ignore) {
-                                //XXX:ignore
                             }
                             charsBuffer.clear();
                         }
-                    }//XXX: else ignore
+                    }//Note: else ignore not found props
                 }
             }
         }

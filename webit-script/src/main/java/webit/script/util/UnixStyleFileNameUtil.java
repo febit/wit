@@ -35,27 +35,23 @@ public class UnixStyleFileNameUtil {
         }
     }
 
-    //XXX:
     public static String concat(String basePath, String fullFilenameToAdd) {
-        if (basePath == null) {
-            return null;
-        }
         int prefix;
-        if ((prefix = getPrefixLength(fullFilenameToAdd)) < 0) {
-            return null;
-        }
-        if (prefix > 0) {
-            return doNormalize(fullFilenameToAdd, true);
-        }
         int len;
-        if ((len = basePath.length()) == 0) {
-            return doNormalize(fullFilenameToAdd, true);
+        if (basePath != null) {
+            if ((prefix = getPrefixLength(fullFilenameToAdd)) == 0 && (len = basePath.length()) != 0) {
+                if (isSeparator(basePath.charAt(len - 1))) {
+                    return doNormalize(basePath.concat(fullFilenameToAdd), true);
+                } else {
+                    return doNormalize(StringUtil.concat(basePath, "/", fullFilenameToAdd), true);
+                }
+            } else if (prefix > 0) {
+                return doNormalize(fullFilenameToAdd, true);
+            } else {
+                return null;
+            }
         }
-        if (isSeparator(basePath.charAt(len - 1))) {
-            return doNormalize(basePath + fullFilenameToAdd, true);
-        } else {
-            return doNormalize(StringUtil.concat(basePath, "/", fullFilenameToAdd), true);
-        }
+        return null;
     }
 
     /**
@@ -160,8 +156,7 @@ public class UnixStyleFileNameUtil {
 
     // ---------------------------------------------------------------- prefix
     /**
-     * Returns the length of the filename prefix, such as
-     * <code>C:/</code> or
+     * Returns the length of the filename prefix, such as <code>C:/</code> or
      * <code>~/</code>.
      * <p>
      * This method will handle a file in either Unix or Windows format.
@@ -196,20 +191,21 @@ public class UnixStyleFileNameUtil {
         if (filename == null) {
             return -1;
         }
-        int len = filename.length();
-        if (len == 0) {
+        int len;
+        if ((len = filename.length()) == 0) {
             return 0;
         }
-        char ch0 = filename.charAt(0);
-        if (ch0 == ':') {
+        char ch0;
+        if ((ch0 = filename.charAt(0)) == ':') {
             return -1;
         }
         if (len == 1) {
-            if (ch0 == '~') {
-                return 2;  // return a length greater than the input
-            }
-            return (isSeparator(ch0) ? 1 : 0);
+//            if (ch0 == '~') {
+//                return 2;  // return a length greater than the input
+//            }
+            return (isSeparator(ch0) ? 1 : (ch0 == '~' ? 2 : 0));
         } else {
+            char ch1;
             if (ch0 == '~') {
                 int posUnix = filename.indexOf(UNIX_SEPARATOR, 1);
                 int posWin = filename.indexOf(WINDOWS_SEPARATOR, 1);
@@ -219,18 +215,14 @@ public class UnixStyleFileNameUtil {
                 posUnix = (posUnix == -1 ? posWin : posUnix);
                 posWin = (posWin == -1 ? posUnix : posWin);
                 return Math.min(posUnix, posWin) + 1;
-            }
-            char ch1 = filename.charAt(1);
-            if (ch1 == ':') {
-                ch0 = Character.toUpperCase(ch0);
-                if (ch0 >= 'A' && ch0 <= 'Z') {
+            } else if ((ch1 = filename.charAt(1)) == ':') {
+                if ((ch0 >= 'A' && ch0 <= 'Z') || (ch0 >= 'a' && ch0 <= 'z')) {
                     if (len == 2 || isSeparator(filename.charAt(2)) == false) {
                         return 2;
                     }
                     return 3;
                 }
                 return -1;
-
             } else if (isSeparator(ch0) && isSeparator(ch1)) {
                 int posUnix = filename.indexOf(UNIX_SEPARATOR, 2);
                 int posWin = filename.indexOf(WINDOWS_SEPARATOR, 2);

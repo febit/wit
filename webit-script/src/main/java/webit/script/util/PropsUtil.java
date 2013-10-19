@@ -63,16 +63,15 @@ public class PropsUtil {
                                     props.load(charsBuffer.toString());
                                     files.add(path);
                                 } catch (IOException ignore) {
-                                    //XXX:ignore
+                                    //XXX:ignore props IOException
                                 } finally {
                                     try {
                                         in.close();
                                     } catch (Exception ignore) {
-                                        //XXX:ignore
                                     }
                                     charsBuffer.clear();
                                 }
-                            }//XXX: else ignore
+                            }//Note: else ignore not found props
                         }
                     }
                 }

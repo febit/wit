@@ -586,7 +586,7 @@ public abstract class lr_parser {
 //     * then doing the shift. If no suitable state exists on the _stack we return
 //     * false
 //     */
-//    private boolean find_recovery_config() {//XXX:
+//    private boolean find_recovery_config() {//X XX:
 //        Symbol error_token;
 //        int act;
 //
@@ -818,7 +818,7 @@ public abstract class lr_parser {
 //        VirtualParseStack(Stack<Symbol> shadowing_stack) {
 //
 //            real_stack = shadowing_stack;
-//            vstack = new Stack<Integer>(16);//XXX:
+//            vstack = new Stack<Integer>(16);//X XX:
 //            real_next = 0;
 //
 //            get_from_real();

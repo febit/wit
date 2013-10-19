@@ -707,7 +707,7 @@ public class ClassWriter{
             out.putInt(innerClasses.length + 2).putShort(innerClassesCount);
             out.putByteArray(innerClasses.data, 0, innerClasses.length);
         }
-        //TODO:ASM invalidFrames ????
+        //XXX:ASM invalidFrames ????
 //        if (invalidFrames) {
 //            ClassWriter cw = new ClassWriter(COMPUTE_FRAMES);
 //            new ClassReader(out.data).accept(cw, ClassReader.SKIP_FRAMES);

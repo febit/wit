@@ -55,8 +55,6 @@ public final class Petite {
 
     public void defineParameters(Props props, Map<String, Object> extraDirectParameters) {
         if (props != null) {
-            //XXX: profiles support
-            //extractProps(final Map target, final String... profiles)
             props.extractProps(this.parameters);
         }
         if (extraDirectParameters != null) {

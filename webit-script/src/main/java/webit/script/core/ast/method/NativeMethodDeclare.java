@@ -46,7 +46,7 @@ public final class NativeMethodDeclare implements MethodDeclare {
             if (args != null && args.length != 0 && args[0] != null) {
                 obj = args[0];
                 int copyLen;
-                //TODO: Warning 参数个数不一致
+                //XXX: Warning 参数个数不一致
                 System.arraycopy(args, 1, methodArgs = new Object[argsCount], 0, ((copyLen = args.length - 1) <= argsCount) ? copyLen : argsCount);
             } else {
                 throw new ScriptRuntimeException("this method need one argument at least");

@@ -9,14 +9,10 @@ import java.util.Map;
  */
 public final class VariantContext {
 
-    //private static final Object[] EMPTY_ARRAY = new Object[0];
     Object[] values;
     private final VariantMap varMap;
 
     public VariantContext(final VariantMap varMap) {
-        //this.varMap = varMap;
-        //int size;
-        //this.values = (size = varMap.size()) != 0 ? new Object[size] : EMPTY_ARRAY;
         this.values = new Object[(this.varMap = varMap).size()];
     }
 

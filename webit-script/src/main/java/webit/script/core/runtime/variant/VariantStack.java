@@ -11,7 +11,7 @@ import webit.script.exceptions.ScriptRuntimeException;
 public final class VariantStack {
 
     private static final int initialCapacity = 16;
-    //XXX: the first keeps null, real contexts start from index=1;
+    //NOTE: the first keeps null, real contexts start from index=1;
     private VariantContext[] contexts;
     //
     private int current;
@@ -27,7 +27,7 @@ public final class VariantStack {
         final int len;
         System.arraycopy(contexts, 0,
                 this.contexts = new VariantContext[initialCapacity > (len = contexts.length) ? initialCapacity : len + 3],
-                1, //XXX:skip top
+                1, //NOTE: skip top
                 len);
         currentContext = contexts[(current = len) - 1];
     }
@@ -74,7 +74,6 @@ public final class VariantStack {
         currentContext.values[index] = value;
     }
 
-    //XXX:
     public void resetCurrent() {
         final VariantContext context;
         if ((context = currentContext) != null) {
@@ -86,7 +85,6 @@ public final class VariantStack {
         }
     }
 
-    //XXX:
     public void resetCurrentWith(int index, Object value, int index2, Object value2) {
         final Object[] contextValues;
         int i = (contextValues = currentContext.values).length;
@@ -97,7 +95,6 @@ public final class VariantStack {
         contextValues[index2] = value2;
     }
 
-    //XXX:
     public void resetCurrentWith(int index, Object value, int index2, Object value2, int index3, Object value3) {
         final Object[] contextValues;
         int i = (contextValues = currentContext.values).length;
@@ -116,7 +113,7 @@ public final class VariantStack {
 //    public boolean set(String key, Object value) {
 //        VariantContext context;
 //        int i = current;
-//        while (i > 0) {//XXX:skip top
+//        while (i > 0) {//NOTE: skip top
 //            if ((context = contexts[i--]) != null && context.set(key, value)) {
 //                return true;
 //            }
@@ -148,7 +145,7 @@ public final class VariantStack {
         VariantContext context;
         int index;
         int i = current;
-        while (i > 0) {//XXX:skip top
+        while (i > 0) {//NOTE: skip top
             if ((context = contexts[i--]) != null && (index = context.getIndex(key)) >= 0) {
                 return context.get(index);
             }
@@ -165,7 +162,7 @@ public final class VariantStack {
 
     public VariantContext getContext(int offset) {
         final int realIndex;
-        if (offset >= 0 && (realIndex = current - offset) > 0) {//XXX:skip top
+        if (offset >= 0 && (realIndex = current - offset) > 0) {//NOTE: skip top
             return contexts[realIndex];
         } else {
             throw new IndexOutOfBoundsException();

@@ -3,6 +3,7 @@ package webit.script.security;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
+import webit.script.EngineManager;
 import webit.script.security.impl.DefaultNativeSecurityManager;
 
 /**
@@ -26,7 +27,7 @@ public class DefaultNativeSecurityManagerTest {
         DefaultNativeSecurityManager manager = new DefaultNativeSecurityManager();
 
         manager.setList(list);
-        manager.init(null); //XXX:
+        manager.init(EngineManager.getEngine());
 
         assertFalse(manager.access("a"));
         assertFalse(manager.access("a.aa"));

@@ -17,7 +17,6 @@ import webit.script.util.StringUtil;
 public class DefaultNativeSecurityManager implements NativeSecurityManager, Initable {
 
     //settings
-    //private String listFiles;
     private String list;
     //
     private final static String ROOT_NODE_NAME = "";
@@ -39,7 +38,6 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         rootNode.setAccess(false);
         nodes.put(ROOT_NODE_NAME, rootNode);
 
-        //do list
         if (list != null) {
             String[] nodeRules = StringUtil.splitc(list, DELIMITERS);
             StringUtil.trimAll(nodeRules);
@@ -125,7 +123,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
          */
         public final boolean setAccess(boolean access) {
             if (this.inherit == false) {
-                //already has a value
+                //if already has a value
                 //black list has higher priority
                 if (access == false) {
                     this.access = false;
