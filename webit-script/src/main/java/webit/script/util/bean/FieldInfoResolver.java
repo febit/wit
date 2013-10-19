@@ -27,13 +27,12 @@ public final class FieldInfoResolver {
     }
 
     public FieldInfo[] resolver() {
-        int i;
+        int i, len;
 
         Field[] fields = beanClass.getFields();
         Field field;
-        i = fields.length;
-        while (i != 0) {
-            if (ClassUtil.isStatic(field = fields[--i]) == false) {
+        for (i = 0, len = fields.length; i < len;) {
+            if (ClassUtil.isStatic(field = fields[i++]) == false) {
                 registField(field);
             }
         }
@@ -43,9 +42,8 @@ public final class FieldInfoResolver {
         String methodName;
         int argsCount;
         int methodNameLength;
-        i = methods.length;
-        while (i != 0) {
-            if (ClassUtil.isStatic(method = methods[--i]) == false
+        for (i = 0, len = methods.length; i < len;) {
+            if (ClassUtil.isStatic(method = methods[i++]) == false
                     && method.getDeclaringClass() != Object.class) {
                 argsCount = method.getParameterTypes().length;
                 methodName = method.getName();

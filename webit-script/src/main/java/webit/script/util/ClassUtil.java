@@ -166,8 +166,20 @@ public class ClassUtil {
         return Modifier.isStatic(member.getModifiers());
     }
 
+    public static boolean isStatic(Method method) {
+        return Modifier.isStatic(method.getModifiers());
+    }
+
     public static boolean isPublic(Class cls) {
         return Modifier.isPublic(cls.getModifiers());
+    }
+
+    public static boolean isPublic(Constructor member) {
+        return Modifier.isPublic(member.getModifiers());
+    }
+
+    public static boolean isPublic(Method member) {
+        return Modifier.isPublic(member.getModifiers());
     }
 
     public static boolean isPublic(Member member) {
