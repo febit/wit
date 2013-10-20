@@ -12,7 +12,6 @@ import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ParseException;
 import webit.script.loggers.Logger;
 import webit.script.util.ClassLoaderUtil;
-import webit.script.util.ClassUtil;
 import webit.script.util.ExceptionUtil;
 import webit.script.util.StringUtil;
 
@@ -206,9 +205,8 @@ public abstract class lr_parser {
      * parser generation time.
      *
      * @param act_num the internal index of the action to be performed.
-     * @param parser the parser object we are acting for.
-     * @param _stack the parse _stack of that object.
-     * @param top the index of the top element of the parse _stack.
+     * @return Object
+     * @throws java.lang.Exception
      */
     protected abstract Object do_action(int act_num) throws Exception;
 
@@ -217,8 +215,11 @@ public abstract class lr_parser {
      * Initialize the action object. This is called before the parser does any
      * parse actions. This is filled in by generated code to create an object
      * that encapsulates all action code.
+     * @throws java.lang.Exception
      */
-    protected abstract void init_actions() throws Exception;
+    protected void init_actions() throws Exception {
+    }
+
 
     /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
     /**
@@ -270,6 +271,7 @@ public abstract class lr_parser {
             /* otherwise binary search */
             first = 0;
             last = ((row_len - 1) >> 1) - 1;  /* leave out trailing default entry */
+
             int probe_2;
             while (first <= last) {
                 probe = (first + last) >> 1;
@@ -389,12 +391,12 @@ public abstract class lr_parser {
             Symbol sym = this.parse();
             _textStatmentFactory.finishTemplateParser(template);
             return (TemplateAST) sym.value;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw ExceptionUtil.castToParseException(e);
         } finally {
             try {
                 this.lexer.yyclose();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 //ignore
             }
         }
@@ -767,7 +769,6 @@ public abstract class lr_parser {
 //
 //
 //    }
-
 //    /*-----------------------------------------------------------*/;
 //    /**
 //     * Utility function: unpacks parse tables from strings
@@ -791,7 +792,6 @@ public abstract class lr_parser {
 //        }
 //        return result;
 //    }
-
     protected static short[][] loadFromDataFile(String name) {
         // Concatanate initialization strings.
         // location in initialization string
@@ -801,13 +801,15 @@ public abstract class lr_parser {
                     .getDefaultClassLoader()
                     .getResourceAsStream(StringUtil.concat("webit/script/core/Parser$", name, ".data"))))
                     .readObject();
-        } catch (Exception e) {
+        } catch (IOException e) {
+            throw new Error(e);
+        } catch (ClassNotFoundException e) {
             throw new Error(e);
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (Exception e) {
+                } catch (IOException e) {
                 }
             }
         }
