@@ -920,7 +920,7 @@ funcHead           ::= funcHeadPrepare:part IDENTIFIER:ident
 
 
 funcHeadPrepare     ::= FUNCTION:sym LPAREN
-                        {: varmgr.push(); varmgr.pushVarWall(); return new FunctionPart(%sym.line%,%sym.column%).setArgsIndex(varmgr.assignVariant("arguments", %sym.line%,%sym.column%)); :}
+                        {: varmgr.push(); varmgr.pushVarWall(); return new FunctionPart(varmgr.assignVariant("arguments", %sym.line%,%sym.column%), %sym.line%,%sym.column%); :}
                         ;
 
 

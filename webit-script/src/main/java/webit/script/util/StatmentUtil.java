@@ -53,6 +53,20 @@ public class StatmentUtil {
         }
     }
 
+    public static Object[] execute(final Expression[] expressions, final Context context) {
+        int i = 0;
+        final int len;
+        final Object[] results = new Object[len = expressions.length];
+        try {
+            for (i = 0; i < len; i++) {
+                results[i] = expressions[i].execute(context);
+            }
+            return results;
+        } catch (Throwable e) {
+            throw ExceptionUtil.castToScriptRuntimeException(e, expressions[i]);
+        }
+    }
+
     public static Object executeSetValue(final ResetableValueExpression expression, final Context context, final Object value) {
         try {
             return expression.setValue(context, value);

@@ -9,5 +9,5 @@ import webit.script.Context;
  */
 public interface MethodDeclare{
 
-    Object execute(Context context, Object[] args);
+    Object invoke(Context context, Object[] args);
 }

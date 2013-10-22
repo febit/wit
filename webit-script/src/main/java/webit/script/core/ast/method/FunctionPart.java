@@ -23,15 +23,11 @@ import webit.script.util.collection.IntArrayList;
 public final class FunctionPart extends Position {
 
     private final IntArrayList argIndexList; //with arguments at first
-    private int argsIndex;
+    private final int argsIndex;
 
-    public FunctionPart setArgsIndex(int argsIndex) {
-        this.argsIndex = argsIndex;
-        return this;
-    }
-
-    public FunctionPart(int line, int column) {
+    public FunctionPart(int argsIndex, int line, int column) {
         super(line, column);
+        this.argsIndex = argsIndex;
         this.argIndexList = new IntArrayList(6);
     }
 

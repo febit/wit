@@ -16,7 +16,7 @@ public class AsmNativeMethodDeclare implements MethodDeclare {
         this.caller = caller;
     }
 
-    public Object execute(final Context context, final Object[] args) {
+    public Object invoke(final Context context, final Object[] args) {
         return caller.execute(args);
     }
 }

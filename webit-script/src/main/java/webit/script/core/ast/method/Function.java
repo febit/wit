@@ -34,10 +34,11 @@ public final class Function extends AbstractStatment {
     }
 
     public Object execute(final Context context) {
-        return execute(context, null);
+        //Note: not support
+        return null;
     }
 
-    public Object execute(final Context context, final Object[] args) {
+    public Object invoke(final Context context, final Object[] args) {
 
         final VariantStack vars;
         (vars = context.vars).push(varMap);

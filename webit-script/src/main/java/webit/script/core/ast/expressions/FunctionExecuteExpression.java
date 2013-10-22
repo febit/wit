@@ -6,6 +6,7 @@ import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.method.MethodDeclare;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.util.ExceptionUtil;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -24,17 +25,9 @@ public final class FunctionExecuteExpression extends AbstractExpression {
     }
 
     public Object execute(final Context context) {
-
         final Object funcObject;
-
         if ((funcObject = StatmentUtil.execute(funcExpr, context)) instanceof MethodDeclare) {
-            final Object[] args = new Object[paramExprs.length];
-
-            for (int i = 0; i < args.length; i++) {
-                args[i] = StatmentUtil.execute(paramExprs[i], context);
-            }
-
-            return ((MethodDeclare) funcObject).execute(context, args);
+            return ((MethodDeclare) funcObject).invoke(context, StatmentUtil.execute(paramExprs, context));
         } else {
             throw new ScriptRuntimeException("not a function");
         }

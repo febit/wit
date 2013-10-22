@@ -23,9 +23,9 @@ public final class FunctionMethodDeclare implements MethodDeclare {
         this.parentVarContexts = parentVarContexts;
     }
 
-    public Object execute(final Context context, final Object[] args) {
+    public Object invoke(final Context context, final Object[] args) {
         try {
-            return function.execute(new Context(context, template, parentVarContexts), args);
+            return function.invoke(new Context(context, template, parentVarContexts), args);
         } catch (Throwable e) {
             throw template == context.template
                     ? ExceptionUtil.castToScriptRuntimeException(e, function)
