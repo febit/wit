@@ -2,8 +2,12 @@
 
 package webit.script.core;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import webit.script.asm.AsmMethodCaller;
+import webit.script.asm.AsmMethodCallerManager;
 import webit.script.core.VariantManager.VarAddress;
 import webit.script.core.ast.*;
 import webit.script.core.ast.expressions.*;
@@ -13,24 +17,28 @@ import webit.script.core.java_cup.runtime.Stack;
 import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ClassNameBand;
+import webit.script.util.ClassUtil;
 import webit.script.util.StatmentUtil;
+import webit.script.util.StringUtil;
 
 
 parser code {:
     public Parser() {
         super(START_STATE, PRODUCTION_TABLE, ACTION_TABLE, REDUCE_TABLE);
+        nativeImportMgr = new NativeImportManager();
+        varmgr = new VariantManager();
+        labelsIndexMap = new HashMap<String, Integer>();
+        labelsIndexMap.put(null, 0);
     }
     
     private Stack<Symbol> getStack() {
         return this._stack;
     }
 
-    private final NativeImportManager nativeImportMgr = new NativeImportManager();
-    private final VariantManager varmgr = new VariantManager();
-    private final Map<String, Integer> labelsIndexMap = new HashMap<String, Integer>();
-    {
-        labelsIndexMap.put(null, 0);
-    }
+    private final NativeImportManager nativeImportMgr;
+    private final VariantManager varmgr;
+    private final Map<String, Integer> labelsIndexMap;
+
     private int currentLabelIndex = 0;
     private int getLabelIndex(String label){
         Integer index;
@@ -38,51 +46,6 @@ parser code {:
             labelsIndexMap.put(label, index = ++currentLabelIndex);
         }
         return index;
-    }
-    
-    private void registClass(ClassNameBand classNameBand, int line, int column) {
-        try {
-            nativeImportMgr.registClass(classNameBand);
-        } catch (ParseException e) {
-            throw e.setPosition(line, column);
-        }
-    }
-    
-    private Class<?> toClass(ClassNameBand classNameBand, int line, int column) {
-        try {
-            return nativeImportMgr.toClass(classNameBand);
-        } catch (ParseException e) {
-            throw e.setPosition(line, column);
-        }
-    }
-
-    private void pushVarMgrForFunction(){
-        varmgr.push();
-        varmgr.pushVarWall();
-    }
-
-    private int assignVariant(String ident, int line, int column) {
-        try {
-            return varmgr.assignVariant(ident);
-        } catch (ParseException e) {
-            throw e.setPosition(line, column);
-        }
-    }
-
-    private int locateVarAtUpstairForce(String name, int upstair, int line, int column) {
-        try {
-            return varmgr.locateAtUpstair(name, upstair, true);
-        } catch (ParseException e) {
-            throw e.setPosition(line, column);
-        }
-    }
-
-    private VarAddress locateVar(String name, int line, int column) {
-        try {
-            return varmgr.locate(name, this.locateVarForce);
-        } catch (ParseException e) {
-            throw e.setPosition(line, column);
-        }
     }
 
     private ForInStatmentPart createForInStatmentPart(String item, Expression items, int line, int column){
@@ -108,39 +71,139 @@ parser code {:
         }
     }
 
-    private BlockStatmentPart createBlockStatmentPart(int line, int column) {
-        varmgr.push();
-        return new BlockStatmentPart(line, column);
-    }
-
-    private IBlockStatment createBlockStatment(BlockStatmentPart part) {
-        return part.setVarMap(varmgr.pop()).pop();
-    }
-
     private ResetableValueExpression createContextValue(String name, int line, int column) {
         VarAddress addr;
-        return (addr = locateVar(name, line, column)).upstairs == 0
+        return (addr = varmgr.locate(name, this.locateVarForce, line, column)).upstairs == 0
                 ? new CurrentContextValue(addr.index, name, line, column)
                 : new ContextValue(addr.upstairs, addr.index, name, line, column);
     }
 
     private ResetableValueExpression createContextValue(int upstair, String name, int line, int column) {
-        int index = locateVarAtUpstairForce(name, upstair, line, column);
+        int index = varmgr.locateAtUpstair(name, upstair, true, line, column);
         return upstair == 0
                 ? new CurrentContextValue(index, name, line, column)
                 : new ContextValue(upstair, index, name, true, line, column);
     }
 
-    private ResetableValueExpression castToResetableValueExpression(Expression rexpr, int line, int column) {
-        if(rexpr instanceof ResetableValueExpression){
-            return (ResetableValueExpression) rexpr;
-        }else{
-            throw new ParseException("Invalid expression to redirect out stream to, must be rewriteable", line, column);
+    public CommonMethodDeclareExpression popNativeNewArrayDeclare(Class componentType, int line, int column) {
+        Class classWaitCheck = componentType;
+        while (classWaitCheck.isArray()) {
+            classWaitCheck = classWaitCheck.getComponentType();
+        }
+
+        if (classWaitCheck == Void.class || classWaitCheck == Void.TYPE) {
+            throw new ParseException("ComponentType must not Void.class", line, column);
+        }
+
+        final String path;
+        if (engine.checkNativeAccess(path = (classWaitCheck.getName().concat(".[]"))) == false) {
+            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+        }
+
+        return new CommonMethodDeclareExpression(new NativeNewArrayDeclare(componentType), line, column);
+    }
+
+    public CommonMethodDeclareExpression popNativeMethodDeclare(Class clazz, String methodName, ClassNameList list, int line, int column) {
+
+        final String path;
+        if (engine.checkNativeAccess(path = (StringUtil.concat(clazz.getName(), ".", methodName))) == false) {
+            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+        }
+
+        try {
+            final Method method = ClassUtil.searchMethod(clazz, methodName, list.toArray(), false);
+            AsmMethodCaller caller;
+            if (engine.isEnableAsmNative()) {
+                if (ClassUtil.isPublic(clazz)) {
+                    if (ClassUtil.isPublic(method)) {
+                        try {
+                            if ((caller = AsmMethodCallerManager.getCaller(method)) == null) {
+                                logger.error(StringUtil.concat("AsmMethodCaller for '", method.toString(), "' is null, and instead by NativeMethodDeclare"));
+                            }
+                        } catch (Exception ex) {
+                            caller = null;
+                            logger.error(StringUtil.concat("Generate AsmMethodCaller for '", method.toString(), "' failed, and instead by NativeMethodDeclare"), ex);
+                        }
+                    } else {
+                        logger.warn(StringUtil.concat("'", method.toString(), "' will not use asm, since this method is not public, and instead by NativeMethodDeclare"));
+                        caller = null;
+                    }
+                } else {
+                    logger.warn(StringUtil.concat("'", method.toString(), "' will not use asm, since class is not public, and instead by NativeMethodDeclare"));
+                    caller = null;
+                }
+            } else {
+                caller = null;
+            }
+
+            return new CommonMethodDeclareExpression(caller != null
+                    ? new AsmNativeMethodDeclare(caller)
+                    : new NativeMethodDeclare(method),
+                    line, column);
+
+        } catch (NoSuchMethodException ex) {
+            throw new ParseException(ex.getMessage(), line, column);
+        } catch (SecurityException ex) {
+            throw new ParseException(ex.getMessage(), line, column);
         }
     }
 
-    private Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column){
-        ResetableValueExpression leftExpr = castToResetableValueExpression(lexpr, line, column);
+    @SuppressWarnings("unchecked")
+    public CommonMethodDeclareExpression popNativeConstructorDeclare(Class clazz, ClassNameList list, int line, int column) {
+
+        final String path;
+        if (engine.checkNativeAccess(path = (clazz.getName() + ".<init>")) == false) {
+            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+        }
+
+        try {
+            final Constructor constructor = clazz.getConstructor(list.toArray());
+            AsmMethodCaller caller;
+            if (engine.isEnableAsmNative()) {
+                if (ClassUtil.isPublic(clazz)) {
+                    if (ClassUtil.isPublic(constructor)) {
+                        try {
+                            if ((caller = AsmMethodCallerManager.getCaller(constructor)) == null) {
+                                logger.error(StringUtil.concat("AsmMethodCaller for '", constructor.toString(), "' is null, and instead by NativeConstructorDeclare"));
+                            }
+                        } catch (Exception ex) {
+                            caller = null;
+                            logger.error(StringUtil.concat("Generate AsmMethodCaller for '", constructor.toString(), "' failed, and instead by NativeConstructorDeclare"), ex);
+                        }
+                    } else {
+                        logger.warn(StringUtil.concat("'", constructor.toString(), "' will not use asm, since this method is not public, and instead by NativeConstructorDeclare"));
+                        caller = null;
+                    }
+                } else {
+                    logger.warn(StringUtil.concat("'" + constructor.toString() + "' will not use asm, since class is not public, and instead by NativeConstructorDeclare"));
+                    caller = null;
+                }
+            } else {
+                caller = null;
+            }
+
+            return new CommonMethodDeclareExpression(caller != null
+                    ? new AsmNativeMethodDeclare(caller)
+                    : new NativeConstructorDeclare(constructor),
+                    line, column);
+
+        } catch (NoSuchMethodException ex) {
+            throw new ParseException(ex.getMessage(), line, column);
+        } catch (SecurityException ex) {
+            throw new ParseException(ex.getMessage(), line, column);
+        }
+    }
+
+    private static ResetableValueExpression castToResetableValueExpression(Expression expr) {
+        if(expr instanceof ResetableValueExpression){
+            return (ResetableValueExpression) expr;
+        }else{
+            throw new ParseException("Invalid expression to redirect out stream to, must be rewriteable", expr);
+        }
+    }
+
+    private static Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column){
+        ResetableValueExpression leftExpr = castToResetableValueExpression(lexpr);
         SelfOperator oper;
         switch (sym) {
 
@@ -190,7 +253,7 @@ parser code {:
         return StatmentUtil.optimize(oper);
     }
 
-    private Expression createBinaryOperator(Expression leftExpr, int sym, Expression rightExpr, int line, int column) {
+    private static Expression createBinaryOperator(Expression leftExpr, int sym, Expression rightExpr, int line, int column) {
 
         BinaryOperator oper;
         switch (sym) {
@@ -280,11 +343,9 @@ terminal Integer    VAR,
                     ECHO,
                     STATIC, NATIVE,
                     IMPORT, INCLUDE, NATIVE_IMPORT,
-                    BREAK, CONTINUE, RETURN
-                    ;
+                    BREAK, CONTINUE, RETURN,
 
-
-terminal Integer    PLUSPLUS, MINUSMINUS,  // ++ ==
+                    PLUSPLUS, MINUSMINUS,  // ++ ==
                     PLUS, MINUS, MULT, DIV, MOD,  // + - * /
                     LSHIFT, RSHIFT, URSHIFT,  // << >> >>>
                     LT, GT, LTEQ, GTEQ, EQEQ, NOTEQ,  // < > <= >= == !=
@@ -297,7 +358,7 @@ terminal Integer    PLUSPLUS, MINUSMINUS,  // ++ ==
                     COLON,  // :
                     COMMA,  // ,
                     SEMICOLON,  // ;
-                    LBRACE, RBRACE,  // { }
+                    LBRACE, RBRACE, PLACE_HOLDER_END, // { }
                     LPAREN, RPAREN,  // ( )
                     LBRACK, RBRACK,  // [ ]
                     EQGT,  // =>
@@ -308,105 +369,59 @@ terminal Integer    PLUSPLUS, MINUSMINUS,  // ++ ==
 
 
 terminal String     IDENTIFIER; // Ident
-
-
+terminal char[]     TEXT_STATMENT;
+terminal Object     DIRECT_VALUE;
+/*
 terminal Number     INTEGER_LITERAL;
 terminal Number     FLOATING_POINT_LITERAL;
 terminal Boolean    BOOLEAN_LITERAL;
 terminal Character  CHARACTER_LITERAL;
 terminal String     STRING_LITERAL;
-
 terminal            NULL_LITERAL;
-
-
-terminal Integer    PLACE_HOLDER_END; // "}"
-terminal char[]     TEXT_STATMENT;
+*/
+ 
 
 
 /* non terminal */
 
-non terminal directValue;
-non terminal ClassNameBand classPureName;
-non terminal ClassNameBand className;
+non terminal ClassNameBand classPureName, className;
 
 /* TemplateAST */
 non terminal TemplateAST templateAST;
-non terminal TemplateASTPart templateASTPart;
-
-
-/* function */
-non terminal FunctionPart funcPart,funcPart0,funcPart1;
-
-non terminal Expression funcExecuteExpr;
-
-non terminal FunctionExecuteExpressionPart funcExecuteExprPart0, funcExecuteExprPart1;
-
-
-non terminal NativeMethodDeclareExpressionPart nativeMethodExprPart, nativeMethodExprPart1;
-
-non terminal NativeConstructorDeclareExpressionPart nativeConstructorExprPart1, nativeConstructorExprPart;
-
 
 /* Statment */
+non terminal StatmentList statmentList;
 
-non terminal Statment statment;
-
-non terminal Statment varStatment;
-non terminal varStatmentPart;
-
-non terminal Statment includeStat;  // include
-non terminal Statment importStat;  // import
+non terminal Statment statment, forInStat, ifStat, forMapStat, whileStat, switchStat;
+non terminal IBlockStatment blockStat, caseBlockStat;
+non terminal Object varStatmentPart;
 non terminal ImportStatmentPart  importStatPart1, importStatPart2;
-
-
-non terminal BlockStatmentPart blockStatPart;
-
-non terminal IBlockStatment blockStat;
-non terminal Statment forInStat;
-non terminal Statment ifStat;
-non terminal Statment forMapStat;
-non terminal Statment whileStat;
-non terminal Statment switchStat;
-
-
-non terminal BlockStatmentPart caseBlockStatPart;
-non terminal IBlockStatment caseBlockStat;
+non terminal Object blockStatPrepare, blockStatPrepare2;
 non terminal SwitchStatmentPart switchStatPart, switchStatPart0;
 non terminal ForInStatmentPart forInStatPart, forInStatPart0, forInStatPart1;
 non terminal ForMapStatmentPart forMapStatPart, forMapStatPart0, forMapStatPart1;
 non terminal WhileStatmentPart whileStatPart, whileStatPart0;
 non terminal IfStatmentPart ifStatPart;
 
-
-/* special Operators */
-
-
-non terminal Expression expression;
-non terminal Expression expression_stat;
-
-
-non terminal ArrayValuePart arrayValuePart;
-
-non terminal MapValuePart mapValuePart;
+/* Expression */
+non terminal Expression expression, expression_statmentable;
+non terminal ExpressionList expressionList, expressionList1;
+non terminal MapKeyValue mapKeyValue;
 non terminal MapValue mapValue;
-
-/* Operators */
 
 non terminal String contextValueIdent;
 non terminal Integer superCount;
 non terminal ResetableValueExpression contextValueExpr; // 
+non terminal ClassNameList classNameList, classNameList1;
 
-
+/* function */
+non terminal Expression funcExecuteExpr;
+non terminal FunctionPart funcHeadPrepare, funcHead;
 
 
 /* precedence */
-
 precedence left     SEMICOLON; // ;
-
-precedence right    SELFEQ,  // (+ - * / %)=  (<< >> >>>)=  (& ^ |)=
-                    EQ // = 
-                    ;
-
+precedence right    SELFEQ, EQ; // (+ - * / %)=  (<< >> >>>)=  (& ^ |)=  = 
 precedence left     DOTDOT;  // ..
 precedence right    QUESTION, QUESTION_COLON; // [? : ] ?:
 precedence left     OROR; // ||
@@ -427,15 +442,14 @@ precedence left     DOT, LBRACK, LPAREN, LBRACE, AT; // . [ ( { @
 
 /* templateAST */
 
-templateAST            ::= templateASTPart:part
-                        {: return (%part%).setVarMap(varmgr.pop()).pop(); :}
+templateAST            ::= statmentList:list
+                        {: return (%list%).popTemplateAST(varmgr.pop()); :}
                         ;
 
-
-templateASTPart        ::= templateASTPart:part statment:stat
-                        {: return (%part%).append(%stat%); :}
-                        |
-                        {: return new TemplateASTPart(); :}
+statmentList           ::= 
+                        {: return new StatmentList(); :}
+                        |statmentList:list statment:stat
+                        {: return (%list%).add(%stat%); :}
                         ;
 
 
@@ -454,14 +468,12 @@ className           ::= classPureName:part
 
 /* special Statments  */
 
-statment            ::= expression_stat:expr SEMICOLON
+statment            ::= expression_statmentable:expr SEMICOLON
                         {: return %expr%; :}
                         |SEMICOLON
                         {: return NoneStatment.getInstance(); :}
                         |expression:expr PLACE_HOLDER_END
                         {: return placeHolderStatmentFactory.creatPlaceHolderStatment(%expr%); :}
-                        |varStatment:stat
-                        {: return %stat%; :}
                         |blockStat:stat
                         {: return %stat%; :}
                         |ifStat:stat
@@ -474,14 +486,10 @@ statment            ::= expression_stat:expr SEMICOLON
                         {: return %stat%; :}
                         |switchStat:stat
                         {: return %stat%; :}
-                        |importStat:stat
-                        {: return %stat%; :}
-                        |includeStat:stat
-                        {: return %stat%; :}
 
                         //redirectOutStat
                         |blockStat:stat EQGT:sym expression:expr SEMICOLON
-                        {: return new RedirectOutStatment(%stat%, castToResetableValueExpression(%expr%, %sym.line%, %sym.column%), %sym.line%, %sym.column%); :}
+                        {: return new RedirectOutStatment(%stat%, castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
 
                         //textStat
                         |TEXT_STATMENT:sym
@@ -497,9 +505,7 @@ statment            ::= expression_stat:expr SEMICOLON
 
                         //@import
                         |NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
-                        {: registClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatment.getInstance(); :}
-                        //|NATIVE_IMPORT:sym classPureName:nameBand DOT MULT SEMICOLON
-                        //{: registPackage(%nameBand%, %sym.line%, %sym.column%); return NoneStatment.getInstance(); :}
+                        {: nativeImportMgr.registClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatment.getInstance(); :}
                         
                         //BREAK
                         |BREAK:sym SEMICOLON
@@ -518,16 +524,28 @@ statment            ::= expression_stat:expr SEMICOLON
                         {: return new ReturnStatment(null, %sym.line%, %sym.column%); :}
                         |RETURN:sym expression:expr SEMICOLON
                         {: return new ReturnStatment(%expr%, %sym.line%, %sym.column%); :}
-                        ;
 
+                        //importStat
+                        |importStatPart1:part SEMICOLON
+                        {: return (%part%).pop(); :}
+                        |importStatPart2:part SEMICOLON
+                        {: return (%part%).pop(); :}
+
+                        //includeStat
+                        |INCLUDE:sym expression:expr SEMICOLON
+                        {: return new IncludeStatment(%expr%, null, %sym.line%, %sym.column%); :}
+                        |INCLUDE:sym expression:expr mapValue:paramsExpr SEMICOLON
+                        {: return new IncludeStatment(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
+                        |INCLUDE:sym expression:expr LBRACE expression:paramsExpr RBRACE SEMICOLON
+                        {: return new IncludeStatment(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
+                        ;
 
 
 varStatmentPart     ::= VAR IDENTIFIER:ident
-                        {: assignVariant(%ident%,%ident.line%,%ident.column%); return null;:}
+                        {: varmgr.assignVariant(%ident%,%ident.line%,%ident.column%); return null;:}
                         |varStatmentPart COMMA IDENTIFIER:ident
-                        {: assignVariant(%ident%,%ident.line%,%ident.column%); return null;:}
+                        {: varmgr.assignVariant(%ident%,%ident.line%,%ident.column%); return null;:}
                         ;
-
 
 
 importStatPart1     ::= IMPORT:sym expression:expr
@@ -537,7 +555,6 @@ importStatPart1     ::= IMPORT:sym expression:expr
                         |IMPORT:sym expression:expr LBRACE expression:paramsExpr RBRACE
                         {: return new ImportStatmentPart(%expr%, %sym.line%, %sym.column%).setParamsExpr(%paramsExpr%); :}
                         ;
-
 
 
 importStatPart2     ::= importStatPart1:part IDENTIFIER:ident
@@ -551,31 +568,16 @@ importStatPart2     ::= importStatPart1:part IDENTIFIER:ident
                         ;
 
 
-importStat          ::= importStatPart1:part SEMICOLON
-                        {: return (%part%).pop(); :}
-                        |importStatPart2:part SEMICOLON
-                        {: return (%part%).pop(); :}
+blockStatPrepare      ::= 
+                        {: varmgr.push(); return null; :}
+                        ;
+blockStatPrepare2      ::= LBRACE
+                        {: varmgr.push(); return null; :}
                         ;
 
 
-includeStat         ::= INCLUDE:sym expression:expr SEMICOLON
-                        {: return new IncludeStatment(%expr%, null, %sym.line%, %sym.column%); :}
-                        |INCLUDE:sym expression:expr mapValue:paramsExpr SEMICOLON
-                        {: return new IncludeStatment(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
-                        |INCLUDE:sym expression:expr LBRACE expression:paramsExpr RBRACE SEMICOLON
-                        {: return new IncludeStatment(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
-                        ;
-
-
-blockStatPart       ::= LBRACE:sym // statment:stat
-                        {: return createBlockStatmentPart(%sym.line%, %sym.column%); :}
-                        |blockStatPart:part statment:stat
-                        {: return (%part%).append(%stat%); :}
-                        ;
-
-
-blockStat           ::= blockStatPart:part RBRACE
-                        {: return createBlockStatment(%part%); :}
+blockStat           ::= blockStatPrepare2:prepare statmentList:list RBRACE
+                        {: return (%list%).popIBlockStatment(varmgr.pop(), %prepare.line%, %prepare.column%); :}
                         ;
 
 
@@ -660,21 +662,14 @@ whileStat           ::= whileStatPart:part
                         ;
 
 
-caseBlockStatPart     ::= 
-                        {: return createBlockStatmentPart(-1, -1); :}
-                        |caseBlockStatPart:part statment:stat
-                        {: return (%part%).append(%stat%); :}
-                        ;
-
-
-caseBlockStat       ::= caseBlockStatPart:bodyPart
-                        {: return createBlockStatment(%bodyPart%); :}
+caseBlockStat       ::= blockStatPrepare:prepare statmentList:list
+                        {: return (%list%).popIBlockStatment(varmgr.pop(), %prepare.line%, %prepare.column%); :}
                         ;
 
 
 switchStatPart0      ::= 
                         {: return new SwitchStatmentPart(); :}
-                        | CASE:sym directValue:key COLON caseBlockStat:body switchStatPart0:part
+                        | CASE:sym DIRECT_VALUE:key COLON caseBlockStat:body switchStatPart0:part
                         {: return (%part%).appendCaseStatment(%key%, %body%, %sym.line%, %sym.column%); :}
                         | DEFAULT:sym COLON caseBlockStat:body switchStatPart0:part
                         {: return (%part%).appendCaseStatment(null, %body%, %sym.line%, %sym.column%); :}
@@ -695,25 +690,25 @@ switchStat          ::= switchStatPart:part
 
 /* Expressions */
 
-expression_stat ::= 
+expression_statmentable ::= 
                     //assignOper = 
                     expression:lexpr EQ:sym expression:expr
-                    {: return new AssignOperator(castToResetableValueExpression(%lexpr%, %sym.line%, %sym.column%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return new AssignOperator(castToResetableValueExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
                     | VAR IDENTIFIER:ident EQ:sym expression:expr
-                    {: assignVariant(%ident%,%ident.line%,%ident.column%);
+                    {: varmgr.assignVariant(%ident%,%ident.line%,%ident.column%);
         return new AssignOperator(createContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
                     
                     //plusPlusOper ++
                     |PLUSPLUS:sym expression:expr
-                    {: return new PlusPlusBeforeOperator(castToResetableValueExpression(%expr%, %sym.line%, %sym.column%), %sym.line%, %sym.column%); :}
+                    {: return new PlusPlusBeforeOperator(castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
                     |expression:expr PLUSPLUS:sym
-                    {: return new PlusPlusAfterOperator(castToResetableValueExpression(%expr%, %sym.line%, %sym.column%), %sym.line%, %sym.column%); :}
+                    {: return new PlusPlusAfterOperator(castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
 
                     //minusMinusOper --
                     |MINUSMINUS:sym expression:expr
-                    {: return new MinusMinusBeforeOperator(castToResetableValueExpression(%expr%, %sym.line%, %sym.column%), %sym.line%, %sym.column%); :}
+                    {: return new MinusMinusBeforeOperator(castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
                     |expression:expr MINUSMINUS:sym
-                    {: return new MinusMinusAfterOperator(castToResetableValueExpression(%expr%, %sym.line%, %sym.column%), %sym.line%, %sym.column%); :}
+                    {: return new MinusMinusAfterOperator(castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
 
                     //selfOper
                     |expression:lexpr SELFEQ:sym expression:rexpr
@@ -721,14 +716,14 @@ expression_stat ::=
                     
                     //RedirectOutExpression =>
                     |funcExecuteExpr:srcExpr EQGT:sym expression:expr
-                    {: return new RedirectOutExpression(%srcExpr%, castToResetableValueExpression(%expr%, %sym.line%, %sym.column%), %sym.line%, %sym.column%); :}
+                    {: return new RedirectOutExpression(%srcExpr%, castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
 
                     //
                     |funcExecuteExpr:expr    {: return %expr%; :}
                     ;
 
 
-expression      ::= expression_stat:expr
+expression      ::= expression_statmentable:expr
                     {: return %expr%; :}
 
                     //bitNotOper ~
@@ -817,66 +812,48 @@ expression      ::= expression_stat:expr
                     |expression:lexpr QUESTION_COLON:sym expression:rexpr
                     {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
 
-
                     //ifOper ? :
                     |expression:ifexpr QUESTION:sym expression:lexpr COLON expression:rexpr
                     {: return StatmentUtil.optimize(new IfOperator(%ifexpr%, %lexpr%, %rexpr%, %sym.line%, %sym.column%)); :}
 
                     //
-                    |directValue:sym
+                    |DIRECT_VALUE:sym
                     {: return new DirectValue(%sym%, %sym.line%, %sym.column%); :}
                     
                     // ()
                     |LPAREN expression:expr RPAREN
                     {: return %expr%; :}
 
-
-                    //NativeNewArrayDeclareExpression 
-                    |NATIVE:sym LBRACK RBRACK className:nameBand
-                    {: return new NativeNewArrayDeclareExpressionPart(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%).pop(this.engine); :}
-                    |NATIVE:sym LBRACK className:nameBand RBRACK
-                    {: return new NativeNewArrayDeclareExpressionPart(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%).pop(this.engine); :}
-
-
                     //funcDeclareExpr
-                    |funcPart:part RBRACE
-                    {: return new FunctionDeclareExpression(
-                (%part%).setOverflowUpstairs(varmgr.popVarWall()).setVarMap(varmgr.pop()).pop(),
-                %part.line%, %part.column%); :}
+                    |funcHeadPrepare:part RPAREN LBRACE statmentList:list RBRACE
+                    {: return (%part%).pop(varmgr, %list%); :}
+                    |funcHead:part RPAREN LBRACE statmentList:list RBRACE
+                    {: return (%part%).pop(varmgr, %list%); :}
 
 
                     //arrayValue
-                    |arrayValuePart:part RBRACK
-                    {: return (%part%).pop(); :}
-                    |LBRACK:sym RBRACK
-                    {: return new ArrayValue(new Expression[0], %sym.line%,%sym.column%); :}
+                    |LBRACK:sym expressionList:list RBRACK
+                    {: return new ArrayValue((%list%).toArray(), %sym.line%, %sym.column%); :}
 
+
+                    //NativeNewArrayDeclareExpression 
+                    |NATIVE:sym LBRACK RBRACK className:nameBand
+                    {: return popNativeNewArrayDeclare(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
+                    |NATIVE:sym LBRACK className:nameBand RBRACK
+                    {: return popNativeNewArrayDeclare(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
 
                     //nativeMethodExpr
-                    |nativeMethodExprPart:part RPAREN
-                    {: return (%part%).pop(this.engine); :}
-                    |nativeMethodExprPart1:part RPAREN
-                    {: return (%part%).pop(this.engine); :}
+                    |NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN classNameList:list RPAREN
+                    {: return popNativeMethodDeclare(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %ident%, %list%, %sym.line%, %sym.column%); :}
 
                     //nativeConstructorExpr
-                    |nativeConstructorExprPart1:part RPAREN
-                    {: return (%part%).pop(this.engine); :}
-                    |nativeConstructorExprPart:part RPAREN
-                    {: return (%part%).pop(this.engine); :}
-
+                    |NATIVE:sym NEW classPureName:nameBand LPAREN classNameList:list RPAREN
+                    {: return popNativeConstructorDeclare(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %list%, %sym.line%, %sym.column%); :}
 
                     |contextValueExpr:expr    {: return %expr%; :}
                     |mapValue:expr    {: return %expr%; :}
                     ;
 
-
-directValue         ::= INTEGER_LITERAL:sym    {: return %sym%; :}
-                        |FLOATING_POINT_LITERAL:sym    {: return %sym%; :}
-                        |BOOLEAN_LITERAL:sym    {: return %sym%; :}
-                        |CHARACTER_LITERAL:sym    {: return %sym%; :}
-                        |STRING_LITERAL:sym    {: return %sym%; :}
-                        |NULL_LITERAL:sym    {: return %sym%; :}
-                        ;
 
 
 // super
@@ -904,27 +881,30 @@ contextValueExpr    ::= contextValueIdent:ident
                         ;
 
 
-// array [expr, ...]
-
-arrayValuePart      ::= LBRACK:sym expression:expr
-                        {: return new ArrayValuePart(%sym.line%, %sym.column%).append(%expr%); :}
-                        |arrayValuePart:part COMMA expression:expr
-                        {: return (%part%).append(%expr%); :}
+expressionList1     ::= expression:expr
+                        {: return new ExpressionList().add(%expr%); :}
+                        |expressionList1:list COMMA expression:expr
+                        {: return (%list%).add(%expr%); :}
                         ;
 
+expressionList      ::=
+                        {: return new ExpressionList(); :}
+                        |expressionList1:list
+                        {: return %list%; :}
+                        ;
 
 
 // map {key:expr, ...}
 
-mapValuePart        ::= LBRACE:sym directValue:key COLON expression:expr
-                        {: return new MapValuePart(%sym.line%, %sym.column%).append(%key%, %expr%); :}
-                        |mapValuePart:part COMMA directValue:key COLON expression:expr
-                        {: return (%part%).append(%key%, %expr%); :}
+mapKeyValue         ::= DIRECT_VALUE:key COLON expression:expr
+                        {: return new MapKeyValue().add(%key%, %expr%); :}
+                        |mapKeyValue:part COMMA DIRECT_VALUE:key COLON expression:expr
+                        {: return (%part%).add(%key%, %expr%); :}
                         ;
 
 
-mapValue            ::= mapValuePart:part RBRACE
-                        {: return (%part%).pop(); :}
+mapValue            ::= LBRACE:sym mapKeyValue:part RBRACE
+                        {: return (%part%).pop(%sym.line%, %sym.column%); :}
                         |LBRACE:sym RBRACE
                         {: return new MapValue(new Object[0], new Expression[0], %sym.line%,%sym.column%); :}
                         ;
@@ -932,77 +912,34 @@ mapValue            ::= mapValuePart:part RBRACE
 /* function  */
 
 
-funcPart0           ::= FUNCTION:sym LPAREN
-                        {: pushVarMgrForFunction(); return new FunctionPart(%sym.line%, %sym.column%).setArgsIndex(assignVariant("arguments", %sym.line%, %sym.column%)); :}
+funcHead           ::= funcHeadPrepare:part IDENTIFIER:ident
+                        {: return (%part%).appendArgIndexs(varmgr.assignVariant(%ident%, %ident.line%, %ident.column%)); :}
+                        |funcHead:part COMMA IDENTIFIER:ident
+                        {: return (%part%).appendArgIndexs(varmgr.assignVariant(%ident%, %ident.line%, %ident.column%)); :}
                         ;
 
 
-funcPart1           ::= funcPart0:part IDENTIFIER:ident
-                        {: return (%part%).appendArgIndexs(assignVariant(%ident%, %ident.line%, %ident.column%)); :}
-                        |funcPart1:part COMMA IDENTIFIER:ident
-                        {: return (%part%).appendArgIndexs(assignVariant(%ident%, %ident.line%, %ident.column%)); :}
+funcHeadPrepare     ::= FUNCTION:sym LPAREN
+                        {: varmgr.push(); varmgr.pushVarWall(); return new FunctionPart(%sym.line%,%sym.column%).setArgsIndex(varmgr.assignVariant("arguments", %sym.line%,%sym.column%)); :}
                         ;
 
 
-funcPart            ::= funcPart0:part RPAREN LBRACE
-                        {: return %part%; :}
-                        |funcPart1:part RPAREN LBRACE
-                        {: return %part%; :}
-                        |funcPart:part statment:stat
-                        {: return (%part%).append(%stat%); :}
+funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list RPAREN
+                        {: return new FunctionExecuteExpression(%funcExpr%, (%list%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
+                        |expression:param0 AT contextValueExpr:funcExpr LPAREN expressionList:list RPAREN
+                        {: return new FunctionExecuteExpression(%funcExpr%, (%list%).addFirst(%param0%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
                         ;
 
 
-funcExecuteExpr     ::= funcExecuteExprPart0:part RPAREN
-                        {: return (%part%).pop(); :}
-                        |funcExecuteExprPart1:part RPAREN
-                        {: return (%part%).pop(); :}
-                        ;
+classNameList1          ::= className:nameBand
+                         {: return new ClassNameList(this.nativeImportMgr).add(%nameBand%, %nameBand.line%, %nameBand.column%); :}
+                         |classNameList1:list COMMA className:nameBand
+                         {: return (%list%).add(%nameBand%, %nameBand.line%, %nameBand.column%); :}
+                         ;
 
-
-funcExecuteExprPart0    ::= expression:funcExpr LPAREN
-                            {: return new FunctionExecuteExpressionPart().setPosition(%funcExpr.line%, %funcExpr.column%).setFuncExpr(%funcExpr%); :}
-                            |expression:param0 AT contextValueExpr:funcExpr LPAREN
-                            {: return new FunctionExecuteExpressionPart().setPosition(%funcExpr.line%, %funcExpr.column%).setFuncExpr(%funcExpr%).append(%param0%); :}
+classNameList           ::= 
+                            {: return new ClassNameList(this.nativeImportMgr); :}
+                            |classNameList1:list
+                            {: return %list%; :}
                             ;
-
-
-funcExecuteExprPart1    ::= funcExecuteExprPart0:part expression:expr
-                            {: return (%part%).append(%expr%); :}
-                            |funcExecuteExprPart1:part COMMA expression:expr
-                            {: return (%part%).append(%expr%); :}
-                            ;
-
-
-
-
-/* Native Method */
-
-
-nativeMethodExprPart1   ::= NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN
-                            {: return new NativeMethodDeclareExpressionPart(%sym.line%, %sym.column%).setClassName(toClass(%nameBand%, %nameBand.line%, %nameBand.column%)).setMethodName(%ident%); :}
-                            ;
-
-
-nativeMethodExprPart    ::= nativeMethodExprPart1:part className:nameBand
-                            {: return (%part%).append(toClass(%nameBand%, %nameBand.line%, %nameBand.column%)); :}
-                            |nativeMethodExprPart:part COMMA className:nameBand
-                            {: return (%part%).append(toClass(%nameBand%, %nameBand.line%, %nameBand.column%)); :}
-                            ;
-
-
-
-/* Native Constructor */
-
-nativeConstructorExprPart1  ::= NATIVE:sym NEW classPureName:nameBand LPAREN
-                                {: return new NativeConstructorDeclareExpressionPart(%sym.line%, %sym.column%).setClassName(toClass(%nameBand%, %nameBand.line%, %nameBand.column%)); :}
-                                ;
-
-
-nativeConstructorExprPart   ::= nativeConstructorExprPart1:part className:nameBand
-                                {: return (%part%).append(toClass(%nameBand%, %nameBand.line%, %nameBand.column%)); :}
-                                |nativeConstructorExprPart:part COMMA className:nameBand
-                                {: return (%part%).append(toClass(%nameBand%, %nameBand.line%, %nameBand.column%)); :}
-                                ;
-
 

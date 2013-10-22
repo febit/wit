@@ -20,7 +20,7 @@ import webit.script.util.RepeatChars;
     //================ >> user code
 
     private boolean placeHolderFlag = false;
-    private boolean leftPlaceHolderFlag = false;
+    private boolean leftPlaceHolderFlag = true;
 
     private boolean trimCodeBlockBlankLine = false;
     private FastCharBuffer stringBuffer = new FastCharBuffer(256);
@@ -73,9 +73,9 @@ import webit.script.util.RepeatChars;
         if(repeat > 12){
             stringBuffer.append(new RepeatChars(c, repeat));
         }else if(repeat >2){
-            char[] chars = new char[repeat];
-            for (int i = 0; i < repeat; i++) {
-                chars[i] = c;
+            final char[] chars = new char[repeat];
+            while (repeat != 0) {
+                chars[--repeat] = c;
             }
             stringBuffer.append(chars);
         }else if (repeat == 2) {
@@ -123,7 +123,7 @@ import webit.script.util.RepeatChars;
         }else{
             chars = popAsCharArray();
         }
-        return symbol(TEXT_STATMENT,  stringLine,stringColumn, chars);
+        return symbol(TEXT_STATMENT, stringLine, stringColumn, chars);
     }
 
     public final String yytext(int startOffset, int endOffset) {
@@ -160,14 +160,12 @@ import webit.script.util.RepeatChars;
 
     private long parseBinLong(char[] buffer, int start, int end) {
         long result = 0;
-
-        for (int i = start; i < end; i++) {
+        while (start < end) {
             result <<= 1;
-            if(buffer[i] == '1'){
+            if(buffer[start++] == '1'){
                 ++ result;
             }
         }
-
         return result;
     }
 
@@ -179,12 +177,9 @@ import webit.script.util.RepeatChars;
      */
     private long parseLong(char[] buffer, int start, int end, int radix) {
         long result = 0;
-        int digit;
-        for (int i = start; i < end; i++) {
-            digit = Character.digit(buffer[i], radix);
-            result = result * radix + digit;
+        while (start < end) {
+            result = result * radix + Character.digit(buffer[start++], radix);
         }
-
         return result;
     }
 
@@ -247,7 +242,7 @@ SingleCharacter = [^\r\n\'\\]
 DelimiterStatementStart     = "<%"
 DelimiterStatementEnd       = "%>"
 DelimiterPlaceholderStart   = "${"
-DelimiterPlaceholderEnd     = "}"
+/* DelimiterPlaceholderEnd     = "}"*/
 
 DelimiterStatementStartMatch   = [\\]* {DelimiterStatementStart}
 DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
@@ -318,11 +313,11 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 /*  "const"                        { return symbol(CONST); } */
   
   /* boolean literals */
-  "true"                         { return symbol(BOOLEAN_LITERAL, Boolean.TRUE); }
-  "false"                        { return symbol(BOOLEAN_LITERAL, Boolean.FALSE); }
+  "true"                         { return symbol(DIRECT_VALUE, Boolean.TRUE); }
+  "false"                        { return symbol(DIRECT_VALUE, Boolean.FALSE); }
   
   /* null literal */
-  "null"                         { return symbol(NULL_LITERAL, null); }
+  "null"                         { return symbol(DIRECT_VALUE, null); }
   
   
   /* separators */
@@ -391,24 +386,24 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 
   /* Note: This is matched together with the minus, because the number is too big to 
      be represented by a positive integer. */
-  "-2147483648"                  { return symbol(INTEGER_LITERAL, Integer.MIN_VALUE); }
+  "-2147483648"                  { return symbol(DIRECT_VALUE, Integer.MIN_VALUE); }
 
 
-  {BinIntegerLiteral}            { return symbol(INTEGER_LITERAL, yyBinInteger(2, 0)); }
-  {BinLongLiteral}               { return symbol(INTEGER_LITERAL, yyBinLong(2, -1)); }  
+  {BinIntegerLiteral}            { return symbol(DIRECT_VALUE, yyBinInteger(2, 0)); }
+  {BinLongLiteral}               { return symbol(DIRECT_VALUE, yyBinLong(2, -1)); }  
 
-  {DecIntegerLiteral}            { return symbol(INTEGER_LITERAL, yyInt(0, 0, 10)); }
-  {DecLongLiteral}               { return symbol(INTEGER_LITERAL, yyLong(0, -1, 10)); }
+  {DecIntegerLiteral}            { return symbol(DIRECT_VALUE, yyInt(0, 0, 10)); }
+  {DecLongLiteral}               { return symbol(DIRECT_VALUE, yyLong(0, -1, 10)); }
   
-  {HexIntegerLiteral}            { return symbol(INTEGER_LITERAL, yyInt(2, 0, 16)); }
-  {HexLongLiteral}               { return symbol(INTEGER_LITERAL, yyLong(2, -1, 16)); }
+  {HexIntegerLiteral}            { return symbol(DIRECT_VALUE, yyInt(2, 0, 16)); }
+  {HexLongLiteral}               { return symbol(DIRECT_VALUE, yyLong(2, -1, 16)); }
  
-  {OctIntegerLiteral}            { return symbol(INTEGER_LITERAL, yyInt(1, 0, 8)); }  
-  {OctLongLiteral}               { return symbol(INTEGER_LITERAL, yyLong(1, -1, 8)); }
+  {OctIntegerLiteral}            { return symbol(DIRECT_VALUE, yyInt(1, 0, 8)); }  
+  {OctLongLiteral}               { return symbol(DIRECT_VALUE, yyLong(1, -1, 8)); }
   
-  {FloatLiteral}                 { return symbol(FLOATING_POINT_LITERAL, new Float(yytext(0, -1))); }
-  {DoubleLiteralPart}            { return symbol(FLOATING_POINT_LITERAL, new Double(yytext())); }
-  {DoubleLiteral}                { return symbol(FLOATING_POINT_LITERAL, new Double(yytext(0, -1))); }
+  {FloatLiteral}                 { return symbol(DIRECT_VALUE, new Float(yytext(0, -1))); }
+  {DoubleLiteralPart}            { return symbol(DIRECT_VALUE, new Double(yytext())); }
+  {DoubleLiteral}                { return symbol(DIRECT_VALUE, new Double(yytext(0, -1))); }
   
   /* comments */
   {Comment}                      { /* ignore */ }
@@ -430,7 +425,7 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 
 
 <STRING> {
-  \"                             { yybegin(YYSTATEMENT); return symbol(STRING_LITERAL, stringLine,stringColumn, popAsString()); }
+  \"                             { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, stringLine, stringColumn, popAsString()); }
   
   {StringCharacter}+             { pullToString(); }
   
@@ -452,18 +447,18 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 }
 
 <CHARLITERAL> {
-  {SingleCharacter}\'            { yybegin(YYSTATEMENT); return symbol(CHARACTER_LITERAL, yyTextChar()); }
+  {SingleCharacter}\'            { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, yyTextChar()); }
   
   /* escape sequences */
-  "\\b"\'                        { yybegin(YYSTATEMENT); return symbol(CHARACTER_LITERAL, '\b');}
-  "\\t"\'                        { yybegin(YYSTATEMENT); return symbol(CHARACTER_LITERAL, '\t');}
-  "\\n"\'                        { yybegin(YYSTATEMENT); return symbol(CHARACTER_LITERAL, '\n');}
-  "\\f"\'                        { yybegin(YYSTATEMENT); return symbol(CHARACTER_LITERAL, '\f');}
-  "\\r"\'                        { yybegin(YYSTATEMENT); return symbol(CHARACTER_LITERAL, '\r');}
-  "\\\""\'                       { yybegin(YYSTATEMENT); return symbol(CHARACTER_LITERAL, '\"');}
-  "\\'"\'                        { yybegin(YYSTATEMENT); return symbol(CHARACTER_LITERAL, '\'');}
-  "\\\\"\'                       { yybegin(YYSTATEMENT); return symbol(CHARACTER_LITERAL, '\\');}
-  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYSTATEMENT); return symbol(CHARACTER_LITERAL, (char) yyInt(1, -1 ,8));}
+  "\\b"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\b');}
+  "\\t"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\t');}
+  "\\n"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\n');}
+  "\\f"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\f');}
+  "\\r"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\r');}
+  "\\\""\'                       { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\"');}
+  "\\'"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\'');}
+  "\\\\"\'                       { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\\');}
+  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, (char) yyInt(1, -1 ,8));}
   
   /* error cases */
   \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }

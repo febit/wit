@@ -121,14 +121,14 @@ public class VariantManager {
         }
     }
 
-    public int assignVariant(String name) {
+    public int assignVariant(String name, int line, int column) {
         Map<String, Integer> current;
         if (!(current = current()).containsKey(name)) {
             int address;
             current.put(name, (address = current.size()));
             return address;
         } else {
-            throw new ParseException("Duplicate Variant declare: ".concat(name));
+            throw new ParseException("Duplicate Variant declare: ".concat(name), line, column);
         }
     }
 
@@ -153,7 +153,7 @@ public class VariantManager {
         return address;
     }
 
-    public int locateAtUpstair(String name, int upstair, boolean force) {
+    public int locateAtUpstair(String name, int upstair, boolean force, int line, int column) {
         if (upstair <= currentElementIndex) {
             int i = currentElementIndex - upstair;
             Map<String, Integer> map = elements[i];
@@ -163,16 +163,16 @@ public class VariantManager {
                 return index;
             }
             if (force) {
-                throw new ParseException("Can't locate variant: ".concat(name));
+                throw new ParseException("Can't locate variant: ".concat(name), line, column);
             } else {
                 return -1;
             }
         } else {
-            throw new ParseException(StringUtil.concat("Stack overflow when locate variant in given upstair: ", name, "-", Integer.toString(upstair)));
+            throw new ParseException(StringUtil.concat("Stack overflow when locate variant in given upstair: ", name, "-", Integer.toString(upstair)), line, column);
         }
     }
 
-    public VarAddress locate(String name, boolean force) {
+    public VarAddress locate(String name, boolean force, int line, int column) {
         for (int i = currentElementIndex; i >= 0; --i) {
             Integer index = elements[i].get(name);
             if (index != null) {
@@ -181,14 +181,14 @@ public class VariantManager {
             }
         }
         if (force) {
-            throw new ParseException("Can't locate variant: ".concat(name));
+            throw new ParseException("Can't locate variant: ".concat(name), line, column);
         } else {
             return assignVariantAtTopWall(name);
         }
     }
 
-    public VarAddress locate(String name) {
-        return locate(name, false);
+    public VarAddress locate(String name, int line, int column) {
+        return locate(name, false, line, column);
     }
 
     public static class VarAddress {

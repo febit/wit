@@ -15,7 +15,7 @@ import webit.script.util.StatmentUtil;
 public final class Function extends AbstractStatment {
 
     private final int argsIndex;
-    private final int[] argIndexs; //with arguments at first
+    private final int[] argIndexs;
     public final int[] overflowUpstairs;
     public final int overflowUpstairsRange;
     private final VariantMap varMap;

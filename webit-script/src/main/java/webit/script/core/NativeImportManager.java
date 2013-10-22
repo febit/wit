@@ -19,22 +19,21 @@ public class NativeImportManager {
         classes = new HashMap<String, String>();
     }
 
-    public boolean registClass(ClassNameBand classNameBand) throws ParseException {
+    public boolean registClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
         final String className = classNameBand.getClassSimpleName();
         if (ClassUtil.getCachedClass(className) != null) {
-            throw new ParseException("Duplicate class simple name:".concat(classNameBand.getClassPureName()));
+            throw new ParseException("Duplicate class simple name:".concat(classNameBand.getClassPureName()), line, column);
         }
         if (classes.containsKey(className)) {
-            throw new ParseException("Duplicate class register:".concat(classNameBand.getClassPureName()));
+            throw new ParseException("Duplicate class register:".concat(classNameBand.getClassPureName()), line, column);
         }
         String classFullName = classNameBand.getClassPureName();
 
         classes.put(className, classFullName);
         return true;
-
     }
 
-    public Class<?> toClass(ClassNameBand classNameBand) {
+    public Class<?> toClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
         String classPureName;
         if (classNameBand.isSimpleName()) {
             //1. find from @imports
@@ -62,7 +61,7 @@ public class NativeImportManager {
         try {
             return ClassUtil.getClass(classPureName, classNameBand.getArrayDepth());
         } catch (ClassNotFoundException ex) {
-            throw new ParseException(ex);
+            throw new ParseException(ex).setPosition(line, column);
         }
     }
 }

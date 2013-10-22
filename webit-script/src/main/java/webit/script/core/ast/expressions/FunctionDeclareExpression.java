@@ -15,8 +15,8 @@ public final class FunctionDeclareExpression extends AbstractExpression {
 
     private final Function function;
 
-    public FunctionDeclareExpression(Function function, int line, int column) {
-        super(line, column);
+    public FunctionDeclareExpression(Function function) {
+        super(function.getLine(), function.getColumn());
         this.function = function;
     }
 

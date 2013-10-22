@@ -4,33 +4,30 @@ package webit.script.core.ast.expressions;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Position;
 
 /**
  *
  * @author Zqq
  */
-public final class MapValuePart extends Position {
+public final class MapKeyValue{
 
     private final List keys;
     private final List<Expression> valueExprs;
 
-    public MapValuePart(int line, int column) {
-        super(line, column);
+    public MapKeyValue() {
         this.keys = new LinkedList();
         this.valueExprs = new LinkedList<Expression>();
     }
 
     @SuppressWarnings("unchecked")
-    public MapValuePart append(Object key, Expression expr) {
+    public MapKeyValue add(Object key, Expression expr) {
         this.keys.add(key);
         this.valueExprs.add(expr);
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    public MapValue pop() {
-
+    public MapValue pop(int line, int column) {
         return new MapValue(
                 keys.toArray(),
                 valueExprs.toArray(new Expression[valueExprs.size()]),
