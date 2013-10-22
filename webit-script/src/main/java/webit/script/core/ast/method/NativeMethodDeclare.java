@@ -29,25 +29,26 @@ public final class NativeMethodDeclare implements MethodDeclare {
     public Object invoke(final Context context, final Object[] args) {
         final Object obj;
         final Object[] methodArgs;
+        final int myArgsCount = this.argsCount;
         if (isStatic) {
             obj = null;
             if (args != null) {
                 int argsLen;
-                if ((argsLen = args.length) == argsCount) {
+                if ((argsLen = args.length) == myArgsCount) {
                     methodArgs = args;
                 } else {
-                    //XXX: Warning 参数个数不一致
-                    System.arraycopy(args, 0, methodArgs = new Object[argsCount], 0, argsLen <= argsCount ? argsLen : argsCount);
+                    //Note: Warning 参数个数不一致
+                    System.arraycopy(args, 0, methodArgs = new Object[myArgsCount], 0, argsLen <= myArgsCount ? argsLen : myArgsCount);
                 }
             } else {
-                methodArgs = new Object[argsCount];
+                methodArgs = new Object[myArgsCount];
             }
         } else {
             if (args != null && args.length != 0 && args[0] != null) {
                 obj = args[0];
                 int copyLen;
-                //XXX: Warning 参数个数不一致
-                System.arraycopy(args, 1, methodArgs = new Object[argsCount], 0, ((copyLen = args.length - 1) <= argsCount) ? copyLen : argsCount);
+                //Note: Warning 参数个数不一致
+                System.arraycopy(args, 1, methodArgs = new Object[myArgsCount], 0, ((copyLen = args.length - 1) <= myArgsCount) ? copyLen : myArgsCount);
             } else {
                 throw new ScriptRuntimeException("this method need one argument at least");
             }

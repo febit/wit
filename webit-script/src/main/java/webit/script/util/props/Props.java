@@ -77,27 +77,27 @@ public final class Props /* implements Cloneable */ {
 //		p.activeProfilesProp = activeProfilesProp;
 //		return p;
 //	}
-    /**
-     * Returns active profiles or
-     * <code>null</code> if none defined.
-     */
-    public String[] getActiveProfiles() {
-        initialize();
-        return activeProfiles;
-    }
-
-    // ---------------------------------------------------------------- configuration
-    /**
-     * Sets new active profiles and overrides existing ones. By setting
-     * <code>null</code>, no active profile will be set.
-     * <pr>
-     * Note that if some props file is loaded <b>after</b>
-     * this method, it might override this value in the same way.
-     */
-    public void setActiveProfiles(final String... activeProfiles) {
-        initialize();
-        this.activeProfiles = activeProfiles;
-    }
+//    /**
+//     * Returns active profiles or
+//     * <code>null</code> if none defined.
+//     */
+//    public String[] getActiveProfiles() {
+//        initialize();
+//        return activeProfiles;
+//    }
+//
+//    // ---------------------------------------------------------------- configuration
+//    /**
+//     * Sets new active profiles and overrides existing ones. By setting
+//     * <code>null</code>, no active profile will be set.
+//     * <pr>
+//     * Note that if some props file is loaded <b>after</b>
+//     * this method, it might override this value in the same way.
+//     */
+//    public void setActiveProfiles(final String... activeProfiles) {
+//        initialize();
+//        this.activeProfiles = activeProfiles;
+//    }
 //
 //	/**
 //	 * Specifies the new line string when EOL is escaped.
@@ -185,42 +185,42 @@ public final class Props /* implements Cloneable */ {
 //        copy(in, out, encoding);
 //        parse(out.toString());
 //    }
-    /**
-     * Loads base properties from the provided java properties. Null values are
-     * ignored.
-     */
-    public void load(final Map<?, ?> p) {
-        for (final Map.Entry<?, ?> entry : p.entrySet()) {
-            final String name = entry.getKey().toString();
-            final Object value = entry.getValue();
-            if (value == null) {
-                continue;
-            }
-            data.putBaseProperty(name, value.toString(), false);
-        }
-    }
+//    /**
+//     * Loads base properties from the provided java properties. Null values are
+//     * ignored.
+//     */
+//    public void load(final Map<?, ?> p) {
+//        for (final Map.Entry<?, ?> entry : p.entrySet()) {
+//            final String name = entry.getKey().toString();
+//            final Object value = entry.getValue();
+//            if (value == null) {
+//                continue;
+//            }
+//            data.putBaseProperty(name, value.toString(), false);
+//        }
+//    }
 
     public void load(final String name, final String value) {
         data.putBaseProperty(name, value, false);
     }
 
-    /**
-     * Loads base properties from java Map using provided prefix. Null values
-     * are ignored.
-     */
-    @SuppressWarnings("unchecked")
-    public void load(final Map<?, ?> map, final String prefix) {
-        String realPrefix = prefix.concat(".");
-        for (final Map.Entry entry : map.entrySet()) {
-            final String name = entry.getKey().toString();
-            final Object value = entry.getValue();
-            if (value == null) {
-                continue;
-            }
-            data.putBaseProperty(realPrefix.concat(name), value.toString(), false);
-        }
-    }
-
+//    /**
+//     * Loads base properties from java Map using provided prefix. Null values
+//     * are ignored.
+//     */
+//    @SuppressWarnings("unchecked")
+//    public void load(final Map<?, ?> map, final String prefix) {
+//        String realPrefix = prefix.concat(".");
+//        for (final Map.Entry entry : map.entrySet()) {
+//            final String name = entry.getKey().toString();
+//            final Object value = entry.getValue();
+//            if (value == null) {
+//                continue;
+//            }
+//            data.putBaseProperty(realPrefix.concat(name), value.toString(), false);
+//        }
+//    }
+//
 //	/**
 //	 * Loads system properties with given prefix.
 //	 * If prefix is <code>null</code> it will not be ignored.
@@ -295,13 +295,13 @@ public final class Props /* implements Cloneable */ {
         data.extract(target, activeProfiles);
     }
 
-    /**
-     * Extract props of given profiles.
-     */
-    public void extractProps(final Map target, final String... profiles) {
-        initialize();
-        data.extract(target, profiles);
-    }
+//    /**
+//     * Extract props of given profiles.
+//     */
+//    public void extractProps(final Map target, final String... profiles) {
+//        initialize();
+//        data.extract(target, profiles);
+//    }
 
     /**
      * Initializes props by replacing macros in values with the lookup values.

@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Map;
@@ -58,7 +59,7 @@ public final class Template {
                             .parseTemplate(
                             resource.openReader(), //Parser will close reader when finish
                             this);
-                } catch (Exception e) {
+                } catch (IOException e) {
                     throw ExceptionUtil.castToParseException(e);
                 }
                 lastModified = System.currentTimeMillis();

@@ -27,8 +27,6 @@ import webit.script.util.props.Props;
  */
 public final class Engine {
 
-    public static final String ENGINE = "engine";
-    public static final String PETITE = "petite";
     //
     private static final String DEFAULT_PROPERTIES = "/webit-script-default.props";
     //settings
@@ -88,8 +86,8 @@ public final class Engine {
         resolveBean(this.resolverManager);
 
         if (this.resolvers != null) {
-            final int resolversLength = this.resolvers.length;
-            Resolver[] resolverInstances = new Resolver[resolversLength];
+            final int resolversLength;
+            Resolver[] resolverInstances = new Resolver[resolversLength = this.resolvers.length];
             for (int i = 0; i < resolversLength; i++) {
                 resolverInstances[i] = (Resolver) getBean(this.resolvers[i]);
             }
@@ -150,7 +148,7 @@ public final class Engine {
                 Template oldTemplate;
                 if ((oldTemplate = templateCache.putIfAbsent(normalizedName,
                         template = new Template(this, normalizedName,
-                        resourceLoader.get(normalizedName)))) != null) {
+                                resourceLoader.get(normalizedName)))) != null) {
                     template = oldTemplate;
                 }
                 if (!name.equals(normalizedName)
@@ -281,15 +279,11 @@ public final class Engine {
     public static Engine createEngine(String configPath, Map<Object, Object> parameters) {
 
         final Props props = new Props();
-        //props.loadSystemProperties("sys");
-        //props.loadEnvironment("env");
 
-        List<String> propsFiles;
-        if (configPath != null) {
-            propsFiles = PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES, configPath);
-        } else {
-            propsFiles = PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES);
-        }
+        final List<String> propsFiles;
+        propsFiles = configPath != null
+                ? PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES, configPath)
+                : PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES);
 
         final Map<String, Object> extraDirectParameters = new HashMap<String, Object>();
         if (parameters != null) {
@@ -306,12 +300,11 @@ public final class Engine {
             }
         }
 
-        Petite petite = new Petite();
+        final Petite petite = new Petite();
         petite.defineParameters(props, extraDirectParameters);
 
-        final Engine engine = new Engine(petite);
-
-        petite.wireBean(engine);
+        final Engine engine;
+        petite.wireBean(engine = new Engine(petite));
 
         try {
             engine.init();

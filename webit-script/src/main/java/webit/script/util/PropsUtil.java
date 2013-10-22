@@ -20,13 +20,12 @@ public class PropsUtil {
     public static List<String> loadFromClasspath(final Props props, final String... pathSets) {
         final List<String> files = new LinkedList<String>();
 
-
         if (pathSets != null) {
 
             String pathSet;
             String[] paths;
             String path;
-            
+
             ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
 
             FastCharBuffer charsBuffer = new FastCharBuffer();
@@ -35,12 +34,12 @@ public class PropsUtil {
             char[] buffer = new char[BUFFER_SIZE];
             int read;
 
-            for (int i = 0; i < pathSets.length; i++) {
+            for (int i = 0, leni = pathSets.length; i < leni; i++) {
                 pathSet = pathSets[i];
                 if (pathSet != null && pathSet.length() > 0) {
                     paths = StringUtil.splitc(pathSet, ',');
                     StringUtil.trimAll(paths);
-                    for (int j = 0; j < paths.length; j++) {
+                    for (int j = 0, lenj = paths.length; j < lenj; j++) {
                         path = paths[j];
                         if (path != null && path.length() > 0) {
                             //load from classpath
@@ -63,11 +62,11 @@ public class PropsUtil {
                                     props.load(charsBuffer.toString());
                                     files.add(path);
                                 } catch (IOException ignore) {
-                                    //XXX:ignore props IOException
+                                    //Note:ignore props IOException
                                 } finally {
                                     try {
                                         in.close();
-                                    } catch (Exception ignore) {
+                                    } catch (IOException ignore) {
                                     }
                                     charsBuffer.clear();
                                 }

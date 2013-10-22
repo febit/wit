@@ -24,15 +24,16 @@ public class NativeConstructorDeclare implements MethodDeclare {
 
         final Object[] methodArgs;
         final int argsLen;
+        final int myArgsCount = this.argsCount;
         if (args != null && (argsLen = args.length) != 0) {
-            if (argsLen == argsCount) {
+            if (argsLen == myArgsCount) {
                 methodArgs = args;
             } else {
-                //XXX: Warning 参数个数不一致
-                System.arraycopy(args, 0, methodArgs = new Object[argsCount], 0, argsLen <= argsCount ? argsLen : argsCount);
+                //Note: Warning 参数个数不一致
+                System.arraycopy(args, 0, methodArgs = new Object[myArgsCount], 0, argsLen <= myArgsCount ? argsLen : myArgsCount);
             }
         } else {
-            methodArgs = new Object[argsCount];
+            methodArgs = new Object[myArgsCount];
         }
         try {
             return constructor.newInstance(methodArgs);

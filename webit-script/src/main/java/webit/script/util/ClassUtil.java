@@ -186,53 +186,7 @@ public class ClassUtil {
         return Modifier.isPublic(member.getModifiers());
     }
 
-    //XXX: rewrite
     public static Method searchMethod(Class<?> currentClass, String name, Class<?>[] parameterTypes, boolean boxed) throws NoSuchMethodException {
-//        try {
         return currentClass.getMethod(name, parameterTypes);
-//        } catch (NoSuchMethodException e) {
-//            Method likeMethod = null;
-//            final int parameterTypesLength = parameterTypes.length;
-//            for (Method method : currentClass.getMethods()) {
-//                if (method.getName().equals(name)
-//                        && parameterTypesLength == method.getParameterTypes().length
-//                        && Modifier.isPublic(method.getModifiers())) {
-//                    if (parameterTypesLength > 0) {
-//                        final Class<?>[] types = method.getParameterTypes();
-//                        boolean eq = true;
-//                        boolean like = true;
-//                        for (int i = 0; i < parameterTypesLength; i++) {
-//                            Class<?> type = types[i];
-//                            Class<?> parameterType = parameterTypes[i];
-//                            if (type != null && parameterType != null
-//                                    && !type.equals(parameterType)) {
-//                                eq = false;
-//                                if (boxed) {
-//                                    type = ClassUtil.getBoxedClass(type);
-//                                    parameterType = ClassUtil.getBoxedClass(parameterType);
-//                                }
-//                                if (!type.isAssignableFrom(parameterType)) {
-//                                    eq = false;
-//                                    like = false;
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                        if (!eq) {
-//                            if (like && (likeMethod == null || likeMethod.getParameterTypes()[0]
-//                                    .isAssignableFrom(method.getParameterTypes()[0]))) {
-//                                likeMethod = method;
-//                            }
-//                            continue;
-//                        }
-//                    }
-//                    return method;
-//                }
-//            }
-//            if (likeMethod != null) {
-//                return likeMethod;
-//            }
-//            throw e;
-//        }
     }
 }

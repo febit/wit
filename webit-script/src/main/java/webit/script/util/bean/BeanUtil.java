@@ -43,7 +43,7 @@ public class BeanUtil {
         }
     }
 
-    private static FieldDescriptor getFieldDescriptor(final Class cls, final String name) {
+    private static FieldDescriptor getFieldDescriptor(final Class cls, final String name) throws BeanUtilException {
         FieldDescriptorsBox box;
         if ((box = CACHE.unsafeGet(cls)) == null) {
             box = CACHE.putIfAbsent(cls, new FieldDescriptorsBox());
@@ -133,7 +133,7 @@ public class BeanUtil {
             this.method = method;
         }
 
-        public Object get(Object bean) {
+        public Object get(Object bean) throws BeanUtilException {
             try {
                 return method.invoke(bean, new Object[0]);
             } catch (Exception ex) {
@@ -157,7 +157,7 @@ public class BeanUtil {
             return fieldType;
         }
 
-        public void set(Object bean, Object value) {
+        public void set(Object bean, Object value) throws BeanUtilException {
             try {
                 method.invoke(bean, new Object[]{value});
             } catch (Exception ex) {
@@ -175,7 +175,7 @@ public class BeanUtil {
             this.field = field;
         }
 
-        public Object get(Object bean) {
+        public Object get(Object bean) throws BeanUtilException {
             try {
                 return field.get(bean);
             } catch (Exception ex) {
@@ -183,7 +183,7 @@ public class BeanUtil {
             }
         }
 
-        public void set(Object bean, Object value) {
+        public void set(Object bean, Object value) throws BeanUtilException {
             try {
                 field.set(bean, value);
             } catch (Exception ex) {
@@ -205,7 +205,7 @@ public class BeanUtil {
             this.field = field;
         }
 
-        public void set(Object bean, Object value) {
+        public void set(Object bean, Object value) throws BeanUtilException {
             try {
                 field.set(bean, value);
             } catch (Exception ex) {
@@ -224,7 +224,7 @@ public class BeanUtil {
             if (!field.isAccessible()) {
                 field.setAccessible(true);
             }
-        } catch (Exception ignore) {
+        } catch (SecurityException ignore) {
         }
     }
     //
@@ -234,7 +234,7 @@ public class BeanUtil {
             if (!method.isAccessible()) {
                 method.setAccessible(true);
             }
-        } catch (Exception ignore) {
+        } catch (SecurityException ignore) {
         }
     }
 }

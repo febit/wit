@@ -57,7 +57,7 @@ public class ServletEngineUtil {
         if (pathSet != null && pathSet.length() > 0) {
             paths = StringUtil.splitc(pathSet, ',');
             StringUtil.trimAll(paths);
-            for (int j = 0; j < paths.length; j++) {
+            for (int j = 0, len = paths.length; j < len; j++) {
                 path = paths[j];
                 if (path != null && path.length() > 0) {
                     //load from servletContext
@@ -80,11 +80,11 @@ public class ServletEngineUtil {
                             props.load(charsBuffer.toString());
                             files.add(path);
                         } catch (IOException ignore) {
-                            //XXX:ignore props IOException
+                            //Note:ignore props IOException
                         } finally {
                             try {
                                 in.close();
-                            } catch (Exception ignore) {
+                            } catch (IOException ignore) {
                             }
                             charsBuffer.clear();
                         }
