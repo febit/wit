@@ -31,8 +31,9 @@ public class VariantMap {
         int i;
         final String[] _names;
         i = (_names = this.names).length;
-        while (i > 0) {
-            if (_names[--i].equals(name)) {
+        while (i != 0) {
+            --i;
+            if (_names[i].equals(name)) {
                 return i;
             }
         }

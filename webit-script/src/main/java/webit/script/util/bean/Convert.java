@@ -51,7 +51,7 @@ public class Convert {
     }
 
     public static boolean toBoolean(String string) {
-        return string != null && "true".equals(string.toLowerCase());
+        return string != null && ("true".equals(string = string.toLowerCase()) || "on".equals(string));
     }
 
     public static int toInt(String string) {
@@ -65,50 +65,56 @@ public class Convert {
     }
 
     public static Class[] toClassArray(String string) {
-
-        String[] classNames = toStringArray(string);
-        Class[] classes = new Class[classNames.length];
-        for (int i = 0; i < classes.length; i++) {
+        int i;
+        String[] classNames;
+        Class[] classes = new Class[i = (classNames = toStringArray(string)).length];
+        while (i != 0) {
+            --i;
             classes[i] = toClass(classNames[i]);
         }
         return classes;
     }
 
     public static boolean[] toBoolArray(String string) {
-
-        String[] strings = toStringArray(string);
-        boolean[] bools = new boolean[strings.length];
-        for (int i = 0; i < bools.length; i++) {
+        int i;
+        String[] strings;
+        boolean[] bools;
+        bools = new boolean[i = (strings = toStringArray(string)).length];
+        while (i != 0) {
+            --i;
             bools[i] = toBoolean(strings[i]);
         }
         return bools;
     }
 
     public static Boolean[] toBooleanArray(String string) {
-
-        String[] strings = toStringArray(string);
-        Boolean[] booleans = new Boolean[strings.length];
-        for (int i = 0; i < booleans.length; i++) {
+        int i;
+        String[] strings;
+        Boolean[] booleans = new Boolean[i = (strings = toStringArray(string)).length];
+        while (i != 0) {
+            --i;
             booleans[i] = toBoolean(strings[i]);
         }
         return booleans;
     }
 
     public static int[] toIntArray(String string) {
-
-        String[] strings = toStringArray(string);
-        int[] ints = new int[strings.length];
-        for (int i = 0; i < ints.length; i++) {
+        int i;
+        String[] strings;
+        int[] ints = new int[i = (strings = toStringArray(string)).length];
+        while (i != 0) {
+            --i;
             ints[i] = toInt(strings[i]);
         }
         return ints;
     }
 
     public static Integer[] toIntegerArray(String string) {
-
-        String[] strings = toStringArray(string);
-        Integer[] ints = new Integer[strings.length];
-        for (int i = 0; i < ints.length; i++) {
+        int i;
+        String[] strings;
+        Integer[] ints = new Integer[i = (strings = toStringArray(string)).length];
+        while (i != 0) {
+            --i;
             ints[i] = toInt(strings[i]);
         }
         return ints;

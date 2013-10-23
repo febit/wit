@@ -60,12 +60,13 @@ public final class VariantStack {
         final Object[] contextValues;
         (contextValues = currentContext.values)[argsIndex] = values;
         if (indexs != null && values != null) {
-            int i = values.length;
-            if (i > indexs.length) {
+            int i;
+            if ((i = values.length) > indexs.length) {
                 i = indexs.length;
             }
             while (i != 0) {
-                contextValues[indexs[--i]] = values[i];
+                --i;
+                contextValues[indexs[i]] = values[i];
             }
         }
     }
@@ -80,7 +81,8 @@ public final class VariantStack {
             final Object[] contextValues;
             int i = (contextValues = context.values).length;
             while (i != 0) {
-                contextValues[--i] = null;
+                --i;
+                contextValues[i] = null;
             }
         }
     }
@@ -89,7 +91,8 @@ public final class VariantStack {
         final Object[] contextValues;
         int i = (contextValues = currentContext.values).length;
         do {
-            contextValues[--i] = null;
+            --i;
+            contextValues[i] = null;
         } while (i != 0);
         contextValues[index] = value;
         contextValues[index2] = value2;
@@ -99,7 +102,8 @@ public final class VariantStack {
         final Object[] contextValues;
         int i = (contextValues = currentContext.values).length;
         do {
-            contextValues[--i] = null;
+            --i;
+            contextValues[i] = null;
         } while (i != 0);
         contextValues[index] = value;
         contextValues[index2] = value2;
@@ -132,7 +136,8 @@ public final class VariantStack {
         int i;
         final Object[] results = new Object[i = keys.length];
         while (i != 0) {
-            results[--i] = get(keys[i], true);
+            --i;
+            results[i] = get(keys[i], true);
         }
         return results;
     }

@@ -19,22 +19,52 @@ public abstract class AbstractLoader implements Loader, Initable {
     //
     private boolean dontAppendLostFileNameExtensionSettedFlag = false;
 
+    /**
+     * get child template name by parent template name and relative name.
+     *
+     * <pre>
+     * example:
+     * /path/to/tmpl1.wtl , tmpl2.wtl => /path/to/tmpl2.wtl
+     * /path/to/tmpl1.wtl , /tmpl2.wtl => /tmpl2.wtl
+     * /path/to/tmpl1.wtl , ./tmpl2.wtl => /path/to/tmpl2.wtl
+     * /path/to/tmpl1.wtl , ../tmpl2.wtl => /path/tmpl2.wtl
+     * </pre>
+     *
+     * @param parent parent template's name
+     * @param name relative name
+     * @return child template's name
+     */
     public String concat(final String parent, final String name) {
         return parent != null ? UnixStyleFileNameUtil.concat(UnixStyleFileNameUtil.getPath(parent), name) : name;
     }
 
     protected String getRealPath(final String name) {
-        return root != null ? (root.concat(name)) : name.substring(1, name.length());
+        return this.root != null ? (this.root.concat(name)) : name.substring(1, name.length());
     }
 
+    /**
+     * normalize a template's name.
+     *
+     * <pre>
+     * example:
+     * /path/to/./tmpl1.wtl  /path/to/tmpl2.wtl
+     * /path/to/../tmpl1.wtl  /path/tmpl2.wtl
+     * \path\to\..\tmpl1.wtl  /path/tmpl2.wtl
+     * \path\to\..\..\tmpl1.wtl  /tmpl2.wtl
+     * \path\to\..\..\..\tmpl1.wtl  null
+     * </pre>
+     *
+     * @param name template's name
+     * @return normalized name
+     */
     public String normalize(String name) {
         if (name != null) {
             final String newName;
             newName = UnixStyleFileNameUtil.normalize(StringUtil.prefixChar(name, '/'));
-            if (dontAppendLostFileNameExtension || newName.charAt(newName.length() - 1) == '/' || newName.endsWith(fileNameExtension)) {
+            if (this.dontAppendLostFileNameExtension || newName.charAt(newName.length() - 1) == '/' || newName.endsWith(this.fileNameExtension)) {
                 return newName;
             } else {
-                return newName.concat(fileNameExtension);
+                return newName.concat(this.fileNameExtension);
             }
         }
         return null;
@@ -54,7 +84,7 @@ public abstract class AbstractLoader implements Loader, Initable {
 
     public void setAppendLostFileNameExtension(boolean appendLostFileNameExtension) {
         this.dontAppendLostFileNameExtension = !appendLostFileNameExtension;
-        dontAppendLostFileNameExtensionSettedFlag = true;
+        this.dontAppendLostFileNameExtensionSettedFlag = true;
     }
 
     public void setFileNameExtension(String fileNameExtension) {
@@ -62,14 +92,14 @@ public abstract class AbstractLoader implements Loader, Initable {
     }
 
     public void init(Engine engine) {
-        if (encoding == null) {
-            encoding = engine.getEncoding();
+        if (this.encoding == null) {
+            this.encoding = engine.getEncoding();
         }
-        if (dontAppendLostFileNameExtensionSettedFlag == false) {
-            dontAppendLostFileNameExtension = !engine.isAppendLostFileNameExtension();
+        if (this.dontAppendLostFileNameExtensionSettedFlag == false) {
+            this.dontAppendLostFileNameExtension = !engine.isAppendLostFileNameExtension();
         }
-        if (fileNameExtension == null) {
-            fileNameExtension = engine.getFileNameExtension();
+        if (this.fileNameExtension == null) {
+            this.fileNameExtension = engine.getFileNameExtension();
         }
     }
 }

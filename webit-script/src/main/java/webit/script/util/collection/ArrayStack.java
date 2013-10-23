@@ -27,14 +27,31 @@ public final class ArrayStack<T> implements Stack<T> {
     }
 
     public void clear() {
-        for (int i = size; i > 0;) {
-            elements[--i] = null;
+        int i = this.size;
+        final Object[] myElements = this.elements;
+        while (i != 0) {
+            --i;
+            myElements[i] = null;
         }
-        size = 0;
+        this.size = 0;
     }
 
     public int size() {
         return size;
+    }
+
+    public void pops(int len) {
+        int i;
+        if ((i = this.size) >= len) {
+            final Object[] myElements = this.elements;
+            this.size = i - len;
+            while (len != 0) {
+                myElements[--i] = null;
+                len--;
+            }
+        } else {
+            throw new IndexOutOfBoundsException(StringUtil.concat("size < ", len));
+        }
     }
 
     public void push(final T element) {
@@ -51,10 +68,11 @@ public final class ArrayStack<T> implements Stack<T> {
     public T pop() {
         int i;
         if ((i = --size) >= 0) {
-            T element = (T) elements[i];
+            final T element = (T) elements[i];
             elements[i] = null;
             return element;
         } else {
+            size = 0;
             throw new IndexOutOfBoundsException(StringUtil.concat("index=", i));
         }
     }

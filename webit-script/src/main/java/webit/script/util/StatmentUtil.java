@@ -88,7 +88,8 @@ public class StatmentUtil {
         int i = statments.length;
         try {
             while (i != 0) {
-                statments[--i].execute(context);
+                --i;
+                statments[i].execute(context);
             }
             return;
         } catch (Throwable e) {
@@ -101,7 +102,8 @@ public class StatmentUtil {
         final LoopCtrl ctrl = context.loopCtrl;
         try {
             do {
-                statments[--i].execute(context);
+                --i;
+                statments[i].execute(context);
             } while (i != 0 && ctrl.getLoopType() == LoopInfo.NO_LOOP);
             return;
         } catch (Throwable e) {
@@ -141,7 +143,8 @@ public class StatmentUtil {
             LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
             List<LoopInfo> list;
             do {
-                if ((list = collectPossibleLoopsInfo(statments[--i])) != null) {
+                --i;
+                if ((list = collectPossibleLoopsInfo(statments[i])) != null) {
                     loopInfos.addAll(list);
                 }
             } while (i != 0);

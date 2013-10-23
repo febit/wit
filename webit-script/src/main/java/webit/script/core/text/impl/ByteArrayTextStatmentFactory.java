@@ -30,7 +30,7 @@ public class ByteArrayTextStatmentFactory implements TextStatmentFactory, Initab
 
     public void startTemplateParser(Template template) {
         encoders.set(coderFactory.newEncoder(encoding));
-        outputs.set(new FastByteArrayOutputStream(256));
+        outputs.set(new FastByteArrayOutputStream(512));
     }
 
     public void finishTemplateParser(Template template) {
@@ -41,9 +41,9 @@ public class ByteArrayTextStatmentFactory implements TextStatmentFactory, Initab
     private byte[] getBytes(char[] text) {
         if (text != null) {
             try {
-                FastByteArrayOutputStream outputStream;
+                final FastByteArrayOutputStream outputStream;
                 encoders.get().write(text, 0, text.length, outputStream = outputs.get());
-                byte[] bytes = outputStream.toByteArray();
+                final byte[] bytes = outputStream.toByteArray();
                 outputStream.reset();
                 return bytes;
             } catch (IOException ex) {

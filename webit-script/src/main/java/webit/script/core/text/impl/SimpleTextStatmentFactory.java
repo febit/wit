@@ -41,9 +41,9 @@ public class SimpleTextStatmentFactory implements TextStatmentFactory, Initable 
     private byte[] getBytes(char[] text) {
         if (text != null) {
             try {
-                FastByteArrayOutputStream outputStream;
+                final FastByteArrayOutputStream outputStream;
                 encoders.get().write(text, 0, text.length, outputStream = outputs.get());
-                byte[] bytes = outputStream.toByteArray();
+                final byte[] bytes = outputStream.toByteArray();
                 outputStream.reset();
                 return bytes;
             } catch (IOException ex) {

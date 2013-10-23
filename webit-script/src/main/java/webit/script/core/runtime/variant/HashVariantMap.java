@@ -21,9 +21,7 @@ public final class HashVariantMap extends VariantMap {
         Integer index;
         final String[] myNames = this.names;
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            name = entry.getKey();
-            index = entry.getValue();
-            myNames[index] = name;
+            myNames[(index = entry.getValue())] = (name = entry.getKey());
             newMap.put(name, index);
         }
     }

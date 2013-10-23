@@ -16,11 +16,14 @@ public class StringUtil {
     public static String concat(String... strings) {
         int len = 0;
         int i;
-        for (i = strings.length; i != 0;) {
-            len += strings[--i].length();
+        final int size;
+        i = size = strings.length;
+        while (i != 0) {
+            --i;
+            len += strings[i].length();
         }
         StringBuilder sb = new StringBuilder(len);
-        for (i = 0; i < strings.length; i++) {
+        for (i = 0; i < size; i++) {
             sb.append(strings[i]);
         }
         return sb.toString();
@@ -54,6 +57,7 @@ public class StringUtil {
      * @param s input string
      * @param sub character to replace
      * @param with character to replace with
+     * @return String
      */
     public static String replaceChar(String s, char sub, char with) {
         int startIndex;

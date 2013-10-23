@@ -17,14 +17,6 @@ public interface Loader {
     /**
      * get child template name by parent template name and relative name.
      *
-     * <pre>
-     * example:
-     * /path/to/tmpl1.wtl , tmpl2.wtl => /path/to/tmpl2.wtl
-     * /path/to/tmpl1.wtl , /tmpl2.wtl => /tmpl2.wtl
-     * /path/to/tmpl1.wtl , ./tmpl2.wtl => /path/to/tmpl2.wtl
-     * /path/to/tmpl1.wtl , ../tmpl2.wtl => /path/tmpl2.wtl
-     * </pre>
-     *
      * @param parent parent template's name
      * @param name relative name
      * @return child template's name
@@ -33,15 +25,6 @@ public interface Loader {
 
     /**
      * normalize a template's name.
-     * 
-     * <pre>
-     * example:
-     * /path/to/./tmpl1.wtl  /path/to/tmpl2.wtl
-     * /path/to/../tmpl1.wtl  /path/tmpl2.wtl
-     * \path\to\..\tmpl1.wtl  /path/tmpl2.wtl
-     * \path\to\..\..\tmpl1.wtl  /tmpl2.wtl
-     * \path\to\..\..\..\tmpl1.wtl  null
-     * </pre>
      *
      * @param name template's name
      * @return normalized name
