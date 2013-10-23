@@ -4,8 +4,6 @@ package webit.script.core;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import webit.script.asm.AsmMethodCaller;
 import webit.script.asm.AsmMethodCallerManager;
 import webit.script.core.VariantManager.VarAddress;
@@ -13,33 +11,18 @@ import webit.script.core.ast.*;
 import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.method.*;
 import webit.script.core.ast.statments.*;
-import webit.script.core.java_cup.runtime.Stack;
-import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
 import webit.script.util.StatmentUtil;
 import webit.script.util.StringUtil;
+import webit.script.util.collection.Stack;
 
 
 parser code {:
     public Parser() {
-        super(START_STATE, PRODUCTION_TABLE, ACTION_TABLE, REDUCE_TABLE);
-        nativeImportMgr = new NativeImportManager();
-        varmgr = new VariantManager();
-        labelsIndexMap = new HashMap<String, Integer>();
-        labelsIndexMap.put(null, 0);
-    }
-    
-    private Stack<Symbol> getStack() {
-        return this._stack;
     }
 
-    private final NativeImportManager nativeImportMgr;
-    private final VariantManager varmgr;
-    private final Map<String, Integer> labelsIndexMap;
-
-    private int currentLabelIndex = 0;
     private int getLabelIndex(String label){
         Integer index;
         if ((index = labelsIndexMap.get(label)) == null) {
@@ -85,7 +68,7 @@ parser code {:
                 : new ContextValue(upstair, index, name, true, line, column);
     }
 
-    public CommonMethodDeclareExpression popNativeNewArrayDeclare(Class componentType, int line, int column) {
+    private CommonMethodDeclareExpression popNativeNewArrayDeclare(Class componentType, int line, int column) {
         Class classWaitCheck = componentType;
         while (classWaitCheck.isArray()) {
             classWaitCheck = classWaitCheck.getComponentType();
@@ -103,7 +86,7 @@ parser code {:
         return new CommonMethodDeclareExpression(new NativeNewArrayDeclare(componentType), line, column);
     }
 
-    public CommonMethodDeclareExpression popNativeMethodDeclare(Class clazz, String methodName, ClassNameList list, int line, int column) {
+    private CommonMethodDeclareExpression popNativeMethodDeclare(Class clazz, String methodName, ClassNameList list, int line, int column) {
 
         final String path;
         if (engine.checkNativeAccess(path = (StringUtil.concat(clazz.getName(), ".", methodName))) == false) {
@@ -149,7 +132,7 @@ parser code {:
     }
 
     @SuppressWarnings("unchecked")
-    public CommonMethodDeclareExpression popNativeConstructorDeclare(Class clazz, ClassNameList list, int line, int column) {
+    private CommonMethodDeclareExpression popNativeConstructorDeclare(Class clazz, ClassNameList list, int line, int column) {
 
         final String path;
         if (engine.checkNativeAccess(path = (clazz.getName() + ".<init>")) == false) {

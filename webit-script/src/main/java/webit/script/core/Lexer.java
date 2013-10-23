@@ -2,7 +2,6 @@
 
 package webit.script.core;
 
-import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.util.FastCharBuffer;
 import webit.script.util.RepeatChars;
 

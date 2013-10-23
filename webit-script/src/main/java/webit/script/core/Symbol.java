@@ -1,5 +1,5 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.java_cup.runtime;
+package webit.script.core;
 
 public class Symbol {
 
@@ -14,13 +14,21 @@ public class Symbol {
      */
     int state;
 
+    public Symbol(int id, Object value) {
+        this(id, -1, -1, value);
+    }
+
+    public Symbol(int id, Object value, Symbol sym) {
+        this(id, sym.line, sym.column, value);
+    }
+
     public Symbol(int id, int line, int column, Object value) {
         this.id = id;
         this.line = line;
         this.column = column;
         this.value = value;
     }
-    
+
     @Override
     public String toString() {
         return "Symbol{" + "id=" + id + ", line=" + line + ", column=" + column + '}';
