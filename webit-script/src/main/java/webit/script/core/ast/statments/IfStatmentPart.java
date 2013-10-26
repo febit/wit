@@ -14,24 +14,19 @@ public final class IfStatmentPart extends Position {
 
     private Expression ifExpr;
     private Statment thenStatment;
-    private Statment elseStatment;
 
-    public IfStatmentPart(Expression ifExpr, int line, int column) {
+    public IfStatmentPart(Expression ifExpr, Statment thenStatment, int line, int column) {
         super(line, column);
         this.ifExpr = ifExpr;
-    }
-
-    public IfStatmentPart setThenStatment(Statment thenStatment) {
         this.thenStatment = StatmentUtil.optimize(thenStatment);
-        return this;
-    }
-
-    public IfStatmentPart setElseStatment(Statment elseStatment) {
-        this.elseStatment = StatmentUtil.optimize(elseStatment);
-        return this;
     }
 
     public Statment pop() {
+        return pop(null);
+    }
+
+    public Statment pop(Statment elseStatment) {
+        elseStatment = StatmentUtil.optimize(elseStatment);
         if (this.thenStatment != null) {
             if (elseStatment != null) {
                 return new IfElseStatment(ifExpr, thenStatment, elseStatment, line, column);

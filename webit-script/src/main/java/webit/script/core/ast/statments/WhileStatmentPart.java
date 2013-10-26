@@ -16,38 +16,15 @@ public final class WhileStatmentPart extends Position {
     private Expression whileExpr;
     private IBlockStatment bodyStatment;
     private boolean doWhileAtFirst;
-    private int label = 0;
 
-    public WhileStatmentPart() {
-    }
-
-    public WhileStatmentPart setWhileExpr(Expression whileExpr) {
+    public WhileStatmentPart(Expression whileExpr, IBlockStatment bodyStatment, boolean doWhileAtFirst, int line, int column) {
+        super(line, column);
         this.whileExpr = whileExpr;
-        return this;
-    }
-
-    public WhileStatmentPart setBodyStatment(IBlockStatment bodyStatment) {
         this.bodyStatment = bodyStatment;
-        return this;
-    }
-
-    public WhileStatmentPart setDoWhileAtFirst(boolean doWhileAtFirst) {
         this.doWhileAtFirst = doWhileAtFirst;
-        return this;
     }
 
-    public WhileStatmentPart setLabel(int label) {
-        this.label = label;
-        return this;
-    }
-
-    @Override
-    public WhileStatmentPart setPosition(int line, int column) {
-        super.setPosition(line, column);
-        return this;
-    }
-
-    public Statment pop() {
+    public Statment pop(int label) {
         if (bodyStatment.hasLoops()) {
             LoopInfo[] loopInfos = StatmentUtil.collectPossibleLoopsInfoForWhileStatments(bodyStatment, null, label);
             return doWhileAtFirst
@@ -58,5 +35,9 @@ public final class WhileStatmentPart extends Position {
                     ? new WhileStatmentNoLoops(whileExpr, bodyStatment.getVarMap(), bodyStatment.getStatments(), line, column)
                     : new DoWhileStatmentNoLoops(whileExpr, bodyStatment.getVarMap(), bodyStatment.getStatments(), line, column);
         }
+    }
+
+    public Statment pop() {
+        return pop(0);  //default label is zero;
     }
 }

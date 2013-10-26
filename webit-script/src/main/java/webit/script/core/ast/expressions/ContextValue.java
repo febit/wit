@@ -13,7 +13,7 @@ public final class ContextValue extends AbstractExpression implements ResetableV
 
     private final int upstairs;
     private final int index;
-//    private final String name;
+//    public final String name;
 //    private final boolean withSuper;
 
     public ContextValue(int upstairs, int index, String name, int line, int column) {

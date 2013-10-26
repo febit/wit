@@ -18,27 +18,15 @@ public final class SwitchStatmentPart extends Position {
 
     private Expression switchExpr;
     private CaseEntry defaultStatment;
-    private Map<Object, CaseEntry> caseMap;
-    private CaseEntry currentCaseStatment = null;
-    private int label = 0;
+    private final Map<Object, CaseEntry> caseMap;
+    private CaseEntry currentCaseStatment;
 
     public SwitchStatmentPart() {
+        this.currentCaseStatment = null;
         this.caseMap = new HashMap<Object, CaseEntry>();
     }
 
-    @Override
-    public SwitchStatmentPart setPosition(int line, int column) {
-        this.line = line;
-        this.column = column;
-        return this;
-    }
-
-    public SwitchStatmentPart setLabel(int label) {
-        this.label = label;
-        return this;
-    }
-
-    public SwitchStatmentPart setSwitchExpr(Expression switchExpr) {
+    public SwitchStatmentPart setSwitchExpr(Expression switchExpr, int line, int column) {
         this.switchExpr = switchExpr;
         return this;
     }
@@ -64,6 +52,10 @@ public final class SwitchStatmentPart extends Position {
     }
 
     public Statment pop() {
+        return pop(0);  //default label is zero;
+    }
+
+    public Statment pop(int label) {
 
         Map<Object, CaseEntry> newCaseMap = new HashMap<Object, CaseEntry>((caseMap.size() + 1) * 4 / 3, 0.75f);
 

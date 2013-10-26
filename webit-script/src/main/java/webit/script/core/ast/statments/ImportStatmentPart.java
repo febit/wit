@@ -6,6 +6,7 @@ import java.util.List;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.ResetableValueExpression;
+import webit.script.core.ast.expressions.ContextValue;
 
 /**
  *
@@ -19,15 +20,15 @@ public class ImportStatmentPart extends Position {
     private List<ResetableValueExpression> toResetableValueList;
 
     public ImportStatmentPart(Expression expr, int line, int column) {
-        super(line, column);
-        this.expr = expr;
-        this.exportNameList = new LinkedList<String>();
-        this.toResetableValueList = new LinkedList<ResetableValueExpression>();
+        this(expr, null, line, column);
     }
 
-    public ImportStatmentPart setParamsExpr(Expression paramsExpr) {
+    public ImportStatmentPart(Expression expr, Expression paramsExpr, int line, int column) {
+        super(line, column);
+        this.expr = expr;
         this.paramsExpr = paramsExpr;
-        return this;
+        this.exportNameList = new LinkedList<String>();
+        this.toResetableValueList = new LinkedList<ResetableValueExpression>();
     }
 
     public ImportStatmentPart append(String name, ResetableValueExpression to) {
@@ -42,8 +43,8 @@ public class ImportStatmentPart extends Position {
         return len == 0
                 ? new ImportStatment(expr, paramsExpr, null, null, line, column)
                 : new ImportStatment(expr, paramsExpr,
-                exportNameList.toArray(new String[len]),
-                toResetableValueList.toArray(new ResetableValueExpression[len]),
-                line, column);
+                        exportNameList.toArray(new String[len]),
+                        toResetableValueList.toArray(new ResetableValueExpression[len]),
+                        line, column);
     }
 }

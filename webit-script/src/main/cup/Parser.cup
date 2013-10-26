@@ -20,8 +20,6 @@ import webit.script.util.collection.Stack;
 
 
 parser code {:
-    public Parser() {
-    }
 
     private int getLabelIndex(String label){
         Integer index;
@@ -29,29 +27,6 @@ parser code {:
             labelsIndexMap.put(label, index = ++currentLabelIndex);
         }
         return index;
-    }
-
-    private ForInStatmentPart createForInStatmentPart(String item, Expression items, int line, int column){
-        try {
-            int itemIndex = varmgr.assignVariantForNextBlock(item);
-            int iterIndex = varmgr.assignVariantForNextBlock("for.iter");
-
-            return new ForInStatmentPart(itemIndex, iterIndex, items, line, column);
-        } catch (ParseException e) {
-            throw e.setPosition(line, column);
-        }
-    }
-
-    private ForMapStatmentPart createForMapStatmentPart(String key, String value, Expression map, int line, int column){
-        try {
-            int keyIndex = varmgr.assignVariantForNextBlock(key);
-            int valueIndex = varmgr.assignVariantForNextBlock(value);
-            int iterIndex = varmgr.assignVariantForNextBlock("for.iter");
-
-            return new ForMapStatmentPart(keyIndex, valueIndex, iterIndex, map, line, column);
-        } catch (ParseException e) {
-            throw e.setPosition(line, column);
-        }
     }
 
     private ResetableValueExpression createContextValue(String name, int line, int column) {
@@ -354,19 +329,10 @@ terminal Integer    VAR,
 terminal String     IDENTIFIER; // Ident
 terminal char[]     TEXT_STATMENT;
 terminal Object     DIRECT_VALUE;
-/*
-terminal Number     INTEGER_LITERAL;
-terminal Number     FLOATING_POINT_LITERAL;
-terminal Boolean    BOOLEAN_LITERAL;
-terminal Character  CHARACTER_LITERAL;
-terminal String     STRING_LITERAL;
-terminal            NULL_LITERAL;
-*/
- 
+
 
 
 /* non terminal */
-
 non terminal ClassNameBand classPureName, className;
 
 /* TemplateAST */
@@ -375,15 +341,14 @@ non terminal TemplateAST templateAST;
 /* Statment */
 non terminal StatmentList statmentList;
 
-non terminal Statment statment, forInStat, ifStat, forMapStat, whileStat, switchStat;
+non terminal Statment statment, ifStat;
 non terminal IBlockStatment blockStat, caseBlockStat;
 non terminal Object varStatmentPart;
-non terminal ImportStatmentPart  importStatPart1, importStatPart2;
+non terminal ImportStatmentPart importStatPart1, importStatPart2;
 non terminal Object blockStatPrepare, blockStatPrepare2;
 non terminal SwitchStatmentPart switchStatPart, switchStatPart0;
-non terminal ForInStatmentPart forInStatPart, forInStatPart0, forInStatPart1;
-non terminal ForMapStatmentPart forMapStatPart, forMapStatPart0, forMapStatPart1;
-non terminal WhileStatmentPart whileStatPart, whileStatPart0;
+non terminal AbstractForInStatmentPart forInStatHead, forInStatBody, forInStatPart;
+non terminal WhileStatmentPart whileStatPart;
 non terminal IfStatmentPart ifStatPart;
 
 /* Expression */
@@ -394,7 +359,7 @@ non terminal MapValue mapValue;
 
 non terminal String contextValueIdent;
 non terminal Integer superCount;
-non terminal ResetableValueExpression contextValueExpr; // 
+non terminal ResetableValueExpression contextValueExpr;
 non terminal ClassNameList classNameList, classNameList1;
 
 /* function */
@@ -449,26 +414,39 @@ className           ::= classPureName:part
                         ;
 
 
-/* special Statments  */
-
+/* Statments  */
 statment            ::= expression_statmentable:expr SEMICOLON
                         {: return %expr%; :}
+
                         |SEMICOLON
                         {: return NoneStatment.getInstance(); :}
+
                         |expression:expr PLACE_HOLDER_END
                         {: return placeHolderStatmentFactory.creatPlaceHolderStatment(%expr%); :}
+
                         |blockStat:stat
                         {: return %stat%; :}
+
                         |ifStat:stat
                         {: return %stat%; :}
-                        |forInStat:stat
-                        {: return %stat%; :}
-                        |forMapStat:stat
-                        {: return %stat%; :}
-                        |whileStat:stat
-                        {: return %stat%; :}
-                        |switchStat:stat
-                        {: return %stat%; :}
+
+                        //switchStat
+                        |switchStatPart:part
+                        {: return (%part%).pop(); :}
+                        |IDENTIFIER:label COLON switchStatPart:part
+                        {: return (%part%).pop(getLabelIndex(%label%)); :}
+                        
+                        //whileStat
+                        |whileStatPart:part
+                        {: return (%part%).pop(); :}
+                        |IDENTIFIER:label COLON whileStatPart:part
+                        {: return (%part%).pop(getLabelIndex(%label%)); :}
+
+                        //forInStat
+                        |forInStatPart:part
+                        {: return (%part%).pop(); :}
+                        |IDENTIFIER:label COLON forInStatPart:part
+                        {: return (%part%).pop(getLabelIndex(%label%)); :}
 
                         //redirectOutStat
                         |blockStat:stat EQGT:sym expression:expr SEMICOLON
@@ -534,9 +512,9 @@ varStatmentPart     ::= VAR IDENTIFIER:ident
 importStatPart1     ::= IMPORT:sym expression:expr
                         {: return new ImportStatmentPart(%expr%, %sym.line%, %sym.column%); :}
                         |IMPORT:sym expression:expr mapValue:paramsExpr
-                        {: return new ImportStatmentPart(%expr%, %sym.line%, %sym.column%).setParamsExpr(%paramsExpr%); :}
+                        {: return new ImportStatmentPart(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
                         |IMPORT:sym expression:expr LBRACE expression:paramsExpr RBRACE
-                        {: return new ImportStatmentPart(%expr%, %sym.line%, %sym.column%).setParamsExpr(%paramsExpr%); :}
+                        {: return new ImportStatmentPart(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
                         ;
 
 
@@ -565,83 +543,42 @@ blockStat           ::= blockStatPrepare2:prepare statmentList:list RBRACE
 
 
 ifStatPart          ::= IF:sym LPAREN expression:expr RPAREN blockStat:body
-                        {: return new IfStatmentPart(%expr%, %sym.line%, %sym.column%).setThenStatment(%body%); :}
+                        {: return new IfStatmentPart(%expr%, %body%, %sym.line%, %sym.column%); :}
                         ;
 
 
 ifStat              ::= ifStatPart:part
                         {: return (%part%).pop(); :}
                         |ifStatPart:part ELSE blockStat:elseBody
-                        {: return (%part%).setElseStatment(%elseBody%).pop(); :}
+                        {: return (%part%).pop(%elseBody%); :}
                         |ifStatPart:part ELSE ifStat:elseBody
-                        {: return (%part%).setElseStatment(%elseBody%).pop(); :}
+                        {: return (%part%).pop(%elseBody%); :}
                         ;
 
 
-forInStatPart0        ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
-                        {: return createForInStatmentPart(%item%, %items%, %sym.line%, %sym.column%); :}
+forInStatHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
+                        {: return new ForInStatmentPart(%item%, %items%, this.varmgr, %sym.line%, %sym.column%); :}
+                        |FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COLON expression:map RPAREN
+                        {: return new ForMapStatmentPart(%key%, %value%, %map%, this.varmgr, %sym.line%, %sym.column%); :}
                         ;
 
 
-forInStatPart1     ::= forInStatPart0:part
+forInStatBody       ::= forInStatHead:part LBRACE statmentList:list RBRACE
+                        {: return (%part%).setStatmentList(%list%); :}
+                        ;
+
+
+forInStatPart       ::= forInStatBody:part
                         {: return %part%; :}
-                        |IDENTIFIER:label COLON forInStatPart0:part
-                        {: return (%part%).setLabel(getLabelIndex(%label%)); :}
+                        |forInStatBody:part ELSE blockStat:elseBody
+                        {: return (%part%).setElseStatment(%elseBody%); :}
                         ;
 
 
-forInStatPart         ::= forInStatPart1:part blockStat:body
-                        {: return (%part%).setBodyStatment(%body%); :}
-                        ;
-
-
-forInStat             ::= forInStatPart:part
-                        {: return (%part%).pop(); :}
-                        |forInStatPart:part ELSE blockStat:elseBody
-                        {: return (%part%).setElseStatment(%elseBody%).pop(); :}
-                        ;
-
-
-forMapStatPart0     ::= FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COLON expression:map RPAREN
-                        {: return createForMapStatmentPart(%key%, %value%, %map%, %sym.line%, %sym.column%); :}
-                        ;
-
-
-forMapStatPart1     ::= forMapStatPart0:part
-                        {: return %part%; :}
-                        |IDENTIFIER:label COLON forMapStatPart0:part
-                        {: return (%part%).setLabel(getLabelIndex(%label%)); :}
-                        ;
-
-
-forMapStatPart      ::= forMapStatPart1:part blockStat:body
-                        {: return (%part%).setBodyStatment(%body%); :}
-                        ;
-
-
-forMapStat          ::= forMapStatPart:part
-                        {: return (%part%).pop(); :}
-                        |forMapStatPart:part ELSE blockStat:elseBody
-                        {: return (%part%).setElseStatment(%elseBody%).pop(); :}
-                        ;
-
-
-whileStatPart0      ::= WHILE:sym LPAREN expression:whileExpr RPAREN
-                        {: return new WhileStatmentPart().setWhileExpr(%whileExpr%).setDoWhileAtFirst(true).setPosition(%sym.line%, %sym.column%); :}
-                        ;
-
-
-whileStatPart       ::= whileStatPart0:part blockStat:body
-                        {: return (%part%).setBodyStatment(%body%); :}
-                        |DO:sym blockStat:body whileStatPart0:part SEMICOLON
-                        {: return (%part%).setBodyStatment(%body%).setPosition(%sym.line%, %sym.column%); :}
-                        ;
-
-
-whileStat           ::= whileStatPart:part
-                        {: return (%part%).pop(); :}
-                        |IDENTIFIER:label COLON whileStatPart:part
-                        {: return (%part%).setLabel(getLabelIndex(%label%)).pop(); :}
+whileStatPart       ::= WHILE:sym LPAREN expression:whileExpr RPAREN blockStat:body
+                        {: return new WhileStatmentPart(%whileExpr%, %body%, true, %sym.line%, %sym.column%); :}
+                        |DO:sym blockStat:body WHILE LPAREN expression:whileExpr RPAREN SEMICOLON
+                        {: return new WhileStatmentPart(%whileExpr%, %body%, false, %sym.line%, %sym.column%); :}
                         ;
 
 
@@ -660,15 +597,9 @@ switchStatPart0      ::=
 
 
 switchStatPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE switchStatPart0:part RBRACE
-                        {: return (%part%).setSwitchExpr(%switchExpr%).setPosition(%sym.line%, %sym.column%); :}
+                        {: return (%part%).setSwitchExpr(%switchExpr%, %sym.line%, %sym.column%); :}
                         ;
 
-
-switchStat          ::= switchStatPart:part
-                        {: return (%part%).pop(); :}
-                        |IDENTIFIER:label COLON switchStatPart:part
-                        {: return (%part%).setLabel(getLabelIndex(%label%)).pop(); :}
-                        ;
 
 
 /* Expressions */
@@ -678,8 +609,7 @@ expression_statmentable ::=
                     expression:lexpr EQ:sym expression:expr
                     {: return new AssignOperator(castToResetableValueExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
                     | VAR IDENTIFIER:ident EQ:sym expression:expr
-                    {: varmgr.assignVariant(%ident%,%ident.line%,%ident.column%);
-        return new AssignOperator(createContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return new AssignOperator(new CurrentContextValue(varmgr.assignVariant(%ident%,%ident.line%,%ident.column%),%ident%,%ident.line%,%ident.column%), %expr%, %sym.line%, %sym.column%); :}
                     
                     //plusPlusOper ++
                     |PLUSPLUS:sym expression:expr
@@ -797,7 +727,7 @@ expression      ::= expression_statmentable:expr
 
                     //ifOper ? :
                     |expression:ifexpr QUESTION:sym expression:lexpr COLON expression:rexpr
-                    {: return StatmentUtil.optimize(new IfOperator(%ifexpr%, %lexpr%, %rexpr%, %sym.line%, %sym.column%)); :}
+                    {: return new IfOperator(%ifexpr%, %lexpr%, %rexpr%, %sym.line%, %sym.column%); :}
 
                     //
                     |DIRECT_VALUE:sym
@@ -914,15 +844,15 @@ funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list RPAREN
                         ;
 
 
-classNameList1          ::= className:nameBand
-                         {: return new ClassNameList(this.nativeImportMgr).add(%nameBand%, %nameBand.line%, %nameBand.column%); :}
-                         |classNameList1:list COMMA className:nameBand
-                         {: return (%list%).add(%nameBand%, %nameBand.line%, %nameBand.column%); :}
-                         ;
+classNameList1      ::= className:nameBand
+                        {: return new ClassNameList(this.nativeImportMgr).add(%nameBand%, %nameBand.line%, %nameBand.column%); :}
+                        |classNameList1:list COMMA className:nameBand
+                        {: return (%list%).add(%nameBand%, %nameBand.line%, %nameBand.column%); :}
+                        ;
 
-classNameList           ::= 
-                            {: return new ClassNameList(this.nativeImportMgr); :}
-                            |classNameList1:list
-                            {: return %list%; :}
-                            ;
+classNameList       ::= 
+                        {: return new ClassNameList(this.nativeImportMgr); :}
+                        |classNameList1:list
+                        {: return %list%; :}
+                        ;
 
