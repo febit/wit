@@ -640,7 +640,7 @@ whileStatPart       ::= whileStatPart0:part blockStat:body
 
 whileStat           ::= whileStatPart:part
                         {: return (%part%).pop(); :}
-                        |IDENTIFIER:label whileStatPart:part
+                        |IDENTIFIER:label COLON whileStatPart:part
                         {: return (%part%).setLabel(getLabelIndex(%label%)).pop(); :}
                         ;
 
