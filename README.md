@@ -356,13 +356,16 @@ var myFunc = function(arg1, arg2){
 #### 导入Java内的 方法
 + 仅可导入公共类的公共方法, 包括静态方法 和 成员方法
 + 可使用`@import` 导入类名 或者包名 用法同Java里的 `import`, 以简化输入
++ ~~@import  java.util.*;~~ 1.2.0 不支持导入包
 
 ~~~~~
-@import  java.lang.System; //实际上默认已经导入  java.lang.* 只是掩饰使用方法
-@import  java.util.*;
+@import  java.lang.System; //实际上默认已经导入  java.lang.* 只是演示使用方法
+@import  java.util.List;
+@import  java.util.ArrayList;
 var now = native java.lang.System.currentTimeMillis();
 var list_add = native List.add(Object);
-var new_list = native new add(Object); // 导入 构造函数
+var new_list = native new ArrayList(); // 导入 构造函数
+var new_list2 = native new ArrayList(int); // 导入 构造函数
 ~~~~~
 
 ### 调用
