@@ -25,7 +25,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
         <dependency>
             <groupId>com.github.zqq90.webit-script</groupId>
             <artifactId>webit-script</artifactId>
-            <version>1.1.6</version>
+            <version>1.2.0</version>
         </dependency>
         ...
     </dependencies>
@@ -33,7 +33,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ### Or Add jars
 
- + `webit-script-1.1.6.jar`
+ + `webit-script-1.2.0.jar`
 
 ### Code in Java like this
 
@@ -610,7 +610,7 @@ outter: for(i: 6..3){
 + 性能测试结果比较理想, 待比较权威的模版测试程序;
 + 使用OutputStream 输出时, 选择 SimpleTextStatmentFactory 将会预先将纯文本根据缺省编码编码成字节流. 
 
-+ boilit/ebm 测试结果 [boilit/ebm] [https://github.com/boilit/ebm]
++ boilit/ebm 测试结果 [boilit/ebm] [https://github.com/boilit/ebm]  [or see][http://boilit.github.io/bsl/zh/ability/jdk7utf8.html]
 
 ~~~~~
 Engine                                Time            Size
@@ -639,7 +639,7 @@ JdkStringBuilder-1.7.0_40              735        67395584
 
 ## Requirements(依赖)
 
-+ ~~`Jodd-props`~~ thinks a lot
++ null
 
 ## Contributing(贡献)
 
@@ -662,10 +662,10 @@ details.
 
 
 
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.6/webit-script-1.1.6.jar
-[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.1.6/webit-script-joddinside-1.1.6.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.6/webit-script-1.1.6-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.1.6/webit-script-1.1.6-javadoc.jar
+[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.0/webit-script-1.2.0.jar
+[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.2.0/webit-script-joddinside-1.2.0.jar
+[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.0/webit-script-1.2.0-sources.jar
+[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.0/webit-script-1.2.0-javadoc.jar
 [url_props_doc]: http://jodd.org/doc/props.html
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
 [default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webit-script-default.props
