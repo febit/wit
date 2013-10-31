@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -186,6 +187,14 @@ public class ClassUtil {
         return Modifier.isPublic(member.getModifiers());
     }
 
+    public static void setAccessible(AccessibleObject accessible) {
+        try {
+            if (!accessible.isAccessible()) {
+                accessible.setAccessible(true);
+            }
+        } catch (SecurityException ignore) {
+        }
+    }
     public static Method searchMethod(Class<?> currentClass, String name, Class<?>[] parameterTypes, boolean boxed) throws NoSuchMethodException {
         return currentClass.getMethod(name, parameterTypes);
     }
