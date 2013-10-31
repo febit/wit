@@ -195,6 +195,7 @@ public class ClassUtil {
         } catch (SecurityException ignore) {
         }
     }
+
     public static Method searchMethod(Class<?> currentClass, String name, Class<?>[] parameterTypes, boolean boxed) throws NoSuchMethodException {
         return currentClass.getMethod(name, parameterTypes);
     }
