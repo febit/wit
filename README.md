@@ -41,7 +41,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
     // template 已缓存, 线程安全, 并自动检测模板源是否被更新
     // 当然您也可以缓存 Template 实例，模板更新时更新实例内部AST, 其实例不会变化
     Template template = engine.getTemplate("/your/template/path/filename.ext");
-    ..。
+    ...
     template.merge(parametersMap, outputStream); 
     //template.merge(parametersMap, writer);
 
@@ -88,7 +88,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
     }
     %>
 
-更多实例可见:[测试模板] [tests]
+更多实例可见:[测试模板][tests]
 
 ### 结构
 
@@ -124,8 +124,8 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 ### 操作符
 *与Java 保持一致，顺序按优先级从高到低*
 
-    []  .  ()  @ (新增)
-    => (新增,重定向输出)
+    [] . () @
+    =>
     !  ~  ++  --  – (取负)
     *  /  %
     +  -
@@ -135,14 +135,14 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
     |
     &&
     ||
-    ? : (三元条件运算符)   ?: (新增: 二元操作符)
-    .. (新增: 递增[减]操作符)
+    ?:
+    ..
     =  +=  -=  *=  /=  %=  ^=  <<=  >>=  >>>=
 
 ### 语句
 + 结尾分号不能省略
 
-### 作用域 (代码段) {}
+### 作用域(代码段) `{ }`
 + 作用域引用上层变量
 + 本层作用域变量不会影响上层
 + 同一作用域不能重复声明变量
@@ -162,9 +162,9 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 + 不能使用关键字
 + 仅能包含 0-9a-zA-Z_$
 + 特殊变量名: 
-++ super. 用于 取得指定上层且仅该层作用域的变量, 可嵌套`super.super.a`
-++ this. 用于 取得本层且仅本层作用域的变量, 可嵌套`this.this.a`
-++ for.iter 用于 最近一层for循环的 迭代状态对象, 可使用"super" "this" 限定作用域
+++ `super.` 用于 取得指定上层且仅该层作用域的变量, 可嵌套`super.super.a`
+++ `this.` 用于 取得本层且仅本层作用域的变量, 可嵌套`this.super.a`
+++ `for.iter` 用于 最近一层for循环的 迭代状态对象, 可使用`super``this` 限定作用域`super.for.iter`
 
 ### 数据结构
 #### 拥有动态类
@@ -200,8 +200,8 @@ var string = "第一行  \
 
 ### 布尔
 
-    var x=true;
-    var y=false;
+    var x = true;
+    var y = false;
 
 
 ### 数组
@@ -218,9 +218,9 @@ var string = "第一行  \
 #### Native 方法声明定长数组,
 
     // 引入生成数组的 native 方法
-    var new_int_array = native [int];
-    var new_Object_array = native [Object];
-    var new_DateTime_array = native [java.util.DateTime];
+    var new_int_array = native int [];
+    var new_Object_array = native Object [];
+    var new_DateTime_array = native java.util.DateTime [];
     
     //得到定长数组
     var int_array = new_int_array(5); //长度为5 的int数组
@@ -304,8 +304,8 @@ var myFunc = function(arg1, arg2){
 
 #### 导入Java内的 方法
 + 仅可导入公共类的公共方法, 包括静态方法 和 成员方法
-+ 可使用`@import` 导入类名 或者包名 用法同Java里的 `import`, 以简化输入
-+ ~~@import  java.util.*;~~ 1.2.0+ 不再支持导入包
++ 可使用`@import` 导入类名 或者包名 用法同Java里的 `import`, 以简化类名输入
++ ~~@import  java.util.*;~~ v1.2.0+ 不再支持导入包
 
 
 ~~~~~
@@ -328,7 +328,7 @@ var new_list2 = native new ArrayList(int); // 导入 构造函数
 ~~~~~
 func(arg1, arg2);
 //等同于
-arg1 @ func(arg2);
+arg1@func(arg2);
 list_add(list, item);
 //等同于
 list@list_add(item);
