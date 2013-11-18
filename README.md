@@ -7,6 +7,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 **Download: [Jar][jar]    [Javadoc][doc]    [Sources][sources]**
 
+**QQ 群(Group): 302505483**
 
 ## How to use(如何使用)
 
