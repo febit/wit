@@ -25,6 +25,7 @@ public class HttpServletTemplateRender {
         this.bufferSize = bufferSize;
     }
 
+    @SuppressWarnings("unchecked")
     public void render(Template template, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("request", request);
