@@ -59,12 +59,12 @@ public final class FunctionPart extends Position {
             }
         }
 
-        return new FunctionDeclareExpression(new Function(argsIndex,
+        return new FunctionDeclareExpression(argsIndex,
                 argIndexList.isEmpty() ? null : argIndexList.toArray(),
                 overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null,
                 VariantUtil.toVariantMap(varMap),
                 statments,
                 hasReturnLoops,
-                line, column));
+                line, column);
     }
 }
