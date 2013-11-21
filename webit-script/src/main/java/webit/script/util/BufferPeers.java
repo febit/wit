@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util;
 
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 
 /**
  *
@@ -9,7 +9,7 @@ import java.lang.ref.SoftReference;
  */
 public final class BufferPeers {
 
-    private final static ThreadLocal<SoftReference<BufferPeers>> bufferPeersLocal = new ThreadLocal<SoftReference<BufferPeers>>();
+    private final static ThreadLocal<WeakReference<BufferPeers>> bufferPeersLocal = new ThreadLocal<WeakReference<BufferPeers>>();
 
     public final static int DEFAULT_SIZE = 1 << 8; //256
     public final static int DEFAULT_MIN_SIZE = 1 << 5; //32
@@ -61,11 +61,14 @@ public final class BufferPeers {
     }
 
     private static BufferPeers createBufferPeersIfAbsent(final int length) {
-        SoftReference<BufferPeers> ref;
+        WeakReference<BufferPeers> ref;
         BufferPeers peers;
         if ((ref = bufferPeersLocal.get()) == null
                 || (peers = ref.get()) == null) {
-            bufferPeersLocal.set(new SoftReference<BufferPeers>(peers = new BufferPeers(length)));
+            if (ref != null) {
+                ref.clear();
+            }
+            bufferPeersLocal.set(new WeakReference<BufferPeers>(peers = new BufferPeers(length)));
         }
         return peers;
     }
