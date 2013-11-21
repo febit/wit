@@ -21,20 +21,18 @@ public final class FunctionDeclareExpression extends AbstractExpression {
     }
 
     public Object execute(final Context context) {
-
         final VariantContext[] variantContexts;
-        final int range;
-        if ((range = function.overflowUpstairsRange) >= 0) {
-            final int[] overflowUpstairs = function.overflowUpstairs;
-            variantContexts = new VariantContext[range + 1];
-            for (int i = 0, j, len = overflowUpstairs.length; i < len; i++) {
-                j = overflowUpstairs[i];
-                variantContexts[range - j] = context.vars.getContext(j);
+        final int[] overflowUpstairs;
+        if ((overflowUpstairs = function.overflowUpstairs) != null) {
+            final int len;
+            final int max;
+            variantContexts = new VariantContext[(max = overflowUpstairs[(len = overflowUpstairs.length) - 1]) + 1];
+            for (int i = 0, j; i < len; i++) {
+                variantContexts[max - (j = overflowUpstairs[i])] = context.vars.getContext(j);
             }
         } else {
             variantContexts = null;
         }
-
         return new FunctionMethodDeclare(function, context.template, variantContexts);
     }
 }

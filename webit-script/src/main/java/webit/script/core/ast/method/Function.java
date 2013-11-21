@@ -17,7 +17,6 @@ public final class Function extends AbstractStatment {
     private final int argsIndex;
     private final int[] argIndexs;
     public final int[] overflowUpstairs;
-    public final int overflowUpstairsRange;
     private final VariantMap varMap;
     private final Statment[] statments;
     private final boolean hasReturnLoops;
@@ -26,8 +25,7 @@ public final class Function extends AbstractStatment {
         super(line, column);
         this.argIndexs = argIndexs;
         this.argsIndex = argsIndex;
-        this.overflowUpstairs = overflowUpstairs;
-        this.overflowUpstairsRange = overflowUpstairs != null ? overflowUpstairs[overflowUpstairs.length - 1] - overflowUpstairs[0] : -1;
+        this.overflowUpstairs = overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null;
         this.varMap = varMap;
         this.statments = statments;
         this.hasReturnLoops = hasReturnLoops;
