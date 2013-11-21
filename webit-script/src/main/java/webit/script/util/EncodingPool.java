@@ -21,7 +21,7 @@ public class EncodingPool {
         String acn;
         if ((acn = cache.get(encoding)) == null) {
             try {
-                acn = Charset.forName("UTF-8").name();
+                acn = Charset.forName(encoding).name();
             } catch (Exception e) {
                 acn = encoding;
             }
