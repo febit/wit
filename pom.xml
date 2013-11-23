@@ -67,6 +67,10 @@
                     <configuration>
                         <archive>
                             <addMavenDescriptor>false</addMavenDescriptor>
+                            <manifest>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
                         </archive>
                     </configuration>
                 </plugin>
