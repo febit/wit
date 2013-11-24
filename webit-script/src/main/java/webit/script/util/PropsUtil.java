@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.LinkedList;
-import java.util.List;
+import webit.script.Engine;
 import webit.script.util.props.Props;
 
 /**
@@ -16,9 +15,9 @@ import webit.script.util.props.Props;
 public class PropsUtil {
 
     private final static int BUFFER_SIZE = 3072;
+    private final static String CLASSPATH_PREFIX = "%CLASS_PATH%/";
 
-    public static List<String> loadFromClasspath(final Props props, final String... pathSets) {
-        final List<String> files = new LinkedList<String>();
+    public static void loadFromClasspath(final Props props, final String... pathSets) {
 
         if (pathSets != null) {
 
@@ -60,7 +59,7 @@ public class PropsUtil {
                                     }
 
                                     props.load(charsBuffer.toString());
-                                    files.add(path);
+                                    props.append(Engine.PROPS_FILE_LIST, CLASSPATH_PREFIX.concat(path));
                                 } catch (IOException ignore) {
                                     //Note:ignore props IOException
                                 } finally {
@@ -76,6 +75,5 @@ public class PropsUtil {
                 }
             }
         }
-        return files;
     }
 }

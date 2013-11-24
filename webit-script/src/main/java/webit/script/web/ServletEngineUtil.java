@@ -24,6 +24,7 @@ public class ServletEngineUtil {
     private final static int BUFFER_SIZE = 3072;
     private final static String DEFAULT_WEB_PROPERTIES = "/webit-script-default-web.props";
     private final static String SERVLET_LOADER_SERVLETCONTEXT = "webit.script.web.loaders.ServletLoader.servletContext";
+    private final static String WEB_ROOT_PREFIX = "%WEB_ROOT%/";
 
     public static Engine createEngine(final ServletContext servletContext, final String configFiles) {
         return createEngine(servletContext, configFiles, null);
@@ -33,18 +34,16 @@ public class ServletEngineUtil {
     public static Engine createEngine(final ServletContext servletContext, final String configFiles, final Map extraSettings) {
         final Map settings;
         final Props props;
-        loadFromServletContextPath(props = new Props(), configFiles, servletContext);
-        props.extractProps(settings = new HashMap());
+        loadFromServletContextPath(props = Engine.createConfigProps(DEFAULT_WEB_PROPERTIES), configFiles, servletContext);
+        settings = new HashMap();
+        settings.put(SERVLET_LOADER_SERVLETCONTEXT, servletContext);
         if (extraSettings != null) {
             settings.putAll(extraSettings);
         }
-        settings.put(SERVLET_LOADER_SERVLETCONTEXT, servletContext);
-        return Engine.createEngine(DEFAULT_WEB_PROPERTIES, settings);
+        return Engine.createEngine(props, settings);
     }
 
-    public static List<String> loadFromServletContextPath(final Props props, final String pathSet, final ServletContext servletContext) {
-        final List<String> files = new LinkedList<String>();
-
+    public static void  loadFromServletContextPath(final Props props, final String pathSet, final ServletContext servletContext) {
         String[] paths;
         String path;
 
@@ -78,7 +77,7 @@ public class ServletEngineUtil {
                             }
 
                             props.load(charsBuffer.toString());
-                            files.add(path);
+                            props.append(Engine.PROPS_FILE_LIST, WEB_ROOT_PREFIX.concat(path));
                         } catch (IOException ignore) {
                             //Note:ignore props IOException
                         } finally {
@@ -92,6 +91,5 @@ public class ServletEngineUtil {
                 }
             }
         }
-        return files;
     }
 }

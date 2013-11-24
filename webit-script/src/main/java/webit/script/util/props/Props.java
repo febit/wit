@@ -160,7 +160,6 @@ public final class Props /* implements Cloneable */ {
 //	public void setMultilineValues(final boolean multilineValues) {
 //		parser.multilineValues = multilineValues;
 //	}
-
     /**
      * Parses input string and loads provided properties map.
      */
@@ -199,9 +198,12 @@ public final class Props /* implements Cloneable */ {
 //            data.putBaseProperty(name, value.toString(), false);
 //        }
 //    }
-
     public void load(final String name, final String value) {
         data.putBaseProperty(name, value, false);
+    }
+
+    public void append(final String name, final String value) {
+        data.putBaseProperty(name, value, true);
     }
 
 //    /**
@@ -302,7 +304,6 @@ public final class Props /* implements Cloneable */ {
 //        initialize();
 //        data.extract(target, profiles);
 //    }
-
     /**
      * Initializes props by replacing macros in values with the lookup values.
      */

@@ -53,17 +53,47 @@ public final class Petite {
         parameters.putAll(parameters);
     }
 
-    public void defineParameters(Props props, Map<String, Object> extraDirectParameters) {
-        if (props != null) {
-            props.extractProps(this.parameters);
+    public void defineParameters(Props props, Map<Object, Object> parameters) {
+        if (props == null) {
+            props = new Props();
         }
-        if (extraDirectParameters != null) {
+        final Map<String, Object> extraDirectParameters;
+        if (parameters != null) {
+            extraDirectParameters = new HashMap<String, Object>();
+            String name;
+            Object value;
+            int len;
+            for (Map.Entry entry : parameters.entrySet()) {
+                name = String.valueOf(entry.getKey()).trim();
+                value = entry.getValue();
+                if (value instanceof String) {
+                    if ((len = name.length()) > 0) {
+                        if (name.charAt(len - 1) == '+') {
+                            props.append(name.substring(0, len - 1).trim(), (String) value);
+                        } else {
+                            props.load(name, (String) value);
+                        }
+                    }
+                } else {
+                    extraDirectParameters.put(name, value);
+                }
+            }
+        } else {
+            extraDirectParameters = null;
+        }
+        //
+        props.extractProps(this.parameters);
+        if (extraDirectParameters != null && extraDirectParameters.size() > 0) {
             this.parameters.putAll(extraDirectParameters);
         }
     }
 
     public void defineParameter(String name, Object value) {
         parameters.put(name, value);
+    }
+
+    public Object getParameter(String name) {
+        return parameters.get(name);
     }
 
     public void setLogger(Logger logger) {

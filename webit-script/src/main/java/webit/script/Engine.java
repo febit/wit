@@ -2,7 +2,6 @@
 package webit.script;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -18,7 +17,6 @@ import webit.script.security.NativeSecurityManager;
 import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
-import webit.script.util.StringUtil;
 import webit.script.util.props.Props;
 
 /**
@@ -27,6 +25,7 @@ import webit.script.util.props.Props;
  */
 public final class Engine {
 
+    public static final String PROPS_FILE_LIST = "$$propsFiles";
     //
     private static final String DEFAULT_PROPERTIES = "/webit-script-default.props";
     //settings
@@ -276,32 +275,24 @@ public final class Engine {
         return createEngine(configPath, null);
     }
 
-    public static Engine createEngine(String configPath, Map<Object, Object> parameters) {
-
+    public static Props createConfigProps(String configPath) {
         final Props props = new Props();
-
-        final List<String> propsFiles;
-        propsFiles = configPath != null
-                ? PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES, configPath)
-                : PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES);
-
-        final Map<String, Object> extraDirectParameters = new HashMap<String, Object>();
-        if (parameters != null) {
-            String name;
-            Object value;
-            for (Map.Entry entry : parameters.entrySet()) {
-                name = String.valueOf(entry.getKey());
-                value = entry.getValue();
-                if (value instanceof String) {
-                    props.load(name, (String) value);
-                } else {
-                    extraDirectParameters.put(name, value);
-                }
-            }
+        if (configPath != null) {
+            PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES, configPath);
+        } else {
+            PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES);
         }
+        return props;
+    }
+
+    public static Engine createEngine(String configPath, Map<Object, Object> parameters) {
+        return createEngine(createConfigProps(configPath), parameters);
+    }
+
+    public static Engine createEngine(Props props, Map<Object, Object> parameters) {
 
         final Petite petite = new Petite();
-        petite.defineParameters(props, extraDirectParameters);
+        petite.defineParameters(props != null ? props : createConfigProps(null), parameters);
 
         final Engine engine;
         petite.wireBean(engine = new Engine(petite));
@@ -312,11 +303,11 @@ public final class Engine {
             throw new RuntimeException(ex);
         }
 
-        //Log props file name
         final Logger logger;
         petite.setLogger(logger = engine.getLogger());
-        if (logger != null && logger.isInfoEnabled()) {
-            logger.info("Loaded props files from classpath: ".concat(StringUtil.join(propsFiles, ", ")));
+        final Object propsFiles;
+        if (logger != null && logger.isInfoEnabled() && (propsFiles = petite.getParameter(PROPS_FILE_LIST)) != null) {
+            logger.info("Loaded props files from classpath: ".concat(propsFiles.toString()));
         }
 
         return engine;
