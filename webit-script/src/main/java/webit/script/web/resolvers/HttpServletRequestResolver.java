@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.web.HttpServletRequestAttributes;
+import webit.script.web.HttpServletRequestHeader;
+import webit.script.web.HttpServletRequestHeaders;
 import webit.script.web.HttpServletRequestParameters;
 
 /**
@@ -23,6 +25,16 @@ public class HttpServletRequestResolver implements GetResolver {
             case 458736106:
                 if ("parameters" == property || "parameters".equals(property)) {
                     return new HttpServletRequestParameters((HttpServletRequest) bean);
+                }
+                break;
+            case 795307910:
+                if ("headers" == property || "headers".equals(property)) {
+                    return new HttpServletRequestHeaders((HttpServletRequest) bean);
+                }
+                break;
+            case -1221270899:
+                if ("header" == property || "header".equals(property)) {
+                    return new HttpServletRequestHeader((HttpServletRequest) bean);
                 }
                 break;
             case -989163880:
