@@ -6,6 +6,8 @@ import com.jfinal.render.IMainRenderFactory;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import webit.script.Engine;
@@ -53,10 +55,12 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
         if ((engine = this._engine) != null) {
             return engine;
         } else {
+            Map<String, Object> settings = new HashMap<String, Object>(4);
+            settings.put("webit.script.Engine.resolvers+", "webit.script.support.jfinal.ModelResolver");
             return this._engine = ServletEngineUtil.createEngine(
                     JFinal.me().getServletContext(),
                     this.configPath,
-                    null);
+                    settings);
         }
     }
 
