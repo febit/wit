@@ -30,12 +30,98 @@
             <artifactId>jodd-madvoc</artifactId>
             <version>3.4.8</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jodd-upload</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-servlet</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-props</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-petite</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-core</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-bean</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.jfinal</groupId>
             <artifactId>jfinal</artifactId>
             <version>1.5</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>3.0.7.RELEASE</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-context-support</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>aopalliance</artifactId>
+                    <groupId>aopalliance</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-aop</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-asm</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-expression</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-core</artifactId>
+            <version>2.3.15.3</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>asm</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>freemarker</artifactId>
+                    <groupId>org.freemarker</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>javassist</artifactId>
+                    <groupId>javassist</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ognl</artifactId>
+                    <groupId>ognl</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-io</artifactId>
+                    <groupId>commons-io</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-fileupload</artifactId>
+                    <groupId>commons-fileupload</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
