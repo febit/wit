@@ -8,11 +8,11 @@ import com.jfinal.render.RenderException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import webit.script.Engine;
-import webit.script.web.HttpServletTemplateRender;
-import webit.script.web.ServletEngineUtil;
+import webit.script.web.ServletUtil;
+import webit.script.web.WebEngineManager;
 
 /**
  *
@@ -24,10 +24,8 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
     protected static final String encoding = Render.getEncoding();
     protected static final String contentType = "text/html; charset=".concat(encoding);
 
-    protected String configPath = "/WEB-INF/webit-script-web-page.props";
-    protected Engine _engine;
+    protected final WebEngineManager engineManager;
     protected final String viewExtension;
-    protected final HttpServletTemplateRender render;
 
     public WebitScriptRenderFactory() {
         this(DEFAULT_VIEW_EXTENSION);
@@ -35,33 +33,25 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
 
     public WebitScriptRenderFactory(String viewExtension) {
         this.viewExtension = viewExtension;
-        render = new HttpServletTemplateRender();
-    }
 
-    public void setBufferSize(int bufferSize) {
-        this.render.setBufferSize(bufferSize);
+        this.engineManager = new WebEngineManager(new WebEngineManager.ServletContextAware() {
+
+            public ServletContext getServletContext() {
+                return JFinal.me().getServletContext();
+            }
+        });
+
+        Map<String, Object> settings = new HashMap<String, Object>(4);
+        settings.put("webit.script.Engine.resolvers+", "webit.script.support.jfinal.ModelResolver");
+        this.engineManager.setExtraSettings(settings);
     }
 
     public void setConfigPath(String configPath) {
-        this.configPath = configPath;
+        this.engineManager.setConfigPath(configPath);
     }
 
     public void resetEngine() {
-        this._engine = null;
-    }
-
-    protected Engine getEngine() {
-        Engine engine;
-        if ((engine = this._engine) != null) {
-            return engine;
-        } else {
-            Map<String, Object> settings = new HashMap<String, Object>(4);
-            settings.put("webit.script.Engine.resolvers+", "webit.script.support.jfinal.ModelResolver");
-            return this._engine = ServletEngineUtil.createEngine(
-                    JFinal.me().getServletContext(),
-                    this.configPath,
-                    settings);
-        }
+        this.engineManager.resetEngine();
     }
 
     private static class WebitScriptRender extends Render {
@@ -79,13 +69,14 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
         }
     }
 
-    protected void render(String realView, final HttpServletRequest request, final HttpServletResponse response) {
+    protected void render(final String realView, final HttpServletRequest request, final HttpServletResponse response) {
         try {
             response.setContentType(contentType);
-            this.render.render(
-                    this.getEngine().getTemplate(realView),
-                    request,
-                    response);
+            final Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("request", request);
+            parameters.put("response", response);
+            ServletUtil.exportAttributes(parameters, request);
+            this.engineManager.renderTemplate(realView, parameters, response);
         } catch (IOException ex) {
             throw new RenderException(ex);
         }
