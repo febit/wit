@@ -29,11 +29,16 @@ public class WebitScriptResultSupport extends StrutsResultSupport {
         });
     }
 
-    public void setConfigPath(String configPath) {
+    private static String contentType;
+    public static void setConfigPath(String configPath) {
         engineManager.setConfigPath(configPath);
     }
 
-    public void resetEngine() {
+    public static void setContentType(String contentType) {
+        WebitScriptResultSupport.contentType = contentType;
+    }
+    
+    public static void resetEngine() {
         engineManager.resetEngine();
     }
 
@@ -42,7 +47,9 @@ public class WebitScriptResultSupport extends StrutsResultSupport {
         Map<String, Object> model = ai.getStack().getContext();
         HttpServletRequest request = (HttpServletRequest) model.get(ServletActionContext.HTTP_REQUEST);
         HttpServletResponse response = (HttpServletResponse) model.get(ServletActionContext.HTTP_RESPONSE);
-
+        if (contentType != null) {
+            response.setContentType(contentType);
+        }
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("request", request);
         params.put("response", response);
