@@ -25,6 +25,7 @@ public class WebitScriptResult extends ActionResult implements ServletContextPro
     //
     @In(scope = ScopeType.CONTEXT)
     protected MadvocController madvocController;
+    protected String contentType;
     //
     protected final WebEngineManager engineManager;
 
@@ -41,6 +42,10 @@ public class WebitScriptResult extends ActionResult implements ServletContextPro
         return this.madvocController.getApplicationContext();
     }
 
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
     public void setConfigPath(String configPath) {
         this.engineManager.setConfigPath(configPath);
     }
@@ -53,6 +58,9 @@ public class WebitScriptResult extends ActionResult implements ServletContextPro
     public void render(ActionRequest actionRequest, Object resultObject, String resultValue, String resultPath) throws Exception {
         final HttpServletRequest request = actionRequest.getHttpServletRequest();
         final HttpServletResponse response = actionRequest.getHttpServletResponse();
+        if (contentType != null) {
+            response.setContentType(contentType);
+        }
         final Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("request", request);
         parameters.put("response", response);
