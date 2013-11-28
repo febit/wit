@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StrutsResultSupport;
 import webit.script.web.WebEngineManager;
+import webit.script.web.WebEngineManager.ServletContextProvider;
 
 /**
  *
@@ -20,7 +21,7 @@ public class WebitScriptResultSupport extends StrutsResultSupport {
     private final static WebEngineManager engineManager;
 
     static {
-        engineManager = new WebEngineManager(new WebEngineManager.ServletContextAware() {
+        engineManager = new WebEngineManager(new ServletContextProvider() {
 
             public ServletContext getServletContext() {
                 return ServletActionContext.getServletContext();

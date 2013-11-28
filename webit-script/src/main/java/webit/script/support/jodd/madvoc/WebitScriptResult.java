@@ -13,12 +13,13 @@ import jodd.madvoc.meta.In;
 import jodd.madvoc.result.ActionResult;
 import webit.script.web.ServletUtil;
 import webit.script.web.WebEngineManager;
+import webit.script.web.WebEngineManager.ServletContextProvider;
 
 /**
  *
  * @author Zqq
  */
-public class WebitScriptResult extends ActionResult {
+public class WebitScriptResult extends ActionResult implements ServletContextProvider {
 
     public static final String NAME = "wtl";
     //
@@ -29,16 +30,15 @@ public class WebitScriptResult extends ActionResult {
 
     public WebitScriptResult() {
         super(NAME);
-        this.engineManager = new WebEngineManager(new WebEngineManager.ServletContextAware() {
-
-            public ServletContext getServletContext() {
-                return WebitScriptResult.this.madvocController.getApplicationContext();
-            }
-        });
+        this.engineManager = new WebEngineManager(this);
 
         Map<String, Object> settings = new HashMap<String, Object>(4);
         settings.put("webit.script.Engine.appendLostFileNameExtension", Boolean.TRUE);
         this.engineManager.setExtraSettings(settings);
+    }
+
+    public ServletContext getServletContext() {
+        return this.madvocController.getApplicationContext();
     }
 
     public void setConfigPath(String configPath) {

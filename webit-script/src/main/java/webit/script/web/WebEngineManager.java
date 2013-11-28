@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
-import webit.script.Context;
 import webit.script.Engine;
-import webit.script.Template;
-import webit.script.exceptions.ResourceNotFoundException;
 
 /**
  *
@@ -18,12 +15,16 @@ public class WebEngineManager {
 
     private final static String DEFAULT_CONFIG = "/WEB-INF/webit-script-webpage.props";
     private String configPath = DEFAULT_CONFIG;
-    private final ServletContextAware servletContextAware;
+    private final ServletContextProvider servletContextAware;
     private Map<String, Object> extraSettings;
     private Engine engine;
 
-    public WebEngineManager(ServletContextAware servletContextAware) {
+    public WebEngineManager(ServletContextProvider servletContextAware) {
         this.servletContextAware = servletContextAware;
+    }
+
+    public WebEngineManager(ServletContext servletContext) {
+        this.servletContextAware = new DirectServletContextProvider(servletContext);
     }
 
     public void setConfigPath(String configPath) {
@@ -56,8 +57,21 @@ public class WebEngineManager {
                 .merge(parameters, response.getOutputStream());
     }
 
-    public static interface ServletContextAware {
+    public static interface ServletContextProvider {
 
         ServletContext getServletContext();
+    }
+
+    public static class DirectServletContextProvider implements ServletContextProvider {
+
+        private final ServletContext servletContext;
+
+        public DirectServletContextProvider(ServletContext servletContext) {
+            this.servletContext = servletContext;
+        }
+
+        public ServletContext getServletContext() {
+            return this.servletContext;
+        }
     }
 }

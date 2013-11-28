@@ -34,12 +34,7 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
     public WebitScriptRenderFactory(String viewExtension) {
         this.viewExtension = viewExtension;
 
-        this.engineManager = new WebEngineManager(new WebEngineManager.ServletContextAware() {
-
-            public ServletContext getServletContext() {
-                return JFinal.me().getServletContext();
-            }
-        });
+        this.engineManager = new WebEngineManager(JFinal.me().getServletContext());
 
         Map<String, Object> settings = new HashMap<String, Object>(4);
         settings.put("webit.script.Engine.resolvers+", "webit.script.support.jfinal.ModelResolver");

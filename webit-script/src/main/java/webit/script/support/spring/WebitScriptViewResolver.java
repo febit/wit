@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
 import webit.script.web.WebEngineManager;
+import webit.script.web.WebEngineManager.ServletContextProvider;
 
 /**
  *
@@ -32,7 +33,7 @@ public class WebitScriptViewResolver extends AbstractTemplateViewResolver implem
     public WebitScriptViewResolver() {
         setViewClass(requiredViewClass());
 
-        this.engineManager = new WebEngineManager(new WebEngineManager.ServletContextAware() {
+        this.engineManager = new WebEngineManager(new ServletContextProvider() {
 
             public ServletContext getServletContext() {
                 return WebitScriptViewResolver.this.getServletContext();
