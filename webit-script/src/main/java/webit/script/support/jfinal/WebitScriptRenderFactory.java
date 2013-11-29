@@ -46,6 +46,25 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
         this.engineManager.resetEngine();
     }
 
+    public WebitScriptRenderFactory setProperties(String key, Object value) {
+        this.engineManager.setProperties(key, value);
+        return this;
+    }
+
+    public WebitScriptRenderFactory setProperties(Map<String, Object> map) {
+        this.engineManager.setProperties(map);
+        return this;
+    }
+
+    public WebitScriptRenderFactory appendProperties(String key, Object value) {
+        this.engineManager.appendProperties(key, value);
+        return this;
+    }
+
+    public Object removeProperties(String key) {
+        return this.engineManager.removeProperties(key);
+    }
+
     private static class WebitScriptRender extends Render {
 
         private final WebitScriptRenderFactory renderFactory;
