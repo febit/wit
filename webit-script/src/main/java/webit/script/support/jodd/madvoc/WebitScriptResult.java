@@ -31,11 +31,9 @@ public class WebitScriptResult extends ActionResult implements ServletContextPro
 
     public WebitScriptResult() {
         super(NAME);
-        this.engineManager = new WebEngineManager(this);
-
-        Map<String, Object> settings = new HashMap<String, Object>(4);
-        settings.put("webit.script.Engine.appendLostFileNameExtension", Boolean.TRUE);
-        this.engineManager.setExtraSettings(settings);
+        this.engineManager
+                = new WebEngineManager(this)
+                .setProperties("webit.script.Engine.appendLostFileNameExtension", Boolean.TRUE);
     }
 
     public ServletContext getServletContext() {

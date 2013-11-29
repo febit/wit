@@ -8,7 +8,6 @@ import com.jfinal.render.RenderException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import webit.script.web.ServletUtil;
@@ -34,11 +33,9 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
     public WebitScriptRenderFactory(String viewExtension) {
         this.viewExtension = viewExtension;
 
-        this.engineManager = new WebEngineManager(JFinal.me().getServletContext());
-
-        Map<String, Object> settings = new HashMap<String, Object>(4);
-        settings.put("webit.script.Engine.resolvers+", "webit.script.support.jfinal.ModelResolver");
-        this.engineManager.setExtraSettings(settings);
+        this.engineManager
+                = new WebEngineManager(JFinal.me().getServletContext())
+                .appendProperties("webit.script.Engine.resolvers", "webit.script.support.jfinal.ModelResolver");
     }
 
     public void setConfigPath(String configPath) {

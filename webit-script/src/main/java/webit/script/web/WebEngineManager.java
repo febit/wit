@@ -2,6 +2,7 @@
 package webit.script.web;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -15,24 +16,49 @@ public class WebEngineManager {
 
     private final static String DEFAULT_CONFIG = "/WEB-INF/webit-script-webpage.props";
     private String configPath = DEFAULT_CONFIG;
-    private final ServletContextProvider servletContextAware;
-    private Map<String, Object> extraSettings;
+    private final ServletContextProvider servletContextProvider;
+    private Map<String, Object> extraProperties;
     private Engine engine;
 
     public WebEngineManager(ServletContextProvider servletContextAware) {
-        this.servletContextAware = servletContextAware;
+        this.servletContextProvider = servletContextAware;
     }
 
     public WebEngineManager(ServletContext servletContext) {
-        this.servletContextAware = new DirectServletContextProvider(servletContext);
+        this.servletContextProvider = new DirectServletContextProvider(servletContext);
+    }
+
+    private void checkExtraProperties() {
+        if (this.extraProperties == null) {
+            this.extraProperties = new HashMap<String, Object>();
+        }
+    }
+
+    public WebEngineManager setProperties(String key, Object value) {
+        checkExtraProperties();
+        this.extraProperties.put(key, value);
+        return this;
+    }
+
+    public WebEngineManager setProperties(Map<String, Object> map) {
+        checkExtraProperties();
+        this.extraProperties.putAll(map);
+        return this;
+    }
+
+    public WebEngineManager appendProperties(String key, Object value) {
+        checkExtraProperties();
+        this.extraProperties.put(key.concat("+"), value);
+        return this;
+    }
+
+    public Object removeProperties(String key) {
+        checkExtraProperties();
+        return this.extraProperties.remove(key);
     }
 
     public void setConfigPath(String configPath) {
         this.configPath = configPath;
-    }
-
-    public void setExtraSettings(Map<String, Object> extraSettings) {
-        this.extraSettings = extraSettings;
     }
 
     public void resetEngine() {
@@ -45,9 +71,9 @@ public class WebEngineManager {
             return engine;
         } else {
             return this.engine = ServletEngineUtil.createEngine(
-                    this.servletContextAware.getServletContext(),
+                    this.servletContextProvider.getServletContext(),
                     this.configPath,
-                    this.extraSettings);
+                    this.extraProperties);
         }
     }
 
