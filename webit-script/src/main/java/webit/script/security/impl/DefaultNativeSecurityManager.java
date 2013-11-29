@@ -19,7 +19,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
     //settings
     private String list;
     //
-    private final static String ROOT_NODE_NAME = "";
+    private final static String ROOT_NODE_NAME = "*";
     private final static char[] DELIMITERS = new char[]{'\n', ',', '\r'};
     private ConcurrentMap<String, Node> allNodes;
 
@@ -39,24 +39,19 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         nodes.put(ROOT_NODE_NAME, rootNode);
 
         if (list != null) {
-            String[] nodeRules = StringUtil.splitc(list, DELIMITERS);
-            StringUtil.trimAll(nodeRules);
+            String[] nodeRules;
+            StringUtil.trimAll(nodeRules = StringUtil.splitc(list, DELIMITERS));
             char firstChar;
-            String nodeName;
             boolean access;
             String rule;
-            for (int i = 0; i < nodeRules.length; i++) {
-                rule = nodeRules[i];
-                if (rule.length() > 0) {
-                    firstChar = rule.charAt(0);
-                    if (firstChar == '+' || firstChar == '-') {
-                        access = firstChar == '+';
-                        nodeName = rule.substring(1).trim();
+            for (int i = 0, len = nodeRules.length; i < len; i++) {
+                if ((rule = nodeRules[i]).length() != 0) {
+                    if ((access = (firstChar = rule.charAt(0)) == '+') || firstChar == '-') {
+                        rule = rule.substring(1).trim();
                     } else {
                         access = true;
-                        nodeName = rule;
                     }
-                    getOrCreateNode(nodes, nodeName).setAccess(access);
+                    getOrCreateNode(nodes, rule).setAccess(access);
                 }
             }
         }
@@ -65,14 +60,12 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
 
     protected final Node getOrCreateNode(final String name) {
         Node node;
-
         if ((node = allNodes.get(name)) == null) {
-            node = new Node(
-                    getOrCreateNode(getParentNodeName(name)),
-                    name);
-            Node old = allNodes.putIfAbsent(name, node);
-            if (old != null) {
-                node = old;
+            Node old;
+            if ((old = allNodes.putIfAbsent(name,
+                    node = new Node(getOrCreateNode(getParentNodeName(name)), name)))
+                    != null) {
+                return old;
             }
         }
         return node;
@@ -81,10 +74,8 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
     private static Node getOrCreateNode(Map<String, Node> map, String name) {
         Node node;
         if ((node = map.get(name)) == null) {
-            node = new Node(
-                    getOrCreateNode(map, getParentNodeName(name)),
-                    name);
-            map.put(name, node);
+            map.put(name,
+                    node = new Node(getOrCreateNode(map, getParentNodeName(name)), name));
         }
         return node;
     }
