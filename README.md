@@ -13,22 +13,24 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ### Maven
 
-    <repositories>
-        <repository>
-            <id>webit-script</id>
-            <name>Webit script</name>
-            <url>http://zqq90.github.io/maven/</url>
-        </repository>
-    </repositories>
-    <dependencies>
-        ...
-        <dependency>
-            <groupId>com.github.zqq90.webit-script</groupId>
-            <artifactId>webit-script</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        ...
-    </dependencies>
+~~~~~xml
+<repositories>
+ <repository>
+     <id>webit-script</id>
+     <name>Webit script</name>
+     <url>http://zqq90.github.io/maven/</url>
+ </repository>
+</repositories>
+<dependencies>
+ ...
+ <dependency>
+     <groupId>com.github.zqq90.webit-script</groupId>
+     <artifactId>webit-script</artifactId>
+     <version>1.2.1</version>
+ </dependency>
+ ...
+</dependencies>
+~~~~~
 
 ### Or Add jars
 
@@ -36,15 +38,17 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ### Code in Java like this
 
-    // !! engine 并不会被缓存, 请根据需要自行实现 Engine的单例模式
-    Engine engine = Engine.createEngine("/webit-script-config.props", extraSettingsMap);
-    ...
-    // template 已缓存, 线程安全, 并自动检测模板源是否被更新
-    // 当然您也可以缓存 Template 实例，模板更新时更新实例内部AST, 其实例不会变化
-    Template template = engine.getTemplate("/your/template/path/filename.ext");
-    ...
-    template.merge(parametersMap, outputStream); 
-    //template.merge(parametersMap, writer);
+~~~~~java
+// !! engine 并不会被缓存, 请根据需要自行实现 Engine的单例模式
+Engine engine = Engine.createEngine("/webit-script-config.props", extraSettingsMap);
+...
+// template 已缓存, 线程安全, 并自动检测模板源是否被更新
+// 当然您也可以缓存 Template 实例，模板更新时更新实例内部AST, 其实例不会变化
+Template template = engine.getTemplate("/your/template/path/filename.ext");
+...
+template.merge(parametersMap, outputStream); 
+//template.merge(parametersMap, writer);
+~~~~~
 
 ## Config(配置)
 
@@ -58,36 +62,38 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ### Hello word
 
-    Hello Webit Script!
-    <%
-    var books;
-    {
-        for(book : books){
-    %>
-    ${for.iter.index}.《${book.name}》 ￥${book.price}
-    <%
-        }
+~~~~~javascript
+Hello Webit Script!
+<%
+var books;
+{
+    for(book : books){
+%>
+${for.iter.index}.《${book.name}》 ￥${book.price}
+<%
     }
-    {
-        //this is a function
-        var func = function(a, b){
-            return a + b + arguments[3];
-        };
-        echo func("a", "b", "c");
-        echo '\n';
+}
+{
+    //this is a function
+    var func = function(a, b){
+        return a + b + arguments[3];
+    };
+    echo func("a", "b", "c");
+    echo '\n';
+}
+{
+    var map = {
+        1: 1,
+        "key2": "value2",
+        3: 2 + 1
+    };
+    map[5] = 2 + 3;
+    for(key, value : map){
+        echo key + ":" +value + "\n";
     }
-    {
-        var map = {
-            1: 1,
-            "key2": "value2",
-            3: 2 + 1
-        };
-        map[5] = 2 + 3;
-        for(key, value : map){
-            echo key + ":" +value + "\n";
-        }
-    }
-    %>
+}
+%>
+~~~~~
 
 更多实例可见:[测试模板][tests]
 
@@ -109,36 +115,42 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ### 关键字
 
-    var  super  this
-    if  else
-    switch  case  default
-    for  do  while  break  continue 
-    function  return
-    import  include  echo
-    native  new  @import
+~~~~~javascript
+var  super  this
+if  else
+switch  case  default
+for  do  while  break  continue 
+function  return
+import  include  echo
+native  new  @import
+~~~~~
 
 ### 保留的关键字
 
-    static  instanceof  class  const  final
-    throw  try  catch  finally
+~~~~~javascript
+static  instanceof  class  const  final
+throw  try  catch  finally
+~~~~~
 
 ### 操作符
 *与Java 保持一致，顺序按优先级从高到低*
 
-    [] . () @
-    =>
-    !  ~  ++  --  – (取负)
-    *  /  %
-    +  -
-    <<  >>  >>>
-    <  <=  >  >=
-    ^
-    |
-    &&
-    ||
-    ?:
-    ..
-    =  +=  -=  *=  /=  %=  ^=  <<=  >>=  >>>=
+~~~~~javascript
+[] . () @
+=>
+!  ~  ++  --  – (取负)
+*  /  %
++  -
+<<  >>  >>>
+<  <=  >  >=
+^
+|
+&&
+||
+?:
+..
+=  +=  -=  *=  /=  %=  ^=  <<=  >>=  >>>=
+~~~~~
 
 ### 语句
 + 结尾分号不能省略
@@ -153,8 +165,10 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 ### 变量
 #### 变量声明 var
 
-    var a;
-    var a, b, c=0, d="d";
+~~~~~javascript
+var a;
+var a, b, c=0, d="d";
+~~~~~
 
 #### 变量名规则
 + 先声明 后使用，所有变量 必须全部声明
@@ -170,18 +184,20 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 ### 数据结构
 #### 拥有动态类
 
-    var x                             //  null
-    var x2 = 6;                    //  数字
-    var x3 = "Bill";               //  字符串
-    var x4 = 'a';                   //  字符
-    var x5 = [1, "string"];     //  数组
-    var x6 = {};                    // Map
+~~~~~javascript
+var x                             //  null
+var x2 = 6;                    //  数字
+var x3 = "Bill";               //  字符串
+var x4 = 'a';                   //  字符
+var x5 = [1, "string"];     //  数组
+var x6 = {};                    // Map
+~~~~~
 
 #### 字符串
 + 转义，`\\` `\"` `\'` `\n` `\r` `\t` `\f` `\b`
 + 允许换行，行后转义字符 可屏蔽该换行符
 
-~~~~~
+~~~~~javascript
 var string = "第一行  \
 这还是在第一行
 这是第二行\n第三行\n
@@ -190,95 +206,112 @@ var string = "第一行  \
 
 ### 数字
 
-    var x1=34;  //Integer
-    var x2=34L;  //Long
-    var x3=34.00; //Double
-    var x4=34.00D;  //Double
-    var x5=34.00F;  //Float
-    var x6 = 0b10101;  //二进制
-    var x7 = 0123; //八进制
-    var x8 = 0x1A; //十六进制
+~~~~~javascript
+var x1=34;  //Integer
+var x2=34L;  //Long
+var x3=34.00; //Double
+var x4=34.00D;  //Double
+var x5=34.00F;  //Float
+var x6 = 0b10101;  //二进制
+var x7 = 0123; //八进制
+var x8 = 0x1A; //十六进制
+~~~~~
 
 ### 布尔
 
-    var x = true;
-    var y = false;
-
+~~~~~javascript
+var x = true;
+var y = false;
+~~~~~
 
 ### 数组
 
 #### 带初始值的数组
 
-    var array = [1, "a string", book];
-    var item;
-    item = array[0];
-    item = array[1];
-    item = array[2];
-    array[0] = "a new value"；
+~~~~~javascript
+var array = [1, "a string", book];
+var item;
+item = array[0];
+item = array[1];
+item = array[2];
+array[0] = "a new value";
+~~~~~
 
 #### Native 方法声明定长数组,
 
-    // 引入生成数组的 native 方法
-    var new_int_array = native int [];
-    var new_Object_array = native Object [];
-    var new_DateTime_array = native java.util.DateTime [];
-    
-    //得到定长数组
-    var int_array = new_int_array(5); //长度为5 的int数组
-    var objects = new_Object_array(5);//长度为5 的Object数组
-    
-    var a;
-    a = objects[4];
-    objects[4]=4; // 自动 装箱为Integer 然后放入数组
-    var len = objects.length; //数组长度
-    len = objects.size; //数组长度
-    
-    //不定长数组 可使用Java提供的List实现
-    var new_list = native new java.util.ArrayList();
-    var list_add = native java.util.List.add(Object);
-    
-    var list = new_list();
-    list@list_add(0); 
-    list@list_add(1);
-    
-    var a = list[0];
-    list[0] = "zero";
-    list[1] = "a string";
+~~~~~javascript
+// 引入生成数组的 native 方法
+var new_int_array = native int [];
+var new_Object_array = native Object [];
+var new_DateTime_array = native java.util.DateTime [];
+
+//得到定长数组
+var int_array = new_int_array(5); //长度为5 的int数组
+var objects = new_Object_array(5);//长度为5 的Object数组
+
+var a;
+a = objects[4];
+objects[4]=4; // 自动 装箱为Integer 然后放入数组
+var len = objects.length; //数组长度
+len = objects.size; //数组长度
+
+//不定长数组 可使用Java提供的List实现
+var new_list = native new java.util.ArrayList();
+var list_add = native java.util.List.add(Object);
+
+var list = new_list();
+list@list_add(0); 
+list@list_add(1);
+
+var a = list[0];
+list[0] = "zero";
+list[1] = "a string";
+~~~~~
 
 ### Map
 
-    var map = {};
-    var map2 = {1:1,"2","2"};
-    map["key"] = "a string value";
-    
-    var value = map[1];
-    value = map["2"];
-    value = map["key"];
+~~~~~javascript
+var map = {};
+var map2 = {1:1,"2","2"};
+map["key"] = "a string value";
+
+var value = map[1];
+value = map["2"];
+value = map["key"];
+~~~~~
 
 ### Java对象
 #### 声明
 
-    var new_list = native new java.util.ArrayList();
-    var list = new_list();
-    var list2 = new_list();
+~~~~~javascript
+var new_list = native new java.util.ArrayList();
+var list = new_list();
+var list2 = new_list();
+~~~~~
 
 #### 访问属性
 
-    var book;
-    var name = book.name; // book.getName();
-    book.name = "new name"; //book.setName("new name"); 
+~~~~~javascript
+var book;
+var name = book.name; // book.getName();
+book.name = "new name"; //book.setName("new name"); 
+~~~~~
 
 #### 访问方法
 *访问方法必须事先native导入成本地函数*
 
-    var list_add = native java.util.List.add(Object);
-    list@list_add(0);
-    list_add(list, 1);
+~~~~~javascript
+var list_add = native java.util.List.add(Object);
+list@list_add(0);
+list_add(list, 1);
+~~~~~
 
 *访问静态方法*
 
-    var now = native java.lang.System.currentTimeMillis();
-    echo now();
+~~~~~javascript
+var now = native java.lang.System.currentTimeMillis();
+echo now();
+~~~~~
  
 ### 函数
 
@@ -289,8 +322,7 @@ var string = "第一行  \
 + 可访问父层作用域
 + 函数内部可嵌套函数
 
-
-~~~~~
+~~~~~javascript
 var outSideVar;
 var a;
 var myFunc = function(arg1, arg2){
@@ -308,8 +340,7 @@ var myFunc = function(arg1, arg2){
 + 可使用`@import` 导入类名 或者包名 用法同Java里的 `import`, 以简化类名输入
 + ~~@import  java.util.*;~~ v1.2.0+ 不再支持导入包
 
-
-~~~~~
+~~~~~javascript
 @import  java.lang.System; //实际上默认已经导入  java.lang.* 只是演示使用方法
 @import  java.util.List;
 @import  java.util.ArrayList;
@@ -325,8 +356,7 @@ var new_list2 = native new ArrayList(int); // 导入 构造函数
 + 缺少的参数 自动 null 填充, *为了良好的设计 不建议使用缺少函数自动填充*
 + 可使用@ 将第一个参数 外置
 
-
-~~~~~
+~~~~~javascript
 func(arg1, arg2);
 //等同于
 arg1@func(arg2);
@@ -335,30 +365,28 @@ list_add(list, item);
 list@list_add(item);
 ~~~~~
 
-
 ### 重定向输出符 `=>`
 + 作用: 将指定 范围 产生的输出流 重定向到 指定变量
 + 意义: 可以延后输出
 + **使用对象: 1. 代码段；  2. 函数调用**
 + 数据格式: 使用OutputStream 时, 为 byte[] ; 使用 Writer 时, 为String.
 
+~~~~~javascript
+var out;
+var book;
+//代码段 输出重定向
+{
+echo "a String";
+>${book.name} <
+} => out; //不要忘了分号！！！
+// "a String" 以及 book.name 都将输出到 out
 
-~~~~~
-    var out;
-    var book;
-    //代码段 输出重定向
-    {
-    echo "a String";
-    >${book.name} <
-    } => out; //不要忘了分号！！！
-    // "a String" 以及 book.name 都将输出到 out
-    
-    var out;
-    // 函数 输出重定向
-    func() => out;
-    //由于 `=>` 具有较高的优先级，也可以这么些
-    var a = arg1@func() => out +1; 
-    //此时 a为 func()+1 , func() 本次执行的输出内容赋值给out
+var out;
+// 函数 输出重定向
+func() => out;
+//由于 `=>` 具有较高的优先级，也可以这么些
+var a = arg1@func() => out +1; 
+//此时 a为 func()+1 , func() 本次执行的输出内容赋值给out
 ~~~~~
 
 
@@ -370,8 +398,7 @@ list@list_add(item);
 + 模板名可以动态生成
 + import 可支持指定需要导出的变量, 否则只导出本层作用域内的同名变量
 
-
-~~~~~
+~~~~~javascript
 //相对路径
 include "./book-head.wtl";
 //等同于 
@@ -408,8 +435,7 @@ import "book-head.wtl"  {"param1":1}  a,b=c;
 + **操作符按 自右向左 结合 [不是执行顺序], 详解看下面例子**
 + **简写时 `?:` 之间不能有空白**
 
-
-~~~~~
+~~~~~javascript
 var a1 = isTrue ? "Yes" : "No";
 //简写
 var a2 = value ?: defaultValue; //取默认值
@@ -428,8 +454,7 @@ var a4 = list1 ?: list2 ?: list3;
 #### 判断控制语句 if - else if - else
 + 不能省略 `{  }`
 
-
-~~~~~
+~~~~~javascript
 if( ... ){
     ...;
 }else if(...){
@@ -447,37 +472,39 @@ if( ... ){
 
 #### for-in
 
-    //集合 数组 等
-    for(item : list){
-        echo item;
-        //echo for.iter.index; // .isFirst .hasNext .isOdd .isEven
-    } else{
-        echo "list is empty";
-    }
-    //递增 
-    for(i: 3..6){
-        echo i;
-    }
-    //递减
-    for(i: 6..3){
-        echo i;
-        //支持 for.iter.*
-    }
-
+~~~~~javascript
+//集合 数组 等
+for(item : list){
+    echo item;
+    //echo for.iter.index; // .isFirst .hasNext .isOdd .isEven
+} else{
+    echo "list is empty";
+}
+//递增 
+for(i: 3..6){
+    echo i;
+}
+//递减
+for(i: 6..3){
+    echo i;
+    //支持 for.iter.*
+}
+~~~~~
 
 #### for-in Map version
 
-    for(key, value : map){
-        echo key + " = " value;
-        echo "\n";
-        //同样支持 for.iter.*
-    }
+~~~~~javascript
+for(key, value : map){
+    echo key + " = " value;
+    echo "\n";
+    //同样支持 for.iter.*
+}
+~~~~~
 
 #### while do-while 
 + 不支持 for.iter 特殊变量
 
-
-~~~~~
+~~~~~javascript
 //
 var iter;
 ... ;
@@ -492,7 +519,6 @@ do{
 ~~~~~
 
 
-
 ### Switch-Case
 
 + 支持普通 Object, 包括 String 
@@ -500,8 +526,7 @@ do{
 + 需要 break, 否则无条件继续执行下一个标签的句柄
 + 每个case 命名空间独立
 
-
-~~~~~
+~~~~~javascript
 switch(a){
     case 1:
         ....;
@@ -520,8 +545,7 @@ switch(a){
 ### break continue
 + **支持 label, 直接操作该循环体 或 switch**
 
-
-~~~~~
+~~~~~javascript
 //break continue
 outter: for(i: 6..3){
     echo i;
@@ -556,20 +580,21 @@ outter: for(i: 6..3){
 + 解析之后的Template AST会放入缓存, 检测到模板源文件改变时将重新加载资源并解析;
 + 性能测试结果比较理想, 待比较权威的模版测试程序;
 + 使用OutputStream 输出时, 选择 SimpleTextStatmentFactory 将会预先将纯文本根据缺省编码编码成字节流. 
-+ boilit/ebm 测试结果 [![boilit/ebm](https://github.com/boilit/ebm)]  [![or see](http://boilit.github.io/bsl/zh/ability/jdk7utf8.html)]
++ zqq90/ebm 测试结果
 
 
 ~~~~~
-Engine                                Time            Size
-BSL-2.0.0                              559        68118050
-webit-script-1.1.4                     590        68318250
-HTTL-1.0.11                            958        68118050
-BeeTL-1.25.01                          958        68138070
-Rythm-1.0.0-b10-SNAPSHOT              1624        48728680
-Velocity-1.7                          1834        75046912
-FreeMarker-2.3.19                     2369        68157440
-JdkStringBuffer-1.7.0_40               606        67395584
-JdkStringBuilder-1.7.0_40              735        67395584
+Engine                          Time
+
+JetbrickTemplate-1.0.0          6532
+HTTL-1.0.11                     6690
+BSL-2.0.2                       8801
+WebitScript-1.2.2               8956
+DirectOut-system                11519
+BeeTL-1.25.01                   11603
+Rythm-1.0.0-b10-SNAPSHOT        12671
+Velocity-1.7                    24075
+FreeMarker-2.3.19               32546
 ~~~~~
 
 
