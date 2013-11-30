@@ -10,7 +10,7 @@ import org.junit.Test;
  */
 public class FastCharBufferTest {
 
-    //@Test
+    @Test
     public void trimRightBlankLineTest() {
         FastCharBuffer buffer;
 

@@ -53,7 +53,7 @@ public class UTF_8Test {
         return true;
     }
 
-    //@Test
+    @Test
     public void testEncode() throws UnsupportedEncodingException {
         assertTrue(matchEncode(""));
 
@@ -66,7 +66,7 @@ public class UTF_8Test {
     }
     
     
-    //@Test
+    @Test
     public void testDecode() throws UnsupportedEncodingException {
         assertTrue(matchDencode(""));
 

@@ -19,7 +19,7 @@ public class ResolverGenerator {
         System.out.println("parameters".hashCode());
     }
 
-    //@Test
+    @Test
     public void generateGetCase() {
 
         Class cls = HttpServletRequest.class;
@@ -41,7 +41,7 @@ public class ResolverGenerator {
         }
     }
 
-    //@Test
+    @Test
     public void generateSetCase() {
         Class cls = HttpServletRequest.class;
         FieldInfo[] all = FieldInfoResolver.resolver(cls);

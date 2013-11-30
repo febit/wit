@@ -53,7 +53,7 @@ public class BeanUtilTest {
         }
     }
 
-    //@Test
+    @Test
     public void test() {
         Foo foo = new Foo();
 

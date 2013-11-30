@@ -55,7 +55,7 @@ public class FieldInfoResolverTest {
         
     }
     
-    //@Test
+    @Test
     public void test(){
         FieldInfoResolver.resolver(Foo.class);
     }

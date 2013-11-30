@@ -11,7 +11,7 @@ import org.junit.Test;
  */
 public class ClassUtilTest {
 
-    //@Test
+    @Test
     public void getClassByNameTest() throws ClassNotFoundException {
 
         assertSame(int.class, ClassUtil.getClass("int", 0));

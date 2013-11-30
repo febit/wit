@@ -9,7 +9,7 @@ import webit.script.exceptions.ResourceNotFoundException;
  */
 public class EngineManager {
 
-    private static Engine engine;
+    private static final Engine engine;
 
     static {
         engine = Engine.createEngine("/webit-script-test.props", null);
