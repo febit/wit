@@ -6,7 +6,6 @@ import java.util.List;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.ResetableValueExpression;
-import webit.script.core.ast.expressions.ContextValue;
 
 /**
  *

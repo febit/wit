@@ -3,7 +3,6 @@ package webit.script.core.ast.statments;
 
 import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Position;
 import webit.script.core.ast.Statment;
 import webit.script.util.StatmentUtil;
 
