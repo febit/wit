@@ -1,24 +1,16 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.exceptions;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import webit.script.Template;
 import webit.script.core.ast.Statment;
 
 /**
  *
  * @author Zqq
  */
-public class ParseException extends RuntimeException {
+public class ParseException extends UncheckedException {
 
     private int line = -1;
     private int column = -1;
-    private Template template;
-
-    public Template getTemplate() {
-        return template;
-    }
 
     public int getLine() {
         return line;
@@ -38,8 +30,7 @@ public class ParseException extends RuntimeException {
 
     public final void initByStatment(Statment statment) {
         if (statment != null) {
-            line = statment.getLine();
-            column = statment.getColumn();
+            setPosition(statment.getLine(), statment.getColumn());
         }
     }
 
@@ -49,52 +40,14 @@ public class ParseException extends RuntimeException {
         return this;
     }
 
-    public ParseException registTemplate(Template template) {
-        if (this.template == null) {
-            this.template = template;
-        }
-        return this;
-    }
-
     @Override
-    public void printStackTrace(PrintStream s) {
-        synchronized (s) {
-            s.println(this);
-            if (this.template != null) {
-                s.println("template:".concat(this.template.name));
-            }
-            s.println("\tat line " + line + "(" + column + ") ");
-            Throwable ourCause = getCause();
-            if (ourCause != null) {
-                s.println("Caused by: ");
-                ourCause.printStackTrace(s);
-            }
-        }
-    }
-
-    @Override
-    public void printStackTrace(PrintWriter s) {
-        synchronized (s) {
-            s.println(this);
-            if (this.template != null) {
-                s.println("template:".concat(this.template.name));
-            }
-            s.println("\tat line " + line + "(" + column + ") ");
-            Throwable ourCause = getCause();
-            if (ourCause != null) {
-                s.println("Caused by: ");
-                ourCause.printStackTrace(s);
-            }
-        }
-    }
-
-    public ParseException() {
-        super();
-    }
-
-    public ParseException(Statment statment) {
-        this();
-        initByStatment(statment);
+    public void printBody(PrintStreamOrWriter out, String prefix) {
+        out.print(prefix)
+                .print("\tat line ")
+                .print(this.line)
+                .print("(")
+                .print(this.column)
+                .println(")");
     }
 
     public ParseException(String message) {
@@ -102,13 +55,13 @@ public class ParseException extends RuntimeException {
     }
 
     public ParseException(String message, int line, int column) {
-        this(message);
+        super(message);
         this.line = line;
         this.column = column;
     }
 
     public ParseException(String message, Statment statment) {
-        this(message);
+        super(message);
         initByStatment(statment);
     }
 
@@ -117,21 +70,16 @@ public class ParseException extends RuntimeException {
     }
 
     public ParseException(String message, Throwable cause, Statment statment) {
-        this(message, cause);
+        super(message, cause);
         initByStatment(statment);
     }
 
     public ParseException(Throwable cause) {
-        this(null, cause);
+        super(cause);
     }
 
     public ParseException(Throwable cause, Statment statment) {
-        this(cause);
+        super(cause);
         initByStatment(statment);
-    }
-
-    @Override
-    public synchronized Throwable fillInStackTrace() {
-        return this;
     }
 }

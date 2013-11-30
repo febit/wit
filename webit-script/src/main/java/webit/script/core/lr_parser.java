@@ -138,10 +138,10 @@ abstract class lr_parser {
      * @return TemplateAST
      * @throws ParseException
      */
-    public TemplateAST parseTemplate(java.io.Reader in, Template template) throws ParseException {
+    public TemplateAST parseTemplate(final Template template) throws ParseException {
         Lexer lexer = null;
         try {
-            lexer = new Lexer(in);
+            lexer = new Lexer(template.resource.openReader());
             this.template = template;
             final Engine _engine;
             this.engine = _engine = template.engine;
@@ -165,18 +165,15 @@ abstract class lr_parser {
         } catch (Exception e) {
             throw ExceptionUtil.castToParseException(e);
         } finally {
-            try {
-                if (lexer != null) {
+            if (lexer != null) {
+                try {
                     lexer.yyclose();
-                } else {
-                    in.close();
+                } catch (IOException ignore) {
                 }
-            } catch (IOException e) {
-                //ignore
             }
         }
     }
-    
+
     /**
      * Perform a bit of user supplied action code (supplied by generated
      * subclass). Actions are indexed by an internal action number assigned at
@@ -335,7 +332,7 @@ abstract class lr_parser {
                 stack.push(currentSymbol);
 
             } else {//act == 0
-                throw new ParseException(StringUtil.concat("Parser stop at here, ", Integer.toString(myLexer.getLine()), "(", Integer.toString(myLexer.getColumn()), ")"), myLexer.getLine(), myLexer.getColumn());
+                throw new ParseException(StringUtil.concat("Parser stop at: ", Integer.toString(myLexer.getLine()), "(", Integer.toString(myLexer.getColumn()), ")"), myLexer.getLine(), myLexer.getColumn());
             }
         } while (goonParse);
 

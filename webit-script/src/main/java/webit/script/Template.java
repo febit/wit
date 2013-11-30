@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Map;
@@ -9,12 +8,12 @@ import webit.script.core.Parser;
 import webit.script.core.ast.TemplateAST;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.exceptions.UncheckedException;
 import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.loaders.Resource;
 import webit.script.util.EncodingPool;
-import webit.script.util.ExceptionUtil;
 
 /**
  *
@@ -43,7 +42,7 @@ public final class Template {
      */
     public TemplateAST prepareTemplate() throws ParseException {
         final TemplateAST tmpl;
-        if ((tmpl = this.templateAst) != null && !resource.isModified()) {
+        if ((tmpl = this.templateAst) != null && !this.resource.isModified()) {
             return tmpl;
         } else {
             return parseAST();
@@ -52,17 +51,11 @@ public final class Template {
 
     private TemplateAST parseAST() throws ParseException {
         TemplateAST tmpl;
-        synchronized (reloadLock) {
-            if ((tmpl = this.templateAst) == null || resource.isModified()) {
-                try {
-                    this.templateAst = tmpl = new Parser()
-                            .parseTemplate(
-                            resource.openReader(), //Parser will close reader when finish
-                            this);
-                } catch (IOException e) {
-                    throw ExceptionUtil.castToParseException(e);
-                }
-                lastModified = System.currentTimeMillis();
+        synchronized (this.reloadLock) {
+            if ((tmpl = this.templateAst) == null || this.resource.isModified()) {
+                tmpl = this.templateAst
+                        = new Parser().parseTemplate(this);
+                this.lastModified = System.currentTimeMillis();
             }
         }
         return tmpl;
@@ -151,11 +144,9 @@ public final class Template {
         return (this.engine == other.engine) && (this.name.equals(other.name));
     }
 
-    private RuntimeException wrapThrowable(final Throwable exception) throws ScriptRuntimeException, ParseException {
-        if (exception instanceof ScriptRuntimeException) {
-            return ((ScriptRuntimeException) exception).setTemplate(this);
-        } else if (exception instanceof ParseException) {
-            return ((ParseException) exception).registTemplate(this);
+    private RuntimeException wrapThrowable(final Throwable exception) {
+        if (exception instanceof UncheckedException) {
+            return ((UncheckedException) exception).setTemplate(this);
         } else {
             return new ScriptRuntimeException(exception).setTemplate(this);
         }

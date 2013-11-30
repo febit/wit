@@ -155,7 +155,7 @@ public final class Engine {
                 }
             }
         } else {
-            throw new ResourceNotFoundException("Illegal template path".concat(name));
+            throw new ResourceNotFoundException("Illegal template path: ".concat(name));
         }
         return template;
     }
