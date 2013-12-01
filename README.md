@@ -26,7 +26,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
  <dependency>
      <groupId>com.github.zqq90.webit-script</groupId>
      <artifactId>webit-script</artifactId>
-     <version>1.2.1</version>
+     <version>1.2.2</version>
  </dependency>
  ...
 </dependencies>
@@ -34,7 +34,7 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
 ### Or Add jars
 
- + `webit-script-1.2.1.jar`
+ + `webit-script-1.2.2.jar`
 
 ### Code in Java like this
 
@@ -567,6 +567,15 @@ outter: for(i: 6..3){
 }
 ~~~~~
 
+### MVC视图支持
++ Jodd Madvoc
++ JFinal
++ Spring MVC
++ Struts
++ Servlet & Filter
+
+[示例代码][mvc-demo]
+
 
 ### 正在完善。。。
 
@@ -634,10 +643,13 @@ details.
 
 
 
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.1/webit-script-1.2.1.jar
-[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.2.1/webit-script-joddinside-1.2.1.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.1/webit-script-1.2.1-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.1/webit-script-1.2.1-javadoc.jar
+[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.2/webit-script-1.2.2.jar
+[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.2.2/webit-script-joddinside-1.2.2.jar
+[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.2/webit-script-1.2.2-sources.jar
+[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.2/webit-script-1.2.2-javadoc.jar
+
+[mvc-demo]: https://github.com/zqq90/webitscript-mvc-demo
+
 [url_props_doc]: http://jodd.org/doc/props.html
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
 [default_config]: https://github.com/zqq90/webit-script/blob/master/webit-script/src/main/resources/webit-script-default.props
