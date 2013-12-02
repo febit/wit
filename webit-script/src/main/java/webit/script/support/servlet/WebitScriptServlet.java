@@ -2,6 +2,7 @@
 package webit.script.support.servlet;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletConfig;
@@ -22,6 +23,7 @@ public class WebitScriptServlet extends HttpServlet {
     private String contentType;
 
     @Override
+    @SuppressWarnings("unchecked")
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
         engineManager = new WebEngineManager(config.getServletContext());
@@ -30,6 +32,20 @@ public class WebitScriptServlet extends HttpServlet {
             engineManager.setConfigPath(configPath);
         }
         contentType = config.getInitParameter("contentType");
+        //extra settings
+        String extraPrefix = config.getInitParameter("extraPrefix");
+        if (extraPrefix == null) {
+            extraPrefix = "extra.";
+        }
+        int prefixLength = extraPrefix.length();
+        final Enumeration<String> enumeration = config.getInitParameterNames();
+        String key;
+        while (enumeration.hasMoreElements()) {
+            key = enumeration.nextElement();
+            if (key.startsWith(extraPrefix)) {
+                engineManager.setProperties(key.substring(prefixLength), config.getInitParameter(key));
+            }
+        }
     }
 
     @Override
