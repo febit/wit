@@ -14,22 +14,11 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 ### Maven
 
 ~~~~~xml
-<repositories>
- <repository>
-     <id>webit-script</id>
-     <name>Webit script</name>
-     <url>http://zqq90.github.io/maven/</url>
- </repository>
-</repositories>
-<dependencies>
- ...
- <dependency>
-     <groupId>com.github.zqq90.webit-script</groupId>
-     <artifactId>webit-script</artifactId>
-     <version>1.2.2</version>
- </dependency>
- ...
-</dependencies>
+<dependency>
+  <groupId>com.github.zqq90.webit-script</groupId>
+  <artifactId>webit-script</artifactId>
+  <version>1.2.2</version>
+</dependency>
 ~~~~~
 
 ### Or Add jars
