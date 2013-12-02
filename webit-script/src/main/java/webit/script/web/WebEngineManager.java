@@ -47,9 +47,7 @@ public class WebEngineManager {
     }
 
     public WebEngineManager appendProperties(String key, Object value) {
-        checkExtraProperties();
-        this.extraProperties.put(key.concat("+"), value);
-        return this;
+        return setProperties(key.concat("+"), value);
     }
 
     public Object removeProperties(String key) {
