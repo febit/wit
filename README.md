@@ -1,11 +1,11 @@
-Webit Script -- to be awesome
+Webit Script
 ====
 
 A template-like script and engine, all writen with Java **(Java 5+)**.
 
 It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 
-**Download: [Jar][jar]    [Javadoc][doc]    [Sources][sources]**
+**Download: [Jar][jar]  [Sources][sources]**
 
 **QQ 群(Group): 302505483**
 
@@ -21,9 +21,9 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 </dependency>
 ~~~~~
 
-### Or Add jars
+### Or add Jar (~~jars~~)
 
- + `webit-script-1.2.2.jar`
+ + `webit-script-1.2.2.jar` [download here][jar]
 
 ### Code in Java like this
 
