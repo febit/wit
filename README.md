@@ -608,29 +608,22 @@ FreeMarker-2.3.19               32546
 + NativeSecurityManager   Native调用安全管理器
 
 
-## Requirements(依赖)
-
-+ null
-
-## Contributing(贡献)
-
-+ Translation works
-+ code & doc: fork -> pull requests
-+ idea & bug report: [github-issue][new_issue]
-+ donate:
-
-
 ## License(许可证)
  
-**Webit Script** is released under the BSD License. See the bundled LICENSE file for
+**Webit Script** is released under the BSD License. See the bundled [LICENSE file][license] for
 details.
 
-**Webit Script** 依据 BSD许可证发布。详细请看捆绑的 [LICENSE][license] 文件。
+**Webit Script** 依据 BSD许可证发布。详细请看 [LICENSE][license] 文件。
 
 ## Third-party Licenses(第三方许可证)
 
 + **Jodd**  under the BSD License. [License file][jodd_license]
 + **ASM-3.3.1**  under the BSD License.[License file][asm_license]
+
+
+## Bug report(bug反馈)
+
++ [github-issue][new_issue]
 
 
 
