@@ -63,7 +63,7 @@ public class WebitScriptFilter implements Filter {
         parameters.put("request", request);
         parameters.put("response", response);
         ServletUtil.exportAttributes(parameters, request);
-        this.engineManager.renderTemplate(WebitScriptFilterUtil.getTemplatePath(request), parameters, response);
+        this.engineManager.renderTemplate(WebitScriptServletUtil.getTemplatePath(request), parameters, response);
     }
 
     public void destroy() {
