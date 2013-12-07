@@ -18,6 +18,6 @@ a=0;
     func();
 
 }
-var c; //asset function not assign variant at the big Top;
+assertEquals(c, "C");
 
 %>

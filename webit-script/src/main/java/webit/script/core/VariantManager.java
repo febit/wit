@@ -84,15 +84,16 @@ public class VariantManager {
         }
     }
 
-    public VarAddress assignVariantAtTopWall(String name) {
-        int topindex = varWallStack.peek().value;
-        Map<String, Integer> top = elements[topindex];
-        if (top.containsKey(name)) {
+    public VarAddress assignVariantAtRoot(final String name) {
+        //int topindex = varWallStack.peek().value;
+        final Map<String, Integer> top;
+        if ((top = elements[0]).containsKey(name)) {
             throw new ParseException("Duplicate Variant declare: ".concat(name));
         }
-        int address = top.size();
-        top.put(name, address);
-        return new VarAddress(currentElementIndex - topindex, address);
+        checkVarWall(0);
+        final int address;
+        top.put(name, address = top.size());
+        return new VarAddress(currentElementIndex, address);
     }
 
     public int locateAtUpstair(String name, int upstair, boolean force, int line, int column) {
@@ -124,7 +125,7 @@ public class VariantManager {
         if (force) {
             throw new ParseException("Can't locate variant: ".concat(name), line, column);
         } else {
-            return assignVariantAtTopWall(name);
+            return assignVariantAtRoot(name);
         }
     }
 
