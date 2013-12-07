@@ -1,7 +1,8 @@
 Webit Script  
 ====
-<a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=7be9d8a59a8533b7c2837bdc22295b4b47c65384eda323971cf5f3b9943ad9db"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Webit Script" title="QQ群：302505483"></a>
+<a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=7be9d8a59a8533b7c2837bdc22295b4b47c65384eda323971cf5f3b9943ad9db"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="QQ群: 302505483" title="QQ群: 302505483"></a>
 <a target="_blank" href="https://bitdeli.com/free"><img border="0" src="https://d2weczhvl823v0.cloudfront.net/zqq90/webit-script/trend.png" alt="Bitdeli Badge" title="Bitdeli Badge"></a>
+<a target="_blank" href="https://travis-ci.org/zqq90/webit-script"><img border="0" src="https://api.travis-ci.org/zqq90/webit-script.png" alt="Build Status" title="Build Status"></a>
 
 A template-like script and engine, all writen with Java **(Java 5+)**.
 
