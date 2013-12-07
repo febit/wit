@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -41,6 +42,7 @@ public final class Engine {
     private boolean trimCodeBlockBlankLine = true;
     private boolean appendLostFileNameExtension = false;
     private String fileNameExtension = ".wtl";
+    private String[] vars = null;
     //
     private Logger logger;
     private Loader resourceLoader;
@@ -268,6 +270,29 @@ public final class Engine {
 
     public void setFileNameExtension(String fileNameExtension) {
         this.fileNameExtension = fileNameExtension;
+    }
+
+    public String[] getVars() {
+        return vars;
+    }
+
+    public void setVars(String[] vars) {
+        final int len;
+        if (vars != null && (len = vars.length) != 0) {
+            //StringUtil.trimAll(vars);
+            final ArrayList<String> list = new ArrayList<String>(len);
+            String var;
+            for (int i = 0; i < len; i++) {
+                if ((var = vars[i].trim()).length() != 0) {
+                    list.add(var);
+                }
+            }
+            this.vars = list.size() != 0
+                    ? list.toArray(new String[list.size()])
+                    : null;
+        } else {
+            this.vars = null;
+        }
     }
 
     public static Engine createEngine(String configPath) {

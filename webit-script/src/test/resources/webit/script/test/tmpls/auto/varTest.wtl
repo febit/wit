@@ -28,6 +28,11 @@ var assertNotSame;
     var __;
     var $$;
 }
-
-
+{
+    //
+    request = 1;
+    session = 1;
+    session = 1;
+    request2 = 1;
+}
 %>

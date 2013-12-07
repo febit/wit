@@ -21,11 +21,20 @@ public class VariantManager {
     private final Stack<VarWall> varWallStack;
 
     @SuppressWarnings("unchecked")
-    public VariantManager() {
+    public VariantManager(String[] vars) {
         this.varWallStack = new ArrayStack<VarWall>();
 
         elements = new Map[10];
-        elements[0] = createNewMap(); //current
+        Map<String, Integer> root = elements[0] = createNewMap(); //current
+        if (vars != null) {
+            String var;
+            for (int i = 0, len = vars.length; i < len; i++) {
+                var = vars[i];
+                if (!root.containsKey(var)) {
+                    root.put(var, root.size());
+                }//ignore duplicate
+            }
+        }
 
         currentElementIndex = 0;
         pushVarWall();

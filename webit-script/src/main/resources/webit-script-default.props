@@ -25,6 +25,7 @@ resolvers=\
 # trimCodeBlockBlankLine=true
 # appendLostFileNameExtension=false
 # fileNameExtension=.wtl
+# vars=
 
 
 ### MutiFilter

@@ -153,7 +153,7 @@ abstract class lr_parser {
             this.placeHolderStatmentFactory = new PlaceHolderStatmentFactory(_engine.getFilter());
             //
             this.nativeImportMgr = new NativeImportManager();
-            this.varmgr = new VariantManager();
+            this.varmgr = new VariantManager(_engine.getVars());
             this.labelsIndexMap = new HashMap<String, Integer>();
             this.labelsIndexMap.put(null, 0);
             this.currentLabelIndex = 0;

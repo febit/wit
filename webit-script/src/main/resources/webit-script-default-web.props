@@ -5,6 +5,8 @@
 textStatmentFactoryClass=webit.script.core.text.impl.ByteArrayTextStatmentFactory
 resourceLoaderClass=webit.script.web.loaders.ServletLoader
 
+vars=request,response
+
 resolvers +=webit.script.web.resolvers.HttpSessionResolver,\
     webit.script.web.resolvers.HttpServletRequestResolver,\
     webit.script.web.resolvers.HttpServletRequestParametersResolver,\
