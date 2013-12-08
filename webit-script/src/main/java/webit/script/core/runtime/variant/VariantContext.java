@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public final class VariantContext {
 
-    Object[] values;
+    final Object[] values;
     private final VariantMap varMap;
 
     public VariantContext(final VariantMap varMap) {

@@ -50,14 +50,18 @@ public class Parser extends lr_parser {
         return index;
     }
 
-    private ResetableValueExpression createContextValue(String name, int line, int column) {
+    private Expression createContextValue(String name, int line, int column) {
         VarAddress addr;
-        return (addr = varmgr.locate(name, this.locateVarForce, line, column)).upstairs == 0
-                ? new CurrentContextValue(addr.index, name, line, column)
-                : new ContextValue(addr.upstairs, addr.index, name, line, column);
+        if ((addr = varmgr.locate(name, this.locateVarForce, line, column)).isRoot) {
+            return new RootContextValue(addr.index, name, line, column);
+        } else if (addr.upstairs == 0) {
+            return new CurrentContextValue(addr.index, name, line, column);
+        } else {
+            return new ContextValue(addr.upstairs, addr.index, name, line, column);
+        }
     }
 
-    private ResetableValueExpression createContextValue(int upstair, String name, int line, int column) {
+    private Expression createContextValue(int upstair, String name, int line, int column) {
         int index = varmgr.locateAtUpstair(name, upstair, true, line, column);
         return upstair == 0
                 ? new CurrentContextValue(index, name, line, column)

@@ -16,7 +16,7 @@ public final class VariantStack {
     //
     private int current;
     private VariantContext currentContext;
-
+    
     public VariantStack() {
         contexts = new VariantContext[initialCapacity];
         current = 0;
@@ -110,6 +110,16 @@ public final class VariantStack {
         contextValues[index3] = value3;
     }
 
+    public void setToRoot(int index, Object value) {
+        //XXX: rootContextValues
+        contexts[1].values[index] = value;
+    }
+
+    public Object getFromRoot(int index) {
+        //XXX: rootContextValues
+        return contexts[1].values[index];
+    }
+    
     public void set(int upstairs, int index, Object value) {
         contexts[current - upstairs].values[index] = value;
     }

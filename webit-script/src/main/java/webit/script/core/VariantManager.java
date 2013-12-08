@@ -102,7 +102,7 @@ public class VariantManager {
         checkVarWall(0);
         final int address;
         top.put(name, address = top.size());
-        return new VarAddress(currentElementIndex, address);
+        return new VarAddress(currentElementIndex, address, true);
     }
 
     public int locateAtUpstair(String name, int upstair, boolean force, int line, int column) {
@@ -128,7 +128,7 @@ public class VariantManager {
             Integer index;
             if ((index = elements[i].get(name)) != null) {
                 checkVarWall(i);
-                return new VarAddress(currentElementIndex - i, index);
+                return new VarAddress(currentElementIndex - i, index, i == 0);
             }
         }
         if (force) {
@@ -176,10 +176,12 @@ public class VariantManager {
 
         public final int upstairs;
         public final int index;
+        public final boolean isRoot;
 
-        public VarAddress(int upstairs, int index) {
+        public VarAddress(int upstairs, int index, boolean isRoot) {
             this.upstairs = upstairs;
             this.index = index;
+            this.isRoot = isRoot;
         }
     }
 }

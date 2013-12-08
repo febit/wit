@@ -6,6 +6,7 @@ import java.util.List;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.ResetableValueExpression;
+import webit.script.exceptions.ParseException;
 
 /**
  *
@@ -30,10 +31,14 @@ public class ImportStatmentPart extends Position {
         this.toResetableValueList = new LinkedList<ResetableValueExpression>();
     }
 
-    public ImportStatmentPart append(String name, ResetableValueExpression to) {
-        this.exportNameList.add(name);
-        this.toResetableValueList.add(to);
-        return this;
+    public ImportStatmentPart append(String name, Expression to) {
+        if (to instanceof ResetableValueExpression) {
+            this.exportNameList.add(name);
+            this.toResetableValueList.add((ResetableValueExpression) to);
+            return this;
+        } else {
+            throw new ParseException("Need a resetable expression.", to);
+        }
     }
 
     public ImportStatment pop() {
