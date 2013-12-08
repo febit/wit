@@ -394,7 +394,7 @@ public class Parser extends lr_parser {
 
 	case 123: // mapKeyValue ::= mapKeyValue COMMA DIRECT_VALUE COLON expression 
 	{
-		 return ((MapKeyValue) myStack.peek(4).value).add((Object) myStack.peek(2).value, (Expression) myStack.peek(0).value); 
+		 return ((MapValuePart) myStack.peek(4).value).add((Object) myStack.peek(2).value, (Expression) myStack.peek(0).value); 
 	}
 
 	case 0: // templateAST ::= statmentList 
@@ -522,7 +522,7 @@ public class Parser extends lr_parser {
 
 	case 122: // mapKeyValue ::= DIRECT_VALUE COLON expression 
 	{
-		 return new MapKeyValue().add((Object) myStack.peek(2).value, (Expression) myStack.peek(0).value); 
+		 return new MapValuePart().add((Object) myStack.peek(2).value, (Expression) myStack.peek(0).value); 
 	}
 
 	case 2: // statmentList ::= 
@@ -794,7 +794,7 @@ public class Parser extends lr_parser {
 	case 124: // mapValue ::= LBRACE mapKeyValue RBRACE 
 	{
 		Symbol sym$Symbol = myStack.peek(2);
-		 return ((MapKeyValue) myStack.peek(1).value).pop(sym$Symbol.line, sym$Symbol.column); 
+		 return ((MapValuePart) myStack.peek(1).value).pop(sym$Symbol.line, sym$Symbol.column); 
 	}
 
 	case 104: // expression ::= LBRACK expressionList RBRACK 

@@ -9,18 +9,18 @@ import webit.script.core.ast.Expression;
  *
  * @author Zqq
  */
-public final class MapKeyValue{
+public final class MapValuePart{
 
     private final List keys;
     private final List<Expression> valueExprs;
 
-    public MapKeyValue() {
+    public MapValuePart() {
         this.keys = new LinkedList();
         this.valueExprs = new LinkedList<Expression>();
     }
 
     @SuppressWarnings("unchecked")
-    public MapKeyValue add(Object key, Expression expr) {
+    public MapValuePart add(Object key, Expression expr) {
         this.keys.add(key);
         this.valueExprs.add(expr);
         return this;

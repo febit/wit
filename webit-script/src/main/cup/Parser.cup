@@ -358,7 +358,7 @@ non terminal IfStatmentPart ifStatPart;
 /* Expression */
 non terminal Expression expression, expression_statmentable;
 non terminal ExpressionList expressionList, expressionList1;
-non terminal MapKeyValue mapKeyValue;
+non terminal MapValuePart mapValuePart;
 non terminal MapValue mapValue;
 
 non terminal String contextValueIdent;
@@ -813,14 +813,14 @@ expressionList      ::=
 
 // map {key:expr, ...}
 
-mapKeyValue         ::= DIRECT_VALUE:key COLON expression:expr
-                        {: return new MapKeyValue().add(%key%, %expr%); :}
-                        |mapKeyValue:part COMMA DIRECT_VALUE:key COLON expression:expr
+mapValuePart         ::= DIRECT_VALUE:key COLON expression:expr
+                        {: return new MapValuePart().add(%key%, %expr%); :}
+                        |mapValuePart:part COMMA DIRECT_VALUE:key COLON expression:expr
                         {: return (%part%).add(%key%, %expr%); :}
                         ;
 
 
-mapValue            ::= LBRACE:sym mapKeyValue:part RBRACE
+mapValue            ::= LBRACE:sym mapValuePart:part RBRACE
                         {: return (%part%).pop(%sym.line%, %sym.column%); :}
                         |LBRACE:sym RBRACE
                         {: return new MapValue(new Object[0], new Expression[0], %sym.line%,%sym.column%); :}
