@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.runtime.variant;
+package webit.script.core.runtime;
 
+import webit.script.core.VariantIndexer;
 import java.util.Map;
 import webit.script.util.keyvalues.KeyValueAccepter;
 
@@ -11,18 +12,18 @@ import webit.script.util.keyvalues.KeyValueAccepter;
 public final class VariantContext implements KeyValueAccepter {
 
     final Object[] values;
-    private final VariantMap varMap;
+    private final VariantIndexer varIndexer;
 
-    public VariantContext(final VariantMap varMap) {
-        this.values = new Object[(this.varMap = varMap).size()];
+    public VariantContext(final VariantIndexer varIndexer) {
+        this.values = new Object[(this.varIndexer = varIndexer).size];
     }
 
     @SuppressWarnings("unchecked")
     public void exportTo(final Map map) {
         final Object[] vars;
-        final String[] keys = this.varMap.names;
+        final VariantIndexer indexer = this.varIndexer;
         for (int i = 0, len = (vars = this.values).length; i < len; i++) {
-            map.put(keys[i], vars[i]);
+            map.put(indexer.getName(i), vars[i]);
         }
     }
 
@@ -36,7 +37,7 @@ public final class VariantContext implements KeyValueAccepter {
 
 //    public boolean set(String key, Object value) {
 //        int index;
-//        if ((index = this.varMap.getIndex(key)) >= 0) {
+//        if ((index = this.varIndexer.getIndex(key)) >= 0) {
 //            values[index] = value;
 //            return true;
 //        }
@@ -44,7 +45,7 @@ public final class VariantContext implements KeyValueAccepter {
 //    }
     public void set(final Map<String, Object> map) {
         int index;
-        final VariantMap _varMap = this.varMap;
+        final VariantIndexer _varMap = this.varIndexer;
         final Object[] _values = this.values;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if ((index = _varMap.getIndex(entry.getKey())) >= 0) {
@@ -54,11 +55,11 @@ public final class VariantContext implements KeyValueAccepter {
     }
 
     public int getIndex(String key) {
-        return this.varMap.getIndex(key);
+        return this.varIndexer.getIndex(key);
     }
 
     public boolean hasKey(String key) {
-        return this.varMap.getIndex(key) >= 0;
+        return this.varIndexer.getIndex(key) >= 0;
     }
 
     public int size() {
@@ -67,7 +68,7 @@ public final class VariantContext implements KeyValueAccepter {
 
     public void set(String key, Object value) {
         int index;
-        if ((index = this.varMap.getIndex(key)) >= 0) {
+        if ((index = this.varIndexer.getIndex(key)) >= 0) {
             this.values[index] = value;
         }
     }

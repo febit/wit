@@ -11,8 +11,8 @@ import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
-import webit.script.core.runtime.variant.VariantMap;
-import webit.script.core.runtime.variant.VariantStack;
+import webit.script.core.VariantIndexer;
+import webit.script.core.runtime.VariantStack;
 import webit.script.util.ALU;
 import webit.script.util.StatmentUtil;
 
@@ -23,15 +23,15 @@ import webit.script.util.StatmentUtil;
 public final class WhileStatment extends AbstractStatment implements Loopable {
 
     private final Expression whileExpr;
-    private final VariantMap varMap;
+    private final VariantIndexer varIndexer;
     private final Statment[] statments;
     public final LoopInfo[] possibleLoopsInfo;
     private final int label;
 
-    public WhileStatment(Expression whileExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, int label, int line, int column) {
+    public WhileStatment(Expression whileExpr, VariantIndexer varIndexer, Statment[] statments, LoopInfo[] possibleLoopsInfo, int label, int line, int column) {
         super(line, column);
         this.whileExpr = whileExpr;
-        this.varMap = varMap;
+        this.varIndexer = varIndexer;
         this.statments = statments;
         this.possibleLoopsInfo = possibleLoopsInfo;
         this.label = label;
@@ -41,7 +41,7 @@ public final class WhileStatment extends AbstractStatment implements Loopable {
         final LoopCtrl ctrl = context.loopCtrl;
         final Statment[] statments = this.statments;
         final VariantStack vars;
-        (vars = context.vars).push(varMap);
+        (vars = context.vars).push(varIndexer);
         label:
         while (ALU.isTrue(StatmentUtil.execute(whileExpr, context))) {
             StatmentUtil.executeInvertedAndCheckLoops(statments, context);

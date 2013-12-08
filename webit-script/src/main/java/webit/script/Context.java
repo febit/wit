@@ -3,9 +3,9 @@ package webit.script;
 
 import java.util.Map;
 import webit.script.core.ast.loop.LoopCtrl;
-import webit.script.core.runtime.variant.VariantContext;
-import webit.script.core.runtime.variant.VariantMap;
-import webit.script.core.runtime.variant.VariantStack;
+import webit.script.core.runtime.VariantContext;
+import webit.script.core.VariantIndexer;
+import webit.script.core.runtime.VariantStack;
 import webit.script.io.Out;
 import webit.script.resolvers.ResolverManager;
 import webit.script.util.collection.ArrayStack;
@@ -53,8 +53,8 @@ public final class Context {
         this.vars = new VariantStack(parent.vars, parentVarContexts);
     }
 
-    public void pushRootVars(final VariantMap varMap) {
-        this.vars.pushRootVars(varMap, this.rootValues);
+    public void pushRootVars(final VariantIndexer varIndexer) {
+        this.vars.pushRootVars(varIndexer, this.rootValues);
     }
 
     /**

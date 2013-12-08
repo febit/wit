@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.runtime.variant;
+package webit.script.core.runtime;
 
+import webit.script.core.VariantIndexer;
 import java.util.Map;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.keyvalues.KeyValues;
@@ -40,8 +41,8 @@ public final class VariantStack {
         this.rootContextValues = parent.rootContextValues;
     }
 
-    public void pushRootVars(final VariantMap varMap, final KeyValues rootValues) {
-        push(varMap);
+    public void pushRootVars(final VariantIndexer varIndexer, final KeyValues rootValues) {
+        push(varIndexer);
         final VariantContext rootContext;
         if ((rootContext = this.currentContext) != null) {
             this.rootContextValues = rootContext.values;
@@ -49,7 +50,7 @@ public final class VariantStack {
         }
     }
 
-    public void push(final VariantMap varMap) {
+    public void push(final VariantIndexer varIndexer) {
         final int i;
         VariantContext[] cnts;
         if ((i = ++this.current) == (cnts = this.contexts).length) {
@@ -57,7 +58,7 @@ public final class VariantStack {
                     cnts = this.contexts = new VariantContext[i << 1],
                     0, i);
         }
-        cnts[i] = this.currentContext = varMap._size > 0 ? new VariantContext(varMap) : null;
+        cnts[i] = this.currentContext = varIndexer.size > 0 ? new VariantContext(varIndexer) : null;
     }
 
     public void pop() {

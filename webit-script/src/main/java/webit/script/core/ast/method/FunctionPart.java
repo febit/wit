@@ -10,10 +10,10 @@ import webit.script.core.ast.Statment;
 import webit.script.core.ast.StatmentList;
 import webit.script.core.ast.expressions.FunctionDeclareExpression;
 import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.VariantIndexer;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatmentUtil;
 import webit.script.util.StringUtil;
-import webit.script.util.VariantUtil;
 import webit.script.util.collection.IntArrayList;
 
 /**
@@ -40,7 +40,7 @@ public final class FunctionPart extends Position {
         Statment[] statments = list.toInvertArray();
 
         int[] overflowUpstairs = varmgr.popVarWall();
-        Map<String, Integer> varMap = varmgr.pop();
+        Map<String, Integer> varIndexer = varmgr.pop();
 
         boolean hasReturnLoops = false;
         List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
@@ -62,7 +62,7 @@ public final class FunctionPart extends Position {
         return new FunctionDeclareExpression(argsIndex,
                 argIndexList.isEmpty() ? null : argIndexList.toArray(),
                 overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null,
-                VariantUtil.toVariantMap(varMap),
+                VariantIndexer.getVariantIndexer(varIndexer),
                 statments,
                 hasReturnLoops,
                 line, column);

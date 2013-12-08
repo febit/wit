@@ -5,8 +5,8 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statment;
-import webit.script.core.runtime.variant.VariantMap;
-import webit.script.core.runtime.variant.VariantStack;
+import webit.script.core.VariantIndexer;
+import webit.script.core.runtime.VariantStack;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -15,25 +15,25 @@ import webit.script.util.StatmentUtil;
  */
 public class BlockStatmentNoLoops extends AbstractStatment implements IBlockStatment, Optimizable {
 
-    private final VariantMap varMap;
+    private final VariantIndexer varIndexer;
     private final Statment[] statments;
 
-    public BlockStatmentNoLoops(VariantMap varMap, Statment[] statments, int line, int column) {
+    public BlockStatmentNoLoops(VariantIndexer varIndexer, Statment[] statments, int line, int column) {
         super(line, column);
-        this.varMap = varMap;
+        this.varIndexer = varIndexer;
         this.statments = statments;
     }
 
     public Object execute(final Context context) {
         final VariantStack vars;
-        (vars = context.vars).push(varMap);
+        (vars = context.vars).push(varIndexer);
         StatmentUtil.executeInverted(statments, context);
         vars.pop();
         return null;
     }
 
-    public VariantMap getVarMap() {
-        return varMap;
+    public VariantIndexer getVarMap() {
+        return varIndexer;
     }
 
     public Statment[] getStatments() {

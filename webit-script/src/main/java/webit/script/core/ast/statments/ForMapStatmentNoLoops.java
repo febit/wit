@@ -6,8 +6,8 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
-import webit.script.core.runtime.variant.VariantMap;
-import webit.script.core.runtime.variant.VariantStack;
+import webit.script.core.VariantIndexer;
+import webit.script.core.runtime.VariantStack;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatmentUtil;
@@ -23,17 +23,17 @@ public final class ForMapStatmentNoLoops extends AbstractStatment {
     private final int keyIndex;
     private final int valueIndex;
     private final Expression mapExpr;
-    private final VariantMap varMap;
+    private final VariantIndexer varIndexer;
     private final Statment[] statments;
     private final Statment elseStatment;
 
-    public ForMapStatmentNoLoops(int iterIndex, int keyIndex, int valueIndex, Expression mapExpr, VariantMap varMap, Statment[] statments, Statment elseStatment, int line, int column) {
+    public ForMapStatmentNoLoops(int iterIndex, int keyIndex, int valueIndex, Expression mapExpr, VariantIndexer varIndexer, Statment[] statments, Statment elseStatment, int line, int column) {
         super(line, column);
         this.iterIndex = iterIndex;
         this.keyIndex = keyIndex;
         this.valueIndex = valueIndex;
         this.mapExpr = mapExpr;
-        this.varMap = varMap;
+        this.varIndexer = varIndexer;
         this.statments = statments;
         this.elseStatment = elseStatment;
     }
@@ -55,7 +55,7 @@ public final class ForMapStatmentNoLoops extends AbstractStatment {
             Map.Entry entry;
             final Statment[] statments = this.statments;
             final VariantStack vars;
-            (vars = context.vars).push(varMap);
+            (vars = context.vars).push(varIndexer);
             do {
                 entry = iter.next();
                 vars.resetCurrentWith(iterIndex, iter, keyIndex, entry.getKey(), valueIndex, entry.getValue());

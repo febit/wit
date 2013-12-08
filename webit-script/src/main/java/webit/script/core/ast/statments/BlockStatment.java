@@ -9,8 +9,8 @@ import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
-import webit.script.core.runtime.variant.VariantMap;
-import webit.script.core.runtime.variant.VariantStack;
+import webit.script.core.VariantIndexer;
+import webit.script.core.runtime.VariantStack;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -19,20 +19,20 @@ import webit.script.util.StatmentUtil;
  */
 public final class BlockStatment extends AbstractStatment implements Loopable, IBlockStatment {
 
-    public final VariantMap varMap;
+    public final VariantIndexer varIndexer;
     public final Statment[] statments;
     public final LoopInfo[] possibleLoopsInfo;
 
-    public BlockStatment(VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, int line, int column) {
+    public BlockStatment(VariantIndexer varIndexer, Statment[] statments, LoopInfo[] possibleLoopsInfo, int line, int column) {
         super(line, column);
-        this.varMap = varMap;
+        this.varIndexer = varIndexer;
         this.statments = statments;
         this.possibleLoopsInfo = possibleLoopsInfo;
     }
 
     public Object execute(final Context context) {
         final VariantStack vars;
-        (vars = context.vars).push(varMap);
+        (vars = context.vars).push(varIndexer);
         StatmentUtil.executeInvertedAndCheckLoops(statments, context);
         vars.pop();
         return null;
@@ -46,8 +46,8 @@ public final class BlockStatment extends AbstractStatment implements Loopable, I
         return true;
     }
 
-    public VariantMap getVarMap() {
-        return varMap;
+    public VariantIndexer getVarMap() {
+        return varIndexer;
     }
 
     public Statment[] getStatments() {

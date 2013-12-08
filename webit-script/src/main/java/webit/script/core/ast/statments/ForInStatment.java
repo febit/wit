@@ -11,8 +11,8 @@ import webit.script.core.ast.Statment;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
-import webit.script.core.runtime.variant.VariantMap;
-import webit.script.core.runtime.variant.VariantStack;
+import webit.script.core.VariantIndexer;
+import webit.script.core.runtime.VariantStack;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatmentUtil;
 import webit.script.util.collection.Iter;
@@ -26,18 +26,18 @@ public final class ForInStatment extends AbstractStatment implements Loopable {
     private final int iterIndex;
     private final int itemIndex;
     private final Expression collectionExpr;
-    private final VariantMap varMap;
+    private final VariantIndexer varIndexer;
     private final Statment[] statments;
     public final LoopInfo[] possibleLoopsInfo;
     private final Statment elseStatment;
     private final int label;
 
-    public ForInStatment(int iterIndex, int itemIndex, Expression collectionExpr, VariantMap varMap, Statment[] statments, LoopInfo[] possibleLoopsInfo, Statment elseStatment, int label, int line, int column) {
+    public ForInStatment(int iterIndex, int itemIndex, Expression collectionExpr, VariantIndexer varIndexer, Statment[] statments, LoopInfo[] possibleLoopsInfo, Statment elseStatment, int label, int line, int column) {
         super(line, column);
         this.iterIndex = iterIndex;
         this.itemIndex = itemIndex;
         this.collectionExpr = collectionExpr;
-        this.varMap = varMap;
+        this.varIndexer = varIndexer;
         this.statments = statments;
         this.possibleLoopsInfo = possibleLoopsInfo;
         this.elseStatment = elseStatment;
@@ -53,7 +53,7 @@ public final class ForInStatment extends AbstractStatment implements Loopable {
             final VariantStack vars;
             final LoopCtrl ctrl = context.loopCtrl;
             final Statment[] statments = this.statments;
-            (vars = context.vars).push(varMap);
+            (vars = context.vars).push(varIndexer);
             label:
             do {
                 vars.resetCurrentWith(iterIndex, iter, itemIndex, iter.next());

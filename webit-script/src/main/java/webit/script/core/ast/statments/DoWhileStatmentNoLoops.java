@@ -5,8 +5,8 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
-import webit.script.core.runtime.variant.VariantMap;
-import webit.script.core.runtime.variant.VariantStack;
+import webit.script.core.VariantIndexer;
+import webit.script.core.runtime.VariantStack;
 import webit.script.util.ALU;
 import webit.script.util.StatmentUtil;
 
@@ -17,20 +17,20 @@ import webit.script.util.StatmentUtil;
 public final class DoWhileStatmentNoLoops extends AbstractStatment {
 
     private final Expression whileExpr;
-    private final VariantMap varMap;
+    private final VariantIndexer varIndexer;
     private final Statment[] statments;
 
-    public DoWhileStatmentNoLoops(Expression whileExpr, VariantMap varMap, Statment[] statments, int line, int column) {
+    public DoWhileStatmentNoLoops(Expression whileExpr, VariantIndexer varIndexer, Statment[] statments, int line, int column) {
         super(line, column);
         this.whileExpr = whileExpr;
-        this.varMap = varMap;
+        this.varIndexer = varIndexer;
         this.statments = statments;
     }
 
     public Object execute(final Context context) {
         final Statment[] statments = this.statments;
         final VariantStack vars;
-        (vars = context.vars).push(varMap);
+        (vars = context.vars).push(varIndexer);
         do {
             StatmentUtil.executeInverted(statments, context);
             vars.resetCurrent();

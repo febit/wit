@@ -5,8 +5,8 @@ import webit.script.Context;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
-import webit.script.core.runtime.variant.VariantMap;
-import webit.script.core.runtime.variant.VariantStack;
+import webit.script.core.VariantIndexer;
+import webit.script.core.runtime.VariantStack;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatmentUtil;
 import webit.script.util.collection.Iter;
@@ -20,16 +20,16 @@ public final class ForInStatmentNoLoops extends AbstractStatment {
     private final int iterIndex;
     private final int itemIndex;
     private final Expression collectionExpr;
-    private final VariantMap varMap;
+    private final VariantIndexer varIndexer;
     private final Statment[] statments;
     private final Statment elseStatment;
 
-    public ForInStatmentNoLoops(int iterIndex, int itemIndex, Expression collectionExpr, VariantMap varMap, Statment[] statments, Statment elseStatment, int line, int column) {
+    public ForInStatmentNoLoops(int iterIndex, int itemIndex, Expression collectionExpr, VariantIndexer varIndexer, Statment[] statments, Statment elseStatment, int line, int column) {
         super(line, column);
         this.iterIndex = iterIndex;
         this.itemIndex = itemIndex;
         this.collectionExpr = collectionExpr;
-        this.varMap = varMap;
+        this.varIndexer = varIndexer;
         this.statments = statments;
         this.elseStatment = elseStatment;
     }
@@ -43,7 +43,7 @@ public final class ForInStatmentNoLoops extends AbstractStatment {
 
             final Statment[] statments = this.statments;
             final VariantStack vars;
-            (vars = context.vars).push(varMap);
+            (vars = context.vars).push(varIndexer);
             do {
                 vars.resetCurrentWith(iterIndex, iter, itemIndex, iter.next());
                 StatmentUtil.executeInverted(statments, context);

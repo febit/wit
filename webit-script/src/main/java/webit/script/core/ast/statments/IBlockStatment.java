@@ -2,7 +2,7 @@
 package webit.script.core.ast.statments;
 
 import webit.script.core.ast.Statment;
-import webit.script.core.runtime.variant.VariantMap;
+import webit.script.core.VariantIndexer;
 
 /**
  *
@@ -10,7 +10,7 @@ import webit.script.core.runtime.variant.VariantMap;
  */
 public interface IBlockStatment extends Statment{
 
-    public VariantMap getVarMap();
+    public VariantIndexer getVarMap();
 
     public Statment[] getStatments();
 
