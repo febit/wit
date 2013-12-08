@@ -10,6 +10,7 @@ import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.StatmentUtil;
+import webit.script.util.keyvalues.KeyValuesUtil;
 
 /**
  *
@@ -62,7 +63,7 @@ public final class ImportStatment extends AbstractStatment {
 
             try {
                 childTemplate = thisTemplate.engine.getTemplate(thisTemplate.name, String.valueOf(templateNameObject));
-                final Context childContext = childTemplate.merge(params, context.getOut());
+                final Context childContext = childTemplate.merge(KeyValuesUtil.wrap(params), context.getOut());
                 if (exportAll) {
 
                     final Map returns = new HashMap();

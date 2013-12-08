@@ -1,10 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.ast;
 
-import java.util.Map;
 import webit.script.Context;
 import webit.script.core.runtime.variant.VariantMap;
-import webit.script.core.runtime.variant.VariantStack;
 import webit.script.util.StatmentUtil;
 
 /**
@@ -21,11 +19,9 @@ public class TemplateAST {
         this.statments = statments;
     }
 
-    public Context execute(final Context context, final Map<String, Object> root) {
-        final VariantStack vars;
-        (vars = context.vars).push(varMap);
-        vars.setToCurrentContext(root);
-        StatmentUtil.executeInverted(statments, context);
+    public Context execute(final Context context) {
+        context.pushRootVars(this.varMap);
+        StatmentUtil.executeInverted(this.statments, context);
         //Note: don't vars.pop(), to keep the top variant(s)
         return context;
     }

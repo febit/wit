@@ -3,6 +3,7 @@ package webit.script.core.runtime.variant;
 
 import java.util.Map;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.util.keyvalues.KeyValues;
 
 /**
  *
@@ -10,26 +11,42 @@ import webit.script.exceptions.ScriptRuntimeException;
  */
 public final class VariantStack {
 
-    private static final int initialCapacity = 16;
+    private static final int DEFAULT_CAPACITY = 12;
     //NOTE: the first keeps null, real contexts start from index=1;
     private VariantContext[] contexts;
     //
+    private Object[] rootContextValues;
     private int current;
     private VariantContext currentContext;
-    
+
     public VariantStack() {
-        contexts = new VariantContext[initialCapacity];
-        current = 0;
-        currentContext = null;
+        this.contexts = new VariantContext[DEFAULT_CAPACITY];
+        this.current = 0;
+        //currentContext = null;
     }
 
-    public VariantStack(final VariantContext[] contexts) {
-        final int len;
-        System.arraycopy(contexts, 0,
-                this.contexts = new VariantContext[initialCapacity > (len = contexts.length) ? initialCapacity : len + 3],
-                1, //NOTE: skip top
-                len);
-        currentContext = contexts[(current = len) - 1];
+    public VariantStack(final VariantStack parent, final VariantContext[] contexts) {
+        if (contexts != null) {
+            final int len;
+            System.arraycopy(contexts, 0,
+                    this.contexts = new VariantContext[DEFAULT_CAPACITY > (len = contexts.length) ? DEFAULT_CAPACITY : len + 3],
+                    1, //NOTE: skip top
+                    len);
+            this.currentContext = contexts[(this.current = len) - 1];
+        } else {
+            this.contexts = new VariantContext[DEFAULT_CAPACITY];
+            this.current = 0;
+        }
+        this.rootContextValues = parent.rootContextValues;
+    }
+
+    public void pushRootVars(final VariantMap varMap, final KeyValues rootValues) {
+        push(varMap);
+        final VariantContext rootContext;
+        if ((rootContext = this.currentContext) != null) {
+            this.rootContextValues = rootContext.values;
+            rootValues.exportTo(rootContext);
+        }
     }
 
     public void push(final VariantMap varMap) {
@@ -111,15 +128,13 @@ public final class VariantStack {
     }
 
     public void setToRoot(int index, Object value) {
-        //XXX: rootContextValues
-        contexts[1].values[index] = value;
+        this.rootContextValues[index] = value;
     }
 
     public Object getFromRoot(int index) {
-        //XXX: rootContextValues
-        return contexts[1].values[index];
+        return this.rootContextValues[index];
     }
-    
+
     public void set(int upstairs, int index, Object value) {
         contexts[current - upstairs].values[index] = value;
     }

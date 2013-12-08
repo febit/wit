@@ -21,7 +21,7 @@ public class FunctionLoopOverflowTest {
         exception = null;
         template = EngineManager.getTemplate("/function/loopOverflow1.wtl");
         try {
-            template.prepareTemplate();
+            template.reloadTemplateForce();
         } catch (ParseException e) {
             exception = e;
         }
@@ -31,7 +31,7 @@ public class FunctionLoopOverflowTest {
         exception = null;
         template = EngineManager.getTemplate("/function/loopOverflow2.wtl");
         try {
-            template.prepareTemplate();
+            template.reloadTemplateForce();
         } catch (ParseException e) {
             exception = e;
         }
@@ -41,7 +41,7 @@ public class FunctionLoopOverflowTest {
         exception = null;
         template = EngineManager.getTemplate("/function/loopOverflow3.wtl");
         try {
-            template.prepareTemplate();
+            template.reloadTemplateForce();
         } catch (ParseException e) {
             exception = e;
         }

@@ -8,6 +8,7 @@ import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.StatmentUtil;
+import webit.script.util.keyvalues.KeyValuesUtil;
 
 /**
  *
@@ -47,7 +48,7 @@ public final class IncludeStatment extends AbstractStatment {
 
             try {
                 childTemplate = thisTemplate.engine.getTemplate(thisTemplate.name, String.valueOf(templateNameObject));
-                childTemplate.merge(params, context.getOut());
+                childTemplate.merge(KeyValuesUtil.wrap(params), context.getOut());
             } catch (Throwable e) {
                 throw new ScriptRuntimeException(e);
             }

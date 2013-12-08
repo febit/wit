@@ -4,11 +4,13 @@ package webit.script;
 import java.util.Map;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.runtime.variant.VariantContext;
+import webit.script.core.runtime.variant.VariantMap;
 import webit.script.core.runtime.variant.VariantStack;
 import webit.script.io.Out;
 import webit.script.resolvers.ResolverManager;
 import webit.script.util.collection.ArrayStack;
 import webit.script.util.collection.Stack;
+import webit.script.util.keyvalues.KeyValues;
 
 /**
  *
@@ -20,6 +22,7 @@ public final class Context {
     //
     private Out out;
     private Stack<Out> outStack;
+    private final KeyValues rootValues;
     public final String encoding;
     //
     public final LoopCtrl loopCtrl;
@@ -28,10 +31,10 @@ public final class Context {
     public final ResolverManager resolverManager;
     public final boolean isByteStream;
 
-    public Context(final Template template, final Out out) {
-
+    public Context(final Template template, final Out out, final KeyValues rootValues) {
         this.template = template;
         this.out = out;
+        this.rootValues = rootValues;
         this.encoding = out.getEncoding();
         this.isByteStream = out.isByteStream();
         this.resolverManager = template.engine.getResolverManager();
@@ -40,14 +43,18 @@ public final class Context {
     }
 
     public Context(final Context parent, final Template template, final VariantContext[] parentVarContexts) {
-
         this.template = template;
         this.out = parent.out;
+        this.rootValues = parent.rootValues;
         this.encoding = parent.encoding;
         this.isByteStream = parent.isByteStream;
         this.resolverManager = parent.resolverManager;
         this.loopCtrl = new LoopCtrl();
-        this.vars = parentVarContexts != null ? new VariantStack(parentVarContexts) : new VariantStack();
+        this.vars = new VariantStack(parent.vars, parentVarContexts);
+    }
+
+    public void pushRootVars(final VariantMap varMap) {
+        this.vars.pushRootVars(varMap, this.rootValues);
     }
 
     /**

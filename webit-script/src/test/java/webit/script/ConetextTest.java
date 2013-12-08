@@ -18,7 +18,7 @@ public class ConetextTest {
 
         Template template = EngineManager.getTemplate("contextTest.wtl");
         
-        Context context = template.merge(null, new DiscardOutputStream());
+        Context context = template.merge(new DiscardOutputStream());
         
         Map map = new HashMap();
         

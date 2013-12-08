@@ -14,6 +14,8 @@ import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.loaders.Resource;
 import webit.script.util.EncodingPool;
+import webit.script.util.keyvalues.KeyValues;
+import webit.script.util.keyvalues.KeyValuesUtil;
 
 /**
  *
@@ -24,7 +26,7 @@ public final class Template {
     public final Engine engine;
     public final String name;
     public final Resource resource;
-    private TemplateAST templateAst;
+    private TemplateAST templateAST;
     private long lastModified;
     //
     private final Object reloadLock = new Object();
@@ -37,28 +39,56 @@ public final class Template {
 
     /**
      *
-     * @return TemplateAST
      * @throws ParseException
      */
-    public TemplateAST prepareTemplate() throws ParseException {
-        final TemplateAST tmpl;
-        if ((tmpl = this.templateAst) != null && !this.resource.isModified()) {
-            return tmpl;
-        } else {
-            return parseAST();
-        }
+    public void reloadTemplateForce() throws ParseException {
+        parseAST(true);
     }
 
-    private TemplateAST parseAST() throws ParseException {
+    private TemplateAST parseAST(boolean force) throws ParseException {
         TemplateAST tmpl;
         synchronized (this.reloadLock) {
-            if ((tmpl = this.templateAst) == null || this.resource.isModified()) {
-                tmpl = this.templateAst
+            if (force || (tmpl = this.templateAST) == null || this.resource.isModified()) {
+                tmpl = this.templateAST
                         = new Parser().parseTemplate(this);
                 this.lastModified = System.currentTimeMillis();
             }
         }
         return tmpl;
+    }
+
+    /**
+     *
+     * @param outputStream
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge(final OutputStream outputStream) throws ScriptRuntimeException, ParseException {
+        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(outputStream, engine.getEncoding(), engine.getCoderFactory()));
+    }
+
+    /**
+     *
+     * @param outputStream
+     * @param encoding
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge(final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParseException {
+        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(outputStream, encoding != null ? EncodingPool.intern(encoding) : engine.getEncoding(), engine.getCoderFactory()));
+    }
+
+    /**
+     *
+     * @param writer
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge(final Writer writer) throws ScriptRuntimeException, ParseException {
+        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new WriterOut(writer, engine.getEncoding(), engine.getCoderFactory()));
     }
 
     /**
@@ -70,7 +100,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> root, final OutputStream outputStream) throws ScriptRuntimeException, ParseException {
-        return merge(root, new OutputStreamOut(outputStream, engine.getEncoding(), engine.getCoderFactory()));
+        return merge(KeyValuesUtil.wrap(root), new OutputStreamOut(outputStream, engine.getEncoding(), engine.getCoderFactory()));
     }
 
     /**
@@ -83,7 +113,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> root, final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParseException {
-        return merge(root, new OutputStreamOut(outputStream, encoding != null ? EncodingPool.intern(encoding) : engine.getEncoding(), engine.getCoderFactory()));
+        return merge(KeyValuesUtil.wrap(root), new OutputStreamOut(outputStream, encoding != null ? EncodingPool.intern(encoding) : engine.getEncoding(), engine.getCoderFactory()));
     }
 
     /**
@@ -95,6 +125,43 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> root, final Writer writer) throws ScriptRuntimeException, ParseException {
+        return merge(KeyValuesUtil.wrap(root), new WriterOut(writer, engine.getEncoding(), engine.getCoderFactory()));
+    }
+
+    /**
+     *
+     * @param root
+     * @param outputStream
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge(final KeyValues root, final OutputStream outputStream) throws ScriptRuntimeException, ParseException {
+        return merge(root, new OutputStreamOut(outputStream, engine.getEncoding(), engine.getCoderFactory()));
+    }
+
+    /**
+     *
+     * @param root
+     * @param outputStream
+     * @param encoding
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge(final KeyValues root, final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParseException {
+        return merge(root, new OutputStreamOut(outputStream, encoding != null ? EncodingPool.intern(encoding) : engine.getEncoding(), engine.getCoderFactory()));
+    }
+
+    /**
+     *
+     * @param root
+     * @param writer
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge(final KeyValues root, final Writer writer) throws ScriptRuntimeException, ParseException {
         return merge(root, new WriterOut(writer, engine.getEncoding(), engine.getCoderFactory()));
     }
 
@@ -106,20 +173,20 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Map<String, Object> root, final Out out) throws ScriptRuntimeException, ParseException {
+    public Context merge(final KeyValues root, final Out out) throws ScriptRuntimeException, ParseException {
         try {
             TemplateAST tmpl;
-            if ((tmpl = this.templateAst) == null || resource.isModified()) {
-                tmpl = parseAST();
+            if ((tmpl = this.templateAST) == null || this.resource.isModified()) {
+                tmpl = parseAST(false);
             }
-            return tmpl.execute(new Context(this, out), root);
+            return tmpl.execute(new Context(this, out, root));
         } catch (Throwable e) {
             throw wrapThrowable(e);
         }
     }
 
     public void reset() {
-        templateAst = null;
+        templateAST = null;
         lastModified = 0;
     }
 

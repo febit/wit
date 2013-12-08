@@ -14,8 +14,8 @@ public class ParserTest {
     public void test() {
         try {
             Template template = EngineManager.getTemplate("/firstTmpl.wtl");
-            //TemplateAST result = template.prepareTemplate();
-            template.merge(null, new DiscardOutputStream());
+            //TemplateAST result = template.reloadTemplateForce();
+            template.merge(new DiscardOutputStream());
         } catch (Exception e) {
             e.printStackTrace();
         }

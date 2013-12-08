@@ -2,12 +2,13 @@
 package webit.script.core.runtime.variant;
 
 import java.util.Map;
+import webit.script.util.keyvalues.KeyValueAccepter;
 
 /**
  *
  * @author Zqq
  */
-public final class VariantContext {
+public final class VariantContext implements KeyValueAccepter {
 
     final Object[] values;
     private final VariantMap varMap;
@@ -41,7 +42,6 @@ public final class VariantContext {
 //        }
 //        return false;
 //    }
-
     public void set(final Map<String, Object> map) {
         int index;
         final VariantMap _varMap = this.varMap;
@@ -63,5 +63,12 @@ public final class VariantContext {
 
     public int size() {
         return values.length;
+    }
+
+    public void set(String key, Object value) {
+        int index;
+        if ((index = this.varMap.getIndex(key)) >= 0) {
+            this.values[index] = value;
+        }
     }
 }
