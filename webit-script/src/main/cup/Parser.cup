@@ -47,6 +47,12 @@ parser code {:
         return createContextValue(varmgr.locate(name, upstair, this.locateVarForce, line, column), line, column);
     }
 
+    private FunctionPart createFunctionPart(int line, int column) {
+        varmgr.push();
+        varmgr.pushVarWall();
+        return new FunctionPart(varmgr.assignVariant("arguments", line, column), line, column); 
+    }
+
     private CommonMethodDeclareExpression popNativeNewArrayDeclare(Class componentType, int line, int column) {
         Class classWaitCheck = componentType;
         while (classWaitCheck.isArray()) {
@@ -742,7 +748,9 @@ expression      ::= expression_statmentable:expr
                     {: return %expr%; :}
 
                     //funcDeclareExpr
-                    |funcHeadPrepare:part RPAREN LBRACE statmentList:list RBRACE
+                    |funcHeadPrepare:part LPAREN RPAREN LBRACE statmentList:list RBRACE
+                    {: return (%part%).pop(varmgr, %list%); :}
+                    |funcHeadPrepare:part LBRACE statmentList:list RBRACE
                     {: return (%part%).pop(varmgr, %list%); :}
                     |funcHead:part RPAREN LBRACE statmentList:list RBRACE
                     {: return (%part%).pop(varmgr, %list%); :}
@@ -831,15 +839,15 @@ mapValue            ::= LBRACE:sym mapValuePart:part RBRACE
 /* function  */
 
 
-funcHead           ::= funcHeadPrepare:part IDENTIFIER:ident
+funcHead           ::= funcHeadPrepare:part LPAREN IDENTIFIER:ident
                         {: return (%part%).appendArgIndexs(varmgr.assignVariant(%ident%, %ident.line%, %ident.column%)); :}
                         |funcHead:part COMMA IDENTIFIER:ident
                         {: return (%part%).appendArgIndexs(varmgr.assignVariant(%ident%, %ident.line%, %ident.column%)); :}
                         ;
 
 
-funcHeadPrepare     ::= FUNCTION:sym LPAREN
-                        {: varmgr.push(); varmgr.pushVarWall(); return new FunctionPart(varmgr.assignVariant("arguments", %sym.line%,%sym.column%), %sym.line%,%sym.column%); :}
+funcHeadPrepare     ::= FUNCTION:sym
+                        {: return createFunctionPart(%sym.line%, %sym.column%); :}
                         ;
 
 

@@ -1,6 +1,5 @@
 package webit.script.core;
 
-import webit.script.core.java_cup.runtime.Symbol;
 import webit.script.util.FastCharBuffer;
 import webit.script.util.RepeatChars;
 
@@ -288,6 +287,7 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   "var"                          { return symbol(VAR); }
   /* "in"                           { return symbol(IN); } */
   "function"                     { return symbol(FUNCTION); }
+  "#"                            { return symbol(FUNCTION); }
   "return"                       { return symbol(RETURN); }
   "this"                         { return symbol(THIS); }
   

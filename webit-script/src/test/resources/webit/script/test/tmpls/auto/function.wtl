@@ -8,7 +8,19 @@ var func = function(){
         var func2 = function(){
             return c;
         };
+        var func3 = function{
+            return c;
+        };
+        var func4 = #(a,b){
+            return c;
+        };
+        var func5 = #{
+            return c;
+        };
         func2();
+        func3();
+        func4();
+        func5();
     }
 };
 func();
