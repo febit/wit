@@ -12,7 +12,7 @@ import webit.script.util.keyvalues.KeyValueAccepter;
 public final class VariantContext implements KeyValueAccepter {
 
     final Object[] values;
-    private final VariantIndexer varIndexer;
+    final VariantIndexer varIndexer;
 
     public VariantContext(final VariantIndexer varIndexer) {
         this.values = new Object[(this.varIndexer = varIndexer).size];
@@ -54,13 +54,13 @@ public final class VariantContext implements KeyValueAccepter {
         }
     }
 
-    public int getIndex(String key) {
-        return this.varIndexer.getIndex(key);
-    }
-
-    public boolean hasKey(String key) {
-        return this.varIndexer.getIndex(key) >= 0;
-    }
+//    public int getIndex(String key) {
+//        return this.varIndexer.getIndex(key);
+//    }
+//
+//    public boolean hasKey(String key) {
+//        return this.varIndexer.getIndex(key) >= 0;
+//    }
 
     public int size() {
         return values.length;

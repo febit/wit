@@ -177,7 +177,7 @@ public final class VariantStack {
         int index;
         int i = current;
         while (i > 0) {//NOTE: skip top
-            if ((context = contexts[i--]) != null && (index = context.getIndex(key)) >= 0) {
+            if ((context = contexts[i--]) != null && (index = context.varIndexer.getIndex(key)) >= 0) {
                 return context.get(index);
             }
         }

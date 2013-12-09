@@ -16,7 +16,9 @@ var assertNotSame;
         assertNotSame(b, super.b);
         assertEquals(a, "a");
         {
-            assertSame(a, super.super.a);
+            assertSame(a, super.a);
+            assertSame(a, super.super.this.a);
+            assertNotSame(super.b, super.super.b);
             assertEquals(a, "a");
         }
     }

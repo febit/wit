@@ -12,12 +12,10 @@ import webit.script.core.ast.ResetableValueExpression;
 public final class RootContextValue extends AbstractExpression implements ResetableValueExpression {
 
     private final int index;
-//    private final String name;
 
-    public RootContextValue(int index, String name, int line, int column) {
+    public RootContextValue(int index, int line, int column) {
         super(line, column);
         this.index = index;
-//        this.name = name;
     }
 
     public Object execute(final Context context) {

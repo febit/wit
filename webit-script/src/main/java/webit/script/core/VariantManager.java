@@ -82,6 +82,10 @@ public class VariantManager {
         }
     }
 
+    public VarAddress assignVariantAddress(String name, int line, int column) {
+        return new VarAddress(0, assignVariant(name, line, column), currentElementIndex == 0);
+    }
+
     public int assignVariant(String name, int line, int column) {
         Map<String, Integer> current;
         if (!(current = elements[currentElementIndex]).containsKey(name)) {
@@ -105,26 +109,22 @@ public class VariantManager {
         return new VarAddress(currentElementIndex, address, true);
     }
 
-    public int locateAtUpstair(String name, int upstair, boolean force, int line, int column) {
+    public VarAddress locateAtUpstair(String name, int upstair, int line, int column) {
         if (upstair <= currentElementIndex) {
             final int i = currentElementIndex - upstair;
             Integer index;
             if ((index = elements[i].get(name)) != null) {
                 checkVarWall(i);
-                return index;
+                return new VarAddress(currentElementIndex - i, index, i == 0);
             }
-            if (force) {
-                throw new ParseException("Can't locate variant: ".concat(name), line, column);
-            } else {
-                return -1;
-            }
+            throw new ParseException("Can't locate variant: ".concat(name), line, column);
         } else {
             throw new ParseException(StringUtil.concat("Stack overflow when locate variant in given upstair: ", name, "-", Integer.toString(upstair)), line, column);
         }
     }
 
-    public VarAddress locate(String name, boolean force, int line, int column) {
-        for (int i = currentElementIndex; i >= 0; --i) {
+    public VarAddress locate(String name, int fromUpstair, boolean force, int line, int column) {
+        for (int i = currentElementIndex - fromUpstair; i >= 0; --i) {
             Integer index;
             if ((index = elements[i].get(name)) != null) {
                 checkVarWall(i);
@@ -136,10 +136,6 @@ public class VariantManager {
         } else {
             return assignVariantAtRoot(name);
         }
-    }
-
-    public VarAddress locate(String name, int line, int column) {
-        return locate(name, false, line, column);
     }
 
     private static class VarWall {

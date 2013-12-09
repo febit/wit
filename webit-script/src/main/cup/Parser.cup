@@ -29,22 +29,22 @@ parser code {:
         return index;
     }
 
-    private Expression createContextValue(String name, int line, int column) {
-        VarAddress addr;
-        if ((addr = varmgr.locate(name, this.locateVarForce, line, column)).isRoot) {
-            return new RootContextValue(addr.index, name, line, column);
+    private Expression createContextValue(VarAddress addr, int line, int column) {
+        if (addr.isRoot) {
+            return new RootContextValue(addr.index, line, column);
         } else if (addr.upstairs == 0) {
-            return new CurrentContextValue(addr.index, name, line, column);
+            return new CurrentContextValue(addr.index,  line, column);
         } else {
-            return new ContextValue(addr.upstairs, addr.index, name, line, column);
+            return new ContextValue(addr.upstairs, addr.index, line, column);
         }
     }
-
+    
+    private Expression createContextValueAtUpstair(int upstair, String name, int line, int column) {
+        return createContextValue(varmgr.locateAtUpstair(name, upstair, line, column), line, column);
+    }
+    
     private Expression createContextValue(int upstair, String name, int line, int column) {
-        int index = varmgr.locateAtUpstair(name, upstair, true, line, column);
-        return upstair == 0
-                ? new CurrentContextValue(index, name, line, column)
-                : new ContextValue(upstair, index, name, true, line, column);
+        return createContextValue(varmgr.locate(name, upstair, this.locateVarForce, line, column), line, column);
     }
 
     private CommonMethodDeclareExpression popNativeNewArrayDeclare(Class componentType, int line, int column) {
@@ -523,11 +523,11 @@ importStatPart1     ::= IMPORT:sym expression:expr
 
 
 importStatPart2     ::= importStatPart1:part IDENTIFIER:ident
-                        {: return (%part%).append(%ident%, createContextValue(%ident%, %ident.line%, %ident.column%)); :}
+                        {: return (%part%).append(%ident%, createContextValue(0, %ident%, %ident.line%, %ident.column%)); :}
                         |importStatPart1:part contextValueExpr:valueExpr EQ IDENTIFIER:ident
                         {: return (%part%).append(%ident%, %valueExpr%); :}
                         |importStatPart2:part COMMA IDENTIFIER:ident
-                        {: return (%part%).append(%ident%, createContextValue(%ident%, %ident.line%, %ident.column%)); :}
+                        {: return (%part%).append(%ident%, createContextValue(0, %ident%, %ident.line%, %ident.column%)); :}
                         |importStatPart2:part COMMA contextValueExpr:valueExpr EQ IDENTIFIER:ident
                         {: return (%part%).append(%ident%, %valueExpr%); :}
                         ;
@@ -613,7 +613,7 @@ expression_statmentable ::=
                     expression:lexpr EQ:sym expression:expr
                     {: return new AssignOperator(castToResetableValueExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
                     | VAR IDENTIFIER:ident EQ:sym expression:expr
-                    {: return new AssignOperator(new CurrentContextValue(varmgr.assignVariant(%ident%,%ident.line%,%ident.column%),%ident%,%ident.line%,%ident.column%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return new AssignOperator(castToResetableValueExpression(createContextValue(varmgr.assignVariantAddress(%ident%,%ident.line%,%ident.column%), %ident.line%, %ident.column%)), %expr%, %sym.line%, %sym.column%); :}
                     
                     //plusPlusOper ++
                     |PLUSPLUS:sym expression:expr
@@ -790,11 +790,13 @@ contextValueIdent   ::= IDENTIFIER:ident
 
 
 contextValueExpr    ::= contextValueIdent:ident
-                        {: return createContextValue(%ident%, %ident.line%, %ident.column%); :}
-                        |THIS DOT contextValueIdent:ident
                         {: return createContextValue(0, %ident%, %ident.line%, %ident.column%); :}
+                        |THIS DOT contextValueIdent:ident
+                        {: return createContextValueAtUpstair(0, %ident%, %ident.line%, %ident.column%); :}
                         |superCount:count contextValueIdent:ident
                         {: return createContextValue(%count%, %ident%, %ident.line%, %ident.column%); :}
+                        |superCount:count THIS DOT contextValueIdent:ident
+                        {: return createContextValueAtUpstair(%count%, %ident%, %ident.line%, %ident.column%); :}
                         ;
 
 

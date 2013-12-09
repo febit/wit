@@ -13,19 +13,11 @@ public final class ContextValue extends AbstractExpression implements ResetableV
 
     private final int upstairs;
     private final int index;
-//    public final String name;
-//    private final boolean withSuper;
 
-    public ContextValue(int upstairs, int index, String name, int line, int column) {
-        this(upstairs, index, name, false, line, column);
-    }
-
-    public ContextValue(int upstairs, int index, String name, boolean withSuper, int line, int column) {
+    public ContextValue(int upstairs, int index, int line, int column) {
         super(line, column);
         this.upstairs = upstairs;
         this.index = index;
-//        this.withSuper = withSuper;
-//        this.name = name;
     }
 
     public Object execute(final Context context) {
