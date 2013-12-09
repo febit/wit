@@ -41,6 +41,10 @@ public class VariantIndexer {
         return -1;
     }
 
+    public final String[] getNames() {
+        return names;
+    }
+
     public final String getName(int index) {
         return this.names[index];
     }

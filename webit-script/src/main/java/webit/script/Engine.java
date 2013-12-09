@@ -39,6 +39,7 @@ public final class Engine {
     private String encoding = EncodingPool.UTF_8;
     private boolean enableAsmNative = true;
     private boolean looseVar = false;
+    private boolean shareRootData = false;
     private boolean trimCodeBlockBlankLine = true;
     private boolean appendLostFileNameExtension = false;
     private String fileNameExtension = ".wtl";
@@ -214,6 +215,14 @@ public final class Engine {
 
     public void setLooseVar(boolean looseVar) {
         this.looseVar = looseVar;
+    }
+
+    public boolean isShareRootData() {
+        return shareRootData;
+    }
+
+    public void setShareRootData(boolean shareRootData) {
+        this.shareRootData = shareRootData;
     }
 
     public boolean isTrimCodeBlockBlankLine() {

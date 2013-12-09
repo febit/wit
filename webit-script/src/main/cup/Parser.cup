@@ -498,17 +498,17 @@ statment            ::= expression_statmentable:expr SEMICOLON
 
                         //importStat
                         |importStatPart1:part SEMICOLON
-                        {: return (%part%).pop(); :}
+                        {: return (%part%).pop(this.template); :}
                         |importStatPart2:part SEMICOLON
-                        {: return (%part%).pop(); :}
+                        {: return (%part%).pop(this.template); :}
 
                         //includeStat
                         |INCLUDE:sym expression:expr SEMICOLON
-                        {: return new IncludeStatment(%expr%, null, %sym.line%, %sym.column%); :}
+                        {: return new IncludeStatment(%expr%, null, this.template, %sym.line%, %sym.column%); :}
                         |INCLUDE:sym expression:expr mapValue:paramsExpr SEMICOLON
-                        {: return new IncludeStatment(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
+                        {: return new IncludeStatment(%expr%, %paramsExpr%, this.template, %sym.line%, %sym.column%); :}
                         |INCLUDE:sym expression:expr LBRACE expression:paramsExpr RBRACE SEMICOLON
-                        {: return new IncludeStatment(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
+                        {: return new IncludeStatment(%expr%, %paramsExpr%, this.template, %sym.line%, %sym.column%); :}
                         ;
 
 

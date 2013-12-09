@@ -1,8 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.core.runtime;
 
-import webit.script.core.VariantIndexer;
 import java.util.Map;
+import webit.script.core.VariantIndexer;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.keyvalues.KeyValues;
 
@@ -71,6 +71,23 @@ public final class VariantStack {
         final VariantContext element;
         if (map != null && (element = currentContext) != null) {
             element.set(map);
+        }
+    }
+
+    public void mergeCurrentContext(final VariantStack fromStack) {
+        final VariantContext from = fromStack.currentContext;
+        final VariantContext to = this.currentContext;
+        if (from != null && to != null) {
+            final String[] fromNames = from.varIndexer.getNames();
+            final Object[] fromValues = from.values;
+            final VariantIndexer toIndexer = to.varIndexer;
+            final Object[] toValues = to.values;
+            int index;
+            for (int i = 0, size = fromNames.length; i < size; i++) {
+                if ((index = toIndexer.getIndex(fromNames[i])) >= 0) {
+                    toValues[index] = fromValues[i];
+                }
+            }
         }
     }
 

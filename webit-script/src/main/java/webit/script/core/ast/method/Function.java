@@ -2,9 +2,9 @@
 package webit.script.core.ast.method;
 
 import webit.script.Context;
+import webit.script.core.VariantIndexer;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Statment;
-import webit.script.core.VariantIndexer;
 import webit.script.core.runtime.VariantStack;
 import webit.script.util.StatmentUtil;
 

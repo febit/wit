@@ -1,0 +1,15 @@
+<%
+var a1, a2;
+var v1, v2;
+var assertEquals;
+
+import "/junit-assert.wtl";
+
+assertEquals(a1,"A1");
+assertEquals(a2,"A2");
+assertEquals(v1,"V1");
+assertEquals(v2,"V2");
+
+var back1 = "BACK1";
+var back2 = "BACK2";
+%>

@@ -2,9 +2,9 @@
 package webit.script;
 
 import java.util.Map;
+import webit.script.core.VariantIndexer;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.runtime.VariantContext;
-import webit.script.core.VariantIndexer;
 import webit.script.core.runtime.VariantStack;
 import webit.script.io.Out;
 import webit.script.resolvers.ResolverManager;
@@ -22,7 +22,7 @@ public final class Context {
     //
     private Out out;
     private Stack<Out> outStack;
-    private final KeyValues rootValues;
+    public final KeyValues rootValues;
     public final String encoding;
     //
     public final LoopCtrl loopCtrl;

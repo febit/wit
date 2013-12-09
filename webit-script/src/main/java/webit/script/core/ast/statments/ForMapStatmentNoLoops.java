@@ -3,10 +3,10 @@ package webit.script.core.ast.statments;
 
 import java.util.Map;
 import webit.script.Context;
+import webit.script.core.VariantIndexer;
 import webit.script.core.ast.AbstractStatment;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statment;
-import webit.script.core.VariantIndexer;
 import webit.script.core.runtime.VariantStack;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.CollectionUtil;

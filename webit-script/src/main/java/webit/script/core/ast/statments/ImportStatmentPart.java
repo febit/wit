@@ -3,6 +3,7 @@ package webit.script.core.ast.statments;
 
 import java.util.LinkedList;
 import java.util.List;
+import webit.script.Template;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.ResetableValueExpression;
@@ -41,14 +42,14 @@ public class ImportStatmentPart extends Position {
         }
     }
 
-    public ImportStatment pop() {
+    public ImportStatment pop(Template template) {
 
         final int len = exportNameList.size();
         return len == 0
-                ? new ImportStatment(expr, paramsExpr, null, null, line, column)
+                ? new ImportStatment(expr, paramsExpr, null, null, template, line, column)
                 : new ImportStatment(expr, paramsExpr,
                         exportNameList.toArray(new String[len]),
                         toResetableValueList.toArray(new ResetableValueExpression[len]),
-                        line, column);
+                        template,line, column);
     }
 }
