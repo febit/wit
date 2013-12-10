@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletContext;
+import webit.script.CFG;
 import webit.script.Engine;
 import webit.script.util.FastCharBuffer;
 import webit.script.util.StringPool;
@@ -21,7 +22,6 @@ public class ServletEngineUtil {
 
     private final static int BUFFER_SIZE = 3072;
     private final static String DEFAULT_WEB_PROPERTIES = "/webit-script-default-web.props";
-    private final static String SERVLET_LOADER_SERVLETCONTEXT = "webit.script.web.loaders.ServletLoader.servletContext";
     private final static String WEB_ROOT_PREFIX = "%WEB_ROOT%/";
 
     public static Engine createEngine(final ServletContext servletContext, final String configFiles) {
@@ -34,7 +34,7 @@ public class ServletEngineUtil {
         final Props props;
         loadFromServletContextPath(props = Engine.createConfigProps(DEFAULT_WEB_PROPERTIES), configFiles, servletContext);
         settings = new HashMap();
-        settings.put(SERVLET_LOADER_SERVLETCONTEXT, servletContext);
+        settings.put(CFG.SERVLET_LOADER_SERVLETCONTEXT, servletContext);
         if (extraSettings != null) {
             settings.putAll(extraSettings);
         }

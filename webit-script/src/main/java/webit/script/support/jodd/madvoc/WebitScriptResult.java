@@ -11,6 +11,7 @@ import jodd.madvoc.ScopeType;
 import jodd.madvoc.component.MadvocController;
 import jodd.madvoc.meta.In;
 import jodd.madvoc.result.ActionResult;
+import webit.script.CFG;
 import webit.script.web.ServletUtil;
 import webit.script.web.WebEngineManager;
 import webit.script.web.WebEngineManager.ServletContextProvider;
@@ -33,7 +34,7 @@ public class WebitScriptResult extends ActionResult implements ServletContextPro
         super(NAME);
         this.engineManager
                 = new WebEngineManager(this)
-                .setProperties("webit.script.Engine.appendLostFileNameExtension", Boolean.TRUE);
+                .setProperties(CFG.APPEND_LOST_EXTENSION, Boolean.TRUE);
     }
 
     public ServletContext getServletContext() {

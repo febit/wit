@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import webit.script.CFG;
 import webit.script.web.ServletUtil;
 import webit.script.web.WebEngineManager;
 
@@ -35,7 +36,7 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
 
         this.engineManager
                 = new WebEngineManager(JFinal.me().getServletContext())
-                .appendProperties("webit.script.Engine.resolvers", "webit.script.support.jfinal.ModelResolver");
+                .appendProperties(CFG.RESOLVERS, "webit.script.support.jfinal.ModelResolver");
     }
 
     public void setConfigPath(String configPath) {
