@@ -32,6 +32,12 @@ public final class ClassNameBand {
         length += (array[index++] = s).length();
         return this;
     }
+    
+    public String pop(){
+        final String last;
+        length -= (last = array[--index]).length();
+        return last;
+    }
 
     public ClassNameBand toArray() {
         this.isArray = true;
@@ -56,6 +62,10 @@ public final class ClassNameBand {
         return index == 1;
     }
 
+    public int size(){
+        return index;
+    }
+    
     public String getClassSimpleName() {
 
         // special cases

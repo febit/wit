@@ -167,6 +167,10 @@ public class ClassUtil {
         return Modifier.isStatic(member.getModifiers());
     }
 
+    public static boolean isFinal(Member member) {
+        return Modifier.isFinal(member.getModifiers());
+    }
+
     public static boolean isStatic(Method method) {
         return Modifier.isStatic(method.getModifiers());
     }

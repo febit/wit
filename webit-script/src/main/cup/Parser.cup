@@ -3,6 +3,7 @@
 package webit.script.core;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import webit.script.asm.AsmMethodCaller;
 import webit.script.asm.AsmMethodCallerManager;
@@ -69,6 +70,34 @@ parser code {:
         }
 
         return new CommonMethodDeclareExpression(new NativeNewArrayDeclare(componentType), line, column);
+    }
+
+    private Expression createNativeStaticValue(ClassNameBand classNameBand, int line, int column) {
+        if (classNameBand.size() < 2) {
+            throw new ParseException("native static need a filed name.");
+        }
+        String fieldName = classNameBand.pop();
+        Class cls = nativeImportMgr.toClass(classNameBand, line, column);
+        Field field;
+        try {
+            field = cls.getField(fieldName);
+        } catch (NoSuchFieldException ex) {
+            throw new ParseException(StringUtil.concat("No such field: ", classNameBand.getClassPureName(), "#", fieldName));
+        }
+        if (ClassUtil.isStatic(field)) {
+            ClassUtil.setAccessible(field);
+            if (ClassUtil.isFinal(field)) {
+                try {
+                    return new DirectValue(field.get(null), line, column);
+                } catch (Exception ex) {
+                    throw new ParseException(StringUtil.concat("Failed to static field value: ", classNameBand.getClassPureName(), "#", fieldName), ex);
+                }
+            } else {
+                return new NativeStaticValue(field, line, column);
+            }
+        } else {
+            throw new ParseException(StringUtil.concat("No a static field: ", classNameBand.getClassPureName(), "#", fieldName));
+        }
     }
 
     private CommonMethodDeclareExpression popNativeMethodDeclare(Class clazz, String methodName, ClassNameList list, int line, int column) {
@@ -770,6 +799,10 @@ expression      ::= expression_statmentable:expr
                     //nativeMethodExpr
                     |NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN classNameList:list RPAREN
                     {: return popNativeMethodDeclare(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %ident%, %list%, %sym.line%, %sym.column%); :}
+
+                    //native static field
+                    |NATIVE classPureName:nameBand
+                    {: return createNativeStaticValue(%nameBand%, %nameBand.line%, %nameBand.column%); :}
 
                     //nativeConstructorExpr
                     |NATIVE:sym NEW classPureName:nameBand LPAREN classNameList:list RPAREN

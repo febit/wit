@@ -12,4 +12,5 @@ root=webit/script/test/tmpls
 list +='''
   org.junit.Assert
   java.lang.System.currentTimeMillis
+  webit.script.test.util
 '''
