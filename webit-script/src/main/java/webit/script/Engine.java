@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.filters.Filter;
+import webit.script.global.GlobalManager;
 import webit.script.io.charset.CoderFactory;
 import webit.script.loaders.Loader;
 import webit.script.loggers.Logger;
@@ -34,6 +35,7 @@ public final class Engine {
     private Class nativeSecurityManagerClass = webit.script.security.impl.DefaultNativeSecurityManager.class;
     private Class coderFactoryClass = webit.script.io.charset.impl.DefaultCoderFactory.class;
     private Class filterClass;
+    private Class globalManagerClass = webit.script.global.DefaultGlobalManager.class;
     private Class loggerClass = webit.script.loggers.impl.NOPLogger.class;
     private Class[] resolvers;
     private String encoding = EncodingPool.UTF_8;
@@ -47,6 +49,7 @@ public final class Engine {
     //
     private Logger logger;
     private Loader resourceLoader;
+    private GlobalManager globalManager;
     private TextStatmentFactory textStatmentFactory;
     private NativeSecurityManager nativeSecurityManager;
     private CoderFactory coderFactory;
@@ -70,6 +73,7 @@ public final class Engine {
         this.nativeSecurityManager = (NativeSecurityManager) newInstance(this.nativeSecurityManagerClass);
         this.textStatmentFactory = (TextStatmentFactory) newInstance(this.textStatmentFactoryClass);
         this.resourceLoader = (Loader) newInstance(this.resourceLoaderClass);
+        this.globalManager = (GlobalManager) newInstance(this.globalManagerClass);
 
         if (this.filterClass != null) {
             this.filter = (Filter) newInstance(this.filterClass);
@@ -94,6 +98,9 @@ public final class Engine {
             }
             this.resolverManager.init(resolverInstances);
         }
+        
+        resolveBean(this.globalManager);
+        globalManager.commit();
     }
 
     public void resolveBean(Object bean) {
@@ -251,6 +258,14 @@ public final class Engine {
 
     public void setFilterClass(Class filterClass) {
         this.filterClass = filterClass;
+    }
+
+    public void setGlobalManagerClass(Class globalManagerClass) {
+        this.globalManagerClass = globalManagerClass;
+    }
+
+    public GlobalManager getGlobalManager() {
+        return globalManager;
     }
 
     public Filter getFilter() {

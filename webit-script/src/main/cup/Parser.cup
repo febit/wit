@@ -31,12 +31,19 @@ parser code {:
     }
 
     private Expression createContextValue(VarAddress addr, int line, int column) {
-        if (addr.isRoot) {
-            return new RootContextValue(addr.index, line, column);
-        } else if (addr.upstairs == 0) {
-            return new CurrentContextValue(addr.index,  line, column);
-        } else {
-            return new ContextValue(addr.upstairs, addr.index, line, column);
+        switch (addr.type) {
+            case VarAddress.ROOT:
+                return new RootContextValue(addr.index, line, column);
+            case VarAddress.GLOBAL:
+                return new GlobalValue(this.engine.getGlobalManager(), addr.index, line, column);
+            case VarAddress.CONST:
+                return new DirectValue(addr.constValue, line, column);
+            default: //VarAddress.CONTEXT
+                if (addr.upstairs == 0) {
+                    return new CurrentContextValue(addr.index, line, column);
+                } else {
+                    return new ContextValue(addr.upstairs, addr.index, line, column);
+                }
         }
     }
     
@@ -398,7 +405,7 @@ non terminal MapValue mapValue;
 
 non terminal String contextValueIdent;
 non terminal Integer superCount;
-non terminal ResetableValueExpression contextValueExpr;
+non terminal Expression contextValueExpr;
 non terminal ClassNameList classNameList, classNameList1;
 
 /* function */

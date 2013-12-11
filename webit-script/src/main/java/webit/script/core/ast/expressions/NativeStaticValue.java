@@ -5,9 +5,7 @@ import java.lang.reflect.Field;
 import webit.script.Context;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.ResetableValueExpression;
-import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.util.ClassUtil;
 import webit.script.util.StringUtil;
 
 /**

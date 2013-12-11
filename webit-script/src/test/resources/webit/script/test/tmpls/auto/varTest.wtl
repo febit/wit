@@ -6,6 +6,7 @@ var assertEquals;
 var assertNotEquals;
 var assertSame;
 var assertNotSame;
+var assertNotNull;
 
 {
     var a = "a";
@@ -37,4 +38,25 @@ var assertNotSame;
     session = 1;
     request2 = 1;
 }
+{
+    //global
+    $GLOBAL["aaa"] = "AAA";
+    $GLOBAL["bbb"] = "BBB";
+
+    assertNotNull($GLOBAL);
+    assertEquals($GLOBAL["aaa"], "AAA");
+    assertEquals($GLOBAL["bbb"], "BBB");
+
+    // cutsom register
+    assertEquals("MY_CONST", MY_CONST);
+    assertEquals("MY_CONST_2", MY_CONST_2);
+    assertEquals("MY_GLOBAL", MY_GLOBAL);
+    assertEquals("MY_GLOBAL_2", MY_GLOBAL_2);
+
+    MY_GLOBAL = "a new value";
+    assertEquals("a new value", MY_GLOBAL);
+
+}
+
+
 %>

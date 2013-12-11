@@ -7,6 +7,7 @@ DEFAULT_ENCODING=UTF-8
 # resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
 # textStatmentFactoryClass=webit.script.core.text.impl.SimpleTextStatmentFactory
 # nativeSecurityManagerClass=webit.script.security.impl.DefaultNativeSecurityManager
+# globalManagerClass=webit.script.global.DefaultGlobalManager
 encoding=${DEFAULT_ENCODING}
 
 # filterClass=webit.script.filters.impl.MutiFilter
@@ -55,6 +56,11 @@ encoding=${DEFAULT_ENCODING}
 # encoding=${DEFAULT_ENCODING}
 # root=/your/template/path
 
+[webit.script.global.DefaultGlobalManager]
+registers=webit.script.global.impl.GlobalMapRegister
+
+# [webit.script.global.impl.GlobalMapRegister]
+# name=$GLOBAL
 
 [webit.script.security.impl.DefaultNativeSecurityManager]
 list='''

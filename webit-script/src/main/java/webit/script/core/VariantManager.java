@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
+import webit.script.Engine;
 import webit.script.exceptions.ParseException;
+import webit.script.global.GlobalManager;
 import webit.script.util.StringUtil;
 import webit.script.util.collection.ArrayStack;
 import webit.script.util.collection.Stack;
@@ -20,13 +22,17 @@ public class VariantManager {
     private int currentElementIndex;
     private final Stack<VarWall> varWallStack;
 
-    @SuppressWarnings("unchecked")
-    public VariantManager(String[] vars) {
-        this.varWallStack = new ArrayStack<VarWall>();
+    private final GlobalManager globalManager;
 
-        elements = new Map[10];
+    @SuppressWarnings("unchecked")
+    public VariantManager(Engine engine) {
+        this.varWallStack = new ArrayStack<VarWall>();
+        this.globalManager = engine.getGlobalManager();
+
+        this.elements = new Map[10];
         Map<String, Integer> root = elements[0] = createNewMap(); //current
-        if (vars != null) {
+        String[] vars;
+        if ((vars = engine.getVars()) != null) {
             String var;
             for (int i = 0, len = vars.length; i < len; i++) {
                 var = vars[i];
@@ -83,7 +89,7 @@ public class VariantManager {
     }
 
     public VarAddress assignVariantAddress(String name, int line, int column) {
-        return new VarAddress(0, assignVariant(name, line, column), currentElementIndex == 0);
+        return VarAddress.context(0, assignVariant(name, line, column), currentElementIndex == 0);
     }
 
     public int assignVariant(String name, int line, int column) {
@@ -106,7 +112,7 @@ public class VariantManager {
         checkVarWall(0);
         final int address;
         top.put(name, address = top.size());
-        return new VarAddress(currentElementIndex, address, true);
+        return VarAddress.context(currentElementIndex, address, true);
     }
 
     public VarAddress locateAtUpstair(String name, int upstair, int line, int column) {
@@ -115,7 +121,7 @@ public class VariantManager {
             Integer index;
             if ((index = elements[i].get(name)) != null) {
                 checkVarWall(i);
-                return new VarAddress(currentElementIndex - i, index, i == 0);
+                return VarAddress.context(currentElementIndex - i, index, i == 0);
             }
             throw new ParseException("Can't locate variant: ".concat(name), line, column);
         } else {
@@ -128,9 +134,17 @@ public class VariantManager {
             Integer index;
             if ((index = elements[i].get(name)) != null) {
                 checkVarWall(i);
-                return new VarAddress(currentElementIndex - i, index, i == 0);
+                return VarAddress.context(currentElementIndex - i, index, i == 0);
             }
         }
+        
+        int index;
+        if ((index = this.globalManager.getVariantIndex(name))>=0) {
+            return VarAddress.global(index);
+        }else if (this.globalManager.hasConst(name)) {
+            return VarAddress.constValue(this.globalManager.getConst(name));
+        }
+        
         if (force) {
             throw new ParseException("Can't locate variant: ".concat(name), line, column);
         } else {
@@ -170,14 +184,33 @@ public class VariantManager {
 
     public static class VarAddress {
 
+        public final static int CONTEXT = 0;
+        public final static int ROOT = 1;
+        public final static int GLOBAL = 2;
+        public final static int CONST = 3;
+
         public final int upstairs;
         public final int index;
-        public final boolean isRoot;
+        public final int type;
+        public final Object constValue;
 
-        public VarAddress(int upstairs, int index, boolean isRoot) {
+        public VarAddress(int upstairs, int index, int type, Object constValue) {
             this.upstairs = upstairs;
             this.index = index;
-            this.isRoot = isRoot;
+            this.type = type;
+            this.constValue = constValue;
+        }
+
+        public static VarAddress context(int upstairs, int index, boolean isRoot) {
+            return new VarAddress(upstairs, index, isRoot ? ROOT : CONTEXT, null);
+        }
+
+        public static VarAddress global(int index) {
+            return new VarAddress(-1, index, GLOBAL, null);
+        }
+
+        public static VarAddress constValue(Object value) {
+            return new VarAddress(-1, -1, CONST, value);
         }
     }
 }

@@ -14,3 +14,7 @@ list +='''
   java.lang.System.currentTimeMillis
   webit.script.test.util
 '''
+
+
+[webit.script.global.DefaultGlobalManager]
+registers+=webit.script.global.TestGlobalRegister
