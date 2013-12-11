@@ -103,11 +103,11 @@ public class VariantManager {
         }
     }
 
-    public VarAddress assignVariantAtRoot(final String name) {
+    public VarAddress assignVariantAtRoot(final String name, int line, int column) {
         //int topindex = varWallStack.peek().value;
         final Map<String, Integer> top;
         if ((top = elements[0]).containsKey(name)) {
-            throw new ParseException("Duplicate Variant declare: ".concat(name));
+            throw new ParseException("Duplicate Variant declare: ".concat(name), line, column);
         }
         checkVarWall(0);
         final int address;
@@ -137,18 +137,18 @@ public class VariantManager {
                 return VarAddress.context(currentElementIndex - i, index, i == 0);
             }
         }
-        
+
         int index;
-        if ((index = this.globalManager.getVariantIndex(name))>=0) {
+        if ((index = this.globalManager.getVariantIndex(name)) >= 0) {
             return VarAddress.global(index);
-        }else if (this.globalManager.hasConst(name)) {
+        } else if (this.globalManager.hasConst(name)) {
             return VarAddress.constValue(this.globalManager.getConst(name));
         }
-        
+
         if (force) {
             throw new ParseException("Can't locate variant: ".concat(name), line, column);
         } else {
-            return assignVariantAtRoot(name);
+            return assignVariantAtRoot(name, line, column);
         }
     }
 

@@ -102,7 +102,7 @@ public class Parser extends lr_parser {
 
     private Expression createNativeStaticValue(ClassNameBand classNameBand, int line, int column) {
         if (classNameBand.size() < 2) {
-            throw new ParseException("native static need a filed name.");
+            throw new ParseException("native static need a filed name.", line, column);
         }
         String fieldName = classNameBand.pop();
         Class cls = nativeImportMgr.toClass(classNameBand, line, column);
@@ -110,7 +110,7 @@ public class Parser extends lr_parser {
         try {
             field = cls.getField(fieldName);
         } catch (NoSuchFieldException ex) {
-            throw new ParseException(StringUtil.concat("No such field: ", classNameBand.getClassPureName(), "#", fieldName));
+            throw new ParseException(StringUtil.concat("No such field: ", classNameBand.getClassPureName(), "#", fieldName), line, column);
         }
         if (ClassUtil.isStatic(field)) {
             ClassUtil.setAccessible(field);
@@ -118,13 +118,13 @@ public class Parser extends lr_parser {
                 try {
                     return new DirectValue(field.get(null), line, column);
                 } catch (Exception ex) {
-                    throw new ParseException(StringUtil.concat("Failed to static field value: ", classNameBand.getClassPureName(), "#", fieldName), ex);
+                    throw new ParseException(StringUtil.concat("Failed to static field value: ", classNameBand.getClassPureName(), "#", fieldName), ex, line, column);
                 }
             } else {
                 return new NativeStaticValue(field, line, column);
             }
         } else {
-            throw new ParseException(StringUtil.concat("No a static field: ", classNameBand.getClassPureName(), "#", fieldName));
+            throw new ParseException(StringUtil.concat("No a static field: ", classNameBand.getClassPureName(), "#", fieldName), line, column);
         }
     }
 

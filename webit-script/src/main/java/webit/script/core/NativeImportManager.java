@@ -61,7 +61,7 @@ public class NativeImportManager {
         try {
             return ClassUtil.getClass(classPureName, classNameBand.getArrayDepth());
         } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class not found:".concat(classPureName)).setPosition(line, column);
+            throw new ParseException("Class not found:".concat(classPureName), line, column);
         }
     }
 }

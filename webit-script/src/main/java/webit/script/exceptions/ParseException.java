@@ -69,6 +69,12 @@ public class ParseException extends UncheckedException {
         super(message, cause);
     }
 
+    public ParseException(String message, Throwable cause, int line, int column) {
+        super(message, cause);
+        this.line = line;
+        this.column = column;
+    }
+
     public ParseException(String message, Throwable cause, Statment statment) {
         super(message, cause);
         initByStatment(statment);
