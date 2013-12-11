@@ -9,7 +9,9 @@ import webit.script.core.text.TextStatmentFactory;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.filters.Filter;
 import webit.script.global.GlobalManager;
+import webit.script.io.Out;
 import webit.script.io.charset.CoderFactory;
+import webit.script.io.impl.DiscardOut;
 import webit.script.loaders.Loader;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.Resolver;
@@ -18,6 +20,7 @@ import webit.script.security.NativeSecurityManager;
 import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
+import webit.script.util.keyvalues.KeyValuesUtil;
 import webit.script.util.props.Props;
 
 /**
@@ -46,6 +49,7 @@ public final class Engine {
     private boolean appendLostFileNameExtension = false;
     private String fileNameExtension = ".wtl";
     private String[] vars = null;
+    private String[] initTemplates = null;
     //
     private Logger logger;
     private Loader resourceLoader;
@@ -98,9 +102,24 @@ public final class Engine {
             }
             this.resolverManager.init(resolverInstances);
         }
-        
+
         resolveBean(this.globalManager);
         globalManager.commit();
+    }
+
+    private void executeInitTemplates() throws Exception {
+        final int size;
+        if (this.initTemplates != null && (size = this.initTemplates.length) > 0) {
+            String templateName;
+            final Out out = new DiscardOut();
+            for (int i = 0; i < size; i++) {
+                if ((templateName = initTemplates[i]) != null
+                        && (templateName = templateName.trim()).length() != 0) {
+                    this.getTemplate(templateName)
+                            .merge(KeyValuesUtil.EMPTY_KEY_VALUES, out);
+                }
+            }
+        }
     }
 
     public void resolveBean(Object bean) {
@@ -319,6 +338,10 @@ public final class Engine {
         }
     }
 
+    public void setInitTemplates(String[] initTemplates) {
+        this.initTemplates = initTemplates;
+    }
+
     public static Engine createEngine(String configPath) {
         return createEngine(configPath, null);
     }
@@ -356,6 +379,12 @@ public final class Engine {
         final Object propsFiles;
         if (logger != null && logger.isInfoEnabled() && (propsFiles = petite.getParameter(PROPS_FILE_LIST)) != null) {
             logger.info("Loaded props files from classpath: ".concat(propsFiles.toString()));
+        }
+
+        try {
+            engine.executeInitTemplates();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
 
         return engine;

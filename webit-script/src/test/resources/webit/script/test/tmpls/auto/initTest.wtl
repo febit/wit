@@ -1,0 +1,15 @@
+<%
+
+import "/junit-assert.wtl";
+
+var assertEquals;
+var assertNotNull;
+
+{
+    assertNotNull($GLOBAL);
+    assertEquals($GLOBAL["one"], 1);
+    assertEquals($GLOBAL["two"], 2);
+    assertEquals($GLOBAL["string"], "string");
+    assertEquals($GLOBAL["string2"], "string2");
+}
+%>

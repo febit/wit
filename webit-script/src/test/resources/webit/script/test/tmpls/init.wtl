@@ -1,0 +1,4 @@
+<%
+$GLOBAL["one"] = 1;
+$GLOBAL["string"] = "string";
+%>

@@ -3,6 +3,8 @@
 resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
 loggerClass=webit.script.loggers.impl.Slf4jLogger
 vars=request,request2,session,session
+initTemplates=/init.wtl,/init2.wtl
+
 
 [webit.script.loaders.impl.ClasspathLoader]
 root=webit/script/test/tmpls

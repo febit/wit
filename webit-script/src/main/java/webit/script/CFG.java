@@ -21,6 +21,7 @@ public interface CFG {
     public static final String TRIM_CODE_LINE   = ENGINE + ".trimCodeBlockBlankLine";
     public static final String VARS             = ENGINE + ".vars";
     public static final String EXTENSION        = ENGINE + ".fileNameExtension";
+    public static final String INIT_TEMPLATES   = ENGINE + ".initTemplates";
     
     public static final String APPEND_LOST_EXTENSION    = ENGINE + ".appendLostFileNameExtension";
 

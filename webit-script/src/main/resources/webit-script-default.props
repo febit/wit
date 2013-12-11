@@ -27,6 +27,7 @@ resolvers=\
 # appendLostFileNameExtension=false
 # fileNameExtension=.wtl
 # vars=
+# initTemplates=
 
 
 ### MutiFilter
