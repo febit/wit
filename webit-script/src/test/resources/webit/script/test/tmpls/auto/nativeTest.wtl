@@ -85,6 +85,12 @@ var assertNotSame;
     assertEquals(new_value, f2);
 
     assertEquals("field2", f2_2);
+
+    //Test set value to static field
+    native StaticFields.field2 = new_value;
+    f2_2 = native StaticFields.field2;
+    assertEquals(new_value, f2_2);
+
 }
 
 %>
