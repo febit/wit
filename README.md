@@ -19,13 +19,13 @@ It's grammar is very like Javascript, and with `<% %>` `${ }` like in JSP
 <dependency>
   <groupId>com.github.zqq90.webit-script</groupId>
   <artifactId>webit-script</artifactId>
-  <version>1.2.2</version>
+  <version>1.3.0</version>
 </dependency>
 ~~~~~
 
 ### Or add Jar (~~jars~~)
 
- + `webit-script-1.2.2.jar` [download here][jar]
+ + `webit-script-1.3.0.jar` [download here][jar]
 
 ### Code in Java like this
 
@@ -589,7 +589,7 @@ Engine                          Time
 JetbrickTemplate-1.0.0          6532
 HTTL-1.0.11                     6690
 BSL-2.0.2                       8801
-WebitScript-1.2.2               8956
+WebitScript-1.3.0               8956
 DirectOut-system                11519
 BeeTL-1.25.01                   11603
 Rythm-1.0.0-b10-SNAPSHOT        12671
@@ -628,10 +628,10 @@ details.
 
 
 
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.2/webit-script-1.2.2.jar
-[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.2.2/webit-script-joddinside-1.2.2.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.2/webit-script-1.2.2-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.2.2/webit-script-1.2.2-javadoc.jar
+[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.3.0/webit-script-1.3.0.jar
+[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.3.0/webit-script-joddinside-1.3.0.jar
+[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.3.0/webit-script-1.3.0-sources.jar
+[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.3.0/webit-script-1.3.0-javadoc.jar
 
 [mvc-demo]: https://github.com/zqq90/webitscript-mvc-demo
 
