@@ -628,10 +628,10 @@ details.
 
 
 
-[jar]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.3.0/webit-script-1.3.0.jar
-[jar_joddin]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script-joddinside/1.3.0/webit-script-joddinside-1.3.0.jar
-[sources]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.3.0/webit-script-1.3.0-sources.jar
-[doc]: http://zqq90.github.io/maven/com/github/zqq90/webit-script/webit-script/1.3.0/webit-script-1.3.0-javadoc.jar
+[jar]: http://central.maven.org/maven2/com/github/zqq90/webit-script/webit-script/1.3.0/webit-script-1.3.0.jar
+[jar_joddin]: http://central.maven.org/maven2/com/github/zqq90/webit-script/webit-script-joddinside/1.3.0/webit-script-joddinside-1.3.0.jar
+[sources]: http://central.maven.org/maven2/com/github/zqq90/webit-script/webit-script/1.3.0/webit-script-1.3.0-sources.jar
+[doc]: http://central.maven.org/maven2/com/github/zqq90/webit-script/webit-script/1.3.0/webit-script-1.3.0-javadoc.jar
 
 [mvc-demo]: https://github.com/zqq90/webitscript-mvc-demo
 
