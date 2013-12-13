@@ -28,15 +28,15 @@ resolvers=\
 # fileNameExtension=.wtl
 # vars=
 # initTemplates=
+# shareRootData=false
+
+# Logger
+# loggerClass=webit.script.loggers.impl.NOPLogger
 
 
 ### MutiFilter
 # [webit.script.filters.impl.MutiFilter]
 # filtersClass=
-
-
-### Logger
-# loggerClass=webit.script.loggers.impl.NOPLogger
 
 
 # [webit.script.resolvers.ResolverManager]
