@@ -48,7 +48,7 @@ encoding=${DEFAULT_ENCODING}
 # root=your/template/path
 
 
-# [webit.script.loaders.impl.ServletLoader]
+# [webit.script.web.loaders.ServletLoader]
 # encoding=${DEFAULT_ENCODING}
 # root=/your/template/path
 
