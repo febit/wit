@@ -2,13 +2,13 @@
 package webit.script.support.struts;
 
 import com.opensymphony.xwork2.ActionInvocation;
-import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StrutsResultSupport;
+import webit.script.util.keyvalues.KeyValuesUtil;
 import webit.script.web.WebEngineManager;
 import webit.script.web.WebEngineManager.ServletContextProvider;
 
@@ -30,6 +30,7 @@ public class WebitScriptResultSupport extends StrutsResultSupport {
     }
 
     private static String contentType;
+
     public static void setConfigPath(String configPath) {
         engineManager.setConfigPath(configPath);
     }
@@ -37,24 +38,28 @@ public class WebitScriptResultSupport extends StrutsResultSupport {
     public static void setContentType(String contentType) {
         WebitScriptResultSupport.contentType = contentType;
     }
-    
+
     public static void resetEngine() {
         engineManager.resetEngine();
     }
 
+    private final static String[] PARAM_KEYS = new String[]{
+        "request", "response", "stackContext", "action"
+    };
+
     @Override
     protected void doExecute(String view, ActionInvocation ai) throws Exception {
-        Map<String, Object> model = ai.getStack().getContext();
-        HttpServletRequest request = (HttpServletRequest) model.get(ServletActionContext.HTTP_REQUEST);
-        HttpServletResponse response = (HttpServletResponse) model.get(ServletActionContext.HTTP_RESPONSE);
+        final Map<String, Object> context = ai.getStack().getContext();
+        final HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+        final HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
         if (contentType != null) {
             response.setContentType(contentType);
         }
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("request", request);
-        params.put("response", response);
-        params.put("stackContext", model);
-        params.put("action", ai.getAction());
-        engineManager.renderTemplate(view, params, response);
+        engineManager.renderTemplate(view, KeyValuesUtil.wrap(PARAM_KEYS, new Object[]{
+            request,
+            response,
+            context,
+            ai.getAction()
+        }), response);
     }
 }

@@ -6,7 +6,6 @@ import com.jfinal.render.IMainRenderFactory;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,11 +83,7 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
     protected void render(final String realView, final HttpServletRequest request, final HttpServletResponse response) {
         try {
             response.setContentType(contentType);
-            final Map<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put("request", request);
-            parameters.put("response", response);
-            ServletUtil.exportAttributes(parameters, request);
-            this.engineManager.renderTemplate(realView, parameters, response);
+            this.engineManager.renderTemplate(realView, ServletUtil.wrapToKeyValues(request, response), response);
         } catch (IOException ex) {
             throw new RenderException(ex);
         }

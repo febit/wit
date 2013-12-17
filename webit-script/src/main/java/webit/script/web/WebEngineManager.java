@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import webit.script.Engine;
+import webit.script.util.keyvalues.KeyValues;
 
 /**
  *
@@ -78,6 +79,18 @@ public class WebEngineManager {
     public void renderTemplate(final String name, final Map<String, Object> parameters, final HttpServletResponse response) throws IOException {
         getEngine()
                 .getTemplate(name)
+                .merge(parameters, response.getOutputStream());
+    }
+
+    public void renderTemplate(final String name, final KeyValues parameters, final HttpServletResponse response) throws IOException {
+        getEngine()
+                .getTemplate(name)
+                .merge(parameters, response.getOutputStream());
+    }
+
+    public void renderTemplate(final String parent, final String name, final KeyValues parameters, final HttpServletResponse response) throws IOException {
+        getEngine()
+                .getTemplate(parent, name)
                 .merge(parameters, response.getOutputStream());
     }
 

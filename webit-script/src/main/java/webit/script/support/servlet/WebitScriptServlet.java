@@ -3,8 +3,6 @@ package webit.script.support.servlet;
 
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -62,10 +60,6 @@ public class WebitScriptServlet extends HttpServlet {
         if (contentType != null) {
             response.setContentType(contentType);
         }
-        final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("request", request);
-        parameters.put("response", response);
-        ServletUtil.exportAttributes(parameters, request);
-        this.engineManager.renderTemplate(request.getServletPath(), parameters, response);
+        this.engineManager.renderTemplate(request.getServletPath(), ServletUtil.wrapToKeyValues(request, response), response);
     }
 }

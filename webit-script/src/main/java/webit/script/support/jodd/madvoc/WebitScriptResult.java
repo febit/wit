@@ -1,10 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.support.jodd.madvoc;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import jodd.madvoc.ActionRequest;
 import jodd.madvoc.ScopeType;
@@ -54,16 +51,11 @@ public class WebitScriptResult extends ActionResult implements ServletContextPro
     }
 
     @Override
-    public void render(ActionRequest actionRequest, Object resultObject, String resultValue, String resultPath) throws Exception {
-        final HttpServletRequest request = actionRequest.getHttpServletRequest();
+    public void render(final ActionRequest actionRequest, final Object resultObject, final String resultValue, final String resultPath) throws Exception {
         final HttpServletResponse response = actionRequest.getHttpServletResponse();
         if (contentType != null) {
             response.setContentType(contentType);
         }
-        final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("request", request);
-        parameters.put("response", response);
-        ServletUtil.exportAttributes(parameters, request);
-        this.engineManager.renderTemplate(resultPath, parameters, response);
+        this.engineManager.renderTemplate(resultPath, ServletUtil.wrapToKeyValues(actionRequest.getHttpServletRequest(), response), response);
     }
 }

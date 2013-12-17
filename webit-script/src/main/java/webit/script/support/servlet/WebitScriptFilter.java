@@ -3,8 +3,6 @@ package webit.script.support.servlet;
 
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -59,11 +57,7 @@ public class WebitScriptFilter implements Filter {
         if (contentType != null) {
             response.setContentType(contentType);
         }
-        final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("request", request);
-        parameters.put("response", response);
-        ServletUtil.exportAttributes(parameters, request);
-        this.engineManager.renderTemplate(WebitScriptServletUtil.getTemplatePath(request), parameters, response);
+        this.engineManager.renderTemplate(WebitScriptServletUtil.getTemplatePath(request), ServletUtil.wrapToKeyValues(request, response), response);
     }
 
     public void destroy() {
