@@ -96,10 +96,10 @@ public abstract class AbstractLoader implements Loader, Initable {
             this.encoding = engine.getEncoding();
         }
         if (this.dontAppendLostFileNameExtensionSettedFlag == false) {
-            this.dontAppendLostFileNameExtension = !engine.isAppendLostFileNameExtension();
+            this.dontAppendLostFileNameExtension = !engine.isAppendLostSuffix();
         }
         if (this.fileNameExtension == null) {
-            this.fileNameExtension = engine.getFileNameExtension();
+            this.fileNameExtension = engine.getSuffix();
         }
     }
 }

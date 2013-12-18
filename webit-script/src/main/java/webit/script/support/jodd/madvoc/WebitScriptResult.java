@@ -31,7 +31,7 @@ public class WebitScriptResult extends ActionResult implements ServletContextPro
         super(NAME);
         this.engineManager
                 = new WebEngineManager(this)
-                .setProperties(CFG.APPEND_LOST_EXTENSION, Boolean.TRUE);
+                .setProperties(CFG.APPEND_LOST_SUFFIX, Boolean.TRUE);
     }
 
     public ServletContext getServletContext() {

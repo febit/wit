@@ -26,7 +26,7 @@ public class WebitScriptViewResolver extends AbstractTemplateViewResolver implem
 
     public void afterPropertiesSet() throws Exception {
         if (getSuffix() == null || getSuffix().length() == 0) {
-            super.setSuffix(this.engineManager.getEngine().getFileNameExtension());
+            super.setSuffix(this.engineManager.getEngine().getSuffix());
         }
     }
 

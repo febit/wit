@@ -46,8 +46,8 @@ public final class Engine {
     private boolean looseVar = false;
     private boolean shareRootData = false;
     private boolean trimCodeBlockBlankLine = true;
-    private boolean appendLostFileNameExtension = false;
-    private String fileNameExtension = ".wit";
+    private boolean appendLostSuffix = false;
+    private String suffix = ".wit";
     private String[] vars = null;
     private String[] initTemplates = null;
     //
@@ -299,20 +299,20 @@ public final class Engine {
         return logger;
     }
 
-    public boolean isAppendLostFileNameExtension() {
-        return appendLostFileNameExtension;
+    public boolean isAppendLostSuffix() {
+        return appendLostSuffix;
     }
 
-    public void setAppendLostFileNameExtension(boolean appendLostFileNameExtension) {
-        this.appendLostFileNameExtension = appendLostFileNameExtension;
+    public void setAppendLostSuffix(boolean appendLostSuffix) {
+        this.appendLostSuffix = appendLostSuffix;
     }
 
-    public String getFileNameExtension() {
-        return fileNameExtension;
+    public String getSuffix() {
+        return suffix;
     }
 
-    public void setFileNameExtension(String fileNameExtension) {
-        this.fileNameExtension = fileNameExtension;
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 
     public String[] getVars() {
