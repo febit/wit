@@ -12,18 +12,18 @@ public class UnixStyleFileNameUtilTest {
 
     @Test
     public void test() {
-        assertEquals("/parent/tmpl.wtl", UnixStyleFileNameUtil.concat("/parent/", "tmpl.wtl"));
-        assertEquals("/parent/tmpl.wtl", UnixStyleFileNameUtil.concat("/parent/", "./tmpl.wtl"));
-        assertEquals("/tmpl.wtl", UnixStyleFileNameUtil.concat("/parent/", "../tmpl.wtl"));
+        assertEquals("/parent/tmpl.wit", UnixStyleFileNameUtil.concat("/parent/", "tmpl.wit"));
+        assertEquals("/parent/tmpl.wit", UnixStyleFileNameUtil.concat("/parent/", "./tmpl.wit"));
+        assertEquals("/tmpl.wit", UnixStyleFileNameUtil.concat("/parent/", "../tmpl.wit"));
         
         
-        assertEquals("/tmpl.wtl", UnixStyleFileNameUtil.normalize("/parent/../tmpl.wtl"));
+        assertEquals("/tmpl.wit", UnixStyleFileNameUtil.normalize("/parent/../tmpl.wit"));
         
-        assertNull(UnixStyleFileNameUtil.normalize("/../tmpl.wtl"));
-        assertNull(UnixStyleFileNameUtil.normalize("../tmpl.wtl"));
-        assertNull(UnixStyleFileNameUtil.normalize("/parent/../../tmpl.wtl"));        
+        assertNull(UnixStyleFileNameUtil.normalize("/../tmpl.wit"));
+        assertNull(UnixStyleFileNameUtil.normalize("../tmpl.wit"));
+        assertNull(UnixStyleFileNameUtil.normalize("/parent/../../tmpl.wit"));        
         
-        assertEquals("/parent/", UnixStyleFileNameUtil.getPath("/parent/tmpl.wtl"));
-        assertEquals("/", UnixStyleFileNameUtil.getPath("/tmpl.wtl"));
+        assertEquals("/parent/", UnixStyleFileNameUtil.getPath("/parent/tmpl.wit"));
+        assertEquals("/", UnixStyleFileNameUtil.getPath("/tmpl.wit"));
     }
 }

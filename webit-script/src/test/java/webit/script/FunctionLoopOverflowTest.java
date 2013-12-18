@@ -19,7 +19,7 @@ public class FunctionLoopOverflowTest {
         ParseException exception;
         //
         exception = null;
-        template = EngineManager.getTemplate("/function/loopOverflow1.wtl");
+        template = EngineManager.getTemplate("/function/loopOverflow1.wit");
         try {
             template.reloadTemplateForce();
         } catch (ParseException e) {
@@ -29,7 +29,7 @@ public class FunctionLoopOverflowTest {
 
         //
         exception = null;
-        template = EngineManager.getTemplate("/function/loopOverflow2.wtl");
+        template = EngineManager.getTemplate("/function/loopOverflow2.wit");
         try {
             template.reloadTemplateForce();
         } catch (ParseException e) {
@@ -39,7 +39,7 @@ public class FunctionLoopOverflowTest {
 
         //
         exception = null;
-        template = EngineManager.getTemplate("/function/loopOverflow3.wtl");
+        template = EngineManager.getTemplate("/function/loopOverflow3.wit");
         try {
             template.reloadTemplateForce();
         } catch (ParseException e) {

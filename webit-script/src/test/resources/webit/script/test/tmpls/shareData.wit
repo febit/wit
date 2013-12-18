@@ -1,6 +1,6 @@
 <%
 
-import "/junit-assert.wtl";
+import "/junit-assert.wit";
 var assertEquals;
 var v1,v2;
 {
@@ -10,7 +10,7 @@ var v1,v2;
     assertEquals(v1,"V1");
     assertEquals(v2,"V2");
 
-    import "/shareDataInlude.wtl" {"a1":"A1","a2":"A2"};
+    import "/shareDataInlude.wit" {"a1":"A1","a2":"A2"};
 
     assertEquals(back1, "BACK1");
     assertEquals(back2, "BACK2");

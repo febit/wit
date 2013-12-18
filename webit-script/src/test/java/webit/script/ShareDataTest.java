@@ -18,7 +18,7 @@ public class ShareDataTest {
         try {
             engine.setShareRootData(true);
 
-            Template template = engine.getTemplate("/shareData.wtl");
+            Template template = engine.getTemplate("/shareData.wit");
             template.reloadTemplateForce();
             template.merge(KeyValuesUtil.wrap(new String[]{"v1", "v2"}, new Object[]{"V1", "V2"}), new DiscardOutputStream());
         } finally {

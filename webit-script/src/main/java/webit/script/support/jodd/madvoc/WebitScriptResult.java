@@ -19,7 +19,7 @@ import webit.script.web.WebEngineManager.ServletContextProvider;
  */
 public class WebitScriptResult extends ActionResult implements ServletContextProvider {
 
-    public static final String NAME = "wtl";
+    public static final String NAME = "wit";
     //
     @In(scope = ScopeType.CONTEXT)
     protected MadvocController madvocController;

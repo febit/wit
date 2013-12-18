@@ -1,6 +1,6 @@
 <%
 
-import "/junit-assert.wtl";
+import "/junit-assert.wit";
 
 var assertEquals;
 var assertNotEquals;
@@ -13,7 +13,7 @@ var assertNull;
     var a = "A";
     var b = "B";
     {
-        import "/import1.wtl";
+        import "/import1.wit";
 
         var b;
         var func;
@@ -30,7 +30,7 @@ var assertNull;
     {
         var b;
         var b_1;
-        import "/import1.wtl" a,b_1=b;
+        import "/import1.wit" a,b_1=b;
 
         var func;
 
@@ -47,11 +47,11 @@ var assertNull;
 
     }
     {
-        import "/import1.wtl" {"1":"1","2":"2"} a,b;
+        import "/import1.wit" {"1":"1","2":"2"} a,b;
         var a;
         var b;
         var c = {"1":"1","2":"2"};
-        import "/import1.wtl" {c} a,b;
+        import "/import1.wit" {c} a,b;
     }
 
 }

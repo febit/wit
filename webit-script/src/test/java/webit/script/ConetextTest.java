@@ -16,7 +16,7 @@ public class ConetextTest {
     @Test
     public void test() throws ResourceNotFoundException {
 
-        Template template = EngineManager.getTemplate("contextTest.wtl");
+        Template template = EngineManager.getTemplate("contextTest.wit");
         
         Context context = template.merge(new DiscardOutputStream());
         

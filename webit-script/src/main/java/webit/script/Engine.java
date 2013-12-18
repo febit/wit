@@ -47,7 +47,7 @@ public final class Engine {
     private boolean shareRootData = false;
     private boolean trimCodeBlockBlankLine = true;
     private boolean appendLostFileNameExtension = false;
-    private String fileNameExtension = ".wtl";
+    private String fileNameExtension = ".wit";
     private String[] vars = null;
     private String[] initTemplates = null;
     //

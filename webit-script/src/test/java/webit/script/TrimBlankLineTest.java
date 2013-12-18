@@ -20,7 +20,7 @@ public class TrimBlankLineTest {
         DiscardWriter out = new DiscardWriter();
 
         engine.setTrimCodeBlockBlankLine(true);
-        Template template = engine.getTemplate("/trimBlankLine.wtl");
+        Template template = engine.getTemplate("/trimBlankLine.wit");
 
         try {
 

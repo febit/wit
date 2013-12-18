@@ -30,7 +30,7 @@ public class AutoTest {
             String[] files = file.list();
             for (int i = 0; i < files.length; i++) {
                 String path = files[i];
-                if (StringUtil.endsWithIgnoreCase(path, ".wtl")) {
+                if (StringUtil.endsWithIgnoreCase(path, ".wit")) {
                     templates.add("/auto/" + path);
                 }
             }

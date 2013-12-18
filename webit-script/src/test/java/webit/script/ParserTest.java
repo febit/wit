@@ -13,7 +13,7 @@ public class ParserTest {
     @Test
     public void test() {
         try {
-            Template template = EngineManager.getTemplate("/firstTmpl.wtl");
+            Template template = EngineManager.getTemplate("/firstTmpl.wit");
             //TemplateAST result = template.reloadTemplateForce();
             template.merge(new DiscardOutputStream());
         } catch (Exception e) {

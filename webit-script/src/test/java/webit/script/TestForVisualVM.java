@@ -22,7 +22,7 @@ public class TestForVisualVM {
         int times = 10000;
         Engine engine = EngineManager.getEngine();
 
-        Template template = engine.getTemplate("/firstTmpl.wtl");
+        Template template = engine.getTemplate("/firstTmpl.wit");
         DiscardOutputStream out = new DiscardOutputStream();
         template.reloadTemplateForce();
 

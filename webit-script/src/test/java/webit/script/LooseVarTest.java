@@ -17,7 +17,7 @@ public class LooseVarTest {
         try {
             engine.setLooseVar(true);
             
-            Template template = engine.getTemplate("/looseVar.wtl");
+            Template template = engine.getTemplate("/looseVar.wit");
             template.merge(new DiscardOutputStream());
         } finally {
             engine.setLooseVar(false);
