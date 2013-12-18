@@ -6,7 +6,7 @@ import java.util.Map;
 import webit.script.Context;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
-import webit.script.util.StatmentUtil;
+import webit.script.util.StatementUtil;
 
 /**
  *
@@ -33,7 +33,7 @@ public final class MapValue extends AbstractExpression {
         final int len = valueExprs.length;
         final Map value = new HashMap(initialCapacity, DEFAULT_MAP_FACTOR);
         for (int i = 0; i < len; i++) {
-            value.put(keys[i], StatmentUtil.execute(valueExprs[i], context));
+            value.put(keys[i], StatementUtil.execute(valueExprs[i], context));
         }
         return value;
     }

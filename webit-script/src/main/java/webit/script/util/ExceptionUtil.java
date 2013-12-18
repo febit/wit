@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.util;
 
-import webit.script.core.ast.Statment;
+import webit.script.core.ast.Statement;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;
 
@@ -11,10 +11,10 @@ import webit.script.exceptions.ScriptRuntimeException;
  */
 public class ExceptionUtil {
 
-    public static ScriptRuntimeException castToScriptRuntimeException(final Throwable e, final Statment statment) {
+    public static ScriptRuntimeException castToScriptRuntimeException(final Throwable e, final Statement statement) {
         return (e instanceof ScriptRuntimeException)
-                ? ((ScriptRuntimeException) e).registStatment(statment)
-                : new ScriptRuntimeException(e, statment);
+                ? ((ScriptRuntimeException) e).registStatement(statement)
+                : new ScriptRuntimeException(e, statement);
     }
 
     public static ScriptRuntimeException castToScriptRuntimeException(final Throwable e) {

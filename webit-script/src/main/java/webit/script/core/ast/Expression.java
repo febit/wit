@@ -5,5 +5,5 @@ package webit.script.core.ast;
  *
  * @author Zqq
  */
-public interface Expression extends Statment {
+public interface Expression extends Statement {
 }

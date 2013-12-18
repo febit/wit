@@ -5,7 +5,7 @@ package webit.script.core.ast;
  *
  * @author Zqq
  */
-public abstract class AbstractExpression extends AbstractStatment implements Expression{
+public abstract class AbstractExpression extends AbstractStatement implements Expression{
 
     public AbstractExpression(int line, int column) {
         super(line, column);

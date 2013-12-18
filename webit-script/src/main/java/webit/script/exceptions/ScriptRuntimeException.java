@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.exceptions;
 
-import webit.script.core.ast.Statment;
+import webit.script.core.ast.Statement;
 import webit.script.util.collection.ArrayStack;
 import webit.script.util.collection.Stack;
 
@@ -11,28 +11,29 @@ import webit.script.util.collection.Stack;
  */
 public class ScriptRuntimeException extends UncheckedException {
 
-    private final Stack<Statment> statmentStack = new ArrayStack<Statment>(8);
-    
-    public final ScriptRuntimeException registStatment(Statment statment) {
-        statmentStack.push(statment);
+    private final Stack<Statement> statementStack = new ArrayStack<Statement>(8);
+
+    public final ScriptRuntimeException registStatement(Statement statement) {
+        statementStack.push(statement);
         return this;
     }
 
-    public Stack<Statment> getStatmentStack() {
-        return statmentStack;
+    public Stack<Statement> getStatementStack() {
+        return statementStack;
     }
 
     @Override
     public void printBody(PrintStreamOrWriter out, String prefix) {
-        for (int i = statmentStack.size() - 1; i >= 0; i--) {
-            Statment statment = statmentStack.peek(i);
+        Statement statement;
+        for (int i = statementStack.size() - 1; i >= 0; i--) {
+            statement = statementStack.peek(i);
             out.print(prefix)
                     .print("\tat line ")
-                    .print(statment.getLine())
+                    .print(statement.getLine())
                     .print("(")
-                    .print(statment.getColumn())
+                    .print(statement.getColumn())
                     .print(") ")
-                    .println(statment.getClass().getSimpleName());
+                    .println(statement.getClass().getSimpleName());
         }
     }
 
@@ -40,26 +41,26 @@ public class ScriptRuntimeException extends UncheckedException {
         super(message);
     }
 
-    public ScriptRuntimeException(String message, Statment statment) {
+    public ScriptRuntimeException(String message, Statement statement) {
         super(message);
-        registStatment(statment);
+        registStatement(statement);
     }
 
     public ScriptRuntimeException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ScriptRuntimeException(String message, Throwable cause, Statment statment) {
+    public ScriptRuntimeException(String message, Throwable cause, Statement statement) {
         super(message, cause);
-        registStatment(statment);
+        registStatement(statement);
     }
 
     public ScriptRuntimeException(Throwable cause) {
         super(cause);
     }
 
-    public ScriptRuntimeException(Throwable cause, Statment statment) {
+    public ScriptRuntimeException(Throwable cause, Statement statement) {
         super(cause);
-        registStatment(statment);
+        registStatement(statement);
     }
 }

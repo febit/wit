@@ -8,8 +8,8 @@ import java.util.Map;
 import webit.script.Engine;
 import webit.script.Template;
 import webit.script.core.ast.TemplateAST;
-import webit.script.core.ast.statments.PlaceHolderStatmentFactory;
-import webit.script.core.text.TextStatmentFactory;
+import webit.script.core.ast.statements.PlaceHolderFactory;
+import webit.script.core.text.TextStatementFactory;
 import webit.script.exceptions.ParseException;
 import webit.script.loggers.Logger;
 import webit.script.util.ClassLoaderUtil;
@@ -122,8 +122,8 @@ abstract class lr_parser {
     //
     Engine engine;
     Template template;
-    TextStatmentFactory textStatmentFactory;
-    PlaceHolderStatmentFactory placeHolderStatmentFactory;
+    TextStatementFactory textStatementFactory;
+    PlaceHolderFactory placeHolderFactory;
     Logger logger;
     boolean locateVarForce;
     NativeImportManager nativeImportMgr;
@@ -147,10 +147,10 @@ abstract class lr_parser {
             this.engine = _engine = template.engine;
             lexer.setTrimCodeBlockBlankLine(_engine.isTrimCodeBlockBlankLine());
             this.logger = _engine.getLogger();
-            TextStatmentFactory _textStatmentFactory;
-            this.textStatmentFactory = _textStatmentFactory = _engine.getTextStatmentFactory();
+            TextStatementFactory _textStatementFactory;
+            this.textStatementFactory = _textStatementFactory = _engine.getTextStatementFactory();
             this.locateVarForce = !_engine.isLooseVar();
-            this.placeHolderStatmentFactory = new PlaceHolderStatmentFactory(_engine.getFilter());
+            this.placeHolderFactory = new PlaceHolderFactory(_engine.getFilter());
             //
             this.nativeImportMgr = new NativeImportManager();
             this.varmgr = new VariantManager(_engine);
@@ -158,9 +158,9 @@ abstract class lr_parser {
             this.labelsIndexMap.put(null, 0);
             this.currentLabelIndex = 0;
             //
-            _textStatmentFactory.startTemplateParser(template);
+            _textStatementFactory.startTemplateParser(template);
             Symbol sym = this.parse(lexer);
-            _textStatmentFactory.finishTemplateParser(template);
+            _textStatementFactory.finishTemplateParser(template);
             return (TemplateAST) sym.value;
         } catch (Exception e) {
             throw ExceptionUtil.castToParseException(e);

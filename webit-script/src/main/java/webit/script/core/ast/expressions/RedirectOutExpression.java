@@ -10,7 +10,7 @@ import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.util.FastByteArrayOutputStream;
 import webit.script.util.FastCharArrayWriter;
-import webit.script.util.StatmentUtil;
+import webit.script.util.StatementUtil;
 
 /**
  *
@@ -34,19 +34,19 @@ public class RedirectOutExpression extends AbstractExpression {
 
             FastByteArrayOutputStream out = new FastByteArrayOutputStream(256);
 
-            Object result = StatmentUtil.execute(srcExpr, context, new OutputStreamOut(out, (OutputStreamOut) current));
-            StatmentUtil.executeSetValue(toExpr, context, out.toByteArray());
+            Object result = StatementUtil.execute(srcExpr, context, new OutputStreamOut(out, (OutputStreamOut) current));
+            StatementUtil.executeSetValue(toExpr, context, out.toByteArray());
 
             return result;
         } else {
             FastCharArrayWriter writer = new FastCharArrayWriter(256);
 
-            Object result = StatmentUtil.execute(srcExpr, context,
+            Object result = StatementUtil.execute(srcExpr, context,
                     current instanceof WriterOut
                     ? new WriterOut(writer, (WriterOut) current)
                     : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
             
-            StatmentUtil.executeSetValue(toExpr, context, writer.toCharArray());
+            StatementUtil.executeSetValue(toExpr, context, writer.toCharArray());
 
             return result;
         }

@@ -7,12 +7,12 @@ import java.util.Map;
 import webit.script.core.VariantIndexer;
 import webit.script.core.VariantManager;
 import webit.script.core.ast.Position;
-import webit.script.core.ast.Statment;
-import webit.script.core.ast.StatmentList;
-import webit.script.core.ast.expressions.FunctionDeclareExpression;
+import webit.script.core.ast.Statement;
+import webit.script.core.ast.StatementList;
+import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.exceptions.ParseException;
-import webit.script.util.StatmentUtil;
+import webit.script.util.StatementUtil;
 import webit.script.util.StringUtil;
 import webit.script.util.collection.IntArrayList;
 
@@ -36,14 +36,14 @@ public final class FunctionPart extends Position {
         return this;
     }
 
-    public FunctionDeclareExpression pop(VariantManager varmgr, StatmentList list) {
-        Statment[] statments = list.toInvertArray();
+    public FunctionDeclare pop(VariantManager varmgr, StatementList list) {
+        Statement[] statements = list.toInvertArray();
 
         int[] overflowUpstairs = varmgr.popVarWall();
         Map<String, Integer> varIndexer = varmgr.pop();
 
         boolean hasReturnLoops = false;
-        List<LoopInfo> loopInfos = StatmentUtil.collectPossibleLoopsInfo(statments);
+        List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(statements);
 
         if (loopInfos != null) {
 
@@ -59,11 +59,11 @@ public final class FunctionPart extends Position {
             }
         }
 
-        return new FunctionDeclareExpression(argsIndex,
+        return new FunctionDeclare(argsIndex,
                 argIndexList.isEmpty() ? null : argIndexList.toArray(),
                 overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null,
                 VariantIndexer.getVariantIndexer(varIndexer),
-                statments,
+                statements,
                 hasReturnLoops,
                 line, column);
     }

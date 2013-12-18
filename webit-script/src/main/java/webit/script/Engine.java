@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import webit.script.core.text.TextStatmentFactory;
+import webit.script.core.text.TextStatementFactory;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.filters.Filter;
 import webit.script.global.GlobalManager;
@@ -34,7 +34,7 @@ public final class Engine {
     private static final String DEFAULT_PROPERTIES = "/webit-script-default.props";
     //settings
     private Class resourceLoaderClass = webit.script.loaders.impl.ClasspathLoader.class;
-    private Class textStatmentFactoryClass = webit.script.core.text.impl.SimpleTextStatmentFactory.class;
+    private Class textStatementFactoryClass = webit.script.core.text.impl.SimpleTextStatementFactory.class;
     private Class nativeSecurityManagerClass = webit.script.security.impl.DefaultNativeSecurityManager.class;
     private Class coderFactoryClass = webit.script.io.charset.impl.DefaultCoderFactory.class;
     private Class filterClass;
@@ -54,7 +54,7 @@ public final class Engine {
     private Logger logger;
     private Loader resourceLoader;
     private GlobalManager globalManager;
-    private TextStatmentFactory textStatmentFactory;
+    private TextStatementFactory textStatementFactory;
     private NativeSecurityManager nativeSecurityManager;
     private CoderFactory coderFactory;
     private Filter filter;
@@ -75,7 +75,7 @@ public final class Engine {
         this.logger = (Logger) newInstance(this.loggerClass);
         this.coderFactory = (CoderFactory) newInstance(this.coderFactoryClass);
         this.nativeSecurityManager = (NativeSecurityManager) newInstance(this.nativeSecurityManagerClass);
-        this.textStatmentFactory = (TextStatmentFactory) newInstance(this.textStatmentFactoryClass);
+        this.textStatementFactory = (TextStatementFactory) newInstance(this.textStatementFactoryClass);
         this.resourceLoader = (Loader) newInstance(this.resourceLoaderClass);
         this.globalManager = (GlobalManager) newInstance(this.globalManagerClass);
 
@@ -87,7 +87,7 @@ public final class Engine {
         resolveBean(this.resolverManager);
         resolveBean(this.coderFactory);
         resolveBean(this.nativeSecurityManager);
-        resolveBean(this.textStatmentFactory);
+        resolveBean(this.textStatementFactory);
         resolveBean(this.resourceLoader);
         if (this.filter != null) {
             resolveBean(this.filter);
@@ -208,9 +208,9 @@ public final class Engine {
     public void setResourceLoaderClass(Class resourceLoaderClass) {
         this.resourceLoaderClass = resourceLoaderClass;
     }
-
-    public void setTextStatmentFactoryClass(Class textStatmentFactoryClass) {
-        this.textStatmentFactoryClass = textStatmentFactoryClass;
+    
+    public void setTextStatementFactoryClass(Class textStatementFactoryClass) {
+        this.textStatementFactoryClass = textStatementFactoryClass;
     }
 
     public void setResourceLoader(Loader resourceLoader) {
@@ -267,8 +267,8 @@ public final class Engine {
         return resolverManager;
     }
 
-    public TextStatmentFactory getTextStatmentFactory() {
-        return textStatmentFactory;
+    public TextStatementFactory getTextStatementFactory() {
+        return textStatementFactory;
     }
 
     public CoderFactory getCoderFactory() {

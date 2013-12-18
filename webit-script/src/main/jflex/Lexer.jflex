@@ -108,7 +108,7 @@ import webit.script.util.RepeatChars;
         return new Symbol(sym, line, column, val);
     }
 
-    private Symbol popTextStatmentSymbol(boolean placeHolderFlag){
+    private Symbol popTextStatementSymbol(boolean placeHolderFlag){
         this.placeHolderFlag = placeHolderFlag;
         yybegin(YYSTATEMENT);
         final char[] chars;
@@ -122,7 +122,7 @@ import webit.script.util.RepeatChars;
         }else{
             chars = popAsCharArray();
         }
-        return symbol(TEXT_STATMENT, stringLine, stringColumn, chars);
+        return symbol(TEXT_STATEMENT, stringLine, stringColumn, chars);
     }
 
     public final String yytext(int startOffset, int endOffset) {
@@ -255,15 +255,15 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 <YYINITIAL>{
 
   /* if to YYSTATEMENT */
-  {DelimiterStatementStartMatch}        { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatmentSymbol(false);} else {appendToString("<%");} }
+  {DelimiterStatementStartMatch}        { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatementSymbol(false);} else {appendToString("<%");} }
 
   /* if to PLACEHOLDER */
-  {DelimiterPlaceholderStartMatch}      { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatmentSymbol(true);} else {appendToString("${");} }
+  {DelimiterPlaceholderStartMatch}      { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatementSymbol(true);} else {appendToString("${");} }
   
 
   .|\n                                  { pullToString(); }
 
-  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(TEXT_STATMENT,  stringLine,stringColumn, popAsCharArray());}
+  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(TEXT_STATEMENT,  stringLine,stringColumn, popAsCharArray());}
 }
 
 

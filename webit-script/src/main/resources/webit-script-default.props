@@ -5,7 +5,7 @@ DEFAULT_ENCODING=UTF-8
 
 [webit.script.Engine]
 # resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
-# textStatmentFactoryClass=webit.script.core.text.impl.SimpleTextStatmentFactory
+# textStatementFactoryClass=webit.script.core.text.impl.SimpleTextStatementFactory
 # nativeSecurityManagerClass=webit.script.security.impl.DefaultNativeSecurityManager
 # globalManagerClass=webit.script.global.DefaultGlobalManager
 encoding=${DEFAULT_ENCODING}

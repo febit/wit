@@ -2,7 +2,7 @@
 package webit.script.core.ast;
 
 import webit.script.Context;
-import webit.script.util.StatmentUtil;
+import webit.script.util.StatementUtil;
 
 /**
  *
@@ -22,8 +22,8 @@ public abstract class SelfOperator extends AbstractExpression {
     public Object execute(final Context context) {
         //final ResetableValue resetableValue;
         ResetableValueExpression _leftExpr;
-        return StatmentUtil.executeSetValue(_leftExpr = this.leftExpr, context, doOperate(StatmentUtil.execute(rightExpr, context),
-                StatmentUtil.execute(_leftExpr, context)));
+        return StatementUtil.executeSetValue(_leftExpr = this.leftExpr, context, doOperate(StatementUtil.execute(rightExpr, context),
+                StatementUtil.execute(_leftExpr, context)));
     }
 
     protected abstract Object doOperate(Object right, Object left);

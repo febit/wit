@@ -7,5 +7,5 @@ package webit.script.core.ast;
  */
 public interface Optimizable {
 
-    Statment optimize() throws Throwable;
+    Statement optimize() throws Throwable;
 }

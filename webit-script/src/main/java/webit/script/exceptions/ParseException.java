@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.exceptions;
 
-import webit.script.core.ast.Statment;
+import webit.script.core.ast.Statement;
 
 /**
  *
@@ -28,9 +28,9 @@ public class ParseException extends UncheckedException {
         this.column = column;
     }
 
-    public final void initByStatment(Statment statment) {
-        if (statment != null) {
-            setPosition(statment.getLine(), statment.getColumn());
+    public final void initByStatement(Statement statement) {
+        if (statement != null) {
+            setPosition(statement.getLine(), statement.getColumn());
         }
     }
 
@@ -60,9 +60,9 @@ public class ParseException extends UncheckedException {
         this.column = column;
     }
 
-    public ParseException(String message, Statment statment) {
+    public ParseException(String message, Statement statement) {
         super(message);
-        initByStatment(statment);
+        initByStatement(statement);
     }
 
     public ParseException(String message, Throwable cause) {
@@ -75,17 +75,17 @@ public class ParseException extends UncheckedException {
         this.column = column;
     }
 
-    public ParseException(String message, Throwable cause, Statment statment) {
+    public ParseException(String message, Throwable cause, Statement statement) {
         super(message, cause);
-        initByStatment(statment);
+        initByStatement(statement);
     }
 
     public ParseException(Throwable cause) {
         super(cause);
     }
 
-    public ParseException(Throwable cause, Statment statment) {
+    public ParseException(Throwable cause, Statement statement) {
         super(cause);
-        initByStatment(statment);
+        initByStatement(statement);
     }
 }

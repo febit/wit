@@ -3,7 +3,7 @@ package webit.script.core.ast.method;
 
 import webit.script.Context;
 import webit.script.Template;
-import webit.script.core.ast.expressions.FunctionDeclareExpression;
+import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.core.runtime.VariantContext;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.ExceptionUtil;
@@ -14,11 +14,11 @@ import webit.script.util.ExceptionUtil;
  */
 public final class FunctionMethodDeclare implements MethodDeclare {
 
-    private final FunctionDeclareExpression function;
+    private final FunctionDeclare function;
     private final Template template;
     private final VariantContext[] parentVarContexts;
 
-    public FunctionMethodDeclare(FunctionDeclareExpression function, Template template, VariantContext[] parentVarContexts) {
+    public FunctionMethodDeclare(FunctionDeclare function, Template template, VariantContext[] parentVarContexts) {
         this.function = function;
         this.template = template;
         this.parentVarContexts = parentVarContexts;
