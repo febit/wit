@@ -29,19 +29,20 @@ public class RedirectOutExpression extends AbstractExpression {
 
     public Object execute(final Context context) {
 
-        final Out current = context.getOut();
-        if (current instanceof OutputStreamOut) {
+        final Out current;
+        final Object result;
+        if ((current = context.getOut()).isByteStream()) {
 
             FastByteArrayOutputStream out = new FastByteArrayOutputStream(256);
 
-            Object result = StatementUtil.execute(srcExpr, context, new OutputStreamOut(out, (OutputStreamOut) current));
+            result = StatementUtil.execute(srcExpr, context, new OutputStreamOut(out, (OutputStreamOut) current));
             StatementUtil.executeSetValue(toExpr, context, out.toByteArray());
 
             return result;
         } else {
             FastCharArrayWriter writer = new FastCharArrayWriter(256);
 
-            Object result = StatementUtil.execute(srcExpr, context,
+            result = StatementUtil.execute(srcExpr, context,
                     current instanceof WriterOut
                     ? new WriterOut(writer, (WriterOut) current)
                     : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));

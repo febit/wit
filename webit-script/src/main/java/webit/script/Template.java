@@ -211,7 +211,7 @@ public final class Template {
         return (this.engine == other.engine) && (this.name.equals(other.name));
     }
 
-    private RuntimeException wrapThrowable(final Throwable exception) {
+    private UncheckedException wrapThrowable(final Throwable exception) {
         if (exception instanceof UncheckedException) {
             return ((UncheckedException) exception).setTemplate(this);
         } else {

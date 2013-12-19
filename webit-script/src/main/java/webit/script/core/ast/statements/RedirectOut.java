@@ -29,8 +29,8 @@ public class RedirectOut extends AbstractStatement {
 
     public Object execute(final Context context) {
 
-        final Out current = context.getOut();
-        if (current instanceof OutputStreamOut) {
+        final Out current;
+        if ((current = context.getOut()).isByteStream()) {
 
             final FastByteArrayOutputStream out = new FastByteArrayOutputStream(128);
 

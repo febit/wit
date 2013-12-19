@@ -63,7 +63,7 @@ public final class Engine {
     private final ConcurrentMap<String, Template> templateCache;
     private final Petite _petite;
 
-    private Engine(Petite petite) {
+    private Engine(final Petite petite) {
         this._petite = petite;
         this.templateCache = new ConcurrentHashMap<String, Template>();
         this.resolverManager = new ResolverManager();
@@ -96,7 +96,7 @@ public final class Engine {
 
         if (this.resolvers != null) {
             final int resolversLength;
-            Resolver[] resolverInstances = new Resolver[resolversLength = this.resolvers.length];
+            final Resolver[] resolverInstances = new Resolver[resolversLength = this.resolvers.length];
             for (int i = 0; i < resolversLength; i++) {
                 resolverInstances[i] = (Resolver) getBean(this.resolvers[i]);
             }
@@ -122,18 +122,18 @@ public final class Engine {
         }
     }
 
-    public void resolveBean(Object bean) {
+    public void resolveBean(final Object bean) {
         _petite.wireBean(bean);
         if (bean instanceof Initable) {
             ((Initable) bean).init(this);
         }
     }
 
-    private Object newInstance(Class type) throws InstantiationException, IllegalAccessException {
+    private Object newInstance(final Class type) throws InstantiationException, IllegalAccessException {
         return type.newInstance();
     }
 
-    public Object getBean(Class type) throws InstantiationException, IllegalAccessException {
+    public Object getBean(final Class type) throws InstantiationException, IllegalAccessException {
         Object bean;
         resolveBean(bean = newInstance(type));
         return bean;
@@ -147,7 +147,7 @@ public final class Engine {
      * @return Template
      * @throws ResourceNotFoundException
      */
-    public Template getTemplate(String parentName, String name) throws ResourceNotFoundException {
+    public Template getTemplate(final String parentName, final String name) throws ResourceNotFoundException {
         return getTemplate(resourceLoader.concat(parentName, name));
     }
 
@@ -183,10 +183,9 @@ public final class Engine {
                     template = oldTemplate;
                 }
             }
-        } else {
-            throw new ResourceNotFoundException("Illegal template path: ".concat(name));
+            return template;
         }
-        return template;
+        throw new ResourceNotFoundException("Illegal template path: ".concat(name));
     }
 
     public boolean checkNativeAccess(String path) {
@@ -208,7 +207,7 @@ public final class Engine {
     public void setResourceLoaderClass(Class resourceLoaderClass) {
         this.resourceLoaderClass = resourceLoaderClass;
     }
-    
+
     public void setTextStatementFactoryClass(Class textStatementFactoryClass) {
         this.textStatementFactoryClass = textStatementFactoryClass;
     }
@@ -322,7 +321,6 @@ public final class Engine {
     public void setVars(String[] vars) {
         final int len;
         if (vars != null && (len = vars.length) != 0) {
-            //StringUtil.trimAll(vars);
             final ArrayList<String> list = new ArrayList<String>(len);
             String var;
             for (int i = 0; i < len; i++) {
@@ -342,11 +340,11 @@ public final class Engine {
         this.initTemplates = initTemplates;
     }
 
-    public static Engine createEngine(String configPath) {
+    public static Engine createEngine(final String configPath) {
         return createEngine(configPath, null);
     }
 
-    public static Props createConfigProps(String configPath) {
+    public static Props createConfigProps(final String configPath) {
         final Props props = new Props();
         if (configPath != null) {
             PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES, configPath);
@@ -356,11 +354,11 @@ public final class Engine {
         return props;
     }
 
-    public static Engine createEngine(String configPath, Map<Object, Object> parameters) {
+    public static Engine createEngine(final String configPath,final Map<Object, Object> parameters) {
         return createEngine(createConfigProps(configPath), parameters);
     }
 
-    public static Engine createEngine(Props props, Map<Object, Object> parameters) {
+    public static Engine createEngine(final Props props,final Map<Object, Object> parameters) {
 
         final Petite petite = new Petite();
         petite.defineParameters(props != null ? props : createConfigProps(null), parameters);
@@ -376,9 +374,8 @@ public final class Engine {
 
         final Logger logger;
         petite.setLogger(logger = engine.getLogger());
-        final Object propsFiles;
-        if (logger != null && logger.isInfoEnabled() && (propsFiles = petite.getParameter(PROPS_FILE_LIST)) != null) {
-            logger.info("Loaded props files from classpath: ".concat(propsFiles.toString()));
+        if (logger.isInfoEnabled()) {
+            logger.info("Loaded props: ".concat(String.valueOf(petite.getParameter(PROPS_FILE_LIST))));
         }
 
         try {
