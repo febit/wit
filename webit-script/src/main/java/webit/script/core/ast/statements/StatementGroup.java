@@ -3,6 +3,7 @@ package webit.script.core.ast.statements;
 
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatement;
+import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
 import webit.script.util.StatementUtil;
 
@@ -10,7 +11,7 @@ import webit.script.util.StatementUtil;
  *
  * @author zqq90 <zqq_90@163.com>
  */
-public class StatementGroup extends AbstractStatement {
+public class StatementGroup extends AbstractStatement implements Optimizable {
 
     private final Statement[] list;
 
@@ -26,5 +27,13 @@ public class StatementGroup extends AbstractStatement {
     public Object execute(Context context) {
         StatementUtil.execute(this.list, context);
         return null;
+    }
+
+    public Statement optimize() throws Throwable {
+        if (this.list.length == 0) {
+            return NoneStatement.getInstance();
+        } else {
+            return this;
+        }
     }
 }

@@ -26,6 +26,27 @@ var assertNotNull;
 
 }
 {
+    {
+        var a,b,c;
+    }
+    {
+        var a, b=c=1, d=2;
+        a = 0;
+        assertEquals(a, 0);
+        assertEquals(b, 1);
+        assertEquals(c, 1);
+        assertEquals(d, 2);
+    }
+    {
+        var b=c=1, d=2, a;
+        a = 0;
+        assertEquals(a, 0);
+        assertEquals(b, 1);
+        assertEquals(c, 1);
+        assertEquals(d, 2);
+    }
+}
+{
     var $;
     var _;
     var __;

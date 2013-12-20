@@ -390,7 +390,8 @@ non terminal StatementList statementList;
 
 non terminal Statement statement, ifStat;
 non terminal IBlock block, caseBlockStat;
-non terminal Object varPart;
+non terminal StatementList varPart;
+non terminal Expression varAssign;
 non terminal ImportPart importPart1, importPart2;
 non terminal Object blockPrepare, blockPrepare2;
 non terminal SwitchPart switchPart, switchPart0;
@@ -504,8 +505,8 @@ statement            ::= expression_statementable:expr SEMICOLON
                         {: return textStatementFactory.getTextStatement(template, %sym%, %sym.line%, %sym.column%); :}
 
                         //var
-                        |varPart SEMICOLON
-                        {: return NoneStatement.getInstance(); :}
+                        |varPart:part SEMICOLON
+                        {: return (%part%).popStatementGroup(%part.line%, %part.column%); :}
 
                         //echoStat
                         |ECHO:sym expression:expr SEMICOLON
@@ -548,12 +549,21 @@ statement            ::= expression_statementable:expr SEMICOLON
                         {: return new Include(%expr%, %paramsExpr%, this.template, %sym.line%, %sym.column%); :}
                         ;
 
+varAssign       ::= IDENTIFIER:ident EQ:sym expression:expr
+                    {: return new Assign(castToResetableValueExpression(createContextValue(varmgr.assignVariantAddress(%ident%,%ident.line%,%ident.column%), %ident.line%, %ident.column%)), %expr%, %sym.line%, %sym.column%); :}
+                    | IDENTIFIER:ident EQ:sym varAssign:expr
+                    {: return new Assign(castToResetableValueExpression(createContextValue(varmgr.assignVariantAddress(%ident%,%ident.line%,%ident.column%), %ident.line%, %ident.column%)), %expr%, %sym.line%, %sym.column%); :}
+                    ;
 
-varPart     ::= VAR IDENTIFIER:ident
-                        {: varmgr.assignVariant(%ident%,%ident.line%,%ident.column%); return null;:}
-                        |varPart COMMA IDENTIFIER:ident
-                        {: varmgr.assignVariant(%ident%,%ident.line%,%ident.column%); return null;:}
-                        ;
+varPart         ::= VAR IDENTIFIER:ident
+                    {: varmgr.assignVariant(%ident%,%ident.line%,%ident.column%); return new StatementList();:}
+                    | VAR varAssign:expr
+                    {: return new StatementList().add(%expr%); :}
+                    | varPart:part COMMA IDENTIFIER:ident
+                    {: varmgr.assignVariant(%ident%,%ident.line%,%ident.column%); return %part%;:}
+                    | varPart:part COMMA varAssign:expr
+                    {: return (%part%).add(%expr%); :}
+                    ;
 
 
 importPart1     ::= IMPORT:sym expression:expr
@@ -655,9 +665,7 @@ expression_statementable ::=
                     //assignOper = 
                     expression:lexpr EQ:sym expression:expr
                     {: return new Assign(castToResetableValueExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
-                    | VAR IDENTIFIER:ident EQ:sym expression:expr
-                    {: return new Assign(castToResetableValueExpression(createContextValue(varmgr.assignVariantAddress(%ident%,%ident.line%,%ident.column%), %ident.line%, %ident.column%)), %expr%, %sym.line%, %sym.column%); :}
-                    
+
                     //plusPlusOper ++
                     |PLUSPLUS:sym expression:expr
                     {: return new PlusPlusBefore(castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
