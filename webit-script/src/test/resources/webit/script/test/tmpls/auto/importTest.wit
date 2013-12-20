@@ -1,13 +1,5 @@
 <%
 
-import "/junit-assert.wit";
-
-var assertEquals;
-var assertNotEquals;
-var assertSame;
-var assertNotSame;
-var assertNull;
-
 {
     
     var a = "A";

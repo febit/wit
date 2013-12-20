@@ -1,10 +1,4 @@
 <%
-
-import "/junit-assert.wit";
-
-var assertEquals;
-var assertNull;
-var assertNotNull;
 {
     //empty block
 }

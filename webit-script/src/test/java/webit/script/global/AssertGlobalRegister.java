@@ -19,6 +19,17 @@ public class AssertGlobalRegister implements GlobalRegister {
     public void regist(DefaultGlobalManager manager) {
         this.manager = manager;
         manager.setGlobal(ASSERT_COUNT, 0);
+        manager.setGlobal("assertTrue", null);
+        manager.setGlobal("assertFalse", null);
+        manager.setGlobal("assertEquals", null);
+        manager.setGlobal("assertNotEquals", null);
+        manager.setGlobal("assertNull", null);
+        manager.setGlobal("assertNotNull", null);
+        manager.setGlobal("assertSame", null);
+        manager.setGlobal("assertNotSame", null);
+        manager.setGlobal("assertArrayEquals", null);
+        manager.setGlobal("assertArrayEquals_chars", null);
+        
     }
 
     public void resetAssertCount() {

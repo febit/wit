@@ -1,8 +1,4 @@
 <%
-import "/junit-assert.wit";
-
-// var assertSame;
-
 
 a=0;
 

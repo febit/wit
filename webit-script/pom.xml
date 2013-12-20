@@ -213,7 +213,7 @@
                 <configuration>
                     <compilerArgument> -Xlint:unchecked </compilerArgument>
                     <showWarnings>true</showWarnings>
-                    <debug>false</debug>
+                    <debug>true</debug>
                     <optimize>true</optimize>
                 </configuration>
             </plugin>

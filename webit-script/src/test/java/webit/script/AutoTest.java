@@ -7,7 +7,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.Test;
+import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ResourceNotFoundException;
+import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.global.AssertGlobalRegister;
 import webit.script.test.util.DiscardOutputStream;
 import webit.script.util.ClassLoaderUtil;
@@ -49,16 +51,25 @@ public class AutoTest {
         List<String> templates = collectAutoTestTemplates();
 
         AssertGlobalRegister assertGlobalRegister = AssertGlobalRegister.instance;
-        for (Iterator<String> it = templates.iterator(); it.hasNext();) {
-            String templatePath = it.next();
-            DiscardOutputStream out = new DiscardOutputStream();
+        try {
 
-            System.out.println("AUTO RUN: " + templatePath);
-            Template template = engine.getTemplate(templatePath);
-            assertGlobalRegister.resetAssertCount();
-            template.merge(out);
-            
-            System.out.println("\tassert count: " + assertGlobalRegister.getAssertCount());
+            for (Iterator<String> it = templates.iterator(); it.hasNext();) {
+                String templatePath = it.next();
+                DiscardOutputStream out = new DiscardOutputStream();
+
+                System.out.println("AUTO RUN: " + templatePath);
+                Template template = engine.getTemplate(templatePath);
+                assertGlobalRegister.resetAssertCount();
+                template.merge(out);
+
+                System.out.println("\tassert count: " + assertGlobalRegister.getAssertCount());
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (ScriptRuntimeException e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 }

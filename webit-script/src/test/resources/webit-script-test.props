@@ -3,7 +3,7 @@
 resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
 loggerClass=webit.script.loggers.impl.Slf4jLogger
 vars=request,request2,session,session
-initTemplates=/init.wit,/init2.wit
+initTemplates=/init.wit,/init2.wit,/init-junit-assert.wit
 
 
 [webit.script.loaders.impl.ClasspathLoader]

@@ -1,8 +1,5 @@
 <%
 
-import "/junit-assert.wit";
-
-var assertEquals;
 {
     assertEquals(10.0f,1e1f);
     assertEquals(12300d,123e2);

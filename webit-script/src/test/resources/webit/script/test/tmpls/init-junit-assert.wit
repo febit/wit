@@ -1,18 +1,5 @@
 <%
 
-var assertTrue;
-var assertFalse;
-var assertEquals;
-var assertNotEquals;
-var assertNull;
-var assertNotNull;
-var assertSame;
-var assertNotSame;
-var assertArrayEquals;
-var assertArrayEquals_chars;
-
-{
-
     @import org.junit.Assert;
 
     var _assertEquals = native Assert.assertEquals(String, Object, Object);
@@ -26,7 +13,6 @@ var assertArrayEquals_chars;
     var _assertArrayEquals = native Assert.assertArrayEquals(String, Object[], Object[]);
     var _assertArrayEquals_chars = native Assert.assertArrayEquals(String, char[], char[]);
 
-    
     assertTrue = function(object, msg){
         _assertTrue(msg, object);
         assertCount++ ;
@@ -76,9 +62,5 @@ var assertArrayEquals_chars;
         _assertArrayEquals_chars(msg, first, second);
         assertCount++ ;
     };
-
-
-
-}
 
 %>

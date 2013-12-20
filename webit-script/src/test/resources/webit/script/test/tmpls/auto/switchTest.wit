@@ -1,9 +1,4 @@
 <%
-
-import "/junit-assert.wit";
-
-var assertEquals;
-
 var func_switch = function(a){
     var result;
     switch(a){

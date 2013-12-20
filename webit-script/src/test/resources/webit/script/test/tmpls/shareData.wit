@@ -1,7 +1,5 @@
 <%
 
-import "/junit-assert.wit";
-var assertEquals;
 var v1,v2;
 {
     var back1;

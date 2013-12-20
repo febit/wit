@@ -1,14 +1,5 @@
 <%
-import "/junit-assert.wit";
 
-var assertEquals;
-var assertNotEquals;
-var assertNull;
-var assertNotNull;
-var assertTrue;
-var assertFalse;
-var assertArrayEquals;
-var assertArrayEquals_chars;
 var trimBlankLine;
 
 var out, out2, out3;

@@ -1,10 +1,5 @@
 <%
 
-import "/junit-assert.wit";
-
-var assertEquals;
-var assertNotNull;
-
 {
     assertNotNull($GLOBAL);
     assertEquals($GLOBAL["one"], 1);
