@@ -29,42 +29,52 @@ var assertArrayEquals_chars;
     
     assertTrue = function(object, msg){
         _assertTrue(msg, object);
+        assertCount++ ;
     };
 
     assertFalse = function(object, msg){
         _assertFalse(msg, object);
+        assertCount++ ;
     };
 
     assertEquals = function(first, second, msg){
         _assertEquals(msg, first, second);
+        assertCount++ ;
     };
 
     assertNotEquals = function(first, second, msg){
         _assertNotEquals(msg, first, second);
+        assertCount++ ;
     };
 
     assertNull = function(object, msg){
         _assertNull(msg, object);
+        assertCount++ ;
     };
 
     assertNotNull = function(object, msg){
         _assertNotNull(msg, object);
+        assertCount++ ;
     };
 
     assertSame = function(first, second, msg){
         _assertSame(msg, first, second);
+        assertCount++ ;
     };
 
     assertNotSame = function(first, second, msg){
         _assertNotSame(msg, first, second);
+        assertCount++ ;
     };
 
     assertArrayEquals = function(first, second, msg){
         _assertArrayEquals(msg, first, second);
+        assertCount++ ;
     };
 
     assertArrayEquals_chars = function(first, second, msg){
         _assertArrayEquals_chars(msg, first, second);
+        assertCount++ ;
     };
 
 

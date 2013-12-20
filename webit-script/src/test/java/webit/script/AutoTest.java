@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.junit.Test;
 import webit.script.exceptions.ResourceNotFoundException;
+import webit.script.global.AssertGlobalRegister;
 import webit.script.test.util.DiscardOutputStream;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.StringUtil;
@@ -47,14 +48,17 @@ public class AutoTest {
         Engine engine = EngineManager.getEngine();
         List<String> templates = collectAutoTestTemplates();
 
+        AssertGlobalRegister assertGlobalRegister = AssertGlobalRegister.instance;
         for (Iterator<String> it = templates.iterator(); it.hasNext();) {
             String templatePath = it.next();
             DiscardOutputStream out = new DiscardOutputStream();
 
             System.out.println("AUTO RUN: " + templatePath);
             Template template = engine.getTemplate(templatePath);
-
+            assertGlobalRegister.resetAssertCount();
             template.merge(out);
+            
+            System.out.println("\tassert count: " + assertGlobalRegister.getAssertCount());
         }
     }
 }

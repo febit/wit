@@ -19,4 +19,4 @@ list +='''
 
 
 [webit.script.global.DefaultGlobalManager]
-registers+=webit.script.global.TestGlobalRegister
+registers+=webit.script.global.TestGlobalRegister,webit.script.global.AssertGlobalRegister
