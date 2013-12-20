@@ -75,6 +75,20 @@ list='''
   float
   double
 
+  Object
+  Boolean
+  Character
+  Byte
+  Short
+  Integer
+  Long
+  Float
+  Double
+  String
+
+  Number
+  Math
+
   java.lang.Object
 
   java.lang.Boolean
@@ -89,6 +103,8 @@ list='''
 
   java.lang.Number
   java.lang.Math
+
+
 
   java.math
 
