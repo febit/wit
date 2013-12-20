@@ -36,17 +36,22 @@ public final class FunctionDeclare extends AbstractExpression {
     public Object execute(final Context context) {
         final VariantContext[] variantContexts;
         final int[] overflowUpstairs;
+        final boolean containsRootContext;
         if ((overflowUpstairs = this._overflowUpstairs) != null) {
             final int len;
             final int max;
+            int j = -1;
+            final VariantStack vars = context.vars;
             variantContexts = new VariantContext[(max = overflowUpstairs[(len = overflowUpstairs.length) - 1]) + 1];
-            for (int i = 0, j; i < len; i++) {
-                variantContexts[max - (j = overflowUpstairs[i])] = context.vars.getContext(j);
+            for (int i = 0; i < len; i++) {
+                variantContexts[max - (j = overflowUpstairs[i])] = vars.getContext(j);
             }
+            containsRootContext = j == vars.getCurrentDepth();
         } else {
             variantContexts = null;
+            containsRootContext = false;
         }
-        return new FunctionMethodDeclare(this, context.template, variantContexts);
+        return new FunctionMethodDeclare(this, context.template, variantContexts, containsRootContext);
     }
 
     public Object invoke(final Context context, final Object[] args) {

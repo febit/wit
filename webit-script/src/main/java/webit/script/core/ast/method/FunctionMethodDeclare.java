@@ -17,16 +17,18 @@ public final class FunctionMethodDeclare implements MethodDeclare {
     private final FunctionDeclare function;
     private final Template template;
     private final VariantContext[] parentVarContexts;
+    private final boolean containsRootContext;
 
-    public FunctionMethodDeclare(FunctionDeclare function, Template template, VariantContext[] parentVarContexts) {
+    public FunctionMethodDeclare(FunctionDeclare function, Template template, VariantContext[] parentVarContexts, boolean containsRootContext) {
         this.function = function;
         this.template = template;
         this.parentVarContexts = parentVarContexts;
+        this.containsRootContext = containsRootContext;
     }
 
     public Object invoke(final Context context, final Object[] args) {
         try {
-            return function.invoke(new Context(context, template, parentVarContexts), args);
+            return function.invoke(new Context(context, template, parentVarContexts, containsRootContext), args);
         } catch (Throwable e) {
             throw template == context.template
                     ? ExceptionUtil.castToScriptRuntimeException(e, function)

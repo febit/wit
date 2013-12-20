@@ -42,7 +42,7 @@ public final class Context {
         this.vars = new VariantStack();
     }
 
-    public Context(final Context parent, final Template template, final VariantContext[] parentVarContexts) {
+    public Context(final Context parent, final Template template, final VariantContext[] parentVarContexts, final boolean containsRootContext) {
         this.template = template;
         this.out = parent.out;
         this.rootValues = parent.rootValues;
@@ -50,7 +50,7 @@ public final class Context {
         this.isByteStream = parent.isByteStream;
         this.resolverManager = parent.resolverManager;
         this.loopCtrl = new LoopCtrl();
-        this.vars = new VariantStack(parent.vars, parentVarContexts);
+        this.vars = new VariantStack(parentVarContexts, containsRootContext);
     }
 
     public void pushRootVars(final VariantIndexer varIndexer) {

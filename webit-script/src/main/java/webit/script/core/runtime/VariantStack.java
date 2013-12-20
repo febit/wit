@@ -26,7 +26,7 @@ public final class VariantStack {
         //currentContext = null;
     }
 
-    public VariantStack(final VariantStack parent, final VariantContext[] contexts) {
+    public VariantStack(final VariantContext[] contexts, final boolean containsRootContext) {
         if (contexts != null) {
             final int len;
             System.arraycopy(contexts, 0,
@@ -34,11 +34,13 @@ public final class VariantStack {
                     1, //NOTE: skip top
                     len);
             this.currentContext = contexts[(this.current = len) - 1];
+            this.rootContextValues = containsRootContext ? contexts[0].values : null;
         } else {
             this.contexts = new VariantContext[DEFAULT_CAPACITY];
             this.current = 0;
+            this.rootContextValues = null;
         }
-        this.rootContextValues = parent.rootContextValues;
+        //this.rootContextValues = parent.rootContextValues;
     }
 
     public void pushRootVars(final VariantIndexer varIndexer, final KeyValues rootValues) {
@@ -206,6 +208,10 @@ public final class VariantStack {
 
     public VariantContext getCurrentContext() {
         return currentContext;
+    }
+
+    public int getCurrentDepth() {
+        return current - 1;
     }
 
     public VariantContext getContext(int offset) {

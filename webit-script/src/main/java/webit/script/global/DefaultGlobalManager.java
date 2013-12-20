@@ -62,15 +62,15 @@ public class DefaultGlobalManager implements GlobalManager, Initable {
     }
 
     public void setGlobal(String key, Object value) {
-        if (!this.committed) {
-            this.globalMap.put(key, value);
-        } else {
+        if (this.committed) {
             int index;
             if ((index = this.getGlobalIndex(key)) >= 0) {
                 this.setGlobal(index, value);
             } else {
                 throw new ScriptRuntimeException("Not found global variant named: ".concat(key));
             }
+        } else {
+            this.globalMap.put(key, value);
         }
     }
 
