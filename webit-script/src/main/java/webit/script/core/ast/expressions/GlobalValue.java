@@ -22,11 +22,11 @@ public final class GlobalValue extends AbstractExpression implements ResetableVa
     }
 
     public Object execute(final Context context) {
-        return this.manager.getVariant(index);
+        return this.manager.getGlobal(index);
     }
 
     public Object setValue(final Context context, final Object value) {
-        this.manager.setVariant(index, value);
+        this.manager.setGlobal(index, value);
         return value;
     }
 }

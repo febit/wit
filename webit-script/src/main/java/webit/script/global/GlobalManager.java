@@ -7,11 +7,11 @@ package webit.script.global;
  */
 public interface GlobalManager {
 
-    int getVariantIndex(String name);
+    int getGlobalIndex(String name);
 
-    Object getVariant(int index);
+    Object getGlobal(int index);
 
-    void setVariant(int index, Object value);
+    void setGlobal(int index, Object value);
     
     void commit();
 

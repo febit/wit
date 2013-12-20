@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import webit.script.Engine;
 import webit.script.Initable;
+import webit.script.exceptions.ScriptRuntimeException;
 
 /**
  *
@@ -63,19 +64,35 @@ public class DefaultGlobalManager implements GlobalManager, Initable {
     public void setGlobal(String key, Object value) {
         if (!this.committed) {
             this.globalMap.put(key, value);
+        } else {
+            int index;
+            if ((index = this.getGlobalIndex(key)) >= 0) {
+                this.setGlobal(index, value);
+            } else {
+                throw new ScriptRuntimeException("Not found global variant named: ".concat(key));
+            }
         }
     }
 
-    public int getVariantIndex(String name) {
+    public int getGlobalIndex(String name) {
         Integer index;
         return (index = globalIndexerMap.get(name)) != null ? index : -1;
     }
 
-    public Object getVariant(int index) {
+    public Object getGlobal(String key) {
+        int index;
+        if ((index = this.getGlobalIndex(key)) >= 0) {
+            return this.getGlobal(index);
+        } else {
+            throw new ScriptRuntimeException("Not found global variant named: ".concat(key));
+        }
+    }
+
+    public Object getGlobal(int index) {
         return globalContext[index];
     }
 
-    public void setVariant(int index, Object value) {
+    public void setGlobal(int index, Object value) {
         this.globalContext[index] = value;
     }
 

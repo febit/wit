@@ -139,7 +139,7 @@ public class VariantManager {
         }
 
         int index;
-        if ((index = this.globalManager.getVariantIndex(name)) >= 0) {
+        if ((index = this.globalManager.getGlobalIndex(name)) >= 0) {
             return VarAddress.global(index);
         } else if (this.globalManager.hasConst(name)) {
             return VarAddress.constValue(this.globalManager.getConst(name));
