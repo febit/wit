@@ -36,7 +36,7 @@ public class ClasspathResource implements Resource {
                     ? new InputStreamReader(inputStream)
                     : new InputStreamReader(inputStream, encoding);
         } else {
-            throw new ResourceNotFoundException("Not found: ".concat(path));
+            throw new ResourceNotFoundException("Resource Not Found: ".concat(path));
         }
     }
 }
