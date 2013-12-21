@@ -23,8 +23,6 @@ import webit.script.util.collection.Iter;
  */
 public final class ForIn extends AbstractStatement implements Loopable {
 
-    private final int iterIndex;
-    private final int itemIndex;
     private final Expression collectionExpr;
     private final VariantIndexer varIndexer;
     private final Statement[] statements;
@@ -32,10 +30,8 @@ public final class ForIn extends AbstractStatement implements Loopable {
     private final Statement elseStatement;
     private final int label;
 
-    public ForIn(int iterIndex, int itemIndex, Expression collectionExpr, VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
+    public ForIn(Expression collectionExpr, VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
         super(line, column);
-        this.iterIndex = iterIndex;
-        this.itemIndex = itemIndex;
         this.collectionExpr = collectionExpr;
         this.varIndexer = varIndexer;
         this.statements = statements;
@@ -54,9 +50,10 @@ public final class ForIn extends AbstractStatement implements Loopable {
             final LoopCtrl ctrl = context.loopCtrl;
             final Statement[] statements = this.statements;
             (vars = context.vars).push(varIndexer);
+            vars.set(0, iter);
             label:
             do {
-                vars.resetCurrentWith(iterIndex, iter, itemIndex, iter.next());
+                vars.resetForForIn(iter.next());
                 StatementUtil.executeInvertedAndCheckLoops(statements, context);
                 if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                     if (ctrl.matchLabel(label)) {

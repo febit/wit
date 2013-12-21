@@ -19,19 +19,13 @@ import webit.script.util.collection.Iter;
  */
 public final class ForMapNoLoops extends AbstractStatement {
 
-    private final int iterIndex;
-    private final int keyIndex;
-    private final int valueIndex;
     private final Expression mapExpr;
     private final VariantIndexer varIndexer;
     private final Statement[] statements;
     private final Statement elseStatement;
 
-    public ForMapNoLoops(int iterIndex, int keyIndex, int valueIndex, Expression mapExpr, VariantIndexer varIndexer, Statement[] statements, Statement elseStatement, int line, int column) {
+    public ForMapNoLoops( Expression mapExpr, VariantIndexer varIndexer, Statement[] statements, Statement elseStatement, int line, int column) {
         super(line, column);
-        this.iterIndex = iterIndex;
-        this.keyIndex = keyIndex;
-        this.valueIndex = valueIndex;
         this.mapExpr = mapExpr;
         this.varIndexer = varIndexer;
         this.statements = statements;
@@ -56,9 +50,10 @@ public final class ForMapNoLoops extends AbstractStatement {
             final Statement[] statements = this.statements;
             final VariantStack vars;
             (vars = context.vars).push(varIndexer);
+            vars.set(0, iter);
             do {
                 entry = iter.next();
-                vars.resetCurrentWith(iterIndex, iter, keyIndex, entry.getKey(), valueIndex, entry.getValue());
+                vars.resetForForMap(entry.getKey(), entry.getValue());
                 StatementUtil.executeInverted(statements, context);
             } while (iter.hasNext());
             vars.pop();

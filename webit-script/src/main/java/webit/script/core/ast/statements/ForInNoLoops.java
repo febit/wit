@@ -17,17 +17,13 @@ import webit.script.util.collection.Iter;
  */
 public final class ForInNoLoops extends AbstractStatement {
 
-    private final int iterIndex;
-    private final int itemIndex;
     private final Expression collectionExpr;
     private final VariantIndexer varIndexer;
     private final Statement[] statements;
     private final Statement elseStatement;
 
-    public ForInNoLoops(int iterIndex, int itemIndex, Expression collectionExpr, VariantIndexer varIndexer, Statement[] statements, Statement elseStatement, int line, int column) {
+    public ForInNoLoops(Expression collectionExpr, VariantIndexer varIndexer, Statement[] statements, Statement elseStatement, int line, int column) {
         super(line, column);
-        this.iterIndex = iterIndex;
-        this.itemIndex = itemIndex;
         this.collectionExpr = collectionExpr;
         this.varIndexer = varIndexer;
         this.statements = statements;
@@ -44,8 +40,9 @@ public final class ForInNoLoops extends AbstractStatement {
             final Statement[] statements = this.statements;
             final VariantStack vars;
             (vars = context.vars).push(varIndexer);
+            vars.set(0, iter);
             do {
-                vars.resetCurrentWith(iterIndex, iter, itemIndex, iter.next());
+                vars.resetForForIn(iter.next());
                 StatementUtil.executeInverted(statements, context);
             } while (iter.hasNext());
             vars.pop();

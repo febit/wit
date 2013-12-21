@@ -25,9 +25,6 @@ import webit.script.util.collection.Iter;
  */
 public final class ForMap extends AbstractStatement implements Loopable {
 
-    private final int iterIndex;
-    private final int keyIndex;
-    private final int valueIndex;
     private final Expression mapExpr;
     private final VariantIndexer varIndexer;
     private final Statement[] statements;
@@ -35,11 +32,8 @@ public final class ForMap extends AbstractStatement implements Loopable {
     private final Statement elseStatement;
     private final int label;
 
-    public ForMap(int iterIndex, int keyIndex, int valueIndex, Expression mapExpr, VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
+    public ForMap(Expression mapExpr, VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
         super(line, column);
-        this.iterIndex = iterIndex;
-        this.keyIndex = keyIndex;
-        this.valueIndex = valueIndex;
         this.mapExpr = mapExpr;
         this.varIndexer = varIndexer;
         this.statements = statements;
@@ -67,10 +61,11 @@ public final class ForMap extends AbstractStatement implements Loopable {
             Map.Entry entry;
             final VariantStack vars;
             (vars = context.vars).push(varIndexer);
+            vars.set(0, iter);
             label:
             do {
                 entry = iter.next();
-                vars.resetCurrentWith(iterIndex, iter, keyIndex, entry.getKey(), valueIndex, entry.getValue());
+                vars.resetForForMap(entry.getKey(),entry.getValue());
                 StatementUtil.executeInvertedAndCheckLoops(statements, context);
                 if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                     if (ctrl.matchLabel(label)) {

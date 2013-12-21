@@ -5,6 +5,7 @@ import webit.script.core.VariantManager;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.StatementList;
+import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;
 
 /**
@@ -16,13 +17,13 @@ public abstract class AbstractForInPart extends Position {
     IBlock bodyStatement;
     Statement elseStatement;
     final VariantManager varmgr;
-    int iterIndex;
-
     public AbstractForInPart(VariantManager varmgr, int line, int column) {
         super(line, column);
         this.varmgr = varmgr;
         varmgr.push();
-        this.iterIndex = varmgr.assignVariant("for.iter", line, column);
+        if (varmgr.assignVariant("for.iter", line, column) != 0) {
+            throw new ParseException("assignVariant failed!");
+        }
     }
 
     public AbstractForInPart setStatementList(StatementList list) {

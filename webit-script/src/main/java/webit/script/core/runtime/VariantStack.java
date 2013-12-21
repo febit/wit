@@ -4,6 +4,7 @@ package webit.script.core.runtime;
 import java.util.Map;
 import webit.script.core.VariantIndexer;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.util.collection.Iter;
 import webit.script.util.keyvalues.KeyValues;
 
 /**
@@ -124,27 +125,25 @@ public final class VariantStack {
         }
     }
 
-    public void resetCurrentWith(int index, Object value, int index2, Object value2) {
+    public void resetForForIn(Object item) {
         final Object[] contextValues;
-        int i = (contextValues = currentContext.values).length;
-        do {
-            --i;
+        (contextValues = currentContext.values)[1] = item;
+        int i = contextValues.length - 1;
+        while (i != 1) {
             contextValues[i] = null;
-        } while (i != 0);
-        contextValues[index] = value;
-        contextValues[index2] = value2;
+            --i;
+        }
     }
 
-    public void resetCurrentWith(int index, Object value, int index2, Object value2, int index3, Object value3) {
+    public void resetForForMap(Object key, Object value) {
         final Object[] contextValues;
-        int i = (contextValues = currentContext.values).length;
-        do {
-            --i;
+        (contextValues = currentContext.values)[1] = key;
+        contextValues[2] = value;
+        int i = contextValues.length - 1;
+        while (i != 2) {
             contextValues[i] = null;
-        } while (i != 0);
-        contextValues[index] = value;
-        contextValues[index2] = value2;
-        contextValues[index3] = value3;
+            --i;
+        }
     }
 
     public void setToRoot(int index, Object value) {
