@@ -32,16 +32,11 @@ public final class ClassNameBand {
         length += (array[index++] = s).length();
         return this;
     }
-    
-    public String pop(){
+
+    public String pop() {
         final String last;
         length -= (last = array[--index]).length();
         return last;
-    }
-
-    public ClassNameBand toArray() {
-        this.isArray = true;
-        return this;
     }
 
     public int getArrayDepth() {
@@ -62,10 +57,10 @@ public final class ClassNameBand {
         return index == 1;
     }
 
-    public int size(){
+    public int size() {
         return index;
     }
-    
+
     public String getClassSimpleName() {
 
         // special cases
@@ -85,15 +80,20 @@ public final class ClassNameBand {
             return array[0];
         }
 
-        // join strings
-        StringBuilder sb = new StringBuilder(length + index - 1);
-        for (int i = 0; i < index; i++) {
+        final char[] destination = new char[length + index - 1];
+        int start = 0;
+        String s;
+        int len;
+        for (int i = 0, size = index; i < size; i++) {
             if (i != 0) {
-                sb.append('.');
+                destination[start++] = '.';
             }
-            sb.append(array[i]);
+            len = (s = array[i]).length();
+            s.getChars(0, len, destination, start);
+            start += len;
         }
-        return sb.toString();
+
+        return new String(destination);
     }
 
     @Override
@@ -108,18 +108,24 @@ public final class ClassNameBand {
         }
 
         // join strings
-        StringBuilder sb = new StringBuilder(length + index - 1 + arrayDepth * 2);
-        for (int i = 0; i < index; i++) {
+        final char[] destination = new char[length + index - 1 + arrayDepth * 2];
+        int start = 0;
+        String s;
+        int len;
+        for (int i = 0, size = index; i < size; i++) {
             if (i != 0) {
-                sb.append('.');
+                destination[start++] = '.';
             }
-            sb.append(array[i]);
+            len = (s = array[i]).length();
+            s.getChars(0, len, destination, start);
+            start += len;
         }
         if (isArray) {
             for (int i = 0; i < arrayDepth; i++) {
-                sb.append("[]");
+                destination[start++] = '[';
+                destination[start++] = ']';
             }
         }
-        return sb.toString();
+        return new String(destination);
     }
 }

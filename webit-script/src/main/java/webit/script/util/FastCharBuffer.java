@@ -1,10 +1,11 @@
 package webit.script.util;
 // Copyright (c) 2003-2013, Jodd Team (jodd.org). All Rights Reserved.
-//package jodd.io;
+//package jodd.util.buffer;
 
 /**
- * Fast, fast
- * <code>char</code> buffer with some additional features.
+ * Fast, fast <code>char</code> buffer with some additional features. This
+ * buffer implementation does not store all data in single array, but in array
+ * of chunks.
  */
 public class FastCharBuffer implements CharSequence, Appendable {
 
@@ -14,115 +15,113 @@ public class FastCharBuffer implements CharSequence, Appendable {
     private int currentBufferIndex = -1;
     private char[] currentBuffer;
     private int offset;
-    private int count;
+    private int size;
+    private final int minChunkLen;
 
     /**
-     * Creates a new
-     * <code>char</code> buffer. The buffer capacity is initially 1024 bytes,
-     * though its size increases if necessary.
+     * Creates a new <code>char</code> buffer. The buffer capacity is initially
+     * 1024 bytes, though its size increases if necessary.
      */
     public FastCharBuffer() {
-        this(1024);
+        this.minChunkLen = 1024;
     }
 
     /**
-     * Creates a new
-     * <code>char</code> buffer, with a buffer capacity of the specified size,
-     * in bytes.
+     * Creates a new <code>char</code> buffer, with a buffer capacity of the
+     * specified size, in bytes.
      *
      * @param size the initial size.
      * @throws IllegalArgumentException if size is negative.
      */
     public FastCharBuffer(int size) {
         if (size < 0) {
-            throw new IllegalArgumentException(StringUtil.concat("Invalid size: ", size));
+            throw new IllegalArgumentException("Invalid size: " + size);
         }
-        needNewBuffer(size);
-    }
-
-    private void needNewBuffer(int newCount) {
-        if (currentBufferIndex < buffersCount - 1) {	// recycling old buffer
-            offset = 0;
-            currentBufferIndex++;
-            currentBuffer = buffers[currentBufferIndex];
-        } else {										// creating new buffer
-            int newBufferSize;
-            if (currentBuffer == null) {
-                newBufferSize = newCount;
-            } else {
-                newBufferSize = Math.max(
-                        currentBuffer.length << 1,
-                        newCount - count);		// this will give no free additional space
-
-            }
-
-            currentBufferIndex++;
-            currentBuffer = new char[newBufferSize];
-            offset = 0;
-
-            // add buffer
-            if (currentBufferIndex >= buffers.length) {
-                int newLen = buffers.length << 1;
-                char[][] newBuffers = new char[newLen][];
-                System.arraycopy(buffers, 0, newBuffers, 0, buffers.length);
-                buffers = newBuffers;
-            }
-            buffers[currentBufferIndex] = currentBuffer;
-            buffersCount++;
-        }
+        this.minChunkLen = size;
     }
 
     /**
-     * Appends
-     * <code>char</code> array to buffer.
+     * Prepares next chunk to match new size. The minimal length of new chunk is
+     * <code>minChunkLen</code>.
+     */
+    private void needNewBuffer(int newSize) {
+        int delta = newSize - size;
+        int newBufferSize = Math.max(minChunkLen, delta);
+
+        currentBufferIndex++;
+        currentBuffer = new char[newBufferSize];
+        offset = 0;
+
+        // add buffer
+        if (currentBufferIndex >= buffers.length) {
+            int newLen = buffers.length << 1;
+            char[][] newBuffers = new char[newLen][];
+            System.arraycopy(buffers, 0, newBuffers, 0, buffers.length);
+            buffers = newBuffers;
+        }
+        buffers[currentBufferIndex] = currentBuffer;
+        buffersCount++;
+    }
+
+    /**
+     * Appends <code>char</code> array to buffer.
      */
     public FastCharBuffer append(char[] array, int off, int len) {
         int end = off + len;
         if ((off < 0)
-                || (off > array.length)
                 || (len < 0)
-                || (end > array.length)
-                || (end < 0)) {
+                || (end > array.length)) {
             throw new IndexOutOfBoundsException();
         }
         if (len == 0) {
             return this;
         }
-        int newCount = count + len;
+        int newSize = size + len;
         int remaining = len;
-        while (remaining > 0) {
+
+        if (currentBuffer != null) {
+            // first try to fill current buffer
             int part = Math.min(remaining, currentBuffer.length - offset);
             System.arraycopy(array, end - remaining, currentBuffer, offset, part);
             remaining -= part;
             offset += part;
-            count += part;
-            if (remaining > 0) {
-                needNewBuffer(newCount);
-            }
+            size += part;
         }
+
+        if (remaining > 0) {
+            // still some data left
+            // ask for new buffer
+            needNewBuffer(newSize);
+
+            // then copy remaining
+            // but this time we are sure that it will fit
+            int part = Math.min(remaining, currentBuffer.length - offset);
+            System.arraycopy(array, end - remaining, currentBuffer, offset, part);
+            offset += part;
+            size += part;
+        }
+
         return this;
     }
 
     /**
-     * Appends
-     * <code>char</code> array to buffer.
+     * Appends <code>char</code> array to buffer.
      */
     public FastCharBuffer append(char[] array) {
         return append(array, 0, array.length);
     }
 
     /**
-     * Appends single
-     * <code>char</code> to buffer.
+     * Appends single <code>char</code> to buffer.
      */
     public FastCharBuffer append(char element) {
-        if (offset == currentBuffer.length) {
-            needNewBuffer(count + 1);
+        if ((currentBuffer == null) || (offset == currentBuffer.length)) {
+            needNewBuffer(size + 1);
         }
 
         currentBuffer[offset] = element;
         offset++;
-        count++;
+        size++;
 
         return this;
     }
@@ -131,6 +130,9 @@ public class FastCharBuffer implements CharSequence, Appendable {
      * Appends another fast buffer to this one.
      */
     public FastCharBuffer append(FastCharBuffer buff) {
+        if (buff.size == 0) {
+            return this;
+        }
         for (int i = 0; i < buff.currentBufferIndex; i++) {
             append(buff.buffers[i]);
         }
@@ -142,20 +144,19 @@ public class FastCharBuffer implements CharSequence, Appendable {
      * Returns buffer size.
      */
     public int size() {
-        return count;
+        return size;
     }
 
     /**
      * Tests if this buffer has no elements.
      */
     public boolean isEmpty() {
-        return count == 0;
+        return size == 0;
     }
 
     /**
-     * Returns current index of inner
-     * <code>char</code> array chunk. Represents the index of last used inner
-     * array chunk.
+     * Returns current index of inner <code>char</code> array chunk. Represents
+     * the index of last used inner array chunk.
      */
     public int index() {
         return currentBufferIndex;
@@ -169,9 +170,8 @@ public class FastCharBuffer implements CharSequence, Appendable {
     }
 
     /**
-     * Returns
-     * <code>char</code> inner array chunk at given index. May be used for
-     * iterating inner chunks in fast manner.
+     * Returns <code>char</code> inner array chunk at given index. May be used
+     * for iterating inner chunks in fast manner.
      */
     public char[] array(int index) {
         return buffers[index];
@@ -181,85 +181,37 @@ public class FastCharBuffer implements CharSequence, Appendable {
      * Resets the buffer content.
      */
     public void clear() {
-        count = 0;
+        size = 0;
         offset = 0;
-        currentBufferIndex = 0;
-        currentBuffer = buffers[currentBufferIndex];
-        buffersCount = 1;
+        currentBufferIndex = -1;
+        currentBuffer = null;
+        buffersCount = 0;
     }
 
     /**
-     * Creates
-     * <code>char</code> array from buffered content.
+     * Creates <code>char</code> array from buffered content.
      */
     public char[] toArray() {
-        int remaining = count;
         int pos = 0;
-        char[] array = new char[count];
-        for (char[] buf : buffers) {
-            int c = Math.min(buf.length, remaining);
-            System.arraycopy(buf, 0, array, pos, c);
-            pos += c;
-            remaining -= c;
-            if (remaining == 0) {
-                break;
-            }
+        char[] array = new char[size];
+
+        if (currentBufferIndex == -1) {
+            return array;
         }
+
+        for (int i = 0; i < currentBufferIndex; i++) {
+            int len = buffers[i].length;
+            System.arraycopy(buffers[i], 0, array, pos, len);
+            pos += len;
+        }
+
+        System.arraycopy(buffers[currentBufferIndex], 0, array, pos, offset);
+
         return array;
     }
 
     /**
-     * Creates
-     * <code>char</code> array from buffered content.
-     */
-    public char[] toArraySkipIfLeftNewLine() {
-        if (count > 0) {
-            final int skip;
-            char[] first = buffers[0];
-            if (first[0] == '\n') {
-                skip = 1;
-            } else if (first[0] == '\r') {
-                if (count > 1) {
-                    if (first[1] == '\n') {
-                        skip = 2;
-                    } else {
-                        skip = 1;
-                    }
-                } else {
-                    return new char[0];
-                }
-            } else {
-                skip = 0;
-            }
-            if (skip == 0) {
-                return toArray();
-            } else {
-                //
-                int remaining = count - skip;
-                int pos = 0;
-                char[] array = new char[remaining];
-                //first
-                int c = Math.min(first.length - skip, remaining);
-                System.arraycopy(first, skip, array, pos, c);
-                pos += c;
-                remaining -= c;
-                for (int i = 1; remaining > 0 && i < buffers.length;) {
-                    char[] buf = buffers[i++];
-                    c = Math.min(buf.length, remaining);
-                    System.arraycopy(buf, 0, array, pos, c);
-                    pos += c;
-                    remaining -= c;
-                }
-                return array;
-            }
-        } else {
-            return new char[0];
-        }
-    }
-
-    /**
-     * Creates
-     * <code>char</code> subarray from buffered content.
+     * Creates <code>char</code> subarray from buffered content.
      */
     public char[] toArray(int start, int len) {
         int remaining = len;
@@ -292,11 +244,10 @@ public class FastCharBuffer implements CharSequence, Appendable {
     }
 
     /**
-     * Returns
-     * <code>char</code> element at given index.
+     * Returns <code>char</code> element at given index.
      */
     public char get(int index) {
-        if (index >= count) {
+        if ((index >= size) || (index < 0)) {
             throw new IndexOutOfBoundsException();
         }
         int ndx = 0;
@@ -310,12 +261,12 @@ public class FastCharBuffer implements CharSequence, Appendable {
         }
     }
 
-    // @@generated
+       // @@generated
     /**
      * Returns buffer length, same as {@link #size()}.
      */
     public int length() {
-        return count;
+        return size;
     }
 
     /**
@@ -340,12 +291,45 @@ public class FastCharBuffer implements CharSequence, Appendable {
         return new StringBuilder(len).append(toArray(start, len));
     }
 
-    // ---------------------------------------------------------------- additional appenders
+    // ---------------------------------------------------------------- additional
     /**
      * Appends string content to buffer.
      */
     public FastCharBuffer append(String string) {
-        return append(string.toCharArray());
+        int len = string.length();
+        if (len == 0) {
+            return this;
+        }
+
+        int end = offset + len;
+        int newSize = size + len;
+        int remaining = len;
+        int start = 0;
+
+        if (currentBuffer != null) {
+            // first try to fill current buffer
+            int part = Math.min(remaining, currentBuffer.length - offset);
+            string.getChars(0, part, currentBuffer, offset);
+            remaining -= part;
+            offset += part;
+            size += part;
+            start += part;
+        }
+
+        if (remaining > 0) {
+            // still some data left
+            // ask for new buffer
+            needNewBuffer(newSize);
+
+            // then copy remaining
+            // but this time we are sure that it will fit
+            int part = Math.min(remaining, currentBuffer.length - offset);
+            string.getChars(start, start + part, currentBuffer, offset);
+            offset += part;
+            size += part;
+        }
+
+        return this;
     }
 
     /**
@@ -366,9 +350,57 @@ public class FastCharBuffer implements CharSequence, Appendable {
         return this;
     }
 
+    /**
+     * Creates <code>char</code> array from buffered content.
+     */
+    public char[] toArraySkipIfLeftNewLine() {
+        if (this.size > 0) {
+            final int skip;
+            char[] first = buffers[0];
+            if (first[0] == '\n') {
+                skip = 1;
+            } else if (first[0] == '\r') {
+                if (this.size > 1) {
+                    if (first[1] == '\n') {
+                        skip = 2;
+                    } else {
+                        skip = 1;
+                    }
+                } else {
+                    return new char[0];
+                }
+            } else {
+                skip = 0;
+            }
+            if (skip == 0) {
+                return toArray();
+            } else {
+                //
+                int remaining = this.size - skip;
+                int pos = 0;
+                char[] array = new char[remaining];
+                //first
+                int c = Math.min(first.length - skip, remaining);
+                System.arraycopy(first, skip, array, pos, c);
+                pos += c;
+                remaining -= c;
+                for (int i = 1; remaining > 0 && i < buffers.length;) {
+                    char[] buf = buffers[i++];
+                    c = Math.min(buf.length, remaining);
+                    System.arraycopy(buf, 0, array, pos, c);
+                    pos += c;
+                    remaining -= c;
+                }
+                return array;
+            }
+        } else {
+            return new char[0];
+        }
+    }
+
     public void trimRightBlankToNewLine() {
         int tmp_offset;
-        int tmp_count = this.count;
+        int tmp_count = this.size;
         char[] tmp_buf; // = this.currentBuffer;
         int tmp_currentBufferIndex = this.currentBufferIndex;
         boolean notLastOne = false;
@@ -385,7 +417,7 @@ public class FastCharBuffer implements CharSequence, Appendable {
                 //All blank
                 tmp_count -= tmp_offset;
             } else if (tmp_buf[pos] == '\n' || tmp_buf[pos] == '\r') {
-                count = tmp_count - tmp_offset + pos + 1;
+                this.size = tmp_count - tmp_offset + pos + 1;
                 offset = pos + 1;
                 currentBufferIndex = tmp_currentBufferIndex;
                 currentBuffer = tmp_buf;
