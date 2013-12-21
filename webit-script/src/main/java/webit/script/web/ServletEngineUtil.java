@@ -84,7 +84,7 @@ public class ServletEngineUtil {
                             }
 
                             props.load(charsBuffer.toString());
-                            props.append(Engine.PROPS_FILE_LIST, WEB_ROOT_PREFIX.concat(path));
+                            props.append(CFG.PROPS_FILE_LIST, WEB_ROOT_PREFIX.concat(path));
                         } catch (IOException ignore) {
                             //Note:ignore props IOException
                         } finally {

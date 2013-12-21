@@ -29,9 +29,6 @@ import webit.script.util.props.Props;
  */
 public final class Engine {
 
-    public static final String PROPS_FILE_LIST = "$$propsFiles";
-    //
-    private static final String DEFAULT_PROPERTIES = "/webit-script-default.props";
     //settings
     private Class resourceLoaderClass = webit.script.loaders.impl.ClasspathLoader.class;
     private Class textStatementFactoryClass = webit.script.core.text.impl.SimpleTextStatementFactory.class;
@@ -61,16 +58,16 @@ public final class Engine {
     //
     private final ResolverManager resolverManager;
     private final ConcurrentMap<String, Template> templateCache;
-    private final Petite _petite;
+    private final Petite petite;
 
     private Engine(final Petite petite) {
-        this._petite = petite;
+        this.petite = petite;
         this.templateCache = new ConcurrentHashMap<String, Template>();
         this.resolverManager = new ResolverManager();
     }
 
     @SuppressWarnings("unchecked")
-    private void init() throws Exception {
+    private void init() throws InstantiationException, IllegalAccessException {
 
         this.logger = (Logger) newInstance(this.loggerClass);
         this.coderFactory = (CoderFactory) newInstance(this.coderFactoryClass);
@@ -84,6 +81,8 @@ public final class Engine {
         }
 
         resolveBean(this.logger);
+        this.petite.setLogger(this.logger);
+
         resolveBean(this.resolverManager);
         resolveBean(this.coderFactory);
         resolveBean(this.nativeSecurityManager);
@@ -107,13 +106,13 @@ public final class Engine {
         globalManager.commit();
     }
 
-    private void executeInitTemplates() throws Exception {
+    private void executeInitTemplates() throws ResourceNotFoundException {
         final int size;
         if (this.initTemplates != null && (size = this.initTemplates.length) > 0) {
             String templateName;
             final Out out = new DiscardOut();
             for (int i = 0; i < size; i++) {
-                if ((templateName = initTemplates[i]) != null
+                if ((templateName = this.initTemplates[i]) != null
                         && (templateName = templateName.trim()).length() != 0) {
                     this.getTemplate(templateName)
                             .merge(KeyValuesUtil.EMPTY_KEY_VALUES, out);
@@ -123,7 +122,7 @@ public final class Engine {
     }
 
     public void resolveBean(final Object bean) {
-        _petite.wireBean(bean);
+        this.petite.wireBean(bean);
         if (bean instanceof Initable) {
             ((Initable) bean).init(this);
         }
@@ -148,7 +147,7 @@ public final class Engine {
      * @throws ResourceNotFoundException
      */
     public Template getTemplate(final String parentName, final String name) throws ResourceNotFoundException {
-        return getTemplate(resourceLoader.concat(parentName, name));
+        return getTemplate(this.resourceLoader.concat(parentName, name));
     }
 
     /**
@@ -160,7 +159,7 @@ public final class Engine {
      */
     public Template getTemplate(final String name) throws ResourceNotFoundException {
         Template template;
-        if ((template = templateCache.get(name)) != null) {
+        if ((template = this.templateCache.get(name)) != null) {
             return template;
         } else {
             return createTemplateIfAbsent(name);
@@ -170,16 +169,16 @@ public final class Engine {
     private Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
         Template template;
         final String normalizedName;
-        if ((normalizedName = resourceLoader.normalize(name)) != null) {
-            if ((template = templateCache.get(normalizedName)) == null) {
+        if ((normalizedName = this.resourceLoader.normalize(name)) != null) {
+            if ((template = this.templateCache.get(normalizedName)) == null) {
                 Template oldTemplate;
-                if ((oldTemplate = templateCache.putIfAbsent(normalizedName,
+                if ((oldTemplate = this.templateCache.putIfAbsent(normalizedName,
                         template = new Template(this, normalizedName,
-                                resourceLoader.get(normalizedName)))) != null) {
+                                this.resourceLoader.get(normalizedName)))) != null) {
                     template = oldTemplate;
                 }
                 if (!name.equals(normalizedName)
-                        && (oldTemplate = templateCache.putIfAbsent(name, template)) != null) {
+                        && (oldTemplate = this.templateCache.putIfAbsent(name, template)) != null) {
                     template = oldTemplate;
                 }
             }
@@ -347,40 +346,39 @@ public final class Engine {
     public static Props createConfigProps(final String configPath) {
         final Props props = new Props();
         if (configPath != null) {
-            PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES, configPath);
+            PropsUtil.loadFromClasspath(props, CFG.DEFAULT_PROPERTIES, configPath);
         } else {
-            PropsUtil.loadFromClasspath(props, DEFAULT_PROPERTIES);
+            PropsUtil.loadFromClasspath(props, CFG.DEFAULT_PROPERTIES);
         }
         return props;
     }
 
-    public static Engine createEngine(final String configPath,final Map<Object, Object> parameters) {
+    public static Engine createEngine(final String configPath, final Map<Object, Object> parameters) {
         return createEngine(createConfigProps(configPath), parameters);
     }
 
-    public static Engine createEngine(final Props props,final Map<Object, Object> parameters) {
+    public static Engine createEngine(final Props props, final Map<Object, Object> parameters) {
 
         final Petite petite = new Petite();
-        petite.defineParameters(props != null ? props : createConfigProps(null), parameters);
+        petite.defineParameters(props, parameters);
 
         final Engine engine;
         petite.wireBean(engine = new Engine(petite));
 
         try {
             engine.init();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
 
-        final Logger logger;
-        petite.setLogger(logger = engine.getLogger());
-        if (logger.isInfoEnabled()) {
-            logger.info("Loaded props: ".concat(String.valueOf(petite.getParameter(PROPS_FILE_LIST))));
-        }
+            final Logger logger;
+            if ((logger = engine.getLogger()).isInfoEnabled()) {
+                logger.info("Loaded props: ".concat(String.valueOf(petite.getParameter(CFG.PROPS_FILE_LIST))));
+            }
 
-        try {
             engine.executeInitTemplates();
-        } catch (Exception ex) {
+        } catch (InstantiationException ex) {
+            throw new RuntimeException(ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        } catch (ResourceNotFoundException ex) {
             throw new RuntimeException(ex);
         }
 

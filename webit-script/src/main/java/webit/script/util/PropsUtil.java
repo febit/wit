@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import webit.script.CFG;
 import webit.script.Engine;
 import webit.script.util.props.Props;
 
@@ -59,7 +60,7 @@ public class PropsUtil {
                                     }
 
                                     props.load(charsBuffer.toString());
-                                    props.append(Engine.PROPS_FILE_LIST, CLASSPATH_PREFIX.concat(path));
+                                    props.append(CFG.PROPS_FILE_LIST, CLASSPATH_PREFIX.concat(path));
                                 } catch (IOException ignore) {
                                     //Note:ignore props IOException
                                 } finally {
