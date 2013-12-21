@@ -1,5 +1,7 @@
 package webit.script.web;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,7 +43,7 @@ public class ServletEngineUtil {
         return Engine.createEngine(props, settings);
     }
 
-    public static void  loadFromServletContextPath(final Props props, final String pathSet, final ServletContext servletContext) {
+    public static void loadFromServletContextPath(final Props props, final String pathSet, final ServletContext servletContext) {
         String[] paths;
         String path;
 
@@ -61,7 +63,14 @@ public class ServletEngineUtil {
                     if (path.charAt(0) == '/') {
                         path = path.substring(1);
                     }
-                    if ((in = servletContext.getResourceAsStream(path)) != null) {
+                    if ((in = servletContext.getResourceAsStream(path)) == null) {
+                        try {
+                            //try read file by real path
+                            in = new FileInputStream(servletContext.getRealPath(path));
+                        } catch (FileNotFoundException ignore) {
+                        }
+                    }
+                    if (in != null) {
                         try {
 
                             reader = new InputStreamReader(in, StringUtil.endsWithIgnoreCase(path, ".properties")
