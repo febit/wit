@@ -2,6 +2,7 @@
 package webit.script.util.props;
 
 import java.util.ArrayList;
+import webit.script.util.StringPool;
 import webit.script.util.StringUtil;
 
 /**
@@ -12,46 +13,50 @@ final class PropsParser /* implements Cloneable*/ {
     private static final String PROFILE_LEFT = "<";
     private static final String PROFILE_RIGHT = ">";
     final PropsData propsData;
+
     /**
      * Value that will be inserted when escaping the new line.
      */
     private final static String escapeNewLineValue = "";
+
 //	/**
 //	 * Trims left the value.
 //	 */
-//	private final static boolean valueTrimLeft = true;
+//	protected boolean valueTrimLeft = true;
 //
 //	/**
 //	 * Trims right the value.
 //	 */
-//	private final static boolean valueTrimRight = true;
+//	protected boolean valueTrimRight = true;
     /**
      * Defines if starting whitespaces when value is split in the new line
      * should be ignored or not.
      */
-    private final static boolean ignorePrefixWhitespacesOnNewLine = true;
+    private final static  boolean ignorePrefixWhitespacesOnNewLine = true;
+
     /**
      * Defines if multi-line values may be written using triple-quotes as in
      * python.
      */
-    private final static boolean multilineValues = true;
+    private final static  boolean multilineValues = true;
+
     /**
      * Don't include empty properties.
      */
-    private final static boolean skipEmptyProps = true;
+    private final static  boolean skipEmptyProps = true;
 
     PropsParser() {
         this.propsData = new PropsData();
     }
 
-//	public PropsParser(final PropsData propsData) {
-//		this.propsData = propsData;
-//	}
+//    public PropsParser(final PropsData propsData) {
+//        this.propsData = propsData;
+//    }
 //
-//	public PropsData getPropsData() {
-//		return propsData;
-//	}
-//
+//    public PropsData getPropsData() {
+//        return propsData;
+//    }
+
 //	@Override
 //	public PropsParser clone() {
 //		final PropsParser pp = new PropsParser(this.propsData.clone());
@@ -82,6 +87,8 @@ final class PropsParser /* implements Cloneable*/ {
      */
     void parse(final String in) {
         ParseState state = ParseState.TEXT;
+        ParseState stateOnEscape = null;
+
         boolean insideSection = false;
         String currentSection = null;
         String key = null;
@@ -100,7 +107,7 @@ final class PropsParser /* implements Cloneable*/ {
                     state = ParseState.TEXT;
                 }
             } else if (state == ParseState.ESCAPE) {
-                state = ParseState.VALUE;
+                state = stateOnEscape;//ParseState.VALUE;
                 switch (c) {
                     case '\r':
                     case '\n':
@@ -113,7 +120,6 @@ final class PropsParser /* implements Cloneable*/ {
 
                         for (int i = 0; i < 4; i++) {
                             final char hexChar = in.charAt(ndx++);
-                            //if (CharUtil.isDigit(hexChar)) {
                             if (hexChar >= '0' && hexChar <= '9') {
                                 value = (value << 4) + hexChar - '0';
                             } else if (hexChar >= 'a' && hexChar <= 'f') {
@@ -143,6 +149,12 @@ final class PropsParser /* implements Cloneable*/ {
                 }
             } else if (state == ParseState.TEXT) {
                 switch (c) {
+                    case '\\':
+                        // escape char, take the next char as is
+                        stateOnEscape = state;
+                        state = ParseState.ESCAPE;
+                        break;
+
                     // start section
                     case '[':
                         sb.setLength(0);
@@ -207,6 +219,7 @@ final class PropsParser /* implements Cloneable*/ {
                 switch (c) {
                     case '\\':
                         // escape char, take the next char as is
+                        stateOnEscape = state;
                         state = ParseState.ESCAPE;
                         break;
 
@@ -289,13 +302,13 @@ final class PropsParser /* implements Cloneable*/ {
         String v = value.toString();
 
         if (trim) {
-//			if (valueTrimLeft && valueTrimRight) {
-            v = v.trim();
-//			} else if (valueTrimLeft) {
-//				v = StringUtil.trimLeft(v);
-//			} else {
-//				v = StringUtil.trimRight(v);
-//			}
+//            if (valueTrimLeft && valueTrimRight) {
+                v = v.trim();
+//            } else if (valueTrimLeft) {
+//                v = StringUtil.trimLeft(v);
+//            } else {
+//                v = StringUtil.trimRight(v);
+//            }
         }
 
         if (v.length() == 0 && skipEmptyProps) {
@@ -338,7 +351,7 @@ final class PropsParser /* implements Cloneable*/ {
 
             // extract profile from key
             ndx2++;
-            final String right = (ndx2 == len) ? "" : fullKey.substring(ndx2);
+            final String right = (ndx2 == len) ? StringPool.EMPTY : fullKey.substring(ndx2);
             fullKey = fullKey.substring(0, ndx) + right;
         }
 
