@@ -13,25 +13,30 @@ import webit.script.core.ast.loop.LoopInfo;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;
 import webit.script.util.StringUtil;
-import webit.script.util.collection.IntArrayList;
 
 /**
  *
  * @author Zqq
  */
-public final class FunctionPart extends Position {
+public final class FunctionDeclarePart extends Position {
 
-    private final IntArrayList argIndexList; //with arguments at first
-    private final int argsIndex;
+    private int argsCount = 0;
+    private final VariantManager varmgr;
 
-    public FunctionPart(int argsIndex, int line, int column) {
+    public FunctionDeclarePart(VariantManager varmgr, int line, int column) {
         super(line, column);
-        this.argsIndex = argsIndex;
-        this.argIndexList = new IntArrayList(6);
+        this.varmgr = varmgr;
+        varmgr.push();
+        varmgr.pushVarWall();
+        if (varmgr.assignVariant("arguments", line, column) != 0) {
+            throw new ParseException("assignVariant failed!");
+        }
     }
 
-    public FunctionPart appendArgIndexs(int index) {
-        this.argIndexList.add(index);
+    public FunctionDeclarePart appendArg(String name, int line, int column) {
+        if (varmgr.assignVariant(name, line, column) != (++ this.argsCount)) {
+            throw new ParseException("assignVariant failed!");
+        }
         return this;
     }
 
@@ -58,8 +63,7 @@ public final class FunctionPart extends Position {
             }
         }
 
-        return new FunctionDeclare(argsIndex,
-                argIndexList.isEmpty() ? null : argIndexList.toArray(),
+        return new FunctionDeclare(argsCount,
                 overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null,
                 VariantIndexer.getVariantIndexer(varIndexer),
                 statements,

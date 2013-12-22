@@ -93,18 +93,13 @@ public final class VariantStack {
         }
     }
 
-    public void setArgumentsForFunction(final int argsIndex, final int[] indexs, final Object[] values) {
+    public void setArgumentsForFunction(final int argsCount, final Object[] values) {
+        final int len;
         final Object[] contextValues;
-        (contextValues = currentContext.values)[argsIndex] = values;
-        if (indexs != null && values != null) {
-            int i;
-            if ((i = values.length) > indexs.length) {
-                i = indexs.length;
-            }
-            while (i != 0) {
-                --i;
-                contextValues[indexs[i]] = values[i];
-            }
+        if (((contextValues = currentContext.values)[0] = values) != null
+                && argsCount != 0
+                && (len = values.length) != 0) {
+            System.arraycopy(values, 0, contextValues, 1,  argsCount > len ? len : argsCount);
         }
     }
 

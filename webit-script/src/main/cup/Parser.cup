@@ -48,12 +48,6 @@ parser code {:
         return createContextValue(varmgr.locate(name, upstair, this.locateVarForce, line, column), line, column);
     }
 
-    private FunctionPart createFunctionPart(int line, int column) {
-        varmgr.push();
-        varmgr.pushVarWall();
-        return new FunctionPart(varmgr.assignVariant("arguments", line, column), line, column); 
-    }
-
     private Expression createNativeStaticValue(ClassNameBand classNameBand, int line, int column) {
         if (classNameBand.size() < 2) {
             throw new ParseException("native static need a filed name.", line, column);
@@ -275,7 +269,7 @@ non terminal ClassNameList classNameList, classNameList1;
 
 /* function */
 non terminal Expression funcExecuteExpr;
-non terminal FunctionPart funcHeadPrepare, funcHead;
+non terminal FunctionDeclarePart funcHeadPrepare, funcHead;
 
 
 /* precedence */
@@ -752,14 +746,14 @@ mapValue            ::= LBRACE:sym mapValuePart:part RBRACE
 
 
 funcHead           ::= funcHeadPrepare:part LPAREN IDENTIFIER:ident
-                        {: return (%part%).appendArgIndexs(varmgr.assignVariant(%ident%, %ident.line%, %ident.column%)); :}
+                        {: return (%part%).appendArg(%ident%, %ident.line%, %ident.column%); :}
                         |funcHead:part COMMA IDENTIFIER:ident
-                        {: return (%part%).appendArgIndexs(varmgr.assignVariant(%ident%, %ident.line%, %ident.column%)); :}
+                        {: return (%part%).appendArg(%ident%, %ident.line%, %ident.column%); :}
                         ;
 
 
 funcHeadPrepare     ::= FUNCTION:sym
-                        {: return createFunctionPart(%sym.line%, %sym.column%); :}
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
                         ;
 
 

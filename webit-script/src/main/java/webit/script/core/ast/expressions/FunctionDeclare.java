@@ -16,17 +16,15 @@ import webit.script.util.StatementUtil;
  */
 public final class FunctionDeclare extends AbstractExpression {
 
-    private final int argsIndex;
-    private final int[] argIndexs;
+    private final int argsCount;
     public final int[] _overflowUpstairs;
     private final VariantIndexer varIndexer;
     private final Statement[] statements;
     private final boolean hasReturnLoops;
 
-    public FunctionDeclare(int argsIndex, int[] argIndexs, int[] overflowUpstairs, VariantIndexer varIndexer, Statement[] statements, boolean hasReturnLoops, int line, int column) {
+    public FunctionDeclare(int argsCount, int[] overflowUpstairs, VariantIndexer varIndexer, Statement[] statements, boolean hasReturnLoops, int line, int column) {
         super(line, column);
-        this.argIndexs = argIndexs;
-        this.argsIndex = argsIndex;
+        this.argsCount = argsCount;
         this._overflowUpstairs = overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null;
         this.varIndexer = varIndexer;
         this.statements = statements;
@@ -57,7 +55,7 @@ public final class FunctionDeclare extends AbstractExpression {
     public Object invoke(final Context context, final Object[] args) {
         final VariantStack vars;
         (vars = context.vars).push(varIndexer);
-        vars.setArgumentsForFunction(argsIndex, argIndexs, args);
+        vars.setArgumentsForFunction(argsCount, args);
         if (hasReturnLoops) {
             StatementUtil.executeInvertedAndCheckLoops(statements, context);
             vars.pop();

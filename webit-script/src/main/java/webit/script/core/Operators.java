@@ -5,7 +5,7 @@ package webit.script.core;
  *
  * @author Zqq
  */
-public interface Operators {
+interface Operators {
     
     //Self Operators
     public static final int PLUSEQ = 0 ;
