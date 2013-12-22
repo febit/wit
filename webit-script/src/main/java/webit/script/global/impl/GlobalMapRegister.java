@@ -1,10 +1,10 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.global.impl;
 
-import webit.script.global.GlobalRegister;
-import webit.script.global.DefaultGlobalManager;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import webit.script.global.DefaultGlobalManager;
+import webit.script.global.GlobalRegister;
 
 /**
  *

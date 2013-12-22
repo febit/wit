@@ -1,5 +1,5 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.ast.method;
+package webit.script.core.ast.expressions;
 
 import java.util.Iterator;
 import java.util.List;
@@ -9,7 +9,6 @@ import webit.script.core.VariantManager;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.StatementList;
-import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;

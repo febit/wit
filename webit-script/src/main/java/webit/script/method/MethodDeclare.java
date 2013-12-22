@@ -1,5 +1,5 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.ast.method;
+package webit.script.method;
 
 import webit.script.Context;
 

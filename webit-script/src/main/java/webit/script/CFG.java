@@ -18,7 +18,6 @@ public interface CFG {
     public static final String OUT_ENCODING     = ENGINE + ".encoding";
     public static final String FILTER           = ENGINE + ".filterClass";
     public static final String LOGGER           = ENGINE + ".loggerClass";
-    public static final String ASM_NATIVE       = ENGINE + ".enableAsmNative";
     public static final String LOOSE_VAR        = ENGINE + ".looseVar";
     public static final String SHARE_ROOT       = ENGINE + ".shareRootData";
     public static final String TRIM_CODE_LINE   = ENGINE + ".trimCodeBlockBlankLine";
@@ -27,11 +26,12 @@ public interface CFG {
     public static final String INIT_TEMPLATES   = ENGINE + ".initTemplates";
     public static final String TEXT_FACTORY     = ENGINE + ".textStatementFactoryClass";
     public static final String APPEND_LOST_SUFFIX    = ENGINE + ".appendLostSuffix";
-
+    
     public static final String SIMPLE_TEXT_FACTORY      = "webit.script.core.text.impl.SimpleTextStatementFactory";
     public static final String BYTE_ARRAY_TEXT_FACTORY  = "webit.script.core.text.impl.ByteArrayTextStatementFactory";
     public static final String CHAR_ARRAY_TEXT_FACTORY  = "webit.script.core.text.impl.CharArrayTextStatementFactory";
     
+    public static final String ASM_NATIVE       = "webit.script.core.NativeFactory.enableAsm";
     public static final String ASM_RESOLVER     = "webit.script.resolvers.ResolverManager.enableAsm";
     public static final String SECURITY_LIST    = "webit.script.security.impl.DefaultNativeSecurityManager.list";
     

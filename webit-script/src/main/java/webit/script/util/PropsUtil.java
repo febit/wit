@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import webit.script.CFG;
-import webit.script.Engine;
 import webit.script.util.props.Props;
 
 /**

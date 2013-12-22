@@ -5,9 +5,9 @@ import webit.script.Context;
 import webit.script.core.VariantIndexer;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Statement;
-import webit.script.core.ast.method.FunctionMethodDeclare;
 import webit.script.core.runtime.VariantContext;
 import webit.script.core.runtime.VariantStack;
+import webit.script.method.impl.FunctionMethodDeclare;
 import webit.script.util.StatementUtil;
 
 /**

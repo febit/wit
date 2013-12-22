@@ -124,6 +124,7 @@ abstract class lr_parser {
     Template template;
     TextStatementFactory textStatementFactory;
     PlaceHolderFactory placeHolderFactory;
+    NativeFactory nativeFactory;
     Logger logger;
     boolean locateVarForce;
     NativeImportManager nativeImportMgr;
@@ -153,6 +154,7 @@ abstract class lr_parser {
             this.placeHolderFactory = new PlaceHolderFactory(_engine.getFilter());
             //
             this.nativeImportMgr = new NativeImportManager();
+            this.nativeFactory = _engine.getNativeFactory();
             this.varmgr = new VariantManager(_engine);
             this.labelsIndexMap = new HashMap<String, Integer>();
             this.labelsIndexMap.put(null, 0);

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import webit.script.core.NativeFactory;
 import webit.script.core.text.TextStatementFactory;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.filters.Filter;
@@ -39,7 +40,6 @@ public final class Engine {
     private Class loggerClass = webit.script.loggers.impl.NOPLogger.class;
     private Class[] resolvers;
     private String encoding = EncodingPool.UTF_8;
-    private boolean enableAsmNative = true;
     private boolean looseVar = false;
     private boolean shareRootData = false;
     private boolean trimCodeBlockBlankLine = true;
@@ -48,6 +48,7 @@ public final class Engine {
     private String[] vars = null;
     private String[] initTemplates = null;
     //
+    private NativeFactory nativeFactory;
     private Logger logger;
     private Loader resourceLoader;
     private GlobalManager globalManager;
@@ -70,6 +71,7 @@ public final class Engine {
     private void init() throws InstantiationException, IllegalAccessException {
 
         this.logger = (Logger) newInstance(this.loggerClass);
+        this.nativeFactory = new NativeFactory();
         this.coderFactory = (CoderFactory) newInstance(this.coderFactoryClass);
         this.nativeSecurityManager = (NativeSecurityManager) newInstance(this.nativeSecurityManagerClass);
         this.textStatementFactory = (TextStatementFactory) newInstance(this.textStatementFactoryClass);
@@ -83,6 +85,7 @@ public final class Engine {
         resolveBean(this.logger);
         this.petite.setLogger(this.logger);
 
+        resolveBean(this.nativeFactory);
         resolveBean(this.resolverManager);
         resolveBean(this.coderFactory);
         resolveBean(this.nativeSecurityManager);
@@ -225,12 +228,8 @@ public final class Engine {
         }
     }
 
-    public boolean isEnableAsmNative() {
-        return enableAsmNative;
-    }
-
-    public void setEnableAsmNative(boolean enableAsmNative) {
-        this.enableAsmNative = enableAsmNative;
+    public NativeFactory getNativeFactory() {
+        return nativeFactory;
     }
 
     public boolean isLooseVar() {

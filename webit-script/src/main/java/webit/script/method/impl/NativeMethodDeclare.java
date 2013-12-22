@@ -1,10 +1,11 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.ast.method;
+package webit.script.method.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.method.MethodDeclare;
 import webit.script.util.ClassUtil;
 
 /**

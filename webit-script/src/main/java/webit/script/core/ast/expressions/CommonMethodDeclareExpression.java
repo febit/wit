@@ -3,7 +3,7 @@ package webit.script.core.ast.expressions;
 
 import webit.script.Context;
 import webit.script.core.ast.AbstractExpression;
-import webit.script.core.ast.method.MethodDeclare;
+import webit.script.method.MethodDeclare;
 
 /**
  *

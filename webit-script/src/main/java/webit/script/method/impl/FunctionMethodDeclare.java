@@ -1,11 +1,12 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-package webit.script.core.ast.method;
+package webit.script.method.impl;
 
 import webit.script.Context;
 import webit.script.Template;
 import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.core.runtime.VariantContext;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.method.MethodDeclare;
 import webit.script.util.ExceptionUtil;
 
 /**
