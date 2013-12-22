@@ -53,7 +53,7 @@ public final class Petite {
         parameters.putAll(parameters);
     }
 
-    public void defineParameters(Props props, Map<Object, Object> parameters) {
+    public void defineParameters(Props props, Map<String, Object> parameters) {
         if (props == null) {
             props = new Props();
         }
@@ -63,8 +63,11 @@ public final class Petite {
             String name;
             Object value;
             int len;
-            for (Map.Entry entry : parameters.entrySet()) {
-                name = String.valueOf(entry.getKey()).trim();
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                if ((name = entry.getKey()) == null) {
+                    continue;
+                }
+                name = name.trim();
                 value = entry.getValue();
                 if (value instanceof String) {
                     if ((len = name.length()) > 0) {

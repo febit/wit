@@ -352,11 +352,11 @@ public final class Engine {
         return props;
     }
 
-    public static Engine createEngine(final String configPath, final Map<Object, Object> parameters) {
+    public static Engine createEngine(final String configPath, final Map<String, Object> parameters) {
         return createEngine(createConfigProps(configPath), parameters);
     }
 
-    public static Engine createEngine(final Props props, final Map<Object, Object> parameters) {
+    public static Engine createEngine(final Props props, final Map<String, Object> parameters) {
 
         final Petite petite = new Petite();
         petite.defineParameters(props, parameters);
