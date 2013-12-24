@@ -1,4 +1,14 @@
 <%
+
+var CONST_MAP, GLOBAL_MAP;
+
 $GLOBAL["two"] = 2;
 $GLOBAL["string2"] = "string2";
+
+GLOBAL_MAP.g_two = 2;
+GLOBAL_MAP.g_string2 = "g_string2";
+
+CONST_MAP.c_two = 2;
+CONST_MAP.c_string2 = "c_string2";
+
 %>

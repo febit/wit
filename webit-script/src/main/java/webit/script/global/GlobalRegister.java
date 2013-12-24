@@ -7,5 +7,5 @@ package webit.script.global;
  */
 public interface GlobalRegister {
 
-    void regist(DefaultGlobalManager manager);
+    void regist(GlobalManager manager);
 }

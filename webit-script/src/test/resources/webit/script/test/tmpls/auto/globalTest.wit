@@ -1,0 +1,53 @@
+<%
+
+{
+    //global
+    $GLOBAL["aaa"] = "AAA";
+    $GLOBAL["bbb"] = "BBB";
+
+    assertNotNull($GLOBAL);
+    assertEquals($GLOBAL["aaa"], "AAA");
+    assertEquals($GLOBAL["bbb"], "BBB");
+}
+
+{
+    // cutsom definded in `TestGlobalRegister`
+
+    assertEquals("MY_CONST", MY_CONST);
+    assertEquals("MY_CONST_2", MY_CONST_2);
+    assertEquals("MY_GLOBAL", MY_GLOBAL);
+    assertEquals("MY_GLOBAL_2", MY_GLOBAL_2);
+
+    MY_GLOBAL = "a new value";
+    assertEquals("a new value", MY_GLOBAL);
+}
+
+{
+    // custom definded in "/init.wit"
+
+    assertEquals($GLOBAL["one"], 1);
+    assertEquals($GLOBAL["string"], "string");
+
+    assertEquals(g_one, 1);
+    assertEquals(g_string, "g_string");
+
+    assertEquals(c_one, 1);
+    assertEquals(c_string, "c_string");
+
+    //parseException: c_one = 2;
+}
+
+{
+    // custom definded in "/init2.wit"
+
+    assertEquals($GLOBAL["two"], 2);
+    assertEquals($GLOBAL["string2"], "string2");
+
+    assertEquals(g_two, 2);
+    assertEquals(g_string2, "g_string2");
+
+    assertEquals(c_two, 2);
+    assertEquals(c_string2, "c_string2");
+}
+
+%>

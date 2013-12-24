@@ -21,6 +21,7 @@ import webit.script.security.NativeSecurityManager;
 import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
+import webit.script.util.keyvalues.KeyValues;
 import webit.script.util.keyvalues.KeyValuesUtil;
 import webit.script.util.props.Props;
 
@@ -114,11 +115,20 @@ public final class Engine {
         if (this.initTemplates != null && (size = this.initTemplates.length) > 0) {
             String templateName;
             final Out out = new DiscardOut();
+            final KeyValues params = KeyValuesUtil.wrap(new String[]{
+                "GLOBAL_MAP",
+                "CONST_MAP"
+            }, new Object[]{
+                this.globalManager.getGlobalBag(),
+                this.globalManager.getConstBag()
+            });
             for (int i = 0; i < size; i++) {
                 if ((templateName = this.initTemplates[i]) != null
                         && (templateName = templateName.trim()).length() != 0) {
                     this.getTemplate(templateName)
-                            .merge(KeyValuesUtil.EMPTY_KEY_VALUES, out);
+                            .merge(params, out);
+                    //Commit Global
+                    this.globalManager.commit();
                 }
             }
         }

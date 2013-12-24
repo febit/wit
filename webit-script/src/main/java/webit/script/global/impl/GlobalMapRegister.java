@@ -3,7 +3,7 @@ package webit.script.global.impl;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import webit.script.global.DefaultGlobalManager;
+import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
 
 /**
@@ -21,8 +21,8 @@ public class GlobalMapRegister implements GlobalRegister {
         this.vars = new ConcurrentHashMap();
     }
 
-    public void regist(DefaultGlobalManager manager) {
-        manager.setConst(this.name, this.vars);
+    public void regist(GlobalManager manager) {
+        manager.getConstBag().set(this.name, this.vars);
     }
 
     public Map getVars() {

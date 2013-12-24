@@ -14,6 +14,7 @@ encoding=${DEFAULT_ENCODING}
 
 resolvers=\
     webit.script.resolvers.impl.MapResolver,\
+    webit.script.resolvers.impl.SimpleBagResolver,\
     webit.script.resolvers.impl.ListResolver,\
     webit.script.resolvers.impl.CharSequenceResolver,\
     webit.script.resolvers.impl.ArrayResolver,\

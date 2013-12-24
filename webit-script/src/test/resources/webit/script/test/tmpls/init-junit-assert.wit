@@ -1,7 +1,8 @@
 <%
 
-    @import org.junit.Assert;
+    var CONST_MAP;
 
+    @import org.junit.Assert;
     var _assertEquals = native Assert.assertEquals(String, Object, Object);
     var _assertNotEquals = native Assert.assertNotEquals(String, Object, Object);
     var _assertTrue = native Assert.assertTrue(String, boolean);
@@ -13,52 +14,52 @@
     var _assertArrayEquals = native Assert.assertArrayEquals(String, Object[], Object[]);
     var _assertArrayEquals_chars = native Assert.assertArrayEquals(String, char[], char[]);
 
-    assertTrue = function(object, msg){
+    CONST_MAP.assertTrue = function(object, msg){
         _assertTrue(msg, object);
         assertCount++ ;
     };
 
-    assertFalse = function(object, msg){
+    CONST_MAP.assertFalse = function(object, msg){
         _assertFalse(msg, object);
         assertCount++ ;
     };
 
-    assertEquals = function(first, second, msg){
+    CONST_MAP.assertEquals = function(first, second, msg){
         _assertEquals(msg, first, second);
         assertCount++ ;
     };
 
-    assertNotEquals = function(first, second, msg){
+    CONST_MAP.assertNotEquals = function(first, second, msg){
         _assertNotEquals(msg, first, second);
         assertCount++ ;
     };
 
-    assertNull = function(object, msg){
+    CONST_MAP.assertNull = function(object, msg){
         _assertNull(msg, object);
         assertCount++ ;
     };
 
-    assertNotNull = function(object, msg){
+    CONST_MAP.assertNotNull = function(object, msg){
         _assertNotNull(msg, object);
         assertCount++ ;
     };
 
-    assertSame = function(first, second, msg){
+    CONST_MAP.assertSame = function(first, second, msg){
         _assertSame(msg, first, second);
         assertCount++ ;
     };
 
-    assertNotSame = function(first, second, msg){
+    CONST_MAP.assertNotSame = function(first, second, msg){
         _assertNotSame(msg, first, second);
         assertCount++ ;
     };
 
-    assertArrayEquals = function(first, second, msg){
+    CONST_MAP.assertArrayEquals = function(first, second, msg){
         _assertArrayEquals(msg, first, second);
         assertCount++ ;
     };
 
-    assertArrayEquals_chars = function(first, second, msg){
+    CONST_MAP.assertArrayEquals_chars = function(first, second, msg){
         _assertArrayEquals_chars(msg, first, second);
         assertCount++ ;
     };

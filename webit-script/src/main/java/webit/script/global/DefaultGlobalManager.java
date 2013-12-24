@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import webit.script.Engine;
 import webit.script.Initable;
-import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.util.SimpleBag;
 
 /**
  *
@@ -14,77 +14,82 @@ import webit.script.exceptions.ScriptRuntimeException;
 public class DefaultGlobalManager implements GlobalManager, Initable {
 
     private final Map<String, Object> constMap;
-    private Map<String, Object> globalMap;
+    private final Map<String, Object> driftedGlobalMap;
+    private final Map<String, Integer> globalIndexer;
     private Object[] globalContext;
-    private Map<String, Integer> globalIndexerMap;
-    private boolean committed = false;
 
+    //settings
     private Class[] registers;
 
     public DefaultGlobalManager() {
         this.constMap = new HashMap<String, Object>();
-        this.globalMap = new HashMap<String, Object>();
+        this.driftedGlobalMap = new HashMap<String, Object>();
+        this.globalIndexer = new HashMap<String, Integer>();
     }
 
     public void init(Engine engine) {
         if (registers != null) {
-            for (int i = 0, len = registers.length; i < len; i++) {
-                try {
+            try {
+                for (int i = 0, len = registers.length; i < len; i++) {
                     ((GlobalRegister) engine.getBean(registers[i]))
                             .regist(this);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                    this.commit();
                 }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
         }
     }
 
     public void commit() {
-        if (!this.committed) {
-            this.committed = true;
-            final int size;
-            this.globalContext = new Object[size = this.globalMap.size()];
-            this.globalIndexerMap = new HashMap<String, Integer>((size * 4) / 3 + 1, 0.75f);
-            int i = 0;
-            for (Map.Entry<String, Object> entry : this.globalMap.entrySet()) {
-                this.globalContext[i] = entry.getValue();
-                this.globalIndexerMap.put(entry.getKey(), i);
-                i++;
-            }
-            this.globalMap = null;
+        if (this.driftedGlobalMap.isEmpty()) {
+            return;
         }
+        final int oldSize;
+        final Object[] oldGlobalContext = this.globalContext;
+        oldSize = oldGlobalContext != null ? oldGlobalContext.length : 0;
+
+        final Object[] newGlobalContext = this.globalContext
+                = new Object[oldSize + this.driftedGlobalMap.size()];
+
+        if (oldSize > 0) {
+            //Copy old data
+            System.arraycopy(oldGlobalContext, 0, newGlobalContext, 0, oldSize);
+        }
+
+        int i = oldSize;
+        for (Map.Entry<String, Object> entry : this.driftedGlobalMap.entrySet()) {
+            newGlobalContext[i] = entry.getValue();
+            this.globalIndexer.put(entry.getKey(), i);
+            i++;
+        }
+        this.driftedGlobalMap.clear();
     }
 
     public void setConst(String key, Object value) {
-        if (!this.committed) {
-            this.constMap.put(key, value);
-        }
+        this.constMap.put(key, value);
     }
 
-    public void setGlobal(String key, Object value) {
-        if (this.committed) {
-            int index;
-            if ((index = this.getGlobalIndex(key)) >= 0) {
-                this.setGlobal(index, value);
-            } else {
-                throw new ScriptRuntimeException("Not found global variant named: ".concat(key));
-            }
+    private void setGlobal(String key, Object value) {
+        int index;
+        if ((index = this.getGlobalIndex(key)) >= 0) {
+            this.setGlobal(index, value);
         } else {
-            this.globalMap.put(key, value);
+            this.driftedGlobalMap.put(key, value);
         }
     }
 
     public int getGlobalIndex(String name) {
         Integer index;
-        return (index = globalIndexerMap.get(name)) != null ? index : -1;
+        return (index = globalIndexer.get(name)) != null ? index : -1;
     }
 
-    public Object getGlobal(String key) {
+    private Object getGlobal(String key) {
         int index;
         if ((index = this.getGlobalIndex(key)) >= 0) {
             return this.getGlobal(index);
         } else {
-            throw new ScriptRuntimeException("Not found global variant named: ".concat(key));
+            return this.driftedGlobalMap.get(key);
         }
     }
 
@@ -106,6 +111,32 @@ public class DefaultGlobalManager implements GlobalManager, Initable {
 
     public void setRegisters(Class[] registers) {
         this.registers = registers;
+    }
+
+    public SimpleBag getConstBag() {
+        return new SimpleBag() {
+
+            public Object get(Object key) {
+                return constMap.get(key);
+            }
+
+            public void set(Object key, Object value) {
+                constMap.put(String.valueOf(key), value);
+            }
+        };
+    }
+
+    public SimpleBag getGlobalBag() {
+        return new SimpleBag() {
+
+            public Object get(Object key) {
+                return getGlobal(String.valueOf(key));
+            }
+
+            public void set(Object key, Object value) {
+                setGlobal(String.valueOf(key), value);
+            }
+        };
     }
 
 }

@@ -1,6 +1,8 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
 package webit.script.global;
 
+import webit.script.util.SimpleBag;
+
 /**
  *
  * @author zqq90 <zqq_90@163.com>
@@ -13,30 +15,26 @@ public class AssertGlobalRegister implements GlobalRegister {
         instance = this;
     }
 
-    private DefaultGlobalManager manager;
+    private GlobalManager manager;
     private final static String ASSERT_COUNT = "assertCount";
+    private int accessCountIndex;
 
-    public void regist(DefaultGlobalManager manager) {
+    public void regist(GlobalManager manager) {
         this.manager = manager;
-        manager.setGlobal(ASSERT_COUNT, 0);
-        manager.setGlobal("assertTrue", null);
-        manager.setGlobal("assertFalse", null);
-        manager.setGlobal("assertEquals", null);
-        manager.setGlobal("assertNotEquals", null);
-        manager.setGlobal("assertNull", null);
-        manager.setGlobal("assertNotNull", null);
-        manager.setGlobal("assertSame", null);
-        manager.setGlobal("assertNotSame", null);
-        manager.setGlobal("assertArrayEquals", null);
-        manager.setGlobal("assertArrayEquals_chars", null);
         
+        //Globals
+        SimpleBag globalBag = manager.getGlobalBag();
+        globalBag.set(ASSERT_COUNT, 0);
+        
+        manager.commit();
+        accessCountIndex = manager.getGlobalIndex(ASSERT_COUNT);
     }
 
     public void resetAssertCount() {
-        this.manager.setGlobal(ASSERT_COUNT, 0);
+        this.manager.setGlobal(accessCountIndex, 0);
     }
 
     public int getAssertCount() {
-        return (Integer) this.manager.getGlobal(ASSERT_COUNT);
+        return (Integer) this.manager.getGlobal(accessCountIndex);
     }
 }
