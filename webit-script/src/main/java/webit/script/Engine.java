@@ -31,6 +31,46 @@ import webit.script.util.props.Props;
  */
 public final class Engine {
 
+    public static Engine createEngine(final String configPath) {
+        return createEngine(configPath, null);
+    }
+
+    public static Props createConfigProps(final String configPath) {
+        return PropsUtil.loadFromClasspath(new Props(), CFG.DEFAULT_PROPERTIES, configPath);
+    }
+
+    public static Engine createEngine(final String configPath, final Map<String, Object> parameters) {
+        return createEngine(createConfigProps(configPath), parameters);
+    }
+
+    public static Engine createEngine(final Props props, final Map<String, Object> parameters) {
+
+        final Petite petite = new Petite();
+        petite.defineParameters(props, parameters);
+
+        final Engine engine;
+        petite.wireBean(engine = new Engine(petite));
+
+        try {
+            engine.init();
+
+            final Logger logger;
+            if ((logger = engine.getLogger()).isInfoEnabled()) {
+                logger.info("Loaded props: ".concat(String.valueOf(petite.getParameter(CFG.PROPS_FILE_LIST))));
+            }
+
+            engine.executeInitTemplates();
+        } catch (InstantiationException ex) {
+            throw new RuntimeException(ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        } catch (ResourceNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        return engine;
+    }
+
     //settings
     private Class resourceLoaderClass = webit.script.loaders.impl.ClasspathLoader.class;
     private Class textStatementFactoryClass = webit.script.core.text.impl.SimpleTextStatementFactory.class;
@@ -49,7 +89,6 @@ public final class Engine {
     private String[] vars = null;
     private String[] initTemplates = null;
     //
-    private NativeFactory nativeFactory;
     private Logger logger;
     private Loader resourceLoader;
     private GlobalManager globalManager;
@@ -58,6 +97,7 @@ public final class Engine {
     private CoderFactory coderFactory;
     private Filter filter;
     //
+    private final NativeFactory nativeFactory;
     private final ResolverManager resolverManager;
     private final ConcurrentMap<String, Template> templateCache;
     private final Petite petite;
@@ -66,13 +106,13 @@ public final class Engine {
         this.petite = petite;
         this.templateCache = new ConcurrentHashMap<String, Template>();
         this.resolverManager = new ResolverManager();
+        this.nativeFactory = new NativeFactory();
     }
 
     @SuppressWarnings("unchecked")
     private void init() throws InstantiationException, IllegalAccessException {
 
         this.logger = (Logger) newInstance(this.loggerClass);
-        this.nativeFactory = new NativeFactory();
         this.coderFactory = (CoderFactory) newInstance(this.coderFactoryClass);
         this.nativeSecurityManager = (NativeSecurityManager) newInstance(this.nativeSecurityManagerClass);
         this.textStatementFactory = (TextStatementFactory) newInstance(this.textStatementFactoryClass);
@@ -346,51 +386,5 @@ public final class Engine {
 
     public void setInitTemplates(String[] initTemplates) {
         this.initTemplates = initTemplates;
-    }
-
-    public static Engine createEngine(final String configPath) {
-        return createEngine(configPath, null);
-    }
-
-    public static Props createConfigProps(final String configPath) {
-        final Props props = new Props();
-        if (configPath != null) {
-            PropsUtil.loadFromClasspath(props, CFG.DEFAULT_PROPERTIES, configPath);
-        } else {
-            PropsUtil.loadFromClasspath(props, CFG.DEFAULT_PROPERTIES);
-        }
-        return props;
-    }
-
-    public static Engine createEngine(final String configPath, final Map<String, Object> parameters) {
-        return createEngine(createConfigProps(configPath), parameters);
-    }
-
-    public static Engine createEngine(final Props props, final Map<String, Object> parameters) {
-
-        final Petite petite = new Petite();
-        petite.defineParameters(props, parameters);
-
-        final Engine engine;
-        petite.wireBean(engine = new Engine(petite));
-
-        try {
-            engine.init();
-
-            final Logger logger;
-            if ((logger = engine.getLogger()).isInfoEnabled()) {
-                logger.info("Loaded props: ".concat(String.valueOf(petite.getParameter(CFG.PROPS_FILE_LIST))));
-            }
-
-            engine.executeInitTemplates();
-        } catch (InstantiationException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException(ex);
-        } catch (ResourceNotFoundException ex) {
-            throw new RuntimeException(ex);
-        }
-
-        return engine;
     }
 }

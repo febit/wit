@@ -2,18 +2,13 @@ package webit.script.web;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletContext;
 import webit.script.CFG;
 import webit.script.Engine;
-import webit.script.util.FastCharBuffer;
-import webit.script.util.StringPool;
-import webit.script.util.StringUtil;
+import webit.script.util.PropsUtil;
 import webit.script.util.props.Props;
 
 /**
@@ -22,7 +17,6 @@ import webit.script.util.props.Props;
  */
 public class ServletEngineUtil {
 
-    private final static int BUFFER_SIZE = 3072;
     private final static String DEFAULT_WEB_PROPERTIES = "/webit-script-default-web.props";
     private final static String WEB_ROOT_PREFIX = "%WEB_ROOT%/";
 
@@ -31,11 +25,11 @@ public class ServletEngineUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static Engine createEngine(final ServletContext servletContext, final String configFiles, final Map extraSettings) {
-        final Map settings;
+    public static Engine createEngine(final ServletContext servletContext, final String configFiles, final Map<String, Object> extraSettings) {
+        final Map<String, Object> settings;
         final Props props;
-        loadFromServletContextPath(props = Engine.createConfigProps(DEFAULT_WEB_PROPERTIES), configFiles, servletContext);
-        settings = new HashMap();
+        props = loadFromServletContextPath(Engine.createConfigProps(DEFAULT_WEB_PROPERTIES), servletContext, configFiles);
+        settings = new HashMap<String, Object>();
         settings.put(CFG.SERVLET_LOADER_SERVLETCONTEXT, servletContext);
         if (extraSettings != null) {
             settings.putAll(extraSettings);
@@ -43,60 +37,29 @@ public class ServletEngineUtil {
         return Engine.createEngine(props, settings);
     }
 
-    public static void loadFromServletContextPath(final Props props, final String pathSet, final ServletContext servletContext) {
-        String[] paths;
-        String path;
+    public static Props loadFromServletContextPath(final Props props, final ServletContext servletContext, final String... pathSets) {
 
-        FastCharBuffer charsBuffer = new FastCharBuffer();
-        Reader reader;
-        InputStream in;
-        char[] buffer = new char[BUFFER_SIZE];
-        int read;
+        return PropsUtil.load(props, new PropsUtil.InputStreamResolver() {
 
-        if (pathSet != null && pathSet.length() > 0) {
-            paths = StringUtil.splitc(pathSet, ',');
-            StringUtil.trimAll(paths);
-            for (int j = 0, len = paths.length; j < len; j++) {
-                path = paths[j];
-                if (path != null && path.length() > 0) {
-                    //load from servletContext
-                    if (path.charAt(0) == '/') {
-                        path = path.substring(1);
-                    }
-                    if ((in = servletContext.getResourceAsStream(path)) == null) {
-                        try {
-                            //try read file by real path
-                            in = new FileInputStream(servletContext.getRealPath(path));
-                        } catch (FileNotFoundException ignore) {
-                        }
-                    }
-                    if (in != null) {
-                        try {
-
-                            reader = new InputStreamReader(in, StringUtil.endsWithIgnoreCase(path, ".properties")
-                                    ? StringPool.ISO_8859_1
-                                    : StringPool.UTF_8);
-
-                            charsBuffer.clear();
-
-                            while ((read = reader.read(buffer, 0, BUFFER_SIZE)) >= 0) {
-                                charsBuffer.append(buffer, 0, read);
-                            }
-
-                            props.load(charsBuffer.toString());
-                            props.append(CFG.PROPS_FILE_LIST, WEB_ROOT_PREFIX.concat(path));
-                        } catch (IOException ignore) {
-                            //Note:ignore props IOException
-                        } finally {
-                            try {
-                                in.close();
-                            } catch (IOException ignore) {
-                            }
-                            charsBuffer.clear();
-                        }
-                    }//Note: else ignore not found props
+            public InputStream openInputStream(String path) {
+                if (path.charAt(0) == '/') {
+                    path = path.substring(1);
                 }
+                final InputStream in;
+                if ((in = servletContext.getResourceAsStream(path)) != null) {
+                    return in;
+                }
+                try {
+                    //try read file by real path
+                    return new FileInputStream(servletContext.getRealPath(path));
+                } catch (FileNotFoundException ignore) {
+                }
+                return null;
             }
-        }
+
+            public String getViewPath(String path) {
+                return WEB_ROOT_PREFIX.concat(path);
+            }
+        }, pathSets);
     }
 }

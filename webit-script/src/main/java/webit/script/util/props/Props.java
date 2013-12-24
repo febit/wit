@@ -162,7 +162,7 @@ public final class Props /* implements Cloneable */ {
     /**
      * Parses input string and loads provided properties map.
      */
-    private /* synchronized */ void parse(final String data) {
+    private /* synchronized */ void parse(final char[] data) {
         initialized = false;
         parser.parse(data);
     }
@@ -170,7 +170,7 @@ public final class Props /* implements Cloneable */ {
     /**
      * Loads props from the string.
      */
-    public void load(final String data) {
+    public void load(final char[] data) {
         parse(data);
     }
 

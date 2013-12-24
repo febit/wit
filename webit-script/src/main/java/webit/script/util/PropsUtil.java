@@ -17,7 +17,31 @@ public class PropsUtil {
     private final static int BUFFER_SIZE = 3072;
     private final static String CLASSPATH_PREFIX = "%CLASS_PATH%/";
 
-    public static void loadFromClasspath(final Props props, final String... pathSets) {
+    public static interface InputStreamResolver {
+
+        InputStream openInputStream(String path);
+
+        String getViewPath(String path);
+    }
+
+    public static Props loadFromClasspath(final Props props, final String... pathSets) {
+
+        final ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
+        return load(props, new InputStreamResolver() {
+
+            public InputStream openInputStream(String path) {
+                return classLoader.getResourceAsStream(path.charAt(0) == '/'
+                        ? path.substring(1)
+                        : path);
+            }
+
+            public String getViewPath(String path) {
+                return CLASSPATH_PREFIX.concat(path);
+            }
+        }, pathSets);
+    }
+
+    public static Props load(final Props props, InputStreamResolver inputStreamResolver, final String... pathSets) {
 
         if (pathSets != null) {
 
@@ -25,27 +49,23 @@ public class PropsUtil {
             String[] paths;
             String path;
 
-            ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
+            final FastCharBuffer charsBuffer = new FastCharBuffer();
+            final char[] buffer = new char[BUFFER_SIZE];
 
-            FastCharBuffer charsBuffer = new FastCharBuffer();
             Reader reader;
             InputStream in;
-            char[] buffer = new char[BUFFER_SIZE];
             int read;
 
             for (int i = 0, leni = pathSets.length; i < leni; i++) {
                 pathSet = pathSets[i];
-                if (pathSet != null && pathSet.length() > 0) {
+                if (pathSet != null && pathSet.length() != 0) {
                     paths = StringUtil.splitc(pathSet, ',');
                     StringUtil.trimAll(paths);
                     for (int j = 0, lenj = paths.length; j < lenj; j++) {
                         path = paths[j];
-                        if (path != null && path.length() > 0) {
-                            //load from classpath
-                            if (path.charAt(0) == '/') {
-                                path = path.substring(1);
-                            }
-                            if ((in = classLoader.getResourceAsStream(path)) != null) {
+                        if (path != null && path.length() != 0) {
+                            //load
+                            if ((in = inputStreamResolver.openInputStream(path)) != null) {
                                 try {
 
                                     reader = new InputStreamReader(in, StringUtil.endsWithIgnoreCase(path, ".properties")
@@ -58,10 +78,9 @@ public class PropsUtil {
                                         charsBuffer.append(buffer, 0, read);
                                     }
 
-                                    props.load(charsBuffer.toString());
-                                    props.append(CFG.PROPS_FILE_LIST, CLASSPATH_PREFIX.concat(path));
+                                    props.load(charsBuffer.toArray());
+                                    props.append(CFG.PROPS_FILE_LIST, inputStreamResolver.getViewPath(path));
                                 } catch (IOException ignore) {
-                                    //Note:ignore props IOException
                                 } finally {
                                     try {
                                         in.close();
@@ -75,5 +94,6 @@ public class PropsUtil {
                 }
             }
         }
+        return props;
     }
 }

@@ -2,6 +2,7 @@
 package webit.script.util.props;
 
 import java.util.ArrayList;
+import webit.script.util.CharUtil;
 import webit.script.util.StringPool;
 import webit.script.util.StringUtil;
 
@@ -32,18 +33,18 @@ final class PropsParser /* implements Cloneable*/ {
      * Defines if starting whitespaces when value is split in the new line
      * should be ignored or not.
      */
-    private final static  boolean ignorePrefixWhitespacesOnNewLine = true;
+    private final static boolean ignorePrefixWhitespacesOnNewLine = true;
 
     /**
      * Defines if multi-line values may be written using triple-quotes as in
      * python.
      */
-    private final static  boolean multilineValues = true;
+    private final static boolean multilineValues = true;
 
     /**
      * Don't include empty properties.
      */
-    private final static  boolean skipEmptyProps = true;
+    private final static boolean skipEmptyProps = true;
 
     PropsParser() {
         this.propsData = new PropsData();
@@ -56,7 +57,6 @@ final class PropsParser /* implements Cloneable*/ {
 //    public PropsData getPropsData() {
 //        return propsData;
 //    }
-
 //	@Override
 //	public PropsParser clone() {
 //		final PropsParser pp = new PropsParser(this.propsData.clone());
@@ -85,7 +85,7 @@ final class PropsParser /* implements Cloneable*/ {
     /**
      * Loads properties.
      */
-    void parse(final String in) {
+    void parse(final char[] in) {
         ParseState state = ParseState.TEXT;
         ParseState stateOnEscape = null;
 
@@ -95,10 +95,10 @@ final class PropsParser /* implements Cloneable*/ {
         boolean quickAppend = false;
         final StringBuilder sb = new StringBuilder();
 
-        final int len = in.length();
+        final int len = in.length;
         int ndx = 0;
         while (ndx < len) {
-            final char c = in.charAt(ndx);
+            final char c = in[ndx];
             ndx++;
 
             if (state == ParseState.COMMENT) {
@@ -119,7 +119,7 @@ final class PropsParser /* implements Cloneable*/ {
                         int value = 0;
 
                         for (int i = 0; i < 4; i++) {
-                            final char hexChar = in.charAt(ndx++);
+                            final char hexChar = in[ndx++];
                             if (hexChar >= '0' && hexChar <= '9') {
                                 value = (value << 4) + hexChar - '0';
                             } else if (hexChar >= 'a' && hexChar <= 'f') {
@@ -182,7 +182,7 @@ final class PropsParser /* implements Cloneable*/ {
 
                     // assignment operator
                     case '+':
-                        if (ndx == len || in.charAt(ndx) != '=') {
+                        if (ndx == len || in[ndx] != '=') {
                             sb.append(c);
                             break;
                         }
@@ -256,11 +256,11 @@ final class PropsParser /* implements Cloneable*/ {
                                 // check for ''' beginning
                                 if (sb.toString().equals("'''")) {
                                     sb.setLength(0);
-                                    int endIndex = in.indexOf("'''", ndx);
+                                    int endIndex = CharUtil.indexOf(in, MULTILINE_END, ndx);
                                     if (endIndex == -1) {
-                                        endIndex = in.length();
+                                        endIndex = len;
                                     }
-                                    sb.append(in, ndx, endIndex);
+                                    sb.append(in, ndx, endIndex - ndx);
 
                                     // append
                                     add(currentSection, key, sb, false, quickAppend);
@@ -282,6 +282,7 @@ final class PropsParser /* implements Cloneable*/ {
             add(currentSection, key, sb, true, quickAppend);
         }
     }
+    private final static char[] MULTILINE_END = "'''".toCharArray();
 
     /**
      * Adds accumulated value to key and current section.
@@ -303,7 +304,7 @@ final class PropsParser /* implements Cloneable*/ {
 
         if (trim) {
 //            if (valueTrimLeft && valueTrimRight) {
-                v = v.trim();
+            v = v.trim();
 //            } else if (valueTrimLeft) {
 //                v = StringUtil.trimLeft(v);
 //            } else {
