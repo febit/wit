@@ -2,19 +2,14 @@
 package webit.script.core;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.asm.AsmMethodCaller;
 import webit.script.asm.AsmMethodCallerManager;
-import webit.script.core.ast.ClassNameList;
-import webit.script.core.ast.Expression;
-import webit.script.core.ast.expressions.CommonMethodDeclareExpression;
-import webit.script.core.ast.expressions.DirectValue;
-import webit.script.core.ast.expressions.NativeStaticValue;
 import webit.script.exceptions.ParseException;
 import webit.script.loggers.Logger;
+import webit.script.method.MethodDeclare;
 import webit.script.method.impl.AsmNativeMethodDeclare;
 import webit.script.method.impl.NativeConstructorDeclare;
 import webit.script.method.impl.NativeMethodDeclare;
@@ -43,34 +38,11 @@ public class NativeFactory implements Initable {
         this.enableAsm = enableAsm;
     }
 
-    public Expression createNativeStaticValue(Class clazz, String fieldName, int line, int column) {
-        final String path;
-        if (this.nativeSecurityManager.access(path = (StringUtil.concat(clazz.getName(), ".", fieldName))) == false) {
-            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
-        }
-        Field field;
-        try {
-            field = clazz.getField(fieldName);
-        } catch (NoSuchFieldException ex) {
-            throw new ParseException("No such field: ".concat(path), line, column);
-        }
-        if (ClassUtil.isStatic(field)) {
-            ClassUtil.setAccessible(field);
-            if (ClassUtil.isFinal(field)) {
-                try {
-                    return new DirectValue(field.get(null), line, column);
-                } catch (Exception ex) {
-                    throw new ParseException("Failed to static field value: ".concat(path), ex, line, column);
-                }
-            } else {
-                return new NativeStaticValue(field, line, column);
-            }
-        } else {
-            throw new ParseException("No a static field: ".concat(path), line, column);
-        }
+    public MethodDeclare createNativeNewArrayMethodDeclare(Class componentType) {
+        return createNativeNewArrayMethodDeclare(componentType, -1, -1);
     }
-
-    public CommonMethodDeclareExpression createNativeNewArrayDeclare(Class componentType, int line, int column) {
+    
+    public MethodDeclare createNativeNewArrayMethodDeclare(Class componentType, int line, int column) {
         Class classWaitCheck = componentType;
         while (classWaitCheck.isArray()) {
             classWaitCheck = classWaitCheck.getComponentType();
@@ -85,14 +57,14 @@ public class NativeFactory implements Initable {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
 
-        return new CommonMethodDeclareExpression(new NativeNewArrayDeclare(componentType), line, column);
+        return new NativeNewArrayDeclare(componentType);
+    }
+    
+    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses) {
+        return createNativeMethodDeclare(clazz, methodName, paramClasses, -1, -1);
     }
 
-    public CommonMethodDeclareExpression createNativeMethodDeclare(Class clazz, String methodName, ClassNameList list, int line, int column) {
-        return createNativeMethodDeclare(clazz, methodName, list.toArray(), line, column);
-    }
-
-    public CommonMethodDeclareExpression createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses, int line, int column) {
+    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses, int line, int column) {
 
         final String path;
         if (this.nativeSecurityManager.access(path = (StringUtil.concat(clazz.getName(), ".", methodName))) == false) {
@@ -125,10 +97,9 @@ public class NativeFactory implements Initable {
                 caller = null;
             }
 
-            return new CommonMethodDeclareExpression(caller != null
+            return caller != null
                     ? new AsmNativeMethodDeclare(caller)
-                    : new NativeMethodDeclare(method),
-                    line, column);
+                    : new NativeMethodDeclare(method);
 
         } catch (NoSuchMethodException ex) {
             throw new ParseException(ex.getMessage(), line, column);
@@ -137,12 +108,12 @@ public class NativeFactory implements Initable {
         }
     }
 
-    public CommonMethodDeclareExpression createNativeConstructorDeclare(Class clazz, ClassNameList list, int line, int column) {
-        return createNativeConstructorDeclare(clazz, list.toArray(), line, column);
+    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramClasses) {
+        return createNativeConstructorDeclare(clazz, paramClasses, -1, -1);
     }
 
     @SuppressWarnings("unchecked")
-    public CommonMethodDeclareExpression createNativeConstructorDeclare(Class clazz, Class[] paramClasses, int line, int column) {
+    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramClasses, int line, int column) {
 
         final String path;
         if (this.nativeSecurityManager.access(path = (clazz.getName() + ".<init>")) == false) {
@@ -175,10 +146,9 @@ public class NativeFactory implements Initable {
                 caller = null;
             }
 
-            return new CommonMethodDeclareExpression(caller != null
+            return caller != null
                     ? new AsmNativeMethodDeclare(caller)
-                    : new NativeConstructorDeclare(constructor),
-                    line, column);
+                    : new NativeConstructorDeclare(constructor);
 
         } catch (NoSuchMethodException ex) {
             throw new ParseException(ex.getMessage(), line, column);

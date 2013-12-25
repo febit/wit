@@ -2,6 +2,7 @@
 
 package webit.script.core;
 
+import java.lang.reflect.Field;
 import webit.script.core.VariantManager.VarAddress;
 import webit.script.core.ast.*;
 import webit.script.core.ast.expressions.*;
@@ -9,7 +10,9 @@ import webit.script.core.ast.operators.*;
 import webit.script.core.ast.statements.*;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ClassNameBand;
+import webit.script.util.ClassUtil;
 import webit.script.util.StatementUtil;
+import webit.script.util.StringUtil;
 import webit.script.util.collection.Stack;
 
 
@@ -53,7 +56,43 @@ parser code {:
             throw new ParseException("native static need a filed name.", line, column);
         }
         final String fieldName = classNameBand.pop();
-        return this.nativeFactory.createNativeStaticValue(nativeImportMgr.toClass(classNameBand, line, column), fieldName, line, column);
+        final Class clazz = nativeImportMgr.toClass(classNameBand, line, column);
+        final String path;
+        if (this.engine.getNativeSecurityManager().access(path = (StringUtil.concat(clazz.getName(), ".", fieldName))) == false) {
+            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+        }
+        final Field field;
+        try {
+            field = clazz.getField(fieldName);
+        } catch (NoSuchFieldException ex) {
+            throw new ParseException("No such field: ".concat(path), line, column);
+        }
+        if (ClassUtil.isStatic(field)) {
+            ClassUtil.setAccessible(field);
+            if (ClassUtil.isFinal(field)) {
+                try {
+                    return new DirectValue(field.get(null), line, column);
+                } catch (Exception ex) {
+                    throw new ParseException("Failed to static field value: ".concat(path), ex, line, column);
+                }
+            } else {
+                return new NativeStaticValue(field, line, column);
+            }
+        } else {
+            throw new ParseException("No a static field: ".concat(path), line, column);
+        }
+    }
+    
+    public CommonMethodDeclareExpression createNativeNewArrayDeclareExpression(Class componentType, int line, int column) {
+        return new CommonMethodDeclareExpression(this.nativeFactory.createNativeNewArrayMethodDeclare(componentType, line, column), line, column);
+    }
+    
+    public CommonMethodDeclareExpression createNativeMethodDeclareExpression(Class clazz, String methodName, ClassNameList list, int line, int column) {
+        return new CommonMethodDeclareExpression(this.nativeFactory.createNativeMethodDeclare(clazz, methodName, list.toArray(), line, column), line, column);
+    }
+
+    public CommonMethodDeclareExpression createNativeConstructorDeclareExpression(Class clazz, ClassNameList list, int line, int column) {
+        return new CommonMethodDeclareExpression(this.nativeFactory.createNativeConstructorDeclare(clazz, list.toArray(), line, column), line, column);
     }
 
     private static ResetableValueExpression castToResetableValueExpression(Expression expr) {
@@ -665,13 +704,13 @@ expression      ::= expression_statementable:expr
 
                     //NativeNewArrayDeclareExpression 
                     |NATIVE:sym LBRACK RBRACK className:nameBand
-                    {: return this.nativeFactory.createNativeNewArrayDeclare(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
+                    {: return this.createNativeNewArrayDeclareExpression(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
                     |NATIVE:sym LBRACK className:nameBand RBRACK
-                    {: return this.nativeFactory.createNativeNewArrayDeclare(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
+                    {: return this.createNativeNewArrayDeclareExpression(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
 
                     //nativeMethodExpr
                     |NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN classNameList:list RPAREN
-                    {: return this.nativeFactory.createNativeMethodDeclare(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %ident%, %list%, %sym.line%, %sym.column%); :}
+                    {: return this.createNativeMethodDeclareExpression(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %ident%, %list%, %sym.line%, %sym.column%); :}
 
                     //native static field
                     |NATIVE classPureName:nameBand
@@ -679,7 +718,7 @@ expression      ::= expression_statementable:expr
 
                     //nativeConstructorExpr
                     |NATIVE:sym NEW classPureName:nameBand LPAREN classNameList:list RPAREN
-                    {: return this.nativeFactory.createNativeConstructorDeclare(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %list%, %sym.line%, %sym.column%); :}
+                    {: return this.createNativeConstructorDeclareExpression(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %list%, %sym.line%, %sym.column%); :}
 
                     |contextValueExpr:expr    {: return %expr%; :}
                     |mapValue:expr    {: return %expr%; :}
