@@ -12,13 +12,13 @@ This is a template engine, all writen in Java, **support Java 5+**.
 <dependency>
   <groupId>com.github.zqq90.webit-script</groupId>
   <artifactId>webit-script</artifactId>
-  <version>1.3.0</version>
+  <version>1.3.1</version>
 </dependency>
 ~~~~~
 
 ## Yeah, only one jar
 
-> `webit-script-1.3.0.jar` *<400KB*
+> `webit-script-*.jar` *<400KB*
 
 ## How to use
 
