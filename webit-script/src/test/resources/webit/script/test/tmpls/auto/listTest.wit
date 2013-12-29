@@ -1,0 +1,23 @@
+<%
+var new_list = native new java.util.ArrayList();
+
+{
+    var list = new_list();
+
+    list[2] = "2";
+    list[4] = "4";
+    list[3] = "3";
+    list[2] = "No.2";
+    list[9] = "No.9";
+    
+    assertEquals(10, list.size);
+    assertNull(list[0]);
+    assertNull(list[1]);
+    assertEquals("No.2", list[2]);
+    assertEquals("3", list[3]);
+    assertEquals("4", list[4]);
+    assertEquals("No.9", list[9]);
+}
+
+
+%>

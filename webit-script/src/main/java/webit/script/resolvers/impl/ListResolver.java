@@ -43,12 +43,19 @@ public class ListResolver implements GetResolver, SetResolver {
     @SuppressWarnings("unchecked")
     public boolean set(Object object, Object property, Object value) {
         if (property instanceof Number) {
-            try {
-                ((List) object).set(((Number) property).intValue(), value);
-                return true;
-            } catch (IndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException(StringUtil.concat("index out of bounds:", property));
+            final int index;
+            final int size;
+            final List list;
+            if ((index = ((Number) property).intValue())
+                    >= (size = (list = (List) object).size())) {
+                for (int i = index - size; i != 0; i--) {
+                    list.add(null);
+                }
+                list.add(value);
+            } else {
+                list.set(index, value);
             }
+            return true;
         } else {
             throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: java.util.List#", property));
         }
