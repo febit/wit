@@ -12,12 +12,12 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class FunctionExecute extends AbstractExpression {
+public final class MethodExecute extends AbstractExpression {
 
     private final Expression funcExpr;
     private final Expression[] paramExprs;
 
-    public FunctionExecute(Expression funcExpr, Expression[] paramExprs, int line, int column) {
+    public MethodExecute(Expression funcExpr, Expression[] paramExprs, int line, int column) {
         super(line, column);
         this.funcExpr = funcExpr;
         this.paramExprs = paramExprs;

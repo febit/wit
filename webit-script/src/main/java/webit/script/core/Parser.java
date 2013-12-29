@@ -509,13 +509,13 @@ public class Parser extends lr_parser {
 	case 136: // funcExecuteExpr ::= expression AT contextValueExpr LPAREN expressionList RPAREN 
 	{
 		Symbol funcExpr$Symbol = myStack.peek(3);
-		 return new FunctionExecute((Expression) funcExpr$Symbol.value, ((ExpressionList) myStack.peek(1).value).addFirst((Expression) myStack.peek(5).value).toArray(), funcExpr$Symbol.line, funcExpr$Symbol.column); 
+		 return new MethodExecute((Expression) funcExpr$Symbol.value, ((ExpressionList) myStack.peek(1).value).addFirst((Expression) myStack.peek(5).value).toArray(), funcExpr$Symbol.line, funcExpr$Symbol.column); 
 	}
 
 	case 135: // funcExecuteExpr ::= expression LPAREN expressionList RPAREN 
 	{
 		Symbol funcExpr$Symbol = myStack.peek(3);
-		 return new FunctionExecute((Expression) funcExpr$Symbol.value, ((ExpressionList) myStack.peek(1).value).toArray(), funcExpr$Symbol.line, funcExpr$Symbol.column); 
+		 return new MethodExecute((Expression) funcExpr$Symbol.value, ((ExpressionList) myStack.peek(1).value).toArray(), funcExpr$Symbol.line, funcExpr$Symbol.column); 
 	}
 
 	case 132: // funcHead ::= funcHeadPrepare LPAREN IDENTIFIER 

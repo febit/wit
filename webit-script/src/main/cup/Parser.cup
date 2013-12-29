@@ -797,9 +797,9 @@ funcHeadPrepare     ::= FUNCTION:sym
 
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list RPAREN
-                        {: return new FunctionExecute(%funcExpr%, (%list%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
+                        {: return new MethodExecute(%funcExpr%, (%list%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
                         |expression:param0 AT contextValueExpr:funcExpr LPAREN expressionList:list RPAREN
-                        {: return new FunctionExecute(%funcExpr%, (%list%).addFirst(%param0%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
+                        {: return new MethodExecute(%funcExpr%, (%list%).addFirst(%param0%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
                         ;
 
 
