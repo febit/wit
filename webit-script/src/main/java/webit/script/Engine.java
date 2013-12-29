@@ -30,6 +30,8 @@ import webit.script.util.props.Props;
  * @author Zqq
  */
 public final class Engine {
+    
+    public final static String DEFAULT_SUFFIX = ".wit";
 
     public static Engine createEngine(final String configPath) {
         return createEngine(configPath, null);
@@ -85,7 +87,7 @@ public final class Engine {
     private boolean shareRootData = false;
     private boolean trimCodeBlockBlankLine = true;
     private boolean appendLostSuffix = false;
-    private String suffix = ".wit";
+    private String suffix = DEFAULT_SUFFIX;
     private String[] vars = null;
     private String[] initTemplates = null;
     //

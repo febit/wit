@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import webit.script.CFG;
+import webit.script.Engine;
 import webit.script.web.ServletUtil;
 import webit.script.web.WebEngineManager;
 
@@ -19,19 +20,18 @@ import webit.script.web.WebEngineManager;
  */
 public class WebitScriptRenderFactory implements IMainRenderFactory {
 
-    public final static String DEFAULT_VIEW_EXTENSION = ".wtl";
     protected static final String encoding = Render.getEncoding();
     protected static final String contentType = "text/html; charset=".concat(encoding);
 
     protected final WebEngineManager engineManager;
-    protected final String viewExtension;
+    protected final String suffix;
 
     public WebitScriptRenderFactory() {
-        this(DEFAULT_VIEW_EXTENSION);
+        this(Engine.DEFAULT_SUFFIX);
     }
 
-    public WebitScriptRenderFactory(String viewExtension) {
-        this.viewExtension = viewExtension;
+    public WebitScriptRenderFactory(String suffix) {
+        this.suffix = suffix;
 
         this.engineManager
                 = new WebEngineManager(JFinal.me().getServletContext())
@@ -94,6 +94,6 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
     }
 
     public String getViewExtension() {
-        return viewExtension;
+        return suffix;
     }
 }
