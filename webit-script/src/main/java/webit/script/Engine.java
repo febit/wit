@@ -30,7 +30,7 @@ import webit.script.util.props.Props;
  * @author Zqq
  */
 public final class Engine {
-    
+
     public final static String DEFAULT_SUFFIX = ".wit";
 
     public static Engine createEngine(final String configPath) {
@@ -183,6 +183,10 @@ public final class Engine {
         }
     }
 
+    public Object getConfig(String key) {
+        return this.petite.getParameter(key);
+    }
+
     private Object newInstance(final Class type) throws InstantiationException, IllegalAccessException {
         return type.newInstance();
     }
@@ -266,8 +270,8 @@ public final class Engine {
         this.textStatementFactoryClass = textStatementFactoryClass;
     }
 
-    public void setResourceLoader(Loader resourceLoader) {
-        this.resourceLoader = resourceLoader;
+    public Loader getResourceLoader() {
+        return resourceLoader;
     }
 
     public String getEncoding() {
