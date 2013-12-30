@@ -30,7 +30,7 @@ public class ServletEngineUtil {
         final Props props;
         props = loadFromServletContextPath(Engine.createConfigProps(DEFAULT_WEB_PROPERTIES), servletContext, configFiles);
         settings = new HashMap<String, Object>();
-        settings.put(CFG.SERVLET_LOADER_SERVLETCONTEXT, servletContext);
+        settings.put(CFG.SERVLET_CONTEXT, servletContext);
         if (extraSettings != null) {
             settings.putAll(extraSettings);
         }
