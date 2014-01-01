@@ -91,7 +91,7 @@ public class JavaSourceFormatter {
     /**
      * Copyright.
      */
-    private static final String COPYRIGHT = "// Copyright (c) 2013, Webit Team. All Rights Reserved.";
+    private static final String COPYRIGHT = "// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.\n";
 
     /**
      * Checks if there is a copyright.
@@ -100,11 +100,15 @@ public class JavaSourceFormatter {
         ruleName = "copyright";
 
         // ignore
-        if (filePath.contains("asm4")
+        if (filePath.contains("\\asm3\\")
+                || filePath.contains("/asm3/")
+                ||filePath.contains("/props/")
+                ||filePath.contains("\\props\\")
                 || filePath.endsWith("Parser.java")
                 || filePath.endsWith("Lexer.java")
                 || filePath.endsWith("Tokens.java")
-                || filePath.endsWith("FastCharBuffer.java")) {
+                
+                || content.contains("Jodd Team (jodd.org). All Rights Reserved.")) {
             return content;
         }
 
@@ -116,7 +120,6 @@ public class JavaSourceFormatter {
                 content = content.substring(index + 1);
             }
         }
-        content = COPYRIGHT + "\n" + content;
-        return content;
+        return COPYRIGHT  + content;
     }
 }

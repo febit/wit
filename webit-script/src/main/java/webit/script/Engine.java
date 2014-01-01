@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script;
 
 import java.util.ArrayList;
@@ -183,6 +183,13 @@ public final class Engine {
         }
     }
 
+    /**
+     * get config by key form engine
+     *
+     * @since 1.3.2
+     * @param key
+     * @return config value
+     */
     public Object getConfig(String key) {
         return this.petite.getParameter(key);
     }
@@ -270,6 +277,11 @@ public final class Engine {
         this.textStatementFactoryClass = textStatementFactoryClass;
     }
 
+    /**
+     *
+     * @since 1.3.2
+     * @return Loader
+     */
     public Loader getResourceLoader() {
         return resourceLoader;
     }

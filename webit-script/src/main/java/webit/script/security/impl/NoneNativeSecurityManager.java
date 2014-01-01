@@ -1,10 +1,11 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.security.impl;
 
 import webit.script.security.NativeSecurityManager;
 
 /**
  *
+ * @since 1.3.2
  * @author zqq90 <zqq_90@163.com>
  */
 public class NoneNativeSecurityManager implements NativeSecurityManager {
