@@ -4,6 +4,7 @@ package webit.script.filters.impl;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.filters.Filter;
+import webit.script.util.ClassEntry;
 
 /**
  *
@@ -12,7 +13,7 @@ import webit.script.filters.Filter;
 public class MutiFilter implements Filter, Initable {
 
     //settings
-    private Class[] filterClasses;
+    private ClassEntry[] filterClasses;
     //
     private Filter[] _filters;
 
@@ -28,7 +29,7 @@ public class MutiFilter implements Filter, Initable {
 
     @SuppressWarnings("unchecked")
     public void init(Engine engine) {
-        Class[] classes;
+        ClassEntry[] classes;
         if ((classes = filterClasses) != null) {
             final int len;
             final Filter[] filters;
@@ -45,7 +46,7 @@ public class MutiFilter implements Filter, Initable {
         }
     }
 
-    public void setFilterClasses(Class[] filterClasses) {
+    public void setFilterClasses(ClassEntry[] filterClasses) {
         this.filterClasses = filterClasses;
     }
 }

@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util.bean;
 
+import webit.script.util.ClassEntry;
 import webit.script.util.ClassUtil;
 import webit.script.util.StringUtil;
 
@@ -17,6 +18,8 @@ public class Convert {
         else if (cls.isArray()) {
             if (cls == Class[].class) {
                 return toClassArray(string);
+            } else if (cls == ClassEntry[].class) {
+                return toClassEntryArray(string);
             } else if (cls == String[].class) {
                 return toStringArray(string);
             } else if (cls == int[].class) {
@@ -33,6 +36,8 @@ public class Convert {
             return string;
         } else if (cls == Class.class) {
             return toClass(string);
+        } else if (cls == ClassEntry.class) {
+            return toClassEntry(string);
         } else if (cls == int.class || cls == Integer.class) {
             return toInt(string);
         } else if (cls == boolean.class || cls == Boolean.class) {
@@ -56,6 +61,14 @@ public class Convert {
 
     public static int toInt(String string) {
         return Integer.valueOf(string);
+    }
+
+    public static ClassEntry toClassEntry(String string) {
+        try {
+            return ClassEntry.wrap(string);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public static String[] toStringArray(String string) {
@@ -118,5 +131,16 @@ public class Convert {
             ints[i] = toInt(strings[i]);
         }
         return ints;
+    }
+
+    public static ClassEntry[] toClassEntryArray(String string) {
+        int i;
+        String[] strings;
+        ClassEntry[] entrys = new ClassEntry[i = (strings = toStringArray(string)).length];
+        while (i != 0) {
+            --i;
+            entrys[i] = toClassEntry(strings[i]);
+        }
+        return entrys;
     }
 }

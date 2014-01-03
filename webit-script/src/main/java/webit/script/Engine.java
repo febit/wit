@@ -18,6 +18,7 @@ import webit.script.loggers.Logger;
 import webit.script.resolvers.Resolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
+import webit.script.util.ClassEntry;
 import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
@@ -74,11 +75,11 @@ public final class Engine {
     }
 
     //settings
-    private Class resourceLoaderClass = webit.script.loaders.impl.ClasspathLoader.class;
+    private ClassEntry resourceLoaderClass = ClassEntry.wrap(webit.script.loaders.impl.ClasspathLoader.class);
+    private ClassEntry filterClass;
     private Class textStatementFactoryClass = webit.script.core.text.impl.SimpleTextStatementFactory.class;
     private Class nativeSecurityManagerClass = webit.script.security.impl.DefaultNativeSecurityManager.class;
     private Class coderFactoryClass = webit.script.io.charset.impl.DefaultCoderFactory.class;
-    private Class filterClass;
     private Class globalManagerClass = webit.script.global.DefaultGlobalManager.class;
     private Class loggerClass = webit.script.loggers.impl.NOPLogger.class;
     private Class[] resolvers;
@@ -133,9 +134,9 @@ public final class Engine {
         resolveBean(this.coderFactory);
         resolveBean(this.nativeSecurityManager);
         resolveBean(this.textStatementFactory);
-        resolveBean(this.resourceLoader);
+        resolveBean(this.resourceLoader, this.resourceLoaderClass);
         if (this.filter != null) {
-            resolveBean(this.filter);
+            resolveBean(this.filter, this.filterClass);
         }
         resolveBean(this.resolverManager);
 
@@ -183,6 +184,13 @@ public final class Engine {
         }
     }
 
+    public void resolveBean(final Object bean, final ClassEntry entry) {
+        this.petite.wireBean(entry.getProfile(), bean);
+        if (bean instanceof Initable) {
+            ((Initable) bean).init(this);
+        }
+    }
+
     /**
      * get config by key form engine
      *
@@ -194,6 +202,10 @@ public final class Engine {
         return this.petite.getParameter(key);
     }
 
+    private Object newInstance(final ClassEntry type) throws InstantiationException, IllegalAccessException {
+        return newInstance(type.getValue());
+    }
+
     private Object newInstance(final Class type) throws InstantiationException, IllegalAccessException {
         return type.newInstance();
     }
@@ -201,6 +213,12 @@ public final class Engine {
     public Object getBean(final Class type) throws InstantiationException, IllegalAccessException {
         Object bean;
         resolveBean(bean = newInstance(type));
+        return bean;
+    }
+
+    public Object getBean(final ClassEntry type) throws InstantiationException, IllegalAccessException {
+        Object bean;
+        resolveBean(bean = newInstance(type), type);
         return bean;
     }
 
@@ -269,7 +287,7 @@ public final class Engine {
         this.resolvers = resolvers;
     }
 
-    public void setResourceLoaderClass(Class resourceLoaderClass) {
+    public void setResourceLoaderClass(ClassEntry resourceLoaderClass) {
         this.resourceLoaderClass = resourceLoaderClass;
     }
 
@@ -340,7 +358,7 @@ public final class Engine {
         return coderFactory;
     }
 
-    public void setFilterClass(Class filterClass) {
+    public void setFilterClass(ClassEntry filterClass) {
         this.filterClass = filterClass;
     }
 
