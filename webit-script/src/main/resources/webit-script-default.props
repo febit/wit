@@ -2,25 +2,15 @@
 
 DEFAULT_ENCODING=UTF-8
 
-
-[webit.script.Engine]
+[engine]
 # resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
 # textStatementFactoryClass=webit.script.core.text.impl.SimpleTextStatementFactory
 # nativeSecurityManagerClass=webit.script.security.impl.DefaultNativeSecurityManager
 # globalManagerClass=webit.script.global.DefaultGlobalManager
+
 encoding=${DEFAULT_ENCODING}
 
 # filterClass=webit.script.filters.impl.MutiFilter
-
-resolvers=\
-    webit.script.resolvers.impl.MapResolver,\
-    webit.script.resolvers.impl.SimpleBagResolver,\
-    webit.script.resolvers.impl.ListResolver,\
-    webit.script.resolvers.impl.CharSequenceResolver,\
-    webit.script.resolvers.impl.ArrayResolver,\
-    webit.script.resolvers.impl.IterGetResolver,\
-    webit.script.resolvers.impl.IntegerOutResolver,\
-    webit.script.resolvers.impl.LongOutResolver
 
 # enableAsmNative=true
 # looseVar=false
@@ -33,6 +23,21 @@ resolvers=\
 
 # Logger
 # loggerClass=webit.script.loggers.impl.NOPLogger
+
+resolvers=\
+    webit.script.resolvers.impl.MapResolver,\
+    webit.script.resolvers.impl.SimpleBagResolver,\
+    webit.script.resolvers.impl.ListResolver,\
+    webit.script.resolvers.impl.CharSequenceResolver,\
+    webit.script.resolvers.impl.ArrayResolver,\
+    webit.script.resolvers.impl.IterGetResolver,\
+    webit.script.resolvers.impl.IntegerOutResolver,\
+    webit.script.resolvers.impl.LongOutResolver
+
+
+
+[webit.script.Engine]
+@extends=engine
 
 
 ### MutiFilter
@@ -58,13 +63,22 @@ encoding=${DEFAULT_ENCODING}
 # encoding=${DEFAULT_ENCODING}
 # root=/your/template/path
 
+
 [webit.script.global.DefaultGlobalManager]
+@extends=global
+
+[global]
 registers=webit.script.global.impl.GlobalMapRegister
+
 
 # [webit.script.global.impl.GlobalMapRegister]
 # name=$GLOBAL
 
+
 [webit.script.security.impl.DefaultNativeSecurityManager]
+@extends=nativeSecurity
+
+[nativeSecurity]
 list='''
 
   boolean
