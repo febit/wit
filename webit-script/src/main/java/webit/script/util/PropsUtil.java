@@ -26,17 +26,18 @@ public class PropsUtil {
 
     public static Props loadFromClasspath(final Props props, final String... pathSets) {
 
-        final ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
         return load(props, new InputStreamResolver() {
 
             public InputStream openInputStream(String path) {
-                return classLoader.getResourceAsStream(path.charAt(0) == '/'
+                return ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path.charAt(0) == '/'
                         ? path.substring(1)
                         : path);
             }
 
             public String getViewPath(String path) {
-                return CLASSPATH_PREFIX.concat(path);
+                return CLASSPATH_PREFIX.concat(path.charAt(0) == '/'
+                        ? path.substring(1)
+                        : path);
             }
         }, pathSets);
     }
@@ -52,18 +53,15 @@ public class PropsUtil {
             final FastCharBuffer charsBuffer = new FastCharBuffer();
             final char[] buffer = new char[BUFFER_SIZE];
 
-            Reader reader;
+            Reader reader = null;
             InputStream in;
             int read;
 
             for (int i = 0, leni = pathSets.length; i < leni; i++) {
-                pathSet = pathSets[i];
-                if (pathSet != null && pathSet.length() != 0) {
-                    paths = StringUtil.splitc(pathSet, ',');
-                    StringUtil.trimAll(paths);
+                if ((pathSet = pathSets[i]) != null && pathSet.length() != 0) {
+                    StringUtil.trimAll(paths = StringUtil.splitc(pathSet, ','));
                     for (int j = 0, lenj = paths.length; j < lenj; j++) {
-                        path = paths[j];
-                        if (path != null && path.length() != 0) {
+                        if ((path = paths[j]) != null && path.length() != 0) {
                             //load
                             if ((in = inputStreamResolver.openInputStream(path)) != null) {
                                 try {
@@ -79,14 +77,18 @@ public class PropsUtil {
                                     }
 
                                     props.load(charsBuffer.toArray());
+                                    charsBuffer.clear();
                                     props.append(CFG.PROPS_FILE_LIST, inputStreamResolver.getViewPath(path));
                                 } catch (IOException ignore) {
                                 } finally {
                                     try {
-                                        in.close();
+                                        if (reader != null) {
+                                            reader.close();
+                                        } else {
+                                            in.close();
+                                        }
                                     } catch (IOException ignore) {
                                     }
-                                    charsBuffer.clear();
                                 }
                             }//Note: else ignore not found props
                         }
