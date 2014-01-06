@@ -59,7 +59,9 @@ public class ServletEngineUtil {
             }
 
             public String getViewPath(String path) {
-                return WEB_ROOT_PREFIX.concat(path);
+                return WEB_ROOT_PREFIX.concat(path.charAt(0) == '/'
+                        ? path.substring(1)
+                        : path);
             }
         }, pathSets);
     }

@@ -1,7 +1,7 @@
 
 
 
-[webit.script.Engine]
+[engine]
 textStatementFactoryClass=webit.script.core.text.impl.ByteArrayTextStatementFactory
 resourceLoaderClass=webit.script.web.loaders.ServletLoader
 
@@ -16,12 +16,14 @@ resolvers +=webit.script.web.resolvers.HttpSessionResolver,\
 
 shareRootData=true
 
-[webit.script.web.loaders.ServletLoader]
-
-encoding=${DEFAULT_ENCODING}
-root=/WEB-INF/templates
-
-### servletContext will be setted by WebEngineUtil
+# [servlet]
+## servletContext will be setted by ServletEngineUtil
 ## servletContext=
 
+[servletLoader]
+@extends=servlet,loader
+root=/WEB-INF/templates
+
+[webit.script.web.loaders.ServletLoader]
+@extends=servletLoader
 

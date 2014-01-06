@@ -7,12 +7,10 @@ package webit.script;
  */
 public interface CFG {
 
-    public static final String PROPS_FILE_LIST = "$$propsFiles";
     public static final String DEFAULT_PROPERTIES = "/webit-script-default.props";
-    
-    public static final String SERVLET_CONTEXT    = "SERVLET_CONTEXT";
-    
+    public static final String PROPS_FILE_LIST  = "$$propsFiles";
     public static final String DEFAULT_ENCODING = "DEFAULT_ENCODING";
+    
     public static final String ENGINE           = "engine";
 
     public static final String RESOLVERS        = ENGINE + ".resolvers";
@@ -37,14 +35,8 @@ public interface CFG {
     public static final String ASM_RESOLVER     = "webit.script.resolvers.ResolverManager.enableAsm";
     public static final String SECURITY_LIST    = "nativeSecurity.list";
     
-    public static final String SERVLET_LOADER   = "webit.script.web.loaders.ServletLoader";
-    public static final String SERVLET_LOADER_ENCODING  = SERVLET_LOADER + ".encoding";
-    public static final String SERVLET_LOADER_ROOT      = SERVLET_LOADER + ".root";
+    public static final String LOADER_ENCODING  = "loader.encoding";
+    public static final String LOADER_ROOT      = "loader.root";
     
-    //public static final String SERVLET_LOADER_SERVLETCONTEXT    = SERVLET_LOADER + ".servletContext";
-    
-    public static final String CLASSPATH_LOADER   = "webit.script.loaders.impl.ClasspathLoader";
-    public static final String CLASSPATH_LOADER_ENCODING  = CLASSPATH_LOADER + ".encoding";
-    public static final String CLASSPATH_LOADER_ROOT      = CLASSPATH_LOADER + ".root";
-
+    public static final String SERVLET_CONTEXT  = "servlet.servletContext";
 }
