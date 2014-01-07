@@ -194,7 +194,7 @@ public final class Engine {
     /**
      * get config by key form engine
      *
-     * @since 1.3.2
+     * @since 1.4.0
      * @param key
      * @return config value
      */
@@ -297,7 +297,7 @@ public final class Engine {
 
     /**
      *
-     * @since 1.3.2
+     * @since 1.4.0
      * @return Loader
      */
     public Loader getResourceLoader() {
