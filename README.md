@@ -66,11 +66,11 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
 
 > [More examples][tests]
 
-## MVC Support
+## Official Support
 + Jodd Madvoc
 + JFinal
 + Spring MVC
-+ Struts
++ Struts2
 + Servlet & Filter
 
 > [Demo][mvc-demo]
