@@ -27,3 +27,6 @@ root=/WEB-INF/templates
 [webit.script.web.loaders.ServletLoader]
 @extends=servletLoader
 
+
+[global]
+registers+=webit.script.web.global.GlobalServletRegister
