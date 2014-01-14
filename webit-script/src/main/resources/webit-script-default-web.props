@@ -14,8 +14,6 @@ resolvers +=webit.script.web.resolvers.HttpSessionResolver,\
     webit.script.web.resolvers.HttpServletRequestHeaderResolver,\
     webit.script.web.resolvers.HttpServletRequestHeadersResolver
 
-shareRootData=true
-
 # [servlet]
 ## servletContext will be setted by ServletEngineUtil
 ## servletContext=

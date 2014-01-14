@@ -85,7 +85,7 @@ public final class Engine {
     private Class[] resolvers;
     private String encoding = EncodingPool.UTF_8;
     private boolean looseVar = false;
-    private boolean shareRootData = false;
+    private boolean shareRootData = true;
     private boolean trimCodeBlockBlankLine = true;
     private boolean appendLostSuffix = false;
     private String suffix = DEFAULT_SUFFIX;

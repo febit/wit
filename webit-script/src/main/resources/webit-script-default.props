@@ -19,7 +19,7 @@ encoding=${DEFAULT_ENCODING}
 # suffix=.wit
 # vars=
 # initTemplates=
-# shareRootData=false
+# shareRootData=true
 
 # Logger
 # loggerClass=webit.script.loggers.impl.NOPLogger
