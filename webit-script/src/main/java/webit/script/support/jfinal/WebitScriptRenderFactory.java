@@ -32,10 +32,10 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
 
     public WebitScriptRenderFactory(String suffix) {
         this.suffix = suffix;
-
         this.engineManager
                 = new WebEngineManager(JFinal.me().getServletContext())
-                .appendProperties(CFG.RESOLVERS, "webit.script.support.jfinal.ModelResolver");
+                .appendProperties(CFG.RESOLVERS, "webit.script.support.jfinal.ModelResolver")
+                .appendProperties(CFG.RESOLVERS, "webit.script.support.jfinal.RecordResolver");
     }
 
     public void setConfigPath(String configPath) {
