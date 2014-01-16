@@ -112,8 +112,18 @@ public class StringUtil {
         return string;
     }
 
-    public static String cutAndLowerFirst(String string, int from) {
-        return String.valueOf(CharUtil.toLowerAscii(string.charAt(from))).concat(string.substring(from + 1));
+    /**
+     *
+     * @since 1.4.0
+     */
+    public static String cutFieldName(final String string, final int from) {
+        final int nextIndex = from + 1;
+        if (string.length() > nextIndex
+                && CharUtil.isUppercaseAlpha(string.charAt(nextIndex))) {
+            return string.substring(from);
+        } else {
+            return String.valueOf(CharUtil.toLowerAscii(string.charAt(from))).concat(string.substring(from + 1));
+        }
     }
 
     /**

@@ -76,6 +76,14 @@ public class CharUtil {
         return c;
     }
 
+    public static boolean isLowercaseAlpha(char c) {
+        return (c >= 'a') && (c <= 'z');
+    }
+
+    public static boolean isUppercaseAlpha(char c) {
+        return (c >= 'A') && (c <= 'Z');
+    }
+
     public static boolean isWhitespace(char c) {
         return c <= ' ';
     }

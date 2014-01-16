@@ -52,16 +52,16 @@ public final class FieldInfoResolver {
                     if (argsCount == 1
                             && methodNameLength > 3
                             && methodName.startsWith("set")) {
-                        registSetterMethod(StringUtil.cutAndLowerFirst(methodName, 3), method);
+                        registSetterMethod(StringUtil.cutFieldName(methodName, 3), method);
                     }
                 } else {
                     if (argsCount == 0) {
                         if (methodNameLength > 3
                                 && methodName.startsWith("get")) {
-                            registGetterMethod(StringUtil.cutAndLowerFirst(methodName, 3), method);
+                            registGetterMethod(StringUtil.cutFieldName(methodName, 3), method);
                         } else if (methodNameLength > 2
                                 && methodName.startsWith("is")) {
-                            registGetterMethod(StringUtil.cutAndLowerFirst(methodName, 2), method);
+                            registGetterMethod(StringUtil.cutFieldName(methodName, 2), method);
                         }
                     }
                 }
