@@ -259,7 +259,7 @@ terminal Integer    VAR,
                     COLON,  // :
                     COMMA,  // ,
                     SEMICOLON,  // ;
-                    LBRACE, RBRACE, PLACE_HOLDER_END, // { }
+                    LBRACE, RBRACE, INTERPOLATION_END, // { }
                     LPAREN, RPAREN,  // ( )
                     LBRACK, RBRACK,  // [ ]
                     EQGT,  // =>
@@ -365,8 +365,8 @@ statement            ::= expression_statementable:expr SEMICOLON
                         |SEMICOLON
                         {: return NoneStatement.getInstance(); :}
 
-                        |expression:expr PLACE_HOLDER_END
-                        {: return placeHolderFactory.creatPlaceHolder(%expr%); :}
+                        |expression:expr INTERPOLATION_END
+                        {: return interpolationFactory.createInterpolation(%expr%); :}
 
                         |block:stat
                         {: return %stat%; :}

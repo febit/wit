@@ -65,7 +65,7 @@ public interface Tokens {
   public static final int OR = 47;
   public static final int error = 1;
   public static final int URSHIFT = 38;
-  public static final int PLACE_HOLDER_END = 62;
+  public static final int INTERPOLATION_END = 62;
   public static final int FINALLY = 16;
   public static final int CONTINUE = 27;
   public static final int IF = 3;

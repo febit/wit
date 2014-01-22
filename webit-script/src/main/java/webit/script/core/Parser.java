@@ -32,7 +32,7 @@ public class Parser extends lr_parser {
   /** Parse-action table. */
   static final short[][] ACTION_TABLE = loadFromDataFile("Action");
 
-  /** <code>reduce_goto</code> table. */
+  /** *  <code>reduce_goto</code> table. */
   static final short[][] REDUCE_TABLE = loadFromDataFile("Reduce");
   /** Indicates start state. */
   final static int START_STATE = 0;
@@ -488,9 +488,9 @@ public class Parser extends lr_parser {
 		 return new SwitchPart(); 
 	}
 
-	case 10: // statement ::= expression PLACE_HOLDER_END 
+	case 10: // statement ::= expression INTERPOLATION_END 
 	{
-		 return placeHolderFactory.creatPlaceHolder((Expression) myStack.peek(1).value); 
+		 return interpolationFactory.createInterpolation((Expression) myStack.peek(1).value); 
 	}
 
 	case 48: // blockPrepare ::= 

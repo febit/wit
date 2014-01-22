@@ -9,17 +9,17 @@ import webit.script.filters.Filter;
  *
  * @author Zqq
  */
-public class PlaceHolderFactory {
+public class InterpolationFactory {
 
     private final Filter filter;
 
-    public PlaceHolderFactory(Filter filter) {
+    public InterpolationFactory(Filter filter) {
         this.filter = filter;
     }
 
-    public Statement creatPlaceHolder(final Expression expr) {
+    public Statement createInterpolation(final Expression expr) {
         return filter != null
-                ? new FilterPlaceHolder(filter, expr)
-                : new PlaceHolder(expr);
+                ? new FilterInterpolation(filter, expr)
+                : new Interpolation(expr);
     }
 }

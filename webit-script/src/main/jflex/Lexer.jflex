@@ -8,7 +8,7 @@ import webit.script.util.RepeatChars;
 %public
 %class Lexer
 /* %cup */
-%implements Tokens
+/* %implements Tokens */
 %function nextToken
 %type Symbol
 %line
@@ -18,8 +18,8 @@ import webit.script.util.RepeatChars;
 %{
     //================ >> user code
 
-    private boolean placeHolderFlag = false;
-    private boolean leftPlaceHolderFlag = true;
+    private boolean interpolationFlag = false;
+    private boolean leftInterpolationFlag = true;
 
     private boolean trimCodeBlockBlankLine = false;
     private FastCharBuffer stringBuffer = new FastCharBuffer(256);
@@ -108,21 +108,21 @@ import webit.script.util.RepeatChars;
         return new Symbol(sym, line, column, val);
     }
 
-    private Symbol popTextStatementSymbol(boolean placeHolderFlag){
-        this.placeHolderFlag = placeHolderFlag;
+    private Symbol popTextStatementSymbol(boolean interpolationFlag){
+        this.interpolationFlag = interpolationFlag;
         yybegin(YYSTATEMENT);
         final char[] chars;
         if(trimCodeBlockBlankLine){
-            if(!placeHolderFlag){
+            if(!interpolationFlag){
                 stringBuffer.trimRightBlankToNewLine();
             }
-            chars = this.leftPlaceHolderFlag
+            chars = this.leftInterpolationFlag
                     ? popAsCharArray()
                     : popAsCharArraySkipIfLeftNewLine();
         }else{
             chars = popAsCharArray();
         }
-        return symbol(TEXT_STATEMENT, stringLine, stringColumn, chars);
+        return symbol(Tokens.TEXT_STATEMENT, stringLine, stringColumn, chars);
     }
 
     public final String yytext(int startOffset, int endOffset) {
@@ -240,11 +240,11 @@ SingleCharacter = [^\r\n\'\\]
 
 DelimiterStatementStart     = "<%"
 DelimiterStatementEnd       = "%>"
-DelimiterPlaceholderStart   = "${"
-/* DelimiterPlaceholderEnd     = "}"*/
+DelimiterInterpolationStart   = "${"
+/* DelimiterInterpolationEnd     = "}"*/
 
 DelimiterStatementStartMatch   = [\\]* {DelimiterStatementStart}
-DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
+DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
 
 
 %state  YYSTATEMENT, STRING, CHARLITERAL, END_OF_FILE
@@ -258,12 +258,12 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   {DelimiterStatementStartMatch}        { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatementSymbol(false);} else {appendToString("<%");} }
 
   /* if to PLACEHOLDER */
-  {DelimiterPlaceholderStartMatch}      { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatementSymbol(true);} else {appendToString("${");} }
+  {DelimiterInterpolationStartMatch}      { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatementSymbol(true);} else {appendToString("${");} }
   
 
   .|\n                                  { pullToString(); }
 
-  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(TEXT_STATEMENT,  stringLine,stringColumn, popAsCharArray());}
+  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(Tokens.TEXT_STATEMENT,  stringLine,stringColumn, popAsCharArray());}
 }
 
 
@@ -271,109 +271,109 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 <YYSTATEMENT> {
 
   /* keywords */
-  "break"                        { return symbol(BREAK); }
-  "case"                         { return symbol(CASE); }
-  "continue"                     { return symbol(CONTINUE); }
-  "do"                           { return symbol(DO); }
-  "else"                         { return symbol(ELSE); }
-  "for"                          { return symbol(FOR); }
-  "default"                      { return symbol(DEFAULT); }
-  "instanceof"                   { return symbol(INSTANCEOF); }
-  "new"                          { return symbol(NEW); }
-  "if"                           { return symbol(IF); }
-  "super"                        { return symbol(SUPER); }
-  "switch"                       { return symbol(SWITCH); }
-  "while"                        { return symbol(WHILE); }
-  "var"                          { return symbol(VAR); }
-  /* "in"                           { return symbol(IN); } */
-  "function"                     { return symbol(FUNCTION); }
-  "#"                            { return symbol(FUNCTION); }
-  "return"                       { return symbol(RETURN); }
-  "this"                         { return symbol(THIS); }
+  "break"                        { return symbol(Tokens.BREAK); }
+  "case"                         { return symbol(Tokens.CASE); }
+  "continue"                     { return symbol(Tokens.CONTINUE); }
+  "do"                           { return symbol(Tokens.DO); }
+  "else"                         { return symbol(Tokens.ELSE); }
+  "for"                          { return symbol(Tokens.FOR); }
+  "default"                      { return symbol(Tokens.DEFAULT); }
+  "instanceof"                   { return symbol(Tokens.INSTANCEOF); }
+  "new"                          { return symbol(Tokens.NEW); }
+  "if"                           { return symbol(Tokens.IF); }
+  "super"                        { return symbol(Tokens.SUPER); }
+  "switch"                       { return symbol(Tokens.SWITCH); }
+  "while"                        { return symbol(Tokens.WHILE); }
+  "var"                          { return symbol(Tokens.VAR); }
+  /* "in"                           { return symbol(Tokens.IN); } */
+  "function"                     { return symbol(Tokens.FUNCTION); }
+  "#"                            { return symbol(Tokens.FUNCTION); }
+  "return"                       { return symbol(Tokens.RETURN); }
+  "this"                         { return symbol(Tokens.THIS); }
   
 
-  "throw"                        { return symbol(THROW); }
-  "try"                          { return symbol(TRY); }
-  "catch"                        { return symbol(CATCH); }
-  "finally"                      { return symbol(FINALLY); }
+  "throw"                        { return symbol(Tokens.THROW); }
+  "try"                          { return symbol(Tokens.TRY); }
+  "catch"                        { return symbol(Tokens.CATCH); }
+  "finally"                      { return symbol(Tokens.FINALLY); }
 
 
-  "native"                       { return symbol(NATIVE); }
-  "static"                       { return symbol(STATIC); }
+  "native"                       { return symbol(Tokens.NATIVE); }
+  "static"                       { return symbol(Tokens.STATIC); }
 
 
-  "import"                       { return symbol(IMPORT); }
-  "include"                      { return symbol(INCLUDE); }
+  "import"                       { return symbol(Tokens.IMPORT); }
+  "include"                      { return symbol(Tokens.INCLUDE); }
 
-  "echo"                         { return symbol(ECHO); }
+  "echo"                         { return symbol(Tokens.ECHO); }
 
-  "@import"                      { return symbol(NATIVE_IMPORT); }
+  "@import"                      { return symbol(Tokens.NATIVE_IMPORT); }
 
 
-/*  "const"                        { return symbol(CONST); } */
+/*  "const"                        { return symbol(Tokens.CONST); } */
   
   /* boolean literals */
-  "true"                         { return symbol(DIRECT_VALUE, Boolean.TRUE); }
-  "false"                        { return symbol(DIRECT_VALUE, Boolean.FALSE); }
+  "true"                         { return symbol(Tokens.DIRECT_VALUE, Boolean.TRUE); }
+  "false"                        { return symbol(Tokens.DIRECT_VALUE, Boolean.FALSE); }
   
   /* null literal */
-  "null"                         { return symbol(DIRECT_VALUE, null); }
+  "null"                         { return symbol(Tokens.DIRECT_VALUE, null); }
   
   
   /* separators */
-  "("                            { return symbol(LPAREN); }
-  ")"                            { return symbol(RPAREN); }
-  "{"                            { return symbol(LBRACE); }
-  "}"                            { if(!placeHolderFlag){return symbol(RBRACE);}else{yybegin(YYINITIAL); leftPlaceHolderFlag = true;return symbol(PLACE_HOLDER_END);} }
-  "["                            { return symbol(LBRACK); }
-  "]"                            { return symbol(RBRACK); }
-  ";"                            { return symbol(SEMICOLON); }
-  ","                            { return symbol(COMMA); }
-  "."                            { return symbol(DOT); }
-  ".."                           { return symbol(DOTDOT); }
+  "("                            { return symbol(Tokens.LPAREN); }
+  ")"                            { return symbol(Tokens.RPAREN); }
+  "{"                            { return symbol(Tokens.LBRACE); }
+  "}"                            { if(!interpolationFlag){return symbol(Tokens.RBRACE);}else{yybegin(YYINITIAL); leftInterpolationFlag = true;return symbol(Tokens.INTERPOLATION_END);} }
+  "["                            { return symbol(Tokens.LBRACK); }
+  "]"                            { return symbol(Tokens.RBRACK); }
+  ";"                            { return symbol(Tokens.SEMICOLON); }
+  ","                            { return symbol(Tokens.COMMA); }
+  "."                            { return symbol(Tokens.DOT); }
+  ".."                           { return symbol(Tokens.DOTDOT); }
   
   /* operators */
-  "="                            { return symbol(EQ); }
-  ">"                            { return symbol(GT); }
-  "<"                            { return symbol(LT); }
-  "!"                            { return symbol(NOT); }
-  "~"                            { return symbol(COMP); }
-  "?"                            { return symbol(QUESTION); }
-  ":"                            { return symbol(COLON); }
-  "?:"                           { return symbol(QUESTION_COLON); }
-  "=="                           { return symbol(EQEQ); }
-  "<="                           { return symbol(LTEQ); }
-  ">="                           { return symbol(GTEQ); }
-  "!="                           { return symbol(NOTEQ); }
-  "&&"                           { return symbol(ANDAND); }
-  "||"                           { return symbol(OROR); }
-  "++"                           { return symbol(PLUSPLUS); }
-  "--"                           { return symbol(MINUSMINUS); }
-  "+"                            { return symbol(PLUS); }
-  "-"                            { return symbol(MINUS); }
-  "*"                            { return symbol(MULT); }
-  "/"                            { return symbol(DIV); }
-  "&"                            { return symbol(AND); }
-  "|"                            { return symbol(OR); }
-  "^"                            { return symbol(XOR); }
-  "%"                            { return symbol(MOD); }
-  "<<"                           { return symbol(LSHIFT); }
-  ">>"                           { return symbol(RSHIFT); }
-  ">>>"                          { return symbol(URSHIFT); }
-  "+="                           { return symbol(SELFEQ, Operators.PLUSEQ); }
-  "-="                           { return symbol(SELFEQ, Operators.MINUSEQ); }
-  "*="                           { return symbol(SELFEQ, Operators.MULTEQ); }
-  "/="                           { return symbol(SELFEQ, Operators.DIVEQ); }
-  "&="                           { return symbol(SELFEQ, Operators.ANDEQ); }
-  "|="                           { return symbol(SELFEQ, Operators.OREQ); }
-  "^="                           { return symbol(SELFEQ, Operators.XOREQ); }
-  "%="                           { return symbol(SELFEQ, Operators.MODEQ); }
-  "<<="                          { return symbol(SELFEQ, Operators.LSHIFTEQ); }
-  ">>="                          { return symbol(SELFEQ, Operators.RSHIFTEQ); }
-  ">>>="                         { return symbol(SELFEQ, Operators.URSHIFTEQ); }
+  "="                            { return symbol(Tokens.EQ); }
+  ">"                            { return symbol(Tokens.GT); }
+  "<"                            { return symbol(Tokens.LT); }
+  "!"                            { return symbol(Tokens.NOT); }
+  "~"                            { return symbol(Tokens.COMP); }
+  "?"                            { return symbol(Tokens.QUESTION); }
+  ":"                            { return symbol(Tokens.COLON); }
+  "?:"                           { return symbol(Tokens.QUESTION_COLON); }
+  "=="                           { return symbol(Tokens.EQEQ); }
+  "<="                           { return symbol(Tokens.LTEQ); }
+  ">="                           { return symbol(Tokens.GTEQ); }
+  "!="                           { return symbol(Tokens.NOTEQ); }
+  "&&"                           { return symbol(Tokens.ANDAND); }
+  "||"                           { return symbol(Tokens.OROR); }
+  "++"                           { return symbol(Tokens.PLUSPLUS); }
+  "--"                           { return symbol(Tokens.MINUSMINUS); }
+  "+"                            { return symbol(Tokens.PLUS); }
+  "-"                            { return symbol(Tokens.MINUS); }
+  "*"                            { return symbol(Tokens.MULT); }
+  "/"                            { return symbol(Tokens.DIV); }
+  "&"                            { return symbol(Tokens.AND); }
+  "|"                            { return symbol(Tokens.OR); }
+  "^"                            { return symbol(Tokens.XOR); }
+  "%"                            { return symbol(Tokens.MOD); }
+  "<<"                           { return symbol(Tokens.LSHIFT); }
+  ">>"                           { return symbol(Tokens.RSHIFT); }
+  ">>>"                          { return symbol(Tokens.URSHIFT); }
+  "+="                           { return symbol(Tokens.SELFEQ, Operators.PLUSEQ); }
+  "-="                           { return symbol(Tokens.SELFEQ, Operators.MINUSEQ); }
+  "*="                           { return symbol(Tokens.SELFEQ, Operators.MULTEQ); }
+  "/="                           { return symbol(Tokens.SELFEQ, Operators.DIVEQ); }
+  "&="                           { return symbol(Tokens.SELFEQ, Operators.ANDEQ); }
+  "|="                           { return symbol(Tokens.SELFEQ, Operators.OREQ); }
+  "^="                           { return symbol(Tokens.SELFEQ, Operators.XOREQ); }
+  "%="                           { return symbol(Tokens.SELFEQ, Operators.MODEQ); }
+  "<<="                          { return symbol(Tokens.SELFEQ, Operators.LSHIFTEQ); }
+  ">>="                          { return symbol(Tokens.SELFEQ, Operators.RSHIFTEQ); }
+  ">>>="                         { return symbol(Tokens.SELFEQ, Operators.URSHIFTEQ); }
 
-  "@"                            { return symbol(AT); }
-  "=>"                           { return symbol(EQGT); }
+  "@"                            { return symbol(Tokens.AT); }
+  "=>"                           { return symbol(Tokens.EQGT); }
 
   
   /* string literal */
@@ -386,24 +386,24 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 
   /* Note: This is matched together with the minus, because the number is too big to 
      be represented by a positive integer. */
-  "-2147483648"                  { return symbol(DIRECT_VALUE, Integer.MIN_VALUE); }
+  "-2147483648"                  { return symbol(Tokens.DIRECT_VALUE, Integer.MIN_VALUE); }
 
 
-  {BinIntegerLiteral}            { return symbol(DIRECT_VALUE, yyBinInteger(2, 0)); }
-  {BinLongLiteral}               { return symbol(DIRECT_VALUE, yyBinLong(2, -1)); }  
+  {BinIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyBinInteger(2, 0)); }
+  {BinLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyBinLong(2, -1)); }  
 
-  {DecIntegerLiteral}            { return symbol(DIRECT_VALUE, yyInt(0, 0, 10)); }
-  {DecLongLiteral}               { return symbol(DIRECT_VALUE, yyLong(0, -1, 10)); }
+  {DecIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(0, 0, 10)); }
+  {DecLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(0, -1, 10)); }
   
-  {HexIntegerLiteral}            { return symbol(DIRECT_VALUE, yyInt(2, 0, 16)); }
-  {HexLongLiteral}               { return symbol(DIRECT_VALUE, yyLong(2, -1, 16)); }
+  {HexIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(2, 0, 16)); }
+  {HexLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(2, -1, 16)); }
  
-  {OctIntegerLiteral}            { return symbol(DIRECT_VALUE, yyInt(1, 0, 8)); }  
-  {OctLongLiteral}               { return symbol(DIRECT_VALUE, yyLong(1, -1, 8)); }
+  {OctIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(1, 0, 8)); }  
+  {OctLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(1, -1, 8)); }
   
-  {FloatLiteral}                 { return symbol(DIRECT_VALUE, new Float(yytext(0, -1))); }
-  {DoubleLiteralPart}            { return symbol(DIRECT_VALUE, new Double(yytext())); }
-  {DoubleLiteral}                { return symbol(DIRECT_VALUE, new Double(yytext(0, -1))); }
+  {FloatLiteral}                 { return symbol(Tokens.DIRECT_VALUE, new Float(yytext(0, -1))); }
+  {DoubleLiteralPart}            { return symbol(Tokens.DIRECT_VALUE, new Double(yytext())); }
+  {DoubleLiteral}                { return symbol(Tokens.DIRECT_VALUE, new Double(yytext(0, -1))); }
   
   /* comments */
   {Comment}                      { /* ignore */ }
@@ -412,20 +412,20 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
   {WhiteSpace}                   { /* ignore */ }
 
   /* identifiers */
-  {Identifier}                   { return symbol(IDENTIFIER, yytext().intern()); }
+  {Identifier}                   { return symbol(Tokens.IDENTIFIER, yytext().intern()); }
 
   /* %> */
-  {DelimiterStatementEnd}        { leftPlaceHolderFlag = false; yybegin(YYINITIAL); }
+  {DelimiterStatementEnd}        { leftInterpolationFlag = false; yybegin(YYINITIAL); }
 
 
 }
 <END_OF_FILE>{
-  <<EOF>>                          { return symbol(EOF); }
+  <<EOF>>                          { return symbol(Tokens.EOF); }
 }
 
 
 <STRING> {
-  \"                             { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, stringLine, stringColumn, popAsString()); }
+  \"                             { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, stringLine, stringColumn, popAsString()); }
   
   {StringCharacter}+             { pullToString(); }
   
@@ -447,18 +447,18 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 }
 
 <CHARLITERAL> {
-  {SingleCharacter}\'            { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, yyTextChar()); }
+  {SingleCharacter}\'            { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, yyTextChar()); }
   
   /* escape sequences */
-  "\\b"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\b');}
-  "\\t"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\t');}
-  "\\n"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\n');}
-  "\\f"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\f');}
-  "\\r"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\r');}
-  "\\\""\'                       { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\"');}
-  "\\'"\'                        { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\'');}
-  "\\\\"\'                       { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, '\\');}
-  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYSTATEMENT); return symbol(DIRECT_VALUE, (char) yyInt(1, -1 ,8));}
+  "\\b"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\b');}
+  "\\t"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\t');}
+  "\\n"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\n');}
+  "\\f"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\f');}
+  "\\r"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\r');}
+  "\\\""\'                       { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\"');}
+  "\\'"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\'');}
+  "\\\\"\'                       { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\\');}
+  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, (char) yyInt(1, -1 ,8));}
   
   /* error cases */
   \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
@@ -468,5 +468,5 @@ DelimiterPlaceholderStartMatch   = [\\]* {DelimiterPlaceholderStart}
 /* error fallback */
 .|\n                             { throw new RuntimeException("Illegal character \""+yytext()+
                                                               "\" at line "+yyline+", column "+yycolumn); }
-<<EOF>>                          { return symbol(EOF); }
+<<EOF>>                          { return symbol(Tokens.EOF); }
 

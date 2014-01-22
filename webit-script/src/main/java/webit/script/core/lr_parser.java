@@ -8,7 +8,7 @@ import java.util.Map;
 import webit.script.Engine;
 import webit.script.Template;
 import webit.script.core.ast.TemplateAST;
-import webit.script.core.ast.statements.PlaceHolderFactory;
+import webit.script.core.ast.statements.InterpolationFactory;
 import webit.script.core.text.TextStatementFactory;
 import webit.script.exceptions.ParseException;
 import webit.script.loggers.Logger;
@@ -42,7 +42,7 @@ abstract class lr_parser {
     Engine engine;
     Template template;
     TextStatementFactory textStatementFactory;
-    PlaceHolderFactory placeHolderFactory;
+    InterpolationFactory interpolationFactory;
     NativeFactory nativeFactory;
     Logger logger;
     boolean locateVarForce;
@@ -69,7 +69,7 @@ abstract class lr_parser {
             TextStatementFactory _textStatementFactory;
             this.textStatementFactory = _textStatementFactory = _engine.getTextStatementFactory();
             this.locateVarForce = !_engine.isLooseVar();
-            this.placeHolderFactory = new PlaceHolderFactory(_engine.getFilter());
+            this.interpolationFactory = new InterpolationFactory(_engine.getFilter());
             //
             this.nativeImportMgr = new NativeImportManager();
             this.nativeFactory = _engine.getNativeFactory();
