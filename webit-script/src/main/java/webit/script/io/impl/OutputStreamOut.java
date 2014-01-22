@@ -3,6 +3,7 @@ package webit.script.io.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import webit.script.Engine;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.io.charset.CoderFactory;
@@ -26,6 +27,10 @@ public final class OutputStreamOut implements Out {
 
     public OutputStreamOut(OutputStream outputStream, OutputStreamOut out) {
         this(outputStream, out.encoding, out.encoder);
+    }
+
+    public OutputStreamOut(OutputStream outputStream, Engine engine) {
+        this(outputStream, engine.getEncoding(), engine.getCoderFactory());
     }
 
     public OutputStreamOut(OutputStream outputStream, String encoding, CoderFactory coderFactory) {

@@ -3,6 +3,7 @@ package webit.script.io.impl;
 
 import java.io.IOException;
 import java.io.Writer;
+import webit.script.Engine;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.io.charset.CoderFactory;
@@ -29,6 +30,10 @@ public final class WriterOut implements Out {
 
     public WriterOut(Writer writer, final WriterOut writerOut) {
         this(writer, writerOut.encoding, writerOut.decoder, writerOut.bufferPeers);
+    }
+
+    public WriterOut(Writer writer, final Engine engine) {
+        this(writer, engine.getEncoding(), engine.getCoderFactory());
     }
 
     public WriterOut(Writer writer, String encoding, CoderFactory coderFactory) {
