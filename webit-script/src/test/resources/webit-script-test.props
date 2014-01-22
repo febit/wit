@@ -1,9 +1,18 @@
 
 [engine]
-resourceLoaderClass=webit.script.loaders.impl.LazyLoader-main
+resourceLoaderClass=webit.script.loaders.impl.RouteLoader-main
 loggerClass=webit.script.loggers.impl.Slf4jLogger
 vars=request,request2,session,session
 initTemplates=/init.wit,/init2.wit,/init-junit-assert.wit
+
+
+[webit.script.loaders.impl.RouteLoader-main]
+loaders='''
+lib-test: webit.script.loaders.impl.ClasspathLoader-test
+lib: webit.script.loaders.impl.ClasspathLoader-lib
+lib:sub: webit.script.loaders.impl.ClasspathLoader-lib-sub
+'''
+defaultLoader=webit.script.loaders.impl.LazyLoader-main
 
 
 [webit.script.loaders.impl.LazyLoader-main]
@@ -17,6 +26,16 @@ root=webit/script/test/tmpls
 
 [loader-error]
 root=this/is/a/error/path
+
+
+[webit.script.loaders.impl.ClasspathLoader-lib]
+@extends=loader-error,loader
+root=webit/script/test/lib
+
+
+[webit.script.loaders.impl.ClasspathLoader-lib-sub]
+@extends=loader-error,loader
+root=webit/script/test/lib-sub
 
 
 [webit.script.loaders.impl.ClasspathLoader-test]
