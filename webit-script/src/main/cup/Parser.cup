@@ -308,7 +308,7 @@ non terminal ClassNameList classNameList, classNameList1;
 
 /* function */
 non terminal Expression funcExecuteExpr;
-non terminal FunctionDeclarePart funcHeadPrepare, funcHead;
+non terminal FunctionDeclarePart funcHeadPrepare, funcHead, funcStatementHeadPrepare, funcStatementHead;
 
 
 /* precedence */
@@ -443,7 +443,14 @@ statement            ::= expression_statementable:expr SEMICOLON
                         {: return new Include(%expr%, %paramsExpr%, this.template, %sym.line%, %sym.column%); :}
                         |INCLUDE:sym expression:expr LBRACE expression:paramsExpr RBRACE SEMICOLON
                         {: return new Include(%expr%, %paramsExpr%, this.template, %sym.line%, %sym.column%); :}
+
+                        //funcStatement
+                        |funcStatementHead:part RPAREN LBRACE statementList:list RBRACE
+                        {: return (%part%).pop(%list%); :}
+                        |funcStatementHeadPrepare:part RPAREN LBRACE statementList:list RBRACE
+                        {: return (%part%).pop(%list%); :}
                         ;
+
 
 varAssign       ::= IDENTIFIER:ident EQ:sym expression:expr
                     {: return new Assign(castToResetableValueExpression(createContextValue(varmgr.assignVariantAddress(%ident%,%ident.line%,%ident.column%), %ident.line%, %ident.column%)), %expr%, %sym.line%, %sym.column%); :}
@@ -690,11 +697,11 @@ expression      ::= expression_statementable:expr
 
                     //funcDeclareExpr
                     |funcHeadPrepare:part LPAREN RPAREN LBRACE statementList:list RBRACE
-                    {: return (%part%).pop(varmgr, %list%); :}
+                    {: return (%part%).pop(%list%); :}
                     |funcHeadPrepare:part LBRACE statementList:list RBRACE
-                    {: return (%part%).pop(varmgr, %list%); :}
+                    {: return (%part%).pop(%list%); :}
                     |funcHead:part RPAREN LBRACE statementList:list RBRACE
-                    {: return (%part%).pop(varmgr, %list%); :}
+                    {: return (%part%).pop(%list%); :}
 
 
                     //arrayValue
@@ -794,6 +801,17 @@ funcHead           ::= funcHeadPrepare:part LPAREN IDENTIFIER:ident
 funcHeadPrepare     ::= FUNCTION:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
                         ;
+
+funcStatementHead   ::= funcStatementHeadPrepare:part IDENTIFIER:ident
+                        {: return (%part%).appendArg(%ident%, %ident.line%, %ident.column%); :}
+                        |funcStatementHead:part COMMA IDENTIFIER:ident
+                        {: return (%part%).appendArg(%ident%, %ident.line%, %ident.column%); :}
+                        ;
+
+
+funcStatementHeadPrepare    ::= FUNCTION:sym IDENTIFIER:ident LPAREN
+                                {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%); :}
+                                ;
 
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list RPAREN

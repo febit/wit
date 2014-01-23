@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 import webit.script.core.VariantIndexer;
 import webit.script.core.VariantManager;
+import webit.script.core.ast.Expression;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.StatementList;
 import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.ast.operators.Assign;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;
 import webit.script.util.StringUtil;
@@ -21,11 +23,21 @@ import webit.script.util.StringUtil;
 public final class FunctionDeclarePart extends Position {
 
     private int argsCount = 0;
+    private final int assignToIndex;
     private final VariantManager varmgr;
 
+    public FunctionDeclarePart(String assignTo, VariantManager varmgr, int line, int column) {
+        this(varmgr.assignVariant(assignTo, line, column), varmgr, line, column);
+    }
+
     public FunctionDeclarePart(VariantManager varmgr, int line, int column) {
+        this(-1, varmgr, line, column);
+    }
+
+    public FunctionDeclarePart(int assignToIndex, VariantManager varmgr, int line, int column) {
         super(line, column);
         this.varmgr = varmgr;
+        this.assignToIndex = assignToIndex;
         varmgr.push();
         varmgr.pushVarWall();
         if (varmgr.assignVariant("arguments", line, column) != 0) {
@@ -34,13 +46,22 @@ public final class FunctionDeclarePart extends Position {
     }
 
     public FunctionDeclarePart appendArg(String name, int line, int column) {
-        if (varmgr.assignVariant(name, line, column) != (++ this.argsCount)) {
+        if (varmgr.assignVariant(name, line, column) != (++this.argsCount)) {
             throw new ParseException("assignVariant failed!");
         }
         return this;
     }
 
-    public FunctionDeclare pop(VariantManager varmgr, StatementList list) {
+    public Expression pop(StatementList list) {
+        final Expression expr = popFunctionDeclare(list);
+        if (this.assignToIndex >= 0) {
+            return new Assign(new CurrentContextValue(this.assignToIndex, line, column), expr, line, column);
+        } else {
+            return expr;
+        }
+    }
+
+    public FunctionDeclare popFunctionDeclare(StatementList list) {
         Statement[] statements = list.toInvertArray();
 
         int[] overflowUpstairs = varmgr.popVarWall();

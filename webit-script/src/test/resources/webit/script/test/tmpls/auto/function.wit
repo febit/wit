@@ -1,27 +1,53 @@
 <%
-var c;
-var func = function(){
-    var a;
-    var b;
+{
+    var c;
+    var func = function(){
+        var a;
+        var b;
 
-    {
-        var func2 = function(){
-            return c;
-        };
-        var func3 = function{
-            return c;
-        };
-        var func4 = #(a,b){
-            return c;
-        };
-        var func5 = #{
-            return c;
-        };
-        func2();
-        func3();
-        func4();
-        func5();
+        {
+            var func2 = function(){
+                assertNone();
+                return c;
+            };
+            var func3 = function{
+                assertNone();
+                return c;
+            };
+            var func4 = #(a,b){
+                assertNone();
+                return c;
+            };
+            var func5 = #{
+                assertNone();
+                return c;
+            };
+            func2();
+            func3();
+            func4();
+            func5();
+        }
+    };
+    func();
+}
+{
+    var c;
+    function func(){
+        var a;
+        var b;
+        {
+            function func2(){
+                assertNone();
+                return c;
+            }
+            function func4(a,b){
+                assertNone();
+                return c;
+            }
+            func2();
+            func4();
+        }
     }
-};
-func();
+    func();
+}
 %>
