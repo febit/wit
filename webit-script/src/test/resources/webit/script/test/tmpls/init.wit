@@ -1,14 +1,14 @@
 <%
 
-var CONST_MAP, GLOBAL_MAP;
+var CONST, GLOBAL;
 
 $GLOBAL["one"] = 1;
 $GLOBAL["string"] = "string";
 
-GLOBAL_MAP.g_one = 1;
-GLOBAL_MAP.g_string = "g_string";
+GLOBAL.g_one = 1;
+GLOBAL.g_string = "g_string";
 
-CONST_MAP.c_one = 1;
-CONST_MAP.c_string = "c_string";
+CONST.c_one = 1;
+CONST.c_string = "c_string";
 
 %>

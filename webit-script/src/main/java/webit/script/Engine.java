@@ -24,6 +24,7 @@ import webit.script.util.ClassUtil;
 import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
+import webit.script.util.SimpleBag;
 import webit.script.util.keyvalues.KeyValues;
 import webit.script.util.keyvalues.KeyValuesUtil;
 import webit.script.util.props.Props;
@@ -158,12 +159,15 @@ public final class Engine {
         if (this.initTemplates != null && (size = this.initTemplates.length) > 0) {
             String templateName;
             final Out out = new DiscardOut();
+            final GlobalManager myGlobalManager = this.globalManager;
+            final SimpleBag globalBag = myGlobalManager.getGlobalBag();
+            final SimpleBag constBag = myGlobalManager.getGlobalBag();
             final KeyValues params = KeyValuesUtil.wrap(new String[]{
-                "GLOBAL_MAP",
-                "CONST_MAP"
+                "GLOBAL", "GLOBAL_MAP",
+                "CONST", "CONST_MAP"
             }, new Object[]{
-                this.globalManager.getGlobalBag(),
-                this.globalManager.getConstBag()
+                globalBag, globalBag,
+                constBag, constBag
             });
             for (int i = 0; i < size; i++) {
                 if ((templateName = this.initTemplates[i]) != null
@@ -171,7 +175,7 @@ public final class Engine {
                     this.getTemplate(templateName)
                             .merge(params, out);
                     //Commit Global
-                    this.globalManager.commit();
+                    myGlobalManager.commit();
                 }
             }
         }
