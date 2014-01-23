@@ -30,13 +30,7 @@ public class LazyLoader implements Loader, Initable {
     protected Loader loader;
 
     public void init(Engine engine) {
-        try {
-            this.loader = (Loader) engine.getComponent(_loader);
-        } catch (InstantiationException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException(ex);
-        }
+        this.loader = (Loader) engine.getComponent(_loader);
     }
 
     public Resource get(String name) throws ResourceNotFoundException {

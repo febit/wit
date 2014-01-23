@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -202,5 +204,19 @@ public class ClassUtil {
 
     public static Method searchMethod(Class<?> currentClass, String name, Class<?>[] parameterTypes, boolean boxed) throws NoSuchMethodException {
         return currentClass.getMethod(name, parameterTypes);
+    }
+
+    public static Object newInstance(final ClassEntry type) {
+        return newInstance(type.getValue());
+    }
+
+    public static Object newInstance(final Class type) {
+        try {
+            return type.newInstance();
+        } catch (InstantiationException ex) {
+            throw new RuntimeException(ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

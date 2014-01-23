@@ -19,6 +19,7 @@ import webit.script.resolvers.Resolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
 import webit.script.util.ClassEntry;
+import webit.script.util.ClassUtil;
 import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
@@ -63,10 +64,6 @@ public final class Engine {
             }
 
             engine.executeInitTemplates();
-        } catch (InstantiationException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException(ex);
         } catch (ResourceNotFoundException ex) {
             throw new RuntimeException(ex);
         }
@@ -113,17 +110,17 @@ public final class Engine {
     }
 
     @SuppressWarnings("unchecked")
-    private void init() throws InstantiationException, IllegalAccessException {
+    private void init() {
 
-        this.logger = (Logger) newInstance(this.loggerClass);
-        this.coderFactory = (CoderFactory) newInstance(this.coderFactoryClass);
-        this.nativeSecurityManager = (NativeSecurityManager) newInstance(this.nativeSecurityManagerClass);
-        this.textStatementFactory = (TextStatementFactory) newInstance(this.textStatementFactoryClass);
-        this.resourceLoader = (Loader) newInstance(this.resourceLoaderClass);
-        this.globalManager = (GlobalManager) newInstance(this.globalManagerClass);
+        this.logger = (Logger) ClassUtil.newInstance(this.loggerClass);
+        this.coderFactory = (CoderFactory) ClassUtil.newInstance(this.coderFactoryClass);
+        this.nativeSecurityManager = (NativeSecurityManager) ClassUtil.newInstance(this.nativeSecurityManagerClass);
+        this.textStatementFactory = (TextStatementFactory) ClassUtil.newInstance(this.textStatementFactoryClass);
+        this.resourceLoader = (Loader) ClassUtil.newInstance(this.resourceLoaderClass);
+        this.globalManager = (GlobalManager) ClassUtil.newInstance(this.globalManagerClass);
 
         if (this.filterClass != null) {
-            this.filter = (Filter) newInstance(this.filterClass);
+            this.filter = (Filter) ClassUtil.newInstance(this.filterClass);
         }
 
         resolveComponent(this.logger);
@@ -188,14 +185,6 @@ public final class Engine {
         return this.petite.getParameter(key);
     }
 
-    private Object newInstance(final ClassEntry type) throws InstantiationException, IllegalAccessException {
-        return newInstance(type.getValue());
-    }
-
-    private Object newInstance(final Class type) throws InstantiationException, IllegalAccessException {
-        return type.newInstance();
-    }
-
     /**
      *
      * @since 1.4.0
@@ -219,9 +208,9 @@ public final class Engine {
      *
      * @since 1.4.0
      */
-    public Object getComponent(final Class type) throws InstantiationException, IllegalAccessException {
+    public Object getComponent(final Class type) {
         Object bean;
-        resolveComponent(bean = newInstance(type));
+        resolveComponent(bean = ClassUtil.newInstance(type));
         return bean;
     }
 
@@ -229,9 +218,9 @@ public final class Engine {
      *
      * @since 1.4.0
      */
-    public Object getComponent(final ClassEntry type) throws InstantiationException, IllegalAccessException {
+    public Object getComponent(final ClassEntry type) {
         Object bean;
-        resolveComponent(bean = newInstance(type), type);
+        resolveComponent(bean = ClassUtil.newInstance(type), type);
         return bean;
     }
 

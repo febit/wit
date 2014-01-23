@@ -34,14 +34,8 @@ public class MutiFilter implements Filter, Initable {
             final int len;
             final Filter[] filters;
             _filters = filters = new Filter[len = classes.length];
-            try {
-                for (int i = 0; i < len; i++) {
-                    filters[i] = (Filter) engine.getComponent(classes[i]);
-                }
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException(ex);
-            } catch (InstantiationException ex) {
-                throw new RuntimeException(ex);
+            for (int i = 0; i < len; i++) {
+                filters[i] = (Filter) engine.getComponent(classes[i]);
             }
         }
     }
