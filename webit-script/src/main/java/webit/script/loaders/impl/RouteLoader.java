@@ -33,7 +33,7 @@ public class RouteLoader implements Loader, Initable {
             //init Route rules
             initLoaderRoute(engine);
             //default Loader
-            _defaultLoader = (Loader) engine.getBean(defaultLoader != null ? defaultLoader : ClassEntry.wrap(ClasspathLoader.class));
+            _defaultLoader = (Loader) engine.getComponent(defaultLoader != null ? defaultLoader : ClassEntry.wrap(ClasspathLoader.class));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -64,7 +64,7 @@ public class RouteLoader implements Loader, Initable {
                             rules.add(rule);
                         }
                         loaderMap.put(rule,
-                                new LoaderEntry(rule, (Loader) engine.getBean(
+                                new LoaderEntry(rule, (Loader) engine.getComponent(
                                                 ClassEntry.wrap(
                                                         raw.substring(index + 1).trim()))));
 

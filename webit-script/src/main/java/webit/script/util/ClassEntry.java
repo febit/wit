@@ -27,12 +27,12 @@ public class ClassEntry {
         return new ClassEntry(cls, cls.getName());
     }
 
-    public static ClassEntry wrap(final String className) throws ClassNotFoundException {
+    public static ClassEntry wrap(final String profile) throws ClassNotFoundException {
         final int index;
         return new ClassEntry(
-                ClassUtil.getClass((index = className.indexOf('-')) >= 0
-                        ? className.substring(0, index)
-                        : className),
-                className);
+                ClassUtil.getClass((index = profile.indexOf('-')) >= 0
+                        ? profile.substring(0, index)
+                        : profile),
+                profile);
     }
 }

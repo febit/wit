@@ -126,30 +126,30 @@ public final class Engine {
             this.filter = (Filter) newInstance(this.filterClass);
         }
 
-        resolveBean(this.logger);
+        resolveComponent(this.logger);
         this.petite.setLogger(this.logger);
 
-        resolveBean(this.nativeFactory);
-        resolveBean(this.resolverManager);
-        resolveBean(this.coderFactory);
-        resolveBean(this.nativeSecurityManager);
-        resolveBean(this.textStatementFactory);
-        resolveBean(this.resourceLoader, this.resourceLoaderClass);
+        resolveComponent(this.nativeFactory);
+        resolveComponent(this.resolverManager);
+        resolveComponent(this.coderFactory);
+        resolveComponent(this.nativeSecurityManager);
+        resolveComponent(this.textStatementFactory);
+        resolveComponent(this.resourceLoader, this.resourceLoaderClass);
         if (this.filter != null) {
-            resolveBean(this.filter, this.filterClass);
+            resolveComponent(this.filter, this.filterClass);
         }
-        resolveBean(this.resolverManager);
+        resolveComponent(this.resolverManager);
 
         if (this.resolvers != null) {
             final int resolversLength;
             final Resolver[] resolverInstances = new Resolver[resolversLength = this.resolvers.length];
             for (int i = 0; i < resolversLength; i++) {
-                resolverInstances[i] = (Resolver) getBean(this.resolvers[i]);
+                resolverInstances[i] = (Resolver) getComponent(this.resolvers[i]);
             }
             this.resolverManager.init(resolverInstances);
         }
 
-        resolveBean(this.globalManager);
+        resolveComponent(this.globalManager);
         globalManager.commit();
     }
 
@@ -177,20 +177,6 @@ public final class Engine {
         }
     }
 
-    public void resolveBean(final Object bean) {
-        this.petite.wireBean(bean);
-        if (bean instanceof Initable) {
-            ((Initable) bean).init(this);
-        }
-    }
-
-    public void resolveBean(final Object bean, final ClassEntry entry) {
-        this.petite.wireBean(entry.getProfile(), bean);
-        if (bean instanceof Initable) {
-            ((Initable) bean).init(this);
-        }
-    }
-
     /**
      * get config by key form engine
      *
@@ -210,15 +196,42 @@ public final class Engine {
         return type.newInstance();
     }
 
-    public Object getBean(final Class type) throws InstantiationException, IllegalAccessException {
+    /**
+     *
+     * @since 1.4.0
+     */
+    public void resolveComponent(final Object bean) {
+        resolveComponent(bean, ClassEntry.wrap(bean.getClass()));
+    }
+
+    /**
+     *
+     * @since 1.4.0
+     */
+    public void resolveComponent(final Object bean, final ClassEntry entry) {
+        this.petite.wireBean(entry.getProfile(), bean);
+        if (bean instanceof Initable) {
+            ((Initable) bean).init(this);
+        }
+    }
+
+    /**
+     *
+     * @since 1.4.0
+     */
+    public Object getComponent(final Class type) throws InstantiationException, IllegalAccessException {
         Object bean;
-        resolveBean(bean = newInstance(type));
+        resolveComponent(bean = newInstance(type));
         return bean;
     }
 
-    public Object getBean(final ClassEntry type) throws InstantiationException, IllegalAccessException {
+    /**
+     *
+     * @since 1.4.0
+     */
+    public Object getComponent(final ClassEntry type) throws InstantiationException, IllegalAccessException {
         Object bean;
-        resolveBean(bean = newInstance(type), type);
+        resolveComponent(bean = newInstance(type), type);
         return bean;
     }
 

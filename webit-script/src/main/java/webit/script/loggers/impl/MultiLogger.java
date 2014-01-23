@@ -23,7 +23,7 @@ public final class MultiLogger implements Logger, Initable {
             _loggers = new Logger[loggers.length];
             for (int i = 0; i < len; i++) {
                 try {
-                    _loggers[i] = (Logger) engine.getBean(loggers[i]);
+                    _loggers[i] = (Logger) engine.getComponent(loggers[i]);
                 } catch (Throwable ex) {
                     throw new RuntimeException(ex);
                 }

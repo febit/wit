@@ -31,7 +31,7 @@ public class DefaultGlobalManager implements GlobalManager, Initable {
         if (registers != null) {
             try {
                 for (int i = 0, len = registers.length; i < len; i++) {
-                    ((GlobalRegister) engine.getBean(registers[i]))
+                    ((GlobalRegister) engine.getComponent(registers[i]))
                             .regist(this);
                     this.commit();
                 }

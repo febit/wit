@@ -36,7 +36,7 @@ public class MutiFilter implements Filter, Initable {
             _filters = filters = new Filter[len = classes.length];
             try {
                 for (int i = 0; i < len; i++) {
-                    filters[i] = (Filter) engine.getBean(classes[i]);
+                    filters[i] = (Filter) engine.getComponent(classes[i]);
                 }
             } catch (IllegalAccessException ex) {
                 throw new RuntimeException(ex);

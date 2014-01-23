@@ -31,7 +31,7 @@ public class LazyLoader implements Loader, Initable {
 
     public void init(Engine engine) {
         try {
-            this.loader = (Loader) engine.getBean(_loader);
+            this.loader = (Loader) engine.getComponent(_loader);
         } catch (InstantiationException ex) {
             throw new RuntimeException(ex);
         } catch (IllegalAccessException ex) {
