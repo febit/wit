@@ -2,6 +2,7 @@
 package webit.script;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -100,11 +101,13 @@ public final class Engine {
     private final NativeFactory nativeFactory;
     private final ResolverManager resolverManager;
     private final ConcurrentMap<String, Template> templateCache;
+    private final Map<String, Object> componentContainer;
     private final Petite petite;
 
     private Engine(final Petite petite) {
         this.petite = petite;
         this.templateCache = new ConcurrentHashMap<String, Template>();
+        this.componentContainer = new HashMap<String, Object>();
         this.resolverManager = new ResolverManager();
         this.nativeFactory = new NativeFactory();
     }
@@ -147,7 +150,7 @@ public final class Engine {
         }
 
         resolveComponent(this.globalManager);
-        globalManager.commit();
+        this.globalManager.commit();
     }
 
     private void executeInitTemplates() throws ResourceNotFoundException {
@@ -189,7 +192,7 @@ public final class Engine {
      *
      * @since 1.4.0
      */
-    public void resolveComponent(final Object bean) {
+    private void resolveComponent(final Object bean) {
         resolveComponent(bean, ClassEntry.wrap(bean.getClass()));
     }
 
@@ -197,11 +200,12 @@ public final class Engine {
      *
      * @since 1.4.0
      */
-    public void resolveComponent(final Object bean, final ClassEntry entry) {
-        this.petite.wireBean(entry.getProfile(), bean);
+    private void resolveComponent(final Object bean, final ClassEntry type) {
+        this.petite.wireBean(type.getProfile(), bean);
         if (bean instanceof Initable) {
             ((Initable) bean).init(this);
         }
+        this.componentContainer.put(type.getProfile(), bean);
     }
 
     /**
@@ -209,18 +213,18 @@ public final class Engine {
      * @since 1.4.0
      */
     public Object getComponent(final Class type) {
-        Object bean;
-        resolveComponent(bean = ClassUtil.newInstance(type));
-        return bean;
+        return getComponent(ClassEntry.wrap(type));
     }
 
     /**
      *
      * @since 1.4.0
      */
-    public Object getComponent(final ClassEntry type) {
+    public synchronized Object getComponent(final ClassEntry type) {
         Object bean;
-        resolveComponent(bean = ClassUtil.newInstance(type), type);
+        if ((bean = this.componentContainer.get(type.getProfile())) == null) {
+            resolveComponent(bean = ClassUtil.newInstance(type), type);
+        }
         return bean;
     }
 
