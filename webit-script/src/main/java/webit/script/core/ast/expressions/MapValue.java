@@ -30,6 +30,8 @@ public final class MapValue extends AbstractExpression {
 
     @SuppressWarnings("unchecked")
     public Object execute(final Context context) {
+        final Object[] keys = this.keys;
+        final Expression[] valueExprs = this.valueExprs;
         final int len = valueExprs.length;
         final Map value = new HashMap(initialCapacity, DEFAULT_MAP_FACTOR);
         for (int i = 0; i < len; i++) {
