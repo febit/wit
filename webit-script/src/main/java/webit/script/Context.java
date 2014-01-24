@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script;
 
+import java.util.HashMap;
 import java.util.Map;
 import webit.script.core.VariantIndexer;
 import webit.script.core.ast.loop.LoopCtrl;
@@ -11,6 +12,7 @@ import webit.script.resolvers.ResolverManager;
 import webit.script.util.collection.ArrayStack;
 import webit.script.util.collection.Stack;
 import webit.script.util.keyvalues.KeyValues;
+import webit.script.util.keyvalues.KeyValuesUtil;
 
 /**
  *
@@ -22,6 +24,8 @@ public final class Context {
     //
     private Out out;
     private Stack<Out> outStack;
+    private Map<Object, Object> localMap;
+    public final Context topContext;
     public final KeyValues rootValues;
     public final String encoding;
     //
@@ -34,6 +38,7 @@ public final class Context {
     public Context(final Template template, final Out out, final KeyValues rootValues) {
         this.template = template;
         this.out = out;
+        this.topContext = this;
         this.rootValues = rootValues;
         this.encoding = out.getEncoding();
         this.isByteStream = out.isByteStream();
@@ -42,9 +47,24 @@ public final class Context {
         this.vars = new VariantStack();
     }
 
+    public Context(final Context parent, final Template template, final KeyValues params) {
+        this.template = template;
+        this.out = parent.out;
+        this.topContext = parent.topContext;
+        this.rootValues = template.engine.isShareRootData()
+                ? KeyValuesUtil.wrap(parent.rootValues, params)
+                : params;
+        this.encoding = parent.encoding;
+        this.isByteStream = parent.isByteStream;
+        this.resolverManager = parent.resolverManager;
+        this.loopCtrl = new LoopCtrl();
+        this.vars = new VariantStack();
+    }
+
     public Context(final Context parent, final Template template, final VariantContext[] parentVarContexts, final boolean containsRootContext) {
         this.template = template;
         this.out = parent.out;
+        this.topContext = parent.topContext;
         this.rootValues = parent.rootValues;
         this.encoding = parent.encoding;
         this.isByteStream = parent.isByteStream;
@@ -64,10 +84,11 @@ public final class Context {
      * @deprecated
      */
     public void pushOut(Out out) {
-        if (outStack == null) {
-            outStack = new ArrayStack<Out>(5);
+        Stack<Out> stack;
+        if ((stack = this.outStack) == null) {
+            stack = this.outStack = new ArrayStack<Out>(5);
         }
-        outStack.push(this.out);
+        stack.push(this.out);
         this.out = out;
     }
 
@@ -78,28 +99,28 @@ public final class Context {
      */
     public void popOut() {
         //checkOutStack();
-        this.out = outStack.pop();
+        this.out = this.outStack.pop();
     }
 
     public Out getOut() {
-        return out;
+        return this.out;
     }
 
     public void out(final byte[] bytes) {
         if (bytes != null) {
-            out.write(bytes);
+            this.out.write(bytes);
         }
     }
 
     public void out(final char[] chars) {
         if (chars != null) {
-            out.write(chars);
+            this.out.write(chars);
         }
     }
 
     public void out(final String string) {
         if (string != null) {
-            out.write(string);
+            this.out.write(string);
         }
     }
 
@@ -107,16 +128,31 @@ public final class Context {
         if (object != null) {
             if (object.getClass() == String.class) {
                 //if (object instanceof String) {
-                out.write((String) object);
+                this.out.write((String) object);
                 return;
             } else {
-                resolverManager.render(out, object);
+                this.resolverManager.render(this.out, object);
                 return;
             }
         }
     }
 
+    public Object getLocalVar(final Object key) {
+        final Map<Object, Object> map;
+        return (map = this.localMap) != null ? map.get(key) : null;
+    }
+
+    public void setLocalVar(final Object key, final Object value) {
+        final Map<Object, Object> map;
+        if ((map = this.localMap) != null) {
+            map.put(key, value);
+            return;
+        } else {
+            (this.localMap = new HashMap<Object, Object>()).put(key, value);
+        }
+    }
+
     public void exportTo(final Map map) {
-        vars.getCurrentContext().exportTo(map);
+        this.vars.getCurrentContext().exportTo(map);
     }
 }

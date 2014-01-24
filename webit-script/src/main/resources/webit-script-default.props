@@ -68,10 +68,17 @@ encoding=${DEFAULT_ENCODING}
 @extends=global
 
 [global]
-registers=webit.script.global.impl.GlobalMapRegister
+registers =\
+    webit.script.global.impl.GlobalMapRegister, \
+    webit.script.global.impl.ContextLocalRegister
+
 
 # [webit.script.global.impl.GlobalMapRegister]
 # name=$GLOBAL
+
+
+# [webit.script.global.impl.ContextLocalRegister]
+# name=LOCAL
 
 
 [webit.script.security.impl.DefaultNativeSecurityManager]

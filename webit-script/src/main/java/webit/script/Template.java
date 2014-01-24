@@ -31,13 +31,14 @@ public final class Template {
     //
     private final Object reloadLock = new Object();
 
-    public Template(Engine engine, String name, Resource resource) {
+    Template(Engine engine, String name, Resource resource) {
         this.engine = engine;
         this.name = name;
         this.resource = resource;
     }
 
     /**
+     * Reload this template.
      *
      * @throws ParseException
      */
@@ -58,6 +59,7 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
      *
      * @param outputStream
      * @return Context
@@ -69,6 +71,7 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
      *
      * @param outputStream
      * @param encoding
@@ -81,6 +84,7 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
      *
      * @param writer
      * @return Context
@@ -92,6 +96,7 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
      *
      * @param root
      * @param outputStream
@@ -104,6 +109,7 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
      *
      * @param root
      * @param outputStream
@@ -117,6 +123,7 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
      *
      * @param root
      * @param writer
@@ -129,6 +136,7 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
      *
      * @param root
      * @param outputStream
@@ -141,6 +149,7 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
      *
      * @param root
      * @param outputStream
@@ -154,6 +163,7 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
      *
      * @param root
      * @param writer
@@ -166,6 +176,7 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
      *
      * @param root
      * @param out
@@ -180,6 +191,28 @@ public final class Template {
                 tmpl = parseAST(false);
             }
             return tmpl.execute(new Context(this, out, root));
+        } catch (Throwable e) {
+            throw wrapThrowable(e);
+        }
+    }
+
+    /**
+     * Merge this template as a child Template, used by include/import.
+     *
+     * @since 1.4.0
+     * @param parent
+     * @param params
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context mergeForInlude(final Context parent, KeyValues params) throws ScriptRuntimeException, ParseException {
+        try {
+            TemplateAST tmpl;
+            if ((tmpl = this.templateAST) == null || this.resource.isModified()) {
+                tmpl = parseAST(false);
+            }
+            return tmpl.execute(new Context(parent, this, params));
         } catch (Throwable e) {
             throw wrapThrowable(e);
         }

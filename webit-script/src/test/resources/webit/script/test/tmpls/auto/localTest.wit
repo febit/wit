@@ -1,0 +1,12 @@
+<%
+
+assertNull(LOCAL("a"));
+
+LOCAL("a","abc");
+assertEquals("abc", LOCAL("a"));
+
+include "imports/localTest.imports.wit";
+
+assertEquals("def", LOCAL("a"));
+
+%>

@@ -1,0 +1,7 @@
+<%
+
+assertEquals("abc", LOCAL("a"));
+
+LOCAL("a","def");
+
+%>

@@ -49,9 +49,7 @@ public abstract class AbstractInclude extends AbstractStatement {
             }
             try {
                 return engine.getTemplate(myTemplateName, String.valueOf(templateName))
-                        .merge(engine.isShareRootData()
-                                ? KeyValuesUtil.wrap(context.rootValues, params)
-                                : params, context.getOut());
+                        .mergeForInlude(context, params);
             } catch (Throwable e) {
                 throw new ScriptRuntimeException(e, this);
             }
