@@ -8,7 +8,7 @@ import webit.script.global.GlobalRegister;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class GlobalMapRegister implements GlobalRegister {
 

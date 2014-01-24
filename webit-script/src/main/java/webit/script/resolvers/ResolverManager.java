@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.asm.AsmResolverManager;
+import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.impl.CommonResolver;
@@ -32,6 +33,7 @@ public final class ResolverManager implements Initable {
     private final CommonResolver commonResolver;
     //settings
     private boolean enableAsm = true;
+    private boolean ignoreNullPointer = false;
     //
 
     public ResolverManager() {
@@ -214,11 +216,22 @@ public final class ResolverManager implements Initable {
     }
 
     public Object get(Object bean, Object property) {
-        return bean != null ? getGetResolver(bean.getClass()).get(bean, property) : null;
+        if (bean != null) {
+            return getGetResolver(bean.getClass()).get(bean, property);
+        } else if (ignoreNullPointer) {
+            return null;
+        } else {
+            throw new ScriptRuntimeException("Null pointer.");
+        }
     }
 
-    public boolean set(Object bean, Object property, Object value) {
-        return bean != null ? getSetResolver(bean.getClass()).set(bean, property, value) : false;
+    public void set(Object bean, Object property, Object value) {
+        if (bean != null) {
+            getSetResolver(bean.getClass()).set(bean, property, value);
+            return;
+        } else if (ignoreNullPointer == false) {
+            throw new ScriptRuntimeException("Null pointer.");
+        }
     }
 
     public void render(final Out out, final Object bean) {
@@ -227,6 +240,10 @@ public final class ResolverManager implements Initable {
 
     public void setEnableAsm(boolean enableAsm) {
         this.enableAsm = enableAsm;
+    }
+
+    public void setIgnoreNullPointer(boolean ignoreNullPointer) {
+        this.ignoreNullPointer = ignoreNullPointer;
     }
 
     public void init(Engine engine) {

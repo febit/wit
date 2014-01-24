@@ -20,7 +20,7 @@ import webit.script.util.StringUtil;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class NativeFactory implements Initable {
 

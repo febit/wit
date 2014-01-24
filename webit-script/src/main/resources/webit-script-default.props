@@ -45,6 +45,7 @@ resolvers=\
 
 # [webit.script.resolvers.ResolverManager]
 # enableAsm=true
+# ignoreNullPointer=false
 
 
 [loader]

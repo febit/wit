@@ -6,7 +6,7 @@ import webit.script.util.EncodingPool;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class DiscardOut implements Out {
 

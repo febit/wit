@@ -3,7 +3,7 @@ package webit.script.global;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public interface GlobalRegister {
 

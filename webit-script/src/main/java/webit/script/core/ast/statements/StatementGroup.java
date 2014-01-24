@@ -9,7 +9,7 @@ import webit.script.util.StatementUtil;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class StatementGroup extends AbstractStatement implements Optimizable {
 

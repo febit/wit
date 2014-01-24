@@ -6,7 +6,7 @@ import webit.script.security.NativeSecurityManager;
 /**
  *
  * @since 1.4.0
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class NoneNativeSecurityManager implements NativeSecurityManager {
 

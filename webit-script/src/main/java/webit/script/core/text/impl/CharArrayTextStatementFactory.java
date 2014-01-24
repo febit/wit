@@ -7,7 +7,7 @@ import webit.script.core.text.TextStatementFactory;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class CharArrayTextStatementFactory implements TextStatementFactory {
 

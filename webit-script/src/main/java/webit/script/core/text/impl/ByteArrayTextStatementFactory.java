@@ -14,7 +14,7 @@ import webit.script.util.FastByteArrayOutputStream;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class ByteArrayTextStatementFactory implements TextStatementFactory, Initable {
 

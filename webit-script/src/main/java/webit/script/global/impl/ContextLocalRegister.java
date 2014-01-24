@@ -9,6 +9,7 @@ import webit.script.method.MethodDeclare;
 
 /**
  *
+ * @since 1.4.0
  * @author zqq90
  */
 public class ContextLocalRegister implements GlobalRegister {

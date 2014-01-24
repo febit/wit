@@ -8,7 +8,7 @@ import webit.script.util.SimpleBag;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class SimpleBagResolver implements GetResolver, SetResolver {
 
