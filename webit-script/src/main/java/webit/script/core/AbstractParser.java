@@ -182,7 +182,7 @@ abstract class AbstractParser {
         final short[][] actionTable = Parser.ACTION_TABLE;
         final short[][] reduceTable = Parser.REDUCE_TABLE;
         final short[][] productionTable = Parser.PRODUCTION_TABLE;
-        
+
         currentToken = myLexer.nextToken();
 
         /* continue until we are told to stop */
@@ -223,7 +223,7 @@ abstract class AbstractParser {
                 stack.push(currentSymbol);
 
             } else {//act == 0
-                throw new ParseException(StringUtil.concat("Parser stop at: ", Integer.toString(myLexer.getLine()), "(", Integer.toString(myLexer.getColumn()), ")"), myLexer.getLine(), myLexer.getColumn());
+                throw new ParseException(StringUtil.concat("Syntax error before: ", Integer.toString(myLexer.getLine()), "(", Integer.toString(myLexer.getColumn()), ")", ". Hints: ", getSimpleHintMessage(currentSymbol)), myLexer.getLine(), myLexer.getColumn());
             }
         } while (goonParse);
 
@@ -249,5 +249,140 @@ abstract class AbstractParser {
                 }
             }
         }
+    }
+
+    private static String getSimpleHintMessage(Symbol symbol) {
+        final short[] row = Parser.ACTION_TABLE[symbol.state];
+        final int len = row.length;
+        if (len == 0) {
+            return "[no hints]";
+        }
+        final boolean highterLevel = len > 8;
+        if (highterLevel && getAction(row, Tokens.SEMICOLON) != 0) {
+            return "forget ';' ?";
+        }
+        final StringBuilder sb = new StringBuilder();
+        boolean notFirst = false;
+        short sym;
+        for (int i = 0; i < len; i += 2) {
+            sym = row[i];
+            if (highterLevel && !isHintLevelOne(sym)) {
+                continue;
+            }
+            if (notFirst) {
+                sb.append(", ");
+            } else {
+                notFirst = true;
+            }
+            sb.append('\'')
+                    .append(symbolToString(sym))
+                    .append('\'');
+        }
+        return sb.toString();
+    }
+
+    private final static short[] HINTS_LEVEL_1 = new short[]{
+        Tokens.COLON, //":"
+        Tokens.SEMICOLON, //";"
+        Tokens.RBRACE, //"}"
+        Tokens.INTERPOLATION_END, //"}"
+        Tokens.RPAREN, //")"
+        Tokens.RBRACK, //"]"
+        Tokens.IDENTIFIER, //"IDENTIFIER"
+        Tokens.DIRECT_VALUE, //"DIRECT_VALUE"
+    };
+
+    private static boolean isHintLevelOne(short sym) {
+        for (int i = 0, len = HINTS_LEVEL_1.length; i < len; i++) {
+            if (HINTS_LEVEL_1[i] == sym) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private final static String[] SYMBOL_STRS = new String[]{
+        "EOF", //EOF = 0
+        "ERROR", //ERROR = 1
+        "var", //VAR = 2
+        "if", //IF = 3
+        "else", //ELSE = 4
+        "for", //FOR = 5
+        "this", //THIS = 6
+        "super", //SUPER = 7
+        "switch", //SWITCH = 8
+        "case", //CASE = 9
+        "default", //DEFAULT = 10
+        "do", //DO = 11
+        "while", //WHILE = 12
+        "throw", //THROW = 13
+        "try", //TRY = 14
+        "catch", //CATCH = 15
+        "finally", //FINALLY = 16
+        "new", //NEW = 17
+        "instanceof", //INSTANCEOF = 18
+        "function", //FUNCTION = 19
+        "echo", //ECHO = 20
+        "static", //STATIC = 21
+        "native", //NATIVE = 22
+        "import", //IMPORT = 23
+        "include", //INCLUDE = 24
+        "@import", //NATIVE_IMPORT = 25
+        "break", //BREAK = 26
+        "continue", //CONTINUE = 27
+        "return", //RETURN = 28
+        "++", //PLUSPLUS = 29
+        "--", //MINUSMINUS = 30
+        "+", //PLUS = 31
+        "-", //MINUS = 32
+        "*", //MULT = 33
+        "/", //DIV = 34
+        "%", //MOD = 35
+        "<<", //LSHIFT = 36
+        ">>", //RSHIFT = 37
+        ">>>", //URSHIFT = 38
+        "<", //LT = 39
+        ">", //GT = 40
+        "<=", //LTEQ = 41
+        ">=", //GTEQ = 42
+        "==", //EQEQ = 43
+        "!=", //NOTEQ = 44
+        "&", //AND = 45
+        "^", //XOR = 46
+        "|", //OR = 47
+        "~", //COMP = 48
+        "&&", //ANDAND = 49
+        "||", //OROR = 50
+        "!", //NOT = 51
+        "?", //QUESTION = 52
+        "?:", //QUESTION_COLON = 53
+        "*=", //SELFEQ = 54
+        "-", //UMINUS = 55
+        ".", //DOT = 56
+        ":", //COLON = 57
+        ",", //COMMA = 58
+        ";", //SEMICOLON = 59
+        "{", //LBRACE = 60
+        "}", //RBRACE = 61
+        "}", //INTERPOLATION_END = 62
+        "(", //LPAREN = 63
+        ")", //RPAREN = 64
+        "[", //LBRACK = 65
+        "]", //RBRACK = 66
+        "=>", //EQGT = 67
+        "@", //AT = 68
+        "..", //DOTDOT = 69
+        "=", //EQ = 70
+        "IDENTIFIER", //IDENTIFIER = 71
+        "TEXT", //TEXT_STATEMENT = 72
+        "DIRECT_VALUE", //DIRECT_VALUE = 73
+        "UNKNOWN"
+    };
+
+    static String symbolToString(final short sym) {
+        if (sym >= 0 && sym < SYMBOL_STRS.length) {
+            return SYMBOL_STRS[sym];
+        }
+        return "UNKNOWN";
     }
 }
