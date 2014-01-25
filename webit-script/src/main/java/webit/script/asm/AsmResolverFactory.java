@@ -23,23 +23,23 @@ import webit.script.util.collection.IntArrayList;
  *
  * @author Zqq
  */
-public class AsmResolverGenerator {
+public class AsmResolverFactory {
 
     private static final String RESOLVERS_CLASS_NAME_PRE = "webit.script.asm.AsmResolver_";
     private static final String[] ASM_RESOLVER = new String[]{"webit/script/asm/AsmResolver"};
     private static final int MIN_SIZE_TO_SWITH = 4;
 
-    private static String generateClassName(Class beanClass) {
+    private static String resolveClassName(Class beanClass) {
         return StringUtil.concat(RESOLVERS_CLASS_NAME_PRE, beanClass.getSimpleName(), "_", Integer.toString(ASMUtil.getSn()));
     }
 
-    public static Class generateResolver(Class beanClass) throws Exception {
+    public static Class createResolverClass(Class beanClass) throws Exception {
 
         if (ClassUtil.isPublic(beanClass)) {
-            String className = generateClassName(beanClass);
-            byte[] code = generateClassBody(className, beanClass);
-
-            return ASMUtil.loadClass(className, code);
+            final String className;
+            return ASMUtil.loadClass(
+                    className = resolveClassName(beanClass),
+                    generateClassBody(className, beanClass));
         } else {
             throw new Exception(StringUtil.concat("Class [", beanClass.getName(), "] is not a public class"));
         }
@@ -50,21 +50,21 @@ public class AsmResolverGenerator {
         classWriter.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL, ASMUtil.toAsmClassName(className), null, ASMUtil.ASM_CLASS_OBJECT, ASM_RESOLVER);
 
         //Default Constructor
-        ASMUtil.attachDefaultConstructorMethod(classWriter);
+        ASMUtil.appendDefaultConstructor(classWriter);
 
-        FieldsDescription fieldsDescription = resolverFieldsDescriptor(beanClass);
-        attach_get_Method(classWriter, beanClass, fieldsDescription);
-        attach_set_Method(classWriter, beanClass, fieldsDescription);
+        FieldsDescription fieldsDescription = resolveFieldsDescription(beanClass);
+        appendGetMethod(classWriter, beanClass, fieldsDescription);
+        appendSetMethod(classWriter, beanClass, fieldsDescription);
 
-        attach_getMatchClass_Method(classWriter, beanClass);
-        attach_getMatchMode_Method(classWriter);
+        appendGetMatchClassMethod(classWriter, beanClass);
+        appendGetMatchModeMethod(classWriter);
 
         //End Class Writer
         classWriter.visitEnd();
         return classWriter.toByteArray();
     }
 
-    private static void attach_get_Method(final ClassWriter classWriter, final Class beanClass, final FieldsDescription fieldsDescription) {
+    private static void appendGetMethod(final ClassWriter classWriter, final Class beanClass, final FieldsDescription fieldsDescription) {
         final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_ASM_RESOLVER_GET, null, null, classWriter);
         final Type beanType = Type.getType(beanClass);
 
@@ -72,7 +72,7 @@ public class AsmResolverGenerator {
         if (fieldInfosLength == 0) {
             //Do nothing
         } else if (fieldInfosLength < MIN_SIZE_TO_SWITH) {
-            attachGetFieldsCode(mg, fieldsDescription.all, beanType);
+            appendGetFieldsCode(mg, fieldsDescription.all, beanType);
         } else {
             final Label end_switch = mg.newLabel();
             final Map<Integer, FieldInfo[]> groupByHashcode = fieldsDescription.groupByHashcode;
@@ -81,7 +81,7 @@ public class AsmResolverGenerator {
             //
             mg.tableSwitch(fieldsDescription.hashcodes, new TableSwitchGenerator() {
                 public void generateCase(int hash, Label end) {
-                    attachGetFieldsCode(mg, groupByHashcode.get(hash), beanType, end_switch);
+                    appendGetFieldsCode(mg, groupByHashcode.get(hash), beanType, end_switch);
                 }
 
                 public void generateDefault() {
@@ -91,11 +91,11 @@ public class AsmResolverGenerator {
         }
         //
         //Exception
-        attachThrowNoSuchPropertyException(mg, beanClass);
+        appendThrowNoSuchPropertyException(mg, beanClass);
         mg.endMethod();
     }
 
-    private static void attach_set_Method(final ClassWriter classWriter, final Class beanClass, final FieldsDescription fieldsDescription) {
+    private static void appendSetMethod(final ClassWriter classWriter, final Class beanClass, final FieldsDescription fieldsDescription) {
         final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_ASM_RESOLVER_SET, null, null, classWriter);
         final Type beanType = Type.getType(beanClass);
 
@@ -103,7 +103,7 @@ public class AsmResolverGenerator {
         if (fieldInfosLength == 0) {
             //Do nothing
         } else if (fieldInfosLength < MIN_SIZE_TO_SWITH) {
-            attachSetFieldsCode(mg, fieldsDescription.all, beanType);
+            appendSetFieldsCode(mg, fieldsDescription.all, beanType);
         } else {
             final Label end_switch = mg.newLabel();
             final Map<Integer, FieldInfo[]> groupByHashcode = fieldsDescription.groupByHashcode;
@@ -112,7 +112,7 @@ public class AsmResolverGenerator {
             //
             mg.tableSwitch(fieldsDescription.hashcodes, new TableSwitchGenerator() {
                 public void generateCase(int hash, Label end) {
-                    attachSetFieldsCode(mg, groupByHashcode.get(hash), beanType, end_switch);
+                    appendSetFieldsCode(mg, groupByHashcode.get(hash), beanType, end_switch);
                 }
 
                 public void generateDefault() {
@@ -123,38 +123,38 @@ public class AsmResolverGenerator {
         }
         //
         //Exception
-        attachThrowNoSuchPropertyException(mg, beanClass);
+        appendThrowNoSuchPropertyException(mg, beanClass);
         mg.endMethod();
     }
 
-    private static void attachSetFieldsCode(final GeneratorAdapter mg, FieldInfo[] fieldInfos, Type beanType) {
+    private static void appendSetFieldsCode(final GeneratorAdapter mg, FieldInfo[] fieldInfos, Type beanType) {
         Label l_end = mg.newLabel();
-        attachSetFieldsCode(mg, fieldInfos, beanType, l_end);
+        appendSetFieldsCode(mg, fieldInfos, beanType, l_end);
         mg.mark(l_end);
     }
 
-    private static void attachSetFieldsCode(final GeneratorAdapter mg, FieldInfo[] fieldInfos, Type beanType, Label l_failedMatch) {
+    private static void appendSetFieldsCode(final GeneratorAdapter mg, FieldInfo[] fieldInfos, Type beanType, Label l_failedMatch) {
         int fieldInfosLength = fieldInfos.length;
         Label[] gotoTable = new Label[fieldInfosLength];
         //if ==
         for (int i = 0; i < fieldInfosLength; i++) {
             gotoTable[i] = mg.newLabel();
-            attachIfFieldSameGoto(mg, fieldInfos[i], gotoTable[i] = mg.newLabel());
+            appendIfFieldSameGoto(mg, fieldInfos[i], gotoTable[i] = mg.newLabel());
         }
         //if equals
         for (int i = 0; i < fieldInfosLength; i++) {
-            attachIfFieldEqualsGoTo(mg, fieldInfos[i], gotoTable[i]);
+            appendIfFieldEqualsGoTo(mg, fieldInfos[i], gotoTable[i]);
         }
         //failed, to end
         mg.goTo(l_failedMatch);
         //actions
         for (int i = 0; i < fieldInfosLength; i++) {
             mg.mark(gotoTable[i]);
-            attachSetFieldCode(mg, fieldInfos[i], beanType);
+            appendSetFieldCode(mg, fieldInfos[i], beanType);
         }
     }
 
-    private static void attachSetFieldCode(final GeneratorAdapter mg, FieldInfo fieldInfo, Type beanType) {
+    private static void appendSetFieldCode(final GeneratorAdapter mg, FieldInfo fieldInfo, Type beanType) {
         java.lang.reflect.Method setter = fieldInfo.getSetterMethod();
         if (setter != null) {
             //return book.setName((String)name);
@@ -166,9 +166,9 @@ public class AsmResolverGenerator {
             mg.checkCast(beanType);
             mg.loadArg(2);
             mg.checkCast(ASMUtil.getBoxedType(fieldClass));
-            ASMUtil.attachUnBoxCodeIfNeed(mg, fieldClass);
+            ASMUtil.appendUnBoxCodeIfNeed(mg, fieldClass);
             mg.invokeVirtual(beanType, setterMethod);
-            attachReturnTrue(mg);
+            appendReturnTrue(mg);
         } else if (fieldInfo.getField() != null && fieldInfo.isIsFinal() == false) {
             //return book.name = (String) name;
             Class fieldClass = fieldInfo.getField().getType();
@@ -181,43 +181,43 @@ public class AsmResolverGenerator {
             mg.checkCast(beanType);
             mg.loadArg(2);
             mg.checkCast(boxedFieldType);
-            ASMUtil.attachUnBoxCodeIfNeed(mg, fieldClass);
+            ASMUtil.appendUnBoxCodeIfNeed(mg, fieldClass);
             mg.putField(beanType, fieldInfo.name, fieldType);
-            attachReturnTrue(mg);
+            appendReturnTrue(mg);
         } else {
             //UnwriteableException
-            attachThrowUnwriteableException(mg, fieldInfo);
+            appendThrowUnwriteableException(mg, fieldInfo);
         }
     }
 
-    private static void attachGetFieldsCode(final GeneratorAdapter mg, FieldInfo[] fieldInfos, Type beanType) {
+    private static void appendGetFieldsCode(final GeneratorAdapter mg, FieldInfo[] fieldInfos, Type beanType) {
         Label l_end = mg.newLabel();
-        attachGetFieldsCode(mg, fieldInfos, beanType, l_end);
+        appendGetFieldsCode(mg, fieldInfos, beanType, l_end);
         mg.mark(l_end);
     }
 
-    private static void attachGetFieldsCode(final GeneratorAdapter mg, FieldInfo[] fieldInfos, Type beanType, Label l_failedMatch) {
+    private static void appendGetFieldsCode(final GeneratorAdapter mg, FieldInfo[] fieldInfos, Type beanType, Label l_failedMatch) {
         int fieldInfosLength = fieldInfos.length;
         Label[] gotoTable = new Label[fieldInfosLength];
         //if ==
         for (int i = 0; i < fieldInfosLength; i++) {
             gotoTable[i] = mg.newLabel();
-            attachIfFieldSameGoto(mg, fieldInfos[i], gotoTable[i] = mg.newLabel());
+            appendIfFieldSameGoto(mg, fieldInfos[i], gotoTable[i] = mg.newLabel());
         }
         //if equals
         for (int i = 0; i < fieldInfosLength; i++) {
-            attachIfFieldEqualsGoTo(mg, fieldInfos[i], gotoTable[i]);
+            appendIfFieldEqualsGoTo(mg, fieldInfos[i], gotoTable[i]);
         }
         //failed, to end
         mg.goTo(l_failedMatch);
         //actions
         for (int i = 0; i < fieldInfosLength; i++) {
             mg.mark(gotoTable[i]);
-            attachGetFieldCode(mg, fieldInfos[i], beanType);
+            appendGetFieldCode(mg, fieldInfos[i], beanType);
         }
     }
 
-    private static void attachGetFieldCode(final GeneratorAdapter mg, final FieldInfo fieldInfo, final Type beanType) {
+    private static void appendGetFieldCode(final GeneratorAdapter mg, final FieldInfo fieldInfo, final Type beanType) {
         java.lang.reflect.Method getter = fieldInfo.getGetterMethod();
         if (getter != null) {
             //return book.getName();
@@ -225,67 +225,67 @@ public class AsmResolverGenerator {
             mg.loadArg(0);
             mg.checkCast(beanType);
             mg.invokeVirtual(beanType, getterMethod);
-            ASMUtil.attachBoxCodeIfNeed(mg, getter.getReturnType());
+            ASMUtil.appendBoxCodeIfNeed(mg, getter.getReturnType());
             mg.returnValue();
         } else if (fieldInfo.getField() != null) {
             //return book.name;
             mg.loadArg(0);
             mg.checkCast(beanType);
             mg.getField(beanType, fieldInfo.name, Type.getType(fieldInfo.getField().getType()));
-            ASMUtil.attachBoxCodeIfNeed(mg, fieldInfo.getField().getType());
+            ASMUtil.appendBoxCodeIfNeed(mg, fieldInfo.getField().getType());
             mg.returnValue();
         } else {
             //Unreadable Exception
-            attachThrowUnreadableException(mg, fieldInfo);
+            appendThrowUnreadableException(mg, fieldInfo);
         }
     }
 
-    private static void attach_getMatchClass_Method(ClassWriter classWriter, Class beanClass) {
+    private static void appendGetMatchClassMethod(ClassWriter classWriter, Class beanClass) {
         final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_ASM_RESOLVER_getMatchClass, null, null, classWriter);
         mg.push(Type.getType(beanClass));
         mg.returnValue();
         mg.endMethod();
     }
 
-    private static void attach_getMatchMode_Method(ClassWriter classWriter) {
+    private static void appendGetMatchModeMethod(ClassWriter classWriter) {
         final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_ASM_RESOLVER_getMatchMode, null, null, classWriter);
         mg.getStatic(ASMUtil.TYPE_MATCH_MODE, "EQUALS", ASMUtil.TYPE_MATCH_MODE);
         mg.returnValue();
         mg.endMethod();
     }
 
-    private static void attachReturnTrue(final GeneratorAdapter mg) {
+    private static void appendReturnTrue(final GeneratorAdapter mg) {
         mg.push(true);
         mg.returnValue();
     }
 
-//    private void attachIfFieldNotSameGoto(final GeneratorAdapter mg, FieldInfo fieldInfo, Label l_goto) {
+//    private void appendIfFieldNotSameGoto(final GeneratorAdapter mg, FieldInfo fieldInfo, Label l_goto) {
 //        mg.push(fieldInfo.name);
 //        mg.loadArg(1); //property
 //        mg.ifCmp(ASMUtil.TYPE_STRING, GeneratorAdapter.NE, l_goto); // if name != property goto
 //    }
-    private static void attachIfFieldSameGoto(final GeneratorAdapter mg, FieldInfo fieldInfo, Label l_goto) {
+    private static void appendIfFieldSameGoto(final GeneratorAdapter mg, FieldInfo fieldInfo, Label l_goto) {
         mg.push(fieldInfo.name);
         mg.loadArg(1); //property
         mg.ifCmp(ASMUtil.TYPE_STRING, GeneratorAdapter.EQ, l_goto); // if name == property goto
     }
 
-    private static void attachIfFieldEqualsGoTo(final GeneratorAdapter mg, FieldInfo fieldInfo, Label l_goto) {
+    private static void appendIfFieldEqualsGoTo(final GeneratorAdapter mg, FieldInfo fieldInfo, Label l_goto) {
         mg.push(fieldInfo.name);
         mg.loadArg(1); //property
         mg.invokeVirtual(ASMUtil.TYPE_STRING, ASMUtil.METHOD_EQUALS);
         mg.ifZCmp(GeneratorAdapter.NE, l_goto); // if true goto
     }
 
-    private static void attachThrowUnreadableException(final GeneratorAdapter mg, final FieldInfo fieldInfo) {
-        ASMUtil.attachThrowScriptRuntimeException(mg, StringUtil.concat("Unreadable property ", fieldInfo.parent.getName(), "#", fieldInfo.name));
+    private static void appendThrowUnreadableException(final GeneratorAdapter mg, final FieldInfo fieldInfo) {
+        ASMUtil.appendThrowScriptRuntimeException(mg, StringUtil.concat("Unreadable property ", fieldInfo.parent.getName(), "#", fieldInfo.name));
     }
 
-    private static void attachThrowUnwriteableException(final GeneratorAdapter mg, final FieldInfo fieldInfo) {
-        ASMUtil.attachThrowScriptRuntimeException(mg, StringUtil.concat("Unwriteable property ", fieldInfo.parent.getName(), "#", fieldInfo.name));
+    private static void appendThrowUnwriteableException(final GeneratorAdapter mg, final FieldInfo fieldInfo) {
+        ASMUtil.appendThrowScriptRuntimeException(mg, StringUtil.concat("Unwriteable property ", fieldInfo.parent.getName(), "#", fieldInfo.name));
     }
 
-    private static void attachThrowNoSuchPropertyException(final GeneratorAdapter mg, final Class beanClass) {
+    private static void appendThrowNoSuchPropertyException(final GeneratorAdapter mg, final Class beanClass) {
         mg.newInstance(ASMUtil.TYPE_SCRIPT_RUNTIME_EXCEPTION);
         mg.dup();
         mg.push(StringUtil.concat("Invalid property ", beanClass.getName(), "#"));
@@ -296,7 +296,7 @@ public class AsmResolverGenerator {
         mg.throwException();
     }
 
-    private static FieldsDescription resolverFieldsDescriptor(Class beanClass) {
+    private static FieldsDescription resolveFieldsDescription(Class beanClass) {
 
         final FieldInfo[] all = FieldInfoResolver.resolver(beanClass);
         Arrays.sort(all);

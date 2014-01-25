@@ -5,7 +5,7 @@ package webit.script.asm;
  *
  * @author Zqq
  */
-public interface AsmMethodCaller {
+public interface AsmMethodAccessor {
 
     public Object execute(Object[] args);
 }

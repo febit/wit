@@ -134,7 +134,7 @@ public class ASMUtil {
         }
     }
 
-    public static void attachBoxCodeIfNeed(final GeneratorAdapter mg, final Class type) {
+    public static void appendBoxCodeIfNeed(final GeneratorAdapter mg, final Class type) {
         if (type.isPrimitive()) {
             if (type == int.class) {
                 mg.invokeStatic(INTEGER_TYPE, METHOD_INT_VALUE_OF);
@@ -158,7 +158,7 @@ public class ASMUtil {
         }// else ignore
     }
 
-    public static void attachUnBoxCodeIfNeed(final GeneratorAdapter mg, final Class type) {
+    public static void appendUnBoxCodeIfNeed(final GeneratorAdapter mg, final Class type) {
         if (type.isPrimitive()) {
             if (type == int.class) {
                 mg.invokeVirtual(INTEGER_TYPE, METHOD_INT_VALUE);
@@ -182,7 +182,7 @@ public class ASMUtil {
         }// else ignore
     }
 
-    public static void attachThrowScriptRuntimeException(final GeneratorAdapter mg, final String message) {
+    public static void appendThrowScriptRuntimeException(final GeneratorAdapter mg, final String message) {
         mg.newInstance(TYPE_SCRIPT_RUNTIME_EXCEPTION);
         mg.dup();
         mg.push(message);
@@ -190,7 +190,7 @@ public class ASMUtil {
         mg.throwException();
     }
 
-    public static void attachDefaultConstructorMethod(ClassWriter classWriter) {
+    public static void appendDefaultConstructor(ClassWriter classWriter) {
         final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR, null, null, classWriter);
         mg.loadThis();
         mg.invokeConstructor(ASMUtil.TYPE_OBJECT, ASMUtil.METHOD_DEFAULT_CONSTRUCTOR);

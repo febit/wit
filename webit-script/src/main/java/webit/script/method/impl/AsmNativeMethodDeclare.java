@@ -2,7 +2,7 @@
 package webit.script.method.impl;
 
 import webit.script.Context;
-import webit.script.asm.AsmMethodCaller;
+import webit.script.asm.AsmMethodAccessor;
 import webit.script.method.MethodDeclare;
 
 /**
@@ -11,13 +11,13 @@ import webit.script.method.MethodDeclare;
  */
 public class AsmNativeMethodDeclare implements MethodDeclare {
 
-    private final AsmMethodCaller caller;
+    private final AsmMethodAccessor accessor;
 
-    public AsmNativeMethodDeclare(AsmMethodCaller caller) {
-        this.caller = caller;
+    public AsmNativeMethodDeclare(AsmMethodAccessor accessor) {
+        this.accessor = accessor;
     }
 
     public Object invoke(final Context context, final Object[] args) {
-        return caller.execute(args);
+        return accessor.execute(args);
     }
 }

@@ -21,7 +21,7 @@ public class AsmResolverManager {
         if ((resolver = box.resolver) == null) {
             synchronized (box) {
                 if ((resolver = box.resolver) == null) {
-                    box.resolver = resolver = (AsmResolver) AsmResolverGenerator.generateResolver(type).newInstance();
+                    box.resolver = resolver = (AsmResolver) AsmResolverFactory.createResolverClass(type).newInstance();
                 }
             }
         }

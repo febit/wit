@@ -10,7 +10,7 @@ import webit.script.resolvers.MatchMode;
  *
  * @author Zqq
  */
-public class AsmResolverGeneratorTest {
+public class AsmResolverFactoryTest {
 
     public static class Foo {
 
@@ -61,12 +61,12 @@ public class AsmResolverGeneratorTest {
         }
     }
 
-    //@Test
+    @Test
     public void testPrivateClass() throws Exception {
 
         Exception exception = null;
         try {
-            AsmResolverGenerator.generateResolver(Book.class);
+            AsmResolverFactory.createResolverClass(Book.class);
         } catch (Exception e) {
             exception = e;
         }
@@ -74,10 +74,10 @@ public class AsmResolverGeneratorTest {
 
     }
 
-    //@Test
+    @Test
     public void test() throws Exception {
 
-        Class clazz = AsmResolverGenerator.generateResolver(Foo.class);
+        Class clazz = AsmResolverFactory.createResolverClass(Foo.class);
 
         Foo foo = new Foo();
 

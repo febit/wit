@@ -5,8 +5,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import webit.script.Engine;
 import webit.script.Initable;
-import webit.script.asm.AsmMethodCaller;
-import webit.script.asm.AsmMethodCallerManager;
+import webit.script.asm.AsmMethodAccessor;
+import webit.script.asm.AsmMethodAccessorManager;
 import webit.script.exceptions.ParseException;
 import webit.script.loggers.Logger;
 import webit.script.method.MethodDeclare;
@@ -73,32 +73,32 @@ public class NativeFactory implements Initable {
 
         try {
             final Method method = ClassUtil.searchMethod(clazz, methodName, paramClasses, false);
-            AsmMethodCaller caller;
+            AsmMethodAccessor accessor;
             if (this.enableAsm) {
                 if (ClassUtil.isPublic(clazz)) {
                     if (ClassUtil.isPublic(method)) {
                         try {
-                            if ((caller = AsmMethodCallerManager.getCaller(method)) == null) {
+                            if ((accessor = AsmMethodAccessorManager.getAccessor(method)) == null) {
                                 logger.error(StringUtil.concat("AsmMethodCaller for '", method.toString(), "' is null, and instead by NativeMethodDeclare"));
                             }
                         } catch (Exception ex) {
-                            caller = null;
+                            accessor = null;
                             logger.error(StringUtil.concat("Generate AsmMethodCaller for '", method.toString(), "' failed, and instead by NativeMethodDeclare"), ex);
                         }
                     } else {
                         logger.warn(StringUtil.concat("'", method.toString(), "' will not use asm, since this method is not public, and instead by NativeMethodDeclare"));
-                        caller = null;
+                        accessor = null;
                     }
                 } else {
                     logger.warn(StringUtil.concat("'", method.toString(), "' will not use asm, since class is not public, and instead by NativeMethodDeclare"));
-                    caller = null;
+                    accessor = null;
                 }
             } else {
-                caller = null;
+                accessor = null;
             }
 
-            return caller != null
-                    ? new AsmNativeMethodDeclare(caller)
+            return accessor != null
+                    ? new AsmNativeMethodDeclare(accessor)
                     : new NativeMethodDeclare(method);
 
         } catch (NoSuchMethodException ex) {
@@ -122,32 +122,32 @@ public class NativeFactory implements Initable {
 
         try {
             final Constructor constructor = clazz.getConstructor(paramClasses);
-            AsmMethodCaller caller;
+            AsmMethodAccessor accessor;
             if (this.enableAsm) {
                 if (ClassUtil.isPublic(clazz)) {
                     if (ClassUtil.isPublic(constructor)) {
                         try {
-                            if ((caller = AsmMethodCallerManager.getCaller(constructor)) == null) {
+                            if ((accessor = AsmMethodAccessorManager.getAccessor(constructor)) == null) {
                                 logger.error(StringUtil.concat("AsmMethodCaller for '", constructor.toString(), "' is null, and instead by NativeConstructorDeclare"));
                             }
                         } catch (Exception ex) {
-                            caller = null;
+                            accessor = null;
                             logger.error(StringUtil.concat("Generate AsmMethodCaller for '", constructor.toString(), "' failed, and instead by NativeConstructorDeclare"), ex);
                         }
                     } else {
                         logger.warn(StringUtil.concat("'", constructor.toString(), "' will not use asm, since this method is not public, and instead by NativeConstructorDeclare"));
-                        caller = null;
+                        accessor = null;
                     }
                 } else {
                     logger.warn(StringUtil.concat("'" + constructor.toString() + "' will not use asm, since class is not public, and instead by NativeConstructorDeclare"));
-                    caller = null;
+                    accessor = null;
                 }
             } else {
-                caller = null;
+                accessor = null;
             }
 
-            return caller != null
-                    ? new AsmNativeMethodDeclare(caller)
+            return accessor != null
+                    ? new AsmNativeMethodDeclare(accessor)
                     : new NativeConstructorDeclare(constructor);
 
         } catch (NoSuchMethodException ex) {

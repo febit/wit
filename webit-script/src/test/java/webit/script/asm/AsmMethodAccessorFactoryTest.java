@@ -12,32 +12,32 @@ import webit.script.exceptions.ScriptRuntimeException;
  *
  * @author Zqq
  */
-public class ASMMethodCallerGeneratorTest {
+public class AsmMethodAccessorFactoryTest {
 
     @Test
     @SuppressWarnings("unchecked")
     public void test() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
         //System.currentTimeMillis();
-        Class currentTimeMillisClass = AsmMethodCallerGenerator.generateCaller(System.class.getMethod("currentTimeMillis", new Class[0]));
-        Class arraycopyClass = AsmMethodCallerGenerator.generateCaller(System.class.getMethod("arraycopy", new Class[]{Object.class, int.class, Object.class, int.class, int.class}));
+        Class currentTimeMillisClass = AsmMethodAccessorFactory.createAccessorClass(System.class.getMethod("currentTimeMillis", new Class[0]));
+        Class arraycopyClass = AsmMethodAccessorFactory.createAccessorClass(System.class.getMethod("arraycopy", new Class[]{Object.class, int.class, Object.class, int.class, int.class}));
 
-        Class newListClass = AsmMethodCallerGenerator.generateCaller(ArrayList.class.getConstructor());
-        Class newListWithInitSizeClass = AsmMethodCallerGenerator.generateCaller(ArrayList.class.getConstructor(new Class[]{int.class}));
+        Class newListClass = AsmMethodAccessorFactory.createAccessorClass(ArrayList.class.getConstructor());
+        Class newListWithInitSizeClass = AsmMethodAccessorFactory.createAccessorClass(ArrayList.class.getConstructor(new Class[]{int.class}));
         
-        Class listSizeClass = AsmMethodCallerGenerator.generateCaller(ArrayList.class.getMethod("size", new Class[0]));
-        Class listAddClass = AsmMethodCallerGenerator.generateCaller(List.class.getMethod("add", new Class[]{Object.class}));
-        Class listAddToIndexClass = AsmMethodCallerGenerator.generateCaller(List.class.getMethod("add", new Class[]{int.class, Object.class}));
+        Class listSizeClass = AsmMethodAccessorFactory.createAccessorClass(ArrayList.class.getMethod("size", new Class[0]));
+        Class listAddClass = AsmMethodAccessorFactory.createAccessorClass(List.class.getMethod("add", new Class[]{Object.class}));
+        Class listAddToIndexClass = AsmMethodAccessorFactory.createAccessorClass(List.class.getMethod("add", new Class[]{int.class, Object.class}));
         
         
-        AsmMethodCaller currentTimeMillis = (AsmMethodCaller) currentTimeMillisClass.newInstance();
-        AsmMethodCaller arraycopy = (AsmMethodCaller) arraycopyClass.newInstance();
+        AsmMethodAccessor currentTimeMillis = (AsmMethodAccessor) currentTimeMillisClass.newInstance();
+        AsmMethodAccessor arraycopy = (AsmMethodAccessor) arraycopyClass.newInstance();
         
-        AsmMethodCaller newList = (AsmMethodCaller) newListClass.newInstance();
-        AsmMethodCaller newListWithInitSize = (AsmMethodCaller) newListWithInitSizeClass.newInstance();
+        AsmMethodAccessor newList = (AsmMethodAccessor) newListClass.newInstance();
+        AsmMethodAccessor newListWithInitSize = (AsmMethodAccessor) newListWithInitSizeClass.newInstance();
 
-        AsmMethodCaller listSize = (AsmMethodCaller) listSizeClass.newInstance();
-        AsmMethodCaller listAdd = (AsmMethodCaller) listAddClass.newInstance();
-        AsmMethodCaller listAddToIndex = (AsmMethodCaller) listAddToIndexClass.newInstance();
+        AsmMethodAccessor listSize = (AsmMethodAccessor) listSizeClass.newInstance();
+        AsmMethodAccessor listAdd = (AsmMethodAccessor) listAddClass.newInstance();
+        AsmMethodAccessor listAddToIndex = (AsmMethodAccessor) listAddToIndexClass.newInstance();
         
 
         assertEquals(currentTimeMillis.execute(null).getClass(), Long.class);
