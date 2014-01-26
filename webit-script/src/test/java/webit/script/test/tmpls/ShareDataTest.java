@@ -22,7 +22,7 @@ public class ShareDataTest {
             engine.setShareRootData(true);
 
             Template template = engine.getTemplate("/shareData.wit");
-            template.reloadTemplateForce();
+            template.reload();
             template.merge(KeyValuesUtil.wrap(new String[]{"v1", "v2"}, new Object[]{"V1", "V2"}), new DiscardOutputStream());
         } finally {
             engine.setShareRootData(false);

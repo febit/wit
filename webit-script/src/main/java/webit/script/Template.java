@@ -40,9 +40,10 @@ public final class Template {
     /**
      * Reload this template.
      *
+     * @since 1.4.0
      * @throws ParseException
      */
-    public void reloadTemplateForce() throws ParseException {
+    public void reload() throws ParseException {
         parseAST(true);
     }
 

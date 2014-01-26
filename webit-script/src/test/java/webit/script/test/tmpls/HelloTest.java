@@ -16,7 +16,7 @@ public class HelloTest {
     public void test() {
         try {
             Template template = EngineManager.getTemplate("/helloTest.wit");
-            //template.reloadForce();
+            //template.reload();
             template.merge(new DiscardOutputStream());
         } catch (Exception e) {
             e.printStackTrace();

@@ -24,13 +24,13 @@ public class TestForVisualVM {
 
         Template template = engine.getTemplate("/helloTest.wit");
         DiscardOutputStream out = new DiscardOutputStream();
-        //template.reloadForce();
+        //template.reload();
 
         //webit.script.TestForVisualVM.Start
         TestForVisualVM.Start.start();
         for (int i = 0; i < times; i++) {
             //template.reset();
-            //template.reloadForce();
+            //template.reload();
             template.merge(out);
         }
     }
