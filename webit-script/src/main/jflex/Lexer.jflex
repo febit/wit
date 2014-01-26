@@ -2,6 +2,7 @@ package webit.script.core;
 
 import webit.script.util.FastCharBuffer;
 import webit.script.util.RepeatChars;
+import webit.script.exceptions.ParseException;
 
 
 %%
@@ -443,7 +444,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   \\{LineTerminator}             { /* escape new line */ }
   
   /* error cases */
-  \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
+  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getLine(), getColumn()); }
 }
 
 <CHARLITERAL> {
@@ -461,12 +462,12 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, (char) yyInt(1, -1 ,8));}
   
   /* error cases */
-  \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
-  {LineTerminator}               { throw new RuntimeException("Unterminated character literal at end of line"); }
+  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getLine(), getColumn()); }
+  {LineTerminator}               { throw new ParseException("Unterminated character literal at end of line", getLine(), getColumn()); }
 }
 
 /* error fallback */
-.|\n                             { throw new RuntimeException("Illegal character \""+yytext()+
-                                                              "\" at line "+yyline+", column "+yycolumn); }
+.|\n                             { throw new ParseException("Illegal character \""+yytext()+
+                                                              "\" at line "+yyline+", column "+yycolumn, getLine(), getColumn()); }
 <<EOF>>                          { return symbol(Tokens.EOF); }
 
