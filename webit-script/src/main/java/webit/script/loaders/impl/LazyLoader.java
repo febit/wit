@@ -48,4 +48,8 @@ public class LazyLoader implements Loader, Initable {
     public String normalize(String name) {
         return this.loader.normalize(name);
     }
+
+    public boolean isEnableCache(String name) {
+        return this.loader.isEnableCache(name);
+    }
 }

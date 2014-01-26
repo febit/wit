@@ -131,6 +131,15 @@ public class RouteLoader implements Loader, Initable {
 
     }
 
+    public boolean isEnableCache(String name) {
+        final LoaderEntry entry = getLoaderEntry(name);
+        if (entry != null) {
+            return entry.isEnableCache(name);
+        } else {
+            return this._defaultLoader.isEnableCache(name);
+        }
+    }
+
     protected static class LoaderEntry {
 
         private final String prefix;
@@ -159,6 +168,10 @@ public class RouteLoader implements Loader, Initable {
             return name != null
                     ? this.prefix.concat(name)
                     : null;
+        }
+
+        private boolean isEnableCache(String name) {
+            return this.loader.isEnableCache(name.substring(this.prefixLength));
         }
     }
 }

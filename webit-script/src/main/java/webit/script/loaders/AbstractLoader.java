@@ -18,6 +18,7 @@ public abstract class AbstractLoader implements Loader, Initable {
     protected String fileNameExtension;
     //
     private boolean dontAppendLostFileNameExtensionSettedFlag = false;
+    protected boolean enableCache = true;
 
     /**
      * get child template name by parent template name and relative name.
@@ -101,5 +102,13 @@ public abstract class AbstractLoader implements Loader, Initable {
         if (this.fileNameExtension == null) {
             this.fileNameExtension = engine.getSuffix();
         }
+    }
+
+    public boolean isEnableCache(String name) {
+        return enableCache;
+    }
+
+    public void setEnableCache(boolean enableCache) {
+        this.enableCache = enableCache;
     }
 }

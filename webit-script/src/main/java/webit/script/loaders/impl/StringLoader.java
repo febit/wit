@@ -12,6 +12,8 @@ import webit.script.loaders.impl.resources.StringResource;
  */
 public class StringLoader implements Loader {
 
+    protected boolean enableCache = false;
+
     public Resource get(String name) throws ResourceNotFoundException {
         return new StringResource(name);
     }
@@ -23,5 +25,13 @@ public class StringLoader implements Loader {
 
     public String normalize(String name) {
         return name;
+    }
+
+    public boolean isEnableCache(String name) {
+        return enableCache;
+    }
+
+    public void setEnableCache(boolean enableCache) {
+        this.enableCache = enableCache;
     }
 }

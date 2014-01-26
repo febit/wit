@@ -212,8 +212,11 @@ public final class Engine {
         this.componentContainer.put(type.getProfile(), bean);
     }
 
+   
     /**
      *
+     * @param type
+     * @return Component
      * @since 1.4.0
      */
     public Object getComponent(final Class type) {
@@ -222,6 +225,8 @@ public final class Engine {
 
     /**
      *
+     * @param type
+     * @return Component
      * @since 1.4.0
      */
     public synchronized Object getComponent(final ClassEntry type) {
@@ -252,7 +257,7 @@ public final class Engine {
      * @throws ResourceNotFoundException
      */
     public Template getTemplate(final String name) throws ResourceNotFoundException {
-        Template template;
+        final Template template;
         if ((template = this.templateCache.get(name)) != null) {
             return template;
         } else {
@@ -263,17 +268,20 @@ public final class Engine {
     private Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
         Template template;
         final String normalizedName;
-        if ((normalizedName = this.resourceLoader.normalize(name)) != null) {
+        final Loader loader;
+        if ((normalizedName = (loader = this.resourceLoader).normalize(name)) != null) {
             if ((template = this.templateCache.get(normalizedName)) == null) {
                 Template oldTemplate;
-                if ((oldTemplate = this.templateCache.putIfAbsent(normalizedName,
-                        template = new Template(this, normalizedName,
-                                this.resourceLoader.get(normalizedName)))) != null) {
-                    template = oldTemplate;
-                }
-                if (!name.equals(normalizedName)
-                        && (oldTemplate = this.templateCache.putIfAbsent(name, template)) != null) {
-                    template = oldTemplate;
+                template = new Template(this, normalizedName,
+                        loader.get(normalizedName));
+                if (loader.isEnableCache(normalizedName)) {
+                    if ((oldTemplate = this.templateCache.putIfAbsent(normalizedName, template)) != null) {
+                        template = oldTemplate;
+                    }
+                    if (!name.equals(normalizedName)
+                            && (oldTemplate = this.templateCache.putIfAbsent(name, template)) != null) {
+                        template = oldTemplate;
+                    }
                 }
             }
             return template;

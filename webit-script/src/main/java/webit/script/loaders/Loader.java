@@ -30,4 +30,12 @@ public interface Loader {
      * @return normalized name
      */
     String normalize(String name);
+
+    /**
+     * if this template need to be cached.
+     *
+     * @param name template's name
+     * @return boolean
+     */
+    boolean isEnableCache(String name);
 }
