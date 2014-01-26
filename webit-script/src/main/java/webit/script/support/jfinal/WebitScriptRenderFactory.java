@@ -21,7 +21,7 @@ import webit.script.web.WebEngineManager;
 public class WebitScriptRenderFactory implements IMainRenderFactory {
 
     protected static final String encoding = Render.getEncoding();
-    protected static final String contentType = "text/html; charset=".concat(encoding);
+    protected static final String contentType = "text/html; charset=" + encoding;
 
     protected final WebEngineManager engineManager;
     protected final String suffix;
@@ -55,7 +55,7 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
         return this;
     }
 
-    public WebitScriptRenderFactory appendProperties(String key, Object value) {
+    public WebitScriptRenderFactory appendProperties(String key, String value) {
         this.engineManager.appendProperties(key, value);
         return this;
     }
