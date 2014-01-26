@@ -1,5 +1,5 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script;
+package webit.script.test.tmpls;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
+import webit.script.EngineManager;
+import webit.script.Template;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.exceptions.ScriptRuntimeException;

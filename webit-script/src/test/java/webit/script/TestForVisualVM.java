@@ -22,15 +22,15 @@ public class TestForVisualVM {
         int times = 10000;
         Engine engine = EngineManager.getEngine();
 
-        Template template = engine.getTemplate("/firstTmpl.wit");
+        Template template = engine.getTemplate("/helloTest.wit");
         DiscardOutputStream out = new DiscardOutputStream();
-        template.reloadTemplateForce();
+        //template.reloadForce();
 
         //webit.script.TestForVisualVM.Start
         TestForVisualVM.Start.start();
         for (int i = 0; i < times; i++) {
             //template.reset();
-            //template.reloadTemplateForce();
+            //template.reloadForce();
             template.merge(out);
         }
     }

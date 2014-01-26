@@ -11,4 +11,5 @@ GLOBAL.g_string = "g_string";
 CONST.c_one = 1;
 CONST.c_string = "c_string";
 
+
 %>

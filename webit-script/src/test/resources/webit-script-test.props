@@ -3,7 +3,11 @@
 resourceLoaderClass=webit.script.loaders.impl.RouteLoader-main
 loggerClass=webit.script.loggers.impl.Slf4jLogger
 vars=request,request2,session,session
-initTemplates=/init.wit,/init2.wit,/init-junit-assert.wit
+initTemplates=\
+        /inits/init-junit-assert.wit, \
+        /auto/etc/initTest.init.wit, \
+        /auto/etc/initTest.init2.wit, \
+        /auto/etc/localTest.init.wit
 
 
 [webit.script.loaders.impl.RouteLoader-main]

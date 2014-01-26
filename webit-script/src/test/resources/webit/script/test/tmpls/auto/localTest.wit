@@ -2,11 +2,29 @@
 
 assertNull(LOCAL("a"));
 
-LOCAL("a","abc");
-assertEquals("abc", LOCAL("a"));
+{
+    //TEST: General
 
-include "imports/localTest.imports.wit";
+    LOCAL("a","abc");
+    assertEquals("abc", LOCAL("a"));
+}
 
-assertEquals("def", LOCAL("a"));
+{
+    //TEST: include
+
+    LOCAL("a","abc");
+    include "etc/localTest.include.wit";
+    assertEquals("def", LOCAL("a"));
+}
+
+{
+    //TEST: Global function
+
+    LOCAL("a","xxx");
+    localTestInClobal("a","xxx");
+
+    localTestInClobal_set("a", "yyy");
+    assertEquals("yyy", LOCAL("a"));
+}
 
 %>

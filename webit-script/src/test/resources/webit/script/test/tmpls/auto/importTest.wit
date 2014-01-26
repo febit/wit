@@ -5,7 +5,7 @@
     var a = "A";
     var b = "B";
     {
-        import "/import1.wit";
+        import "etc/importTest.import.wit";
 
         var b;
         var func;
@@ -22,7 +22,7 @@
     {
         var b;
         var b_1;
-        import "/import1.wit" a,b_1=b;
+        import "etc/importTest.import.wit" a,b_1=b;
 
         var func;
 
@@ -39,11 +39,11 @@
 
     }
     {
-        import "/import1.wit" {"1":"1","2":"2"} a,b;
+        import "etc/importTest.import.wit" {"1":"1","2":"2"} a,b;
         var a;
         var b;
         var c = {"1":"1","2":"2"};
-        import "/import1.wit" {c} a,b;
+        import "etc/importTest.import.wit" {c} a,b;
     }
 
 }

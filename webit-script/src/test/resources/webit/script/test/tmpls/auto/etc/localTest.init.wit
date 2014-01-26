@@ -1,0 +1,13 @@
+<%
+var CONST;
+
+CONST.localTestInClobal = function(key, exp){
+    assertEquals(exp, LOCAL(key));
+};
+
+CONST.localTestInClobal_set = function(key, value){
+    LOCAL(key, value);
+};
+
+
+%>
