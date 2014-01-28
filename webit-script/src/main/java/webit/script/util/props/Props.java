@@ -307,13 +307,13 @@ public final class Props /* implements Cloneable */ {
 //        return getValue(key, null);
 //    }
 //
-//    /**
-//     * Returns value of property, using active profiles.
-//     */
-//    public String getValue(final String key) {
-//        initialize();
-//        return data.lookupValue(key, activeProfiles);
-//    }
+    /**
+     * Returns value of property, using active profiles.
+     */
+    public String getValue(final String key) {
+        initialize();
+        return data.lookupValue(key, activeProfiles);
+    }
 //
 //       // ---------------------------------------------------------------- put
 //    /**

@@ -175,11 +175,11 @@ public class StringUtil {
         }
     }
 
-    public static void trimAll(String[] strings) {
-        for (int i = 0; i < strings.length; i++) {
-            String string = strings[i];
-            if (string != null) {
-                strings[i] = string.trim();
+    public static void trimAll(final String[] strings) {
+        String item;
+        for (int i = 0, len = strings.length; i < len; i++) {
+            if ((item = strings[i]) != null) {
+                strings[i] = item.trim();
             }
         }
     }
@@ -288,6 +288,14 @@ public class StringUtil {
         for (int i = 0; i < count; i++) {
             result[i] = src.substring(start[i], end[i]);
         }
+        return result;
+    }
+
+    private final static char[] DEFAULT_DELIMITERS = ",\n\r".toCharArray();
+
+    public static String[] splitAndTrimAll(String src) {
+        final String[] result = splitc(src, DEFAULT_DELIMITERS);
+        trimAll(result);
         return result;
     }
 

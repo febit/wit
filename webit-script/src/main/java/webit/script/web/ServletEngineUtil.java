@@ -38,7 +38,7 @@ public class ServletEngineUtil {
         return Engine.createEngine(props, settings);
     }
 
-    public static Props loadFromServletContextPath(final Props props, final ServletContext servletContext, final String... pathSets) {
+    public static Props loadFromServletContextPath(final Props props, final ServletContext servletContext, final String... paths) {
 
         return PropsUtil.load(props, new PropsUtil.InputStreamResolver() {
 
@@ -63,6 +63,6 @@ public class ServletEngineUtil {
                         ? path.substring(1)
                         : path);
             }
-        }, pathSets);
+        }, paths);
     }
 }

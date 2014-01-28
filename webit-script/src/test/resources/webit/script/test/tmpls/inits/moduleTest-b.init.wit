@@ -1,0 +1,11 @@
+
+<%
+
+assertNotNull($GLOBAL["moduleTest_a"]);
+assertNotNull($GLOBAL["moduleTest_a_1"]);
+assertNotNull($GLOBAL["moduleTest_a_2"]);
+
+$GLOBAL["moduleTest_b"] = ($GLOBAL["moduleTest_b"] || 0)  + 1;
+$GLOBAL["moduleTest-all"] = ($GLOBAL["moduleTest-all"] || 0)  + 1;
+
+%>

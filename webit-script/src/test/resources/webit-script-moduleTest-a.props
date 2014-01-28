@@ -1,0 +1,9 @@
+
+
+@modules='''
+/webit-script-moduleTest-a-1.props
+/webit-script-moduleTest-a-2.props
+'''
+
+[engine]
+initTemplates+= /inits/moduleTest-a.init.wit

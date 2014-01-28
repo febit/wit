@@ -1,0 +1,10 @@
+<%
+
+assertEquals(1, $GLOBAL["moduleTest_a"]);
+assertEquals(1, $GLOBAL["moduleTest_a_1"]);
+assertEquals(1, $GLOBAL["moduleTest_a_2"]);
+assertEquals(1, $GLOBAL["moduleTest_b"]);
+
+assertEquals(4, $GLOBAL["moduleTest-all"]);
+
+%>

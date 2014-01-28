@@ -183,7 +183,7 @@ final class PropsData {
     /**
      * Lookup props value through profiles and base properties.
      */
-    private String lookupValue(final String key, final String... profiles) {
+    String lookupValue(final String key, final String... profiles) {
         if (profiles != null) {
             nextprofile:
             for (String profile : profiles) {

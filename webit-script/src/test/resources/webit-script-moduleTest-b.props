@@ -1,0 +1,5 @@
+
+
+
+[engine]
+initTemplates+= /inits/moduleTest-b.init.wit
