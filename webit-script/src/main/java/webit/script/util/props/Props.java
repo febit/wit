@@ -178,6 +178,21 @@ public final class Props /* implements Cloneable */ {
         data.putBaseProperty(name, value, false);
     }
 
+    public void merge(final Props props) {
+        data.merge(props.data);
+    }
+
+//    public void removeBaseProperty(final String name) {
+//        data.removeBaseProperty(name);
+//    }
+    public String getBaseProperty(final String name) {
+        return data.getBaseProperty(name);
+    }
+
+    public String popBaseProperty(final String name) {
+        return data.popBaseProperty(name);
+    }
+
     public void append(final String name, final String value) {
         data.putBaseProperty(name, value, true);
     }
@@ -394,13 +409,12 @@ public final class Props /* implements Cloneable */ {
 //            return;
 //        }
 
-        final PropsEntry pv = data.getBaseProperty(activeProfilesProp);
-        if (pv == null) {
+        final String value = data.getBaseProperty(activeProfilesProp);
+        if (value == null) {
             // no active profile set as the property, exit
             return;
         }
 
-        final String value = pv.getValue();
         if (StringUtil.isBlank(value)) {
             activeProfiles = null;
             return;

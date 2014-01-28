@@ -19,20 +19,18 @@ final class PropsData {
 
 //    private PropsEntry first;
 //    private PropsEntry last;
-
-    /**
-     * If set, duplicate props will be appended to the end, separated by comma.
-     */
-    private final static boolean appendDuplicateProps = false;
+//    /**
+//     * If set, duplicate props will be appended to the end, separated by comma.
+//     */
+//    private final static boolean appendDuplicateProps = false;
 //	/**
 //	 * When set, missing macros will be replaces with an empty string.
 //	 */
 //	protected boolean ignoreMissingMacros;
-    /**
-     * When set, empty properties will be skipped.
-     */
-    private final static boolean skipEmptyProps = true;
-
+//    /**
+//     * When set, empty properties will be skipped.
+//     */
+//    private final static boolean skipEmptyProps = true;
     PropsData() {
         this.baseProperties = new HashMap<String, PropsEntry>();
         this.profileProperties = new HashMap<String, Map<String, PropsEntry>>();
@@ -61,20 +59,23 @@ final class PropsData {
 //		pd.skipEmptyProps = skipEmptyProps;
 //		return pd;
 //	}
-	// ---------------------------------------------------------------- misc
+    // ---------------------------------------------------------------- misc
     /**
      * Puts key-value pair into the map, with respect of appending duplicate
      * properties
      */
     private void put(final String profile, final Map<String, PropsEntry> map, final String key, final String value, final boolean append) {
         String realValue = value;
-        if (append || appendDuplicateProps) {
+        boolean realAppend = append;
+        if (append) {
+            //if (append || appendDuplicateProps) {
             PropsEntry pv = map.get(key);
             if (pv != null) {
                 realValue = pv.value + APPEND_SEPARATOR + realValue;
+                realAppend = pv.append;
             }
         }
-        PropsEntry propsEntry = new PropsEntry(key, realValue, profile);
+        PropsEntry propsEntry = new PropsEntry(key, realValue, profile, realAppend);
 
 //        // update position pointers
 //        if (first == null) {
@@ -83,12 +84,11 @@ final class PropsData {
 //            last.next = propsEntry;
 //        }
 //        last = propsEntry;
-
         // add to the map
         map.put(key, propsEntry);
     }
 
-	// ---------------------------------------------------------------- properties
+    // ---------------------------------------------------------------- properties
 //	/**
 //	 * Counts base properties.
 //	 */
@@ -102,11 +102,41 @@ final class PropsData {
         put(null, baseProperties, key, value, append);
     }
 
+    void merge(PropsData src) {
+        //baseProperties
+        for (Map.Entry<String, PropsEntry> entry : src.baseProperties.entrySet()) {
+            PropsEntry propsEntry = entry.getValue();
+            putBaseProperty(entry.getKey(), propsEntry.value, propsEntry.append);
+        }
+        //profileProperties
+        for (Map.Entry<String, Map<String, PropsEntry>> entry : this.profileProperties.entrySet()) {
+            String profile = entry.getKey();
+            for (Map.Entry<String, PropsEntry> entry1 : entry.getValue().entrySet()) {
+                PropsEntry propsEntry = entry1.getValue();
+                putProfileProperty(entry1.getKey(), propsEntry.value, profile, propsEntry.append);
+            }
+        }
+    }
+
     /**
      * Returns base property or <code>null</code> if it doesn't exist.
      */
-    PropsEntry getBaseProperty(final String key) {
-        return baseProperties.get(key);
+    String getBaseProperty(final String key) {
+        final PropsEntry propsEntry;
+        return (propsEntry = baseProperties.get(key)) != null
+                ? propsEntry.getValue()
+                : null;
+    }
+
+//    void removeBaseProperty(final String key) {
+//        baseProperties.remove(key);
+//    }
+
+    String popBaseProperty(final String key) {
+        final PropsEntry propsEntry;
+        return (propsEntry = baseProperties.remove(key)) != null
+                ? propsEntry.getValue()
+                : null;
     }
 
     // ---------------------------------------------------------------- profiles
@@ -149,6 +179,7 @@ final class PropsData {
 //		return profileMap.get(key);
 //	}
     // ---------------------------------------------------------------- lookup
+
     /**
      * Lookup props value through profiles and base properties.
      */
@@ -173,11 +204,10 @@ final class PropsData {
                 }
             }
         }
-        final PropsEntry value = getBaseProperty(key);
-        return value == null ? null : value.getValue();
+        return getBaseProperty(key);
     }
 
-	// ---------------------------------------------------------------- resolve
+    // ---------------------------------------------------------------- resolve
     /**
      * Resolves all macros in this props set. Called once on initialization.
      */
@@ -226,13 +256,13 @@ final class PropsData {
             final String newValue = StringTemplateParser.parse(pv.value, macroResolver);
 
             if (!newValue.equals(pv.value)) {
-                if (skipEmptyProps) {
-                    if (newValue.length() == 0) {
-                        iterator.remove();
-                        replaced = true;
-                        continue;
-                    }
+//                if (skipEmptyProps) {
+                if (newValue.length() == 0) {
+                    iterator.remove();
+                    replaced = true;
+                    continue;
                 }
+//                }
 
                 pv.resolved = newValue;
                 replaced = true;
@@ -243,7 +273,7 @@ final class PropsData {
         return replaced;
     }
 
-	// ---------------------------------------------------------------- extract
+    // ---------------------------------------------------------------- extract
     /**
      * Extract props to target map.
      */

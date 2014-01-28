@@ -10,6 +10,8 @@ final class PropsEntry {
      * Original value.
      */
     final String value;
+    
+    final boolean append;
 
     /**
      * Value with all macros resolved. May be <code>null</code> when value
@@ -23,8 +25,9 @@ final class PropsEntry {
 
     //private final String profile;
 
-    PropsEntry(final String key, final String value, String profile) {
+    PropsEntry(final String key, final String value, String profile, boolean append) {
         this.value = value;
+        this.append = append;
         //this.key = key;
         //this.profile = profile;
     }
