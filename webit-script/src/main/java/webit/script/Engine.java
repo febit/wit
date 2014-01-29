@@ -81,7 +81,7 @@ public final class Engine {
     private Class coderFactoryClass = webit.script.io.charset.impl.DefaultCoderFactory.class;
     private Class globalManagerClass = webit.script.global.DefaultGlobalManager.class;
     private Class loggerClass = webit.script.loggers.impl.NOPLogger.class;
-    private Class[] resolvers;
+    private ClassEntry[] resolvers;
     private String encoding = EncodingPool.UTF_8;
     private boolean looseVar = false;
     private boolean shareRootData = true;
@@ -301,7 +301,7 @@ public final class Engine {
         this.coderFactoryClass = coderFactoryClass;
     }
 
-    public void setResolvers(Class[] resolvers) {
+    public void setResolvers(ClassEntry[] resolvers) {
         this.resolvers = resolvers;
     }
 

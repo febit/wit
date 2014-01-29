@@ -4,6 +4,7 @@ package webit.script.loggers.impl;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.loggers.Logger;
+import webit.script.util.ClassEntry;
 
 /**
  *
@@ -12,7 +13,7 @@ import webit.script.loggers.Logger;
 public final class MultiLogger implements Logger, Initable {
 
     //Settings
-    private Class[] loggers;
+    private ClassEntry[] loggers;
     //
     private Logger[] _loggers;
 
@@ -206,7 +207,7 @@ public final class MultiLogger implements Logger, Initable {
         }
     }
 
-    public void setLoggers(Class[] loggers) {
+    public void setLoggers(ClassEntry[] loggers) {
         this.loggers = loggers;
     }
 }

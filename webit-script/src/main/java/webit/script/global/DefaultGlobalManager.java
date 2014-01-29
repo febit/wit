@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import webit.script.Engine;
 import webit.script.Initable;
+import webit.script.util.ClassEntry;
 import webit.script.util.SimpleBag;
 
 /**
@@ -19,7 +20,7 @@ public class DefaultGlobalManager implements GlobalManager, Initable {
     private Object[] globalContext;
 
     //settings
-    private Class[] registers;
+    private ClassEntry[] registers;
 
     public DefaultGlobalManager() {
         this.constMap = new HashMap<String, Object>();
@@ -109,7 +110,7 @@ public class DefaultGlobalManager implements GlobalManager, Initable {
         return this.constMap.get(name);
     }
 
-    public void setRegisters(Class[] registers) {
+    public void setRegisters(ClassEntry[] registers) {
         this.registers = registers;
     }
 
