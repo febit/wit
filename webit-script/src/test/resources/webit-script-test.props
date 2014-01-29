@@ -7,7 +7,6 @@
 '''
 
 [engine]
-resourceLoader=webit.script.loaders.impl.RouteLoader-main
 logger=webit.script.loggers.impl.Slf4jLogger
 vars+=request,request2,session,session
 inits+='''
@@ -16,14 +15,18 @@ inits+='''
     /auto/etc/localTest.init.wit
 '''
 
+[loader-classpath-root]
+list +='''
+  /webit/script/test/tmpls/safe
+'''
 
-[webit.script.loaders.impl.RouteLoader-main]
-loaders+='''
+[routeLoader-main]
+loaders +='''
 lib-test: webit.script.loaders.impl.ClasspathLoader-test
 lib: webit.script.loaders.impl.ClasspathLoader-lib
 lib:sub: webit.script.loaders.impl.ClasspathLoader-lib-sub
 '''
-defaultLoader=webit.script.loaders.impl.LazyLoader-main
+default=webit.script.loaders.impl.LazyLoader-main
 
 
 [webit.script.loaders.impl.LazyLoader-main]

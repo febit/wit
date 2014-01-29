@@ -5,7 +5,7 @@ DEFAULT_ENCODING=UTF-8
 
 [engine]
 encoding=${DEFAULT_ENCODING}
-# resourceLoader=webit.script.loaders.impl.ClasspathLoader
+resourceLoader=webit.script.loaders.impl.RouteLoader-main
 # textStatementFactory=webit.script.core.text.impl.SimpleTextStatementFactory
 # nativeSecurityManager=webit.script.security.impl.DefaultNativeSecurityManager
 # globalManager=webit.script.global.DefaultGlobalManager
@@ -35,9 +35,21 @@ resolvers='''
     webit.script.resolvers.impl.LongOutResolver
 '''
 
+
+[routeLoader-main]
+default=webit.script.loaders.impl.ClasspathLoader
+loaders +='''
+  classpath:  webit.script.loaders.impl.SimpleSecurityLoader-classpath-root
+'''
+
 [loader]
 encoding=${DEFAULT_ENCODING}
 # root=your/template/path
+
+[loader-classpath-root]
+loader=webit.script.loaders.impl.ClasspathLoader-root
+list +='''
+'''
 
 
 [webit.script.Engine]
@@ -52,6 +64,15 @@ encoding=${DEFAULT_ENCODING}
 [webit.script.security.impl.DefaultNativeSecurityManager]
 @extends=nativeSecurity
 
+[webit.script.loaders.impl.SimpleSecurityLoader-classpath-root]
+@extends=loader-classpath-root
+
+[webit.script.loaders.impl.ClasspathLoader-root]
+encoding=UTF-8
+root=
+
+[webit.script.loaders.impl.RouteLoader-main]
+@extends=routeLoader-main
 
 [webit.script.loaders.impl.ClasspathLoader]
 @extends=loader

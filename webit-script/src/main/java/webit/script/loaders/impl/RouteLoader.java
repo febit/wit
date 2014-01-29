@@ -125,10 +125,9 @@ public class RouteLoader implements Loader, Initable {
     public void setLoaders(String loaders) {
         this.loaders = loaders;
     }
-
-    public void setDefaultLoader(ClassEntry defaultLoader) {
+    
+    public void setDefault(ClassEntry defaultLoader) {
         this.defaultLoader = defaultLoader;
-
     }
 
     public boolean isEnableCache(String name) {

@@ -1,10 +1,11 @@
 
 
+[routeLoader-main]
+default=webit.script.web.loaders.ServletLoader
+
 
 [engine]
 textStatementFactory=webit.script.core.text.impl.ByteArrayTextStatementFactory
-resourceLoader=webit.script.web.loaders.ServletLoader
-
 vars=request,response
 
 
