@@ -13,7 +13,6 @@ public interface CFG {
     
     public static final String ENGINE           = "engine";
 
-    public static final String RESOLVERS        = ENGINE + ".resolvers";
     public static final String LOADER           = ENGINE + ".resourceLoaderClass";
     public static final String OUT_ENCODING     = ENGINE + ".encoding";
     public static final String FILTER           = ENGINE + ".filterClass";
@@ -32,7 +31,8 @@ public interface CFG {
     public static final String CHAR_ARRAY_TEXT_FACTORY  = "webit.script.core.text.impl.CharArrayTextStatementFactory";
     
     public static final String ASM_NATIVE       = "webit.script.core.NativeFactory.enableAsm";
-    public static final String ASM_RESOLVER     = "webit.script.resolvers.ResolverManager.enableAsm";
+    public static final String ASM_RESOLVER     = "resolverManager.enableAsm";
+    public static final String RESOLVERS        = "resolverManager.resolvers";
     public static final String SECURITY_LIST    = "nativeSecurity.list";
     
     public static final String LOADER_ENCODING  = "loader.encoding";

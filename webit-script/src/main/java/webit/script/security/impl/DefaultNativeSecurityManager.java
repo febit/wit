@@ -20,7 +20,6 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
     private String list;
     //
     private final static String ROOT_NODE_NAME = "*";
-    private final static char[] DELIMITERS = new char[]{'\n', ',', '\r'};
     private ConcurrentMap<String, Node> allNodes;
 
     public boolean access(String path) {
@@ -39,8 +38,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         nodes.put(ROOT_NODE_NAME, rootNode);
 
         if (list != null) {
-            String[] nodeRules;
-            StringUtil.trimAll(nodeRules = StringUtil.splitc(list, DELIMITERS));
+            String[] nodeRules = StringUtil.splitAndTrimAll(list);
             char firstChar;
             boolean access;
             String rule;

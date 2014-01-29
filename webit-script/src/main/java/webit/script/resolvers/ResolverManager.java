@@ -9,6 +9,7 @@ import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.impl.CommonResolver;
+import webit.script.util.ClassEntry;
 import webit.script.util.collection.ClassIdentityHashMap;
 
 /**
@@ -34,6 +35,7 @@ public final class ResolverManager implements Initable {
     //settings
     private boolean enableAsm = true;
     private boolean ignoreNullPointer = false;
+    private ClassEntry[] resolvers;
     //
 
     public ResolverManager() {
@@ -158,10 +160,10 @@ public final class ResolverManager implements Initable {
         return resolver;
     }
 
-    public void init(Resolver[] resolvers) {
-        Resolver resolver;
+    public void init(Engine engine) {
+        this.logger = engine.getLogger();
         for (int i = 0, len = resolvers.length; i < len; i++) {
-            resolver = resolvers[i];
+            Resolver resolver = (Resolver) engine.getComponent(resolvers[i]);
             if (resolver.getMatchMode() == MatchMode.REGIST) {
                 ((RegistModeResolver) resolver).regist(this);
             } else {
@@ -246,7 +248,7 @@ public final class ResolverManager implements Initable {
         this.ignoreNullPointer = ignoreNullPointer;
     }
 
-    public void init(Engine engine) {
-        logger = engine.getLogger();
+    public void setResolvers(ClassEntry[] resolvers) {
+        this.resolvers = resolvers;
     }
 }

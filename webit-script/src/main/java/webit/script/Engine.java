@@ -16,7 +16,6 @@ import webit.script.io.charset.CoderFactory;
 import webit.script.io.impl.DiscardOut;
 import webit.script.loaders.Loader;
 import webit.script.loggers.Logger;
-import webit.script.resolvers.Resolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
 import webit.script.util.ClassEntry;
@@ -81,7 +80,6 @@ public final class Engine {
     private ClassEntry coderFactoryClass;
     private ClassEntry globalManagerClass;
     private ClassEntry loggerClass;
-    private ClassEntry[] resolvers;
     private String encoding = EncodingPool.UTF_8;
     private boolean looseVar = false;
     private boolean shareRootData = true;
@@ -161,15 +159,6 @@ public final class Engine {
         resolveComponent(this.resourceLoader, this.resourceLoaderClass);
         if (this.filter != null) {
             resolveComponent(this.filter, this.filterClass);
-        }
-
-        if (this.resolvers != null) {
-            final int resolversLength;
-            final Resolver[] resolverInstances = new Resolver[resolversLength = this.resolvers.length];
-            for (int i = 0; i < resolversLength; i++) {
-                resolverInstances[i] = (Resolver) getComponent(this.resolvers[i]);
-            }
-            this.resolverManager.init(resolverInstances);
         }
 
         resolveComponent(this.globalManager, this.globalManagerClass);
@@ -320,10 +309,6 @@ public final class Engine {
 
     public void setCoderFactoryClass(ClassEntry coderFactoryClass) {
         this.coderFactoryClass = coderFactoryClass;
-    }
-
-    public void setResolvers(ClassEntry[] resolvers) {
-        this.resolvers = resolvers;
     }
 
     public void setResourceLoaderClass(ClassEntry resourceLoaderClass) {

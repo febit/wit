@@ -7,12 +7,16 @@ resourceLoaderClass=webit.script.web.loaders.ServletLoader
 
 vars=request,response
 
-resolvers +=webit.script.web.resolvers.HttpSessionResolver,\
-    webit.script.web.resolvers.HttpServletRequestResolver,\
-    webit.script.web.resolvers.HttpServletRequestParametersResolver,\
-    webit.script.web.resolvers.HttpServletRequestAttributesResolver,\
-    webit.script.web.resolvers.HttpServletRequestHeaderResolver,\
+
+[resolverManager]
+resolvers +='''
+    webit.script.web.resolvers.HttpSessionResolver
+    webit.script.web.resolvers.HttpServletRequestResolver
+    webit.script.web.resolvers.HttpServletRequestParametersResolver
+    webit.script.web.resolvers.HttpServletRequestAttributesResolver
+    webit.script.web.resolvers.HttpServletRequestHeaderResolver
     webit.script.web.resolvers.HttpServletRequestHeadersResolver
+'''
 
 # [servlet]
 ## servletContext will be setted by ServletEngineUtil
