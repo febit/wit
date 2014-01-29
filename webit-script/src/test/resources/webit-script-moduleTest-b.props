@@ -2,4 +2,4 @@
 
 
 [engine]
-initTemplates+= /inits/moduleTest-b.init.wit
+inits+= /inits/moduleTest-b.init.wit

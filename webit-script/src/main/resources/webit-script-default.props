@@ -17,7 +17,7 @@ encoding=${DEFAULT_ENCODING}
 # appendLostSuffix=false
 # suffix=.wit
 # vars=
-# initTemplates=
+# inits=
 # shareRootData=true
 
 

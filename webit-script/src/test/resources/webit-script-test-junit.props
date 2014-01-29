@@ -1,3 +1,3 @@
 
 [engine]
-initTemplates+= /inits/init-junit-assert.wit
+inits+= /inits/init-junit-assert.wit

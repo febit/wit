@@ -10,10 +10,11 @@
 resourceLoader=webit.script.loaders.impl.RouteLoader-main
 logger=webit.script.loggers.impl.Slf4jLogger
 vars+=request,request2,session,session
-initTemplates+=\
-        /auto/etc/initTest.init.wit, \
-        /auto/etc/initTest.init2.wit, \
-        /auto/etc/localTest.init.wit
+inits+='''
+    /auto/etc/initTest.init.wit
+    /auto/etc/initTest.init2.wit
+    /auto/etc/localTest.init.wit
+'''
 
 
 [webit.script.loaders.impl.RouteLoader-main]

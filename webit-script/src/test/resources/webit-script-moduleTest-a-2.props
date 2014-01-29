@@ -4,4 +4,4 @@
 '''
 
 [engine]
-initTemplates+= /inits/moduleTest-a-2.init.wit
+inits+= /inits/moduleTest-a-2.init.wit

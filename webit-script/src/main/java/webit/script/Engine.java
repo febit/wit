@@ -24,6 +24,7 @@ import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
 import webit.script.util.SimpleBag;
+import webit.script.util.StringUtil;
 import webit.script.util.keyvalues.KeyValues;
 import webit.script.util.keyvalues.KeyValuesUtil;
 import webit.script.util.props.Props;
@@ -87,7 +88,7 @@ public final class Engine {
     private boolean appendLostSuffix = false;
     private String suffix = DEFAULT_SUFFIX;
     private String[] vars = null;
-    private String[] initTemplates = null;
+    private String inits = null;
     //
     private Logger logger;
     private Loader resourceLoader;
@@ -154,7 +155,7 @@ public final class Engine {
         resolveComponent(this.nativeFactory);
         resolveComponent(this.resolverManager);
         resolveComponent(this.coderFactory, this._coderFactory);
-        resolveComponent(this.nativeSecurityManager,this._nativeSecurityManager);
+        resolveComponent(this.nativeSecurityManager, this._nativeSecurityManager);
         resolveComponent(this.textStatementFactory, this._textStatementFactory);
         resolveComponent(this.resourceLoader, this._resourceLoader);
         if (this.filter != null) {
@@ -166,9 +167,7 @@ public final class Engine {
     }
 
     private void executeInitTemplates() throws ResourceNotFoundException {
-        final int size;
-        if (this.initTemplates != null && (size = this.initTemplates.length) > 0) {
-            String templateName;
+        if (this.inits != null) {
             final Out out = new DiscardOut();
             final GlobalManager myGlobalManager = this.globalManager;
             final SimpleBag globalBag = myGlobalManager.getGlobalBag();
@@ -180,9 +179,8 @@ public final class Engine {
                 globalBag, globalBag,
                 constBag, constBag
             });
-            for (int i = 0; i < size; i++) {
-                if ((templateName = this.initTemplates[i]) != null
-                        && (templateName = templateName.trim()).length() != 0) {
+            for (String templateName : StringUtil.splitc(this.inits)) {
+                if ((templateName = templateName.trim()).length() != 0) {
                     this.getTemplate(templateName)
                             .merge(params, out);
                     //Commit Global
@@ -444,7 +442,7 @@ public final class Engine {
         }
     }
 
-    public void setInitTemplates(String[] initTemplates) {
-        this.initTemplates = initTemplates;
+    public void setInits(String inits) {
+        this.inits = inits;
     }
 }

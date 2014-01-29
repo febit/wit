@@ -1,8 +1,8 @@
 package webit.script.core;
 
+import webit.script.exceptions.ParseException;
 import webit.script.util.FastCharBuffer;
 import webit.script.util.RepeatChars;
-import webit.script.exceptions.ParseException;
 
 
 %%
