@@ -160,7 +160,7 @@ public final class ResolverManager implements Initable {
 
     public void init(Resolver[] resolvers) {
         Resolver resolver;
-        for (int i = 0; i < resolvers.length; i++) {
+        for (int i = 0, len = resolvers.length; i < len; i++) {
             resolver = resolvers[i];
             if (resolver.getMatchMode() == MatchMode.REGIST) {
                 ((RegistModeResolver) resolver).regist(this);

@@ -74,13 +74,13 @@ public final class Engine {
     }
 
     //settings
-    private ClassEntry resourceLoaderClass = ClassEntry.wrap(webit.script.loaders.impl.ClasspathLoader.class);
+    private ClassEntry resourceLoaderClass;
     private ClassEntry filterClass;
-    private Class textStatementFactoryClass = webit.script.core.text.impl.SimpleTextStatementFactory.class;
-    private Class nativeSecurityManagerClass = webit.script.security.impl.DefaultNativeSecurityManager.class;
-    private Class coderFactoryClass = webit.script.io.charset.impl.DefaultCoderFactory.class;
-    private Class globalManagerClass = webit.script.global.DefaultGlobalManager.class;
-    private Class loggerClass = webit.script.loggers.impl.NOPLogger.class;
+    private ClassEntry textStatementFactoryClass;
+    private ClassEntry nativeSecurityManagerClass;
+    private ClassEntry coderFactoryClass;
+    private ClassEntry globalManagerClass;
+    private ClassEntry loggerClass;
     private ClassEntry[] resolvers;
     private String encoding = EncodingPool.UTF_8;
     private boolean looseVar = false;
@@ -116,30 +116,52 @@ public final class Engine {
     @SuppressWarnings("unchecked")
     private void init() {
 
+        if (this.loggerClass == null) {
+            this.loggerClass = ClassEntry.wrap(webit.script.loggers.impl.NOPLogger.class);
+        }
         this.logger = (Logger) ClassUtil.newInstance(this.loggerClass);
+
+        if (this.coderFactoryClass == null) {
+            this.coderFactoryClass = ClassEntry.wrap(webit.script.io.charset.impl.DefaultCoderFactory.class);
+        }
         this.coderFactory = (CoderFactory) ClassUtil.newInstance(this.coderFactoryClass);
+
+        if (this.nativeSecurityManagerClass == null) {
+            this.nativeSecurityManagerClass = ClassEntry.wrap(webit.script.security.impl.DefaultNativeSecurityManager.class);
+        }
         this.nativeSecurityManager = (NativeSecurityManager) ClassUtil.newInstance(this.nativeSecurityManagerClass);
+
+        if (this.textStatementFactoryClass == null) {
+            this.textStatementFactoryClass = ClassEntry.wrap(webit.script.core.text.impl.SimpleTextStatementFactory.class);
+        }
         this.textStatementFactory = (TextStatementFactory) ClassUtil.newInstance(this.textStatementFactoryClass);
+
+        if (this.resourceLoaderClass == null) {
+            this.resourceLoaderClass = ClassEntry.wrap(webit.script.loaders.impl.ClasspathLoader.class);
+        }
         this.resourceLoader = (Loader) ClassUtil.newInstance(this.resourceLoaderClass);
+
+        if (this.globalManagerClass == null) {
+            this.globalManagerClass = ClassEntry.wrap(webit.script.global.DefaultGlobalManager.class);
+        }
         this.globalManager = (GlobalManager) ClassUtil.newInstance(this.globalManagerClass);
 
         if (this.filterClass != null) {
             this.filter = (Filter) ClassUtil.newInstance(this.filterClass);
         }
 
-        resolveComponent(this.logger);
+        resolveComponent(this.logger, this.loggerClass);
         this.petite.setLogger(this.logger);
 
         resolveComponent(this.nativeFactory);
         resolveComponent(this.resolverManager);
-        resolveComponent(this.coderFactory);
-        resolveComponent(this.nativeSecurityManager);
-        resolveComponent(this.textStatementFactory);
+        resolveComponent(this.coderFactory, this.coderFactoryClass);
+        resolveComponent(this.nativeSecurityManager,this.nativeSecurityManagerClass);
+        resolveComponent(this.textStatementFactory, this.textStatementFactoryClass);
         resolveComponent(this.resourceLoader, this.resourceLoaderClass);
         if (this.filter != null) {
             resolveComponent(this.filter, this.filterClass);
         }
-        resolveComponent(this.resolverManager);
 
         if (this.resolvers != null) {
             final int resolversLength;
@@ -150,7 +172,7 @@ public final class Engine {
             this.resolverManager.init(resolverInstances);
         }
 
-        resolveComponent(this.globalManager);
+        resolveComponent(this.globalManager, this.globalManagerClass);
         this.globalManager.commit();
     }
 
@@ -212,7 +234,6 @@ public final class Engine {
         this.componentContainer.put(type.getProfile(), bean);
     }
 
-   
     /**
      *
      * @param type
@@ -293,11 +314,11 @@ public final class Engine {
         return this.nativeSecurityManager.access(path);
     }
 
-    public void setNativeSecurityManagerClass(Class nativeSecurityManagerClass) {
+    public void setNativeSecurityManagerClass(ClassEntry nativeSecurityManagerClass) {
         this.nativeSecurityManagerClass = nativeSecurityManagerClass;
     }
 
-    public void setCoderFactoryClass(Class coderFactoryClass) {
+    public void setCoderFactoryClass(ClassEntry coderFactoryClass) {
         this.coderFactoryClass = coderFactoryClass;
     }
 
@@ -309,7 +330,7 @@ public final class Engine {
         this.resourceLoaderClass = resourceLoaderClass;
     }
 
-    public void setTextStatementFactoryClass(Class textStatementFactoryClass) {
+    public void setTextStatementFactoryClass(ClassEntry textStatementFactoryClass) {
         this.textStatementFactoryClass = textStatementFactoryClass;
     }
 
@@ -380,7 +401,7 @@ public final class Engine {
         this.filterClass = filterClass;
     }
 
-    public void setGlobalManagerClass(Class globalManagerClass) {
+    public void setGlobalManagerClass(ClassEntry globalManagerClass) {
         this.globalManagerClass = globalManagerClass;
     }
 
@@ -392,7 +413,7 @@ public final class Engine {
         return filter;
     }
 
-    public void setLoggerClass(Class loggerClass) {
+    public void setLoggerClass(ClassEntry loggerClass) {
         this.loggerClass = loggerClass;
     }
 
