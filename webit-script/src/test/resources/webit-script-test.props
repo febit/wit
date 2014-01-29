@@ -7,8 +7,8 @@
 '''
 
 [engine]
-resourceLoaderClass=webit.script.loaders.impl.RouteLoader-main
-loggerClass=webit.script.loggers.impl.Slf4jLogger
+resourceLoader=webit.script.loaders.impl.RouteLoader-main
+logger=webit.script.loggers.impl.Slf4jLogger
 vars+=request,request2,session,session
 initTemplates+=\
         /auto/etc/initTest.init.wit, \

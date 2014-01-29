@@ -2,8 +2,8 @@
 
 
 [engine]
-textStatementFactoryClass=webit.script.core.text.impl.ByteArrayTextStatementFactory
-resourceLoaderClass=webit.script.web.loaders.ServletLoader
+textStatementFactory=webit.script.core.text.impl.ByteArrayTextStatementFactory
+resourceLoader=webit.script.web.loaders.ServletLoader
 
 vars=request,response
 

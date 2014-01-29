@@ -5,12 +5,12 @@ DEFAULT_ENCODING=UTF-8
 
 [engine]
 encoding=${DEFAULT_ENCODING}
-# resourceLoaderClass=webit.script.loaders.impl.ClasspathLoader
-# textStatementFactoryClass=webit.script.core.text.impl.SimpleTextStatementFactory
-# nativeSecurityManagerClass=webit.script.security.impl.DefaultNativeSecurityManager
-# globalManagerClass=webit.script.global.DefaultGlobalManager
-# filterClass=webit.script.filters.impl.MutiFilter
-# loggerClass=webit.script.loggers.impl.NOPLogger
+# resourceLoader=webit.script.loaders.impl.ClasspathLoader
+# textStatementFactory=webit.script.core.text.impl.SimpleTextStatementFactory
+# nativeSecurityManager=webit.script.security.impl.DefaultNativeSecurityManager
+# globalManager=webit.script.global.DefaultGlobalManager
+# filter=webit.script.filters.impl.MutiFilter
+# logger=webit.script.loggers.impl.NOPLogger
 
 # looseVar=false
 # trimCodeBlockBlankLine=true
@@ -64,7 +64,7 @@ encoding=${DEFAULT_ENCODING}
 
 
 # [webit.script.filters.impl.MutiFilter]
-# filtersClass=
+# filters=
 
 
 # [webit.script.global.impl.GlobalMapRegister]

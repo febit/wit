@@ -13,7 +13,7 @@ import webit.script.util.ClassEntry;
 public class MutiFilter implements Filter, Initable {
 
     //settings
-    private ClassEntry[] filterClasses;
+    private ClassEntry[] filters;
     //
     private Filter[] _filters;
 
@@ -30,17 +30,17 @@ public class MutiFilter implements Filter, Initable {
     @SuppressWarnings("unchecked")
     public void init(Engine engine) {
         ClassEntry[] classes;
-        if ((classes = filterClasses) != null) {
+        if ((classes = filters) != null) {
             final int len;
-            final Filter[] filters;
-            _filters = filters = new Filter[len = classes.length];
+            final Filter[] myFilters;
+            _filters = myFilters = new Filter[len = classes.length];
             for (int i = 0; i < len; i++) {
-                filters[i] = (Filter) engine.getComponent(classes[i]);
+                myFilters[i] = (Filter) engine.getComponent(classes[i]);
             }
         }
     }
 
-    public void setFilterClasses(ClassEntry[] filterClasses) {
-        this.filterClasses = filterClasses;
+    public void setFilters(ClassEntry[] filters) {
+        this.filters = filters;
     }
 }
