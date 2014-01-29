@@ -78,69 +78,122 @@ public class Convert {
     }
 
     public static Class[] toClassArray(String string) {
-        int i;
-        String[] classNames;
-        Class[] classes = new Class[i = (classNames = toStringArray(string)).length];
-        while (i != 0) {
-            --i;
-            classes[i] = toClass(classNames[i]);
+        final String[] strings;
+        final int len;
+        final Class[] entrys = new Class[len = (strings = StringUtil.splitc(string)).length];
+        int j = 0;
+        String item;
+        for (int i = 0; i < len; i++) {
+            if ((item = strings[i].trim()).length() != 0) {
+                entrys[j++] = toClass(item);
+            }
         }
-        return classes;
+        if (j == len) {
+            return entrys;
+        } else {
+            final Class[] result;
+            System.arraycopy(entrys, 0, result = new Class[j], 0, j);
+            return result;
+        }
     }
 
     public static boolean[] toBoolArray(String string) {
-        int i;
-        String[] strings;
-        boolean[] bools;
-        bools = new boolean[i = (strings = toStringArray(string)).length];
-        while (i != 0) {
-            --i;
-            bools[i] = toBoolean(strings[i]);
+        final String[] strings;
+        final int len;
+        final boolean[] entrys = new boolean[len = (strings = StringUtil.splitc(string)).length];
+        int j = 0;
+        String item;
+        for (int i = 0; i < len; i++) {
+            if ((item = strings[i].trim()).length() != 0) {
+                entrys[j++] = toBoolean(item);
+            }
         }
-        return bools;
+        if (j == len) {
+            return entrys;
+        } else {
+            final boolean[] result;
+            System.arraycopy(entrys, 0, result = new boolean[j], 0, j);
+            return result;
+        }
     }
 
     public static Boolean[] toBooleanArray(String string) {
-        int i;
-        String[] strings;
-        Boolean[] booleans = new Boolean[i = (strings = toStringArray(string)).length];
-        while (i != 0) {
-            --i;
-            booleans[i] = toBoolean(strings[i]);
+        final String[] strings;
+        final int len;
+        final Boolean[] entrys = new Boolean[len = (strings = StringUtil.splitc(string)).length];
+        int j = 0;
+        String item;
+        for (int i = 0; i < len; i++) {
+            if ((item = strings[i].trim()).length() != 0) {
+                entrys[j++] = toBoolean(item);
+            }
         }
-        return booleans;
+        if (j == len) {
+            return entrys;
+        } else {
+            final Boolean[] result;
+            System.arraycopy(entrys, 0, result = new Boolean[j], 0, j);
+            return result;
+        }
     }
 
     public static int[] toIntArray(String string) {
-        int i;
-        String[] strings;
-        int[] ints = new int[i = (strings = toStringArray(string)).length];
-        while (i != 0) {
-            --i;
-            ints[i] = toInt(strings[i]);
+        final String[] strings;
+        final int len;
+        final int[] entrys = new int[len = (strings = StringUtil.splitc(string)).length];
+        int j = 0;
+        String item;
+        for (int i = 0; i < len; i++) {
+            if ((item = strings[i].trim()).length() != 0) {
+                entrys[j++] = toInt(item);
+            }
         }
-        return ints;
+        if (j == len) {
+            return entrys;
+        } else {
+            final int[] result;
+            System.arraycopy(entrys, 0, result = new int[j], 0, j);
+            return result;
+        }
     }
 
     public static Integer[] toIntegerArray(String string) {
-        int i;
-        String[] strings;
-        Integer[] ints = new Integer[i = (strings = toStringArray(string)).length];
-        while (i != 0) {
-            --i;
-            ints[i] = toInt(strings[i]);
+        final String[] strings;
+        final int len;
+        final Integer[] entrys = new Integer[len = (strings = StringUtil.splitc(string)).length];
+        int j = 0;
+        String item;
+        for (int i = 0; i < len; i++) {
+            if ((item = strings[i].trim()).length() != 0) {
+                entrys[j++] = toInt(item);
+            }
         }
-        return ints;
+        if (j == len) {
+            return entrys;
+        } else {
+            final Integer[] result;
+            System.arraycopy(entrys, 0, result = new Integer[j], 0, j);
+            return result;
+        }
     }
 
-    public static ClassEntry[] toClassEntryArray(String string) {
-        int i;
-        String[] strings;
-        ClassEntry[] entrys = new ClassEntry[i = (strings = toStringArray(string)).length];
-        while (i != 0) {
-            --i;
-            entrys[i] = toClassEntry(strings[i]);
+    public static ClassEntry[] toClassEntryArray(final String string) {
+        final String[] strings;
+        final int len;
+        final ClassEntry[] entrys = new ClassEntry[len = (strings = StringUtil.splitc(string)).length];
+        int j = 0;
+        String item;
+        for (int i = 0; i < len; i++) {
+            if ((item = strings[i].trim()).length() != 0) {
+                entrys[j++] = toClassEntry(item);
+            }
         }
-        return entrys;
+        if (j == len) {
+            return entrys;
+        } else {
+            final ClassEntry[] result;
+            System.arraycopy(entrys, 0, result = new ClassEntry[j], 0, j);
+            return result;
+        }
     }
 }

@@ -293,6 +293,10 @@ public class StringUtil {
 
     private final static char[] DEFAULT_DELIMITERS = ",\n\r".toCharArray();
 
+    public static String[] splitc(String src) {
+        return splitc(src, DEFAULT_DELIMITERS);
+    }
+
     public static String[] splitAndTrimAll(String src) {
         final String[] result = splitc(src, DEFAULT_DELIMITERS);
         trimAll(result);
