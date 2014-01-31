@@ -25,10 +25,10 @@ public abstract class AbstractLoader implements Loader, Initable {
      *
      * <pre>
      * example:
-     * /path/to/tmpl1.wtl , tmpl2.wtl => /path/to/tmpl2.wtl
-     * /path/to/tmpl1.wtl , /tmpl2.wtl => /tmpl2.wtl
-     * /path/to/tmpl1.wtl , ./tmpl2.wtl => /path/to/tmpl2.wtl
-     * /path/to/tmpl1.wtl , ../tmpl2.wtl => /path/tmpl2.wtl
+     * /path/to/tmpl1.wit , tmpl2.wit => /path/to/tmpl2.wit
+     * /path/to/tmpl1.wit , /tmpl2.wit => /tmpl2.wit
+     * /path/to/tmpl1.wit , ./tmpl2.wit => /path/to/tmpl2.wit
+     * /path/to/tmpl1.wit , ../tmpl2.wit => /path/tmpl2.wit
      * </pre>
      *
      * @param parent parent template's name
@@ -48,11 +48,12 @@ public abstract class AbstractLoader implements Loader, Initable {
      *
      * <pre>
      * example:
-     * /path/to/./tmpl1.wtl  /path/to/tmpl2.wtl
-     * /path/to/../tmpl1.wtl  /path/tmpl2.wtl
-     * \path\to\..\tmpl1.wtl  /path/tmpl2.wtl
-     * \path\to\..\..\tmpl1.wtl  /tmpl2.wtl
-     * \path\to\..\..\..\tmpl1.wtl  null
+     * path/to/tmpl.wit  /path/to/tmpl.wit
+     * /path/to/./tmpl.wit  /path/to/tmpl.wit
+     * /path/to/../tmpl.wit  /path/tmpl.wit
+     * \path\to\..\tmpl.wit  /path/tmpl.wit
+     * \path\to\..\..\tmpl.wit  /tmpl.wit
+     * \path\to\..\..\..\tmpl.wit  null
      * </pre>
      *
      * @param name template's name
