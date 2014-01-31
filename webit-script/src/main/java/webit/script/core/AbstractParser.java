@@ -11,9 +11,9 @@ import webit.script.core.ast.TemplateAST;
 import webit.script.core.ast.statements.InterpolationFactory;
 import webit.script.core.text.TextStatementFactory;
 import webit.script.exceptions.ParseException;
-import webit.script.loggers.Logger;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ExceptionUtil;
+import webit.script.util.StreamUtil;
 import webit.script.util.StringUtil;
 import webit.script.util.collection.ArrayStack;
 import webit.script.util.collection.Stack;
@@ -24,28 +24,22 @@ import webit.script.util.collection.Stack;
  */
 abstract class AbstractParser {
 
-    private final static int stackInitialCapacity = 24;
+    private final static int STACK_INITIAL_CAPACITY = 24;
     private final static int START_STATE = 0;
 
+    
     AbstractParser() {
-        this._stack = new ArrayStack<Symbol>(stackInitialCapacity);
+        this._stack = new ArrayStack<Symbol>(STACK_INITIAL_CAPACITY);
     }
-    /**
-     * The parse _stack itself.
-     */
+    
     final Stack<Symbol> _stack;
-    /**
-     * Internal flag to indicate when parser should quit.
-     */
     boolean goonParse = false;
-
     //
     Engine engine;
     Template template;
     TextStatementFactory textStatementFactory;
     InterpolationFactory interpolationFactory;
     NativeFactory nativeFactory;
-    Logger logger;
     boolean locateVarForce;
     NativeImportManager nativeImportMgr;
     VariantManager varmgr;
@@ -61,28 +55,31 @@ abstract class AbstractParser {
     public TemplateAST parseTemplate(final Template template) throws ParseException {
         Lexer lexer = null;
         try {
+            final Engine _engine;
+            final TextStatementFactory _textStatementFactory;
+            final Symbol astSymbol;
+            
+            //ISSUE: LexerProvider
             lexer = new Lexer(template.resource.openReader());
             this.template = template;
-            final Engine _engine;
             this.engine = _engine = template.engine;
             lexer.setTrimCodeBlockBlankLine(_engine.isTrimCodeBlockBlankLine());
-            this.logger = _engine.getLogger();
-            TextStatementFactory _textStatementFactory;
             this.textStatementFactory = _textStatementFactory = _engine.getTextStatementFactory();
             this.locateVarForce = !_engine.isLooseVar();
             this.interpolationFactory = new InterpolationFactory(_engine.getFilter());
-            //
             this.nativeImportMgr = new NativeImportManager();
             this.nativeFactory = _engine.getNativeFactory();
             this.varmgr = new VariantManager(_engine);
-            this.labelsIndexMap = new HashMap<String, Integer>();
-            this.labelsIndexMap.put(null, 0);
-            this.currentLabelIndex = 0;
+            
+            //init labelsIndexMap
+            (this.labelsIndexMap = new HashMap<String, Integer>())
+                    .put(null, this.currentLabelIndex = 0);
+            
             //
             _textStatementFactory.startTemplateParser(template);
-            Symbol sym = this.parse(lexer);
+            astSymbol = this.parse(lexer);
             _textStatementFactory.finishTemplateParser(template);
-            return (TemplateAST) sym.value;
+            return (TemplateAST) astSymbol.value;
         } catch (Exception e) {
             throw ExceptionUtil.castToParseException(e);
         } finally {
@@ -242,12 +239,7 @@ abstract class AbstractParser {
         } catch (ClassNotFoundException e) {
             throw new Error(e);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                }
-            }
+            StreamUtil.close(in);
         }
     }
 
