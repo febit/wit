@@ -1,0 +1,13 @@
+
+
+@modules +='''
+'''
+
+[engine]
+logger=webit.script.loggers.impl.Slf4jLogger
+inits+='''
+'''
+
+[nativeSecurity]
+list +='''
+'''
