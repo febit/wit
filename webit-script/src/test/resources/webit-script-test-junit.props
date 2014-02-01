@@ -1,3 +1,0 @@
-
-[engine]
-inits+= /inits/init-junit-assert.wit

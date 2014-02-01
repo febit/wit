@@ -10,13 +10,13 @@ import webit.script.util.SimpleBag;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class TestGlobalRegister implements GlobalRegister, Initable {
 
     private NativeFactory nativeFactory;
 
-    public void regist(GlobalManager manager) {
+    public void regist(final GlobalManager manager) {
 
         //Globals
         SimpleBag globalBag = manager.getGlobalBag();

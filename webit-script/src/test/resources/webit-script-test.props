@@ -1,9 +1,9 @@
 
 @modules='''
-/webit-script-test-junit.props
-/webit-script-moduleTest-a.props
-/webit-script-moduleTest-b.props
-/webit-script-moduleTest-a-2.props
+  /lib-assert.wim
+  /webit-script-moduleTest-a.props
+  /webit-script-moduleTest-b.props
+  /webit-script-moduleTest-a-2.props
 '''
 
 [engine]
@@ -21,12 +21,12 @@ list +='''
 '''
 
 [routeLoader-main]
-loaders +='''
-lib-test: webit.script.loaders.impl.ClasspathLoader-test
-lib: webit.script.loaders.impl.ClasspathLoader-lib
-lib:sub: webit.script.loaders.impl.ClasspathLoader-lib-sub
-'''
 default=webit.script.loaders.impl.LazyLoader-main
+loaders +='''
+  lib-test: webit.script.loaders.impl.ClasspathLoader-test
+  lib: webit.script.loaders.impl.ClasspathLoader-lib
+  lib:sub: webit.script.loaders.impl.ClasspathLoader-lib-sub
+'''
 
 
 [webit.script.loaders.impl.LazyLoader-main]
@@ -58,11 +58,10 @@ root=webit/script/test/lib-sub
 
 [nativeSecurity]
 list +='''
-  org.junit.Assert
   java.lang.System.currentTimeMillis
   webit.script.test.util
 '''
 
 
 [global]
-registers+=webit.script.global.TestGlobalRegister,webit.script.global.AssertGlobalRegister
+registers+=webit.script.global.TestGlobalRegister

@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
+import webit.script.Context;
 import webit.script.EngineManager;
 import webit.script.Template;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.global.AssertGlobalRegister;
 import webit.script.test.util.DiscardOutputStream;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.FastByteArrayOutputStream;
@@ -46,8 +46,7 @@ public class AutoTest {
                     templates.put("/auto/".concat(path), new File(file, outPath).exists() ? outPath : null);
                 }
             }
-        } catch (Exception ex) {
-            //ignore
+        } catch (Exception ignore) {
         }
         return templates;
     }
@@ -99,12 +98,9 @@ public class AutoTest {
     }
 
     public void mergeTemplate(String templatePath, OutputStream out) throws ResourceNotFoundException {
-
         System.out.println("AUTO RUN: " + templatePath);
         Template template = EngineManager.getEngine().getTemplate(templatePath);
-        AssertGlobalRegister.instance.resetAssertCount();
-        template.merge(out);
-
-        System.out.println("\tassert count: " + AssertGlobalRegister.instance.getAssertCount());
+        Context context = template.merge(out);
+        System.out.println("\tassert count: " + context.getLocalVar(webit.script.tools.testunit.Assert.ASSERT_COUNT_KEY));
     }
 }

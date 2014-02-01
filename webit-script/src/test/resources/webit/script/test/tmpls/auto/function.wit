@@ -7,19 +7,19 @@
 
         {
             var func2 = function(){
-                assertNone();
+                assertTrue(true);
                 return c;
             };
             var func3 = function{
-                assertNone();
+                assertTrue(true);
                 return c;
             };
             var func4 = #(a,b){
-                assertNone();
+                assertTrue(true);
                 return c;
             };
             var func5 = #{
-                assertNone();
+                assertTrue(true);
                 return c;
             };
             func2();
@@ -37,11 +37,11 @@
         var b;
         {
             function func2(){
-                assertNone();
+                assertTrue(true);
                 return c;
             }
             function func4(a,b){
-                assertNone();
+                assertTrue(true);
                 return c;
             }
             func2();
