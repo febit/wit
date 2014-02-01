@@ -25,6 +25,7 @@ resourceLoader=webit.script.loaders.impl.RouteLoader-main
 # enableAsm=true
 # ignoreNullPointer=false
 resolvers='''
+    webit.script.resolvers.impl.ScriptUnsetableBagResolver
     webit.script.resolvers.impl.MapResolver
     webit.script.resolvers.impl.SimpleBagResolver
     webit.script.resolvers.impl.ListResolver
