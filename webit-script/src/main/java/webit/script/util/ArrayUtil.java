@@ -162,4 +162,16 @@ public class ArrayUtil {
             array[j] = cell;
         }
     }
+
+    public static Object[] resureMinSize(final Object[] array, final int len) {
+        if (array == null) {
+            return new Object[len];
+        } else if (array.length >= len) {
+            return array;
+        } else {
+            final Object[] newArray;
+            System.arraycopy(array, 0, newArray = new Object[len], 0, array.length);
+            return newArray;
+        }
+    }
 }
