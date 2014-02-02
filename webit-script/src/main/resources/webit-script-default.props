@@ -6,6 +6,7 @@ DEFAULT_ENCODING=UTF-8
 [engine]
 encoding=${DEFAULT_ENCODING}
 resourceLoader=webit.script.loaders.impl.RouteLoader-main
+assistantSuffixs+=.wit
 # textStatementFactory=webit.script.core.text.impl.SimpleTextStatementFactory
 # nativeSecurityManager=webit.script.security.impl.DefaultNativeSecurityManager
 # globalManager=webit.script.global.DefaultGlobalManager

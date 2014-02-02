@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -176,10 +177,12 @@ public class StringUtil {
     }
 
     public static void trimAll(final String[] strings) {
-        String item;
-        for (int i = 0, len = strings.length; i < len; i++) {
-            if ((item = strings[i]) != null) {
-                strings[i] = item.trim();
+        if (strings != null) {
+            String item;
+            for (int i = 0, len = strings.length; i < len; i++) {
+                if ((item = strings[i]) != null) {
+                    strings[i] = item.trim();
+                }
             }
         }
     }
@@ -295,6 +298,24 @@ public class StringUtil {
 
     public static String[] splitc(String src) {
         return splitc(src, DEFAULT_DELIMITERS);
+    }
+
+    public static String[] splitAndRemoveBlank(String src) {
+        if (src == null) {
+            return null;
+        }
+        final String[] result = splitc(src, DEFAULT_DELIMITERS);
+        final int len = result.length;
+        final ArrayList<String> list = new ArrayList<String>(len);
+        String var;
+        for (int i = 0; i < len; i++) {
+            if ((var = result[i].trim()).length() != 0) {
+                list.add(var);
+            }
+        }
+        return list.size() != 0
+                ? list.toArray(new String[list.size()])
+                : null;
     }
 
     public static String[] splitAndTrimAll(String src) {

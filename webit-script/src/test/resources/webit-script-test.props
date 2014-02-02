@@ -9,6 +9,8 @@
 [engine]
 logger=webit.script.loggers.impl.Slf4jLogger
 vars+=request,request2,session,session
+assistantSuffixs+=.whtml, .wit2
+appendLostSuffix=true
 inits+='''
     /auto/etc/initTest.init.wit
     /auto/etc/initTest.init2.wit

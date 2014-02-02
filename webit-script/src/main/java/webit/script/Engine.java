@@ -88,6 +88,7 @@ public final class Engine {
     private boolean appendLostSuffix = false;
     private String suffix = DEFAULT_SUFFIX;
     private String[] vars = null;
+    private String[] assistantSuffixs = null;
     private String inits = null;
     //
     private Logger logger;
@@ -424,22 +425,16 @@ public final class Engine {
         return vars;
     }
 
-    public void setVars(String[] vars) {
-        final int len;
-        if (vars != null && (len = vars.length) != 0) {
-            final ArrayList<String> list = new ArrayList<String>(len);
-            String var;
-            for (int i = 0; i < len; i++) {
-                if ((var = vars[i].trim()).length() != 0) {
-                    list.add(var);
-                }
-            }
-            this.vars = list.size() != 0
-                    ? list.toArray(new String[list.size()])
-                    : null;
-        } else {
-            this.vars = null;
-        }
+    public void setVars(String vars) {
+        this.vars = StringUtil.splitAndRemoveBlank(vars);
+    }
+
+    public String[] getAssistantSuffixs() {
+        return assistantSuffixs;
+    }
+
+    public void setAssistantSuffixs(String assistantSuffixs) {
+        this.assistantSuffixs = StringUtil.splitAndRemoveBlank(assistantSuffixs);
     }
 
     public void setInits(String inits) {

@@ -14,11 +14,13 @@ public abstract class AbstractLoader implements Loader, Initable {
 
     protected String encoding;
     protected String root = null;
-    protected boolean dontAppendLostFileNameExtension;
-    protected String fileNameExtension;
-    //
-    private boolean dontAppendLostFileNameExtensionSettedFlag = false;
+    protected boolean appendLostSuffix;
+    protected String suffix;
+    protected String[] assistantSuffixs = null;
     protected boolean enableCache = true;
+    //
+    protected boolean appendLostSuffixSettedFlag = false;
+    protected boolean assistantSuffixsSettedFlag = false;
 
     /**
      * get child template name by parent template name and relative name.
@@ -63,10 +65,20 @@ public abstract class AbstractLoader implements Loader, Initable {
         if (name != null) {
             final String newName;
             newName = UnixStyleFileNameUtil.normalize(StringUtil.prefixChar(name, '/'));
-            if (this.dontAppendLostFileNameExtension || newName.charAt(newName.length() - 1) == '/' || newName.endsWith(this.fileNameExtension)) {
+            if (this.appendLostSuffix == false
+                    || newName.endsWith(this.suffix)
+                    || newName.charAt(newName.length() - 1) == '/') {
                 return newName;
             } else {
-                return newName.concat(this.fileNameExtension);
+                final String[] myAssistantSuffixs;
+                if ((myAssistantSuffixs = this.assistantSuffixs) != null) {
+                    for (int i = 0, len = myAssistantSuffixs.length; i < len; i++) {
+                        if (newName.endsWith(myAssistantSuffixs[i])) {
+                            return newName;
+                        }
+                    }
+                }
+                return newName.concat(this.suffix);
             }
         }
         return null;
@@ -84,24 +96,32 @@ public abstract class AbstractLoader implements Loader, Initable {
         this.encoding = encoding;
     }
 
-    public void setAppendLostFileNameExtension(boolean appendLostFileNameExtension) {
-        this.dontAppendLostFileNameExtension = !appendLostFileNameExtension;
-        this.dontAppendLostFileNameExtensionSettedFlag = true;
+    public void setAppendLostSuffix(boolean appendLostSuffix) {
+        this.appendLostSuffix = appendLostSuffix;
+        this.appendLostSuffixSettedFlag = true;
     }
 
-    public void setFileNameExtension(String fileNameExtension) {
-        this.fileNameExtension = fileNameExtension;
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    public void setAssistantSuffixs(String assistantSuffixs) {
+        this.assistantSuffixs = StringUtil.splitAndRemoveBlank(assistantSuffixs);
+        this.assistantSuffixsSettedFlag = true;
     }
 
     public void init(Engine engine) {
         if (this.encoding == null) {
             this.encoding = engine.getEncoding();
         }
-        if (this.dontAppendLostFileNameExtensionSettedFlag == false) {
-            this.dontAppendLostFileNameExtension = !engine.isAppendLostSuffix();
+        if (this.appendLostSuffixSettedFlag == false) {
+            this.appendLostSuffix = engine.isAppendLostSuffix();
         }
-        if (this.fileNameExtension == null) {
-            this.fileNameExtension = engine.getSuffix();
+        if (this.suffix == null) {
+            this.suffix = engine.getSuffix();
+        }
+        if (this.assistantSuffixsSettedFlag == false) {
+            this.assistantSuffixs = engine.getAssistantSuffixs();
         }
     }
 
