@@ -103,16 +103,16 @@ public class Parser extends AbstractParser {
         }
     }
     
-    public CommonMethodDeclareExpression createNativeNewArrayDeclareExpression(Class componentType, int line, int column) {
-        return new CommonMethodDeclareExpression(this.nativeFactory.createNativeNewArrayMethodDeclare(componentType, line, column), line, column);
+    private Expression createNativeNewArrayDeclareExpression(Class componentType, int line, int column) {
+        return new DirectValue(this.nativeFactory.createNativeNewArrayMethodDeclare(componentType, line, column), line, column);
     }
     
-    public CommonMethodDeclareExpression createNativeMethodDeclareExpression(Class clazz, String methodName, ClassNameList list, int line, int column) {
-        return new CommonMethodDeclareExpression(this.nativeFactory.createNativeMethodDeclare(clazz, methodName, list.toArray(), line, column), line, column);
+    private Expression createNativeMethodDeclareExpression(Class clazz, String methodName, ClassNameList list, int line, int column) {
+        return new DirectValue(this.nativeFactory.createNativeMethodDeclare(clazz, methodName, list.toArray(), line, column), line, column);
     }
 
-    public CommonMethodDeclareExpression createNativeConstructorDeclareExpression(Class clazz, ClassNameList list, int line, int column) {
-        return new CommonMethodDeclareExpression(this.nativeFactory.createNativeConstructorDeclare(clazz, list.toArray(), line, column), line, column);
+    private Expression createNativeConstructorDeclareExpression(Class clazz, ClassNameList list, int line, int column) {
+        return new DirectValue(this.nativeFactory.createNativeConstructorDeclare(clazz, list.toArray(), line, column), line, column);
     }
 
     private static ResetableValueExpression castToResetableValueExpression(Expression expr) {
