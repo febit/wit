@@ -51,6 +51,15 @@ parser code {:
         return createContextValue(varmgr.locate(name, upstair, this.locateVarForce, line, column), line, column);
     }
 
+    private void assignConst(String name, Expression value, int line, int column) {
+        value = StatementUtil.optimize(value);
+        if (value instanceof DirectValue) {
+            varmgr.assignConst(name, ((DirectValue) value).value, line, column);
+        }else{
+            throw new ParseException("const should defined a direct value.", line, column);
+        }
+    }
+
     private Expression createNativeStaticValue(ClassNameBand classNameBand, int line, int column) {
         if (classNameBand.size() < 2) {
             throw new ParseException("native static need a filed name.", line, column);
@@ -96,14 +105,14 @@ parser code {:
     }
 
     private static ResetableValueExpression castToResetableValueExpression(Expression expr) {
-        if(expr instanceof ResetableValueExpression){
+        if (expr instanceof ResetableValueExpression) {
             return (ResetableValueExpression) expr;
-        }else{
+        } else {
             throw new ParseException("Invalid expression to redirect out stream to, must be rewriteable", expr);
         }
     }
 
-    private static Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column){
+    private static Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column) {
         ResetableValueExpression leftExpr = castToResetableValueExpression(lexpr);
         SelfOperator oper;
         switch (sym) {
@@ -272,6 +281,7 @@ terminal Integer    VAR,
 terminal String     IDENTIFIER; // Ident
 terminal char[]     TEXT_STATEMENT;
 terminal Object     DIRECT_VALUE;
+terminal Integer    CONST;
 
 
 
@@ -400,6 +410,10 @@ statement            ::= expression_statementable:expr SEMICOLON
                         |TEXT_STATEMENT:sym
                         {: return textStatementFactory.getTextStatement(template, %sym%, %sym.line%, %sym.column%); :}
 
+                        //
+                        |CONST IDENTIFIER:ident EQ expression:expr SEMICOLON
+                        {: assignConst(%ident%, %expr%, %ident.line%, %ident.column%); return NoneStatement.getInstance(); :}
+                        
                         //var
                         |varPart:part SEMICOLON
                         {: return (%part%).popStatementGroup(%part.line%, %part.column%); :}

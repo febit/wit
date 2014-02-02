@@ -311,7 +311,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   "@import"                      { return symbol(Tokens.NATIVE_IMPORT); }
 
 
-/*  "const"                        { return symbol(Tokens.CONST); } */
+  "const"                        { return symbol(Tokens.CONST); }
   
   /* boolean literals */
   "true"                         { return symbol(Tokens.DIRECT_VALUE, Boolean.TRUE); }

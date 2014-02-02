@@ -18,7 +18,7 @@ import webit.script.util.collection.Stack;
  */
 public class VariantManager {
 
-    private Map<String, Integer>[] elements;
+    private VarIndexer[] elements;
     private int currentElementIndex;
     private final Stack<VarWall> varWallStack;
 
@@ -29,15 +29,14 @@ public class VariantManager {
         this.varWallStack = new ArrayStack<VarWall>();
         this.globalManager = engine.getGlobalManager();
 
-        this.elements = new Map[10];
-        Map<String, Integer> root = elements[0] = createNewMap(); //current
-        String[] vars;
+        this.elements = new VarIndexer[10];
+        final VarIndexer root = elements[0] = new VarIndexer(); //current
+        final String[] vars;
         if ((vars = engine.getVars()) != null) {
-            String var;
             for (int i = 0, len = vars.length; i < len; i++) {
-                var = vars[i];
-                if (!root.containsKey(var)) {
-                    root.put(var, root.size());
+                String var = vars[i];
+                if (!root.contains(var)) {
+                    root.assignVar(var, -1, -1);
                 }//ignore duplicate
             }
         }
@@ -57,16 +56,12 @@ public class VariantManager {
     @SuppressWarnings("unchecked")
     public void push() {
         final int i;
-        Map<String, Integer>[] _elements;
+        VarIndexer[] _elements;
         if ((i = ++currentElementIndex) >= (_elements = elements).length) {
             System.arraycopy(_elements, 0,
-                    _elements = elements = new Map[i << 1], 0, i);
+                    _elements = elements = new VarIndexer[i << 1], 0, i);
         }
-        _elements[i] = createNewMap();
-    }
-
-    protected final Map<String, Integer> createNewMap() {
-        return new HashMap<String, Integer>();
+        _elements[i] = new VarIndexer();
     }
 
     public void checkVarWall(int index) {
@@ -80,9 +75,17 @@ public class VariantManager {
     public Map<String, Integer> pop() {
         int index;
         if ((index = currentElementIndex--) >= 0) {
-            Map<String, Integer> element = elements[index];
+            final VarIndexer element = elements[index];
             elements[index] = null;
-            return element;
+            //remove consts
+            final Map<String, Integer> indexerMap = element.values;
+            final Map<String, Object> constMap = element.constMap;
+            if (constMap != null) {
+                for (Map.Entry<String, Object> entry : constMap.entrySet()) {
+                    indexerMap.remove(entry.getKey());
+                }
+            }
+            return indexerMap;
         } else {
             throw new ParseException("Variant stack overflow");
         }
@@ -93,25 +96,18 @@ public class VariantManager {
     }
 
     public int assignVariant(String name, int line, int column) {
-        Map<String, Integer> current;
-        if (!(current = elements[currentElementIndex]).containsKey(name)) {
-            int address;
-            current.put(name, (address = current.size()));
-            return address;
-        } else {
-            throw new ParseException("Duplicate Variant declare: ".concat(name), line, column);
-        }
+        return elements[currentElementIndex].assignVar(name, line, column);
+    }
+
+    public void assignConst(String name, Object value, int line, int column) {
+        elements[currentElementIndex].assignConst(name, value, line, column);
     }
 
     public VarAddress assignVariantAtRoot(final String name, int line, int column) {
-        //int topindex = varWallStack.peek().value;
-        final Map<String, Integer> top;
-        if ((top = elements[0]).containsKey(name)) {
-            throw new ParseException("Duplicate Variant declare: ".concat(name), line, column);
-        }
+        final VarIndexer top;
+        (top = elements[0]).checkDuplicate(name, line, column); //XXX： remove？
         checkVarWall(0);
-        final int address;
-        top.put(name, address = top.size());
+        final int address = top.assignVar(name, line, column);
         return VarAddress.context(currentElementIndex, address, true);
     }
 
@@ -119,9 +115,13 @@ public class VariantManager {
         if (upstair <= currentElementIndex) {
             final int i = currentElementIndex - upstair;
             Integer index;
-            if ((index = elements[i].get(name)) != null) {
-                checkVarWall(i);
-                return VarAddress.context(currentElementIndex - i, index, i == 0);
+            if ((index = elements[i].getIndex(name)) != null) {
+                if (index >= 0) {
+                    checkVarWall(i);
+                    return VarAddress.context(currentElementIndex - i, index, i == 0);
+                } else {
+                    return VarAddress.constValue(elements[i].getConstValue(name));
+                }
             }
             throw new ParseException("Can't locate variant: ".concat(name), line, column);
         } else {
@@ -132,9 +132,13 @@ public class VariantManager {
     public VarAddress locate(String name, int fromUpstair, boolean force, int line, int column) {
         for (int i = currentElementIndex - fromUpstair; i >= 0; --i) {
             Integer index;
-            if ((index = elements[i].get(name)) != null) {
-                checkVarWall(i);
-                return VarAddress.context(currentElementIndex - i, index, i == 0);
+            if ((index = elements[i].getIndex(name)) != null) {
+                if (index >= 0) {
+                    checkVarWall(i);
+                    return VarAddress.context(currentElementIndex - i, index, i == 0);
+                } else {
+                    return VarAddress.constValue(elements[i].getConstValue(name));
+                }
             }
         }
 
@@ -149,6 +153,58 @@ public class VariantManager {
             throw new ParseException("Can't locate variant: ".concat(name), line, column);
         } else {
             return assignVariantAtRoot(name, line, column);
+        }
+    }
+
+    private static class VarIndexer {
+
+        final Map<String, Integer> values;
+        Map<String, Object> constMap;
+        private int varIndex;
+
+        VarIndexer() {
+            this.values = new HashMap<String, Integer>();
+            this.varIndex = 0;
+        }
+
+        Integer getIndex(String name) {
+            return this.values.get(name);
+        }
+
+        Object getConstValue(String name) {
+            return this.constMap != null
+                    ? this.constMap.get(name)
+                    : null;
+        }
+
+        private void prepareConstMap() {
+            if (this.constMap == null) {
+                this.constMap = new HashMap<String, Object>();
+            }
+        }
+
+        boolean contains(String name) {
+            return this.values.containsKey(name);
+        }
+
+        void checkDuplicate(final String name, int line, int column) {
+            if (this.values.containsKey(name)) {
+                throw new ParseException("Duplicate Variant declare: ".concat(name), line, column);
+            }
+        }
+
+        void assignConst(final String name, final Object value, int line, int column) {
+            checkDuplicate(name, line, column);
+            prepareConstMap();
+            this.values.put(name, -1);
+            this.constMap.put(name, value);
+        }
+
+        Integer assignVar(final String name, int line, int column) {
+            checkDuplicate(name, line, column);
+            int index = this.varIndex++;
+            this.values.put(name, index);
+            return index;
         }
     }
 
