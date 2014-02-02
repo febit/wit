@@ -163,7 +163,7 @@ public class ArrayUtil {
         }
     }
 
-    public static Object[] resureMinSize(final Object[] array, final int len) {
+    public static Object[] ensureMinSize(final Object[] array, final int len) {
         if (array == null) {
             return new Object[len];
         } else if (array.length >= len) {
@@ -172,6 +172,14 @@ public class ArrayUtil {
             final Object[] newArray;
             System.arraycopy(array, 0, newArray = new Object[len], 0, array.length);
             return newArray;
+        }
+    }
+
+    public static Object get(final Object[] array, final int index, final Object defaultValue) {
+        if (array != null && index < array.length) {
+            return array[index];
+        } else {
+            return defaultValue;
         }
     }
 }

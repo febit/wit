@@ -18,8 +18,7 @@ public class Assert {
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
-            args = ArrayUtil.resureMinSize(args, 1);
-            assertObjectTrue(args[0]);
+            assertObjectTrue(ArrayUtil.get(args, 0, null));
             return null;
         }
     };
@@ -28,8 +27,7 @@ public class Assert {
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
-            args = ArrayUtil.resureMinSize(args, 1);
-            assertObjectFalse(args[0]);
+            assertObjectFalse(ArrayUtil.get(args, 0, null));
             return null;
         }
     };
@@ -38,8 +36,7 @@ public class Assert {
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
-            args = ArrayUtil.resureMinSize(args, 1);
-            assertNotNull(args[0]);
+            assertNotNull(ArrayUtil.get(args, 0, null));
             return null;
         }
     };
@@ -48,8 +45,7 @@ public class Assert {
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
-            args = ArrayUtil.resureMinSize(args, 1);
-            assertNull(args[0]);
+            assertNull(ArrayUtil.get(args, 0, null));
             return null;
         }
     };
@@ -58,7 +54,7 @@ public class Assert {
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
-            args = ArrayUtil.resureMinSize(args, 2);
+            args = ArrayUtil.ensureMinSize(args, 2);
             assertEquals(args[0], args[1]);
             return null;
         }
@@ -68,7 +64,7 @@ public class Assert {
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
-            args = ArrayUtil.resureMinSize(args, 2);
+            args = ArrayUtil.ensureMinSize(args, 2);
             assertSame(args[0], args[1]);
             return null;
         }
@@ -78,7 +74,7 @@ public class Assert {
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
-            args = ArrayUtil.resureMinSize(args, 2);
+            args = ArrayUtil.ensureMinSize(args, 2);
             assertNotSame(args[0], args[1]);
             return null;
         }
@@ -88,7 +84,7 @@ public class Assert {
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
-            args = ArrayUtil.resureMinSize(args, 2);
+            args = ArrayUtil.ensureMinSize(args, 2);
             assertArrayEquals(args[0], args[1]);
             return null;
         }
