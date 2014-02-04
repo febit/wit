@@ -198,6 +198,19 @@ public final class Template {
     }
 
     /**
+     * Merge this template.
+     *
+     * @since 1.4.0
+     * @param out
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge(final Out out) throws ScriptRuntimeException, ParseException {
+        return this.merge(KeyValuesUtil.EMPTY_KEY_VALUES, out);
+    }
+
+    /**
      * Merge this template as a child Template, used by include/import.
      *
      * @since 1.4.0
