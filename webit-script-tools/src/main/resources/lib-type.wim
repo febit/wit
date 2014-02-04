@@ -1,0 +1,4 @@
+
+
+[global]
+registers+= webit.script.tools.type.TypeGlobalRegister
