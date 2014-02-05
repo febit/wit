@@ -4,7 +4,7 @@ package webit.script.test.tmpls;
 import org.junit.Test;
 import webit.script.EngineManager;
 import webit.script.Template;
-import webit.script.test.util.DiscardOutputStream;
+import webit.script.io.impl.DiscardOut;
 
 /**
  *
@@ -17,7 +17,7 @@ public class HelloTest {
         try {
             Template template = EngineManager.getTemplate("/helloTest.wit");
             //template.reload();
-            template.merge(new DiscardOutputStream());
+            template.merge(new DiscardOut());
         } catch (Exception e) {
             e.printStackTrace();
         }

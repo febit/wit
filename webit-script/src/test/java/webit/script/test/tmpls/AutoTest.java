@@ -16,7 +16,9 @@ import webit.script.Template;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.test.util.DiscardOutputStream;
+import webit.script.io.Out;
+import webit.script.io.impl.DiscardOut;
+import webit.script.io.impl.OutputStreamOut;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.FastByteArrayOutputStream;
 import webit.script.util.FastByteBuffer;
@@ -85,7 +87,7 @@ public class AutoTest {
                     }
                     out.reset();
                 } else {
-                    mergeTemplate(templatePath, new DiscardOutputStream());
+                    mergeTemplate(templatePath, new DiscardOut());
                 }
             }
         } catch (ParseException e) {
@@ -98,6 +100,10 @@ public class AutoTest {
     }
 
     public void mergeTemplate(String templatePath, OutputStream out) throws ResourceNotFoundException {
+        mergeTemplate(templatePath, new OutputStreamOut(out, EngineManager.getEngine()));
+    }
+
+    public void mergeTemplate(String templatePath, Out out) throws ResourceNotFoundException {
         System.out.println("AUTO RUN: " + templatePath);
         Template template = EngineManager.getEngine().getTemplate(templatePath);
         Context context = template.merge(out);

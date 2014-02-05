@@ -6,7 +6,7 @@ import webit.script.Engine;
 import webit.script.EngineManager;
 import webit.script.Template;
 import webit.script.exceptions.ResourceNotFoundException;
-import webit.script.test.util.DiscardOutputStream;
+import webit.script.io.impl.DiscardOut;
 import webit.script.util.keyvalues.KeyValuesUtil;
 
 /**
@@ -23,7 +23,7 @@ public class ShareDataTest {
 
             Template template = engine.getTemplate("/shareData.wit");
             template.reload();
-            template.merge(KeyValuesUtil.wrap(new String[]{"v1", "v2"}, new Object[]{"V1", "V2"}), new DiscardOutputStream());
+            template.merge(KeyValuesUtil.wrap(new String[]{"v1", "v2"}, new Object[]{"V1", "V2"}), new DiscardOut());
         } finally {
             engine.setShareRootData(false);
         }

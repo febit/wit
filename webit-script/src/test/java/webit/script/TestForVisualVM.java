@@ -3,7 +3,7 @@ package webit.script;
 
 import java.io.IOException;
 import webit.script.exceptions.ResourceNotFoundException;
-import webit.script.test.util.DiscardOutputStream;
+import webit.script.io.impl.DiscardOut;
 
 /**
  *
@@ -23,7 +23,7 @@ public class TestForVisualVM {
         Engine engine = EngineManager.getEngine();
 
         Template template = engine.getTemplate("/helloTest.wit");
-        DiscardOutputStream out = new DiscardOutputStream();
+        DiscardOut out = new DiscardOut();
         //template.reload();
 
         //webit.script.TestForVisualVM.Start

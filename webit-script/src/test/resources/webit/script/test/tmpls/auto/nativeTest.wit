@@ -60,7 +60,7 @@
 }
 
 {
-    @import webit.script.test.util.StaticFields;
+    @import webit.script.test.tmpls.auto.etc.StaticFields;
 
     var f1 = native StaticFields.field1;
 

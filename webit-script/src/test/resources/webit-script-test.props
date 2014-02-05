@@ -61,7 +61,7 @@ root=webit/script/test/lib-sub
 [nativeSecurity]
 list +='''
   java.lang.System.currentTimeMillis
-  webit.script.test.util
+  webit.script.test
 '''
 
 

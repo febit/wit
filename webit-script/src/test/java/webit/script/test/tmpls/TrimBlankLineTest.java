@@ -9,7 +9,8 @@ import webit.script.EngineManager;
 import webit.script.Template;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.test.util.DiscardWriter;
+import webit.script.io.impl.DiscardOut;
+import webit.script.util.keyvalues.KeyValuesUtil;
 
 /**
  *
@@ -20,7 +21,7 @@ public class TrimBlankLineTest {
     @Test
     public void test() throws ResourceNotFoundException {
         Engine engine = EngineManager.getEngine();
-        DiscardWriter out = new DiscardWriter();
+        DiscardOut out = new DiscardOut();
 
         engine.setTrimCodeBlockBlankLine(true);
         Template template = engine.getTemplate("/trimBlankLine.wit");
@@ -29,13 +30,13 @@ public class TrimBlankLineTest {
 
             Map<String, Object> param = new HashMap<String, Object>(4);
             param.put("trimBlankLine", true);
-            template.merge(param, out);
+            template.merge(KeyValuesUtil.wrap(param), out);
 
             engine.setTrimCodeBlockBlankLine(false);
             template.reset();
 
             param.put("trimBlankLine", false);
-            template.merge(param, out);
+            template.merge(KeyValuesUtil.wrap(param), out);
         } catch (ScriptRuntimeException e) {
             e.printStackTrace();
         }

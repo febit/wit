@@ -1,11 +1,10 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.test.tmpls;
 
-import java.io.OutputStream;
 import org.junit.Test;
 import webit.script.EngineManager;
 import webit.script.exceptions.ResourceNotFoundException;
-import webit.script.test.util.DiscardOutputStream;
+import webit.script.io.impl.DiscardOut;
 
 /**
  *
@@ -16,8 +15,8 @@ public class RouteLoaderTest {
     @Test
     public void test() throws ResourceNotFoundException {
 
-        OutputStream out = new DiscardOutputStream();
-        
+        DiscardOut out = new DiscardOut();
+
         EngineManager.getTemplate("lib:/lib.wit").merge(out);
         EngineManager.getTemplate("lib:sub:/lib-sub.wit").merge(out);
     }

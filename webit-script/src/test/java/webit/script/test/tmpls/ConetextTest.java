@@ -9,22 +9,23 @@ import webit.script.Context;
 import webit.script.EngineManager;
 import webit.script.Template;
 import webit.script.exceptions.ResourceNotFoundException;
-import webit.script.test.util.DiscardOutputStream;
+import webit.script.io.impl.DiscardOut;
 
 /**
  *
  * @author Zqq
  */
 public class ConetextTest {
+
     @Test
     public void test() throws ResourceNotFoundException {
 
         Template template = EngineManager.getTemplate("contextTest.wit");
-        
-        Context context = template.merge(new DiscardOutputStream());
-        
+
+        Context context = template.merge(new DiscardOut());
+
         Map map = new HashMap();
-        
+
         assertEquals("a", context.vars.get("a"));
 
         context.exportTo(map);

@@ -13,13 +13,13 @@ import webit.script.util.bean.FieldInfoResolver;
  */
 public class ResolverGenerator {
 
-    @Test
+    //@Test
     public void hash() {
         System.out.println("attributes".hashCode());
         System.out.println("parameters".hashCode());
     }
 
-    @Test
+    //@Test
     public void generateGetCase() {
 
         Class cls = HttpServletRequest.class;
@@ -41,7 +41,7 @@ public class ResolverGenerator {
         }
     }
 
-    @Test
+    //@Test
     public void generateSetCase() {
         Class cls = HttpServletRequest.class;
         FieldInfo[] all = FieldInfoResolver.resolver(cls);

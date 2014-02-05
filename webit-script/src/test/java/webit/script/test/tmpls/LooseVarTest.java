@@ -6,7 +6,7 @@ import webit.script.Engine;
 import webit.script.EngineManager;
 import webit.script.Template;
 import webit.script.exceptions.ResourceNotFoundException;
-import webit.script.test.util.DiscardOutputStream;
+import webit.script.io.impl.DiscardOut;
 
 /**
  *
@@ -21,7 +21,7 @@ public class LooseVarTest {
             engine.setLooseVar(true);
             
             Template template = engine.getTemplate("/looseVar.wit");
-            template.merge(new DiscardOutputStream());
+            template.merge(new DiscardOut());
         } finally {
             engine.setLooseVar(false);
         }
