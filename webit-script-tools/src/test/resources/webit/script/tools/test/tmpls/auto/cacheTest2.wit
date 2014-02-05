@@ -1,0 +1,21 @@
+<%
+
+var func = function(arg1, arg2){
+    var result = arg1 + arg2;
+%>Hello Cache with Args
+<%
+    return result;
+};
+
+assertEquals(3, cache(func, 1, 2));
+assertEquals(3, cache(func, 2, 3));
+cache_clear();
+assertEquals(5, cache(func, 2, 3));
+assertEquals(5, cache(func, 1, 2));
+
+assertEquals(3, cache("cache-func-1,2", func, 1, 2));
+assertEquals(7, cache("cache-func-5,2", func, 5, 2));
+assertEquals(7, cache("cache-func-5,2", func, 5, 2));
+assertEquals(3, cache("cache-func-1,2", func, 1, 2));
+
+%>
