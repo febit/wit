@@ -1,3 +1,11 @@
 
 [global]
 registers+= webit.script.tools.cache.CacheGlobalRegister
+
+
+## CacheGlobalRegister
+# [webit.script.tools.cache.CacheGlobalRegister]
+# name=cache
+# registCacheClear=false
+# registCacheRemove=true
+# cacheProvider=webit.script.tools.cache.impl.SimpleCacheProvider

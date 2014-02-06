@@ -13,6 +13,7 @@ import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.method.MethodDeclare;
 import webit.script.tools.cache.impl.SimpleCacheProvider;
+import webit.script.util.ArrayUtil;
 import webit.script.util.ClassEntry;
 import webit.script.util.FastByteArrayOutputStream;
 import webit.script.util.FastCharArrayWriter;
@@ -28,6 +29,7 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
     protected String name = DEFAULT_NAME;
     protected ClassEntry cacheProvider;
     protected boolean registCacheClear = false;
+    protected boolean registCacheRemove = true;
     //
     protected CacheProvider _cacheProvider;
 
@@ -36,6 +38,9 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
         final SimpleBag constBag = manager.getConstBag();
 
         constBag.set(name, new CacheMethodDeclare(_cacheProvider));
+        if (registCacheRemove) {
+            constBag.set(name + "_remove", new CacheRemoveMethodDeclare(_cacheProvider));
+        }
         if (registCacheClear) {
             constBag.set(name + "_clear", new CacheClearMethodDeclare(_cacheProvider));
         }
@@ -68,6 +73,20 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
 
         public Object invoke(Context context, Object[] args) {
             this.cacheProvider.clear();
+            return Context.VOID;
+        }
+    }
+
+    protected static class CacheRemoveMethodDeclare implements MethodDeclare {
+
+        protected final CacheProvider cacheProvider;
+
+        public CacheRemoveMethodDeclare(CacheProvider cacheProvider) {
+            this.cacheProvider = cacheProvider;
+        }
+
+        public Object invoke(Context context, Object[] args) {
+            this.cacheProvider.remove(ArrayUtil.get(args, 0, null));
             return Context.VOID;
         }
     }
