@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+
+	<tlib-version>1.0</tlib-version>
+	<short-name>witTldTest</short-name>
+	<uri>/witTldTest</uri>
+
+	<function>
+		<name>plus</name>
+		<function-class>webit.script.tools.test.tld.Functions</function-class>
+		<function-signature>int  plus  ( int, int )</function-signature>
+	</function>
+        
+	<function>
+		<name>multi</name>
+		<function-class>webit.script.tools.test.tld.Functions</function-class>
+		<function-signature>int multi(int,int)</function-signature>
+	</function>
+
+        
+</taglib>

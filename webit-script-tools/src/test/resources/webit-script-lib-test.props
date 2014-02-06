@@ -5,6 +5,7 @@ lib-assert.wim
 lib-std.wim
 lib-type.wim
 lib-cache.wim
+lib-tld.wim
 '''
 
 [engine]
@@ -31,3 +32,10 @@ registCacheClear=true
 cacheProvider=webit.script.tools.cache.impl.SimpleCacheProvider
 
 
+[global]
+registers+= webit.script.tools.tld.TLDGlobalRegister-test
+
+
+[webit.script.tools.tld.TLDGlobalRegister-test]
+tld=tld-test.tld
+prefix=tld_

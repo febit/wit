@@ -1,0 +1,9 @@
+
+# [global]
+# registers+= webit.script.tools.tld.TLDGlobalRegister-profile
+
+
+# [webit.script.tools.tld.TLDGlobalRegister-profile]
+# checkAccess=false
+# tld=
+# prefix=
