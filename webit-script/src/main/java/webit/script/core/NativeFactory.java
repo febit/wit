@@ -41,8 +41,16 @@ public class NativeFactory implements Initable {
     public MethodDeclare createNativeNewArrayMethodDeclare(Class componentType) {
         return createNativeNewArrayMethodDeclare(componentType, -1, -1);
     }
-    
+
+    public MethodDeclare createNativeNewArrayMethodDeclare(Class componentType, boolean checkAccess) {
+        return createNativeNewArrayMethodDeclare(componentType, -1, -1, checkAccess);
+    }
+
     public MethodDeclare createNativeNewArrayMethodDeclare(Class componentType, int line, int column) {
+        return createNativeNewArrayMethodDeclare(componentType, line, column, true);
+    }
+
+    public MethodDeclare createNativeNewArrayMethodDeclare(Class componentType, int line, int column, boolean checkAccess) {
         Class classWaitCheck = componentType;
         while (classWaitCheck.isArray()) {
             classWaitCheck = classWaitCheck.getComponentType();
@@ -53,21 +61,29 @@ public class NativeFactory implements Initable {
         }
 
         final String path;
-        if (this.nativeSecurityManager.access(path = (classWaitCheck.getName().concat(".[]"))) == false) {
+        if (checkAccess && this.nativeSecurityManager.access(path = (classWaitCheck.getName().concat(".[]"))) == false) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
 
         return new NativeNewArrayDeclare(componentType);
     }
-    
+
     public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses) {
         return createNativeMethodDeclare(clazz, methodName, paramClasses, -1, -1);
     }
 
+    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses, boolean checkAccess) {
+        return createNativeMethodDeclare(clazz, methodName, paramClasses, -1, -1, checkAccess);
+    }
+
     public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses, int line, int column) {
+        return createNativeMethodDeclare(clazz, methodName, paramClasses, line, column, true);
+    }
+
+    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses, int line, int column, boolean checkAccess) {
 
         final String path;
-        if (this.nativeSecurityManager.access(path = (StringUtil.concat(clazz.getName(), ".", methodName))) == false) {
+        if (checkAccess && this.nativeSecurityManager.access(path = (StringUtil.concat(clazz.getName(), ".", methodName))) == false) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
 
@@ -112,11 +128,19 @@ public class NativeFactory implements Initable {
         return createNativeConstructorDeclare(clazz, paramClasses, -1, -1);
     }
 
-    @SuppressWarnings("unchecked")
+    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramClasses, boolean checkAccess) {
+        return createNativeConstructorDeclare(clazz, paramClasses, -1, -1, checkAccess);
+    }
+
     public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramClasses, int line, int column) {
+        return createNativeConstructorDeclare(clazz, paramClasses, line, column, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramClasses, int line, int column, boolean checkAccess) {
 
         final String path;
-        if (this.nativeSecurityManager.access(path = (clazz.getName() + ".<init>")) == false) {
+        if (checkAccess && this.nativeSecurityManager.access(path = (clazz.getName() + ".<init>")) == false) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
 
