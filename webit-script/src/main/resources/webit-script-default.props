@@ -24,7 +24,7 @@ assistantSuffixs+=.wit
 
 [resolverManager]
 # enableAsm=true
-# ignoreNullPointer=false
+# ignoreNullPointer=true
 resolvers='''
     webit.script.resolvers.impl.ScriptUnsetableBagResolver
     webit.script.resolvers.impl.MapResolver

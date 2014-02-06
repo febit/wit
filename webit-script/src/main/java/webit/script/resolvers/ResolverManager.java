@@ -34,7 +34,7 @@ public final class ResolverManager implements Initable {
     private final CommonResolver commonResolver;
     //settings
     private boolean enableAsm = true;
-    private boolean ignoreNullPointer = false;
+    private boolean ignoreNullPointer = true;
     private ClassEntry[] resolvers;
     //
 
