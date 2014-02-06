@@ -1,13 +1,10 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.tools.tld;
 
-import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 import webit.script.util.CharUtil;
 import webit.script.util.StringUtil;
 

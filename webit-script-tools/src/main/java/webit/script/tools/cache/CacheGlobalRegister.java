@@ -26,6 +26,7 @@ import webit.script.util.SimpleBag;
 public class CacheGlobalRegister implements GlobalRegister, Initable {
 
     protected final static String DEFAULT_NAME = "cache";
+    //
     protected String name = DEFAULT_NAME;
     protected ClassEntry cacheProvider;
     protected boolean registCacheClear = false;
@@ -179,8 +180,8 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
 
             private static final long serialVersionUID = 1L;
 
-            protected final Object returned;
-            protected final Object outted;
+            public final Object returned;
+            public final Object outted;
 
             public CachingEntry(Object returned, Object outted) {
                 this.returned = returned;
