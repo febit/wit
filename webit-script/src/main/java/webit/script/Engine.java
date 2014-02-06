@@ -1,7 +1,6 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -182,6 +181,9 @@ public final class Engine {
             });
             for (String templateName : StringUtil.splitc(this.inits)) {
                 if ((templateName = templateName.trim()).length() != 0) {
+                    if (this.logger.isInfoEnabled()) {
+                        this.logger.info("Merge init template: " + templateName);
+                    }
                     this.getTemplate(templateName)
                             .merge(params, out);
                     //Commit Global
