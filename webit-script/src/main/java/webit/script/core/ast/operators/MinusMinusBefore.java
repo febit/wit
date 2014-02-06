@@ -22,7 +22,7 @@ public final class MinusMinusBefore extends AbstractExpression {
 
     public Object execute(final Context context) {
         final ResetableValueExpression _expr;
-        return StatementUtil.executeSetValue(_expr = this.expr, context, ALU.plusOne(
+        return StatementUtil.executeSetValue(_expr = this.expr, context, ALU.minusOne(
                 StatementUtil.execute(_expr, context)));
     }
 }
