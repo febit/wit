@@ -7,6 +7,8 @@ import webit.script.Initable;
 import webit.script.core.NativeFactory;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
+import webit.script.loggers.Logger;
+import webit.script.method.MethodDeclare;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ClassUtil;
 import webit.script.util.SimpleBag;
@@ -23,6 +25,7 @@ public class TLDGlobalRegister implements GlobalRegister, Initable {
     protected boolean checkAccess = false;
 
     //
+    protected Engine engine;
     protected NativeFactory nativeFactory;
 
     public void regist(GlobalManager manager) {
@@ -31,39 +34,46 @@ public class TLDGlobalRegister implements GlobalRegister, Initable {
         if (inputStream == null) {
             throw new RuntimeException("TLD file not found: " + tld);
         }
+        Logger logger = this.engine.getLogger();
+        if (logger.isInfoEnabled()) {
+            logger.info("Load TLD file: "+ tld);
+        }
 
         final SimpleBag constBag = manager.getConstBag();
 
         try {
             TLDFunction[] functions = TLDDocumentParser.parse(inputStream);
-
             for (int i = 0, len = functions.length; i < len; i++) {
-                TLDFunction tLDFunction = functions[i];
-
-                Class[] argumentTypes;
-                String[] argumentTypeStrings = tLDFunction.argumentTypes;
-                if (argumentTypeStrings == null) {
-                    argumentTypes = null;
-                } else {
-                    int argsLen = argumentTypeStrings.length;
-                    argumentTypes = new Class[argsLen];
-                    for (int j = 0; j < argsLen; j++) {
-                        argumentTypes[j] = ClassUtil.getClass(argumentTypeStrings[j]);
-                    }
-                }
-
-                constBag.set(this.prefix + tLDFunction.name,
-                        this.nativeFactory.createNativeMethodDeclare(
-                                ClassUtil.getClass(tLDFunction.declaredClass),
-                                tLDFunction.methodName, argumentTypes, checkAccess));
-
+                TLDFunction func = functions[i];
+                constBag.set(this.prefix + func.name, createMethodDeclare(func));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    protected MethodDeclare createMethodDeclare(TLDFunction func) throws ClassNotFoundException {
+
+        final Class[] parameterTypes;
+        final String[] parameterTypeNames = func.parameterTypes;
+        if (parameterTypeNames == null) {
+            parameterTypes = null;
+        } else {
+            int paramSize = parameterTypeNames.length;
+            parameterTypes = new Class[paramSize];
+            for (int j = 0; j < paramSize; j++) {
+                parameterTypes[j] = ClassUtil.getClass(parameterTypeNames[j]);
+            }
+        }
+        return this.nativeFactory.createNativeMethodDeclare(
+                ClassUtil.getClass(func.declaredClass),
+                func.methodName,
+                parameterTypes,
+                checkAccess);
+    }
+
     public void init(Engine engine) {
+        this.engine = engine;
         this.nativeFactory = engine.getNativeFactory();
         if (tld == null) {
             throw new RuntimeException("TLDGlobalRegister.tld need be setted.");

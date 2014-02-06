@@ -5,18 +5,20 @@ package webit.script.tools.tld;
  *
  * @author zqq90
  */
-public class TLDFunction {
+public final class TLDFunction {
 
-    protected final String name;
-    protected final String declaredClass;
-    protected final String methodName;
-    protected final String[] argumentTypes;
+    final String name;
+    final String declaredClass;
+    final String returnType;
+    final String methodName;
+    final String[] parameterTypes;
 
-    public TLDFunction(String name, String declaredClass, String methodName, String[] argumentTypes) {
+    TLDFunction(String name, String declaredClass, String returnType, String methodName, String[] parameterTypes) {
         this.name = name;
         this.declaredClass = declaredClass;
+        this.returnType = returnType;
         this.methodName = methodName;
-        this.argumentTypes = argumentTypes;
+        this.parameterTypes = parameterTypes;
     }
 
     public String getName() {
@@ -27,11 +29,16 @@ public class TLDFunction {
         return declaredClass;
     }
 
+    public String getReturnType() {
+        return returnType;
+    }
+
     public String getMethodName() {
         return methodName;
     }
 
-    public String[] getArgumentTypes() {
-        return argumentTypes;
+    public String[] getParameterTypes() {
+        return parameterTypes;
     }
+
 }

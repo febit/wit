@@ -31,8 +31,9 @@ public class TLDDocumentParser {
             final String name = getRequestChildElementValue(functionElement, "name").trim();
             final String declaredClass = getRequestChildElementValue(functionElement, "function-class").trim();
 
+            final String returnType;
             final String methodName;
-            final String[] argumentTypes;
+            final String[] parameterTypes;
             final String functionSignature = getRequestChildElementValue(functionElement, "function-signature").trim();
 
             final int lparenIndex = functionSignature.indexOf('(');
@@ -43,17 +44,19 @@ public class TLDDocumentParser {
                     break;
                 }
             }
-            methodName = functionSignature.substring(
-                    functionSignature.lastIndexOf(' ', methodNameEnd - 1) + 1, methodNameEnd);
+            int returnTypeEndIndex = functionSignature.lastIndexOf(' ', methodNameEnd - 1);
+            returnType = functionSignature.substring(0, returnTypeEndIndex).trim();
 
-            String argumentTypeString = functionSignature.substring(lparenIndex + 1, functionSignature.lastIndexOf(')')).trim();
-            if (argumentTypeString.length() != 0) {
-                StringUtil.trimAll(argumentTypes = StringUtil.splitc(argumentTypeString, ','));
+            methodName = functionSignature.substring(returnTypeEndIndex + 1, methodNameEnd);
+
+            String parameterTypesString = functionSignature.substring(lparenIndex + 1, functionSignature.lastIndexOf(')')).trim();
+            if (parameterTypesString.length() != 0) {
+                StringUtil.trimAll(parameterTypes = StringUtil.splitc(parameterTypesString, ','));
             } else {
-                argumentTypes = null;
+                parameterTypes = null;
             }
 
-            functions[i] = new TLDFunction(name, declaredClass, methodName, argumentTypes);
+            functions[i] = new TLDFunction(name, declaredClass, returnType, methodName, parameterTypes);
         }
         return functions;
     }
@@ -61,7 +64,7 @@ public class TLDDocumentParser {
     protected static String getRequestChildElementValue(Element parent, String name) {
         NodeList list = parent.getElementsByTagName(name);
         if (list == null || list.getLength() == 0) {
-            return null;
+            throw new RuntimeException("Not found child element named: " + name);
         } else {
             return list.item(0).getFirstChild().getNodeValue();
         }
