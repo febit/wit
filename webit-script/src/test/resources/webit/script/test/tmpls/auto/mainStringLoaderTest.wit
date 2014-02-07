@@ -1,0 +1,11 @@
+<%
+var template ="string:<%
+var a = 2;
+assertEquals(5, a+3);
+echo \"Hello StringLoader \";
+for(a : 0..9){
+echo a;
+}
+%>";
+include template;
+%>

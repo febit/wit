@@ -42,6 +42,7 @@ resolvers='''
 default=webit.script.loaders.impl.ClasspathLoader
 loaders +='''
   classpath:  webit.script.loaders.impl.SimpleSecurityLoader-classpath-root
+  string:     webit.script.loaders.impl.StringLoader-main
 '''
 
 [loader]
