@@ -126,7 +126,7 @@ public final class Engine {
         this.coderFactory = (CoderFactory) ClassUtil.newInstance(this._coderFactory);
 
         if (this._nativeSecurityManager == null) {
-            this._nativeSecurityManager = ClassEntry.wrap(webit.script.security.impl.DefaultNativeSecurityManager.class);
+            this._nativeSecurityManager = ClassEntry.wrap(webit.script.security.impl.NoneNativeSecurityManager.class);
         }
         this.nativeSecurityManager = (NativeSecurityManager) ClassUtil.newInstance(this._nativeSecurityManager);
 
