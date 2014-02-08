@@ -75,6 +75,9 @@ public class PropsUtil {
             this.initForModules();
             for (String module : StringUtil.splitAndTrimAll(modules)) {
                 if (module.length() != 0) {
+                    if (module.charAt(0)=='/') {
+                        module = module.substring(1);
+                    }
                     if (loadedModules.contains(module)) {
                         continue;
                     }
