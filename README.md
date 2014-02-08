@@ -12,7 +12,7 @@ This is a template engine, all writen in Java, **support Java 5+**.
 <dependency>
   <groupId>com.github.zqq90.webit-script</groupId>
   <artifactId>webit-script</artifactId>
-  <version>1.3.1</version>
+  <version>1.4.0</version>
 </dependency>
 ~~~~~
 
