@@ -5,7 +5,7 @@
 <struts>
    <package name="webitScript-default" extends="struts-default">
         <result-types>
-            <result-type name="wit" class="webit.script.support.struts.WebitScriptResultSupport" />
+            <result-type name="wit" class="webit.script.support.struts2.WebitScriptResultSupport" />
         </result-types>
     </package>
 </struts>

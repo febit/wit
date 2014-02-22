@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.zqq90.webit-script</groupId>
+        <artifactId>webit-script-support</artifactId>
+        <version>1.4.1</version>
+    </parent>
+
+    <artifactId>webit-script-jfinal</artifactId>
+    <packaging>jar</packaging>
+    <version>1.4.1</version>
+    
+    <properties>
+        <java.source.version>1.6</java.source.version>
+        <java.target.version>1.6</java.target.version>
+    </properties>
+    
+    <name>Webit Script :: JFinal</name>
+    <dependencies>
+        <dependency>
+            <groupId>com.jfinal</groupId>
+            <artifactId>jfinal</artifactId>
+            <version>1.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>webit-script</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+    </dependencies>
+</project>

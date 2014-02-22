@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.zqq90.webit-script</groupId>
+        <artifactId>webit-script-support</artifactId>
+        <version>1.4.1</version>
+    </parent>
+
+    <artifactId>webit-script-jodd3_5</artifactId>
+    <packaging>jar</packaging>
+    <version>1.4.1</version>
+    
+    <name>Webit Script :: Jodd3.5</name>
+    <dependencies>
+        <dependency>
+            <groupId>org.jodd</groupId>
+            <artifactId>jodd-madvoc</artifactId>
+            <version>3.5</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jodd-upload</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-servlet</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-props</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-petite</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-core</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jodd-bean</artifactId>
+                    <groupId>org.jodd</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>webit-script</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+    </dependencies>
+</project>
