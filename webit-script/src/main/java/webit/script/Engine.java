@@ -276,6 +276,27 @@ public final class Engine {
         }
     }
 
+    /**
+     * if exists this resource.
+     *
+     * @param resourceName
+     * @return boolean
+     * @since 1.4.1
+     */
+    public boolean exists(final String resourceName) {
+        final String normalizedName;
+        final Loader loader;
+        if ((normalizedName = (loader = this.resourceLoader).normalize(resourceName)) != null) {
+            try {
+                return loader.get(normalizedName).exists();
+            } catch (ResourceNotFoundException ex) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     private Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
         Template template;
         final String normalizedName;

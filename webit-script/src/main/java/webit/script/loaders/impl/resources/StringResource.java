@@ -25,4 +25,11 @@ public class StringResource implements Resource {
     public Reader openReader() throws IOException {
         return new StringReader(this.text);
     }
+
+    /**
+     * @since 1.4.1
+     */
+    public boolean exists() {
+        return this.text != null;
+    }
 }

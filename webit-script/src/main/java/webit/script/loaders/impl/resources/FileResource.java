@@ -35,4 +35,11 @@ public class FileResource implements Resource {
                 new FileInputStream(file),
                 encoding);
     }
+
+    /**
+     * @since 1.4.1
+     */
+    public boolean exists() {
+        return file.exists();
+    }
 }

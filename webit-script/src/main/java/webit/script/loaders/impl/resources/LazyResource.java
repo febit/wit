@@ -39,4 +39,11 @@ public class LazyResource implements Resource {
     private void recalculateExpire() {
         this.expire = System.currentTimeMillis() + this.timeout;
     }
+
+    /**
+     * @since 1.4.1
+     */
+    public boolean exists() {
+        return this.resource.exists();
+    }
 }

@@ -8,5 +8,13 @@ public interface Resource {
 
     boolean isModified();
 
+    /**
+     * if exists this resource.
+     *
+     * @return boolean
+     * @since 1.4.1
+     */
+    boolean exists();
+
     Reader openReader() throws IOException;
 }

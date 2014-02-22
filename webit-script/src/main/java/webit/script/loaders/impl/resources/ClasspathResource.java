@@ -8,6 +8,7 @@ import java.io.Reader;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.loaders.Resource;
 import webit.script.util.ClassLoaderUtil;
+import webit.script.util.StreamUtil;
 
 /**
  *
@@ -22,6 +23,18 @@ public class ClasspathResource implements Resource {
     public ClasspathResource(String path, String encoding) {
         this.path = path;
         this.encoding = encoding;
+    }
+
+    /**
+     * @since 1.4.1
+     */
+    public boolean exists() {
+        final InputStream inputStream;
+        if ((inputStream = ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path)) != null) {
+            StreamUtil.close(inputStream);
+            return true;
+        }
+        return false;
     }
 
     public boolean isModified() {
