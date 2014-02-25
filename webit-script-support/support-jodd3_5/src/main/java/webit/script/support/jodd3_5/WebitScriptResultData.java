@@ -7,13 +7,13 @@ import jodd.madvoc.meta.RenderWith;
  *
  * @author zqq90
  */
-@RenderWith(WebitScriptRender.class)
-public class WebitScriptRenderData {
+@RenderWith(WebitScriptResult.class)
+public class WebitScriptResultData {
 
     public final String path;
     public final String contentType;
 
-    public WebitScriptRenderData(String path, String contentType) {
+    public WebitScriptResultData(String path, String contentType) {
         this.path = path;
         this.contentType = contentType;
     }

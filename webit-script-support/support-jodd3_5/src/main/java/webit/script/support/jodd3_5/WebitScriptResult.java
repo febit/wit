@@ -20,20 +20,30 @@ import webit.script.web.WebEngineManager;
  *
  * @author zqq90
  */
-public class WebitScriptRender extends BaseActionResult<WebitScriptRenderData> implements WebEngineManager.ServletContextProvider {
+public class WebitScriptResult extends BaseActionResult<Object> implements WebEngineManager.ServletContextProvider {
 
-    public static final WebitScriptRenderData DEFAULT_RESULT = new WebitScriptRenderData(null, null);
+    public static final WebitScriptResultData DEFAULT_RESULT = new WebitScriptResultData(null, null);
 
-    public static WebitScriptRenderData render() {
+    public static final String NAME = "wit";
+
+    public WebitScriptResult() {
+        super(NAME);
+        this.targetCache = new HashMap<String, String>();
+        this.engineManager
+                = new WebEngineManager(this)
+                .setProperties(CFG.APPEND_LOST_SUFFIX, Boolean.TRUE);
+    }
+
+    public static WebitScriptResultData render() {
         return DEFAULT_RESULT;
     }
 
-    public static WebitScriptRenderData render(String path) {
-        return new WebitScriptRenderData(path, null);
+    public static WebitScriptResultData render(String path) {
+        return new WebitScriptResultData(path, null);
     }
 
-    public static WebitScriptRenderData render(String path, String contentType) {
-        return new WebitScriptRenderData(path, contentType);
+    public static WebitScriptResultData render(String path, String contentType) {
+        return new WebitScriptResultData(path, contentType);
     }
 
     @In(scope = ScopeType.CONTEXT)
@@ -47,23 +57,35 @@ public class WebitScriptRender extends BaseActionResult<WebitScriptRenderData> i
     protected HashMap<String, String> targetCache;
 
     @Override
-    public void render(final ActionRequest actionRequest, final WebitScriptRenderData resultValue) throws Exception {
+    public void render(final ActionRequest actionRequest, final Object resultValue) throws Exception {
         final HttpServletResponse response = actionRequest.getHttpServletResponse();
 
-        if (resultValue.contentType != null) {
-            response.setContentType(resultValue.contentType);
-        } else if (contentType != null) {
+        boolean contentTypeSetted = false;
+        final String customPath;
+
+        if (resultValue == null) {
+            customPath = null;
+        } else if (resultValue instanceof WebitScriptResultData) {
+            final WebitScriptResultData data = (WebitScriptResultData) resultValue;
+            if (data.contentType != null) {
+                response.setContentType(data.contentType);
+                contentTypeSetted = true;
+            }
+            customPath = data.path;
+        } else {
+            customPath = resultValue.toString();
+        }
+
+        if (contentTypeSetted == false && contentType != null) {
             response.setContentType(contentType);
         }
 
         String key = actionRequest.getActionPath();
-        final String customPath;
-        if ((customPath = resultValue.path) != null) {
+        if (customPath != null) {
             key += ':' + customPath;
         }
-        String target = targetCache.get(key);
-
-        if (target == null) {
+        String target;
+        if ((target = targetCache.get(key)) == null) {
 
             ResultPath resultPath = resultMapper.resolveResultPath(actionRequest.getActionPath(), customPath);
 
@@ -122,13 +144,6 @@ public class WebitScriptRender extends BaseActionResult<WebitScriptRenderData> i
 
     protected boolean targetExist(String path) {
         return this.engineManager.getEngine().exists(path);
-    }
-
-    public WebitScriptRender() {
-        this.targetCache = new HashMap<String, String>();
-        this.engineManager
-                = new WebEngineManager(this)
-                .setProperties(CFG.APPEND_LOST_SUFFIX, Boolean.TRUE);
     }
 
     public ServletContext getServletContext() {
