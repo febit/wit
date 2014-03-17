@@ -12,7 +12,7 @@ class StringTemplateParser {
     // ---------------------------------------------------------------- properties
     private final static boolean replaceMissingKey = true;
     private final static String missingKeyReplacement = "";
-    private final static boolean resolveEscapes = false;
+    private final static boolean resolveEscapes = true;
     private final static String macroStart = "${";
     private final static String macroEnd = "}";
     private final static char escapeChar = '\\';
