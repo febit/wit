@@ -44,10 +44,16 @@ final class PropsParser /* implements Cloneable*/ {
     /**
      * Don't include empty properties.
      */
-    private final static boolean skipEmptyProps = true;
+    private boolean skipEmptyProps = true;
+
+    private boolean treatEmptyPropsAsNull = true;
 
     PropsParser() {
         this.propsData = new PropsData();
+    }
+
+    void setSkipEmptyProps(boolean skipEmptyProps) {
+        this.skipEmptyProps = skipEmptyProps;
     }
 
 //    public PropsParser(final PropsData propsData) {

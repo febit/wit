@@ -197,6 +197,9 @@ public final class Props /* implements Cloneable */ {
         data.putBaseProperty(name, value, true);
     }
 
+    public void setSkipEmptyProps(boolean skipEmptyProps) {
+        this.parser.setSkipEmptyProps(skipEmptyProps);
+    }
 //    /**
 //     * Loads props from the file. Assumes UTF8 encoding unless the file ends
 //     * with '.properties', than it uses ISO 8859-1.
@@ -307,6 +310,7 @@ public final class Props /* implements Cloneable */ {
 //        return getValue(key, null);
 //    }
 //
+
     /**
      * Returns value of property, using active profiles.
      */
@@ -351,6 +355,7 @@ public final class Props /* implements Cloneable */ {
 //    public void extractBaseProps(final Map target) {
 //        extractProps(target, null);
 //    }
+
     /**
      * Extracts props belonging to active profiles.
      */
