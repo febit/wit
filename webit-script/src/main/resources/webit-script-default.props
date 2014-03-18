@@ -36,6 +36,7 @@ resolvers='''
     webit.script.resolvers.impl.IterGetResolver
     webit.script.resolvers.impl.IntegerOutResolver
     webit.script.resolvers.impl.LongOutResolver
+    webit.script.resolvers.impl.ScriptVoidResolver
 '''
 
 

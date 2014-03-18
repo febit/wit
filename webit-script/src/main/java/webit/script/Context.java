@@ -9,6 +9,7 @@ import webit.script.core.runtime.VariantContext;
 import webit.script.core.runtime.VariantStack;
 import webit.script.io.Out;
 import webit.script.resolvers.ResolverManager;
+import webit.script.util.ScriptVoid;
 import webit.script.util.collection.ArrayStack;
 import webit.script.util.collection.Stack;
 import webit.script.util.keyvalues.KeyValues;
@@ -20,7 +21,7 @@ import webit.script.util.keyvalues.KeyValuesUtil;
  */
 public final class Context {
 
-    public static final Object VOID = new Object();
+    public static final ScriptVoid VOID = new ScriptVoid();
     //
     private Out out;
     private Stack<Out> outStack;

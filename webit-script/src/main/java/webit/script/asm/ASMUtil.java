@@ -22,6 +22,7 @@ public class ASMUtil {
     public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
     //
     public static final Type TYPE_CONTEXT = Type.getObjectType("webit/script/Context");
+    public static final Type TYPE_SCRIPT_VOID = Type.getObjectType("webit/script/util/ScriptVoid");
     public static final Type TYPE_SYSTEM = Type.getObjectType("java/lang/System");
     public static final Type TYPE_OBJECT_ARR = Type.getObjectType("[Ljava/lang/Object;");
     public static final Type TYPE_SCRIPT_RUNTIME_EXCEPTION = Type.getObjectType("webit/script/exceptions/ScriptRuntimeException");
@@ -153,7 +154,7 @@ public class ASMUtil {
             } else if (type == byte.class) {
                 mg.invokeStatic(BYTE_TYPE, METHOD_BYTE_VALUE_OF);
             } else /* if (type == void.class) */ {
-                mg.getStatic(ASMUtil.TYPE_CONTEXT, "VOID", ASMUtil.TYPE_OBJECT);
+                mg.getStatic(ASMUtil.TYPE_CONTEXT, "VOID", ASMUtil.TYPE_SCRIPT_VOID);
             }
         }// else ignore
     }
