@@ -19,6 +19,10 @@ import webit.script.util.RepeatChars;
 %{
     //================ >> user code
 
+    private static final int INTERPOLATION_START_LEN = 2;
+    private static final int TEXT_BLOCK_END_LEN = 2;
+
+
     private boolean interpolationFlag = false;
     private boolean leftInterpolationFlag = true;
 
@@ -256,10 +260,10 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
 <YYINITIAL>{
 
   /* if to YYSTATEMENT */
-  {DelimiterStatementStartMatch}        { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatementSymbol(false);} else {appendToString("<%");} }
+  {DelimiterStatementStartMatch}        { int length = yylength() - TEXT_BLOCK_END_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(false);} else {appendToString("<%");} }
 
-  /* if to PLACEHOLDER */
-  {DelimiterInterpolationStartMatch}      { int length = yylength()-2;appendToString('\\',length/2);if(length%2 == 0){return popTextStatementSymbol(true);} else {appendToString("${");} }
+  /* if to INTERPOLATION */
+  {DelimiterInterpolationStartMatch}      { int length = yylength() - INTERPOLATION_START_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(true);} else {appendToString("${");} }
   
 
   .|\n                                  { pullToString(); }
@@ -409,14 +413,14 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   /* comments */
   {Comment}                      { /* ignore */ }
 
-  /* whitespace */
-  {WhiteSpace}                   { /* ignore */ }
+  /* %> etc .. */
+  {DelimiterStatementEnd}        { leftInterpolationFlag = false; yybegin(YYINITIAL); }
 
   /* identifiers */
   {Identifier}                   { return symbol(Tokens.IDENTIFIER, yytext().intern()); }
 
-  /* %> */
-  {DelimiterStatementEnd}        { leftInterpolationFlag = false; yybegin(YYINITIAL); }
+  /* whitespace */
+  {WhiteSpace}                   { /* ignore */ }
 
 
 }
