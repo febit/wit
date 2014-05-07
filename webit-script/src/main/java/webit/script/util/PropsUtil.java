@@ -75,7 +75,7 @@ public class PropsUtil {
             this.initForModules();
             for (String module : StringUtil.splitAndTrimAll(modules)) {
                 if (module.length() != 0) {
-                    if (module.charAt(0)=='/') {
+                    if (module.charAt(0) == '/') {
                         module = module.substring(1);
                     }
                     if (loadedModules.contains(module)) {
@@ -86,6 +86,9 @@ public class PropsUtil {
                         modulePropsCache.put(module,
                                 moduleProps = loadProps(this.moduleInputStreamResolver, module));
                         //resolve PROPS_MODULES after loaded
+                        if (moduleProps == null) {
+                            throw new RuntimeException("Not found props named:" + module);
+                        }
                         resolveModules(moduleProps.popBaseProperty(PROPS_MODULES));
 
                         if (loadedModules.contains(module)) {
@@ -153,6 +156,9 @@ public class PropsUtil {
                     for (String subpath : StringUtil.splitAndTrimAll(path)) {
                         if (subpath.length() != 0) {
                             Props temp = loadProps(this.mainInputStreamResolver, subpath);
+                            if (temp == null) {
+                                throw new RuntimeException("Not found props named:" + temp);
+                            }
                             resolveModules(temp.popBaseProperty(PROPS_MODULES));
                             this.props.merge(temp);
                             logPropsFiles(this.mainInputStreamResolver.getViewPath(subpath));
