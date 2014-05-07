@@ -193,7 +193,7 @@ public class BeanUtil {
         FieldSetter(Field field) {
             ClassUtil.setAccessible(field);
             this.field = field;
-            this.fieldType = field.getDeclaringClass();
+            this.fieldType = field.getType();
         }
 
         public void set(Object bean, Object value) throws BeanUtilException {
