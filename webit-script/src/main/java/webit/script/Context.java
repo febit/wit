@@ -154,6 +154,9 @@ public final class Context {
     }
 
     public void exportTo(final Map map) {
-        this.vars.getCurrentContext().exportTo(map);
+        VariantContext variantContext = this.vars.getCurrentContext();
+        if (variantContext != null) {
+            variantContext.exportTo(map);
+        }
     }
 }
