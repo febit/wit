@@ -24,19 +24,18 @@ public class ALU {
     private static final int BYTE = 9;
 
     //mark
-    private static final int NULL_MARK = 1 << 30;
-    private static final int STRING_MARK = 1 << 10;
-    private static final int CHAR_MARK = 1 << 9;
+    private static final int NULL_MARK = (1 << 30) - 1;
+    private static final int STRING_MARK = (1 << 10) - 1;
+    private static final int CHAR_MARK = (1 << 9) - 1;
     //
-    private static final int BIG_DECIMAL_MARK = 1 << 8;
-    private static final int BIG_INTEGER_MARK = 1 << 7;
-    private static final int DOUBLE_MARK = 1 << 6;
-    private static final int FLOAT_MARK = 1 << 5;
-    private static final int LONG_MARK = 1 << 4;
-    private static final int INTEGER_MARK = 1 << 3;
-    //Notice: 2 for CHAR_MARK but Character is special,since not impl java.lang.Number.
-    private static final int SHORT_MARK = 1 << 1;
-    private static final int BYTE_MARK = 1 << 0;
+    private static final int BIG_DECIMAL_MARK = (1 << 8) - 1;
+    private static final int BIG_INTEGER_MARK = (1 << 7) - 1;
+    private static final int DOUBLE_MARK = (1 << 6) - 1;
+    private static final int FLOAT_MARK = (1 << 5) - 1;
+    private static final int LONG_MARK = (1 << 4) - 1;
+    private static final int INTEGER_MARK = (1 << 3) - 1;
+    private static final int SHORT_MARK = (1 << 2) - 1;
+    private static final int BYTE_MARK = (1 << 1) - 1;
     //STRING BIG_DECIMAL DOUBLE FLOAT BIG_INTEGER LONG  CHAR INTEGER SHORT BYTE
 
     private static int getTypeMark(final Object o1) {
