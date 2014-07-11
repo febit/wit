@@ -3,7 +3,6 @@ package webit.script.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import webit.script.exceptions.ScriptRuntimeException;
 
 /**
@@ -375,7 +374,7 @@ public class ALU {
     }
 
     // ==
-    public static boolean equals(final Object o1, final Object o2) {
+    public static boolean equal(final Object o1, final Object o2) {
         if (o1 == o2) {
             return true;
         }
@@ -406,8 +405,8 @@ public class ALU {
     }
 
     // !=
-    public static boolean notEquals(final Object o1, final Object o2) {
-        return !equals(o1, o2);
+    public static boolean notEqual(final Object o1, final Object o2) {
+        return !equal(o1, o2);
     }
 
     // >
@@ -416,8 +415,8 @@ public class ALU {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
                 //case STRING_MARK:
                 case CHAR_MARK:
-                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
-                            > (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
+                            > (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
                 case BYTE_MARK:
                 case SHORT_MARK:
                 case INTEGER_MARK:
@@ -440,13 +439,13 @@ public class ALU {
     }
 
     // >=
-    public static boolean greaterEquals(final Object o1, final Object o2) {
+    public static boolean greaterEqual(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
                 //case STRING_MARK:
                 case CHAR_MARK:
-                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
-                            >= (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
+                            >= (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
                 case BYTE_MARK:
                 case SHORT_MARK:
                 case INTEGER_MARK:
@@ -474,8 +473,8 @@ public class ALU {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
                 //case STRING_MARK:
                 case CHAR_MARK:
-                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
-                            < (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
+                            < (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
                 case BYTE_MARK:
                 case SHORT_MARK:
                 case INTEGER_MARK:
@@ -498,13 +497,13 @@ public class ALU {
     }
 
     // <=
-    public static boolean lessEquals(final Object o1, final Object o2) {
+    public static boolean lessEqual(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
                 //case STRING_MARK:
                 case CHAR_MARK:
-                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
-                            <= (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
+                            <= (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
                 case BYTE_MARK:
                 case SHORT_MARK:
                 case INTEGER_MARK:
@@ -532,8 +531,8 @@ public class ALU {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
                 //case STRING_MARK:
                 case CHAR_MARK:
-                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
-                            & (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
+                            & (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
                 case BYTE_MARK:
                     return ((Number) o1).byteValue() & ((Number) o2).byteValue();
                 case SHORT_MARK:
@@ -558,8 +557,8 @@ public class ALU {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
                 //case STRING_MARK:
                 case CHAR_MARK:
-                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
-                            | (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
+                            | (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
                 case BYTE_MARK:
                     return ((Number) o1).byteValue() | ((Number) o2).byteValue();
                 case SHORT_MARK:
@@ -584,8 +583,8 @@ public class ALU {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
                 //case STRING_MARK:
                 case CHAR_MARK:
-                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) ((Character) o1).charValue())
-                            ^ (o2 instanceof Number ? ((Number) o2).intValue() : (int) ((Character) o2).charValue());
+                    return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
+                            ^ (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
                 case BYTE_MARK:
                     return ((Number) o1).byteValue() ^ ((Number) o2).byteValue();
                 case SHORT_MARK:
@@ -635,15 +634,15 @@ public class ALU {
                 switch (getBaseType(o1)) {
                     //case STRING:
                     case CHAR:
-                        return ((Character) o1).charValue() << ((Number) o2).intValue();
+                        return ((Character) o1) << ((Number) o2).intValue();
                     case BYTE:
-                        return ((Byte) o1).byteValue() << ((Number) o2).intValue();
+                        return ((Byte) o1) << ((Number) o2).intValue();
                     case SHORT:
-                        return ((Short) o1).shortValue() << ((Number) o2).intValue();
+                        return ((Short) o1) << ((Number) o2).intValue();
                     case INTEGER:
-                        return ((Integer) o1).intValue() << ((Number) o2).intValue();
+                        return ((Integer) o1) << ((Number) o2).intValue();
                     case LONG:
-                        return ((Long) o1).longValue() << ((Number) o2).intValue();
+                        return ((Long) o1) << ((Number) o2).intValue();
                     //case DOUBLE:
                     //case FLOAT:
                     default:
@@ -741,7 +740,7 @@ public class ALU {
         } else if (Boolean.FALSE == o || o == null) {
             return false;
         } else if (o instanceof Boolean) {
-            return ((Boolean) o).booleanValue();
+            return (Boolean) o;
         } else {
             //if Collection empty 
             return CollectionUtil.notEmpty(o, true);

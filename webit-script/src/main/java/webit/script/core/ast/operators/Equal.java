@@ -13,19 +13,19 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class NotEquals extends BinaryOperator implements Optimizable {
+public final class Equal extends BinaryOperator implements Optimizable {
 
-    public NotEquals(Expression leftExpr, Expression rightExpr, int line, int column) {
+    public Equal(Expression leftExpr, Expression rightExpr, int line, int column) {
         super(leftExpr, rightExpr, line, column);
     }
 
     public Object execute(final Context context) {
-        return ALU.notEquals(StatementUtil.execute(leftExpr, context), StatementUtil.execute(rightExpr, context));
+        return ALU.equal(StatementUtil.execute(leftExpr, context), StatementUtil.execute(rightExpr, context));
     }
 
     public Expression optimize() {
         return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
-                ? new DirectValue(ALU.notEquals(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
+                ? new DirectValue(ALU.equal(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
                 : this;
     }
 }

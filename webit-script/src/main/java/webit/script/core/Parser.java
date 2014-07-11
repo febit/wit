@@ -194,10 +194,10 @@ public class Parser extends AbstractParser {
                 oper = new Div(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.EQEQ: // ==
-                oper = new Equals(leftExpr, rightExpr, line, column);
+                oper = new Equal(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.GTEQ: // >=
-                oper = new GreaterEquals(leftExpr, rightExpr, line, column);
+                oper = new GreaterEqual(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.GT: // >
                 oper = new Greater(leftExpr, rightExpr, line, column);
@@ -206,7 +206,7 @@ public class Parser extends AbstractParser {
                 oper = new LShift(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.LTEQ: // <=
-                oper = new LessEquals(leftExpr, rightExpr, line, column);
+                oper = new LessEqual(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.LT: // <
                 oper = new Less(leftExpr, rightExpr, line, column);
@@ -221,7 +221,7 @@ public class Parser extends AbstractParser {
                 oper = new Mult(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.NOTEQ: // !=
-                oper = new NotEquals(leftExpr, rightExpr, line, column);
+                oper = new NotEqual(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.OROR: // ||
                 oper = new Or(leftExpr, rightExpr, line, column);
