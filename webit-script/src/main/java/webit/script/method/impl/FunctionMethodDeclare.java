@@ -30,10 +30,12 @@ public final class FunctionMethodDeclare implements MethodDeclare {
     public Object invoke(final Context context, final Object[] args) {
         try {
             return function.invoke(new Context(context, template, parentVarContexts, containsRootContext), args);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw template == context.template
                     ? ExceptionUtil.castToScriptRuntimeException(e, function)
-                    : new ScriptRuntimeException(ExceptionUtil.castToScriptRuntimeException(e, function).setTemplate(template));
+                    : new ScriptRuntimeException(
+                            ExceptionUtil.castToScriptRuntimeException(e, function)
+                            .setTemplate(template));
         }
     }
 }

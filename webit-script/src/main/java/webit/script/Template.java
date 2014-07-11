@@ -192,8 +192,8 @@ public final class Template {
                 tmpl = parseAST(false);
             }
             return tmpl.execute(new Context(this, out, root));
-        } catch (Throwable e) {
-            throw wrapThrowable(e);
+        } catch (Exception e) {
+            throw wrapException(e);
         }
     }
 
@@ -227,8 +227,8 @@ public final class Template {
                 tmpl = parseAST(false);
             }
             return tmpl.execute(new Context(parent, this, params));
-        } catch (Throwable e) {
-            throw wrapThrowable(e);
+        } catch (Exception e) {
+            throw wrapException(e);
         }
     }
 
@@ -258,7 +258,7 @@ public final class Template {
         return (this.engine == other.engine) && (this.name.equals(other.name));
     }
 
-    private UncheckedException wrapThrowable(final Throwable exception) {
+    private UncheckedException wrapException(final Exception exception) {
         if (exception instanceof UncheckedException) {
             return ((UncheckedException) exception).setTemplate(this);
         } else {

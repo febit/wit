@@ -11,7 +11,7 @@ public class AsmResolverManager {
 
     private final static ClassIdentityHashMap<AsmResolverBox> asmResolversMap = new ClassIdentityHashMap<AsmResolverBox>();
 
-    public static AsmResolver getAsmResolver(Class type) throws Throwable {
+    public static AsmResolver getAsmResolver(Class type) throws Exception {
         AsmResolverBox box;
         if ((box = asmResolversMap.get(type)) == null) {
             box = asmResolversMap.putIfAbsent(type, new AsmResolverBox());

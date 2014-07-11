@@ -50,7 +50,7 @@ public abstract class AbstractInclude extends AbstractStatement {
             try {
                 return engine.getTemplate(myTemplateName, String.valueOf(templateName))
                         .mergeForInlude(context, params);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new ScriptRuntimeException(e, this);
             }
         } else {

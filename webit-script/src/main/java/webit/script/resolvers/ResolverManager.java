@@ -76,7 +76,7 @@ public final class ResolverManager implements Initable {
             if (resolver == null && enableAsm) {
                 try {
                     resolver = AsmResolverManager.getAsmResolver(type);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     logger.error(null, e);
                 }
                 if (resolver == null) {
@@ -116,7 +116,7 @@ public final class ResolverManager implements Initable {
             if (resolver == null && enableAsm) {
                 try {
                     resolver = AsmResolverManager.getAsmResolver(type);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     logger.error(null, e);
                 }
                 if (resolver == null) {
@@ -230,7 +230,6 @@ public final class ResolverManager implements Initable {
     public void set(Object bean, Object property, Object value) {
         if (bean != null) {
             getSetResolver(bean.getClass()).set(bean, property, value);
-            return;
         } else if (ignoreNullPointer == false) {
             throw new ScriptRuntimeException("Null pointer.");
         }

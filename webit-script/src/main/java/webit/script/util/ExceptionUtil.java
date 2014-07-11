@@ -11,19 +11,19 @@ import webit.script.exceptions.ScriptRuntimeException;
  */
 public class ExceptionUtil {
 
-    public static ScriptRuntimeException castToScriptRuntimeException(final Throwable e, final Statement statement) {
+    public static ScriptRuntimeException castToScriptRuntimeException(final Exception e, final Statement statement) {
         return (e instanceof ScriptRuntimeException)
                 ? ((ScriptRuntimeException) e).registStatement(statement)
                 : new ScriptRuntimeException(e, statement);
     }
 
-    public static ScriptRuntimeException castToScriptRuntimeException(final Throwable e) {
+    public static ScriptRuntimeException castToScriptRuntimeException(final Exception e) {
         return (e instanceof ScriptRuntimeException)
                 ? ((ScriptRuntimeException) e)
                 : new ScriptRuntimeException(e);
     }
 
-    public static ParseException castToParseException(final Throwable e) {
+    public static ParseException castToParseException(final Exception e) {
         return (e instanceof ParseException)
                 ? ((ParseException) e)
                 : new ParseException(e);

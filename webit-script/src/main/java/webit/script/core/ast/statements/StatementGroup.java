@@ -29,7 +29,7 @@ public class StatementGroup extends AbstractStatement implements Optimizable {
         return null;
     }
 
-    public Statement optimize() throws Throwable {
+    public Statement optimize() throws Exception {
         if (this.list.length == 0) {
             return NoneStatement.getInstance();
         } else {

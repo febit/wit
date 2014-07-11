@@ -28,7 +28,7 @@ public class StatementUtil {
             Object result = expression.execute(context);
             context.popOut();
             return result;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, expression);
         }
     }
@@ -39,8 +39,7 @@ public class StatementUtil {
             context.pushOut(out);
             statement.execute(context);
             context.popOut();
-            return;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statement);
         }
     }
@@ -48,7 +47,7 @@ public class StatementUtil {
     public static Object execute(final Expression expression, final Context context) {
         try {
             return expression.execute(context);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, expression);
         }
     }
@@ -62,7 +61,7 @@ public class StatementUtil {
                 results[i] = expressions[i].execute(context);
             }
             return results;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, expressions[i]);
         }
     }
@@ -70,7 +69,7 @@ public class StatementUtil {
     public static Object executeSetValue(final ResetableValueExpression expression, final Context context, final Object value) {
         try {
             return expression.setValue(context, value);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, expression);
         }
     }
@@ -78,8 +77,7 @@ public class StatementUtil {
     public static void execute(final Statement statement, final Context context) {
         try {
             statement.execute(context);
-            return;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statement);
         }
     }
@@ -92,8 +90,7 @@ public class StatementUtil {
                 statements[i].execute(context);
                 i++;
             }
-            return;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statements[i]);
         }
     }
@@ -105,8 +102,7 @@ public class StatementUtil {
                 --i;
                 statements[i].execute(context);
             }
-            return;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statements[i]);
         }
     }
@@ -119,8 +115,7 @@ public class StatementUtil {
                 --i;
                 statements[i].execute(context);
             } while (i != 0 && ctrl.getLoopType() == LoopInfo.NO_LOOP);
-            return;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw ExceptionUtil.castToScriptRuntimeException(e, statements[i]);
         }
     }
@@ -130,7 +125,7 @@ public class StatementUtil {
             return expression != null && expression instanceof Optimizable
                     ? (Expression) ((Optimizable) expression).optimize()
                     : expression;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new ParseException("Exception occur when do optimization", e, expression);
         }
     }
@@ -140,7 +135,7 @@ public class StatementUtil {
             return statement != null && statement instanceof Optimizable
                     ? ((Optimizable) statement).optimize()
                     : statement;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new ParseException("Exception occur when do optimization", e, statement);
         }
     }
