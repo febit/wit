@@ -30,11 +30,7 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
         if (property instanceof Number) {
             return ArrayUtil.getByIndex(object, ((Number) property).intValue());
         } else {
-            if ("length" == property || "size" == property) {
-                return ArrayUtil.getSize(object);
-            } else if ("isEmpty" == property) {
-                return ArrayUtil.getSize(object) == 0;
-            } else if ("length".equals(property) || "size".equals(property)) {
+            if ("length".equals(property) || "size".equals(property)) {
                 return ArrayUtil.getSize(object);
             } else if ("isEmpty".equals(property)) {
                 return ArrayUtil.getSize(object) == 0;
@@ -68,13 +64,10 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
         final Class objClass;
         if ((objClass = bean.getClass()) == char[].class) {
             out.write((char[]) bean);
-            return;
         } else if (objClass == byte[].class) {
             out.write((byte[]) bean);
-            return;
         } else {
             out.write(ArrayUtil.arrayToString(bean));
-            return;
         }
     }
 }

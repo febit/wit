@@ -31,9 +31,9 @@ public class ListResolver implements GetResolver, SetResolver {
                 throw new ScriptRuntimeException(StringUtil.concat("index out of bounds:", property));
             }
         } else {
-            if (property == "size" || "size".equals(property)) {
+            if ("size".equals(property)) {
                 return ((List) object).size();
-            } else if (property == "isEmpty" || "isEmpty".equals(property)) {
+            } else if ("isEmpty".equals(property)) {
                 return ((List) object).isEmpty();
             }
             throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: java.util.List#", property));

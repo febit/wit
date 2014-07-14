@@ -313,7 +313,7 @@ public class StringUtil {
                 list.add(var);
             }
         }
-        return list.size() != 0
+        return !list.isEmpty()
                 ? list.toArray(new String[list.size()])
                 : null;
     }

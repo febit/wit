@@ -25,32 +25,32 @@ public class IterGetResolver implements GetResolver {
 
         switch (property.hashCode()) {
             case 696759469:
-                if ("hasNext" == property || "hasNext".equals(property)) {
+                if ("hasNext".equals(property)) {
                     return ((Iter) object).hasNext();
                 }
                 break;
             case 100346066:
-                if ("index" == property || "index".equals(property)) {
+                if ("index".equals(property)) {
                     return ((Iter) object).index();
                 }
                 break;
             case 2058846118:
-                if ("isFirst" == property || "isFirst".equals(property)) {
+                if ("isFirst".equals(property)) {
                     return ((Iter) object).isFirst();
                 }
                 break;
             case 3377907:
-                if ("next" == property || "next".equals(property)) {
+                if ("next".equals(property)) {
                     return ((Iter) object).next();
                 }
                 break;
             case -1180529308:
-                if ("isEven" == property || "isEven".equals(property)) {
+                if ("isEven".equals(property)) {
                     return (((Iter) object).index() & 1) != 0; //Note: when index start by 0
                 }
                 break;
             case 100474789:
-                if ("isOdd" == property || "isOdd".equals(property)) {
+                if ("isOdd".equals(property)) {
                     return (((Iter) object).index() & 1) == 0; //Note: when index start by 0
                 }
                 break;

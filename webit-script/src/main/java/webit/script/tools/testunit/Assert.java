@@ -102,7 +102,7 @@ public class Assert {
 
     private static void assertObjectTrue(Object condition) {
         if (condition instanceof Boolean) {
-            assertTrue(((Boolean) condition).booleanValue());
+            assertTrue((Boolean) condition);
         } else {
             fail("not a Boolean");
         }

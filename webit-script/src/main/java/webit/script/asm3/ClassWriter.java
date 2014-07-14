@@ -732,28 +732,28 @@ public class ClassWriter{
      */
     Item newConstItem(final Object cst) {
         if (cst instanceof Integer) {
-            int val = ((Integer) cst).intValue();
+            int val = (Integer) cst;
             return newInteger(val);
         } else if (cst instanceof Byte) {
             int val = ((Byte) cst).intValue();
             return newInteger(val);
         } else if (cst instanceof Character) {
-            int val = ((Character) cst).charValue();
+            int val = (Character) cst;
             return newInteger(val);
         } else if (cst instanceof Short) {
             int val = ((Short) cst).intValue();
             return newInteger(val);
         } else if (cst instanceof Boolean) {
-            int val = ((Boolean) cst).booleanValue() ? 1 : 0;
+            int val = (Boolean) cst ? 1 : 0;
             return newInteger(val);
         } else if (cst instanceof Float) {
-            float val = ((Float) cst).floatValue();
+            float val = (Float) cst;
             return newFloat(val);
         } else if (cst instanceof Long) {
-            long val = ((Long) cst).longValue();
+            long val = (Long) cst;
             return newLong(val);
         } else if (cst instanceof Double) {
-            double val = ((Double) cst).doubleValue();
+            double val = (Double) cst;
             return newDouble(val);
         } else if (cst instanceof String) {
             return newString((String) cst);
