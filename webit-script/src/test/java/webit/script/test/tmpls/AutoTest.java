@@ -54,7 +54,7 @@ public class AutoTest {
     }
 
     @Test
-    public void test() throws ResourceNotFoundException, IOException {
+    public void test() throws ResourceNotFoundException, IOException, ParseException, ScriptRuntimeException {
 
         Map<String, String> templates = collectAutoTestTemplates();
         ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
@@ -62,40 +62,31 @@ public class AutoTest {
         final FastByteBuffer bytesBuffer = new FastByteBuffer();
         final byte[] buffer = new byte[BUFFER_SIZE];
 
-        try {
+        FastByteArrayOutputStream out = new FastByteArrayOutputStream();
+        for (Map.Entry<String, String> entry : templates.entrySet()) {
+            String templatePath = entry.getKey();
+            String outPath = entry.getValue();
+            if (outPath != null) {
+                out.reset();
+                mergeTemplate(templatePath, out);
 
-            FastByteArrayOutputStream out = new FastByteArrayOutputStream();
-            for (Map.Entry<String, String> entry : templates.entrySet()) {
-                String templatePath = entry.getKey();
-                String outPath = entry.getValue();
-                if (outPath != null) {
-                    out.reset();
-                    mergeTemplate(templatePath, out);
-
-                    //read out 
-                    InputStream in;
-                    if ((in = classLoader.getResourceAsStream(AUTO_TEST_PATH.concat(outPath))) != null) {
-                        int read;
-                        bytesBuffer.clear();
-                        while ((read = in.read(buffer, 0, BUFFER_SIZE)) >= 0) {
-                            bytesBuffer.append(buffer, 0, read);
-                        }
-                        assertArrayEquals(bytesBuffer.toArray(), out.toByteArray());
-                        System.out.println("\tresult match to: " + outPath);
-
-                        bytesBuffer.clear();
+                //read out 
+                InputStream in;
+                if ((in = classLoader.getResourceAsStream(AUTO_TEST_PATH.concat(outPath))) != null) {
+                    int read;
+                    bytesBuffer.clear();
+                    while ((read = in.read(buffer, 0, BUFFER_SIZE)) >= 0) {
+                        bytesBuffer.append(buffer, 0, read);
                     }
-                    out.reset();
-                } else {
-                    mergeTemplate(templatePath, new DiscardOut());
+                    assertArrayEquals(bytesBuffer.toArray(), out.toByteArray());
+                    System.out.println("\tresult match to: " + outPath);
+
+                    bytesBuffer.clear();
                 }
+                out.reset();
+            } else {
+                mergeTemplate(templatePath, new DiscardOut());
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
-            throw e;
-        } catch (ScriptRuntimeException e) {
-            e.printStackTrace();
-            throw e;
         }
     }
 

@@ -4,6 +4,7 @@ package webit.script.test.tmpls;
 import org.junit.Test;
 import webit.script.EngineManager;
 import webit.script.Template;
+import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.io.impl.DiscardOut;
 
 /**
@@ -13,13 +14,9 @@ import webit.script.io.impl.DiscardOut;
 public class HelloTest {
 
     @Test
-    public void test() {
-        try {
-            Template template = EngineManager.getTemplate("/helloTest.wit");
-            //template.reload();
-            template.merge(new DiscardOut());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void test() throws ResourceNotFoundException {
+        Template template = EngineManager.getTemplate("/helloTest.wit");
+        //template.reload();
+        template.merge(new DiscardOut());
     }
 }

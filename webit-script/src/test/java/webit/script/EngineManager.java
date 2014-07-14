@@ -12,12 +12,7 @@ public class EngineManager {
     private static final Engine engine;
 
     static {
-        try {
-            engine = Engine.createEngine("/webit-script-test.props", null);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw e;
-        }
+        engine = Engine.createEngine("/webit-script-test.props", null);
     }
 
     public static Engine getEngine() {

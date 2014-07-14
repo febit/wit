@@ -8,7 +8,6 @@ import webit.script.Engine;
 import webit.script.EngineManager;
 import webit.script.Template;
 import webit.script.exceptions.ResourceNotFoundException;
-import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.impl.DiscardOut;
 import webit.script.util.keyvalues.KeyValuesUtil;
 
@@ -26,20 +25,15 @@ public class TrimBlankLineTest {
         engine.setTrimCodeBlockBlankLine(true);
         Template template = engine.getTemplate("/trimBlankLine.wit");
 
-        try {
+        Map<String, Object> param = new HashMap<String, Object>(4);
+        param.put("trimBlankLine", true);
+        template.merge(KeyValuesUtil.wrap(param), out);
 
-            Map<String, Object> param = new HashMap<String, Object>(4);
-            param.put("trimBlankLine", true);
-            template.merge(KeyValuesUtil.wrap(param), out);
+        engine.setTrimCodeBlockBlankLine(false);
+        template.reset();
 
-            engine.setTrimCodeBlockBlankLine(false);
-            template.reset();
-
-            param.put("trimBlankLine", false);
-            template.merge(KeyValuesUtil.wrap(param), out);
-        } catch (ScriptRuntimeException e) {
-            e.printStackTrace();
-        }
+        param.put("trimBlankLine", false);
+        template.merge(KeyValuesUtil.wrap(param), out);
 
     }
 }

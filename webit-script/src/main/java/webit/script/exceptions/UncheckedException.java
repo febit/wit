@@ -4,6 +4,7 @@ package webit.script.exceptions;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import webit.script.Template;
+import webit.script.util.ExceptionUtil;
 
 /**
  *
@@ -125,7 +126,7 @@ public abstract class UncheckedException extends RuntimeException {
         }
 
         public void printStackTrace(Throwable cause) {
-            cause.printStackTrace(out);
+            ExceptionUtil.printStackTrace(cause, out);
         }
     }
 

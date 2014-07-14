@@ -1,9 +1,11 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
+import java.io.PrintStream;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.loggers.Logger;
+import webit.script.util.ExceptionUtil;
 import webit.script.util.MessageFormatter;
 import webit.script.util.StringUtil;
 
@@ -53,39 +55,25 @@ public final class SimpleLogger implements Logger, Initable {
         _trace = true;
     }
 
-    private String getMessage(String msg) {
-        if (prefix == null) {
-            return msg;
-        }
-        return prefix.concat(msg != null ? msg : "null");
-    }
-
-    private String getMessage(String msg, Object... args) {
-        return getMessage(MessageFormatter.format(msg, args));
-    }
-
     public boolean isTraceEnabled() {
         return _trace;
     }
 
     public void trace(String msg) {
         if (_trace) {
-            System.out.println(getMessage(msg));
+            printStackTrace(msg, null, false);
         }
     }
 
     public void trace(String format, Object... arguments) {
         if (_trace) {
-            System.out.println(getMessage(format, arguments));
+            printStackTrace(format, null, false, arguments);
         }
     }
 
-    public void trace(String msg, Throwable t) {
+    public void trace(String msg, Throwable throwable) {
         if (_trace) {
-            System.out.println(getMessage(msg));
-            if (t != null) {
-                t.printStackTrace(System.out);
-            }
+            printStackTrace(msg, throwable, false);
         }
     }
 
@@ -95,22 +83,19 @@ public final class SimpleLogger implements Logger, Initable {
 
     public void debug(String msg) {
         if (_debug) {
-            System.out.println(getMessage(msg));
+            printStackTrace(msg, null, false);
         }
     }
 
     public void debug(String format, Object... arguments) {
         if (_debug) {
-            System.out.println(getMessage(format, arguments));
+            printStackTrace(format, null, false, arguments);
         }
     }
 
-    public void debug(String msg, Throwable t) {
+    public void debug(String msg, Throwable throwable) {
         if (_debug) {
-            System.out.println(getMessage(msg));
-            if (t != null) {
-                t.printStackTrace(System.out);
-            }
+            printStackTrace(msg, throwable, false);
         }
     }
 
@@ -120,22 +105,19 @@ public final class SimpleLogger implements Logger, Initable {
 
     public void info(String msg) {
         if (_info) {
-            System.out.println(getMessage(msg));
+            printStackTrace(msg, null, false);
         }
     }
 
     public void info(String format, Object... arguments) {
         if (_info) {
-            System.out.println(getMessage(format, arguments));
+            printStackTrace(format, null, false, arguments);
         }
     }
 
-    public void info(String msg, Throwable t) {
+    public void info(String msg, Throwable throwable) {
         if (_info) {
-            System.out.println(getMessage(msg));
-            if (t != null) {
-                t.printStackTrace(System.out);
-            }
+            printStackTrace(msg, throwable, false);
         }
     }
 
@@ -145,22 +127,19 @@ public final class SimpleLogger implements Logger, Initable {
 
     public void warn(String msg) {
         if (_warn) {
-            System.err.println(getMessage(msg));
+            printStackTrace(msg, null, true);
         }
     }
 
     public void warn(String format, Object... arguments) {
         if (_warn) {
-            System.err.println(getMessage(format, arguments));
+            printStackTrace(format, null, true, arguments);
         }
     }
 
-    public void warn(String msg, Throwable t) {
+    public void warn(String msg, Throwable throwable) {
         if (_warn) {
-            System.err.println(getMessage(msg));
-            if (t != null) {
-                t.printStackTrace(System.err);
-            }
+            printStackTrace(msg, throwable, true);
         }
     }
 
@@ -170,26 +149,45 @@ public final class SimpleLogger implements Logger, Initable {
 
     public void error(String msg) {
         if (_error) {
-            System.err.println(getMessage(msg));
+            printStackTrace(msg, null, true);
         }
     }
 
     public void error(String format, Object... arguments) {
         if (_error) {
-            System.err.println(getMessage(format, arguments));
+            printStackTrace(format, null, true, arguments);
         }
     }
 
-    public void error(String msg, Throwable t) {
+    public void error(String msg, Throwable throwable) {
         if (_error) {
-            System.err.println(getMessage(msg));
-            if (t != null) {
-                t.printStackTrace(System.err);
-            }
+            printStackTrace(msg, throwable, true);
         }
     }
 
-    //
+    private String getMessage(String msg) {
+        if (prefix == null) {
+            return msg;
+        }
+        return prefix.concat(msg != null ? msg : "null");
+    }
+
+    private String format(String format, Object... args) {
+        return MessageFormatter.format(format, args);
+    }
+
+    private void printStackTrace(String format, Throwable throwable, boolean error, Object... arguments) {
+        printStackTrace(format(format, arguments), throwable, error);
+    }
+
+    private void printStackTrace(String msg, Throwable throwable, boolean error) {
+        PrintStream out = error ? System.err : System.out;
+        out.print(getMessage(msg));
+        if (throwable != null) {
+            ExceptionUtil.printStackTrace(throwable, out);
+        }
+    }
+
     public void setLevel(String level) {
         this.level = level;
     }

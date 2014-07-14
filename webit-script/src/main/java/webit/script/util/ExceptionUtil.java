@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util;
 
+import java.io.PrintStream;
 import webit.script.core.ast.Statement;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;
@@ -27,5 +28,9 @@ public class ExceptionUtil {
         return (e instanceof ParseException)
                 ? ((ParseException) e)
                 : new ParseException(e);
+    }
+
+    public static void printStackTrace(Throwable exception, PrintStream out) {
+        exception.printStackTrace(out);
     }
 }
