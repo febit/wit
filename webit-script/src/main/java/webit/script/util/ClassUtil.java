@@ -44,47 +44,47 @@ public class ClassUtil {
     public static char getAliasOfBaseType(final String name) {
         switch (name.hashCode()) {
             case 3625364:
-                if ("void" == name || "void".equals(name)) {
+                if ("void".equals(name)) {
                     return 'V';
                 }
                 break;
             case 64711720:
-                if ("boolean" == name || "boolean".equals(name)) {
+                if ("boolean".equals(name)) {
                     return 'Z';
                 }
                 break;
             case 3039496:
-                if ("byte" == name || "byte".equals(name)) {
+                if ("byte".equals(name)) {
                     return 'B';
                 }
                 break;
             case 3052374:
-                if ("char" == name || "char".equals(name)) {
+                if ("char".equals(name)) {
                     return 'C';
                 }
                 break;
             case -1325958191:
-                if ("double" == name || "double".equals(name)) {
+                if ("double".equals(name)) {
                     return 'D';
                 }
                 break;
             case 97526364:
-                if ("float" == name || "float".equals(name)) {
+                if ("float".equals(name)) {
                     return 'F';
                 }
                 break;
             case 104431:
-                if ("int" == name || "int".equals(name)) {
+                if ("int".equals(name)) {
                     return 'I';
                 }
                 break;
             case 3327612:
-                if ("long" == name || "long".equals(name)) {
+                if ("long".equals(name)) {
                     return 'J';
                 }
                 break;
             case 109413500:
-                if ("short" == name || "short".equals(name)) {
+                if ("short".equals(name)) {
                     return 'S';
                 }
                 break;
