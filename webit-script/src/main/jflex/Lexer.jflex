@@ -266,7 +266,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   {DelimiterInterpolationStartMatch}      { int length = yylength() - INTERPOLATION_START_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(true);} else {appendToString("${");} }
   
 
-  .|\n                                  { pullToString(); }
+  [^]                                  { pullToString(); }
 
   <<EOF>>                               { yybegin(END_OF_FILE); return symbol(Tokens.TEXT_STATEMENT,  stringLine,stringColumn, popAsCharArray());}
 }
@@ -471,7 +471,6 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
 }
 
 /* error fallback */
-.|\n                             { throw new ParseException("Illegal character \""+yytext()+
-                                                              "\" at line "+yyline+", column "+yycolumn, getLine(), getColumn()); }
+[^]                              { throw new ParseException("Illegal character \""+yytext()+"\" at line "+yyline+", column "+yycolumn, getLine(), getColumn()); }
 <<EOF>>                          { return symbol(Tokens.EOF); }
 
