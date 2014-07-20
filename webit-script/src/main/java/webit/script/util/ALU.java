@@ -22,11 +22,10 @@ public class ALU {
     private static final int CHAR = 8;
     private static final int BYTE = 9;
 
-    //mark
+    //marks
     private static final int NULL_MARK = (1 << 30) - 1;
     private static final int STRING_MARK = (1 << 10) - 1;
     private static final int CHAR_MARK = (1 << 9) - 1;
-    //
     private static final int BIG_DECIMAL_MARK = (1 << 8) - 1;
     private static final int BIG_INTEGER_MARK = (1 << 7) - 1;
     private static final int DOUBLE_MARK = (1 << 6) - 1;
@@ -35,12 +34,15 @@ public class ALU {
     private static final int INTEGER_MARK = (1 << 3) - 1;
     private static final int SHORT_MARK = (1 << 2) - 1;
     private static final int BYTE_MARK = (1 << 1) - 1;
+
     //STRING BIG_DECIMAL DOUBLE FLOAT BIG_INTEGER LONG  CHAR INTEGER SHORT BYTE
+    private ALU() {
+    }
 
     private static int getTypeMark(final Object o1) {
         if (o1 != null) {
-            final Class cls;
-            if ((cls = o1.getClass()) == String.class) {
+            final Class cls = o1.getClass();
+            if (cls == String.class) {
                 return STRING_MARK;
             } else if (cls == Integer.class) {
                 return INTEGER_MARK;
@@ -78,8 +80,8 @@ public class ALU {
     @Deprecated
     private static int getNumberType(final Number o1) {
         if (o1 != null) {
-            final Class cls;
-            if ((cls = o1.getClass()) == Integer.class) {
+            final Class cls = o1.getClass();
+            if (cls == Integer.class) {
                 return INTEGER;
             } else if (cls == Long.class) {
                 return LONG;
@@ -100,8 +102,8 @@ public class ALU {
     private static int getBaseType(final Object o1) {
 
         if (o1 != null) {
-            final Class cls;
-            if ((cls = o1.getClass()) == String.class) {
+            final Class cls = o1.getClass();
+            if (cls == String.class) {
                 return STRING;
             } else if (cls == Integer.class) {
                 return INTEGER;
@@ -128,8 +130,8 @@ public class ALU {
     public static Object plusOne(final Object o1) {
         if (o1 != null) {
             if (o1 instanceof Number) {
-                final Number num;
-                switch (getNumberType(num = (Number) o1)) {
+                final Number num = (Number) o1;
+                switch (getNumberType(num)) {
                     //TODO: Unsupported Big*
                     case INTEGER:
                     case SHORT:
@@ -148,15 +150,15 @@ public class ALU {
                 throw new ScriptRuntimeException("value not a number");
             }
         }
-        throw ValueIsNullException(o1);
+        throw valueIsNullException(o1);
     }
 
     // -1
     public static Object minusOne(final Object o1) {
         if (o1 != null) {
             if (o1 instanceof Number) {
-                final Number num;
-                switch (getNumberType(num = (Number) o1)) {
+                final Number num = (Number) o1;
+                switch (getNumberType(num)) {
                     //TODO: Unsupported Big*
                     case INTEGER:
                     case SHORT:
@@ -175,7 +177,7 @@ public class ALU {
                 throw new ScriptRuntimeException("value not a number");
             }
         }
-        throw ValueIsNullException(o1);
+        throw valueIsNullException(o1);
     }
 
     //+
@@ -197,11 +199,13 @@ public class ALU {
                 case BIG_DECIMAL_MARK:
                     return new BigDecimal(o1.toString()).add(new BigDecimal(o2.toString()));
                 case BIG_INTEGER_MARK:
-                    throw UnsupportedTypeException(o1, o2); //TODO: Unsupported
+                    //TODO: Unsupported
+                    throw unsupportedTypeException(o1, o2);
                 case CHAR_MARK:
-                    throw UnsupportedTypeException(o1, o2); //TODO: Unsupported
+                    //TODO: Unsupported
+                    throw unsupportedTypeException(o1, o2);
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
             return o1 != null ? o1 : o2;
@@ -212,8 +216,6 @@ public class ALU {
     public static Object minus(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
-                //case STRING_MARK:
-                //return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER_MARK:
                 case SHORT_MARK:
                 case BYTE_MARK:
@@ -227,24 +229,23 @@ public class ALU {
                 case BIG_DECIMAL_MARK:
                     return new BigDecimal(o1.toString()).subtract(new BigDecimal(o2.toString()));
                 case BIG_INTEGER_MARK:
-                    throw UnsupportedTypeException(o1, o2); //TODO: Unsupported
+                    //TODO: Unsupported
+                    throw unsupportedTypeException(o1, o2);
                 case CHAR_MARK:
-                    throw UnsupportedTypeException(o1, o2);
+                    throw unsupportedTypeException(o1, o2);
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
-    // 负
+    // negative
     public static Object negative(final Object o1) {
         if (o1 != null) {
             switch (getBaseType(o1)) {
                 //TODO: Unsupported Big*
-                //case STRING:
-                //return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER:
                     return -((Number) o1).intValue();
                 case LONG:
@@ -255,15 +256,12 @@ public class ALU {
                     return -((Number) o1).floatValue();
                 case SHORT:
                     return -((Number) o1).shortValue();
-                //case CHAR:
-                //    return Character.valueOf((char) (((Number) o1).intValue() * ((Number) o2).intValue()));
-                //case BYTE:
-                //    return Byte.valueOf((byte) (((Number) o1).intValue() * ((Number) o2).intValue()));
                 default:
+                    //BYTE STRING CHAR
                     throw new ScriptRuntimeException("value not a number"); //TODO: unsuitable message
             }
         } else {
-            throw ValueIsNullException(o1);
+            throw valueIsNullException(o1);
         }
     }
 
@@ -272,8 +270,6 @@ public class ALU {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
                 //TODO: Unsupported Big*
-                //case STRING_MARK:
-                //return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER_MARK:
                 case SHORT_MARK:
                 case BYTE_MARK:
@@ -287,14 +283,14 @@ public class ALU {
                 case BIG_DECIMAL_MARK:
                     return new BigDecimal(o1.toString()).multiply(new BigDecimal(o2.toString()));
                 case BIG_INTEGER_MARK:
-                    throw UnsupportedTypeException(o1, o2); //TODO: Unsupported
-                //case CHAR_MARK:
-                //    return Character.valueOf((char) (((Number) o1).intValue() * ((Number) o2).intValue()));
+                    //TODO: Unsupported
+                    throw unsupportedTypeException(o1, o2);
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    //STRING CHAR_MARK
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -302,8 +298,6 @@ public class ALU {
     public static Object div(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
-                //case STRING_MARK:
-                //return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER_MARK:
                 case SHORT_MARK:
                 case BYTE_MARK:
@@ -317,14 +311,14 @@ public class ALU {
                 case BIG_DECIMAL_MARK:
                     return new BigDecimal(o1.toString()).divide(new BigDecimal(o2.toString()));
                 case BIG_INTEGER_MARK:
-                    throw UnsupportedTypeException(o1, o2); //TODO: Unsupported
-                //case CHAR_MARK:
-                //    return Character.valueOf((char) (((Number) o1).intValue() / ((Number) o2).intValue()));
+                    //TODO: Unsupported
+                    throw unsupportedTypeException(o1, o2);
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    //STRING_MARK CHAR_MARK
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -332,8 +326,6 @@ public class ALU {
     public static Object mod(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
-                //case STRING:
-                //return String.valueOf(o1) + String.valueOf(o2);
                 case INTEGER_MARK:
                 case SHORT_MARK:
                 case BYTE_MARK:
@@ -347,14 +339,14 @@ public class ALU {
                 case BIG_DECIMAL_MARK:
                     return new BigDecimal(o1.toString()).remainder(new BigDecimal(o2.toString()));
                 case BIG_INTEGER_MARK:
-                    throw UnsupportedTypeException(o1, o2); //TODO: Unsupported
-                //case CHAR_MARK:
-                //    return Character.valueOf((char) (((Number) o1).intValue() % ((Number) o2).intValue()));
+                    //TODO: Unsupported
+                    throw unsupportedTypeException(o1, o2);
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    //STRING_MARK CHAR_MARK
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -413,7 +405,6 @@ public class ALU {
     public static boolean greater(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
-                //case STRING_MARK:
                 case CHAR_MARK:
                     return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
                             > (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
@@ -431,10 +422,11 @@ public class ALU {
                 case BIG_INTEGER_MARK:
                     return new BigDecimal(o1.toString()).compareTo(new BigDecimal(o2.toString())) > 0;
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    //STRING_MARK
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -442,7 +434,6 @@ public class ALU {
     public static boolean greaterEqual(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
-                //case STRING_MARK:
                 case CHAR_MARK:
                     return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
                             >= (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
@@ -460,10 +451,11 @@ public class ALU {
                 case BIG_INTEGER_MARK:
                     return new BigDecimal(o1.toString()).compareTo(new BigDecimal(o2.toString())) >= 0;
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    //STRING_MARK
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -471,7 +463,6 @@ public class ALU {
     public static boolean less(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
-                //case STRING_MARK:
                 case CHAR_MARK:
                     return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
                             < (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
@@ -489,10 +480,11 @@ public class ALU {
                 case BIG_INTEGER_MARK:
                     return new BigDecimal(o1.toString()).compareTo(new BigDecimal(o2.toString())) < 0;
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    //STRING_MARK
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -500,7 +492,6 @@ public class ALU {
     public static boolean lessEqual(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
-                //case STRING_MARK:
                 case CHAR_MARK:
                     return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
                             <= (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
@@ -518,10 +509,11 @@ public class ALU {
                 case BIG_INTEGER_MARK:
                     return new BigDecimal(o1.toString()).compareTo(new BigDecimal(o2.toString())) <= 0;
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    //STRING_MARK
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -529,7 +521,6 @@ public class ALU {
     public static Object bitAnd(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
-                //case STRING_MARK:
                 case CHAR_MARK:
                     return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
                             & (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
@@ -541,13 +532,12 @@ public class ALU {
                     return ((Number) o1).intValue() & ((Number) o2).intValue();
                 case LONG_MARK:
                     return ((Number) o1).longValue() & ((Number) o2).longValue();
-                //case DOUBLE_MARK:
-                //case FLOAT_MARK:
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    //STRING_MARK DOUBLE_MARK FLOAT_MARK
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -555,7 +545,6 @@ public class ALU {
     public static Object bitOr(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
-                //case STRING_MARK:
                 case CHAR_MARK:
                     return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
                             | (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
@@ -567,13 +556,12 @@ public class ALU {
                     return ((Number) o1).intValue() | ((Number) o2).intValue();
                 case LONG_MARK:
                     return ((Number) o1).longValue() | ((Number) o2).longValue();
-                //case DOUBLE_MARK:
-                //case FLOAT_MARK:
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    //STRING_MARK DOUBLE_MARK FLOAT_MARK
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -581,7 +569,6 @@ public class ALU {
     public static Object bitXor(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
-                //case STRING_MARK:
                 case CHAR_MARK:
                     return (o1 instanceof Number ? ((Number) o1).intValue() : (int) (Character) o1)
                             ^ (o2 instanceof Number ? ((Number) o2).intValue() : (int) (Character) o2);
@@ -593,13 +580,12 @@ public class ALU {
                     return ((Number) o1).intValue() ^ ((Number) o2).intValue();
                 case LONG_MARK:
                     return ((Number) o1).longValue() ^ ((Number) o2).longValue();
-                //case DOUBLE_MARK:
-                //case FLOAT_MARK:
                 default:
-                    throw UnsupportedTypeException(o1, o2);
+                    //STRING_MARK DOUBLE_MARK FLOAT_MARK
+                    throw unsupportedTypeException(o1, o2);
             }
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -607,8 +593,6 @@ public class ALU {
     public static Object bitNot(final Object o1) {
         if (o1 != null) {
             switch (getBaseType(o1)) {
-                //case STRING:
-                //case CHAR:
                 case BYTE:
                     return ~((Number) o1).byteValue();
                 case SHORT:
@@ -617,13 +601,12 @@ public class ALU {
                     return ~((Number) o1).intValue();
                 case LONG:
                     return ~((Number) o1).longValue();
-                //case DOUBLE:
-                //case FLOAT:
                 default:
+                    //STRING CHAR DOUBLE FLOAT
                     throw new ScriptRuntimeException(StringUtil.concatObjectClass("unsupported type:", o1));
             }
         } else {
-            throw ValueIsNullException(o1);
+            throw valueIsNullException(o1);
         }
     }
 
@@ -632,7 +615,6 @@ public class ALU {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
                 switch (getBaseType(o1)) {
-                    //case STRING:
                     case CHAR:
                         return ((Character) o1) << ((Number) o2).intValue();
                     case BYTE:
@@ -643,15 +625,14 @@ public class ALU {
                         return ((Integer) o1) << ((Number) o2).intValue();
                     case LONG:
                         return ((Long) o1) << ((Number) o2).intValue();
-                    //case DOUBLE:
-                    //case FLOAT:
                     default:
+                        //STRING DOUBLE FLOAT
                         throw new ScriptRuntimeException(StringUtil.concatObjectClass("left value type is unsupported:", o1));
                 }
             }
             throw new ScriptRuntimeException("right value not a number");
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -660,7 +641,6 @@ public class ALU {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
                 switch (getBaseType(o1)) {
-                    //case STRING:
                     case CHAR:
                         return ((Character) o1) >> ((Number) o2).intValue();
                     case BYTE:
@@ -671,15 +651,14 @@ public class ALU {
                         return ((Integer) o1) >> ((Number) o2).intValue();
                     case LONG:
                         return ((Long) o1) >> ((Number) o2).intValue();
-                    //case DOUBLE:
-                    //case FLOAT:
                     default:
+                        //STRING DOUBLE FLOAT
                         throw new ScriptRuntimeException(StringUtil.concatObjectClass("left value type is unsupported:", o1));
                 }
             }
             throw new ScriptRuntimeException("right value not a number");
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
@@ -688,7 +667,6 @@ public class ALU {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
                 switch (getBaseType(o1)) {
-                    //case STRING:
                     case CHAR:
                         return ((Character) o1) >>> ((Number) o2).intValue();
                     case BYTE:
@@ -699,28 +677,27 @@ public class ALU {
                         return ((Integer) o1) >>> ((Number) o2).intValue();
                     case LONG:
                         return ((Long) o1) >>> ((Number) o2).intValue();
-                    //case DOUBLE:
-                    //case FLOAT:
                     default:
+                        //STRING DOUBLE FLOAT
                         throw new ScriptRuntimeException(StringUtil.concatObjectClass("left value type is unsupported:", o1));
                 }
             }
             throw new ScriptRuntimeException("right value not a number");
         } else {
-            throw ValueIsNullException(o1, o2);
+            throw valueIsNullException(o1, o2);
         }
     }
 
     //*******************
-    private static ScriptRuntimeException UnsupportedTypeException(final Object o1, final Object o2) {
+    private static ScriptRuntimeException unsupportedTypeException(final Object o1, final Object o2) {
         return new ScriptRuntimeException(StringUtil.concat("Unsupported type: left[", o1.getClass().getName(), "], right[", o2.getClass().getName(), "]"));
     }
 
-    private static ScriptRuntimeException ValueIsNullException(final Object o1) {
+    private static ScriptRuntimeException valueIsNullException(final Object o1) {
         return new ScriptRuntimeException("value is null");
     }
 
-    private static ScriptRuntimeException ValueIsNullException(final Object o1, final Object o2) {
+    private static ScriptRuntimeException valueIsNullException(final Object o1, final Object o2) {
         if (o1 == null) {
             if (o2 == null) {
                 return new ScriptRuntimeException("left & right values are null");
@@ -735,9 +712,7 @@ public class ALU {
     }
 
     public static boolean isTrue(final Object o) {
-        if (Boolean.TRUE == o) {
-            return true;
-        } else if (Boolean.FALSE == o || o == null) {
+        if (o == null) {
             return false;
         } else if (o instanceof Boolean) {
             return (Boolean) o;
