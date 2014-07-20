@@ -253,11 +253,7 @@ public final class Engine {
         final String normalizedName;
         final Loader loader;
         if ((normalizedName = (loader = this.resourceLoader).normalize(resourceName)) != null) {
-            try {
-                return loader.get(normalizedName).exists();
-            } catch (ResourceNotFoundException ex) {
-                return false;
-            }
+            return loader.get(normalizedName).exists();
         } else {
             return false;
         }

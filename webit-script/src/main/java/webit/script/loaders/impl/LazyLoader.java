@@ -33,7 +33,7 @@ public class LazyLoader implements Loader, Initable {
         this.loader = (Loader) engine.getComponent(_loader);
     }
 
-    public Resource get(String name) throws ResourceNotFoundException {
+    public Resource get(String name) {
         if (this.timeout > 0) {
             return new LazyResource(this.loader.get(name), this.timeout);
         } else {

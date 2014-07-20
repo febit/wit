@@ -7,6 +7,7 @@ import webit.script.Initable;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.loaders.Loader;
 import webit.script.loaders.Resource;
+import webit.script.loaders.impl.resources.NotFoundResource;
 import webit.script.util.ClassEntry;
 import webit.script.util.StringUtil;
 
@@ -25,14 +26,14 @@ public class SimpleSecurityLoader implements Loader, Initable {
         this.loader = (Loader) engine.getComponent(_loader);
     }
 
-    public Resource get(String name) throws ResourceNotFoundException {
+    public Resource get(String name) {
         final String[] whiteList = this.list;
         for (int i = 0, len = whiteList.length; i < len; i++) {
             if (name.startsWith(whiteList[i])) {
                 return this.loader.get(name);
             }
         }
-        throw new ResourceNotFoundException("Security Unaccessable: " + name);
+        return new NotFoundResource(name, "Security Unaccessable: " + name);
     }
 
     public String concat(String parent, String name) {

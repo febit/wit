@@ -92,7 +92,7 @@ public class RouteLoader implements Loader, Initable {
         return null;
     }
 
-    public Resource get(String name) throws ResourceNotFoundException {
+    public Resource get(String name) {
         final LoaderEntry entry = getLoaderEntry(name);
         if (entry != null) {
             return entry.get(name);
@@ -125,7 +125,7 @@ public class RouteLoader implements Loader, Initable {
     public void setLoaders(String loaders) {
         this.loaders = loaders;
     }
-    
+
     public void setDefault(ClassEntry defaultLoader) {
         this.defaultLoader = defaultLoader;
     }
@@ -151,7 +151,7 @@ public class RouteLoader implements Loader, Initable {
             this.prefixLength = prefix.length();
         }
 
-        public Resource get(String name) throws ResourceNotFoundException {
+        public Resource get(String name) {
             return this.loader.get(name.substring(this.prefixLength));
         }
 

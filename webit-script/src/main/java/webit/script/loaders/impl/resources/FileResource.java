@@ -14,13 +14,11 @@ import webit.script.loaders.Resource;
  */
 public class FileResource implements Resource {
 
-    //private final String path;
     private final File file;
     private final String encoding;
     private long lastModified;
 
     public FileResource(String path, String encoding) {
-        //this.path = path;
         this.encoding = encoding;
         this.file = new File(path);
     }

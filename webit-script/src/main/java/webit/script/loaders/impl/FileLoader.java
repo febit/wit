@@ -12,7 +12,7 @@ import webit.script.loaders.impl.resources.FileResource;
  */
 public class FileLoader extends AbstractLoader {
 
-    public Resource get(String name) throws ResourceNotFoundException {
+    public Resource get(String name) {
         return new FileResource(getRealPath(name), encoding);
     }
 }

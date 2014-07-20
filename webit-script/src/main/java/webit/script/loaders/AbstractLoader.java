@@ -22,6 +22,21 @@ public abstract class AbstractLoader implements Loader, Initable {
     protected boolean appendLostSuffixSettedFlag = false;
     protected boolean assistantSuffixsSettedFlag = false;
 
+    public void init(Engine engine) {
+        if (this.encoding == null) {
+            this.encoding = engine.getEncoding();
+        }
+        if (this.appendLostSuffixSettedFlag == false) {
+            this.appendLostSuffix = engine.isAppendLostSuffix();
+        }
+        if (this.suffix == null) {
+            this.suffix = engine.getSuffix();
+        }
+        if (this.assistantSuffixsSettedFlag == false) {
+            this.assistantSuffixs = engine.getAssistantSuffixs();
+        }
+    }
+
     /**
      * get child template name by parent template name and relative name.
      *
@@ -41,6 +56,12 @@ public abstract class AbstractLoader implements Loader, Initable {
         return parent != null ? UnixStyleFileNameUtil.concat(UnixStyleFileNameUtil.getPath(parent), name) : name;
     }
 
+    /**
+     * get real path from name.
+     *
+     * @param name
+     * @return
+     */
     protected String getRealPath(final String name) {
         return this.root != null ? (this.root.concat(name)) : name.substring(1, name.length());
     }
@@ -108,21 +129,6 @@ public abstract class AbstractLoader implements Loader, Initable {
     public void setAssistantSuffixs(String assistantSuffixs) {
         this.assistantSuffixs = StringUtil.splitAndRemoveBlank(assistantSuffixs);
         this.assistantSuffixsSettedFlag = true;
-    }
-
-    public void init(Engine engine) {
-        if (this.encoding == null) {
-            this.encoding = engine.getEncoding();
-        }
-        if (this.appendLostSuffixSettedFlag == false) {
-            this.appendLostSuffix = engine.isAppendLostSuffix();
-        }
-        if (this.suffix == null) {
-            this.suffix = engine.getSuffix();
-        }
-        if (this.assistantSuffixsSettedFlag == false) {
-            this.assistantSuffixs = engine.getAssistantSuffixs();
-        }
     }
 
     public boolean isEnableCache(String name) {

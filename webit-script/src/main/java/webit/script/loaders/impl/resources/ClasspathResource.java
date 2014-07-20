@@ -18,7 +18,6 @@ public class ClasspathResource implements Resource {
 
     private final String path;
     private final String encoding;
-    //private long lastLoadTime;
 
     public ClasspathResource(String path, String encoding) {
         this.path = path;
@@ -42,7 +41,6 @@ public class ClasspathResource implements Resource {
     }
 
     public Reader openReader() throws IOException {
-        //lastLoadTime = System.currentTimeMillis();
         final InputStream inputStream;
         if ((inputStream = ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path)) != null) {
             return encoding == null

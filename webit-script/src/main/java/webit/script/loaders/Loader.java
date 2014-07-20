@@ -10,9 +10,8 @@ public interface Loader {
      *
      * @param name template's name
      * @return Resource
-     * @throws ResourceNotFoundException
      */
-    Resource get(String name) throws ResourceNotFoundException;
+    Resource get(String name);
 
     /**
      * get child template name by parent template name and relative name.

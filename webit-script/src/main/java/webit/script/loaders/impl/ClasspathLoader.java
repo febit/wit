@@ -12,7 +12,7 @@ import webit.script.loaders.impl.resources.ClasspathResource;
  */
 public class ClasspathLoader extends AbstractLoader {
 
-    public Resource get(String name) throws ResourceNotFoundException {
+    public Resource get(String name) {
         return new ClasspathResource(getRealPath(name), encoding);
     }
 }

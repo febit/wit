@@ -14,7 +14,7 @@ public class StringLoader implements Loader {
 
     protected boolean enableCache = false;
 
-    public Resource get(String name) throws ResourceNotFoundException {
+    public Resource get(String name) {
         return new StringResource(name);
     }
 
