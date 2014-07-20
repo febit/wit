@@ -36,42 +36,6 @@ public final class Engine {
 
     public final static String DEFAULT_SUFFIX = ".wit";
 
-    public static Engine createEngine(final String configPath) {
-        return createEngine(configPath, null);
-    }
-
-    public static Props createConfigProps(final String configPath) {
-        return PropsUtil.loadFromClasspath(new Props(), CFG.DEFAULT_PROPERTIES, configPath);
-    }
-
-    public static Engine createEngine(final String configPath, final Map<String, Object> parameters) {
-        return createEngine(createConfigProps(configPath), parameters);
-    }
-
-    public static Engine createEngine(final Props props, final Map<String, Object> parameters) {
-
-        final Petite petite = new Petite();
-        petite.defineParameters(props, parameters);
-
-        final Engine engine;
-        petite.wireBean(engine = new Engine(petite));
-
-        try {
-            engine.init();
-
-            final Logger logger;
-            if ((logger = engine.getLogger()).isInfoEnabled()) {
-                logger.info("Loaded props: ".concat(String.valueOf(petite.getParameter(CFG.PROPS_FILE_LIST))));
-            }
-
-            engine.executeInitTemplates();
-        } catch (ResourceNotFoundException ex) {
-            throw new RuntimeException(ex);
-        }
-
-        return engine;
-    }
-
     //settings
     private ClassEntry _resourceLoader;
     private ClassEntry _filter;
@@ -180,7 +144,8 @@ public final class Engine {
                 constBag, constBag
             });
             for (String templateName : StringUtil.splitc(this.inits)) {
-                if ((templateName = templateName.trim()).length() != 0) {
+                templateName = templateName.trim();
+                if (templateName.length() != 0) {
                     if (this.logger.isInfoEnabled()) {
                         this.logger.info("Merge init template: " + templateName);
                     }
@@ -241,9 +206,10 @@ public final class Engine {
      * @since 1.4.0
      */
     public synchronized Object getComponent(final ClassEntry type) {
-        Object bean;
-        if ((bean = this.componentContainer.get(type.getProfile())) == null) {
-            resolveComponent(bean = ClassUtil.newInstance(type), type);
+        Object bean = this.componentContainer.get(type.getProfile());
+        if (bean == null) {
+            bean = ClassUtil.newInstance(type);
+            resolveComponent(bean, type);
         }
         return bean;
     }
@@ -299,46 +265,55 @@ public final class Engine {
 
     private Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
         Template template;
-        final String normalizedName;
-        final Loader loader;
-        if ((normalizedName = (loader = this.resourceLoader).normalize(name)) != null) {
-            if ((template = this.templateCache.get(normalizedName)) == null) {
-                Template oldTemplate;
+        final Loader loader = this.resourceLoader;
+        final String normalizedName = loader.normalize(name);
+        if (normalizedName != null) {
+            template = this.templateCache.get(normalizedName);
+            if (template == null) {
+                //then create Template
                 template = new Template(this, normalizedName,
                         loader.get(normalizedName));
                 if (loader.isEnableCache(normalizedName)) {
-                    if ((oldTemplate = this.templateCache.putIfAbsent(normalizedName, template)) != null) {
+                    Template oldTemplate;
+                    oldTemplate = this.templateCache.putIfAbsent(normalizedName, template);
+                    //if old Template exist, use the old one
+                    if (oldTemplate != null) {
                         template = oldTemplate;
                     }
-                    if (!name.equals(normalizedName)
-                            && (oldTemplate = this.templateCache.putIfAbsent(name, template)) != null) {
-                        template = oldTemplate;
+                    if (!name.equals(normalizedName)) {
+                        // cache Template with un-normalized name
+                        oldTemplate = this.templateCache.putIfAbsent(name, template);
+                        if (oldTemplate != null) {
+                            template = oldTemplate;
+                        }
                     }
                 }
             }
             return template;
+        } else {
+            //if normalized-name is null means not found resource.
+            throw new ResourceNotFoundException("Illegal template path: ".concat(name));
         }
-        throw new ResourceNotFoundException("Illegal template path: ".concat(name));
     }
 
     public boolean checkNativeAccess(String path) {
         return this.nativeSecurityManager.access(path);
     }
 
-    public void setNativeSecurityManager(ClassEntry _nativeSecurityManager) {
-        this._nativeSecurityManager = _nativeSecurityManager;
+    public void setNativeSecurityManager(ClassEntry nativeSecurityManager) {
+        this._nativeSecurityManager = nativeSecurityManager;
     }
 
-    public void setCoderFactory(ClassEntry _coderFactory) {
-        this._coderFactory = _coderFactory;
+    public void setCoderFactory(ClassEntry coderFactory) {
+        this._coderFactory = coderFactory;
     }
 
-    public void setResourceLoader(ClassEntry _resourceLoader) {
-        this._resourceLoader = _resourceLoader;
+    public void setResourceLoader(ClassEntry resourceLoader) {
+        this._resourceLoader = resourceLoader;
     }
 
-    public void setTextStatementFactory(ClassEntry _textStatementFactory) {
-        this._textStatementFactory = _textStatementFactory;
+    public void setTextStatementFactory(ClassEntry textStatementFactory) {
+        this._textStatementFactory = textStatementFactory;
     }
 
     /**
@@ -404,12 +379,12 @@ public final class Engine {
         return coderFactory;
     }
 
-    public void setFilter(ClassEntry _filter) {
-        this._filter = _filter;
+    public void setFilter(ClassEntry filter) {
+        this._filter = filter;
     }
 
-    public void setGlobalManager(ClassEntry _globalManager) {
-        this._globalManager = _globalManager;
+    public void setGlobalManager(ClassEntry globalManager) {
+        this._globalManager = globalManager;
     }
 
     public GlobalManager getGlobalManager() {
@@ -420,8 +395,8 @@ public final class Engine {
         return filter;
     }
 
-    public void setLogger(ClassEntry _logger) {
-        this._logger = _logger;
+    public void setLogger(ClassEntry logger) {
+        this._logger = logger;
     }
 
     public Logger getLogger() {
@@ -463,4 +438,38 @@ public final class Engine {
     public void setInits(String inits) {
         this.inits = inits;
     }
+
+    public static Engine createEngine(final String configPath) {
+        return createEngine(configPath, null);
+    }
+
+    public static Props createConfigProps(final String configPath) {
+        return PropsUtil.loadFromClasspath(new Props(), CFG.DEFAULT_PROPERTIES, configPath);
+    }
+
+    public static Engine createEngine(final String configPath, final Map<String, Object> parameters) {
+        return createEngine(createConfigProps(configPath), parameters);
+    }
+
+    public static Engine createEngine(final Props props, final Map<String, Object> parameters) {
+
+        final Petite petite = new Petite();
+        petite.defineParameters(props, parameters);
+
+        final Engine engine = new Engine(petite);
+        petite.wireBean(engine);
+
+        try {
+            engine.init();
+            if (engine.getLogger().isInfoEnabled()) {
+                engine.getLogger().info("Loaded props: ".concat(String.valueOf(petite.getParameter(CFG.PROPS_FILE_LIST))));
+            }
+            engine.executeInitTemplates();
+        } catch (ResourceNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        return engine;
+    }
+
 }
