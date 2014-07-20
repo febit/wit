@@ -15,7 +15,10 @@ import java.util.Map;
  */
 public class ClassUtil {
 
-    public static Class<?> getBoxedClass(final Class<?> type) {
+    private ClassUtil() {
+    }
+
+    public static Class getBoxedClass(final Class type) {
         if (type.isPrimitive()) {
             if (type == int.class) {
                 return Integer.class;
@@ -33,7 +36,7 @@ public class ClassUtil {
                 return Character.class;
             } else if (type == byte.class) {
                 return Byte.class;
-            } else /* if (type == void.class) */ {
+            } else {
                 return Void.class;
             }
         } else {
@@ -42,48 +45,46 @@ public class ClassUtil {
     }
 
     public static char getAliasOfBaseType(final String name) {
-        switch (name.hashCode()) {
-            case 3625364:
+        switch (name.charAt(0)) {
+            case 'v':
                 if ("void".equals(name)) {
                     return 'V';
                 }
                 break;
-            case 64711720:
+            case 'b':
                 if ("boolean".equals(name)) {
                     return 'Z';
                 }
-                break;
-            case 3039496:
                 if ("byte".equals(name)) {
                     return 'B';
                 }
                 break;
-            case 3052374:
+            case 'c':
                 if ("char".equals(name)) {
                     return 'C';
                 }
                 break;
-            case -1325958191:
+            case 'd':
                 if ("double".equals(name)) {
                     return 'D';
                 }
                 break;
-            case 97526364:
+            case 'f':
                 if ("float".equals(name)) {
                     return 'F';
                 }
                 break;
-            case 104431:
+            case 'i':
                 if ("int".equals(name)) {
                     return 'I';
                 }
                 break;
-            case 3327612:
+            case 'l':
                 if ("long".equals(name)) {
                     return 'J';
                 }
                 break;
-            case 109413500:
+            case 's':
                 if ("short".equals(name)) {
                     return 'S';
                 }
@@ -92,13 +93,12 @@ public class ClassUtil {
         return '\0';
     }
 
-    public static Class<?> getClass(final String name, final int arrayDepth) throws ClassNotFoundException {
+    public static Class getClass(final String name, final int arrayDepth) throws ClassNotFoundException {
 
         if (arrayDepth == 0) {
             return getClass(name);
         }
         char alias = getAliasOfBaseType(name);
-        //final StringBuilder sb;
         final char[] chars;
         if (alias == '\0') {
             chars = new char[name.length() + 2 + arrayDepth];
@@ -119,11 +119,11 @@ public class ClassUtil {
         }
         return getClassByInternalName(new String(chars));
     }
-    private static final Map<String, Class<?>> CLASS_CACHE;
+    private static final Map<String, Class> CLASS_CACHE;
 
     static {
 
-        Map<String, Class<?>> classes = new HashMap<String, Class<?>>(32, 0.75f); //24*4/3
+        Map<String, Class> classes = new HashMap<String, Class>(32, 0.75f); //24*4/3
         classes.put("boolean", boolean.class);
         classes.put("char", char.class);
         classes.put("byte", byte.class);
@@ -150,16 +150,16 @@ public class ClassUtil {
         CLASS_CACHE = classes;
     }
 
-    public static Class<?> getCachedClass(final String name) {
+    public static Class getCachedClass(final String name) {
         return CLASS_CACHE.get(name);
     }
 
-    public static Class<?> getClass(final String name) throws ClassNotFoundException {
+    public static Class getClass(final String name) throws ClassNotFoundException {
         Class cls;
         return (cls = CLASS_CACHE.get(name)) != null ? cls : getClassByInternalName(name);
     }
 
-    private static Class<?> getClassByInternalName(String name) throws ClassNotFoundException {
+    private static Class getClassByInternalName(String name) throws ClassNotFoundException {
         return Class.forName(name, true, ClassLoaderUtil.getDefaultClassLoader());
     }
 
@@ -192,15 +192,16 @@ public class ClassUtil {
     }
 
     public static void setAccessible(AccessibleObject accessible) {
-        try {
-            if (!accessible.isAccessible()) {
+        if (!accessible.isAccessible()) {
+            try {
                 accessible.setAccessible(true);
+            } catch (SecurityException ignore) {
             }
-        } catch (SecurityException ignore) {
         }
     }
-
-    public static Method searchMethod(Class<?> currentClass, String name, Class<?>[] parameterTypes, boolean boxed) throws NoSuchMethodException {
+    
+    @SuppressWarnings("unchecked")
+    public static Method searchMethod(Class currentClass, String name, Class[] parameterTypes, boolean boxed) throws NoSuchMethodException {
         return currentClass.getMethod(name, parameterTypes);
     }
 
