@@ -1,21 +1,29 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.core;
 
+import java.lang.reflect.Field;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.Engine;
 import webit.script.Template;
+import webit.script.core.ast.*;
+import webit.script.core.ast.expressions.*;
+import webit.script.core.ast.operators.*;
 import webit.script.core.ast.TemplateAST;
 import webit.script.core.ast.statements.InterpolationFactory;
 import webit.script.core.text.TextStatementFactory;
+import webit.script.core.VariantManager.VarAddress;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ExceptionUtil;
 import webit.script.util.StreamUtil;
-import webit.script.util.StringUtil;
 import webit.script.util.collection.ArrayStack;
+import webit.script.util.ClassNameBand;
+import webit.script.util.ClassUtil;
+import webit.script.util.StatementUtil;
+import webit.script.util.StringUtil;
 import webit.script.util.collection.Stack;
 
 /**
@@ -24,14 +32,13 @@ import webit.script.util.collection.Stack;
  */
 abstract class AbstractParser {
 
-    private final static int STACK_INITIAL_CAPACITY = 24;
-    private final static int START_STATE = 0;
+    private static final int STACK_INITIAL_CAPACITY = 24;
+    private static final int START_STATE = 0;
 
-    
-    AbstractParser() {
-        this._stack = new ArrayStack<Symbol>(STACK_INITIAL_CAPACITY);
-    }
-    
+    private static final short[][] PRODUCTION_TABLE = loadFromDataFile("Production");
+    private static final short[][] ACTION_TABLE = loadFromDataFile("Action");
+    private static final short[][] REDUCE_TABLE = loadFromDataFile("Reduce");
+
     final Stack<Symbol> _stack;
     boolean goonParse = false;
     //
@@ -46,6 +53,10 @@ abstract class AbstractParser {
     Map<String, Integer> labelsIndexMap;
     int currentLabelIndex;
 
+    AbstractParser() {
+        this._stack = new ArrayStack<Symbol>(STACK_INITIAL_CAPACITY);
+    }
+
     /**
      *
      * @param template Template
@@ -58,7 +69,7 @@ abstract class AbstractParser {
             final Engine _engine;
             final TextStatementFactory _textStatementFactory;
             final Symbol astSymbol;
-            
+
             //ISSUE: LexerProvider
             lexer = new Lexer(template.resource.openReader());
             this.template = template;
@@ -70,11 +81,11 @@ abstract class AbstractParser {
             this.nativeImportMgr = new NativeImportManager();
             this.nativeFactory = _engine.getNativeFactory();
             this.varmgr = new VariantManager(_engine);
-            
+
             //init labelsIndexMap
             (this.labelsIndexMap = new HashMap<String, Integer>())
                     .put(null, this.currentLabelIndex = 0);
-            
+
             //
             _textStatementFactory.startTemplateParser(template);
             astSymbol = this.parse(lexer);
@@ -101,6 +112,224 @@ abstract class AbstractParser {
      * @throws java.lang.Exception
      */
     abstract Object doAction(int act_num) throws ParseException;
+
+    int getLabelIndex(String label) {
+        Integer index;
+        if ((index = labelsIndexMap.get(label)) == null) {
+            labelsIndexMap.put(label, index = ++currentLabelIndex);
+        }
+        return index;
+    }
+
+    Expression createContextValue(VarAddress addr, int line, int column) {
+        switch (addr.type) {
+            case VarAddress.ROOT:
+                return new RootContextValue(addr.index, line, column);
+            case VarAddress.GLOBAL:
+                return new GlobalValue(this.engine.getGlobalManager(), addr.index, line, column);
+            case VarAddress.CONST:
+                return new DirectValue(addr.constValue, line, column);
+            default: //VarAddress.CONTEXT
+                if (addr.upstairs == 0) {
+                    return new CurrentContextValue(addr.index, line, column);
+                } else {
+                    return new ContextValue(addr.upstairs, addr.index, line, column);
+                }
+        }
+    }
+
+    Expression createContextValueAtUpstair(int upstair, String name, int line, int column) {
+        return createContextValue(varmgr.locateAtUpstair(name, upstair, line, column), line, column);
+    }
+
+    Expression createContextValue(int upstair, String name, int line, int column) {
+        return createContextValue(varmgr.locate(name, upstair, this.locateVarForce, line, column), line, column);
+    }
+
+    void assignConst(String name, Expression value, int line, int column) {
+        value = StatementUtil.optimize(value);
+        if (value instanceof DirectValue) {
+            varmgr.assignConst(name, ((DirectValue) value).value, line, column);
+        } else {
+            throw new ParseException("const should defined a direct value.", line, column);
+        }
+    }
+
+    Expression createNativeStaticValue(ClassNameBand classNameBand, int line, int column) {
+        if (classNameBand.size() < 2) {
+            throw new ParseException("native static need a filed name.", line, column);
+        }
+        final String fieldName = classNameBand.pop();
+        final Class clazz = nativeImportMgr.toClass(classNameBand, line, column);
+        final String path;
+        if (this.engine.getNativeSecurityManager().access(path = (StringUtil.concat(clazz.getName(), ".", fieldName))) == false) {
+            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+        }
+        final Field field;
+        try {
+            field = clazz.getField(fieldName);
+        } catch (NoSuchFieldException ex) {
+            throw new ParseException("No such field: ".concat(path), line, column);
+        }
+        if (ClassUtil.isStatic(field)) {
+            ClassUtil.setAccessible(field);
+            if (ClassUtil.isFinal(field)) {
+                try {
+                    return new DirectValue(field.get(null), line, column);
+                } catch (Exception ex) {
+                    throw new ParseException("Failed to static field value: ".concat(path), ex, line, column);
+                }
+            } else {
+                return new NativeStaticValue(field, line, column);
+            }
+        } else {
+            throw new ParseException("No a static field: ".concat(path), line, column);
+        }
+    }
+
+    Expression createNativeNewArrayDeclareExpression(Class componentType, int line, int column) {
+        return new DirectValue(this.nativeFactory.createNativeNewArrayMethodDeclare(componentType, line, column), line, column);
+    }
+
+    Expression createNativeMethodDeclareExpression(Class clazz, String methodName, ClassNameList list, int line, int column) {
+        return new DirectValue(this.nativeFactory.createNativeMethodDeclare(clazz, methodName, list.toArray(), line, column), line, column);
+    }
+
+    Expression createNativeConstructorDeclareExpression(Class clazz, ClassNameList list, int line, int column) {
+        return new DirectValue(this.nativeFactory.createNativeConstructorDeclare(clazz, list.toArray(), line, column), line, column);
+    }
+
+    static ResetableValueExpression castToResetableValueExpression(Expression expr) {
+        if (expr instanceof ResetableValueExpression) {
+            return (ResetableValueExpression) expr;
+        } else {
+            throw new ParseException("Invalid expression to redirect out stream to, must be rewriteable", expr);
+        }
+    }
+
+    static Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column) {
+        ResetableValueExpression leftExpr = castToResetableValueExpression(lexpr);
+        SelfOperator oper;
+        switch (sym) {
+
+            // (+ - * / %)=
+            case Operators.PLUSEQ:
+                oper = new SelfPlus(leftExpr, rightExpr, line, column);
+                break;
+            case Operators.MINUSEQ:
+                oper = new SelfMinus(leftExpr, rightExpr, line, column);
+                break;
+            case Operators.MULTEQ:
+                oper = new SelfMult(leftExpr, rightExpr, line, column);
+                break;
+            case Operators.DIVEQ:
+                oper = new SelfDiv(leftExpr, rightExpr, line, column);
+                break;
+            case Operators.MODEQ:
+                oper = new SelfMod(leftExpr, rightExpr, line, column);
+                break;
+
+            // (<< >> >>>)=
+            case Operators.LSHIFTEQ:
+                oper = new SelfLShift(leftExpr, rightExpr, line, column);
+                break;
+            case Operators.RSHIFTEQ:
+                oper = new SelfRShift(leftExpr, rightExpr, line, column);
+                break;
+            case Operators.URSHIFTEQ:
+                oper = new SelfURShift(leftExpr, rightExpr, line, column);
+                break;
+
+            // (& ^ |)=
+            case Operators.ANDEQ:
+                oper = new SelfBitAnd(leftExpr, rightExpr, line, column);
+                break;
+            case Operators.XOREQ:
+                oper = new SelfBitXor(leftExpr, rightExpr, line, column);
+                break;
+            case Operators.OREQ:
+                oper = new SelfBitOr(leftExpr, rightExpr, line, column);
+                break;
+
+            default:
+                throw new ParseException("Unsupported Operator", line, column);
+        }
+
+        return StatementUtil.optimize(oper);
+    }
+
+    static Expression createBinaryOperator(Expression leftExpr, int sym, Expression rightExpr, int line, int column) {
+
+        BinaryOperator oper;
+        switch (sym) {
+            case Tokens.ANDAND: // &&
+                oper = new And(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.AND: // &
+                oper = new BitAnd(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.OR: // |
+                oper = new BitOr(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.XOR: // ^
+                oper = new BitXor(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.DIV: // /
+                oper = new Div(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.EQEQ: // ==
+                oper = new Equal(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.GTEQ: // >=
+                oper = new GreaterEqual(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.GT: // >
+                oper = new Greater(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.LSHIFT: // <<
+                oper = new LShift(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.LTEQ: // <=
+                oper = new LessEqual(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.LT: // <
+                oper = new Less(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.MINUS: // -
+                oper = new Minus(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.MOD: // %
+                oper = new Mod(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.MULT: // *
+                oper = new Mult(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.NOTEQ: // !=
+                oper = new NotEqual(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.OROR: // ||
+                oper = new Or(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.PLUS: // +
+                oper = new Plus(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.RSHIFT: // >>
+                oper = new RShift(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.URSHIFT: // >>>
+                oper = new URShift(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.QUESTION_COLON: // ?:
+                oper = new IfOrOperator(leftExpr, rightExpr, line, column);
+                break;
+            case Tokens.DOTDOT: // ..
+                oper = new IntStep(leftExpr, rightExpr, line, column);
+                break;
+            default:
+                throw new ParseException("Unsupported Operator", line, column);
+        }
+        return StatementUtil.optimize(oper);
+    }
 
     /**
      *
@@ -176,9 +405,9 @@ abstract class AbstractParser {
             stack.push(currentSymbol = START);
         }
 
-        final short[][] actionTable = Parser.ACTION_TABLE;
-        final short[][] reduceTable = Parser.REDUCE_TABLE;
-        final short[][] productionTable = Parser.PRODUCTION_TABLE;
+        final short[][] actionTable = ACTION_TABLE;
+        final short[][] reduceTable = REDUCE_TABLE;
+        final short[][] productionTable = PRODUCTION_TABLE;
 
         currentToken = myLexer.nextToken();
 
@@ -227,7 +456,7 @@ abstract class AbstractParser {
         return stack.peek();//lhs_sym;
     }
 
-    static short[][] loadFromDataFile(String name) {
+    private static short[][] loadFromDataFile(String name) {
         ObjectInputStream in = null;
         try {
             return (short[][]) (in = new ObjectInputStream(ClassLoaderUtil
@@ -244,7 +473,7 @@ abstract class AbstractParser {
     }
 
     private static String getSimpleHintMessage(Symbol symbol) {
-        final short[] row = Parser.ACTION_TABLE[symbol.state];
+        final short[] row = ACTION_TABLE[symbol.state];
         final int len = row.length;
         if (len == 0) {
             return "[no hints]";
