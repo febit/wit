@@ -17,17 +17,12 @@ public final class MultiLogger implements Logger, Initable {
     //
     private Logger[] _loggers;
 
-    @SuppressWarnings("unchecked")
     public void init(Engine engine) {
         if (loggers != null && loggers.length > 0) {
             int len = loggers.length;
             _loggers = new Logger[loggers.length];
             for (int i = 0; i < len; i++) {
-                try {
-                    _loggers[i] = (Logger) engine.getComponent(loggers[i]);
-                } catch (Throwable ex) {
-                    throw new RuntimeException(ex);
-                }
+                _loggers[i] = (Logger) engine.getComponent(loggers[i]);
             }
         }
     }
