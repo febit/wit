@@ -304,18 +304,19 @@ public class StringUtil {
         if (src == null) {
             return null;
         }
-        final String[] result = splitc(src, DEFAULT_DELIMITERS);
-        final int len = result.length;
-        final ArrayList<String> list = new ArrayList<String>(len);
-        String var;
-        for (int i = 0; i < len; i++) {
-            if ((var = result[i].trim()).length() != 0) {
-                list.add(var);
+        final String[] array = splitc(src, DEFAULT_DELIMITERS);
+        int count = 0;
+        for (int i = 0; i < array.length; i++) {
+            String item = array[i].trim();
+            if (item.length() == 0) {
+                continue;
             }
+            array[count++] = item;
         }
-        return !list.isEmpty()
-                ? list.toArray(new String[list.size()])
-                : null;
+        if (count != array.length) {
+            return ArrayUtil.subarray(array, 0, count);
+        }
+        return array;
     }
 
     public static String[] splitAndTrimAll(String src) {

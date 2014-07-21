@@ -182,4 +182,10 @@ public class ArrayUtil {
             return defaultValue;
         }
     }
+
+    public static String[] subarray(String[] src, int offset, int len) {
+        String dest[] = new String[len];
+        System.arraycopy(src, offset, dest, 0, len);
+        return dest;
+    }
 }
