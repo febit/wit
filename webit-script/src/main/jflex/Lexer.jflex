@@ -379,6 +379,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
 
   "@"                            { return symbol(Tokens.AT); }
   "=>"                           { return symbol(Tokens.EQGT); }
+  "->"                           { return symbol(Tokens.MINUSGT); }
 
   
   /* string literal */

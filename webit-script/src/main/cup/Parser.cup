@@ -44,6 +44,7 @@ terminal Integer    VAR,
                     LPAREN, RPAREN,  // ( )
                     LBRACK, RBRACK,  // [ ]
                     EQGT,  // =>
+                    MINUSGT, // ->
                     AT,  // @
                     DOTDOT,  // ..
                     EQ   // =
@@ -92,10 +93,13 @@ non terminal ClassNameList classNameList, classNameList1;
 non terminal Expression funcExecuteExpr;
 non terminal FunctionDeclarePart funcHeadPrepare, funcHead, funcStatementHeadPrepare, funcStatementHead;
 
+/* Lambda */
+non terminal Expression lambaExpr;
+non terminal LambdaPart lambaExprHead;
 
 /* precedence */
 precedence left     SEMICOLON; // ;
-precedence right    SELFEQ, EQ; // (+ - * / %)=  (<< >> >>>)=  (& ^ |)=  = 
+precedence right    SELFEQ, EQ, MINUSGT; // (+ - * / %)=  (<< >> >>>)=  (& ^ |)=  = ->
 precedence left     DOTDOT;  // ..
 precedence right    QUESTION, QUESTION_COLON; // [? : ] ?:
 precedence left     OROR; // ||
@@ -109,7 +113,7 @@ precedence left     LSHIFT, RSHIFT, URSHIFT; // << >> >>>
 precedence left     PLUS, MINUS; // + -
 precedence left     MULT, DIV, MOD; // * / %
 precedence right    PLUSPLUS, MINUSMINUS, UMINUS, NOT, COMP; // ++ -- - ! ~
-precedence left     EQGT;  // =>
+precedence left     EQGT;  // => 
 precedence left     DOT, LBRACK, LPAREN, LBRACE, AT; // . [ ( { @
 
 
@@ -519,6 +523,10 @@ expression      ::= expression_statementable:expr
                     {: return %expr%; :}
                     |mapValue:expr
                     {: return %expr%; :}
+
+                    //Lambda
+                    |lambaExpr:expr
+                    {: return %expr%; :}
                     ;
 
 
@@ -622,3 +630,12 @@ classNameList       ::=
                         {: return %list%; :}
                         ;
 
+
+/* lamba */
+lambaExprHead           ::= IDENTIFIER:ident MINUSGT:sym
+                            {: return new LambdaPart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%); :}
+                            ;
+
+lambaExpr               ::= lambaExprHead:part expression:expr
+                            {: return (%part%).pop(%expr%); :}
+                            ;

@@ -20,7 +20,7 @@ import webit.script.util.StringUtil;
  *
  * @author Zqq
  */
-public final class FunctionDeclarePart extends Position {
+public class FunctionDeclarePart extends Position {
 
     private int argsCount = 0;
     private final int assignToIndex;
@@ -51,7 +51,7 @@ public final class FunctionDeclarePart extends Position {
         }
         return this;
     }
-
+    
     public Expression pop(StatementList list) {
         final Expression expr = popFunctionDeclare(list);
         if (this.assignToIndex >= 0) {
