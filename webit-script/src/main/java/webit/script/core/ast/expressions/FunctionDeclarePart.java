@@ -7,6 +7,8 @@ import java.util.Map;
 import webit.script.core.VariantIndexer;
 import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
+import webit.script.core.ast.Identifer;
+import webit.script.core.ast.IdentiferList;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.StatementList;
@@ -41,13 +43,20 @@ public class FunctionDeclarePart extends Position {
         varmgr.push();
         varmgr.pushVarWall();
         if (varmgr.assignVariant("arguments", line, column) != 0) {
-            throw new ParseException("assignVariant failed!");
+            throw new ParseException("Failed to assign variant!");
         }
     }
 
+    public FunctionDeclarePart appendArgs(IdentiferList identiferList) {
+        for (Identifer identifer : identiferList) {
+            appendArg(identifer.getName(), identifer.getLine(), identifer.getColumn());
+        }
+        return this;
+    }
+    
     public FunctionDeclarePart appendArg(String name, int line, int column) {
         if (varmgr.assignVariant(name, line, column) != (++this.argsCount)) {
-            throw new ParseException("assignVariant failed!");
+            throw new ParseException("Failed to assign variant!");
         }
         return this;
     }

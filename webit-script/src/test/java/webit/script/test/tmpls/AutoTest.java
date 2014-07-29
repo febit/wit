@@ -20,6 +20,7 @@ import webit.script.io.Out;
 import webit.script.io.impl.DiscardOut;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.util.ClassLoaderUtil;
+import webit.script.util.ExceptionUtil;
 import webit.script.util.FastByteArrayOutputStream;
 import webit.script.util.FastByteBuffer;
 import webit.script.util.StringUtil;
@@ -97,7 +98,12 @@ public class AutoTest {
     public void mergeTemplate(String templatePath, Out out) throws ResourceNotFoundException {
         System.out.println("AUTO RUN: " + templatePath);
         Template template = EngineManager.getEngine().getTemplate(templatePath);
-        Context context = template.merge(out);
-        System.out.println("\tassert count: " + context.getLocalVar(webit.script.tools.testunit.Assert.ASSERT_COUNT_KEY));
+        try {
+            Context context = template.merge(out);
+            System.out.println("\tassert count: " + context.getLocalVar(webit.script.tools.testunit.Assert.ASSERT_COUNT_KEY));
+        } catch (ScriptRuntimeException e) {
+            ExceptionUtil.printStackTrace(e, System.out);
+            throw e;
+        }
     }
 }

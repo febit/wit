@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
 import webit.script.core.VariantManager;

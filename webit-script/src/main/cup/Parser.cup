@@ -60,6 +60,7 @@ terminal Integer    CONST;
 
 /* non terminal */
 non terminal ClassNameBand classPureName, className;
+non terminal IdentiferList identiferList;
 
 /* TemplateAST */
 non terminal TemplateAST templateAST;
@@ -84,18 +85,17 @@ non terminal ExpressionList expressionList, expressionList1;
 non terminal MapValuePart mapValuePart;
 non terminal MapValue mapValue;
 
-non terminal String contextValueIdent;
 non terminal Integer superCount;
 non terminal Expression contextValueExpr;
 non terminal ClassNameList classNameList, classNameList1;
 
 /* function */
 non terminal Expression funcExecuteExpr;
-non terminal FunctionDeclarePart funcHeadPrepare, funcHead, funcStatementHeadPrepare, funcStatementHead;
+non terminal FunctionDeclarePart funcHead, funcStatementHead;
 
 /* Lambda */
-non terminal Expression lambaExpr;
-non terminal LambdaPart lambaExprHead;
+non terminal Expression lambdaExpr;
+non terminal LambdaPart lambdaExprHead;
 
 /* precedence */
 precedence left     SEMICOLON; // ;
@@ -124,8 +124,8 @@ templateAST            ::= statementList:list
                         {: return (%list%).popTemplateAST(varmgr.pop()); :}
                         ;
 
-statementList           ::= 
-                        {: return new StatementList(); :}
+statementList           ::= statement:stat
+                        {: return new StatementList().add(%stat%); :}
                         |statementList:list statement:stat
                         {: return (%list%).add(%stat%); :}
                         ;
@@ -143,6 +143,12 @@ className           ::= classPureName:part
                         {: return (%part%).plusArrayDepth(); :}
                         ;
 
+
+identiferList       ::= IDENTIFIER:ident
+                        {: return new IdentiferList().add(%ident%, %ident.line%, %ident.column%); :}
+                        |identiferList:list COMMA IDENTIFIER:ident
+                        {: return (%list%).add(%ident%, %ident.line%, %ident.column%); :}
+                        ;
 
 /* statements  */
 statement            ::= expression_statementable:expr SEMICOLON
@@ -235,10 +241,10 @@ statement            ::= expression_statementable:expr SEMICOLON
                         {: return new Include(%expr%, %paramsExpr%, this.template, %sym.line%, %sym.column%); :}
 
                         //funcStatement
-                        |funcStatementHead:part RPAREN LBRACE statementList:list RBRACE
+                        |funcStatementHead:part LBRACE statementList:list RBRACE
                         {: return (%part%).pop(%list%); :}
-                        |funcStatementHeadPrepare:part RPAREN LBRACE statementList:list RBRACE
-                        {: return (%part%).pop(%list%); :}
+                        |funcStatementHead:part LBRACE RBRACE
+                        {: return (%part%).pop(new StatementList()); :}
                         ;
 
 
@@ -288,8 +294,10 @@ blockPrepare2   ::= LBRACE
 
 
 block           ::= blockPrepare2:prepare statementList:list RBRACE
-                        {: return (%list%).popIBlock(varmgr.pop(), %prepare.line%, %prepare.column%); :}
-                        ;
+                    {: return (%list%).popIBlock(varmgr.pop(), %prepare.line%, %prepare.column%); :}
+                    |blockPrepare2:prepare RBRACE
+                    {: return new StatementList().popIBlock(varmgr.pop(), %prepare.line%, %prepare.column%); :}
+                    ;
 
 
 ifPart      ::= IF:sym LPAREN expression:expr RPAREN block:body
@@ -314,26 +322,30 @@ forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
 
 
 forInBody       ::= forInHead:part LBRACE statementList:list RBRACE
-                        {: return (%part%).setStatementList(%list%); :}
-                        ;
+                    {: return (%part%).setStatementList(%list%); :}
+                    |forInHead:part LBRACE RBRACE
+                    {: return (%part%).setStatementList(new StatementList()); :}
+                    ;
 
 
 forInPart       ::= forInBody:part
-                        {: return %part%; :}
-                        |forInBody:part ELSE block:elseBody
-                        {: return (%part%).setElse(%elseBody%); :}
-                        ;
+                    {: return %part%; :}
+                    |forInBody:part ELSE block:elseBody
+                    {: return (%part%).setElse(%elseBody%); :}
+                    ;
 
 
 whilePart       ::= WHILE:sym LPAREN expression:whileExpr RPAREN block:body
-                        {: return new WhilePart(%whileExpr%, %body%, true, %sym.line%, %sym.column%); :}
-                        |DO:sym block:body WHILE LPAREN expression:whileExpr RPAREN SEMICOLON
-                        {: return new WhilePart(%whileExpr%, %body%, false, %sym.line%, %sym.column%); :}
-                        ;
+                    {: return new WhilePart(%whileExpr%, %body%, true, %sym.line%, %sym.column%); :}
+                    |DO:sym block:body WHILE LPAREN expression:whileExpr RPAREN SEMICOLON
+                    {: return new WhilePart(%whileExpr%, %body%, false, %sym.line%, %sym.column%); :}
+                    ;
 
 
 caseBlockStat       ::= blockPrepare:prepare statementList:list
                         {: return (%list%).popIBlock(varmgr.pop(), %prepare.line%, %prepare.column%); :}
+                        |blockPrepare:prepare
+                        {: return new StatementList().popIBlock(varmgr.pop(), %prepare.line%, %prepare.column%); :}
                         ;
 
 
@@ -488,12 +500,10 @@ expression      ::= expression_statementable:expr
                     {: return %expr%; :}
 
                     //funcDeclareExpr
-                    |funcHeadPrepare:part LPAREN RPAREN LBRACE statementList:list RBRACE
+                    |funcHead:part LBRACE statementList:list RBRACE
                     {: return (%part%).pop(%list%); :}
-                    |funcHeadPrepare:part LBRACE statementList:list RBRACE
-                    {: return (%part%).pop(%list%); :}
-                    |funcHead:part RPAREN LBRACE statementList:list RBRACE
-                    {: return (%part%).pop(%list%); :}
+                    |funcHead:part LBRACE RBRACE
+                    {: return (%part%).pop(new StatementList()); :}
 
 
                     //arrayValue
@@ -525,7 +535,7 @@ expression      ::= expression_statementable:expr
                     {: return %expr%; :}
 
                     //Lambda
-                    |lambaExpr:expr
+                    |lambdaExpr:expr
                     {: return %expr%; :}
                     ;
 
@@ -539,21 +549,20 @@ superCount          ::= SUPER DOT
 
 
 // ident  super...ident  this.ident
-contextValueIdent   ::= IDENTIFIER:ident
-                        {: return %ident%; :}
-                        |FOR DOT IDENTIFIER:ident
-                        {: return ("for." + %ident%).intern(); :}
-                        ;
 
-
-contextValueExpr    ::= contextValueIdent:ident
+contextValueExpr    ::= IDENTIFIER:ident
                         {: return createContextValue(0, %ident%, %ident.line%, %ident.column%); :}
-                        |THIS DOT contextValueIdent:ident
+                        |THIS DOT IDENTIFIER:ident
                         {: return createContextValueAtUpstair(0, %ident%, %ident.line%, %ident.column%); :}
-                        |superCount:count contextValueIdent:ident
+                        |superCount:count IDENTIFIER:ident
                         {: return createContextValue(%count%, %ident%, %ident.line%, %ident.column%); :}
-                        |superCount:count THIS DOT contextValueIdent:ident
+                        |superCount:count THIS DOT IDENTIFIER:ident
                         {: return createContextValueAtUpstair(%count%, %ident%, %ident.line%, %ident.column%); :}
+
+                        |FOR DOT IDENTIFIER:ident
+                        {: return createContextValue(0, ("for." + %ident%), %ident.line%, %ident.column%); :}
+                        |superCount:count FOR DOT IDENTIFIER:ident
+                        {: return createContextValue(%count%, ("for." + %ident%), %ident.line%, %ident.column%); :}
                         ;
 
 
@@ -587,29 +596,20 @@ mapValue            ::= LBRACE:sym mapValuePart:part RBRACE
 
 /* function  */
 
-
-funcHead           ::= funcHeadPrepare:part LPAREN IDENTIFIER:ident
-                        {: return (%part%).appendArg(%ident%, %ident.line%, %ident.column%); :}
-                        |funcHead:part COMMA IDENTIFIER:ident
-                        {: return (%part%).appendArg(%ident%, %ident.line%, %ident.column%); :}
+funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN RPAREN 
+                        {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%); :}
+                        |FUNCTION:sym IDENTIFIER:ident LPAREN identiferList:identList RPAREN 
+                        {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%).appendArgs(%identList%); :}
                         ;
 
 
-funcHeadPrepare     ::= FUNCTION:sym
+funcHead            ::= FUNCTION:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
+                        |FUNCTION:sym LPAREN RPAREN
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
+                        |FUNCTION:sym LPAREN identiferList:list RPAREN
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
                         ;
-
-funcStatementHead   ::= funcStatementHeadPrepare:part IDENTIFIER:ident
-                        {: return (%part%).appendArg(%ident%, %ident.line%, %ident.column%); :}
-                        |funcStatementHead:part COMMA IDENTIFIER:ident
-                        {: return (%part%).appendArg(%ident%, %ident.line%, %ident.column%); :}
-                        ;
-
-
-funcStatementHeadPrepare    ::= FUNCTION:sym IDENTIFIER:ident LPAREN
-                                {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%); :}
-                                ;
-
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list RPAREN
                         {: return new MethodExecute(%funcExpr%, (%list%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
@@ -631,11 +631,16 @@ classNameList       ::=
                         ;
 
 
-/* lamba */
-lambaExprHead           ::= IDENTIFIER:ident MINUSGT:sym
+/* lambda */
+lambdaExprHead           ::= IDENTIFIER:ident MINUSGT:sym
                             {: return new LambdaPart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%); :}
+                            |LPAREN IDENTIFIER:ident COMMA identiferList:list RPAREN MINUSGT:sym
+                            {: return new LambdaPart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%).appendArgs(%list%); :}
                             ;
 
-lambaExpr               ::= lambaExprHead:part expression:expr
+
+lambdaExpr               ::= lambdaExprHead:part expression:expr
                             {: return (%part%).pop(%expr%); :}
+                            |lambdaExprHead:part LBRACE statementList:list RBRACE
+                            {: return (%part%).pop(%list%); :}
                             ;
