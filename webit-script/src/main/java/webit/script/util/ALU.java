@@ -3,6 +3,7 @@ package webit.script.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
 
 /**
@@ -712,7 +713,7 @@ public class ALU {
     }
 
     public static boolean isTrue(final Object o) {
-        if (o == null) {
+        if (o == null || o == Context.VOID) {
             return false;
         } else if (o instanceof Boolean) {
             return (Boolean) o;
