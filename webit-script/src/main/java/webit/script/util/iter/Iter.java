@@ -5,11 +5,11 @@ package webit.script.util.iter;
  *
  * @author Zqq
  */
-public interface Iter<E> {
+public interface Iter {
 
     boolean hasNext();
 
-    E next();
+    Object next();
 
     boolean isFirst();
 

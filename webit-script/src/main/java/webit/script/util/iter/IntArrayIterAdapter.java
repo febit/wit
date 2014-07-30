@@ -5,9 +5,9 @@ package webit.script.util.iter;
  *
  * @author Zqq
  */
-public class IntArrayIterAdapter extends AbstractIter<Integer> {
+public class IntArrayIterAdapter extends AbstractIter {
 
-    private final int [] array;
+    private final int[] array;
     private final int max;
 
     public IntArrayIterAdapter(int[] array) {

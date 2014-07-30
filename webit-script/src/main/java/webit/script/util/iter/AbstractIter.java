@@ -5,16 +5,16 @@ package webit.script.util.iter;
  *
  * @author Zqq
  */
-public abstract class AbstractIter<E> implements Iter<E> {
+public abstract class AbstractIter implements Iter {
 
     protected int _index = -1;
 
-    public E next() {
+    public Object next() {
         ++_index;
         return _next();
     }
 
-    protected abstract E _next();
+    protected abstract Object _next();
 
     public boolean isFirst() {
         return _index == 0;

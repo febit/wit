@@ -89,8 +89,8 @@ public class CollectionUtil {
         throw new ScriptRuntimeException("Unsupported type: ".concat(o1.getClass().getName()));
     }
 
-    public static <T> Iter<T> toIter(final Iterable<T> o1) {
-        return new IteratorIterAdapter<T>(o1.iterator());
+    public static Iter toIter(final Iterable o1) {
+        return new IteratorIterAdapter(o1.iterator());
     }
 
     public static boolean notEmpty(final Object object, final boolean defaultValue) {

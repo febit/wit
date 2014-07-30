@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
  *
  * @author Zqq
  */
-public class IntegerDescStepIter implements Iter<Integer> {
+public class IntegerDescStepIter implements Iter {
 
     private final int from;
     private final int to;

@@ -5,9 +5,9 @@ package webit.script.util.iter;
  *
  * @author Zqq
  */
-public class CharArrayIterAdapter extends AbstractIter<Character> {
+public class CharArrayIterAdapter extends AbstractIter {
 
-    private final char [] array;
+    private final char[] array;
     private final int max;
 
     public CharArrayIterAdapter(char[] array) {

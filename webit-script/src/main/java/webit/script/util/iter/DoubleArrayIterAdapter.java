@@ -5,9 +5,9 @@ package webit.script.util.iter;
  *
  * @author Zqq
  */
-public class DoubleArrayIterAdapter extends AbstractIter<Double> {
+public class DoubleArrayIterAdapter extends AbstractIter {
 
-    private final double [] array;
+    private final double[] array;
     private final int max;
 
     public DoubleArrayIterAdapter(double[] array) {

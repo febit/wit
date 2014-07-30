@@ -7,7 +7,7 @@ import java.util.Iterator;
  *
  * @author Zqq
  */
-public class IteratorIterAdapter<E> extends AbstractIter<E> {
+public class IteratorIterAdapter<E> extends AbstractIter {
 
     private final Iterator<E> iterator;
 
@@ -16,7 +16,7 @@ public class IteratorIterAdapter<E> extends AbstractIter<E> {
     }
 
     @Override
-    protected E _next() {
+    protected Object _next() {
         return iterator.next();
     }
 

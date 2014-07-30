@@ -130,10 +130,8 @@ public final class Context {
             if (object.getClass() == String.class) {
                 //if (object instanceof String) {
                 this.out.write((String) object);
-                return;
             } else {
                 this.resolverManager.render(this.out, object);
-                return;
             }
         }
     }
@@ -147,7 +145,6 @@ public final class Context {
         final Map<Object, Object> map;
         if ((map = this.localMap) != null) {
             map.put(key, value);
-            return;
         } else {
             (this.localMap = new HashMap<Object, Object>()).put(key, value);
         }

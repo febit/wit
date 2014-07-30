@@ -45,7 +45,7 @@ public final class ForMap extends AbstractStatement implements Loopable {
     @SuppressWarnings("unchecked")
     public Object execute(final Context context) {
         final Object object = StatementUtil.execute(mapExpr, context);
-        final Iter<Map.Entry> iter;
+        final Iter iter;
         if (object != null) {
             if (object instanceof Map) {
                 iter = CollectionUtil.toIter(((Map) object).entrySet());
@@ -64,7 +64,7 @@ public final class ForMap extends AbstractStatement implements Loopable {
             vars.set(0, iter);
             label:
             do {
-                entry = iter.next();
+                entry = (Map.Entry) iter.next();
                 vars.resetForForMap(entry.getKey(),entry.getValue());
                 StatementUtil.executeInvertedAndCheckLoops(statements, context);
                 if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {

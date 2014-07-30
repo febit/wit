@@ -5,18 +5,18 @@ package webit.script.util.iter;
  *
  * @author Zqq
  */
-public class ArrayIterAdapter<E> extends AbstractIter<E> {
+public class ArrayIterAdapter extends AbstractIter {
 
-    private final E[] array;
+    private final Object[] array;
     private final int max;
 
-    public ArrayIterAdapter(E[] array) {
+    public ArrayIterAdapter(Object[] array) {
         this.array = array;
         this.max = array.length - 1;
     }
 
     @Override
-    protected E _next() {
+    protected Object _next() {
         return array[_index];
     }
 

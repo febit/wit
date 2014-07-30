@@ -5,9 +5,9 @@ package webit.script.util.iter;
  *
  * @author Zqq
  */
-public class FloatArrayIterAdapter extends AbstractIter<Float> {
+public class FloatArrayIterAdapter extends AbstractIter {
 
-    private final float [] array;
+    private final float[] array;
     private final int max;
 
     public FloatArrayIterAdapter(float[] array) {

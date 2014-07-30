@@ -35,7 +35,7 @@ public final class ForMapNoLoops extends AbstractStatement {
     @SuppressWarnings("unchecked")
     public Object execute(final Context context) {
         final Object object = StatementUtil.execute(mapExpr, context);
-        final Iter<Map.Entry> iter;
+        final Iter iter;
         if (object != null) {
             if (object instanceof Map) {
                 iter = CollectionUtil.toIter(((Map) object).entrySet());
@@ -52,7 +52,7 @@ public final class ForMapNoLoops extends AbstractStatement {
             (vars = context.vars).push(varIndexer);
             vars.set(0, iter);
             do {
-                entry = iter.next();
+                entry = (Map.Entry) iter.next();
                 vars.resetForForMap(entry.getKey(), entry.getValue());
                 StatementUtil.executeInverted(statements, context);
             } while (iter.hasNext());

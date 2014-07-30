@@ -7,16 +7,16 @@ import java.util.Enumeration;
  *
  * @author Zqq
  */
-public class EnumerationIterAdapter<E> extends AbstractIter<E> {
+public class EnumerationIterAdapter extends AbstractIter {
 
-    private final Enumeration<E> enumeration;
+    private final Enumeration enumeration;
 
-    public EnumerationIterAdapter(Enumeration<E> enumeration) {
+    public EnumerationIterAdapter(Enumeration enumeration) {
         this.enumeration = enumeration;
     }
 
     @Override
-    protected E _next() {
+    protected Object _next() {
         return enumeration.nextElement();
     }
 

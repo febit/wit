@@ -5,9 +5,9 @@ package webit.script.util.iter;
  *
  * @author Zqq
  */
-public class ByteArrayIterAdapter extends AbstractIter<Byte> {
+public class ByteArrayIterAdapter extends AbstractIter {
 
-    private final byte [] array;
+    private final byte[] array;
     private final int max;
 
     public ByteArrayIterAdapter(byte[] array) {

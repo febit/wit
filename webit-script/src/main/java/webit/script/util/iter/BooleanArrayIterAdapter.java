@@ -5,9 +5,9 @@ package webit.script.util.iter;
  *
  * @author Zqq
  */
-public class BooleanArrayIterAdapter extends AbstractIter<Boolean> {
+public class BooleanArrayIterAdapter extends AbstractIter {
 
-    private final boolean [] array;
+    private final boolean[] array;
     private final int max;
 
     public BooleanArrayIterAdapter(boolean[] array) {

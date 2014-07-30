@@ -5,9 +5,9 @@ package webit.script.util.iter;
  *
  * @author Zqq
  */
-public class ShortArrayIterAdapter extends AbstractIter<Short> {
+public class ShortArrayIterAdapter extends AbstractIter {
 
-    private final short [] array;
+    private final short[] array;
     private final int max;
 
     public ShortArrayIterAdapter(short[] array) {
