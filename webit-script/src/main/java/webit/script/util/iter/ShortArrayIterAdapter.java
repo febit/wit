@@ -1,21 +1,21 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.util.collection;
+package webit.script.util.iter;
 
 /**
  *
  * @author Zqq
  */
-public class DoubleArrayIterAdapter extends AbstractIter<Double> {
+public class ShortArrayIterAdapter extends AbstractIter<Short> {
 
-    private final double [] array;
+    private final short [] array;
     private final int max;
 
-    public DoubleArrayIterAdapter(double[] array) {
+    public ShortArrayIterAdapter(short[] array) {
         this.array = array;
         this.max = array.length - 1;
     }
 
-    protected Double _next() {
+    protected Short _next() {
         return array[_index];
     }
 

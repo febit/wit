@@ -7,8 +7,8 @@ import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.util.StatementUtil;
 import webit.script.util.StringUtil;
-import webit.script.util.collection.IntegerAscStepIter;
-import webit.script.util.collection.IntegerDescStepIter;
+import webit.script.util.iter.IntegerAscStepIter;
+import webit.script.util.iter.IntegerDescStepIter;
 
 /**
  *

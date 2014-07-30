@@ -1,22 +1,21 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.util.collection;
+package webit.script.util.iter;
 
 /**
  *
  * @author Zqq
  */
-public class ArrayIterAdapter<E> extends AbstractIter<E> {
+public class IntArrayIterAdapter extends AbstractIter<Integer> {
 
-    private final E[] array;
+    private final int [] array;
     private final int max;
 
-    public ArrayIterAdapter(E[] array) {
+    public IntArrayIterAdapter(int[] array) {
         this.array = array;
         this.max = array.length - 1;
     }
 
-    @Override
-    protected E _next() {
+    protected Integer _next() {
         return array[_index];
     }
 

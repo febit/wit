@@ -9,7 +9,7 @@ import webit.script.core.ast.Statement;
 import webit.script.core.runtime.VariantStack;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatementUtil;
-import webit.script.util.collection.Iter;
+import webit.script.util.iter.Iter;
 
 /**
  *

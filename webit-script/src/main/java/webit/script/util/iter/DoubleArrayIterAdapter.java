@@ -1,21 +1,21 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.util.collection;
+package webit.script.util.iter;
 
 /**
  *
  * @author Zqq
  */
-public class BooleanArrayIterAdapter extends AbstractIter<Boolean> {
+public class DoubleArrayIterAdapter extends AbstractIter<Double> {
 
-    private final boolean [] array;
+    private final double [] array;
     private final int max;
 
-    public BooleanArrayIterAdapter(boolean[] array) {
+    public DoubleArrayIterAdapter(double[] array) {
         this.array = array;
         this.max = array.length - 1;
     }
 
-    protected Boolean _next() {
+    protected Double _next() {
         return array[_index];
     }
 

@@ -1,21 +1,21 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.util.collection;
+package webit.script.util.iter;
 
 /**
  *
  * @author Zqq
  */
-public class FloatArrayIterAdapter extends AbstractIter<Float> {
+public class LongArrayIterAdapter extends AbstractIter<Long> {
 
-    private final float [] array;
+    private final long [] array;
     private final int max;
 
-    public FloatArrayIterAdapter(float[] array) {
+    public LongArrayIterAdapter(long[] array) {
         this.array = array;
         this.max = array.length - 1;
     }
 
-    protected Float _next() {
+    protected Long _next() {
         return array[_index];
     }
 

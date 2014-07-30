@@ -1,21 +1,21 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.util.collection;
+package webit.script.util.iter;
 
 /**
  *
  * @author Zqq
  */
-public class ByteArrayIterAdapter extends AbstractIter<Byte> {
+public class FloatArrayIterAdapter extends AbstractIter<Float> {
 
-    private final byte [] array;
+    private final float [] array;
     private final int max;
 
-    public ByteArrayIterAdapter(byte[] array) {
+    public FloatArrayIterAdapter(float[] array) {
         this.array = array;
         this.max = array.length - 1;
     }
 
-    protected Byte _next() {
+    protected Float _next() {
         return array[_index];
     }
 

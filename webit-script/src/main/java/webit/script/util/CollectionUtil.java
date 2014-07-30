@@ -6,7 +6,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.util.collection.*;
+import webit.script.util.iter.*;
 
 /**
  *
