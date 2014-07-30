@@ -9,29 +9,34 @@ import webit.script.core.VariantIndexer;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
+import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.core.runtime.VariantStack;
+import webit.script.method.MethodDeclare;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatementUtil;
 import webit.script.util.iter.Iter;
+import webit.script.util.iter.IterMethodFilter;
 
 /**
  *
  * @author Zqq
  */
-public final class ForIn extends AbstractStatement implements Loopable {
+public class ForIn extends AbstractStatement implements Loopable {
 
-    private final Expression collectionExpr;
-    private final VariantIndexer varIndexer;
-    private final Statement[] statements;
-    public final LoopInfo[] possibleLoopsInfo;
-    private final Statement elseStatement;
-    private final int label;
+    protected final FunctionDeclare functionDeclareExpr;
+    protected final Expression collectionExpr;
+    protected final VariantIndexer varIndexer;
+    protected final Statement[] statements;
+    protected final LoopInfo[] possibleLoopsInfo;
+    protected final Statement elseStatement;
+    protected final int label;
 
-    public ForIn(Expression collectionExpr, VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
+    public ForIn(FunctionDeclare functionDeclareExpr, Expression collectionExpr, VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
         super(line, column);
+        this.functionDeclareExpr = functionDeclareExpr;
         this.collectionExpr = collectionExpr;
         this.varIndexer = varIndexer;
         this.statements = statements;
@@ -41,9 +46,13 @@ public final class ForIn extends AbstractStatement implements Loopable {
     }
 
     public Object execute(final Context context) {
-        final Iter iter;
-        if ((iter = CollectionUtil.toIter(
-                StatementUtil.execute(collectionExpr, context))) != null
+        Iter iter = CollectionUtil.toIter(StatementUtil.execute(collectionExpr, context));
+        if (functionDeclareExpr != null) {
+            iter = new IterMethodFilter(context,
+                    functionDeclareExpr.execute(context),
+                    iter);
+        }
+        if (iter != null
                 && iter.hasNext()) {
 
             final VariantStack vars;

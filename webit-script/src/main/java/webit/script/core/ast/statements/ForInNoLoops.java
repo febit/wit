@@ -6,10 +6,12 @@ import webit.script.core.VariantIndexer;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
+import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.core.runtime.VariantStack;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatementUtil;
 import webit.script.util.iter.Iter;
+import webit.script.util.iter.IterMethodFilter;
 
 /**
  *
@@ -21,9 +23,11 @@ public final class ForInNoLoops extends AbstractStatement {
     private final VariantIndexer varIndexer;
     private final Statement[] statements;
     private final Statement elseStatement;
+    protected final FunctionDeclare functionDeclareExpr;
 
-    public ForInNoLoops(Expression collectionExpr, VariantIndexer varIndexer, Statement[] statements, Statement elseStatement, int line, int column) {
+    public ForInNoLoops(FunctionDeclare functionDeclareExpr, Expression collectionExpr, VariantIndexer varIndexer, Statement[] statements, Statement elseStatement, int line, int column) {
         super(line, column);
+        this.functionDeclareExpr = functionDeclareExpr;
         this.collectionExpr = collectionExpr;
         this.varIndexer = varIndexer;
         this.statements = statements;
@@ -31,12 +35,14 @@ public final class ForInNoLoops extends AbstractStatement {
     }
 
     public Object execute(final Context context) {
-        final Iter iter;
-
-        if ((iter = CollectionUtil.toIter(
-                StatementUtil.execute(collectionExpr, context))) != null
+        Iter iter = CollectionUtil.toIter(StatementUtil.execute(collectionExpr, context));
+        if (functionDeclareExpr != null) {
+            iter = new IterMethodFilter(context,
+                    functionDeclareExpr.execute(context),
+                    iter);
+        }
+        if (iter != null
                 && iter.hasNext()) {
-
             final Statement[] statements = this.statements;
             final VariantStack vars;
             (vars = context.vars).push(varIndexer);

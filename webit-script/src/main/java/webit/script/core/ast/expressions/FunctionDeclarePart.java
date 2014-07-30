@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class FunctionDeclarePart extends Position {
     private int argsCount = 0;
     private final int assignToIndex;
     private final VariantManager varmgr;
+    private final List<String> args;
 
     public FunctionDeclarePart(String assignTo, VariantManager varmgr, int line, int column) {
         this(varmgr.assignVariant(assignTo, line, column), varmgr, line, column);
@@ -40,6 +42,7 @@ public class FunctionDeclarePart extends Position {
         super(line, column);
         this.varmgr = varmgr;
         this.assignToIndex = assignToIndex;
+        this.args = new ArrayList<String>();
         varmgr.push();
         varmgr.pushVarWall();
         if (varmgr.assignVariant("arguments", line, column) != 0) {
@@ -53,14 +56,23 @@ public class FunctionDeclarePart extends Position {
         }
         return this;
     }
-    
+
     public FunctionDeclarePart appendArg(String name, int line, int column) {
         if (varmgr.assignVariant(name, line, column) != (++this.argsCount)) {
             throw new ParseException("Failed to assign variant!");
         }
+        this.args.add(name);
         return this;
     }
-    
+
+    public List<String> getArgs() {
+        return args;
+    }
+
+    public String getArg(int index) {
+        return args.get(index);
+    }
+
     public Expression pop(StatementList list) {
         final Expression expr = popFunctionDeclare(list);
         if (this.assignToIndex >= 0) {
@@ -69,7 +81,7 @@ public class FunctionDeclarePart extends Position {
             return expr;
         }
     }
-
+    
     public FunctionDeclare popFunctionDeclare(StatementList list) {
         Statement[] statements = list.toInvertArray();
 

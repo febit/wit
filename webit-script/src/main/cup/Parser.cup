@@ -97,6 +97,9 @@ non terminal FunctionDeclarePart funcHead, funcStatementHead;
 non terminal Expression lambdaExpr;
 non terminal LambdaPart lambdaExprHead;
 
+non terminal LambdaPart lambdaForHead1;
+non terminal ForInPart lambdaForHead, lambdaForHead2;
+
 /* precedence */
 precedence left     SEMICOLON; // ;
 precedence right    SELFEQ, EQ, MINUSGT; // (+ - * / %)=  (<< >> >>>)=  (& ^ |)=  = ->
@@ -313,17 +316,37 @@ ifStat          ::= ifPart:part
                         {: return (%part%).pop(%elseBody%); :}
                         ;
 
-
 forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
-                        {: return new ForInPart(%item%, %items%, this.varmgr, %sym.line%, %sym.column%); :}
-                        |FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COLON expression:map RPAREN
-                        {: return new ForMapPart(%key%, %value%, %map%, this.varmgr, %sym.line%, %sym.column%); :}
-                        ;
+                    {: return new ForInPart(%item%, %items%, this.varmgr, %sym.line%, %sym.column%); :}
+                    |FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COLON expression:map RPAREN
+                    {: return new ForMapPart(%key%, %value%, %map%, this.varmgr, %sym.line%, %sym.column%); :}
+                    ;
+
+
+lambdaForHead1   ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
+                    {: return new LambdaPart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%); :}
+                    ;
+
+
+lambdaForHead2  ::= lambdaForHead1:part expression:expr COLON
+                    {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.line%, %part.column%); :}
+                    |lambdaForHead1:part LBRACE statementList:list RBRACE COLON
+                    {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.line%, %part.column%); :}
+                    ;
+
+
+lambdaForHead   ::= lambdaForHead2:part expression:items RPAREN
+                    {: return (%part%).setCollectionExpr(%items%); :}
+                    ;
 
 
 forInBody       ::= forInHead:part LBRACE statementList:list RBRACE
                     {: return (%part%).setStatementList(%list%); :}
                     |forInHead:part LBRACE RBRACE
+                    {: return (%part%).setStatementList(new StatementList()); :}
+                    |lambdaForHead:part LBRACE statementList:list RBRACE
+                    {: return (%part%).setStatementList(%list%); :}
+                    |lambdaForHead:part LBRACE RBRACE
                     {: return (%part%).setStatementList(new StatementList()); :}
                     ;
 

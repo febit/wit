@@ -17,8 +17,16 @@ public class LambdaPart extends FunctionDeclarePart{
     }
     
     public Expression pop(Expression expr) {
+        return pop(toStatementList(expr));
+    }
+    
+    public FunctionDeclare popFunctionDeclare(Expression expr) {
+        return popFunctionDeclare(toStatementList(expr));
+    }
+    
+    protected StatementList toStatementList(Expression expr){
         StatementList statementList = new StatementList();
         statementList.add(new Return(expr, expr.getLine(), expr.getColumn()));
-        return pop(statementList);
+        return statementList;
     }
 }

@@ -31,7 +31,7 @@ public final class FunctionDeclare extends AbstractExpression {
         this.hasReturnLoops = hasReturnLoops;
     }
 
-    public Object execute(final Context context) {
+    public FunctionMethodDeclare execute(final Context context) {
         final VariantContext[] variantContexts;
         final int[] overflowUpstairs;
         final boolean containsRootContext;
@@ -63,7 +63,7 @@ public final class FunctionDeclare extends AbstractExpression {
         } else {
             StatementUtil.executeInverted(statements, context);
             vars.pop();
+            return Context.VOID;
         }
-        return Context.VOID;
     }
 }
