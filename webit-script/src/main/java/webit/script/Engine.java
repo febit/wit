@@ -23,6 +23,7 @@ import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
 import webit.script.util.SimpleBag;
+import webit.script.util.StringPool;
 import webit.script.util.StringUtil;
 import webit.script.util.keyvalues.KeyValues;
 import webit.script.util.keyvalues.KeyValuesUtil;
@@ -435,19 +436,39 @@ public final class Engine {
         this.inits = inits;
     }
 
-    public static Engine createEngine(final String configPath) {
-        return createEngine(configPath, null);
-    }
-
     public static Props createConfigProps(final String configPath) {
         return PropsUtil.loadFromClasspath(new Props(), CFG.DEFAULT_PROPERTIES, configPath);
     }
 
-    public static Engine createEngine(final String configPath, final Map<String, Object> parameters) {
-        return createEngine(createConfigProps(configPath), parameters);
+    /**
+     *
+     * @since 1.5.0
+     */
+    public static Engine create() {
+        return create(StringPool.EMPTY, null);
     }
 
-    public static Engine createEngine(final Props props, final Map<String, Object> parameters) {
+    /**
+     *
+     * @since 1.5.0
+     */
+    public static Engine create(final String configPath) {
+        return create(configPath, null);
+    }
+
+    /**
+     *
+     * @since 1.5.0
+     */
+    public static Engine create(final String configPath, final Map<String, Object> parameters) {
+        return create(createConfigProps(configPath), parameters);
+    }
+
+    /**
+     *
+     * @since 1.5.0
+     */
+    public static Engine create(final Props props, final Map<String, Object> parameters) {
 
         final Petite petite = new Petite();
         petite.defineParameters(props, parameters);
@@ -468,4 +489,20 @@ public final class Engine {
         return engine;
     }
 
+    public static Engine createEngine(final String configPath) {
+        return create(configPath, null);
+    }
+
+    public static Engine createEngine(final String configPath, final Map<String, Object> parameters) {
+        return create(configPath, parameters);
+    }
+
+    /**
+     *
+     * @deprecated
+     */
+    @Deprecated
+    public static Engine createEngine(final Props props, final Map<String, Object> parameters) {
+        return create(props, parameters);
+    }
 }
