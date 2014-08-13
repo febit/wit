@@ -1,0 +1,19 @@
+<%
+
+
+var map_empty = {};
+
+
+var map = {
+    1 : "a",
+    "1": "b",
+    '1': "c",
+    -1 : "d"
+};
+
+
+assertEquals(map[1], "a");
+assertEquals(map["1"], "b");
+assertEquals(map['1'], "c");
+assertEquals(map[-1], "d");
+assertEquals(map[2], null);

@@ -7,6 +7,7 @@ import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.operators.*;
 import webit.script.core.ast.statements.*;
 import webit.script.exceptions.ParseException;
+import webit.script.util.ALU;
 import webit.script.util.ClassNameBand;
 import webit.script.util.StatementUtil;
 import webit.script.util.collection.Stack;
@@ -376,6 +377,8 @@ switchPart0         ::=
                         {: return new SwitchPart(); :}
                         | CASE:sym DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:part
                         {: return (%part%).appendCase(%key%, %body%, %sym.line%, %sym.column%); :}
+                        | CASE:sym MINUS:sym DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:part
+                        {: return (%part%).appendCase(ALU.negative(%key%), %body%, %sym.line%, %sym.column%); :}
                         | DEFAULT:sym COLON caseBlockStat:body switchPart0:part
                         {: return (%part%).appendCase(null, %body%, %sym.line%, %sym.column%); :}
                         ;
@@ -606,8 +609,12 @@ expressionList      ::=
 
 mapValuePart         ::= DIRECT_VALUE:key COLON expression:expr
                         {: return new MapValuePart().add(%key%, %expr%); :}
+                        |MINUS:sym DIRECT_VALUE:key COLON expression:expr
+                        {: return new MapValuePart().add(ALU.negative(%key%), %expr%); :}
                         |mapValuePart:part COMMA DIRECT_VALUE:key COLON expression:expr
                         {: return (%part%).add(%key%, %expr%); :}
+                        |mapValuePart:part COMMA MINUS:sym DIRECT_VALUE:key COLON expression:expr
+                        {: return (%part%).add(ALU.negative(%key%), %expr%); :}
                         ;
 
 

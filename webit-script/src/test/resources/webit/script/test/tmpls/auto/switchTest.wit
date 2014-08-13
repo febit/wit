@@ -2,6 +2,8 @@
 var func_switch = function(a){
     var result;
     switch(a){
+        case -7:
+            return "-7";
         case 1:
             result = "1";
             break;
@@ -17,6 +19,7 @@ var func_switch = function(a){
     return result;
 };
 
+assertEquals("-7", func_switch(-7));
 assertEquals("1", func_switch(1));
 assertEquals("2|3|4", func_switch(2));
 assertEquals("2|3|4", func_switch(3));
