@@ -17,7 +17,7 @@ public class AsmMethodAccessorFactoryTest {
     @Test
     @SuppressWarnings("unchecked")
     public void test() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
-        //System.currentTimeMillis();
+
         Class currentTimeMillisClass = AsmMethodAccessorFactory.createAccessorClass(System.class.getMethod("currentTimeMillis", new Class[0]));
         Class arraycopyClass = AsmMethodAccessorFactory.createAccessorClass(System.class.getMethod("arraycopy", new Class[]{Object.class, int.class, Object.class, int.class, int.class}));
 
@@ -57,7 +57,6 @@ public class AsmMethodAccessorFactoryTest {
         List list2 = (List) newListWithInitSize.execute(new Object[]{2});
         assertNotNull(list2);
         
-        //list.size();
         list.add("i1");
         list.add("i2");
 
@@ -65,7 +64,6 @@ public class AsmMethodAccessorFactoryTest {
 
         Exception exception = null;
         try {
-            //exception
             assertEquals(listSize.execute(new Object[0]), 2);
         } catch (ScriptRuntimeException e) {
             exception = e;

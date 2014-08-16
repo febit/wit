@@ -51,7 +51,6 @@ public class AsmTest extends ClassLoader implements Opcodes {
 
 
         mg.push(Type.getType(String.class));
-        //mg.visitLdcInsn(Type.getType(String.class));
         mg.storeLocal(var_class);
         
         //
@@ -81,91 +80,6 @@ public class AsmTest extends ClassLoader implements Opcodes {
 
         mg.invokeVirtual(Type.getType(PrintStream.class),
                 new Method("println", "(Ljava/lang/Object;)V"));
-        
-//        mg.loadLocal(var_out);
-//        mg.loadLocal(var_enum);
-//
-//        mg.invokeVirtual(Type.getType(PrintStream.class),
-//                Method.getMethod("void println (Object)"));
-
-
-//        mg.loadArg(0);
-//
-//        int[] keys = new int[]{1, 100, 3};
-//        Arrays.sort(keys);
-//
-//        mg.tableSwitch(keys, new TableSwitchGenerator() {
-//            public void generateCase(int i, Label label) {
-//                switch (i) {
-//                    case 1:
-//
-//                        mg.loadLocal(var_out);
-//                        mg.loadLocal(var_str);
-//                        mg.invokeVirtual(Type.getType(PrintStream.class),
-//                                Method.getMethod("void println (String)"));
-//                        mg.goTo(label);
-//                        break;
-//                    case 2:
-//                        mg.loadLocal(var_out);
-//                        mg.loadLocal(var_str2);
-//                        mg.invokeVirtual(Type.getType(PrintStream.class),
-//                                Method.getMethod("void println (String)"));
-//                        mg.goTo(label);
-//                        break;
-//                    case 100:
-//                        mg.loadLocal(var_out);
-//                        mg.push(100);
-//                        mg.invokeVirtual(Type.getType(PrintStream.class),
-//                                Method.getMethod("void println (int)"));
-//                        mg.goTo(label);
-//                        break;
-//                    default:
-//                        mg.goTo(label);
-//                }
-//            }
-//
-//            public void generateDefault() {
-////                mg.loadLocal(var_out);
-////                mg.loadArg(0);
-////                mg.invokeVirtual(Type.getType(PrintStream.class),
-////                Method.getMethod("void println (int)"));
-////                mg.goTo(switch_end);
-//            }
-//        });
-
-        //
-//        mg.push(Type.LONG_TYPE);
-//        //mg.checkCast(Type.getType(Class.class));
-//        mg.storeLocal(var_class);
-//        
-
-
-
-
-
-
-//        
-//        //out len
-//        mg.loadLocal(var_out);
-//        mg.loadLocal(var_arg1_length);
-//        
-//        mg.invokeVirtual(Type.getType(PrintStream.class),
-//                Method.getMethod("void println (int)"));
-
-
-
-
-//        mg.loadLocal(var_out);
-//        mg.loadLocal(var_str);
-//        mg.invokeVirtual(Type.getType(String.class),
-//                Method.getMethod("int hashCode ()"));
-//        
-//        mg.invokeVirtual(Type.getType(PrintStream.class),
-//                Method.getMethod("void println (int)"));
-
-
-
-
 
         mg.returnValue();
         mg.endMethod();

@@ -89,13 +89,6 @@ public class AsmResolverFactoryTest {
         assertEquals(resolver.getMatchClass(), Foo.class);
         assertEquals(resolver.getMatchMode(), MatchMode.EQUALS);
 
-//        assertEquals(resolver.get(foo, "f1"), "foo:f1");
-//        assertEquals(resolver.get(foo, "f2"), "foo:f2");
-//        assertEquals(resolver.get(foo, "f3"), "foo:f3");
-//        assertEquals(resolver.get(foo, "f4"), 4);
-//        assertEquals(resolver.get(foo, "f5"), 5);
-//        assertEquals(resolver.get(foo, "bG"), "foo:bG");
-//        assertEquals(resolver.get(foo, "af"), "foo:af");
 
         int i = 0;
         assertEquals(resolver.get(foo, "f" + (i + 1)), "foo:f1");
@@ -103,7 +96,6 @@ public class AsmResolverFactoryTest {
 
         resolver.set(foo, "f1", "new:f1");
         resolver.set(foo, "f2", "new:f2");
-        //setResolver.set(foo, "f3", "new:f3"); //exception
         resolver.set(foo, "f4", 8);
         resolver.set(foo, "f5", 8);
         resolver.set(foo, "bG", "new:bG");

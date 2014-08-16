@@ -94,7 +94,7 @@ public class AutoTest {
     public void mergeTemplate(String templatePath, OutputStream out) throws ResourceNotFoundException {
         mergeTemplate(templatePath, new OutputStreamOut(out, EngineManager.getEngine()));
     }
-
+    
     public void mergeTemplate(String templatePath, Out out) throws ResourceNotFoundException {
         System.out.println("AUTO RUN: " + templatePath);
         Template template = EngineManager.getEngine().getTemplate(templatePath);

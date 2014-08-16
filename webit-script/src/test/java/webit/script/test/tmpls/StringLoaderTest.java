@@ -6,6 +6,7 @@
 package webit.script.test.tmpls;
 
 import java.io.StringWriter;
+import org.junit.Assert;
 import org.junit.Test;
 import webit.script.Engine;
 import webit.script.exceptions.ResourceNotFoundException;
@@ -21,9 +22,9 @@ public class StringLoaderTest {
 
         final StringWriter writer = new StringWriter();
 
-        Engine.createEngine("")  
-                .getTemplate("string:<% echo \"Hello Webit Script！\"; %>")  
-                .merge(writer); 
-        System.out.println(writer);
+        Engine.createEngine("")
+                .getTemplate("string:<% echo \"Hello Webit Script！\"; %>")
+                .merge(writer);
+        Assert.assertEquals("Hello Webit Script！", writer.toString());
     }
 }

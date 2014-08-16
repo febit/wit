@@ -3,7 +3,7 @@ package webit.script.test.tmpls.auto.etc;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class StaticFields {
 

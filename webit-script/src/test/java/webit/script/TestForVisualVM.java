@@ -24,9 +24,7 @@ public class TestForVisualVM {
 
         Template template = engine.getTemplate("/helloTest.wit");
         DiscardOut out = new DiscardOut();
-        //template.reload();
 
-        //webit.script.TestForVisualVM.Start
         TestForVisualVM.Start.start();
         for (int i = 0; i < times; i++) {
             //template.reset();

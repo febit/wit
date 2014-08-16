@@ -10,7 +10,7 @@ import org.junit.Test;
  */
 public class CharUtilTest {
     
-    //@Test
+    @Test
     public void indexOfTest(){
     
         char [] src = "abcdefghi".toCharArray();
