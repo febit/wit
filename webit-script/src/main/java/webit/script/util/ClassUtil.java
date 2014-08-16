@@ -6,8 +6,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -119,44 +117,103 @@ public class ClassUtil {
         }
         return getClassByInternalName(new String(chars));
     }
-    private static final Map<String, Class> CLASS_CACHE;
-
-    static {
-
-        Map<String, Class> classes = new HashMap<String, Class>(32, 0.75f); //24*4/3
-        classes.put("boolean", boolean.class);
-        classes.put("char", char.class);
-        classes.put("byte", byte.class);
-        classes.put("short", short.class);
-        classes.put("int", int.class);
-        classes.put("long", long.class);
-        classes.put("float", float.class);
-        classes.put("double", double.class);
-        classes.put("void", void.class);
-        classes.put("Boolean", Boolean.class);
-        classes.put("Character", Character.class);
-        classes.put("Byte", Byte.class);
-        classes.put("Short", Short.class);
-        classes.put("Integer", Integer.class);
-        classes.put("Long", Long.class);
-        classes.put("Float", Float.class);
-        classes.put("Double", Double.class);
-        classes.put("Number", Number.class);
-        classes.put("String", String.class);
-        classes.put("Object", Object.class);
-        classes.put("Class", Class.class);
-        classes.put("Void", Void.class);
-
-        CLASS_CACHE = classes;
-    }
 
     public static Class getCachedClass(final String name) {
-        return CLASS_CACHE.get(name);
+        if (name == null || name.length() == 0) {
+            return null;
+        }
+        switch (name.charAt(0)) {
+            case 'b':
+                if (name.equals("boolean")) {
+                    return boolean.class;
+                }
+                if (name.equals("byte")) {
+                    return byte.class;
+                }
+            case 'c':
+                if (name.equals("char")) {
+                    return char.class;
+                }
+            case 's':
+                if (name.equals("short")) {
+                    return short.class;
+                }
+            case 'i':
+                if (name.equals("int")) {
+                    return int.class;
+                }
+            case 'l':
+                if (name.equals("long")) {
+                    return long.class;
+                }
+            case 'f':
+                if (name.equals("float")) {
+                    return float.class;
+                }
+            case 'd':
+                if (name.equals("double")) {
+                    return double.class;
+                }
+            case 'v':
+                if (name.equals("void")) {
+                    return void.class;
+                }
+            case 'B':
+                if (name.equals("Boolean")) {
+                    return Boolean.class;
+                }
+                if (name.equals("Byte")) {
+                    return Byte.class;
+                }
+            case 'C':
+                if (name.equals("Character")) {
+                    return Character.class;
+                }
+                if (name.equals("Class")) {
+                    return Class.class;
+                }
+            case 'S':
+                if (name.equals("String")) {
+                    return String.class;
+                }
+                if (name.equals("Short")) {
+                    return Short.class;
+                }
+            case 'I':
+                if (name.equals("Integer")) {
+                    return Integer.class;
+                }
+            case 'L':
+                if (name.equals("Long")) {
+                    return Long.class;
+                }
+            case 'F':
+                if (name.equals("Float")) {
+                    return Float.class;
+                }
+            case 'D':
+                if (name.equals("Double")) {
+                    return Double.class;
+                }
+            case 'N':
+                if (name.equals("Number")) {
+                    return Number.class;
+                }
+            case 'O':
+                if (name.equals("Object")) {
+                    return Object.class;
+                }
+            case 'V':
+                if (name.equals("Void")) {
+                    return Void.class;
+                }
+        }
+        return null;
     }
 
     public static Class getClass(final String name) throws ClassNotFoundException {
         Class cls;
-        return (cls = CLASS_CACHE.get(name)) != null ? cls : getClassByInternalName(name);
+        return (cls = getCachedClass(name)) != null ? cls : getClassByInternalName(name);
     }
 
     private static Class getClassByInternalName(String name) throws ClassNotFoundException {
@@ -199,7 +256,7 @@ public class ClassUtil {
             }
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public static Method searchMethod(Class currentClass, String name, Class[] parameterTypes, boolean boxed) throws NoSuchMethodException {
         return currentClass.getMethod(name, parameterTypes);

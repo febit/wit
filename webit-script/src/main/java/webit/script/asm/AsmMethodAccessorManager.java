@@ -31,7 +31,6 @@ public class AsmMethodAccessorManager {
                 }
             }
         }
-        //
         AsmMethodAccessor accessor;
         if ((accessor = box.accessor) == null) {
             synchronized (box) {

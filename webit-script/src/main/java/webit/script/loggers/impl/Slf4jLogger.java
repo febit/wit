@@ -11,10 +11,10 @@ import webit.script.loggers.Logger;
  */
 public class Slf4jLogger implements Logger, Initable {
 
+    private org.slf4j.Logger logger;
+
     //settings
     private String name = DEFAULT_NAME;
-    //
-    private org.slf4j.Logger logger;
 
     public void init(Engine engine) {
         logger = org.slf4j.LoggerFactory.getLogger(name);
@@ -100,7 +100,6 @@ public class Slf4jLogger implements Logger, Initable {
         logger.error(msg, t);
     }
 
-    //
     public void setName(String name) {
         this.name = name;
     }

@@ -7,7 +7,7 @@ package webit.script.loggers;
  */
 public interface Logger {
 
-    public static final String DEFAULT_NAME = "webit_script";
+    public static final String DEFAULT_NAME = "WebitScript";
 
     public boolean isTraceEnabled();
 

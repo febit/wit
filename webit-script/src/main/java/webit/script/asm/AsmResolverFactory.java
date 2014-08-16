@@ -76,9 +76,9 @@ public class AsmResolverFactory {
         } else {
             final Label end_switch = mg.newLabel();
             final Map<Integer, FieldInfo[]> groupByHashcode = fieldsDescription.groupByHashcode;
-            mg.loadArg(1); //property
+            mg.loadArg(1);
             mg.invokeVirtual(ASMUtil.TYPE_OBJECT, ASMUtil.METHOD_HASH_CODE);
-            //
+
             mg.tableSwitch(fieldsDescription.hashcodes, new TableSwitchGenerator() {
                 public void generateCase(int hash, Label end) {
                     appendGetFieldsCode(mg, groupByHashcode.get(hash), beanType, end_switch);
@@ -89,7 +89,6 @@ public class AsmResolverFactory {
             });
             mg.mark(end_switch);
         }
-        //
         //Exception
         appendThrowNoSuchPropertyException(mg, beanClass);
         mg.endMethod();
@@ -107,7 +106,7 @@ public class AsmResolverFactory {
         } else {
             final Label end_switch = mg.newLabel();
             final Map<Integer, FieldInfo[]> groupByHashcode = fieldsDescription.groupByHashcode;
-            mg.loadArg(1); //property
+            mg.loadArg(1);
             mg.invokeVirtual(ASMUtil.TYPE_OBJECT, ASMUtil.METHOD_HASH_CODE);
             //
             mg.tableSwitch(fieldsDescription.hashcodes, new TableSwitchGenerator() {
@@ -121,7 +120,6 @@ public class AsmResolverFactory {
 
             mg.mark(end_switch);
         }
-        //
         //Exception
         appendThrowNoSuchPropertyException(mg, beanClass);
         mg.endMethod();
@@ -259,22 +257,19 @@ public class AsmResolverFactory {
         mg.returnValue();
     }
 
-//    private void appendIfFieldNotSameGoto(final GeneratorAdapter mg, FieldInfo fieldInfo, Label l_goto) {
-//        mg.push(fieldInfo.name);
-//        mg.loadArg(1); //property
-//        mg.ifCmp(ASMUtil.TYPE_STRING, GeneratorAdapter.NE, l_goto); // if name != property goto
-//    }
     private static void appendIfFieldSameGoto(final GeneratorAdapter mg, FieldInfo fieldInfo, Label l_goto) {
         mg.push(fieldInfo.name);
-        mg.loadArg(1); //property
-        mg.ifCmp(ASMUtil.TYPE_STRING, GeneratorAdapter.EQ, l_goto); // if name == property goto
+        mg.loadArg(1);
+        // if name == property goto
+        mg.ifCmp(ASMUtil.TYPE_STRING, GeneratorAdapter.EQ, l_goto);
     }
 
     private static void appendIfFieldEqualsGoTo(final GeneratorAdapter mg, FieldInfo fieldInfo, Label l_goto) {
         mg.push(fieldInfo.name);
-        mg.loadArg(1); //property
+        mg.loadArg(1);
         mg.invokeVirtual(ASMUtil.TYPE_STRING, ASMUtil.METHOD_EQUALS);
-        mg.ifZCmp(GeneratorAdapter.NE, l_goto); // if true goto
+        // if true goto
+        mg.ifZCmp(GeneratorAdapter.NE, l_goto);
     }
 
     private static void appendThrowUnreadableException(final GeneratorAdapter mg, final FieldInfo fieldInfo) {
@@ -322,7 +317,6 @@ public class AsmResolverFactory {
                 } else {
                     groupByHashcode.put(hash, cacheList.toArray(new FieldInfo[cacheList.size()]));
                     cacheList.clear();
-
                     cacheList.add(fieldInfo);
                     hashList.add(hash = fieldInfo.hashCode);
                 }

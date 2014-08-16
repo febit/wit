@@ -17,20 +17,15 @@ public class CollectionUtil {
     public static int getSize(final Object object) {
         if (object == null) {
             return 0;
-        }//
-        else if (object.getClass().isArray()) {
+        } else if (object.getClass().isArray()) {
             return ArrayUtil.getSize(object);
-        }//
-        else if (object instanceof Collection) {
+        } else if (object instanceof Collection) {
             return ((Collection) object).size();
-        }//
-        else if (object instanceof Map) {
+        } else if (object instanceof Map) {
             return ((Map) object).size();
-        }//
-        else if (object instanceof CharSequence) {
+        } else if (object instanceof CharSequence) {
             return ((CharSequence) object).length();
-        }//
-        else {
+        } else {
             return -1;
         }
     }
@@ -40,49 +35,35 @@ public class CollectionUtil {
         final Class clazz;
         if (o1 == null) {
             return null;
-        }//
-        else if (o1 instanceof Iterable) {
+        } else if (o1 instanceof Iterable) {
             return new IteratorIterAdapter(((Iterable) o1).iterator());
-        }//
-        else if ((clazz = o1.getClass()).isArray()) {
+        } else if ((clazz = o1.getClass()).isArray()) {
             if (o1 instanceof Object[]) {
                 return new ArrayIterAdapter((Object[]) o1);
-            }//
-            else if (clazz == int[].class) {
+            } else if (clazz == int[].class) {
                 return new IntArrayIterAdapter((int[]) o1);
-            }//
-            else if (clazz == boolean[].class) {
+            } else if (clazz == boolean[].class) {
                 return new BooleanArrayIterAdapter((boolean[]) o1);
-            }//
-            else if (clazz == char[].class) {
+            } else if (clazz == char[].class) {
                 return new CharArrayIterAdapter((char[]) o1);
-            }//
-            else if (clazz == float[].class) {
+            } else if (clazz == float[].class) {
                 return new FloatArrayIterAdapter((float[]) o1);
-            }//
-            else if (clazz == double[].class) {
+            } else if (clazz == double[].class) {
                 return new DoubleArrayIterAdapter((double[]) o1);
-            }//
-            else if (clazz == long[].class) {
+            } else if (clazz == long[].class) {
                 return new LongArrayIterAdapter((long[]) o1);
-            }//
-            else if (clazz == short[].class) {
+            } else if (clazz == short[].class) {
                 return new ShortArrayIterAdapter((short[]) o1);
-            }//
-            else if (clazz == byte[].class) {
+            } else if (clazz == byte[].class) {
                 return new ByteArrayIterAdapter((byte[]) o1);
-            }//
-        }//
-        else if (o1 instanceof Iterator) {
+            }
+        } else if (o1 instanceof Iterator) {
             return new IteratorIterAdapter((Iterator) o1);
-        }//
-        else if (o1 instanceof Iter) {
+        } else if (o1 instanceof Iter) {
             return (Iter) o1;
-        }//
-        else if (o1 instanceof Enumeration) {
+        } else if (o1 instanceof Enumeration) {
             return new EnumerationIterAdapter((Enumeration) o1);
-        }//
-        else if (o1 instanceof CharSequence) {
+        } else if (o1 instanceof CharSequence) {
             return new CharSequenceIterAdapter((CharSequence) o1);
         }
 
@@ -100,14 +81,11 @@ public class CollectionUtil {
             return false;
         } else if (size > 0) {
             return true;
-        }//
-        else if (object instanceof Iterable) {
+        } else if (object instanceof Iterable) {
             return ((Iterable) object).iterator().hasNext();
-        }//
-        else if (object instanceof Iterator) {
+        } else if (object instanceof Iterator) {
             return ((Iterator) object).hasNext();
-        }//
-        else if (object instanceof Enumeration) {
+        } else if (object instanceof Enumeration) {
             return ((Enumeration) object).hasMoreElements();
         }
 

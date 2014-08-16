@@ -9,7 +9,7 @@ public final class ClassIdentityHashMap<V> {
     private Entry<V> table[];
     private int threshold;
     private int count;
-    //
+
     private final Object lock = new Object();
 
     public ClassIdentityHashMap(int initialCapacity) {
@@ -43,13 +43,7 @@ public final class ClassIdentityHashMap<V> {
     public V unsafeGet(final Class key) {
 
         Entry<V> e;
-        //final int id;
-        //id = key.hashCode();
         final Entry<V>[] tab;
-        //tab = table;
-        //final int index = id % tab.length;
-        //Entry<V> e = tab[(id = System.identityHashCode(key)) & (tab.length - 1)];
-        //Entry<V> e = table[index];
         e = (tab = table)[key.hashCode() & (tab.length - 1)];
         while (e != null) {
             if (key == e.key) {
@@ -80,7 +74,7 @@ public final class ClassIdentityHashMap<V> {
                 if (threshold == MAXIMUM_CAPACITY - 1) {
                     throw new IllegalStateException("Capacity exhausted.");
                 }
-                threshold = MAXIMUM_CAPACITY - 1;  // Gigantic map!
+                threshold = MAXIMUM_CAPACITY - 1;
                 return;
             }
             final int newMark = newCapacity - 1;
@@ -108,18 +102,12 @@ public final class ClassIdentityHashMap<V> {
     private V unsafePutIfAbsent(Class key, V value) {
 
         final int id;
-        //id = key.hashCode();
         int index;
-        //final int index = id % tab.length;
 
         Entry<V>[] tab;
-        //tab = table;
         Entry<V> e = (tab = table)[index = (id = key.hashCode()) & (tab.length - 1)];
-        //Entry<V> e = table[index];
         for (; e != null; e = e.next) {
             if (e.id == id) {
-                //V old = e.value;
-                //e.value = value;
                 return e.value;
             }
         }

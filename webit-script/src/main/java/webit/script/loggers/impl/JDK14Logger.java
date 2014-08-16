@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.loggers.Logger;
-import webit.script.util.MessageFormatter;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -13,10 +13,10 @@ import webit.script.util.MessageFormatter;
  */
 public final class JDK14Logger implements Logger, Initable {
 
+    private java.util.logging.Logger logger;
+
     //settings
     private String name = DEFAULT_NAME;
-    //
-    private java.util.logging.Logger logger;
 
     public void init(Engine engine) {
         logger = java.util.logging.Logger.getLogger(name);
@@ -113,9 +113,9 @@ public final class JDK14Logger implements Logger, Initable {
     }
 
     private String getMessage(String msg, Object... args) {
-        return MessageFormatter.format(msg, args);
+        return StringUtil.format(msg, args);
     }
-    //
+
     public void setName(String name) {
         this.name = name;
     }

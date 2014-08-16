@@ -55,7 +55,7 @@ public final class FieldInfo implements Comparable<FieldInfo> {
     }
 
     public int compareTo(final FieldInfo o) {
-        return (this.hashCode  < o.hashCode) ? -1 : ((this.hashCode  == o.hashCode) ? 0 : 1);
+        return (this.hashCode < o.hashCode) ? -1 : ((this.hashCode == o.hashCode) ? 0 : 1);
     }
 
     @Override
@@ -68,7 +68,7 @@ public final class FieldInfo implements Comparable<FieldInfo> {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof FieldInfo)) {
             return false;
         }
         final FieldInfo other = (FieldInfo) obj;

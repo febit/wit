@@ -9,8 +9,6 @@ import webit.script.io.charset.Encoder;
  */
 public class ISO_8859_1 {
 
-    //public static final double MAX_CHARS_PER_BYTE = 1.0;
-    //public static final double MAX_BYTES_PER_CHAR = 1.0;
     public static int decode(final byte[] src, int sp, int len, final char[] dst) {
         if (len > dst.length) {
             len = dst.length;

@@ -37,7 +37,8 @@ public class VariantManager {
                 String var = vars[i];
                 if (!root.contains(var)) {
                     root.assignVar(var, -1, -1);
-                }//ignore duplicate
+                }
+                //ignore duplicate
             }
         }
 

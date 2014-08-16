@@ -6,7 +6,6 @@ import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.loggers.Logger;
 import webit.script.util.ExceptionUtil;
-import webit.script.util.MessageFormatter;
 import webit.script.util.StringUtil;
 
 /**
@@ -20,147 +19,147 @@ public final class SimpleLogger implements Logger, Initable {
     public static final int LEVEL_INFO = 3;
     public static final int LEVEL_WARN = 4;
     public static final int LEVEL_ERROR = 5;
-    //
-    private String prefix;
+
     //settings
     private String level = "info";
     private String name = DEFAULT_NAME;
-    //
-    private boolean _trace = false;
-    private boolean _debug = false;
-    private boolean _info = false;
-    private boolean _warn = false;
-    private boolean _error = false;
+
+    private String prefix;
+    private boolean traceFlag = false;
+    private boolean debugFlag = false;
+    private boolean infoFlag = false;
+    private boolean warnFlag = false;
+    private boolean errorFlag = false;
 
     public void init(Engine engine) {
         prefix = StringUtil.concat("[", name, "] ");
         level = level.trim().toLowerCase();
 
-        _error = true;
+        errorFlag = true;
         if ("error".equals(level)) {
             return;
         }
-        _warn = true;
+        warnFlag = true;
         if ("warn".equals(level)) {
             return;
         }
-        _info = true;
+        infoFlag = true;
         if ("info".equals(level)) {
             return;
         }
-        _debug = true;
+        debugFlag = true;
         if ("debug".equals(level)) {
             return;
         }
-        _trace = true;
+        traceFlag = true;
     }
 
     public boolean isTraceEnabled() {
-        return _trace;
+        return traceFlag;
     }
 
     public void trace(String msg) {
-        if (_trace) {
+        if (traceFlag) {
             printStackTrace(msg, null, false);
         }
     }
 
     public void trace(String format, Object... arguments) {
-        if (_trace) {
+        if (traceFlag) {
             printStackTrace(format, null, false, arguments);
         }
     }
 
     public void trace(String msg, Throwable throwable) {
-        if (_trace) {
+        if (traceFlag) {
             printStackTrace(msg, throwable, false);
         }
     }
 
     public boolean isDebugEnabled() {
-        return _debug;
+        return debugFlag;
     }
 
     public void debug(String msg) {
-        if (_debug) {
+        if (debugFlag) {
             printStackTrace(msg, null, false);
         }
     }
 
     public void debug(String format, Object... arguments) {
-        if (_debug) {
+        if (debugFlag) {
             printStackTrace(format, null, false, arguments);
         }
     }
 
     public void debug(String msg, Throwable throwable) {
-        if (_debug) {
+        if (debugFlag) {
             printStackTrace(msg, throwable, false);
         }
     }
 
     public boolean isInfoEnabled() {
-        return _info;
+        return infoFlag;
     }
 
     public void info(String msg) {
-        if (_info) {
+        if (infoFlag) {
             printStackTrace(msg, null, false);
         }
     }
 
     public void info(String format, Object... arguments) {
-        if (_info) {
+        if (infoFlag) {
             printStackTrace(format, null, false, arguments);
         }
     }
 
     public void info(String msg, Throwable throwable) {
-        if (_info) {
+        if (infoFlag) {
             printStackTrace(msg, throwable, false);
         }
     }
 
     public boolean isWarnEnabled() {
-        return _warn;
+        return warnFlag;
     }
 
     public void warn(String msg) {
-        if (_warn) {
+        if (warnFlag) {
             printStackTrace(msg, null, true);
         }
     }
 
     public void warn(String format, Object... arguments) {
-        if (_warn) {
+        if (warnFlag) {
             printStackTrace(format, null, true, arguments);
         }
     }
 
     public void warn(String msg, Throwable throwable) {
-        if (_warn) {
+        if (warnFlag) {
             printStackTrace(msg, throwable, true);
         }
     }
 
     public boolean isErrorEnabled() {
-        return _error;
+        return errorFlag;
     }
 
     public void error(String msg) {
-        if (_error) {
+        if (errorFlag) {
             printStackTrace(msg, null, true);
         }
     }
 
     public void error(String format, Object... arguments) {
-        if (_error) {
+        if (errorFlag) {
             printStackTrace(format, null, true, arguments);
         }
     }
 
     public void error(String msg, Throwable throwable) {
-        if (_error) {
+        if (errorFlag) {
             printStackTrace(msg, throwable, true);
         }
     }
@@ -173,7 +172,7 @@ public final class SimpleLogger implements Logger, Initable {
     }
 
     private String format(String format, Object... args) {
-        return MessageFormatter.format(format, args);
+        return StringUtil.format(format, args);
     }
 
     private void printStackTrace(String format, Throwable throwable, boolean error, Object... arguments) {

@@ -336,4 +336,67 @@ public class StringUtil {
         }
         return true;
     }
+
+    /**
+     * Parses string template and replaces macros with resolved values.
+     */
+    public static String format(String template, Object... array) {
+        if (template == null) {
+            return null;
+        }
+        StringBuilder result = new StringBuilder(template.length());
+        int i = 0;
+        int len = template.length();
+        int currentIndex = 0;
+        int arrayLen = array != null ? array.length : 0;
+        int index;
+        int j;
+        int escapeCharcount;
+        String value;
+        while (i < len) {
+            int ndx = template.indexOf('{', i);
+            if (ndx == -1) {
+                result.append(i == 0 ? template : template.substring(i));
+                break;
+            }
+            j = ndx - 1;
+            while ((j >= 0) && (template.charAt(j) == '\\')) {
+                j--;
+            }
+            escapeCharcount = ndx - 1 - j;
+            if (escapeCharcount > 0) {
+                result.append(template.substring(i, ndx - ((escapeCharcount + 1) >> 1)));
+            } else {
+                result.append(template.substring(i, ndx));
+            }
+            if ((escapeCharcount & 1) == 1) {
+                result.append('{');
+                i = ndx + 1;
+                continue;
+            }
+            ndx += 1;
+            int ndx_end = template.indexOf('}', ndx);
+            if (ndx_end == -1) {
+                throw new IllegalArgumentException(StringUtil.concat("Invalid string template, unclosed macro at: ", ndx - 1));
+            }
+            if (ndx == ndx_end) {
+                index = currentIndex++;
+            } else {
+                try {
+                    index = template.charAt(ndx) - '0';
+                    for (int k = ndx + 1; k < ndx_end; k++) {
+                        index = index * 10 + (template.charAt(k) - '0');
+                    }
+                } catch (Exception e) {
+                    index = -1;
+                }
+            }
+            if (index < arrayLen && index >= 0 && array[index] != null) {
+                value = array[index].toString();
+                result.append(value);
+            }
+            i = ndx_end + 1;
+        }
+        return result.toString();
+    }
 }

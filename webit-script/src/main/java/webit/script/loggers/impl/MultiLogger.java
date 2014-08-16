@@ -12,10 +12,10 @@ import webit.script.util.ClassEntry;
  */
 public final class MultiLogger implements Logger, Initable {
 
+    private Logger[] _loggers;
+
     //Settings
     private ClassEntry[] loggers;
-    //
-    private Logger[] _loggers;
 
     public void init(Engine engine) {
         if (loggers != null && loggers.length > 0) {

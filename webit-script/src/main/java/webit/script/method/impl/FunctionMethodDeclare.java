@@ -31,11 +31,10 @@ public final class FunctionMethodDeclare implements MethodDeclare {
         try {
             return function.invoke(new Context(context, template, parentVarContexts, containsRootContext), args);
         } catch (Exception e) {
+            ScriptRuntimeException scriptRuntimeException = ExceptionUtil.castToScriptRuntimeException(e, function);
             throw template == context.template
-                    ? ExceptionUtil.castToScriptRuntimeException(e, function)
-                    : new ScriptRuntimeException(
-                            ExceptionUtil.castToScriptRuntimeException(e, function)
-                            .setTemplate(template));
+                    ? scriptRuntimeException
+                    : new ScriptRuntimeException(scriptRuntimeException.setTemplate(template));
         }
     }
 }

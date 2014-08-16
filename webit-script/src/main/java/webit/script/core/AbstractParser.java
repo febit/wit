@@ -86,7 +86,6 @@ abstract class AbstractParser {
             (this.labelsIndexMap = new HashMap<String, Integer>())
                     .put(null, this.currentLabelIndex = 0);
 
-            //
             _textStatementFactory.startTemplateParser(template);
             astSymbol = this.parse(lexer);
             _textStatementFactory.finishTemplateParser(template);
@@ -129,7 +128,8 @@ abstract class AbstractParser {
                 return new GlobalValue(this.engine.getGlobalManager(), addr.index, line, column);
             case VarAddress.CONST:
                 return new DirectValue(addr.constValue, line, column);
-            default: //VarAddress.CONTEXT
+            default:
+                //VarAddress.CONTEXT
                 if (addr.upstairs == 0) {
                     return new CurrentContextValue(addr.index, line, column);
                 } else {
@@ -331,11 +331,6 @@ abstract class AbstractParser {
         return StatementUtil.optimize(oper);
     }
 
-    /**
-     *
-     * @param row actionTable[state]
-     * @param id the Symbol index of the action being accessed.
-     */
     private static short getAction(final short[] row, final int sym) {
         int first, last, probe, row_len;
 
@@ -363,15 +358,10 @@ abstract class AbstractParser {
                 }
             }
         }
-        /* default: error == 0 */
+        //error
         return 0;
     }
 
-    /**
-     *
-     * @param row reduceTable[state]
-     * @param id the Symbol index of the entry being accessed.
-     */
     private static short getReduce(final short[] row, int sym) {
         int probe, len;
         if (row != null) {
@@ -381,7 +371,7 @@ abstract class AbstractParser {
                 }
             }
         }
-        //TODO: Error */
+        //error
         return -1;
     }
 
@@ -428,7 +418,6 @@ abstract class AbstractParser {
                 currentToken = myLexer.nextToken();
             } else if (act < 0) {
                 /* if its less than zero, then it encodes a reduce action */
-                //reduceAction()
                 act = (-act) - 1;
                 final int symId, handleSize;
                 final Object result = doAction(act);
@@ -448,12 +437,13 @@ abstract class AbstractParser {
                 currentSymbol.state = getReduce(reduceTable[stack.peek().state], symId);
                 stack.push(currentSymbol);
 
-            } else {//act == 0
+            } else {
+                //act == 0
                 throw new ParseException(StringUtil.concat("Syntax error before: ", Integer.toString(myLexer.getLine()), "(", Integer.toString(myLexer.getColumn()), ")", ". Hints: ", getSimpleHintMessage(currentSymbol)), myLexer.getLine(), myLexer.getColumn());
             }
         } while (goonParse);
 
-        return stack.peek();//lhs_sym;
+        return stack.peek();
     }
 
     private static short[][] loadFromDataFile(String name) {
