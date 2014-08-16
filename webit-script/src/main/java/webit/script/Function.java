@@ -11,7 +11,9 @@ import webit.script.method.MethodDeclare;
 import webit.script.util.keyvalues.KeyValuesUtil;
 
 /**
- *
+ * Exported function.
+ * 
+ * @since 1.5.0
  * @author zqq
  */
 public class Function {

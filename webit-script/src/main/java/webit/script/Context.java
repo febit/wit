@@ -149,6 +149,13 @@ public final class Context {
         }
     }
 
+    /**
+     * Export a named var.
+     *
+     * @since 1.5.0
+     * @param name
+     * @return
+     */
     public Object export(String name) {
         VariantContext variantContext = this.vars.getCurrentContext();
         if (variantContext != null) {
@@ -157,6 +164,14 @@ public final class Context {
         return null;
     }
 
+    /**
+     * Export a named function.
+     *
+     * @since 1.5.0
+     * @param name
+     * @return
+     * @throws NotFunctionException
+     */
     public Function exportFunction(String name) throws NotFunctionException {
         Object func = export(name);
         if (func != null && func instanceof MethodDeclare) {
@@ -165,6 +180,11 @@ public final class Context {
         throw new NotFunctionException(func);
     }
 
+    /**
+     * Export vars to a given map.
+     *
+     * @param map
+     */
     public void exportTo(final Map map) {
         VariantContext variantContext = this.vars.getCurrentContext();
         if (variantContext != null) {

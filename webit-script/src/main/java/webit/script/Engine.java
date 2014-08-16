@@ -441,7 +441,9 @@ public final class Engine {
     }
 
     /**
+     * Create a Engine with default configPath.
      *
+     * @return
      * @since 1.5.0
      */
     public static Engine create() {
@@ -449,7 +451,10 @@ public final class Engine {
     }
 
     /**
+     * Create a Engine with given configPath.
      *
+     * @param configPath
+     * @return
      * @since 1.5.0
      */
     public static Engine create(final String configPath) {
@@ -457,7 +462,11 @@ public final class Engine {
     }
 
     /**
+     * Create a Engine with given configPath and extra-parameters.
      *
+     * @param configPath
+     * @param parameters
+     * @return
      * @since 1.5.0
      */
     public static Engine create(final String configPath, final Map<String, Object> parameters) {
@@ -465,7 +474,11 @@ public final class Engine {
     }
 
     /**
+     * Create a Engine with given baseProps and extra-parameters.
      *
+     * @param props
+     * @param parameters
+     * @return
      * @since 1.5.0
      */
     public static Engine create(final Props props, final Map<String, Object> parameters) {
