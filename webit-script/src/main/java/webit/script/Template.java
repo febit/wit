@@ -26,10 +26,11 @@ public final class Template {
     public final Engine engine;
     public final String name;
     public final Resource resource;
-    private TemplateAST templateAST;
-    private long lastModified;
-    //
+
     private final Object reloadLock = new Object();
+
+    private TemplateAST ast;
+    private long lastModified;
 
     Template(Engine engine, String name, Resource resource) {
         this.engine = engine;
@@ -44,19 +45,19 @@ public final class Template {
      * @throws ParseException
      */
     public void reload() throws ParseException {
-        parseAST(true);
+        parse(true);
     }
 
-    private TemplateAST parseAST(boolean force) throws ParseException {
-        TemplateAST tmpl;
+    private TemplateAST parse(boolean force) throws ParseException {
+        TemplateAST ast = this.ast;
         synchronized (this.reloadLock) {
-            if (force || (tmpl = this.templateAST) == null || this.resource.isModified()) {
-                tmpl = this.templateAST
-                        = new Parser().parseTemplate(this);
+            if (force || ast == null || this.resource.isModified()) {
+                ast = new Parser().parseTemplate(this);
+                this.ast = ast;
                 this.lastModified = System.currentTimeMillis();
             }
         }
-        return tmpl;
+        return ast;
     }
 
     /**
@@ -179,27 +180,6 @@ public final class Template {
     /**
      * Merge this template.
      *
-     * @param root
-     * @param out
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final KeyValues root, final Out out) throws ScriptRuntimeException, ParseException {
-        try {
-            TemplateAST tmpl;
-            if ((tmpl = this.templateAST) == null || this.resource.isModified()) {
-                tmpl = parseAST(false);
-            }
-            return tmpl.execute(new Context(this, out, root));
-        } catch (Exception e) {
-            throw wrapException(e);
-        }
-    }
-
-    /**
-     * Merge this template.
-     *
      * @since 1.4.0
      * @param out
      * @return Context
@@ -208,6 +188,27 @@ public final class Template {
      */
     public Context merge(final Out out) throws ScriptRuntimeException, ParseException {
         return this.merge(KeyValuesUtil.EMPTY_KEY_VALUES, out);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param root
+     * @param out
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge(final KeyValues root, final Out out) throws ScriptRuntimeException, ParseException {
+        try {
+            TemplateAST ast = this.ast;
+            if (ast == null || this.resource.isModified()) {
+                ast = parse(false);
+            }
+            return ast.execute(new Context(this, out, root));
+        } catch (Exception e) {
+            throw completeException(e);
+        }
     }
 
     /**
@@ -222,23 +223,23 @@ public final class Template {
      */
     public Context mergeForInlude(final Context parent, KeyValues params) throws ScriptRuntimeException, ParseException {
         try {
-            TemplateAST tmpl;
-            if ((tmpl = this.templateAST) == null || this.resource.isModified()) {
-                tmpl = parseAST(false);
+            TemplateAST ast = this.ast;
+            if (ast == null || this.resource.isModified()) {
+                ast = parse(false);
             }
-            return tmpl.execute(new Context(parent, this, params));
+            return ast.execute(new Context(parent, this, params));
         } catch (Exception e) {
-            throw wrapException(e);
+            throw completeException(e);
         }
     }
 
     public void reset() {
-        templateAST = null;
-        lastModified = 0;
+        this.ast = null;
+        this.lastModified = 0;
     }
 
     public long getLastModified() {
-        return lastModified;
+        return this.lastModified;
     }
 
     @Override
@@ -251,18 +252,17 @@ public final class Template {
         if (obj == this) {
             return true;
         }
-        if (obj == null || obj.getClass() != Template.class) {
+        if (obj == null || !(obj instanceof Template)) {
             return false;
         }
         Template other = (Template) obj;
-        return (this.engine == other.engine) && (this.name.equals(other.name));
+        return this.engine == other.engine
+                && this.name.equals(other.name);
     }
 
-    private UncheckedException wrapException(final Exception exception) {
-        if (exception instanceof UncheckedException) {
-            return ((UncheckedException) exception).setTemplate(this);
-        } else {
-            return new ScriptRuntimeException(exception).setTemplate(this);
-        }
+    private UncheckedException completeException(final Exception exception) {
+        return (exception instanceof UncheckedException)
+                ? ((UncheckedException) exception).setTemplate(this)
+                : new ScriptRuntimeException(exception).setTemplate(this);
     }
 }
