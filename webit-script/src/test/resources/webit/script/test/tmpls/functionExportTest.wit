@@ -1,0 +1,29 @@
+<%
+
+var plus = function(a, b){
+    return a+b;
+};
+
+var count = 0;
+
+var counter = function(){
+    return count ++;
+};
+
+var counter2;
+
+{
+    var count2 = 0;
+
+    counter2 = function(){
+        return count2 ++;
+    };
+}
+
+var str_len = native String.length();
+
+var print = function(msg){
+    echo msg;
+};
+
+%>

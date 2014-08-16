@@ -32,6 +32,10 @@ public final class OutputStreamOut implements Out {
     public OutputStreamOut(OutputStream outputStream, Engine engine) {
         this(outputStream, engine.getEncoding(), engine.getCoderFactory());
     }
+    
+    public OutputStreamOut(OutputStream outputStream, String encoding, Engine engine) {
+        this(outputStream, encoding, engine.getCoderFactory());
+    }
 
     public OutputStreamOut(OutputStream outputStream, String encoding, CoderFactory coderFactory) {
         this(outputStream, encoding, coderFactory.newEncoder(encoding));

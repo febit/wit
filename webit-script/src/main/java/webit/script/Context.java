@@ -7,7 +7,9 @@ import webit.script.core.VariantIndexer;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.runtime.VariantContext;
 import webit.script.core.runtime.VariantStack;
+import webit.script.exceptions.NotFunctionException;
 import webit.script.io.Out;
+import webit.script.method.MethodDeclare;
 import webit.script.resolvers.ResolverManager;
 import webit.script.util.ScriptVoid;
 import webit.script.util.collection.ArrayStack;
@@ -22,14 +24,13 @@ import webit.script.util.keyvalues.KeyValuesUtil;
 public final class Context {
 
     public static final ScriptVoid VOID = new ScriptVoid();
-    //
+
     private Out out;
     private Stack<Out> outStack;
     private Map<Object, Object> localMap;
     public final Context topContext;
     public final KeyValues rootValues;
     public final String encoding;
-    //
     public final LoopCtrl loopCtrl;
     public final VariantStack vars;
     public final Template template;
@@ -99,7 +100,6 @@ public final class Context {
      * @deprecated
      */
     public void popOut() {
-        //checkOutStack();
         this.out = this.outStack.pop();
     }
 
@@ -128,7 +128,6 @@ public final class Context {
     public void out(final Object object) {
         if (object != null) {
             if (object.getClass() == String.class) {
-                //if (object instanceof String) {
                 this.out.write((String) object);
             } else {
                 this.resolverManager.render(this.out, object);
@@ -148,6 +147,22 @@ public final class Context {
         } else {
             (this.localMap = new HashMap<Object, Object>()).put(key, value);
         }
+    }
+
+    public Object export(String name) {
+        VariantContext variantContext = this.vars.getCurrentContext();
+        if (variantContext != null) {
+            return variantContext.get(name);
+        }
+        return null;
+    }
+
+    public Function exportFunction(String name) throws NotFunctionException {
+        Object func = export(name);
+        if (func != null && func instanceof MethodDeclare) {
+            return new Function(this.template, (MethodDeclare) func, this.encoding, this.out.isByteStream());
+        }
+        throw new NotFunctionException(func);
     }
 
     public void exportTo(final Map map) {
