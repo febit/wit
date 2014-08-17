@@ -1,7 +1,6 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -343,6 +342,9 @@ public class StringUtil {
     public static String format(String template, Object... array) {
         if (template == null) {
             return null;
+        }
+        if (template.indexOf('{') <0) {
+            return template;
         }
         StringBuilder result = new StringBuilder(template.length());
         int i = 0;
