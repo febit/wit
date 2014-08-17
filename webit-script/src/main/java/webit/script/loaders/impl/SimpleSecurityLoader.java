@@ -4,7 +4,6 @@ package webit.script.loaders.impl;
 import java.util.ArrayList;
 import webit.script.Engine;
 import webit.script.Initable;
-import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.loaders.Loader;
 import webit.script.loaders.Resource;
 import webit.script.loaders.impl.resources.NotFoundResource;

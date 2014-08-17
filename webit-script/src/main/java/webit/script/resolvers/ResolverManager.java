@@ -10,7 +10,7 @@ import webit.script.io.Out;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.impl.CommonResolver;
 import webit.script.util.ClassEntry;
-import webit.script.util.collection.ClassIdentityHashMap;
+import webit.script.util.ClassMap;
 
 /**
  *
@@ -20,9 +20,9 @@ public final class ResolverManager implements Initable {
 
     private Logger logger;
     //
-    private final ClassIdentityHashMap<GetResolver> getResolverMap;
-    private final ClassIdentityHashMap<SetResolver> setResolverMap;
-    private final ClassIdentityHashMap<OutResolver> outResolverMap;
+    private final ClassMap<GetResolver> getResolverMap;
+    private final ClassMap<SetResolver> setResolverMap;
+    private final ClassMap<OutResolver> outResolverMap;
     //
     private final ArrayList<GetResolver> getResolvers;
     private final ArrayList<SetResolver> setResolvers;
@@ -39,9 +39,9 @@ public final class ResolverManager implements Initable {
     //
 
     public ResolverManager() {
-        getResolverMap = new ClassIdentityHashMap<GetResolver>();
-        setResolverMap = new ClassIdentityHashMap<SetResolver>();
-        outResolverMap = new ClassIdentityHashMap<OutResolver>();
+        getResolverMap = new ClassMap<GetResolver>();
+        setResolverMap = new ClassMap<SetResolver>();
+        outResolverMap = new ClassMap<OutResolver>();
 
         getResolvers = new ArrayList<GetResolver>();
         setResolvers = new ArrayList<SetResolver>();

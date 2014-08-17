@@ -14,7 +14,6 @@ import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.core.runtime.VariantStack;
-import webit.script.method.MethodDeclare;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatementUtil;
 import webit.script.util.iter.Iter;

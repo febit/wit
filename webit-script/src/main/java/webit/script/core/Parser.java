@@ -13,7 +13,7 @@ import webit.script.exceptions.ParseException;
 import webit.script.util.ALU;
 import webit.script.util.ClassNameBand;
 import webit.script.util.StatementUtil;
-import webit.script.util.collection.Stack;
+import webit.script.util.Stack;
 
 /**
  * 

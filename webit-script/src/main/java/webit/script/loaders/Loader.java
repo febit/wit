@@ -1,8 +1,6 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.loaders;
 
-import webit.script.exceptions.ResourceNotFoundException;
-
 public interface Loader {
 
     /**

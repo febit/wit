@@ -5,9 +5,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import webit.script.util.ClassMap;
 import webit.script.util.ClassUtil;
 import webit.script.util.StringUtil;
-import webit.script.util.collection.ClassIdentityHashMap;
 
 /**
  *
@@ -15,7 +15,7 @@ import webit.script.util.collection.ClassIdentityHashMap;
  */
 public class BeanUtil {
 
-    private final static ClassIdentityHashMap<FieldDescriptorsBox> CACHE = new ClassIdentityHashMap<FieldDescriptorsBox>();
+    private final static ClassMap<FieldDescriptorsBox> CACHE = new ClassMap<FieldDescriptorsBox>();
 
     public static Object get(final Object bean, final String name) throws BeanUtilException {
 

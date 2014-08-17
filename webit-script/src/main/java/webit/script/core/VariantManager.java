@@ -8,9 +8,8 @@ import java.util.TreeSet;
 import webit.script.Engine;
 import webit.script.exceptions.ParseException;
 import webit.script.global.GlobalManager;
+import webit.script.util.Stack;
 import webit.script.util.StringUtil;
-import webit.script.util.collection.ArrayStack;
-import webit.script.util.collection.Stack;
 
 /**
  *
@@ -26,7 +25,7 @@ public class VariantManager {
 
     @SuppressWarnings("unchecked")
     public VariantManager(Engine engine) {
-        this.varWallStack = new ArrayStack<VarWall>();
+        this.varWallStack = new Stack<VarWall>();
         this.globalManager = engine.getGlobalManager();
 
         this.elements = new VarIndexer[10];

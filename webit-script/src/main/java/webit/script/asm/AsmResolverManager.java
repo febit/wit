@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.asm;
 
-import webit.script.util.collection.ClassIdentityHashMap;
+import webit.script.util.ClassMap;
 
 /**
  *
@@ -9,7 +9,7 @@ import webit.script.util.collection.ClassIdentityHashMap;
  */
 public class AsmResolverManager {
 
-    private final static ClassIdentityHashMap<AsmResolverBox> asmResolversMap = new ClassIdentityHashMap<AsmResolverBox>();
+    private final static ClassMap<AsmResolverBox> asmResolversMap = new ClassMap<AsmResolverBox>();
 
     public static AsmResolver getAsmResolver(Class type) throws Exception {
         AsmResolverBox box;

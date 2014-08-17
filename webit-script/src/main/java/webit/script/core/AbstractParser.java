@@ -19,12 +19,11 @@ import webit.script.exceptions.ParseException;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ExceptionUtil;
 import webit.script.util.StreamUtil;
-import webit.script.util.collection.ArrayStack;
 import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
 import webit.script.util.StatementUtil;
 import webit.script.util.StringUtil;
-import webit.script.util.collection.Stack;
+import webit.script.util.Stack;
 
 /**
  *
@@ -54,7 +53,7 @@ abstract class AbstractParser {
     int currentLabelIndex;
 
     AbstractParser() {
-        this._stack = new ArrayStack<Symbol>(STACK_INITIAL_CAPACITY);
+        this._stack = new Stack<Symbol>(STACK_INITIAL_CAPACITY);
     }
 
     /**

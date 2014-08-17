@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.util.collection;
+package webit.script.util;
 
-public final class ClassIdentityHashMap<V> {
+public final class ClassMap<V> {
 
     private static final int DEFAULT_CAPACITY = 64;
     private static final int MINIMUM_CAPACITY = 4;
@@ -12,7 +12,7 @@ public final class ClassIdentityHashMap<V> {
 
     private final Object lock = new Object();
 
-    public ClassIdentityHashMap(int initialCapacity) {
+    public ClassMap(int initialCapacity) {
 
         int initlen;
         if (initialCapacity > MAXIMUM_CAPACITY || initialCapacity < 0) {
@@ -26,7 +26,7 @@ public final class ClassIdentityHashMap<V> {
         init(initlen);
     }
 
-    public ClassIdentityHashMap() {
+    public ClassMap() {
         init(DEFAULT_CAPACITY);
     }
 

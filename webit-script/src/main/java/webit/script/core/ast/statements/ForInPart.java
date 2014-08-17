@@ -4,9 +4,7 @@ package webit.script.core.ast.statements;
 import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
-import webit.script.core.ast.StatementList;
 import webit.script.core.ast.expressions.FunctionDeclare;
-import webit.script.core.ast.expressions.LambdaPart;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;
 

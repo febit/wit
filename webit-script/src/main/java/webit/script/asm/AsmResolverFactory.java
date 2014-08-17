@@ -17,7 +17,6 @@ import webit.script.util.ClassUtil;
 import webit.script.util.StringUtil;
 import webit.script.util.bean.FieldInfo;
 import webit.script.util.bean.FieldInfoResolver;
-import webit.script.util.collection.IntArrayList;
 
 /**
  *
@@ -301,13 +300,15 @@ public class AsmResolverFactory {
             final Map<Integer, FieldInfo[]> groupByHashcode = new HashMap<Integer, FieldInfo[]>();
 
             final List<FieldInfo> cacheList = new ArrayList<FieldInfo>(size);
-            final IntArrayList hashList = new IntArrayList(size);
+            final int [] hashs = new int[size];
+            
+            int hashsCount = 0;
 
             int hash;
             FieldInfo fieldInfo;
 
             cacheList.add(fieldInfo = all[0]);
-            hashList.add(hash = fieldInfo.hashCode);
+            hashs[hashsCount++] = hash = fieldInfo.hashCode;
 
             int i = 1;
             while (i < size) {
@@ -318,12 +319,12 @@ public class AsmResolverFactory {
                     groupByHashcode.put(hash, cacheList.toArray(new FieldInfo[cacheList.size()]));
                     cacheList.clear();
                     cacheList.add(fieldInfo);
-                    hashList.add(hash = fieldInfo.hashCode);
+                    hashs[hashsCount++] = hash = fieldInfo.hashCode;
                 }
             }
             groupByHashcode.put(hash, cacheList.toArray(new FieldInfo[cacheList.size()]));
 
-            return new FieldsDescription(all, size, hashList.toArray(), groupByHashcode);
+            return new FieldsDescription(all, size, Arrays.copyOf(hashs, hashsCount), groupByHashcode);
         } else {
             return new FieldsDescription(all, size, null, null);
         }

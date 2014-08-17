@@ -12,8 +12,7 @@ import webit.script.io.Out;
 import webit.script.method.MethodDeclare;
 import webit.script.resolvers.ResolverManager;
 import webit.script.util.ScriptVoid;
-import webit.script.util.collection.ArrayStack;
-import webit.script.util.collection.Stack;
+import webit.script.util.Stack;
 import webit.script.util.keyvalues.KeyValues;
 import webit.script.util.keyvalues.KeyValuesUtil;
 
@@ -88,7 +87,7 @@ public final class Context {
     public void pushOut(Out out) {
         Stack<Out> stack;
         if ((stack = this.outStack) == null) {
-            stack = this.outStack = new ArrayStack<Out>(5);
+            stack = this.outStack = new Stack<Out>(5);
         }
         stack.push(this.out);
         this.out = out;

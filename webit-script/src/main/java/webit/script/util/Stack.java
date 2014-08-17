@@ -1,23 +1,21 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.util.collection;
-
-import webit.script.util.StringUtil;
+package webit.script.util;
 
 /**
  *
  * @author Zqq
  */
-public final class ArrayStack<T> implements Stack<T> {
+public final class Stack<T> {
 
     private Object[] elements;
     private int size;
     public final static int initialCapacity = 16;
 
-    public ArrayStack() {
+    public Stack() {
         this(initialCapacity);
     }
 
-    public ArrayStack(int initialCapacity) {
+    public Stack(int initialCapacity) {
         elements = new Object[initialCapacity];
         size = 0;
     }

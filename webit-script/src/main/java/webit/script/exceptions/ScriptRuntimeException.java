@@ -2,8 +2,7 @@
 package webit.script.exceptions;
 
 import webit.script.core.ast.Statement;
-import webit.script.util.collection.ArrayStack;
-import webit.script.util.collection.Stack;
+import webit.script.util.Stack;
 
 /**
  *
@@ -11,7 +10,7 @@ import webit.script.util.collection.Stack;
  */
 public class ScriptRuntimeException extends UncheckedException {
 
-    private final Stack<Statement> statementStack = new ArrayStack<Statement>(8);
+    private final Stack<Statement> statementStack = new Stack<Statement>(8);
 
     public final ScriptRuntimeException registStatement(Statement statement) {
         statementStack.push(statement);
