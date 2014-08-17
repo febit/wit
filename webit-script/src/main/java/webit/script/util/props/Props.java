@@ -395,8 +395,8 @@ public final class Props /* implements Cloneable */ {
 //            synchronized (this) {
 //                if (initialized == false) {
 
-            data.resolveMacros();
             resolveActiveProfiles();
+            data.resolveMacros(activeProfiles);
 
             initialized = true;
         }

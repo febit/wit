@@ -24,7 +24,7 @@ class StringTemplateParser {
      */
     static String parse(String template, MacroResolver macroResolver) {
 
-        if (template.indexOf(macroStart) < 0) {
+        if (!template.contains(macroStart)) {
             return template;
         }
 

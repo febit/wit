@@ -185,17 +185,16 @@ final class PropsData {
      */
     String lookupValue(final String key, final String... profiles) {
         if (profiles != null) {
-            nextprofile:
             for (String profile : profiles) {
                 while (true) {
                     final Map<String, PropsEntry> profileMap = this.profileProperties.get(profile);
-                    if (profileMap == null) {
-                        continue nextprofile;
+                    if (profileMap != null) {
+                        final PropsEntry value = profileMap.get(key);
+                        if (value != null) {
+                            return value.getValue();
+                        }
                     }
-                    final PropsEntry value = profileMap.get(key);
-                    if (value != null) {
-                        return value.getValue();
-                    }
+                    // go back with profile
                     final int ndx = profile.lastIndexOf('.');
                     if (ndx == -1) {
                         break;
@@ -211,7 +210,7 @@ final class PropsData {
     /**
      * Resolves all macros in this props set. Called once on initialization.
      */
-    void resolveMacros() {
+    void resolveMacros(String[] activeProfiles) {
         // create string template pareser that will be used internally
         //StringTemplateParser stringTemplateParser = new StringTemplateParser();
         //stringTemplateParser.setResolveEscapes(false);
@@ -225,12 +224,10 @@ final class PropsData {
         // start parsing
         int loopCount = 0;
         while (loopCount++ < MAX_INNER_MACROS) {
-            boolean replaced = resolveMacros(this.baseProperties, null);
+            boolean replaced = resolveMacros(this.baseProperties, activeProfiles);
 
             for (final Map.Entry<String, Map<String, PropsEntry>> entry : profileProperties.entrySet()) {
-                String profile = entry.getKey();
-
-                replaced = resolveMacros(entry.getValue(), profile) || replaced;
+                replaced = resolveMacros(entry.getValue(), activeProfiles) || replaced;
             }
 
             if (!replaced) {
@@ -239,12 +236,12 @@ final class PropsData {
         }
     }
 
-    private boolean resolveMacros(final Map<String, PropsEntry> map, final String profile) {
+    private boolean resolveMacros(final Map<String, PropsEntry> map, final String[] profiles) {
         boolean replaced = false;
 
         final StringTemplateParser.MacroResolver macroResolver = new StringTemplateParser.MacroResolver() {
             public String resolve(String macroName) {
-                return lookupValue(macroName, profile);
+                return lookupValue(macroName, profiles);
             }
         };
 
