@@ -93,11 +93,7 @@ public class Assert {
     private static void plusAssertCount(Context context) {
         context = context.topContext;
         Integer count = (Integer) context.getLocalVar(ASSERT_COUNT_KEY);
-        if (count == null) {
-            context.setLocalVar(ASSERT_COUNT_KEY, 1);
-        } else {
-            context.setLocalVar(ASSERT_COUNT_KEY, count + 1);
-        }
+        context.setLocalVar(ASSERT_COUNT_KEY, count != null ? count + 1 : 0);
     }
 
     private static void assertObjectTrue(Object condition) {
@@ -131,12 +127,8 @@ public class Assert {
     }
 
     private static void assertEquals(Object expected, Object actual) {
-        if (expected == null && actual == null) {
-            return;
-        }
-        if (expected != null && expected.equals(actual)) {
-            return;
-        } else {
+        if ((expected == null && actual != null)
+                || (expected != null && !expected.equals(actual))) {
             failNotEquals(expected, actual);
         }
     }
