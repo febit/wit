@@ -11,44 +11,16 @@ import webit.script.util.StringUtil;
 /**
  * {@link Props} parser.
  */
-final class PropsParser /* implements Cloneable*/ {
-
-    private static final String PROFILE_LEFT = "<";
-    private static final String PROFILE_RIGHT = ">";
+final class PropsParser {
+    
     final PropsData propsData;
-
-    /**
-     * Value that will be inserted when escaping the new line.
-     */
-    private static final String escapeNewLineValue = "";
-
-//	/**
-//	 * Trims left the value.
-//	 */
-//	protected boolean valueTrimLeft = true;
-//
-//	/**
-//	 * Trims right the value.
-//	 */
-//	protected boolean valueTrimRight = true;
-    /**
-     * Defines if starting whitespaces when value is split in the new line
-     * should be ignored or not.
-     */
-    private static final boolean ignorePrefixWhitespacesOnNewLine = true;
-
-    /**
-     * Defines if multi-line values may be written using triple-quotes as in
-     * python.
-     */
-    private static final boolean multilineValues = true;
 
     /**
      * Don't include empty properties.
      */
     private boolean skipEmptyProps = true;
 
-    private boolean treatEmptyPropsAsNull = true;
+    private static final char[] MULTILINE_END = "'''".toCharArray();
 
     PropsParser() {
         this.propsData = new PropsData();
@@ -58,26 +30,6 @@ final class PropsParser /* implements Cloneable*/ {
         this.skipEmptyProps = skipEmptyProps;
     }
 
-//    public PropsParser(final PropsData propsData) {
-//        this.propsData = propsData;
-//    }
-//
-//    public PropsData getPropsData() {
-//        return propsData;
-//    }
-//	@Override
-//	public PropsParser clone() {
-//		final PropsParser pp = new PropsParser(this.propsData.clone());
-//
-//		pp.escapeNewLineValue = escapeNewLineValue;
-//		pp.valueTrimLeft = valueTrimLeft;
-//		pp.valueTrimRight = valueTrimRight;
-//		pp.ignorePrefixWhitespacesOnNewLine = ignorePrefixWhitespacesOnNewLine;
-//		pp.skipEmptyProps = skipEmptyProps;
-//		pp.multilineValues = multilineValues;
-//
-//		return pp;
-//	}
     /**
      * Parsing states.
      */
@@ -254,12 +206,7 @@ final class PropsParser /* implements Cloneable*/ {
 
                     case '\r':
                     case '\n':
-                        if ((state == ParseState.ESCAPE_NEWLINE) && (c == '\n')) {
-                            sb.append(escapeNewLineValue);
-                            if (ignorePrefixWhitespacesOnNewLine == false) {
-                                state = ParseState.VALUE;
-                            }
-                        } else {
+                        if ((state != ParseState.ESCAPE_NEWLINE) || (c != '\n')) {
                             add(currentSection, key, sb, true, operator);
                             sb.setLength(0);
                             key = null;
@@ -279,28 +226,26 @@ final class PropsParser /* implements Cloneable*/ {
                         sb.append(c);
                         state = ParseState.VALUE;
 
-                        if (multilineValues) {
-                            if (sb.length() == 3) {
+                        if (sb.length() == 3) {
 
-                                // check for ''' beginning
-                                if (sb.toString().equals("'''")) {
-                                    sb.setLength(0);
-                                    int endIndex = CharUtil.indexOf(in, MULTILINE_END, ndx);
-                                    if (endIndex == -1) {
-                                        endIndex = len;
-                                    }
-                                    sb.append(in, ndx, endIndex - ndx);
-
-                                    // append
-                                    add(currentSection, key, sb, false, operator);
-                                    sb.setLength(0);
-                                    key = null;
-                                    operator = Operator.ASSIGN;
-
-                                    // end of value, continue to text
-                                    state = ParseState.TEXT;
-                                    ndx = endIndex + 3;
+                            // check for ''' beginning
+                            if (sb.toString().equals("'''")) {
+                                sb.setLength(0);
+                                int endIndex = CharUtil.indexOf(in, MULTILINE_END, ndx);
+                                if (endIndex == -1) {
+                                    endIndex = len;
                                 }
+                                sb.append(in, ndx, endIndex - ndx);
+
+                                // append
+                                add(currentSection, key, sb, false, operator);
+                                sb.setLength(0);
+                                key = null;
+                                operator = Operator.ASSIGN;
+
+                                // end of value, continue to text
+                                state = ParseState.TEXT;
+                                ndx = endIndex + 3;
                             }
                         }
                 }
@@ -311,7 +256,6 @@ final class PropsParser /* implements Cloneable*/ {
             add(currentSection, key, sb, true, operator);
         }
     }
-    private static final char[] MULTILINE_END = "'''".toCharArray();
 
     /**
      * Adds accumulated value to key and current section.
@@ -336,13 +280,7 @@ final class PropsParser /* implements Cloneable*/ {
         String v = value.toString();
 
         if (trim) {
-//            if (valueTrimLeft && valueTrimRight) {
             v = v.trim();
-//            } else if (valueTrimLeft) {
-//                v = StringUtil.trimLeft(v);
-//            } else {
-//                v = StringUtil.trimRight(v);
-//            }
         }
 
         if (v.length() == 0 && skipEmptyProps) {
@@ -357,7 +295,7 @@ final class PropsParser /* implements Cloneable*/ {
      */
     private void extractProfilesAndAdd(final String key, final String value, final Operator operator) {
         String fullKey = key;
-        int ndx = fullKey.indexOf(PROFILE_LEFT);
+        int ndx = fullKey.indexOf('<'); //PROFILE_LEFT
         if (ndx == -1) {
             justAdd(fullKey, value, null, operator);
             return;
@@ -367,14 +305,14 @@ final class PropsParser /* implements Cloneable*/ {
         ArrayList<String> keyProfiles = new ArrayList<String>();
 
         while (true) {
-            ndx = fullKey.indexOf(PROFILE_LEFT);
+            ndx = fullKey.indexOf('<'); //PROFILE_LEFT
             if (ndx == -1) {
                 break;
             }
 
             final int len = fullKey.length();
 
-            int ndx2 = fullKey.indexOf(PROFILE_RIGHT, ndx + 1);
+            int ndx2 = fullKey.indexOf('>', ndx + 1); //PROFILE_RIGHT
             if (ndx2 == -1) {
                 ndx2 = len;
             }

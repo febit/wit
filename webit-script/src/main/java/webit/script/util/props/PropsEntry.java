@@ -10,7 +10,7 @@ final class PropsEntry {
      * Original value.
      */
     final String value;
-    
+
     final boolean append;
 
     /**
@@ -19,17 +19,9 @@ final class PropsEntry {
      */
     String resolved;
 
-//    PropsEntry next;
-
-    //private final String key;
-
-    //private final String profile;
-
     PropsEntry(final String key, final String value, String profile, boolean append) {
         this.value = value;
         this.append = append;
-        //this.key = key;
-        //this.profile = profile;
     }
 
     /**
@@ -38,24 +30,4 @@ final class PropsEntry {
     String getValue() {
         return resolved != null ? resolved : value;
     }
-//
-//    /**
-//     * Returns property key.
-//     */
-//    public String getKey() {
-//        return key;
-//    }
-//
-//    /**
-//     * Returns property profile or <code>null</code> if this is a base property.
-//     */
-//    public String getProfile() {
-//        return profile;
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return "PropsEntry{" + key + (profile != null ? '<' + profile + '>' : "") + '=' + value + (resolved == null ? "" : "}{" + resolved) + '}';
-//    }
-
 }

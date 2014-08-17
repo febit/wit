@@ -46,13 +46,12 @@ import webit.script.util.StringUtil;
  * base props context.
  * </ul>
  */
-public final class Props /* implements Cloneable */ {
+public final class Props {
 
-    private String activeProfilesProp = "@profiles";
     private final PropsParser parser;
     private final PropsData data;
     private String[] activeProfiles;
-    private volatile boolean initialized;
+    private boolean initialized;
 
     /**
      * Creates new props.
@@ -61,108 +60,10 @@ public final class Props /* implements Cloneable */ {
         this.data = (this.parser = new PropsParser()).propsData;
     }
 
-//	protected Props(final PropsParser parser) {
-//		this.parser = parser;
-//		this.data = parser.getPropsData();
-//	}
-//    /**
-//     * Clones props by creating new instance and copying current configuration.
-//     */
-//    @Override
-//    protected Props clone() {
-//        final PropsParser parser = this.parser.clone();
-//        final Props p = new Props(parser);
-//
-//        p.activeProfilesProp = activeProfilesProp;
-//        return p;
-//    }
-//
-//    /**
-//     * Returns active profiles or <code>null</code> if none defined.
-//     */
-//    public String[] getActiveProfiles() {
-//        initialize();
-//        return activeProfiles;
-//    }
-//    
-//    // ---------------------------------------------------------------- configuration
-//    /**
-//     * Sets new active profiles and overrides existing ones. By setting
-//     * <code>null</code>, no active profile will be set.
-//     * <pr>
-//     * Note that if some props file is loaded <b>after</b>
-//     * this method, it might override this value in the same way.
-//     */
-//    public void setActiveProfiles(final String... activeProfiles) {
-//        initialized = false;
-//        this.activeProfiles = activeProfiles;
-//    }
-//
-//    /**
-//     * Specifies the new line string when EOL is escaped. Default value is an
-//     * empty string.
-//     */
-//    public void setEscapeNewLineValue(final String escapeNewLineValue) {
-//        parser.escapeNewLineValue = escapeNewLineValue;
-//    }
-//
-//    /**
-//     * Specifies should the values be trimmed from the left. Default is
-//     * <code>true</code>.
-//     */
-//    public void setValueTrimLeft(final boolean valueTrimLeft) {
-//        parser.valueTrimLeft = valueTrimLeft;
-//    }
-//
-//    /**
-//     * Specifies should the values be trimmed from the right. Default is
-//     * <code>true</code>.
-//     */
-//    public void setValueTrimRight(final boolean valueTrimRight) {
-//        parser.valueTrimRight = valueTrimRight;
-//    }
-//
-//    /**
-//     * Defines if the prefix whitespaces should be ignored when value is split
-//     * into the lines.
-//     */
-//    public void setIgnorePrefixWhitespacesOnNewLine(final boolean ignorePrefixWhitespacesOnNewLine) {
-//        parser.ignorePrefixWhitespacesOnNewLine = ignorePrefixWhitespacesOnNewLine;
-//    }
-//
-//    /**
-//     * Skips empty properties as they don't exist.
-//     */
-//    public void setSkipEmptyProps(final boolean skipEmptyProps) {
-//        parser.skipEmptyProps = skipEmptyProps;
-//        data.skipEmptyProps = skipEmptyProps;
-//    }
-//
-//    /**
-//     * Appends duplicate props.
-//     */
-//    public void setAppendDuplicateProps(final boolean appendDuplicateProps) {
-//        data.appendDuplicateProps = appendDuplicateProps;
-//    }
-//
-//    /**
-//     * Ignore missing macros by replacing them with an empty string.
-//     */
-//    public void setIgnoreMissingMacros(boolean ignoreMissingMacros) {
-//        data.ignoreMissingMacros = ignoreMissingMacros;
-//    }
-//
-//	// ---------------------------------------------------------------- load
-//    /**
-//     * Enables multiline values.
-//     */
-//    public void setMultilineValues(final boolean multilineValues) {
-//        parser.multilineValues = multilineValues;
-//    }
     /**
      * Parses input string and loads provided properties map.
      */
-    private /* synchronized */ void parse(final char[] data) {
+    private void parse(final char[] data) {
         initialized = false;
         parser.parse(data);
     }
@@ -182,9 +83,6 @@ public final class Props /* implements Cloneable */ {
         data.merge(props.data);
     }
 
-//    public void removeBaseProperty(final String name) {
-//        data.removeBaseProperty(name);
-//    }
     public String getBaseProperty(final String name) {
         return data.getBaseProperty(name);
     }
@@ -200,116 +98,6 @@ public final class Props /* implements Cloneable */ {
     public void setSkipEmptyProps(boolean skipEmptyProps) {
         this.parser.setSkipEmptyProps(skipEmptyProps);
     }
-//    /**
-//     * Loads props from the file. Assumes UTF8 encoding unless the file ends
-//     * with '.properties', than it uses ISO 8859-1.
-//     */
-//    public void load(final File file) throws IOException {
-//        final String extension = FileNameUtil.getExtension(file.getAbsolutePath());
-//        final String data;
-//        if (extension.equalsIgnoreCase("properties")) {
-//            data = FileUtil.readString(file, StringPool.ISO_8859_1);
-//        } else {
-//            data = FileUtil.readString(file);
-//        }
-//        parse(data);
-//    }
-//
-//    /**
-//     * Loads properties from the file in provided encoding.
-//     */
-//    public void load(final File file, final String encoding) throws IOException {
-//        parse(FileUtil.readString(file, encoding));
-//    }
-//
-//    /**
-//     * Loads properties from input stream. Stream is not closed at the end.
-//     */
-//    public void load(final InputStream in) throws IOException {
-//        final Writer out = new FastCharArrayWriter();
-//        StreamUtil.copy(in, out);
-//        parse(out.toString());
-//    }
-//
-//    /**
-//     * Loads properties from input stream and provided encoding. Stream is not
-//     * closed at the end.
-//     */
-//    public void load(final InputStream in, final String encoding) throws IOException {
-//        final Writer out = new FastCharArrayWriter();
-//        StreamUtil.copy(in, out, encoding);
-//        parse(out.toString());
-//    }
-//
-//    /**
-//     * Loads base properties from the provided java properties. Null values are
-//     * ignored.
-//     */
-//    public void load(final Map<?, ?> p) {
-//        for (final Map.Entry<?, ?> entry : p.entrySet()) {
-//            final String name = entry.getKey().toString();
-//            final Object value = entry.getValue();
-//            if (value == null) {
-//                continue;
-//            }
-//            data.putBaseProperty(name, value.toString(), false);
-//        }
-//    }
-//
-//    /**
-//     * Loads base properties from java Map using provided prefix. Null values
-//     * are ignored.
-//     */
-//    @SuppressWarnings("unchecked")
-//    public void load(final Map<?, ?> map, final String prefix) {
-//        String realPrefix = prefix;
-//        realPrefix += '.';
-//        for (final Map.Entry entry : map.entrySet()) {
-//            final String name = entry.getKey().toString();
-//            final Object value = entry.getValue();
-//            if (value == null) {
-//                continue;
-//            }
-//            data.putBaseProperty(realPrefix + name, value.toString(), false);
-//        }
-//    }
-//
-//    /**
-//     * Loads system properties with given prefix. If prefix is <code>null</code>
-//     * it will not be ignored.
-//     */
-//    public void loadSystemProperties(final String prefix) {
-//        final Properties environmentProperties = System.getProperties();
-//        load(environmentProperties, prefix);
-//    }
-//
-//	// ---------------------------------------------------------------- props
-//    /**
-//     * Loads environment properties with given prefix. If prefix is
-//     * <code>null</code> it will not be used.
-//     */
-//    public void loadEnvironment(final String prefix) {
-//        final Map<String, String> environmentMap = System.getenv();
-//        load(environmentMap, prefix);
-//    }
-//
-//    /**
-//     * Counts the total number of properties, including all profiles. This
-//     * operation performs calculation each time and it might be more time
-//     * consuming then expected.
-//     */
-//    public int countTotalProperties() {
-//        return data.countBaseProperties() + data.countProfileProperties();
-//    }
-//    /**
-//     * Returns <code>string</code> value of base property. Returns
-//     * <code>null</code> if property doesn't exist.
-//     */
-//    @SuppressWarnings({"NullArgumentToVariableArgMethod"})
-//    public String getBaseValue(final String key) {
-//        return getValue(key, null);
-//    }
-//
 
     /**
      * Returns value of property, using active profiles.
@@ -318,43 +106,6 @@ public final class Props /* implements Cloneable */ {
         initialize();
         return data.lookupValue(key, activeProfiles);
     }
-//
-//       // ---------------------------------------------------------------- put
-//    /**
-//     * Returns <code>string</code> value of given profiles. If key is not found
-//     * under listed profiles, base properties will be searched. Returns
-//     * <code>null</code> if property doesn't exist.
-//     */
-//    public String getValue(final String key, final String... profiles) {
-//        initialize();
-//        return data.lookupValue(key, profiles);
-//    }
-//
-//    /**
-//     * Sets default value.
-//     */
-//    public void setValue(final String key, final String value) {
-//        setValue(key, value, null);
-//    }
-//
-//       // ---------------------------------------------------------------- extract
-//    /**
-//     * Sets value on some profile.
-//     */
-//    public void setValue(final String key, final String value, final String profile) {
-//        if (profile == null) {
-//            data.putBaseProperty(key, value, false);
-//        } else {
-//            data.putProfileProperty(key, value, profile, false);
-//        }
-//        initialized = false;
-//    }
-//    /**
-//     * Extract base props (no profiles).
-//     */
-//    public void extractBaseProps(final Map target) {
-//        extractProps(target, null);
-//    }
 
     /**
      * Extracts props belonging to active profiles.
@@ -364,44 +115,15 @@ public final class Props /* implements Cloneable */ {
         data.extract(target, activeProfiles, null);
     }
 
-//    /**
-//     * Extract props of given profiles.
-//     */
-//    public void extractProps(final Map target, final String... profiles) {
-//        initialize();
-//        data.extract(target, profiles, null);
-//    }
-//
-//    public void extractBaseSubProps(final Map target, final String... wildcardPatterns) {
-//        initialize();
-//        data.extract(target, null, wildcardPatterns);
-//    }
-//
-//    public void extractSubProps(final Map target, final String... wildcardPatterns) {
-//        initialize();
-//        data.extract(target, activeProfiles, wildcardPatterns);
-//    }
-//
-//    // ---------------------------------------------------------------- initialize
-//    public void extractSubProps(final Map target, final String[] profiles, final String[] wildcardPatterns) {
-//        initialize();
-//        data.extract(target, profiles, wildcardPatterns);
-//    }
     /**
      * Initializes props by replacing macros in values with the lookup values.
      */
     private void initialize() {
         if (initialized == false) {
-//            synchronized (this) {
-//                if (initialized == false) {
-
             resolveActiveProfiles();
             data.resolveMacros(activeProfiles);
-
             initialized = true;
         }
-//            }
-//        }
     }
 
     /**
@@ -409,12 +131,8 @@ public final class Props /* implements Cloneable */ {
      * defined, nothing happens. Otherwise,
      */
     private void resolveActiveProfiles() {
-//        if (activeProfilesProp == null) {
-//            activeProfiles = null;
-//            return;
-//        }
 
-        final String value = data.getBaseProperty(activeProfilesProp);
+        final String value = data.getBaseProperty("@profiles");
         if (value == null) {
             // no active profile set as the property, exit
             return;

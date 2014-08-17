@@ -9,29 +9,21 @@ package webit.script.util.props;
  */
 class StringTemplateParser {
 
-    // ---------------------------------------------------------------- properties
-    private final static boolean replaceMissingKey = true;
-    private final static String missingKeyReplacement = "";
-    private final static boolean resolveEscapes = true;
     private final static String macroStart = "${";
     private final static String macroEnd = "}";
-    private final static char escapeChar = '\\';
-    private final static boolean parseValues = false;
 
-    // ---------------------------------------------------------------- parse
     /**
      * Parses string template and replaces macros with resolved values.
      */
-    static String parse(String template, MacroResolver macroResolver) {
+    static String parse(String template, final MacroResolver macroResolver) {
 
         if (!template.contains(macroStart)) {
             return template;
         }
 
-        StringBuilder result = new StringBuilder(template.length());
-
         int i = 0;
         int len = template.length();
+        StringBuilder result = new StringBuilder(len);
 
         int startLen = macroStart.length();
         int endLen = macroEnd.length();
@@ -48,18 +40,15 @@ class StringTemplateParser {
             boolean escape = false;
             int count = 0;
 
-            while ((j >= 0) && (template.charAt(j) == escapeChar)) {
+            while ((j >= 0) && (template.charAt(j) == '\\')) {
                 escape = !escape;
                 if (escape) {
                     count++;
                 }
                 j--;
             }
-            if (resolveEscapes) {
-                result.append(template.substring(i, ndx - count));
-            } else {
-                result.append(template.substring(i, ndx));
-            }
+            result.append(template.substring(i, ndx - count));
+
             if (escape) {
                 result.append(macroStart);
                 i = ndx + startLen;
@@ -89,17 +78,10 @@ class StringTemplateParser {
             String value;
             value = macroResolver.resolve(name);
             if (value == null) {
-                value = replaceMissingKey
-                        ? missingKeyReplacement
-                        : template.substring(ndx1 - startLen, ndx2 + 1);
+                value = "";
             }
 
             if (ndx == ndx1) {
-                if (parseValues) {
-                    if (value.contains(macroStart)) {
-                        value = parse(value, macroResolver);
-                    }
-                }
                 result.append(value);
                 i = ndx2 + endLen;
             } else {
@@ -145,7 +127,6 @@ class StringTemplateParser {
         }
         return -1;
     }
-    // ---------------------------------------------------------------- resolver
 
     /**
      * Macro value resolver.
