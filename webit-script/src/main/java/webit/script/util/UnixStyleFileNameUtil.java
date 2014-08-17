@@ -29,7 +29,7 @@ public class UnixStyleFileNameUtil {
             int index;
             return (index = filename.lastIndexOf(UNIX_SEPARATOR)) >= 0
                     ? filename.substring(0, index + 1)
-                    : StringPool.EMPTY;
+                    : "";
         } else {
             return null;
         }

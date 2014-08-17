@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.util.CharUtil;
-import webit.script.util.StringPool;
 import webit.script.util.StringUtil;
 
 /**
@@ -323,7 +322,7 @@ final class PropsParser {
 
             // extract profile from key
             ndx2++;
-            final String right = (ndx2 == len) ? StringPool.EMPTY : fullKey.substring(ndx2);
+            final String right = (ndx2 == len) ? "" : fullKey.substring(ndx2);
             fullKey = fullKey.substring(0, ndx) + right;
         }
 

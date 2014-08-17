@@ -23,7 +23,6 @@ import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
 import webit.script.util.SimpleBag;
-import webit.script.util.StringPool;
 import webit.script.util.StringUtil;
 import webit.script.util.keyvalues.KeyValues;
 import webit.script.util.keyvalues.KeyValuesUtil;
@@ -447,7 +446,7 @@ public final class Engine {
      * @since 1.5.0
      */
     public static Engine create() {
-        return create(StringPool.EMPTY, null);
+        return create("", null);
     }
 
     /**

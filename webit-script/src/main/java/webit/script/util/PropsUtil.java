@@ -113,8 +113,8 @@ public class PropsUtil {
             if ((in = inputStreamResolver.openInputStream(path)) != null) {
                 try {
                     reader = new InputStreamReader(in, StringUtil.endsWithIgnoreCase(path, ".properties")
-                            ? StringPool.ISO_8859_1
-                            : StringPool.UTF_8);
+                            ? "ISO-8859-1"
+                            : "UTF-8");
 
                     charsBuffer.clear();
                     int read;
