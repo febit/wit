@@ -173,8 +173,8 @@ public final class Context {
      */
     public Function exportFunction(String name) throws NotFunctionException {
         Object func = export(name);
-        if (func != null && func instanceof MethodDeclare) {
-            return new Function(this.template, (MethodDeclare) func, this.encoding, this.out.isByteStream());
+        if (func instanceof MethodDeclare) {
+            return new Function(this.template, (MethodDeclare) func, this.encoding, this.isByteStream);
         }
         throw new NotFunctionException(func);
     }
