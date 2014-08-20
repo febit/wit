@@ -19,12 +19,11 @@ import webit.script.util.StringUtil;
  */
 public class RouteLoader implements Loader, Initable {
 
-    private static final char[] DELIMITERS = "\n\r,".toCharArray();
     protected String loaders;
     protected ClassEntry defaultLoader;
 
     protected Loader _defaultLoader;
-    protected LoaderEntry[] _loLoaderEntrys;
+    protected LoaderEntry[] _loaderEntrys;
     protected String[] _rules;
 
     public void init(final Engine engine) {
@@ -40,41 +39,37 @@ public class RouteLoader implements Loader, Initable {
 
     protected void initLoaderRoute(Engine engine) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (loaders != null) {
-            final String[] raws = StringUtil.splitc(this.loaders, DELIMITERS);
-            final List<String> rules = new ArrayList<String>();
+            final String[] raws = StringUtil.splitAndRemoveBlank(this.loaders);
+            final List<String> rules = new ArrayList<String>(raws.length);
             final Map<String, LoaderEntry> loaderMap = new HashMap<String, LoaderEntry>();
-            for (int i = 0, len = raws.length; i < len; i++) {
-                final String raw = raws[i].trim();
-                if (raw.length() > 0) {
-                    final int index = raw.indexOf(' ');
-                    if (index < 0) {
-                        throw new RuntimeException("Illegal rule: ".concat(raw));
-                    } else {
-                        final String rule = raw.substring(0, index);
-                        boolean inserted = false;
-                        for (int j = 0; j < rules.size(); j++) {
-                            if (rule.startsWith(rules.get(j))) {
-                                rules.add(j, rule);
-                                inserted = true;
-                                break;
-                            }
+            for (String raw : raws) {
+                final int index = raw.indexOf(' ');
+                if (index < 0) {
+                    throw new RuntimeException("Illegal rule: ".concat(raw));
+                } else {
+                    final String rule = raw.substring(0, index);
+                    boolean inserted = false;
+                    for (int j = 0; j < rules.size(); j++) {
+                        if (rule.startsWith(rules.get(j))) {
+                            rules.add(j, rule);
+                            inserted = true;
+                            break;
                         }
-                        if (inserted == false) {
-                            rules.add(rule);
-                        }
-                        loaderMap.put(rule,
-                                new LoaderEntry(rule, (Loader) engine.getComponent(
-                                                ClassEntry.wrap(
-                                                        raw.substring(index + 1).trim()))));
-
                     }
+                    if (!inserted) {
+                        rules.add(rule);
+                    }
+                    loaderMap.put(rule,
+                            new LoaderEntry(rule, (Loader) engine.getComponent(
+                                            ClassEntry.wrap(raw.substring(index + 1).trim()))));
+
                 }
             }
             final int size = rules.size();
             rules.toArray(this._rules = new String[size]);
-            this._loLoaderEntrys = new LoaderEntry[size];
+            this._loaderEntrys = new LoaderEntry[size];
             for (int i = 0; i < size; i++) {
-                this._loLoaderEntrys[i] = loaderMap.get(this._rules[i]);
+                this._loaderEntrys[i] = loaderMap.get(this._rules[i]);
             }
         } else {
             this._rules = new String[0];
@@ -85,7 +80,7 @@ public class RouteLoader implements Loader, Initable {
         final String[] rules;
         for (int i = 0, len = (rules = this._rules).length; i < len; i++) {
             if (resourceName.startsWith(rules[i])) {
-                return _loLoaderEntrys[i];
+                return _loaderEntrys[i];
             }
         }
         return null;

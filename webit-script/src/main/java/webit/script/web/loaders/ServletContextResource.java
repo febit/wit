@@ -8,7 +8,6 @@ import java.io.Reader;
 import javax.servlet.ServletContext;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.loaders.Resource;
-import webit.script.util.StreamUtil;
 
 /**
  *
@@ -31,8 +30,8 @@ public class ServletContextResource implements Resource {
     }
 
     public Reader openReader() throws IOException {
-        final InputStream in;
-        if ((in = servletContext.getResourceAsStream(path)) != null) {
+        final InputStream in = servletContext.getResourceAsStream(path);
+        if (in != null) {
             return new InputStreamReader(in, encoding);
         } else {
             throw new ResourceNotFoundException("Resource Not Found: ".concat(path));
@@ -43,10 +42,11 @@ public class ServletContextResource implements Resource {
      * @since 1.4.1
      */
     public boolean exists() {
-        final InputStream inputStream;
-        if ((inputStream = servletContext.getResourceAsStream(path)) != null) {
-            StreamUtil.close(inputStream);
-            return true;
+        try {
+            if (servletContext.getResource(path) != null) {
+                return true;
+            }
+        } catch (Exception ignore) {
         }
         return false;
     }

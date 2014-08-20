@@ -18,7 +18,6 @@ import webit.script.core.VariantManager.VarAddress;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ExceptionUtil;
-import webit.script.util.StreamUtil;
 import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
 import webit.script.util.StatementUtil;
@@ -448,16 +447,21 @@ abstract class AbstractParser {
     private static short[][] loadFromDataFile(String name) {
         ObjectInputStream in = null;
         try {
-            return (short[][]) (in = new ObjectInputStream(ClassLoaderUtil
-                    .getDefaultClassLoader()
-                    .getResourceAsStream(StringUtil.concat("webit/script/core/Parser$", name, ".data"))))
-                    .readObject();
+            in = new ObjectInputStream(ClassLoaderUtil.getDefaultClassLoader()
+                    .getResourceAsStream(StringUtil.concat("webit/script/core/Parser$", name, ".data")));
+            return (short[][]) in.readObject();
         } catch (IOException e) {
             throw new Error(e);
         } catch (ClassNotFoundException e) {
             throw new Error(e);
         } finally {
-            StreamUtil.close(in);
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ioex) {
+                    // ignore
+                }
+            }
         }
     }
 

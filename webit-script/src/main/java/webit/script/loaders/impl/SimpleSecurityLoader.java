@@ -48,14 +48,7 @@ public class SimpleSecurityLoader implements Loader, Initable {
     }
 
     public void setList(String list) {
-        String[] temp = StringUtil.splitc(list);
-        ArrayList<String> result = new ArrayList<String>(temp.length);
-        for (String string : temp) {
-            if ((string = string.trim()).length() != 0) {
-                result.add(string);
-            }
-        }
-        result.toArray(this.list = new String[result.size()]);
+        this.list = StringUtil.splitAndRemoveBlank(list);
     }
 
     public void setLoader(ClassEntry _loader) {

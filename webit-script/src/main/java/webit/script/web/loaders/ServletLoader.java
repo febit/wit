@@ -16,8 +16,8 @@ public class ServletLoader extends AbstractLoader{
 
     public Resource get(String path) {
         path = getRealPath(path);
-        final String filepath;
-        if ((filepath = servletContext.getRealPath(path)) != null) {
+        final String filepath = servletContext.getRealPath(path);
+        if (filepath != null) {
             return new FileResource(filepath, encoding);
         } else {
             return new ServletContextResource(path, encoding, servletContext);

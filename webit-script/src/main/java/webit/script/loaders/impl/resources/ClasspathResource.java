@@ -8,7 +8,6 @@ import java.io.Reader;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.loaders.Resource;
 import webit.script.util.ClassLoaderUtil;
-import webit.script.util.StreamUtil;
 
 /**
  *
@@ -28,12 +27,7 @@ public class ClasspathResource implements Resource {
      * @since 1.4.1
      */
     public boolean exists() {
-        final InputStream inputStream;
-        if ((inputStream = ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path)) != null) {
-            StreamUtil.close(inputStream);
-            return true;
-        }
-        return false;
+        return ClassLoaderUtil.getDefaultClassLoader().getResource(path) != null;
     }
 
     public boolean isModified() {
@@ -41,11 +35,12 @@ public class ClasspathResource implements Resource {
     }
 
     public Reader openReader() throws IOException {
-        final InputStream inputStream;
-        if ((inputStream = ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path)) != null) {
+        final InputStream in = ClassLoaderUtil.getDefaultClassLoader()
+                .getResourceAsStream(path);
+        if (in != null) {
             return encoding == null
-                    ? new InputStreamReader(inputStream)
-                    : new InputStreamReader(inputStream, encoding);
+                    ? new InputStreamReader(in)
+                    : new InputStreamReader(in, encoding);
         } else {
             throw new ResourceNotFoundException("Resource Not Found: ".concat(path));
         }
