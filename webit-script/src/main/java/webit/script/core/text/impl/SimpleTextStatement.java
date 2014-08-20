@@ -11,8 +11,8 @@ import webit.script.core.ast.Optimizable;
  */
 public final class SimpleTextStatement extends AbstractStatement implements Optimizable {
 
-    private final char[] text;
     private final String encoding;
+    private final char[] text;
     private final byte[] textBytes;
 
     public SimpleTextStatement(char[] chars, byte[] bytes, String encoding, int line, int column) {
@@ -25,7 +25,6 @@ public final class SimpleTextStatement extends AbstractStatement implements Opti
     public Object execute(final Context context) {
         if (context.isByteStream && encoding == context.encoding) {
             context.out(textBytes);
-            return null;
         } else {
             context.out(text);
         }
