@@ -11,12 +11,7 @@
     <artifactId>webit-script-servlet</artifactId>
     <packaging>jar</packaging>
     <version>1.5.0-SNAPSHOT</version>
-    
-    <properties>
-        <java.source.version>1.6</java.source.version>
-        <java.target.version>1.6</java.target.version>
-    </properties>
-    
+
     <name>Webit Script :: Servlet</name>
     <dependencies>
         <dependency>

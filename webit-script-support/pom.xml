@@ -11,7 +11,7 @@
     <artifactId>webit-script-support</artifactId>
     <packaging>pom</packaging>
     <version>1.5.0-SNAPSHOT</version>
-    
+
     <name>Webit Script Support</name>
     <modules>
         <module>support-servlet</module>
