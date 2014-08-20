@@ -2,7 +2,7 @@
 package webit.script.tools.type;
 
 import webit.script.Context;
-import webit.script.method.MethodDeclare;
+import webit.script.lang.MethodDeclare;
 import webit.script.util.ArrayUtil;
 
 /**

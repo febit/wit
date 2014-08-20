@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.github.zqq90.webit-script</groupId>
         <artifactId>script-parent</artifactId>
-        <version>1.4.0</version>
+        <version>1.5</version>
     </parent>
 
     <artifactId>webit-script-support</artifactId>
     <packaging>pom</packaging>
-    <version>1.4.1</version>
+    <version>1.5</version>
     
     <name>Webit Script Support</name>
     <modules>

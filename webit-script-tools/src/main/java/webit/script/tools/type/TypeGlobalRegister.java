@@ -3,7 +3,7 @@ package webit.script.tools.type;
 
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
-import webit.script.util.SimpleBag;
+import webit.script.lang.Bag;
 
 /**
  *
@@ -12,7 +12,7 @@ import webit.script.util.SimpleBag;
 public class TypeGlobalRegister implements GlobalRegister {
 
     public void regist(GlobalManager manager) {
-        final SimpleBag constBag = manager.getConstBag();
+        final Bag constBag = manager.getConstBag();
 
         constBag.set("is_array", TypeMethods.is_array);
         constBag.set("is_bool", TypeMethods.is_bool);

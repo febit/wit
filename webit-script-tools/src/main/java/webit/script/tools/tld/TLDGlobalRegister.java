@@ -7,11 +7,11 @@ import webit.script.Initable;
 import webit.script.core.NativeFactory;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
+import webit.script.lang.Bag;
+import webit.script.lang.MethodDeclare;
 import webit.script.loggers.Logger;
-import webit.script.method.MethodDeclare;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ClassUtil;
-import webit.script.util.SimpleBag;
 import webit.script.util.UnixStyleFileNameUtil;
 
 /**
@@ -39,7 +39,7 @@ public class TLDGlobalRegister implements GlobalRegister, Initable {
             logger.info("Load TLD file: "+ tld);
         }
 
-        final SimpleBag constBag = manager.getConstBag();
+        final Bag constBag = manager.getConstBag();
 
         try {
             TLDFunction[] functions = TLDDocumentParser.parse(inputStream);
