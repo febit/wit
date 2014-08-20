@@ -18,7 +18,7 @@ import webit.script.util.props.Props;
  */
 public class ServletEngineUtil {
 
-    private static final String DEFAULT_WEB_PROPERTIES = "/webit-script-default-web.props";
+    private static final String DEFAULT_WEB_PROPERTIES = "/webit-script-servlet.props";
     private static final String WEB_ROOT_PREFIX = "%WEB_ROOT%/";
 
     public static Engine createEngine(final ServletContext servletContext, final String configFiles) {
@@ -35,7 +35,7 @@ public class ServletEngineUtil {
         if (extraSettings != null) {
             settings.putAll(extraSettings);
         }
-        return Engine.createEngine(props, settings);
+        return Engine.create(props, settings);
     }
 
     public static Props loadFromServletContextPath(final Props props, final ServletContext servletContext, final String... paths) {
