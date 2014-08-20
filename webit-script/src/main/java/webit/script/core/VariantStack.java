@@ -1,8 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.core.runtime;
+package webit.script.core;
 
 import java.util.Map;
-import webit.script.core.VariantIndexer;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.KeyValues;
 

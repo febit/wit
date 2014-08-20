@@ -3,18 +3,18 @@ package webit.script;
 
 import java.util.HashMap;
 import java.util.Map;
+import webit.script.core.VariantContext;
 import webit.script.core.VariantIndexer;
+import webit.script.core.VariantStack;
 import webit.script.core.ast.loop.LoopCtrl;
-import webit.script.core.runtime.VariantContext;
-import webit.script.core.runtime.VariantStack;
 import webit.script.exceptions.NotFunctionException;
 import webit.script.io.Out;
-import webit.script.lang.MethodDeclare;
-import webit.script.resolvers.ResolverManager;
-import webit.script.lang.Void;
-import webit.script.util.Stack;
 import webit.script.lang.KeyValues;
+import webit.script.lang.MethodDeclare;
+import webit.script.lang.Void;
+import webit.script.resolvers.ResolverManager;
 import webit.script.util.KeyValuesUtil;
+import webit.script.util.Stack;
 
 /**
  *

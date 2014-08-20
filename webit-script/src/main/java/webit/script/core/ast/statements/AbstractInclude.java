@@ -8,9 +8,9 @@ import webit.script.Template;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.util.StatementUtil;
 import webit.script.lang.KeyValues;
 import webit.script.util.KeyValuesUtil;
+import webit.script.util.StatementUtil;
 
 /**
  *

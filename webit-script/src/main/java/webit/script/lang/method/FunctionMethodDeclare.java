@@ -3,8 +3,8 @@ package webit.script.lang.method;
 
 import webit.script.Context;
 import webit.script.Template;
+import webit.script.core.VariantContext;
 import webit.script.core.ast.expressions.FunctionDeclare;
-import webit.script.core.runtime.VariantContext;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.MethodDeclare;
 import webit.script.util.ExceptionUtil;

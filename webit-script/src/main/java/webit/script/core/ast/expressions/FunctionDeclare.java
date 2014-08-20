@@ -2,11 +2,11 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
+import webit.script.core.VariantContext;
 import webit.script.core.VariantIndexer;
+import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Statement;
-import webit.script.core.runtime.VariantContext;
-import webit.script.core.runtime.VariantStack;
 import webit.script.lang.method.FunctionMethodDeclare;
 import webit.script.util.StatementUtil;
 

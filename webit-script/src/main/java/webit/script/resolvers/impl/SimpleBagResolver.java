@@ -1,10 +1,10 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.resolvers.impl;
 
+import webit.script.lang.Bag;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
-import webit.script.lang.Bag;
 
 /**
  *

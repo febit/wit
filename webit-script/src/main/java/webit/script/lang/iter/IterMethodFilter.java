@@ -1,8 +1,8 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.lang.iter;
 
-import webit.script.lang.Iter;
 import webit.script.Context;
+import webit.script.lang.Iter;
 import webit.script.lang.MethodDeclare;
 import webit.script.util.ALU;
 

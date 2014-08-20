@@ -3,15 +3,15 @@ package webit.script.core.ast.statements;
 
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
+import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.expressions.FunctionDeclare;
-import webit.script.core.runtime.VariantStack;
-import webit.script.util.CollectionUtil;
-import webit.script.util.StatementUtil;
 import webit.script.lang.Iter;
 import webit.script.lang.iter.IterMethodFilter;
+import webit.script.util.CollectionUtil;
+import webit.script.util.StatementUtil;
 
 /**
  *

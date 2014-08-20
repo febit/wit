@@ -3,10 +3,10 @@ package webit.script.core.ast.statements;
 
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
+import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
-import webit.script.core.runtime.VariantStack;
 import webit.script.util.ALU;
 import webit.script.util.StatementUtil;
 

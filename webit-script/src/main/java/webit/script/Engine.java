@@ -13,6 +13,8 @@ import webit.script.global.GlobalManager;
 import webit.script.io.Out;
 import webit.script.io.charset.CoderFactory;
 import webit.script.io.impl.DiscardOut;
+import webit.script.lang.Bag;
+import webit.script.lang.KeyValues;
 import webit.script.loaders.Loader;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.ResolverManager;
@@ -20,12 +22,10 @@ import webit.script.security.NativeSecurityManager;
 import webit.script.util.ClassEntry;
 import webit.script.util.ClassUtil;
 import webit.script.util.EncodingPool;
+import webit.script.util.KeyValuesUtil;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
-import webit.script.lang.Bag;
 import webit.script.util.StringUtil;
-import webit.script.lang.KeyValues;
-import webit.script.util.KeyValuesUtil;
 import webit.script.util.props.Props;
 
 /**

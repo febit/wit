@@ -2,10 +2,10 @@
 package webit.script.resolvers.impl;
 
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.lang.SimpleUnsetableBag;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
-import webit.script.lang.SimpleUnsetableBag;
 
 /**
  *

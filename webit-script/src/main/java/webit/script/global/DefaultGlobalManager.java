@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import webit.script.Engine;
 import webit.script.Initable;
-import webit.script.util.ClassEntry;
 import webit.script.lang.Bag;
+import webit.script.util.ClassEntry;
 
 /**
  *

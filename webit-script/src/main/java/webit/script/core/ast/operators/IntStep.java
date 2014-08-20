@@ -5,10 +5,10 @@ import webit.script.Context;
 import webit.script.core.ast.BinaryOperator;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.util.StatementUtil;
-import webit.script.util.StringUtil;
 import webit.script.lang.iter.IntegerAscStepIter;
 import webit.script.lang.iter.IntegerDescStepIter;
+import webit.script.util.StatementUtil;
+import webit.script.util.StringUtil;
 
 /**
  *
