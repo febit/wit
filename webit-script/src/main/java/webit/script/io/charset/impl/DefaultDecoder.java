@@ -28,7 +28,7 @@ public class DefaultDecoder implements Decoder {
 
     public void write(final byte[] bytes, final int offset, final int length, final Writer writer) throws IOException {
         if (bytes != null && length != 0) {
-            final char[] chars; //new byte[new_len];
+            final char[] chars;
             final CharsetDecoder decoder;
             final CharBuffer cb;
             (decoder = this.charsetDecoder).reset().decode(

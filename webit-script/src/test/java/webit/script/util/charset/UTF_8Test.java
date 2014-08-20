@@ -37,7 +37,7 @@ public class UTF_8Test {
         
         byte[] src = string.getBytes("utf-8");
         
-        char [] buffer = new char[(int)(src.length * UTF_8.MAX_CHARS_PER_BYTE)];
+        char [] buffer = new char[(int)(src.length)];
 
         int used = UTF_8.decode(src, 0, src.length, buffer);
         

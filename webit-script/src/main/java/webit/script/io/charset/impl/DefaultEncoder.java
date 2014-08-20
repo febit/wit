@@ -10,7 +10,6 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.UnsupportedCharsetException;
 import webit.script.io.charset.Encoder;
 import webit.script.util.BufferPeers;
-//import sun.nio.cs.ArrayEncoder;
 
 /**
  *
@@ -37,7 +36,7 @@ public class DefaultEncoder implements Encoder {
 
     public void write(final char[] chars, final int offset, final int length, final OutputStream out) throws IOException {
         if (chars != null && length != 0) {
-            final byte[] bytes; //new byte[new_len];
+            final byte[] bytes;
             final CharsetEncoder encoder;
             final ByteBuffer bb;
             (encoder = this.charsetEncoder).reset().encode(
