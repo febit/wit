@@ -14,15 +14,8 @@ import webit.script.util.NumberUtil;
  */
 public class IntegerOutResolver implements OutResolver, RegistModeResolver {
 
-    public void render(final Out out, final Object bean) {
-        final int i;
-        if ((i = ((Number) bean).intValue()) != Integer.MIN_VALUE) {
-            final char[] buf;
-            final int pos = NumberUtil.getChars(i, NumberUtil.SIZE, (buf = NumberUtil.get()));
-            out.write(buf, pos, NumberUtil.SIZE - pos);
-        } else {
-            out.write("-2147483648");
-        }
+    public void render(final Out out, final Object number) {
+        NumberUtil.print((Integer) number, out);
     }
 
     public MatchMode getMatchMode() {
