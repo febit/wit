@@ -13,8 +13,8 @@ import jodd.madvoc.component.ResultMapper;
 import jodd.madvoc.meta.In;
 import jodd.madvoc.result.BaseActionResult;
 import webit.script.CFG;
-import webit.script.web.ServletUtil;
-import webit.script.web.WebEngineManager;
+import webit.script.servlet.ServletUtil;
+import webit.script.servlet.WebEngineManager;
 
 /**
  *

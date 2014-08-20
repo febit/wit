@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import webit.script.CFG;
 import webit.script.Engine;
-import webit.script.web.ServletUtil;
-import webit.script.web.WebEngineManager;
+import webit.script.servlet.ServletUtil;
+import webit.script.servlet.WebEngineManager;
 
 /**
  *

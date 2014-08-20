@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.github.zqq90.webit-script</groupId>
         <artifactId>webit-script-support</artifactId>
-        <version>1.5</version>
+        <version>1.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>webit-script-servlet</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.0</version>
+    <version>1.5.0-SNAPSHOT</version>
     
     <properties>
         <java.source.version>1.6</java.source.version>

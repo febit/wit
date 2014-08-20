@@ -9,9 +9,9 @@ import jodd.madvoc.component.MadvocController;
 import jodd.madvoc.meta.In;
 import jodd.madvoc.result.ActionResult;
 import webit.script.CFG;
-import webit.script.web.ServletUtil;
-import webit.script.web.WebEngineManager;
-import webit.script.web.WebEngineManager.ServletContextProvider;
+import webit.script.servlet.ServletUtil;
+import webit.script.servlet.WebEngineManager;
+import webit.script.servlet.WebEngineManager.ServletContextProvider;
 
 /**
  *

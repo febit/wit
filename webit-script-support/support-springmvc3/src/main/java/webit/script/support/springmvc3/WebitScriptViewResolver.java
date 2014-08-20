@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
-import webit.script.web.WebEngineManager;
-import webit.script.web.WebEngineManager.ServletContextProvider;
+import webit.script.servlet.WebEngineManager;
+import webit.script.servlet.WebEngineManager.ServletContextProvider;
 
 /**
  *
