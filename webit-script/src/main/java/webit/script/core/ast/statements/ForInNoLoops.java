@@ -10,8 +10,8 @@ import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.core.runtime.VariantStack;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatementUtil;
-import webit.script.util.iter.Iter;
-import webit.script.util.iter.IterMethodFilter;
+import webit.script.lang.Iter;
+import webit.script.lang.iter.IterMethodFilter;
 
 /**
  *

@@ -21,7 +21,7 @@ public class ASMUtil {
     public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
 
     public static final Type TYPE_CONTEXT = Type.getObjectType("webit/script/Context");
-    public static final Type TYPE_SCRIPT_VOID = Type.getObjectType("webit/script/util/ScriptVoid");
+    public static final Type TYPE_SCRIPT_VOID = Type.getObjectType("webit/script/lang/Void");
     public static final Type TYPE_SYSTEM = Type.getObjectType("java/lang/System");
     public static final Type TYPE_OBJECT_ARR = Type.getObjectType("[Ljava/lang/Object;");
     public static final Type TYPE_SCRIPT_RUNTIME_EXCEPTION = Type.getObjectType("webit/script/exceptions/ScriptRuntimeException");

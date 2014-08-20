@@ -14,8 +14,8 @@ import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.loaders.Resource;
 import webit.script.util.EncodingPool;
-import webit.script.util.keyvalues.KeyValues;
-import webit.script.util.keyvalues.KeyValuesUtil;
+import webit.script.lang.KeyValues;
+import webit.script.util.KeyValuesUtil;
 
 /**
  *

@@ -3,7 +3,7 @@ package webit.script.tools.testunit;
 
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
-import webit.script.util.SimpleBag;
+import webit.script.lang.Bag;
 
 /**
  *
@@ -12,7 +12,7 @@ import webit.script.util.SimpleBag;
 public class AssertGlobalRegister implements GlobalRegister {
 
     public void regist(final GlobalManager manager) {
-        final SimpleBag constBag = manager.getConstBag();
+        final Bag constBag = manager.getConstBag();
 
         constBag.set("assertTrue", Assert.assertTrue);
         constBag.set("assertFalse", Assert.assertFalse);

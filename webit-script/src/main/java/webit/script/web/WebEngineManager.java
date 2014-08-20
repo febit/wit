@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import webit.script.Engine;
-import webit.script.util.keyvalues.KeyValues;
+import webit.script.lang.KeyValues;
 
 /**
  *

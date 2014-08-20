@@ -7,7 +7,7 @@ import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.SetResolver;
-import webit.script.util.ScriptVoid;
+import webit.script.lang.Void;
 
 /**
  *
@@ -24,7 +24,7 @@ public class ScriptVoidResolver implements GetResolver, SetResolver, OutResolver
     }
 
     public Class<?> getMatchClass() {
-        return ScriptVoid.class;
+        return Void.class;
     }
 
     public boolean set(Object object, Object property, Object value) {

@@ -9,12 +9,12 @@ import webit.script.core.runtime.VariantContext;
 import webit.script.core.runtime.VariantStack;
 import webit.script.exceptions.NotFunctionException;
 import webit.script.io.Out;
-import webit.script.method.MethodDeclare;
+import webit.script.lang.MethodDeclare;
 import webit.script.resolvers.ResolverManager;
-import webit.script.util.ScriptVoid;
+import webit.script.lang.Void;
 import webit.script.util.Stack;
-import webit.script.util.keyvalues.KeyValues;
-import webit.script.util.keyvalues.KeyValuesUtil;
+import webit.script.lang.KeyValues;
+import webit.script.util.KeyValuesUtil;
 
 /**
  *
@@ -22,7 +22,7 @@ import webit.script.util.keyvalues.KeyValuesUtil;
  */
 public final class Context {
 
-    public static final ScriptVoid VOID = new ScriptVoid();
+    public static final Void VOID = new Void();
 
     private Out out;
     private Stack<Out> outStack;

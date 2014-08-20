@@ -6,7 +6,7 @@ import java.util.List;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.core.NativeFactory;
-import webit.script.util.SimpleBag;
+import webit.script.lang.Bag;
 
 /**
  *
@@ -19,12 +19,12 @@ public class TestGlobalRegister implements GlobalRegister, Initable {
     public void regist(final GlobalManager manager) {
 
         //Globals
-        SimpleBag globalBag = manager.getGlobalBag();
+        Bag globalBag = manager.getGlobalBag();
         globalBag.set("MY_GLOBAL", "MY_GLOBAL");
         globalBag.set("MY_GLOBAL_2", "MY_GLOBAL_2");
 
         //Consts
-        SimpleBag constBag = manager.getConstBag();
+        Bag constBag = manager.getConstBag();
         constBag.set("MY_CONST", "MY_CONST");
         constBag.set("MY_CONST_2", "MY_CONST_2");
 

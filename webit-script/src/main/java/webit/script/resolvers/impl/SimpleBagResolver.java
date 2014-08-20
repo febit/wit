@@ -4,7 +4,7 @@ package webit.script.resolvers.impl;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
-import webit.script.util.SimpleBag;
+import webit.script.lang.Bag;
 
 /**
  *
@@ -13,11 +13,11 @@ import webit.script.util.SimpleBag;
 public class SimpleBagResolver implements GetResolver, SetResolver {
 
     public Object get(Object object, Object property) {
-        return ((SimpleBag) object).get(property);
+        return ((Bag) object).get(property);
     }
 
     public boolean set(Object object, Object property, Object value) {
-        ((SimpleBag) object).set(property, value);
+        ((Bag) object).set(property, value);
         return true;
     }
 
@@ -26,6 +26,6 @@ public class SimpleBagResolver implements GetResolver, SetResolver {
     }
 
     public Class<?> getMatchClass() {
-        return SimpleBag.class;
+        return Bag.class;
     }
 }

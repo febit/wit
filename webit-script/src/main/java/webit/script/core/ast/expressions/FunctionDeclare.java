@@ -7,7 +7,7 @@ import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Statement;
 import webit.script.core.runtime.VariantContext;
 import webit.script.core.runtime.VariantStack;
-import webit.script.method.impl.FunctionMethodDeclare;
+import webit.script.lang.method.FunctionMethodDeclare;
 import webit.script.util.StatementUtil;
 
 /**

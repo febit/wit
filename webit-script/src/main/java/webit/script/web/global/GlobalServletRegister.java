@@ -7,7 +7,7 @@ import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
-import webit.script.util.SimpleBag;
+import webit.script.lang.Bag;
 
 /**
  *
@@ -28,7 +28,7 @@ public class GlobalServletRegister implements GlobalRegister, Initable {
     }
 
     public void regist(GlobalManager manager) {
-        final SimpleBag constBag = manager.getConstBag();
+        final Bag constBag = manager.getConstBag();
 
         constBag.set(this.servletContextName, this.servletContext);
         constBag.set(this.basePathName, this.servletContext.getContextPath());

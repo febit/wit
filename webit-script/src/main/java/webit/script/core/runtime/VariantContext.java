@@ -3,7 +3,7 @@ package webit.script.core.runtime;
 
 import java.util.Map;
 import webit.script.core.VariantIndexer;
-import webit.script.util.keyvalues.KeyValueAccepter;
+import webit.script.lang.KeyValueAccepter;
 
 /**
  *

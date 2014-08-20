@@ -5,7 +5,7 @@ import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
-import webit.script.util.SimpleScriptUnsetableBag;
+import webit.script.lang.SimpleUnsetableBag;
 
 /**
  *
@@ -16,7 +16,7 @@ public class ScriptUnsetableBagResolver implements GetResolver, SetResolver {
 
     @SuppressWarnings("unchecked")
     public Object get(Object object, Object property) {
-        return ((SimpleScriptUnsetableBag) object).get(property);
+        return ((SimpleUnsetableBag) object).get(property);
     }
 
     public boolean set(Object object, Object property, Object value) {
@@ -28,6 +28,6 @@ public class ScriptUnsetableBagResolver implements GetResolver, SetResolver {
     }
 
     public Class<?> getMatchClass() {
-        return SimpleScriptUnsetableBag.class;
+        return SimpleUnsetableBag.class;
     }
 }

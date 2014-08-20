@@ -22,10 +22,10 @@ import webit.script.util.ClassUtil;
 import webit.script.util.EncodingPool;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
-import webit.script.util.SimpleBag;
+import webit.script.lang.Bag;
 import webit.script.util.StringUtil;
-import webit.script.util.keyvalues.KeyValues;
-import webit.script.util.keyvalues.KeyValuesUtil;
+import webit.script.lang.KeyValues;
+import webit.script.util.KeyValuesUtil;
 import webit.script.util.props.Props;
 
 /**
@@ -134,8 +134,8 @@ public final class Engine {
         if (this.inits != null) {
             final Out out = new DiscardOut();
             final GlobalManager myGlobalManager = this.globalManager;
-            final SimpleBag globalBag = myGlobalManager.getGlobalBag();
-            final SimpleBag constBag = myGlobalManager.getGlobalBag();
+            final Bag globalBag = myGlobalManager.getGlobalBag();
+            final Bag constBag = myGlobalManager.getGlobalBag();
             final KeyValues params = KeyValuesUtil.wrap(new String[]{
                 "GLOBAL", "GLOBAL_MAP",
                 "CONST", "CONST_MAP"

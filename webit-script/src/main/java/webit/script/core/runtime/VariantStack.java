@@ -4,7 +4,7 @@ package webit.script.core.runtime;
 import java.util.Map;
 import webit.script.core.VariantIndexer;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.util.keyvalues.KeyValues;
+import webit.script.lang.KeyValues;
 
 /**
  *

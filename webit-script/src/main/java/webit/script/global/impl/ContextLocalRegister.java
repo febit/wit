@@ -5,7 +5,7 @@ import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
-import webit.script.method.MethodDeclare;
+import webit.script.lang.MethodDeclare;
 
 /**
  *

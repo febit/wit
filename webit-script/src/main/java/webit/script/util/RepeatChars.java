@@ -20,7 +20,6 @@ public class RepeatChars implements CharSequence {
     }
 
     public char charAt(int index) {
-
         return c;
     }
 

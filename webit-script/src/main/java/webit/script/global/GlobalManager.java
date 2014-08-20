@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.global;
 
-import webit.script.util.SimpleBag;
+import webit.script.lang.Bag;
 
 /**
  *
@@ -21,7 +21,7 @@ public interface GlobalManager {
 
     Object getConst(String name);
 
-    public SimpleBag getConstBag();
+    public Bag getConstBag();
 
-    public SimpleBag getGlobalBag();
+    public Bag getGlobalBag();
 }

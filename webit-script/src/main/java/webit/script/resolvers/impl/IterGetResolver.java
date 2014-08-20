@@ -5,7 +5,7 @@ import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
 import webit.script.util.StringUtil;
-import webit.script.util.iter.Iter;
+import webit.script.lang.Iter;
 
 /**
  *

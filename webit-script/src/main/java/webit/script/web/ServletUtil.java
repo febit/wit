@@ -5,8 +5,8 @@ import java.util.Enumeration;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import webit.script.util.keyvalues.KeyValueAccepter;
-import webit.script.util.keyvalues.KeyValues;
+import webit.script.lang.KeyValueAccepter;
+import webit.script.lang.KeyValues;
 
 /**
  *

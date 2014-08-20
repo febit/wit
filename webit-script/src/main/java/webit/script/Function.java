@@ -7,8 +7,8 @@ import webit.script.io.Out;
 import webit.script.io.impl.DiscardOut;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
-import webit.script.method.MethodDeclare;
-import webit.script.util.keyvalues.KeyValuesUtil;
+import webit.script.lang.MethodDeclare;
+import webit.script.util.KeyValuesUtil;
 
 /**
  * Exported function.

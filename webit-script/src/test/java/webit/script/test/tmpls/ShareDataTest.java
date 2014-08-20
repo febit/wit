@@ -7,7 +7,7 @@ import webit.script.EngineManager;
 import webit.script.Template;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.io.impl.DiscardOut;
-import webit.script.util.keyvalues.KeyValuesUtil;
+import webit.script.util.KeyValuesUtil;
 
 /**
  *

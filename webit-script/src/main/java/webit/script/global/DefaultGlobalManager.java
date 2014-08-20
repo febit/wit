@@ -6,7 +6,7 @@ import java.util.Map;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.util.ClassEntry;
-import webit.script.util.SimpleBag;
+import webit.script.lang.Bag;
 
 /**
  *
@@ -114,8 +114,8 @@ public class DefaultGlobalManager implements GlobalManager, Initable {
         this.registers = registers;
     }
 
-    public SimpleBag getConstBag() {
-        return new SimpleBag() {
+    public Bag getConstBag() {
+        return new Bag() {
 
             public Object get(Object key) {
                 return constMap.get(key);
@@ -127,8 +127,8 @@ public class DefaultGlobalManager implements GlobalManager, Initable {
         };
     }
 
-    public SimpleBag getGlobalBag() {
-        return new SimpleBag() {
+    public Bag getGlobalBag() {
+        return new Bag() {
 
             public Object get(Object key) {
                 return getGlobal(String.valueOf(key));
