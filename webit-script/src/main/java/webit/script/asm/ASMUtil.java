@@ -81,7 +81,7 @@ public class ASMUtil {
         return sn++;
     }
 
-    private final static class AsmClassLoader extends ClassLoader {
+    private static final class AsmClassLoader extends ClassLoader {
 
         @Override
         protected Class<?> findClass(String name) throws ClassNotFoundException {

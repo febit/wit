@@ -29,8 +29,8 @@ public class PropsUtil {
 
     private static class PropsLoader {
 
-        private final static int BUFFER_SIZE = 3072;
-        private final static String PROPS_MODULES = "@modules";
+        private static final int BUFFER_SIZE = 3072;
+        private static final String PROPS_MODULES = "@modules";
 
         private final InputStreamResolver mainInputStreamResolver;
         private final Props props;
@@ -178,7 +178,7 @@ public class PropsUtil {
 
     public static class ClasspathInputStreamResolver implements InputStreamResolver {
 
-        private final static String CLASSPATH_PREFIX = "%CLASS_PATH%/";
+        private static final String CLASSPATH_PREFIX = "%CLASS_PATH%/";
 
         public InputStream openInputStream(String path) {
             return ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path.charAt(0) == '/'

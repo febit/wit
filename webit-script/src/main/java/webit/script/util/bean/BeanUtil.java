@@ -15,7 +15,7 @@ import webit.script.util.StringUtil;
  */
 public class BeanUtil {
 
-    private final static ClassMap<FieldDescriptorsBox> CACHE = new ClassMap<FieldDescriptorsBox>();
+    private static final ClassMap<FieldDescriptorsBox> CACHE = new ClassMap<FieldDescriptorsBox>();
 
     public static Object get(final Object bean, final String name) throws BeanUtilException {
 

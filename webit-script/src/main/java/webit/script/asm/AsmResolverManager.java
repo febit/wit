@@ -9,7 +9,7 @@ import webit.script.util.ClassMap;
  */
 public class AsmResolverManager {
 
-    private final static ClassMap<AsmResolverBox> asmResolversMap = new ClassMap<AsmResolverBox>();
+    private static final ClassMap<AsmResolverBox> asmResolversMap = new ClassMap<AsmResolverBox>();
 
     public static AsmResolver getAsmResolver(Class type) throws Exception {
         AsmResolverBox box;

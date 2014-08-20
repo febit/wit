@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class VariantIndexer {
 
-    public final static VariantIndexer EMPTY = new VariantIndexer(new String[0]);
+    public static final VariantIndexer EMPTY = new VariantIndexer(new String[0]);
 
     public final int size;
     final String[] names;
@@ -49,7 +49,7 @@ public class VariantIndexer {
         return this.names[index];
     }
 
-    private final static int MAX_OF_NORMAL_VAR_MAP = 6;
+    private static final int MAX_OF_NORMAL_VAR_MAP = 6;
 
     public static VariantIndexer getVariantIndexer(final Map<String, Integer> map) {
         if (map == null || map.isEmpty()) {

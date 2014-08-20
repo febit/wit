@@ -7,8 +7,8 @@ package webit.script.util;
  */
 public class NumberUtil {
 
-    private final static ThreadLocal<char[]> charsBufLocal = new ThreadLocal<char[]>();
-    public final static int SIZE = 20;
+    private static final ThreadLocal<char[]> charsBufLocal = new ThreadLocal<char[]>();
+    public static final int SIZE = 20;
 
     public static char[] get() {
         char[] buf;
@@ -136,8 +136,8 @@ public class NumberUtil {
     /**
      * All possible chars for representing a number as a String
      */
-    final static char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    final static char[] DigitTens = {
+    static final char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    static final char[] DigitTens = {
         '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
         '1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
         '2', '2', '2', '2', '2', '2', '2', '2', '2', '2',
@@ -148,7 +148,7 @@ public class NumberUtil {
         '7', '7', '7', '7', '7', '7', '7', '7', '7', '7',
         '8', '8', '8', '8', '8', '8', '8', '8', '8', '8',
         '9', '9', '9', '9', '9', '9', '9', '9', '9', '9'};
-    final static char[] DigitOnes = {
+    static final char[] DigitOnes = {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',

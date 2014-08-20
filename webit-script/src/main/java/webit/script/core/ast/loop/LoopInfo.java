@@ -7,14 +7,14 @@ package webit.script.core.ast.loop;
  */
 public class LoopInfo {
 
-    public final static int NO_LOOP = 0;
-    public final static int BREAK = 1;
-    public final static int CONTINUE = 2;
-    public final static int RETURN = 3;
+    public static final int NO_LOOP = 0;
+    public static final int BREAK = 1;
+    public static final int CONTINUE = 2;
+    public static final int RETURN = 3;
     //
-    public final static int NO_LABEL = 0;
+    public static final int NO_LABEL = 0;
     //
-    private final static String[] LOOP_NAMES = new String[]{"null", "break", "continue", "return"};
+    private static final String[] LOOP_NAMES = new String[]{"null", "break", "continue", "return"};
     //
     public final int type;
     public final int label;

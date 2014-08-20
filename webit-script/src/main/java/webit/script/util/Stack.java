@@ -9,7 +9,7 @@ public final class Stack<T> {
 
     private Object[] elements;
     private int size;
-    public final static int initialCapacity = 16;
+    public static final int initialCapacity = 16;
 
     public Stack() {
         this(initialCapacity);

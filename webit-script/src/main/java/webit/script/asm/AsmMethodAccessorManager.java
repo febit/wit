@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class AsmMethodAccessorManager {
 
-    private final static Map<Object, AsmMethodAccessorBox> accessorCache = new IdentityHashMap<Object, AsmMethodAccessorBox>();
+    private static final Map<Object, AsmMethodAccessorBox> accessorCache = new IdentityHashMap<Object, AsmMethodAccessorBox>();
 
     public static AsmMethodAccessor getAccessor(Method method) throws Exception {
         return doGetAccessor(method);

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class WebitScriptServletUtil {
 
-    private final static String PATH_ATTRIBUTE_KEY = WebitScriptServletUtil.class.getName().concat("$$PATH");
+    private static final String PATH_ATTRIBUTE_KEY = WebitScriptServletUtil.class.getName().concat("$$PATH");
 
     public static String getTemplatePath(final HttpServletRequest request) {
         String path;

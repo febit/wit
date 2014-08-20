@@ -13,9 +13,9 @@ import webit.script.lang.KeyValues;
 public final class VariantStack {
 
     private static final int DEFAULT_CAPACITY = 12;
+    
     //NOTE: the first keeps null, real contexts start from index=1;
     private VariantContext[] contexts;
-    //
     private Object[] rootContextValues;
     private int current;
     private VariantContext currentContext;
@@ -23,7 +23,6 @@ public final class VariantStack {
     public VariantStack() {
         this.contexts = new VariantContext[DEFAULT_CAPACITY];
         this.current = 0;
-        //currentContext = null;
     }
 
     public VariantStack(final VariantContext[] contexts, final boolean containsRootContext) {
@@ -40,7 +39,6 @@ public final class VariantStack {
             this.current = 0;
             this.rootContextValues = null;
         }
-        //this.rootContextValues = parent.rootContextValues;
     }
 
     public void pushRootVars(final VariantIndexer varIndexer, final KeyValues rootValues) {
@@ -152,16 +150,6 @@ public final class VariantStack {
         contexts[current - upstairs].values[index] = value;
     }
 
-//    public boolean set(String key, Object value) {
-//        VariantContext context;
-//        int i = current;
-//        while (i > 0) {//NOTE: skip top
-//            if ((context = contexts[i--]) != null && context.set(key, value)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
     public Object get(int index) {
         return currentContext.values[index];
     }

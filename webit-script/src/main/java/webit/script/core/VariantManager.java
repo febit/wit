@@ -240,10 +240,10 @@ public class VariantManager {
 
     public static class VarAddress {
 
-        public final static int CONTEXT = 0;
-        public final static int ROOT = 1;
-        public final static int GLOBAL = 2;
-        public final static int CONST = 3;
+        public static final int CONTEXT = 0;
+        public static final int ROOT = 1;
+        public static final int GLOBAL = 2;
+        public static final int CONST = 3;
 
         public final int upstairs;
         public final int index;

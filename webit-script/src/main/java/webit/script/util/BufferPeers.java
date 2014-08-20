@@ -9,25 +9,14 @@ import java.lang.ref.WeakReference;
  */
 public final class BufferPeers {
 
-    private final static ThreadLocal<WeakReference<BufferPeers>> bufferPeersLocal = new ThreadLocal<WeakReference<BufferPeers>>();
+    private static final ThreadLocal<WeakReference<BufferPeers>> bufferPeersLocal = new ThreadLocal<WeakReference<BufferPeers>>();
 
-    public final static int DEFAULT_SIZE = 1 << 8; //256
-    public final static int DEFAULT_MIN_SIZE = 1 << 5; //32
     private char[] chars;
     private byte[] bytes;
-    public final static int MAX_SIZE = 1 << 13; //8192
-
-    private BufferPeers() {
-        this(DEFAULT_SIZE, DEFAULT_SIZE);
-    }
 
     private BufferPeers(int size) {
-        this(size, size);
-    }
-
-    private BufferPeers(int charArraySize, int byteArraySize) {
-        this.chars = new char[charArraySize];
-        this.bytes = new byte[byteArraySize];
+        this.chars = new char[size];
+        this.bytes = new byte[size];
     }
 
     public char[] getChars(int len) {
@@ -46,18 +35,19 @@ public final class BufferPeers {
             if (value >= length) {
                 return value;
             }
-            if ((value <<= 1) > MAX_SIZE) {
+            if ((value <<= 1) > (1 << 13)) {
+                //MAX_SIZE 8192
                 return length;
             }
         }
     }
 
     public static BufferPeers getNormalSizePeers() {
-        return createBufferPeersIfAbsent(DEFAULT_SIZE);
+        return createBufferPeersIfAbsent(1 << 8); //DEFAULT_SIZE 256
     }
 
     public static BufferPeers getMiniSizePeers() {
-        return createBufferPeersIfAbsent(DEFAULT_MIN_SIZE);
+        return createBufferPeersIfAbsent(1 << 5); //DEFAULT_MIN_SIZE 32
     }
 
     private static BufferPeers createBufferPeersIfAbsent(final int length) {

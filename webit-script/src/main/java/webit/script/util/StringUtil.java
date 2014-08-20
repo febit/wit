@@ -293,7 +293,7 @@ public class StringUtil {
         return result;
     }
 
-    private final static char[] DEFAULT_DELIMITERS = ",\n\r".toCharArray();
+    private static final char[] DEFAULT_DELIMITERS = ",\n\r".toCharArray();
 
     public static String[] splitc(String src) {
         return splitc(src, DEFAULT_DELIMITERS);

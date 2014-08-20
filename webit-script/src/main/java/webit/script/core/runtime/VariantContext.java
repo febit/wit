@@ -54,9 +54,6 @@ public final class VariantContext implements KeyValueAccepter {
         }
     }
 
-//    public boolean hasKey(String key) {
-//        return this.varIndexer.getIndex(key) >= 0;
-//    }
     public int size() {
         return values.length;
     }

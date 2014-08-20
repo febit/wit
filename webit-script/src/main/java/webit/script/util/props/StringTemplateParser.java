@@ -9,8 +9,8 @@ package webit.script.util.props;
  */
 class StringTemplateParser {
 
-    private final static String macroStart = "${";
-    private final static String macroEnd = "}";
+    private static final String macroStart = "${";
+    private static final String macroEnd = "}";
 
     /**
      * Parses string template and replaces macros with resolved values.

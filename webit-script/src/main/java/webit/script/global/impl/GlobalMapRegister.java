@@ -12,7 +12,7 @@ import webit.script.global.GlobalRegister;
  */
 public class GlobalMapRegister implements GlobalRegister {
 
-    private final static String DEFAULT_NAME = "$GLOBAL";
+    private static final String DEFAULT_NAME = "$GLOBAL";
     private String name = DEFAULT_NAME;
 
     private final Map vars;

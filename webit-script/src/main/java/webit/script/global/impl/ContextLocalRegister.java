@@ -14,7 +14,7 @@ import webit.script.lang.MethodDeclare;
  */
 public class ContextLocalRegister implements GlobalRegister {
 
-    private final static String DEFAULT_NAME = "LOCAL";
+    private static final String DEFAULT_NAME = "LOCAL";
     private String name = DEFAULT_NAME;
 
     public void regist(GlobalManager manager) {

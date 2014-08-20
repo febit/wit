@@ -491,7 +491,7 @@ abstract class AbstractParser {
         return sb.toString();
     }
 
-    private final static short[] HINTS_LEVEL_1 = new short[]{
+    private static final short[] HINTS_LEVEL_1 = new short[]{
         Tokens.COLON, //":"
         Tokens.SEMICOLON, //";"
         Tokens.RBRACE, //"}"
@@ -511,7 +511,7 @@ abstract class AbstractParser {
         return false;
     }
 
-    private final static String[] SYMBOL_STRS = new String[]{
+    private static final String[] SYMBOL_STRS = new String[]{
         "EOF", //EOF = 0
         "ERROR", //ERROR = 1
         "var", //VAR = 2

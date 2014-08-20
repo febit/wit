@@ -11,7 +11,7 @@ import webit.script.lang.KeyValues;
  */
 public class KeyValuesUtil {
 
-    public final static KeyValues EMPTY_KEY_VALUES = new KeyValues() {
+    public static final KeyValues EMPTY_KEY_VALUES = new KeyValues() {
 
         public void exportTo(KeyValueAccepter accepter) {
         }
@@ -56,7 +56,7 @@ public class KeyValuesUtil {
         }
     }
 
-    private final static class MapKeyValues implements KeyValues {
+    private static final class MapKeyValues implements KeyValues {
 
         private final Map<String, Object> map;
 
@@ -71,7 +71,7 @@ public class KeyValuesUtil {
         }
     }
 
-    private final static class ArrayKeyValues implements KeyValues {
+    private static final class ArrayKeyValues implements KeyValues {
 
         private final String[] keys;
         private final Object[] values;

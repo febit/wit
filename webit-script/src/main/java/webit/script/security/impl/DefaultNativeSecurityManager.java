@@ -19,7 +19,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
     //settings
     private String list;
     //
-    private final static String ROOT_NODE_NAME = "*";
+    private static final String ROOT_NODE_NAME = "*";
     private ConcurrentMap<String, Node> allNodes;
 
     public boolean access(String path) {

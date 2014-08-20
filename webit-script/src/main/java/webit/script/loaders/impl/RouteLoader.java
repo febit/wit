@@ -19,7 +19,7 @@ import webit.script.util.StringUtil;
  */
 public class RouteLoader implements Loader, Initable {
 
-    private final static char[] DELIMITERS = "\n\r,".toCharArray();
+    private static final char[] DELIMITERS = "\n\r,".toCharArray();
     protected String loaders;
     protected ClassEntry defaultLoader;
 

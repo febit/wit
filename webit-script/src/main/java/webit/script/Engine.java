@@ -34,7 +34,7 @@ import webit.script.util.props.Props;
  */
 public final class Engine {
 
-    public final static String DEFAULT_SUFFIX = ".wit";
+    public static final String DEFAULT_SUFFIX = ".wit";
 
     //settings
     private ClassEntry _resourceLoader;

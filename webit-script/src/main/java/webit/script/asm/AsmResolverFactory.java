@@ -330,7 +330,7 @@ public class AsmResolverFactory {
         }
     }
 
-    private final static class FieldsDescription {
+    private static final class FieldsDescription {
 
         final FieldInfo[] all;
         final int size;

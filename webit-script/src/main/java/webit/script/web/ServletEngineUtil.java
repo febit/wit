@@ -18,8 +18,8 @@ import webit.script.util.props.Props;
  */
 public class ServletEngineUtil {
 
-    private final static String DEFAULT_WEB_PROPERTIES = "/webit-script-default-web.props";
-    private final static String WEB_ROOT_PREFIX = "%WEB_ROOT%/";
+    private static final String DEFAULT_WEB_PROPERTIES = "/webit-script-default-web.props";
+    private static final String WEB_ROOT_PREFIX = "%WEB_ROOT%/";
 
     public static Engine createEngine(final ServletContext servletContext, final String configFiles) {
         return createEngine(servletContext, configFiles, null);

@@ -14,8 +14,8 @@ import webit.script.util.StatementUtil;
  */
 public final class MapValue extends AbstractExpression {
 
-    private final static float DEFAULT_MAP_FACTOR = 0.75f;
-    private final static int MIN_MAP_CAPACITY = 4;
+    private static final float DEFAULT_MAP_FACTOR = 0.75f;
+    private static final int MIN_MAP_CAPACITY = 4;
     private final Object[] keys;
     private final Expression[] valueExprs;
     private final int initialCapacity;

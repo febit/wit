@@ -10,8 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class EncodingPool {
 
-    private final static ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<String, String>();
-    public final static String UTF_8;
+    private static final ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<String, String>();
+    public static final String UTF_8;
 
     static {
         UTF_8 = intern("UTF-8");
