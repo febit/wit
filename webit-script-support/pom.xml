@@ -14,6 +14,7 @@
     
     <name>Webit Script Support</name>
     <modules>
+        <module>support-servlet</module>
         <module>support-jodd3</module>
         <module>support-jodd3_5</module>
         <module>support-jfinal</module>

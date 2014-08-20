@@ -1,5 +1,5 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.web.loaders;
+package webit.script.servlet.loaders;
 
 import javax.servlet.ServletContext;
 import webit.script.loaders.AbstractLoader;

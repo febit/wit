@@ -1,5 +1,5 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.web;
+package webit.script.servlet;
 
 import java.util.Enumeration;
 import java.util.Map;

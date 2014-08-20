@@ -1,13 +1,13 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.web.resolvers;
+package webit.script.servlet.resolvers;
 
 import javax.servlet.http.HttpServletRequest;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.MatchMode;
-import webit.script.web.HttpServletRequestAttributes;
-import webit.script.web.HttpServletRequestHeader;
-import webit.script.web.HttpServletRequestHeaders;
-import webit.script.web.HttpServletRequestParameters;
+import webit.script.servlet.HttpServletRequestAttributes;
+import webit.script.servlet.HttpServletRequestHeader;
+import webit.script.servlet.HttpServletRequestHeaders;
+import webit.script.servlet.HttpServletRequestParameters;
 
 /**
  *
