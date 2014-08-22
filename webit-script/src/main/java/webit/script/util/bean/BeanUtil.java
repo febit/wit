@@ -98,6 +98,9 @@ public class BeanUtil {
     private static final class FieldDescriptorsBox {
 
         Map<String, FieldDescriptor> items;
+
+        FieldDescriptorsBox() {
+        }
     }
 
     private static final class FieldDescriptor {

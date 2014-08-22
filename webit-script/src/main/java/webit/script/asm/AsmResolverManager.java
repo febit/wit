@@ -28,7 +28,11 @@ public class AsmResolverManager {
         return resolver;
     }
 
-    private static class AsmResolverBox {
+    private static final class AsmResolverBox {
+
         AsmResolver resolver;
+
+        AsmResolverBox() {
+        }
     }
 }

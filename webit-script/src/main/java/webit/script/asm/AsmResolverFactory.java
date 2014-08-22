@@ -299,8 +299,8 @@ public class AsmResolverFactory {
             final Map<Integer, FieldInfo[]> groupByHashcode = new HashMap<Integer, FieldInfo[]>();
 
             final List<FieldInfo> cacheList = new ArrayList<FieldInfo>(size);
-            final int [] hashs = new int[size];
-            
+            final int[] hashs = new int[size];
+
             int hashsCount = 0;
 
             int hash;

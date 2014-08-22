@@ -5,7 +5,7 @@ package webit.script.resolvers;
  *
  * @author Zqq
  */
-public abstract interface Resolver {
+public interface Resolver {
 
     MatchMode getMatchMode();
 

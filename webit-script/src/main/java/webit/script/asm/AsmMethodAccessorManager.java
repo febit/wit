@@ -46,8 +46,11 @@ public class AsmMethodAccessorManager {
         return accessor;
     }
 
-    private static class AsmMethodAccessorBox {
+    private static final class AsmMethodAccessorBox {
 
         AsmMethodAccessor accessor;
+
+        AsmMethodAccessorBox() {
+        }
     }
 }

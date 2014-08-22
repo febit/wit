@@ -83,6 +83,9 @@ public class ASMUtil {
 
     private static final class AsmClassLoader extends ClassLoader {
 
+        AsmClassLoader() {
+        }
+
         @Override
         protected Class<?> findClass(String name) throws ClassNotFoundException {
             return ClassLoaderUtil.getDefaultClassLoader().loadClass(name);
