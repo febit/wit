@@ -10,7 +10,7 @@ import javax.servlet.ServletContext;
 import webit.script.CFG;
 import webit.script.Engine;
 import webit.script.util.PropsUtil;
-import webit.script.util.props.Props;
+import webit.script.util.Props;
 
 /**
  *
