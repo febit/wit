@@ -143,7 +143,7 @@ public final class Engine {
                 globalBag, globalBag,
                 constBag, constBag
             });
-            for (String templateName : StringUtil.splitc(this.inits)) {
+            for (String templateName : StringUtil.split(this.inits)) {
                 templateName = templateName.trim();
                 if (templateName.length() != 0) {
                     if (this.logger.isInfoEnabled()) {

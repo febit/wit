@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import webit.script.loggers.Logger;
 import webit.script.util.bean.BeanUtil;
+import webit.script.util.bean.BeanUtilException;
 
 /**
- * A Simple IoC. Note: <code>defineParameters</code> and
- * <code>defineParameter</code> are not thread safe
+ * A Simple IoC.
  *
  * @author zqq90
  */
@@ -18,10 +18,11 @@ public final class Petite {
 
     private final Map<String, Object> parameters;
     private Map<String, ParameterEntry> parameterEntrys;
-    private boolean initalized = false;
+    private boolean initalized;
     private Logger logger;
 
     public Petite() {
+        this.initalized = false;
         this.parameters = new HashMap<String, Object>();
     }
 
@@ -34,14 +35,14 @@ public final class Petite {
     }
 
     public void wireBean(String beanName, final Object bean) {
-        final Map<String, Object> params;
-        getParametersResolver().resolve(params = new HashMap<String, Object>(), beanName);
+        final Map<String, Object> params = new HashMap<String, Object>();
+        getParametersResolver().resolve(params, beanName);
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             try {
                 BeanUtil.set(bean, entry.getKey(), entry.getValue(), true);
-            } catch (Exception ex) {
+            } catch (BeanUtilException ex) {
                 if (logger != null) {
-                    logger.warn("Failed to set declared property: ".concat(entry.getKey()), ex);
+                    logger.warn("Failed to set declared property {}: {}", entry.getKey(), ex);
                 }
             }
         }
@@ -157,16 +158,11 @@ public final class Petite {
             }
             this.profiles.add(beanName);
             {
-                //resolve x.@extends
-                final Object extendsString;
-                if ((extendsString = parameters.get(beanName.concat(".@extends"))) != null) {
-                    final String[] extendsProfiles = StringUtil.splitc(String.valueOf(extendsString), ',');
-                    StringUtil.trimAll(extendsProfiles);
-                    String profile;
-                    for (int i = 0, len = extendsProfiles.length; i < len; i++) {
-                        if ((profile = extendsProfiles[i]).length() != 0) {
-                            resolve(result, profile);
-                        }
+                //resolve xxx.@extends
+                final Object extendsString = parameters.get(beanName.concat(".@extends"));
+                if (extendsString != null) {
+                    for (String profile : StringUtil.splitAndRemoveBlank(String.valueOf(extendsString))) {
+                        resolve(result, profile);
                     }
                 }
             }

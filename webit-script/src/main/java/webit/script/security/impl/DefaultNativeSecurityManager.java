@@ -38,19 +38,18 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         nodes.put(ROOT_NODE_NAME, rootNode);
 
         if (list != null) {
-            String[] nodeRules = StringUtil.splitAndTrimAll(list);
+            String[] nodeRules = StringUtil.splitAndRemoveBlank(list);
             char firstChar;
             boolean access;
             String rule;
             for (int i = 0, len = nodeRules.length; i < len; i++) {
-                if ((rule = nodeRules[i]).length() != 0) {
-                    if ((access = (firstChar = rule.charAt(0)) == '+') || firstChar == '-') {
-                        rule = rule.substring(1).trim();
-                    } else {
-                        access = true;
-                    }
-                    getOrCreateNode(nodes, rule).setAccess(access);
+                rule = nodeRules[i];
+                if ((access = (firstChar = rule.charAt(0)) == '+') || firstChar == '-') {
+                    rule = rule.substring(1).trim();
+                } else {
+                    access = true;
                 }
+                getOrCreateNode(nodes, rule).setAccess(access);
             }
         }
         allNodes = new ConcurrentHashMap<String, Node>(nodes);

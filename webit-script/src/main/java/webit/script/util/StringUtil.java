@@ -78,10 +78,7 @@ public class StringUtil {
      *
      * @param src String to test
      * @param subS suffix
-     *
-     * @return <code>true</code> if the character sequence represented by the
-     * argument is a suffix of the character sequence represented by this
-     * object; <code>false</code> otherwise.
+     * @return
      */
     public static boolean endsWithIgnoreCase(String src, String subS) {
         String sub = subS.toLowerCase();
@@ -103,26 +100,20 @@ public class StringUtil {
     }
 
     /**
-     * Cuts prefix if exists.
-     */
-    public static String cutPrefix(String string, String prefix) {
-        if (string.startsWith(prefix)) {
-            string = string.substring(prefix.length());
-        }
-        return string;
-    }
-
-    /**
      *
      * @since 1.4.0
      */
     public static String cutFieldName(final String string, final int from) {
         final int nextIndex = from + 1;
-        if (string.length() > nextIndex
+        final int len = string.length();
+        if (len > nextIndex
                 && CharUtil.isUppercaseAlpha(string.charAt(nextIndex))) {
             return string.substring(from);
         } else {
-            return String.valueOf(CharUtil.toLowerAscii(string.charAt(from))).concat(string.substring(from + 1));
+            char[] buffer = new char[len - from];
+            string.getChars(from, len, buffer, 0);
+            buffer[0] = CharUtil.toLowerAscii(buffer[0]);
+            return new String(buffer);
         }
     }
 
@@ -295,7 +286,7 @@ public class StringUtil {
 
     private static final char[] DEFAULT_DELIMITERS = ",\n\r".toCharArray();
 
-    public static String[] splitc(String src) {
+    public static String[] split(String src) {
         return splitc(src, DEFAULT_DELIMITERS);
     }
 
@@ -324,18 +315,6 @@ public class StringUtil {
         return result;
     }
 
-    public static boolean isBlank(String string) {
-        if (string == null) {
-            return true;
-        }
-        for (int i = 0, size = string.length(); i < size; i++) {
-            if (CharUtil.isWhitespace(string.charAt(i)) == false) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     /**
      * Parses string template and replaces macros with resolved values.
      */
@@ -343,34 +322,30 @@ public class StringUtil {
         if (template == null) {
             return null;
         }
-        if (template.indexOf('{') <0) {
+        if (template.indexOf('{') < 0) {
             return template;
         }
-        StringBuilder result = new StringBuilder(template.length());
+        final StringBuilder result = new StringBuilder(template.length());
+        final int len = template.length();
+        final int arrayLen = array != null ? array.length : 0;
         int i = 0;
-        int len = template.length();
         int currentIndex = 0;
-        int arrayLen = array != null ? array.length : 0;
         int index;
-        int j;
-        int escapeCharcount;
-        String value;
         while (i < len) {
             int ndx = template.indexOf('{', i);
             if (ndx == -1) {
                 result.append(i == 0 ? template : template.substring(i));
                 break;
             }
-            j = ndx - 1;
+            int j = ndx - 1;
             while ((j >= 0) && (template.charAt(j) == '\\')) {
                 j--;
             }
-            escapeCharcount = ndx - 1 - j;
-            if (escapeCharcount > 0) {
-                result.append(template.substring(i, ndx - ((escapeCharcount + 1) >> 1)));
-            } else {
-                result.append(template.substring(i, ndx));
-            }
+            int escapeCharcount = ndx - 1 - j;
+            result.append(template.substring(i,
+                    escapeCharcount > 0
+                    ? ndx - ((escapeCharcount + 1) >> 1)
+                    : ndx));
             if ((escapeCharcount & 1) == 1) {
                 result.append('{');
                 i = ndx + 1;
@@ -379,23 +354,18 @@ public class StringUtil {
             ndx += 1;
             int ndx_end = template.indexOf('}', ndx);
             if (ndx_end == -1) {
-                throw new IllegalArgumentException(StringUtil.concat("Invalid string template, unclosed macro at: ", ndx - 1));
+                throw new IllegalArgumentException(StringUtil.concat("Invalid message, unclosed macro at: ", ndx - 1));
             }
             if (ndx == ndx_end) {
                 index = currentIndex++;
             } else {
-                try {
-                    index = template.charAt(ndx) - '0';
-                    for (int k = ndx + 1; k < ndx_end; k++) {
-                        index = index * 10 + (template.charAt(k) - '0');
-                    }
-                } catch (Exception e) {
-                    index = -1;
+                index = template.charAt(ndx) - '0';
+                for (int k = ndx + 1; k < ndx_end; k++) {
+                    index = index * 10 + (template.charAt(k) - '0');
                 }
             }
             if (index < arrayLen && index >= 0 && array[index] != null) {
-                value = array[index].toString();
-                result.append(value);
+                result.append(array[index].toString());
             }
             i = ndx_end + 1;
         }

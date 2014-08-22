@@ -51,7 +51,8 @@ public class TLDDocumentParser {
 
             String parameterTypesString = functionSignature.substring(lparenIndex + 1, functionSignature.lastIndexOf(')')).trim();
             if (parameterTypesString.length() != 0) {
-                StringUtil.trimAll(parameterTypes = StringUtil.splitc(parameterTypesString, ','));
+                parameterTypes = StringUtil.splitc(parameterTypesString, ',');
+                StringUtil.trimAll(parameterTypes);
             } else {
                 parameterTypes = null;
             }
