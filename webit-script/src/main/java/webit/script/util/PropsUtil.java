@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import webit.script.CFG;
-import webit.script.util.props.Props;
 
 /**
  *
@@ -89,7 +88,7 @@ public class PropsUtil {
                         if (moduleProps == null) {
                             throw new RuntimeException("Not found props named:" + module);
                         }
-                        resolveModules(moduleProps.popBaseProperty(PROPS_MODULES));
+                        resolveModules(moduleProps.remove(PROPS_MODULES));
 
                         if (loadedModules.contains(module)) {
                             //XXX: show warning: self depended!
@@ -159,7 +158,7 @@ public class PropsUtil {
                             if (temp == null) {
                                 throw new RuntimeException("Not found props named:" + temp);
                             }
-                            resolveModules(temp.popBaseProperty(PROPS_MODULES));
+                            resolveModules(temp.remove(PROPS_MODULES));
                             this.props.merge(temp);
                             logPropsFiles(this.mainInputStreamResolver.getViewPath(subpath));
                         }

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import webit.script.loggers.Logger;
 import webit.script.util.bean.BeanUtil;
-import webit.script.util.props.Props;
 
 /**
  * A Simple IoC. Note: <code>defineParameters</code> and
@@ -74,7 +73,7 @@ public final class Petite {
                         if (name.charAt(len - 1) == '+') {
                             props.append(name.substring(0, len - 1).trim(), (String) value);
                         } else {
-                            props.load(name, (String) value);
+                            props.set(name, (String) value);
                         }
                     }
                 } else {
@@ -84,9 +83,9 @@ public final class Petite {
         } else {
             extraDirectParameters = null;
         }
-        //
-        props.extractProps(this.parameters);
-        if (extraDirectParameters != null && extraDirectParameters.size() > 0) {
+
+        props.extractTo(this.parameters);
+        if (extraDirectParameters != null && !extraDirectParameters.isEmpty()) {
             this.parameters.putAll(extraDirectParameters);
         }
         initalized = false;

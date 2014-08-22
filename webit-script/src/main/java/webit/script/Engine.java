@@ -26,7 +26,7 @@ import webit.script.util.KeyValuesUtil;
 import webit.script.util.Petite;
 import webit.script.util.PropsUtil;
 import webit.script.util.StringUtil;
-import webit.script.util.props.Props;
+import webit.script.util.Props;
 
 /**
  *
