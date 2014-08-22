@@ -179,8 +179,8 @@ public class ASMUtil {
                 mg.invokeVirtual(CHARACTER_TYPE, METHOD_CHAR_VALUE);
             } else if (type == byte.class) {
                 mg.invokeVirtual(BYTE_TYPE, METHOD_BYTE_VALUE);
-            } else /* if (type == void.class) */ {
-                //ignore
+            } else {
+                //ignore void.class
             }
         }
         // else ignore

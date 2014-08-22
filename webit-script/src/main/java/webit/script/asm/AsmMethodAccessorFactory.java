@@ -21,16 +21,14 @@ public class AsmMethodAccessorFactory {
     private static final String[] ASM_METHOD_ACCESSOR = new String[]{"webit/script/asm/AsmMethodAccessor"};
 
     public static Class createAccessorClass(java.lang.reflect.Method method) {
-        final String className;
-        return ASMUtil.loadClass(
-                className = resolveClassName(method),
+        final String className = resolveClassName(method);
+        return ASMUtil.loadClass(className,
                 generateClassBody(className, method));
     }
 
     public static Class createAccessorClass(Constructor constructor) {
-        final String className;
-        return ASMUtil.loadClass(
-                className = resolveClassName(constructor),
+        final String className = resolveClassName(constructor);
+        return ASMUtil.loadClass(className,
                 generateClassBody(className, constructor));
     }
 

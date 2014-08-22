@@ -60,8 +60,8 @@ public class NativeFactory implements Initable {
             throw new ParseException("ComponentType must not Void.class", line, column);
         }
 
-        final String path;
-        if (checkAccess && this.nativeSecurityManager.access(path = (classWaitCheck.getName().concat(".[]"))) == false) {
+        final String path = classWaitCheck.getName().concat(".[]");
+        if (checkAccess && !this.nativeSecurityManager.access(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
 
@@ -82,8 +82,8 @@ public class NativeFactory implements Initable {
 
     public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses, int line, int column, boolean checkAccess) {
 
-        final String path;
-        if (checkAccess && this.nativeSecurityManager.access(path = (StringUtil.concat(clazz.getName(), ".", methodName))) == false) {
+        final String path = (StringUtil.concat(clazz.getName(), ".", methodName));
+        if (checkAccess && !this.nativeSecurityManager.access(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
 
@@ -95,18 +95,18 @@ public class NativeFactory implements Initable {
                     if (ClassUtil.isPublic(method)) {
                         try {
                             if ((accessor = AsmMethodAccessorManager.getAccessor(method)) == null) {
-                                logger.error(StringUtil.concat("AsmMethodCaller for '", method.toString(), "' is null, and instead by NativeMethodDeclare"));
+                                logger.error("AsmMethodCaller for '{}' is null, and instead by NativeMethodDeclare", method);
                             }
                         } catch (Exception ex) {
                             accessor = null;
-                            logger.error(StringUtil.concat("Generate AsmMethodCaller for '", method.toString(), "' failed, and instead by NativeMethodDeclare"), ex);
+                            logger.error("Generate AsmMethodCaller for '{}' failed, and instead by NativeMethodDeclare:{}", method, ex);
                         }
                     } else {
-                        logger.warn(StringUtil.concat("'", method.toString(), "' will not use asm, since this method is not public, and instead by NativeMethodDeclare"));
+                        logger.warn("'{}' will not use asm, since this method is not public, and instead by NativeMethodDeclare", method);
                         accessor = null;
                     }
                 } else {
-                    logger.warn(StringUtil.concat("'", method.toString(), "' will not use asm, since class is not public, and instead by NativeMethodDeclare"));
+                    logger.warn("'{}' will not use asm, since class is not public, and instead by NativeMethodDeclare", method);
                     accessor = null;
                 }
             } else {
@@ -139,8 +139,8 @@ public class NativeFactory implements Initable {
     @SuppressWarnings("unchecked")
     public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramClasses, int line, int column, boolean checkAccess) {
 
-        final String path;
-        if (checkAccess && this.nativeSecurityManager.access(path = (clazz.getName() + ".<init>")) == false) {
+        final String path = clazz.getName().concat(".<init>");
+        if (checkAccess && !this.nativeSecurityManager.access(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
 

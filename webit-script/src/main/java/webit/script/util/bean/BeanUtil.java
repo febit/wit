@@ -18,7 +18,6 @@ public class BeanUtil {
     private static final ClassMap<FieldDescriptorsBox> CACHE = new ClassMap<FieldDescriptorsBox>();
 
     public static Object get(final Object bean, final String name) throws BeanUtilException {
-
         Getter getter;
         if ((getter = getFieldDescriptor(bean.getClass(), name).getter) != null) {
             return getter.get(bean);
@@ -32,10 +31,9 @@ public class BeanUtil {
     }
 
     public static void set(final Object bean, final String name, Object value, boolean convertIfNeed) throws BeanUtilException {
-
         Setter setter;
         if ((setter = getFieldDescriptor(bean.getClass(), name).setter) != null) {
-            if (convertIfNeed && value != null && value instanceof String) {
+            if (convertIfNeed && (value == null || value instanceof String)) {
                 value = Convert.convert((String) value, setter.getPropertyType());
             }
             setter.set(bean, value);
@@ -49,27 +47,27 @@ public class BeanUtil {
         if ((box = CACHE.unsafeGet(cls)) == null) {
             box = CACHE.putIfAbsent(cls, new FieldDescriptorsBox());
         }
-        Map<String, FieldDescriptor> descriptors;
-        if ((descriptors = box.descriptors) == null) {
+        Map<String, FieldDescriptor> descs;
+        if ((descs = box.items) == null) {
             synchronized (box) {
-                if ((descriptors = box.descriptors) == null) {
-                    descriptors = resolveClassDescriptor(cls);
-                    box.descriptors = descriptors;
+                if ((descs = box.items) == null) {
+                    descs = resolveFieldDescriptors(cls);
+                    box.items = descs;
                 }
             }
         }
 
         FieldDescriptor fieldDescriptor;
-        if ((fieldDescriptor = descriptors.get(name)) != null) {
+        if ((fieldDescriptor = descs.get(name)) != null) {
             return fieldDescriptor;
         } else {
             throw new BeanUtilException(StringUtil.concat("Unable to get field: ", cls.getName(), "#", name));
         }
     }
 
-    private static Map<String, FieldDescriptor> resolveClassDescriptor(Class cls) {
-        FieldInfo[] fieldInfos = FieldInfoResolver.resolver(cls);
-        Map<String, FieldDescriptor> map = new HashMap<String, FieldDescriptor>(fieldInfos.length * 4 / 3 + 1, 0.75f);
+    private static Map<String, FieldDescriptor> resolveFieldDescriptors(Class cls) {
+        final FieldInfo[] fieldInfos = FieldInfoResolver.resolver(cls);
+        final Map<String, FieldDescriptor> map = new HashMap<String, FieldDescriptor>(fieldInfos.length * 4 / 3 + 1, 0.75f);
         FieldInfo fieldInfo;
         for (int i = 0, len = fieldInfos.length; i < len;) {
             fieldInfo = fieldInfos[i++];
@@ -99,7 +97,7 @@ public class BeanUtil {
 
     private static final class FieldDescriptorsBox {
 
-        Map<String, FieldDescriptor> descriptors;
+        Map<String, FieldDescriptor> items;
     }
 
     private static final class FieldDescriptor {
@@ -136,7 +134,7 @@ public class BeanUtil {
 
         public Object get(Object bean) throws BeanUtilException {
             try {
-                return this.method.invoke(bean, new Object[0]);
+                return this.method.invoke(bean, (Object[]) null);
             } catch (Exception ex) {
                 throw new BeanUtilException(ex.getMessage());
             }

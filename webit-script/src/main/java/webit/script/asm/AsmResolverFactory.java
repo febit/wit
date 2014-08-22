@@ -26,7 +26,6 @@ public class AsmResolverFactory {
 
     private static final String RESOLVERS_CLASS_NAME_PRE = "webit.script.asm.AsmResolver_";
     private static final String[] ASM_RESOLVER = new String[]{"webit/script/asm/AsmResolver"};
-    private static final int MIN_SIZE_TO_SWITH = 4;
 
     private static String resolveClassName(Class beanClass) {
         return StringUtil.concat(RESOLVERS_CLASS_NAME_PRE, beanClass.getSimpleName(), "_", Integer.toString(ASMUtil.getSn()));
@@ -70,7 +69,7 @@ public class AsmResolverFactory {
         final int fieldInfosLength = fieldsDescription.size;
         if (fieldInfosLength == 0) {
             //Do nothing
-        } else if (fieldInfosLength < MIN_SIZE_TO_SWITH) {
+        } else if (fieldInfosLength < 4) {
             appendGetFieldsCode(mg, fieldsDescription.all, beanType);
         } else {
             final Label end_switch = mg.newLabel();
@@ -100,7 +99,7 @@ public class AsmResolverFactory {
         final int fieldInfosLength = fieldsDescription.size;
         if (fieldInfosLength == 0) {
             //Do nothing
-        } else if (fieldInfosLength < MIN_SIZE_TO_SWITH) {
+        } else if (fieldInfosLength < 4) {
             appendSetFieldsCode(mg, fieldsDescription.all, beanType);
         } else {
             final Label end_switch = mg.newLabel();
@@ -330,14 +329,14 @@ public class AsmResolverFactory {
         }
     }
 
-    private static final class FieldsDescription {
+    private static class FieldsDescription {
 
         final FieldInfo[] all;
         final int size;
         final int[] hashcodes;
         final Map<Integer, FieldInfo[]> groupByHashcode;
 
-        public FieldsDescription(FieldInfo[] all, int size, int[] hashcodes, Map<Integer, FieldInfo[]> groupByHashcode) {
+        FieldsDescription(FieldInfo[] all, int size, int[] hashcodes, Map<Integer, FieldInfo[]> groupByHashcode) {
             this.all = all;
             this.size = size;
             this.hashcodes = hashcodes;

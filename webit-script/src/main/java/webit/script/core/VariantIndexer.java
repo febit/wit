@@ -49,12 +49,10 @@ public class VariantIndexer {
         return this.names[index];
     }
 
-    private static final int MAX_OF_NORMAL_VAR_MAP = 6;
-
     public static VariantIndexer getVariantIndexer(final Map<String, Integer> map) {
         if (map == null || map.isEmpty()) {
             return VariantIndexer.EMPTY;
-        } else if (map.size() <= VariantIndexer.MAX_OF_NORMAL_VAR_MAP) {
+        } else if (map.size() <= 6) {
             return new VariantIndexer(map);
         } else {
             return new HashVariantIndexer(map);

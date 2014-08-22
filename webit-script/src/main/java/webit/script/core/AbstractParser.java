@@ -30,9 +30,6 @@ import webit.script.util.Stack;
  */
 abstract class AbstractParser {
 
-    private static final int STACK_INITIAL_CAPACITY = 24;
-    private static final int START_STATE = 0;
-
     private static final short[][] PRODUCTION_TABLE = loadFromDataFile("Production");
     private static final short[][] ACTION_TABLE = loadFromDataFile("Action");
     private static final short[][] REDUCE_TABLE = loadFromDataFile("Reduce");
@@ -52,7 +49,7 @@ abstract class AbstractParser {
     int currentLabelIndex;
 
     AbstractParser() {
-        this._stack = new Stack<Symbol>(STACK_INITIAL_CAPACITY);
+        this._stack = new Stack<Symbol>(24);
     }
 
     /**
@@ -100,14 +97,6 @@ abstract class AbstractParser {
         }
     }
 
-    /**
-     * Perform a bit of user supplied action code. Actions are indexed by an
-     * internal action number assigned at parser generation time.
-     *
-     * @param act_num the internal index of the action to be performed.
-     * @return Object
-     * @throws java.lang.Exception
-     */
     abstract Object doAction(int act_num) throws ParseException;
 
     int getLabelIndex(String label) {
@@ -389,7 +378,7 @@ abstract class AbstractParser {
         (stack = this._stack).clear();
         {
             Symbol START;
-            (START = new Symbol(0, null)).state = START_STATE;
+            (START = new Symbol(0, null)).state = 0;
             stack.push(currentSymbol = START);
         }
 
