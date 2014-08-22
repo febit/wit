@@ -14,10 +14,9 @@ public final class FieldInfo implements Comparable<FieldInfo> {
     public final String name;
     public final int hashCode;
     public final Class parent;
-    private Method getterMethod;
     private Field field;
+    private Method getterMethod;
     private Method setterMethod;
-    private boolean isFinal = false;
 
     public FieldInfo(Class parent, String name) {
         this.parent = parent;
@@ -47,11 +46,10 @@ public final class FieldInfo implements Comparable<FieldInfo> {
 
     public void setField(Field field) {
         this.field = field;
-        this.isFinal = Modifier.isFinal(field.getModifiers());
     }
 
     public boolean isIsFinal() {
-        return isFinal;
+        return this.field != null && Modifier.isFinal(field.getModifiers());
     }
 
     public int compareTo(final FieldInfo o) {
@@ -65,19 +63,14 @@ public final class FieldInfo implements Comparable<FieldInfo> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+        if (this == obj) {
+            return true;
         }
-        if (!(obj instanceof FieldInfo)) {
+        if (obj == null
+                ||!(obj instanceof FieldInfo)) {
             return false;
         }
         final FieldInfo other = (FieldInfo) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        if (this.parent != other.parent && (this.parent == null || !this.parent.equals(other.parent))) {
-            return false;
-        }
-        return true;
+        return this.parent == other.parent && this.name.equals(other.name);
     }
 }

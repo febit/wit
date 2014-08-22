@@ -15,39 +15,32 @@ import webit.script.util.StringUtil;
  */
 public final class FieldInfoResolver {
 
-    public static FieldInfo[] resolver(Class beanClass) {
-        return new FieldInfoResolver(beanClass).resolver();
-    }
     private final Class beanClass;
     private final Map<String, FieldInfo> fieldInfos;
 
     public FieldInfoResolver(Class beanClass) {
-        this.fieldInfos = new HashMap<String, FieldInfo>();
         this.beanClass = beanClass;
+        this.fieldInfos = new HashMap<String, FieldInfo>();
     }
 
-    public FieldInfo[] resolver() {
-        int i, len;
+    public static FieldInfo[] resolve(Class beanClass) {
+        return new FieldInfoResolver(beanClass).resolve();
+    }
 
-        Field[] fields = beanClass.getFields();
-        Field field;
-        for (i = 0, len = fields.length; i < len;) {
-            if (ClassUtil.isStatic(field = fields[i++]) == false) {
+    public FieldInfo[] resolve() {
+
+        for (Field field : beanClass.getFields()) {
+            if (!ClassUtil.isStatic(field)) {
                 registField(field);
             }
         }
 
-        final Method[] methods = beanClass.getMethods();
-        Method method;
-        String methodName;
-        int argsCount;
-        int methodNameLength;
-        for (i = 0, len = methods.length; i < len;) {
-            if (ClassUtil.isStatic(method = methods[i++]) == false
+        for (Method method : beanClass.getMethods()) {
+            if (!ClassUtil.isStatic(method)
                     && method.getDeclaringClass() != Object.class) {
-                argsCount = method.getParameterTypes().length;
-                methodName = method.getName();
-                methodNameLength = methodName.length();
+                int argsCount = method.getParameterTypes().length;
+                String methodName = method.getName();
+                int methodNameLength = methodName.length();
                 if (method.getReturnType() == void.class) {
                     if (argsCount == 1
                             && methodNameLength > 3
@@ -68,15 +61,16 @@ public final class FieldInfoResolver {
             }
         }
 
-        final FieldInfo[] fieldInfoArray;
-        Arrays.sort(fieldInfoArray = fieldInfos.values().toArray(new FieldInfo[fieldInfos.size()]));
+        final FieldInfo[] fieldInfoArray = fieldInfos.values().toArray(new FieldInfo[fieldInfos.size()]);
+        Arrays.sort(fieldInfoArray);
         return fieldInfoArray;
     }
 
     private FieldInfo getOrCreateFieldInfo(String name) {
-        FieldInfo fieldInfo;
-        if ((fieldInfo = fieldInfos.get(name)) == null) {
-            fieldInfos.put(name, fieldInfo = new FieldInfo(beanClass, name));
+        FieldInfo fieldInfo = fieldInfos.get(name);
+        if (fieldInfo == null) {
+            fieldInfo = new FieldInfo(beanClass, name);
+            fieldInfos.put(name, fieldInfo);
         }
         return fieldInfo;
     }

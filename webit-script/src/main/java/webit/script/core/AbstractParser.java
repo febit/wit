@@ -100,9 +100,10 @@ abstract class AbstractParser {
     abstract Object doAction(int act_num) throws ParseException;
 
     int getLabelIndex(String label) {
-        Integer index;
-        if ((index = labelsIndexMap.get(label)) == null) {
-            labelsIndexMap.put(label, index = ++currentLabelIndex);
+        Integer index = labelsIndexMap.get(label);
+        if (index == null) {
+            index = ++currentLabelIndex;
+            labelsIndexMap.put(label, index);
         }
         return index;
     }
@@ -148,8 +149,8 @@ abstract class AbstractParser {
         }
         final String fieldName = classNameBand.pop();
         final Class clazz = nativeImportMgr.toClass(classNameBand, line, column);
-        final String path;
-        if (this.engine.getNativeSecurityManager().access(path = (StringUtil.concat(clazz.getName(), ".", fieldName))) == false) {
+        final String path = (StringUtil.concat(clazz.getName(), ".", fieldName));
+        if (!this.engine.getNativeSecurityManager().access(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
         final Field field;
@@ -374,13 +375,13 @@ abstract class AbstractParser {
         int act;
         Symbol currentToken;
         Symbol currentSymbol;
-        final Stack<Symbol> stack;
-        (stack = this._stack).clear();
-        {
-            Symbol START;
-            (START = new Symbol(0, null)).state = 0;
-            stack.push(currentSymbol = START);
-        }
+        final Stack<Symbol> stack = this._stack;
+        stack.clear();
+
+        //Start Symbol
+        currentSymbol = new Symbol(0, null);
+        currentSymbol.state = 0;
+        stack.push(currentSymbol);
 
         final short[][] actionTable = ACTION_TABLE;
         final short[][] reduceTable = REDUCE_TABLE;

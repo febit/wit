@@ -66,7 +66,7 @@ public class BeanUtil {
     }
 
     private static Map<String, FieldDescriptor> resolveFieldDescriptors(Class cls) {
-        final FieldInfo[] fieldInfos = FieldInfoResolver.resolver(cls);
+        final FieldInfo[] fieldInfos = FieldInfoResolver.resolve(cls);
         final Map<String, FieldDescriptor> map = new HashMap<String, FieldDescriptor>(fieldInfos.length * 4 / 3 + 1, 0.75f);
         FieldInfo fieldInfo;
         for (int i = 0, len = fieldInfos.length; i < len;) {

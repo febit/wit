@@ -41,10 +41,11 @@ public class NativeImportManager {
             //3. find from java.lang.*
             //4. use simpleName
             String simpleName = classNameBand.getClassSimpleName();
-            if ((classPureName = classes.get(simpleName)) == null) {
+            classPureName = classes.get(simpleName);
+            if (classPureName == null) {
                 if (!classNameBand.isArray()) {
-                    Class cls;
-                    if ((cls = ClassUtil.getCachedClass(simpleName)) != null) {
+                    Class cls = ClassUtil.getCachedClass(simpleName);
+                    if (cls != null) {
                         return cls;
                     }
                 }

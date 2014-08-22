@@ -291,7 +291,7 @@ public class AsmResolverFactory {
 
     private static FieldsDescription resolveFieldsDescription(Class beanClass) {
 
-        final FieldInfo[] all = FieldInfoResolver.resolver(beanClass);
+        final FieldInfo[] all = FieldInfoResolver.resolve(beanClass);
         Arrays.sort(all);
         final int size = all.length;
 
