@@ -166,7 +166,7 @@ public final class Engine {
      * @return config value
      */
     public Object getConfig(String key) {
-        return this.petite.getParameter(key);
+        return this.petite.get(key);
     }
 
     /**
@@ -483,7 +483,7 @@ public final class Engine {
     public static Engine create(final Props props, final Map<String, Object> parameters) {
 
         final Petite petite = new Petite();
-        petite.defineParameters(props, parameters);
+        petite.set(props, parameters);
 
         final Engine engine = new Engine(petite);
         petite.wireBean(engine);
@@ -491,7 +491,7 @@ public final class Engine {
         try {
             engine.init();
             if (engine.getLogger().isInfoEnabled()) {
-                engine.getLogger().info("Loaded props: ".concat(String.valueOf(petite.getParameter(CFG.PROPS_FILE_LIST))));
+                engine.getLogger().info("Loaded props: ".concat(String.valueOf(petite.get(CFG.PROPS_FILE_LIST))));
             }
             engine.executeInitTemplates();
         } catch (ResourceNotFoundException ex) {
