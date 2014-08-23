@@ -1,5 +1,5 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script;
+
 
 import java.io.PrintStream;
 import org.junit.Test;

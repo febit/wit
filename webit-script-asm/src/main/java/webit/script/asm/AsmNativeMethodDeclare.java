@@ -1,8 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.lang.method;
+package webit.script.asm;
 
 import webit.script.Context;
-import webit.script.asm.AsmMethodAccessor;
 import webit.script.lang.MethodDeclare;
 
 /**

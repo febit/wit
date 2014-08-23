@@ -24,7 +24,6 @@ assistantSuffixs+=.wit
 
 
 [resolverManager]
-# enableAsm=true
 # ignoreNullPointer=true
 resolvers='''
     webit.script.resolvers.impl.ScriptUnsetableBagResolver
@@ -61,6 +60,9 @@ list +='''
 @extends=engine
 
 [webit.script.resolvers.ResolverManager]
+@extends=resolverManager
+
+[webit.script.asm.AsmResolverManager]
 @extends=resolverManager
 
 [webit.script.global.DefaultGlobalManager]

@@ -4,7 +4,6 @@ package webit.script.resolvers;
 import java.util.ArrayList;
 import webit.script.Engine;
 import webit.script.Initable;
-import webit.script.asm.AsmResolverManager;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.loggers.Logger;
@@ -16,29 +15,29 @@ import webit.script.util.ClassMap;
  *
  * @author Zqq
  */
-public final class ResolverManager implements Initable {
+public class ResolverManager implements Initable {
 
-    private Logger logger;
-    //
-    private final ClassMap<GetResolver> getResolverMap;
-    private final ClassMap<SetResolver> setResolverMap;
-    private final ClassMap<OutResolver> outResolverMap;
-    //
-    private final ArrayList<GetResolver> getResolvers;
-    private final ArrayList<SetResolver> setResolvers;
-    private final ArrayList<OutResolver> outResolvers;
-    private final ArrayList<Class> getResolverTypes;
-    private final ArrayList<Class> setResolverTypes;
-    private final ArrayList<Class> outResolverTypes;
-    //
-    private final CommonResolver commonResolver;
+    protected Logger logger;
+
+    protected final ClassMap<GetResolver> getResolverMap;
+    protected final ClassMap<SetResolver> setResolverMap;
+    protected final ClassMap<OutResolver> outResolverMap;
+
+    protected final ArrayList<GetResolver> getResolvers;
+    protected final ArrayList<SetResolver> setResolvers;
+    protected final ArrayList<OutResolver> outResolvers;
+    protected final ArrayList<Class> getResolverTypes;
+    protected final ArrayList<Class> setResolverTypes;
+    protected final ArrayList<Class> outResolverTypes;
+
+    protected final CommonResolver commonResolver;
     //settings
-    private boolean enableAsm = true;
-    private boolean ignoreNullPointer = true;
-    private ClassEntry[] resolvers;
-    //
+    protected boolean ignoreNullPointer;
+    protected ClassEntry[] resolvers;
 
     public ResolverManager() {
+        this.ignoreNullPointer = true;
+        
         getResolverMap = new ClassMap<GetResolver>();
         setResolverMap = new ClassMap<SetResolver>();
         outResolverMap = new ClassMap<OutResolver>();
@@ -53,18 +52,16 @@ public final class ResolverManager implements Initable {
         commonResolver = new CommonResolver();
     }
 
-    private GetResolver getGetResolver(final Class type) {
+    protected GetResolver getGetResolver(final Class type) {
         GetResolver resolver;
         return (resolver = getResolverMap.unsafeGet(type)) != null
                 ? resolver
-                : resolveGetResolver(type);
+                : resolveGetResolverIfAbsent(type);
     }
 
     @SuppressWarnings("unchecked")
-    private GetResolver resolveGetResolver(final Class type) {
-        GetResolver resolver;
-
-        resolver = getResolverMap.get(type);
+    protected GetResolver resolveGetResolverIfAbsent(final Class type) {
+        GetResolver resolver = getResolverMap.get(type);
         if (resolver == null) {
             for (int i = 0; i < getResolverTypes.size(); i++) {
                 if (getResolverTypes.get(i).isAssignableFrom(type)) {
@@ -72,37 +69,27 @@ public final class ResolverManager implements Initable {
                     break;
                 }
             }
-
-            if (resolver == null && enableAsm) {
-                try {
-                    resolver = AsmResolverManager.getAsmResolver(type);
-                } catch (Exception e) {
-                    logger.error(null, e);
-                }
-                if (resolver == null) {
-                    logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
-                }
-            }
-
             if (resolver == null) {
-                resolver = commonResolver;
+                resolver = resolveGetResolver(type);
             }
-
-            //last
             resolver = getResolverMap.putIfAbsent(type, resolver);
         }
         return resolver;
     }
 
-    private SetResolver getSetResolver(final Class type) {
+    protected GetResolver resolveGetResolver(final Class type) {
+        return commonResolver;
+    }
+
+    protected SetResolver getSetResolver(final Class type) {
         SetResolver resolver;
         return (resolver = setResolverMap.unsafeGet(type)) != null
                 ? resolver
-                : resolveSetResolver(type);
+                : resolveSetResolverIfAbsent(type);
     }
 
     @SuppressWarnings("unchecked")
-    private SetResolver resolveSetResolver(final Class type) {
+    protected SetResolver resolveSetResolverIfAbsent(final Class type) {
         SetResolver resolver;
         resolver = setResolverMap.get(type);
         if (resolver == null) {
@@ -112,28 +99,19 @@ public final class ResolverManager implements Initable {
                     break;
                 }
             }
-
-            if (resolver == null && enableAsm) {
-                try {
-                    resolver = AsmResolverManager.getAsmResolver(type);
-                } catch (Exception e) {
-                    logger.error(null, e);
-                }
-                if (resolver == null) {
-                    logger.warn("Failed to generate AsmResolver for type '{}', use CommonResolver instead.", type.getName());
-                }
-            }
-
             if (resolver == null) {
-                resolver = commonResolver;
+                resolver = resolveSetResolver(type);
             }
-
             resolver = setResolverMap.putIfAbsent(type, resolver);
         }
         return resolver;
     }
 
-    private OutResolver getOutResolver(final Class type) {
+    protected SetResolver resolveSetResolver(final Class type) {
+        return commonResolver;
+    }
+
+    protected OutResolver getOutResolver(final Class type) {
         OutResolver resolver;
         return (resolver = outResolverMap.unsafeGet(type)) != null
                 ? resolver
@@ -141,7 +119,7 @@ public final class ResolverManager implements Initable {
     }
 
     @SuppressWarnings("unchecked")
-    private OutResolver resolveOutResolver(final Class type) {
+    protected OutResolver resolveOutResolver(final Class type) {
         OutResolver resolver;
         resolver = outResolverMap.get(type);
         if (resolver == null) {
@@ -177,7 +155,6 @@ public final class ResolverManager implements Initable {
         getResolverTypes.trimToSize();
         setResolverTypes.trimToSize();
         outResolverTypes.trimToSize();
-        //
     }
 
     public boolean registResolver(Class type, Resolver resolver, MatchMode matchMode) {
@@ -210,7 +187,7 @@ public final class ResolverManager implements Initable {
                 break;
             case REGIST:
             default:
-                //EXCEPTION??
+                //Error??
                 return false;
         }
 
@@ -230,17 +207,13 @@ public final class ResolverManager implements Initable {
     public void set(Object bean, Object property, Object value) {
         if (bean != null) {
             getSetResolver(bean.getClass()).set(bean, property, value);
-        } else if (ignoreNullPointer == false) {
+        } else if (!ignoreNullPointer) {
             throw new ScriptRuntimeException("Null pointer.");
         }
     }
 
     public void render(final Out out, final Object bean) {
         getOutResolver(bean.getClass()).render(out, bean);
-    }
-
-    public void setEnableAsm(boolean enableAsm) {
-        this.enableAsm = enableAsm;
     }
 
     public void setIgnoreNullPointer(boolean ignoreNullPointer) {

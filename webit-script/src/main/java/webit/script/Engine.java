@@ -44,6 +44,8 @@ public final class Engine {
     private ClassEntry _coderFactory;
     private ClassEntry _globalManager;
     private ClassEntry _logger;
+    private ClassEntry _resolverManager;
+    private ClassEntry _nativeFactory;
     private String encoding = EncodingPool.UTF_8;
     private boolean looseVar = false;
     private boolean shareRootData = true;
@@ -61,9 +63,9 @@ public final class Engine {
     private NativeSecurityManager nativeSecurityManager;
     private CoderFactory coderFactory;
     private Filter filter;
+    private NativeFactory nativeFactory;
+    private ResolverManager resolverManager;
     //
-    private final NativeFactory nativeFactory;
-    private final ResolverManager resolverManager;
     private final ConcurrentMap<String, Template> templateCache;
     private final Map<String, Object> componentContainer;
     private final Petite petite;
@@ -84,6 +86,16 @@ public final class Engine {
         }
         this.logger = (Logger) ClassUtil.newInstance(this._logger);
 
+        if (this._nativeFactory == null) {
+            this._nativeFactory = ClassEntry.wrap(NativeFactory.class);
+        }
+        this.nativeFactory = (NativeFactory) ClassUtil.newInstance(this._nativeFactory);
+        
+        if (this._resolverManager == null) {
+            this._resolverManager = ClassEntry.wrap(ResolverManager.class);
+        }
+        this.resolverManager = (ResolverManager) ClassUtil.newInstance(this._resolverManager);
+        
         if (this._coderFactory == null) {
             this._coderFactory = ClassEntry.wrap(webit.script.io.charset.impl.DefaultCoderFactory.class);
         }
@@ -116,8 +128,8 @@ public final class Engine {
         resolveComponent(this.logger, this._logger);
         this.petite.setLogger(this.logger);
 
-        resolveComponent(this.nativeFactory);
-        resolveComponent(this.resolverManager);
+        resolveComponent(this.nativeFactory, this._nativeFactory);
+        resolveComponent(this.resolverManager, this._resolverManager);
         resolveComponent(this.coderFactory, this._coderFactory);
         resolveComponent(this.nativeSecurityManager, this._nativeSecurityManager);
         resolveComponent(this.textStatementFactory, this._textStatementFactory);
