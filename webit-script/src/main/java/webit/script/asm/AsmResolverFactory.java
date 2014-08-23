@@ -84,7 +84,7 @@ public class AsmResolverFactory {
 
                 public void generateDefault() {
                 }
-            });
+            }, false);
             mg.mark(end_switch);
         }
         //Exception
@@ -114,7 +114,7 @@ public class AsmResolverFactory {
 
                 public void generateDefault() {
                 }
-            });
+            }, false);
 
             mg.mark(end_switch);
         }
