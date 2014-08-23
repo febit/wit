@@ -162,7 +162,7 @@ statement            ::= expression_statementable:expr SEMICOLON
                         {: return NoneStatement.getInstance(); :}
 
                         |expression:expr INTERPOLATION_END
-                        {: return interpolationFactory.createInterpolation(%expr%); :}
+                        {: return createInterpolation(%expr%); :}
 
                         |block:stat
                         {: return %stat%; :}

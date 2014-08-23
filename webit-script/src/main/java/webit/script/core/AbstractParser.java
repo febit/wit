@@ -12,9 +12,9 @@ import webit.script.core.ast.*;
 import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.operators.*;
 import webit.script.core.ast.TemplateAST;
-import webit.script.core.ast.statements.InterpolationFactory;
 import webit.script.core.text.TextStatementFactory;
 import webit.script.core.VariantManager.VarAddress;
+import webit.script.core.ast.statements.Interpolation;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ExceptionUtil;
@@ -40,7 +40,6 @@ abstract class AbstractParser {
     Engine engine;
     Template template;
     TextStatementFactory textStatementFactory;
-    InterpolationFactory interpolationFactory;
     NativeFactory nativeFactory;
     boolean locateVarForce;
     NativeImportManager nativeImportMgr;
@@ -72,7 +71,6 @@ abstract class AbstractParser {
             lexer.setTrimCodeBlockBlankLine(_engine.isTrimCodeBlockBlankLine());
             this.textStatementFactory = _textStatementFactory = _engine.getTextStatementFactory();
             this.locateVarForce = !_engine.isLooseVar();
-            this.interpolationFactory = new InterpolationFactory(_engine.getFilter());
             this.nativeImportMgr = new NativeImportManager();
             this.nativeFactory = _engine.getNativeFactory();
             this.varmgr = new VariantManager(_engine);
@@ -173,6 +171,10 @@ abstract class AbstractParser {
         } else {
             throw new ParseException("No a static field: ".concat(path), line, column);
         }
+    }
+    
+    Statement createInterpolation(final Expression expr) {
+        return new Interpolation(expr);
     }
 
     Expression createNativeNewArrayDeclareExpression(Class componentType, int line, int column) {

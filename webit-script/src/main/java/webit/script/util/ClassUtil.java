@@ -262,10 +262,6 @@ public class ClassUtil {
         return currentClass.getMethod(name, parameterTypes);
     }
 
-    public static Object newInstance(final ClassEntry type) {
-        return newInstance(type.getValue());
-    }
-
     public static Object newInstance(final Class type) {
         try {
             return type.newInstance();

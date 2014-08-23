@@ -643,7 +643,7 @@ public class Parser extends AbstractParser {
             }
             case 12: // statement ::= expression INTERPOLATION_END 
             {
-                return interpolationFactory.createInterpolation((Expression) myStack.peek(1).value);
+                return createInterpolation((Expression) myStack.peek(1).value);
             }
             case 4: // classPureName ::= IDENTIFIER 
             {
