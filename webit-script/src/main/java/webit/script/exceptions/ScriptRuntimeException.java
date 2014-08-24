@@ -57,6 +57,7 @@ public class ScriptRuntimeException extends TemplateException {
                     .print(statement.getLine())
                     .print(":")
                     .print(statement.getColumn())
+                    .print(" ")
                     .println(statement.getClass().getSimpleName());
         }
     }
