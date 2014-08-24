@@ -5,14 +5,18 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import webit.script.loaders.Resource;
+import webit.script.loaders.ResourceOffset;
 
 /**
  *
  * @author Zqq
  */
-public class StringResource implements Resource {
+public class StringResource implements Resource, ResourceOffset {
 
     private final String text;
+
+    private int offsetLine = 0;
+    private int offsetColumnOfFirstLine = 0;
 
     public StringResource(String text) {
         this.text = text;
@@ -31,5 +35,28 @@ public class StringResource implements Resource {
      */
     public boolean exists() {
         return this.text != null;
+    }
+
+    /**
+     * @since 1.5.0
+     */
+    public StringResource setOffset(int offsetLine, int offsetColumnOfFirstLine) {
+        this.offsetLine = offsetLine;
+        this.offsetColumnOfFirstLine = offsetColumnOfFirstLine;
+        return this;
+    }
+
+    /**
+     * @since 1.5.0
+     */
+    public int getOffsetLine() {
+        return offsetLine;
+    }
+
+    /**
+     * @since 1.5.0
+     */
+    public int getOffsetColumnOfFirstLine() {
+        return offsetColumnOfFirstLine;
     }
 }

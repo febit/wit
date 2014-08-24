@@ -3,6 +3,7 @@
 package webit.script.core;
 
 import webit.script.exceptions.ParseException;
+import webit.script.loaders.ResourceOffset;
 import webit.script.util.FastCharBuffer;
 import webit.script.util.RepeatChars;
 
@@ -922,25 +923,36 @@ public class Lexer {
     private static final int INTERPOLATION_START_LEN = 2;
     private static final int TEXT_BLOCK_END_LEN = 2;
 
-
     private boolean interpolationFlag = false;
     private boolean leftInterpolationFlag = true;
 
     private boolean trimCodeBlockBlankLine = false;
-    private FastCharBuffer stringBuffer = new FastCharBuffer(256);
+    private final FastCharBuffer stringBuffer = new FastCharBuffer(256);
     private int stringLine = 0;
     private int stringColumn = 0;
+    
+    private int offsetLine = 0;
+    private int offsetColumnOfFirstLine= 0;
     
     public void setTrimCodeBlockBlankLine(boolean flag){
         trimCodeBlockBlankLine = flag;
     }
     
+    public void setOffset(int offsetLine, int offsetColumnOfFirstLine){
+        this.offsetLine = offsetLine;
+        this.offsetColumnOfFirstLine = 1 - offsetColumnOfFirstLine;
+    }
+    
+    public void setOffset(ResourceOffset offset){
+        setOffset(offset.getOffsetLine(), offset.getOffsetColumnOfFirstLine());
+    }
+    
     public int getColumn(){
-        return yycolumn+1;
+        return yycolumn + (yyline == offsetLine ? offsetColumnOfFirstLine : 1);
     }
     
     public int getLine(){
-        return yyline+1;
+        return yyline - offsetLine + 1;
     }
 
     public char yychar(){
@@ -1002,11 +1014,11 @@ public class Lexer {
     }
 
     private Symbol symbol(int sym) {
-        return new Symbol(sym, yyline + 1, yycolumn + 1, sym);
+        return new Symbol(sym, getLine(), getColumn(), sym);
     }
 
     private Symbol symbol(int sym, Object val) {
-        return new Symbol(sym, yyline + 1, yycolumn + 1, val);
+        return new Symbol(sym, getLine(), getColumn(), val);
     }
     
     private Symbol symbol(int sym, int line, int column, Object val) {

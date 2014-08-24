@@ -16,6 +16,8 @@ import webit.script.core.text.TextStatementFactory;
 import webit.script.core.VariantManager.VarAddress;
 import webit.script.core.ast.statements.Interpolation;
 import webit.script.exceptions.ParseException;
+import webit.script.loaders.Resource;
+import webit.script.loaders.ResourceOffset;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ExceptionUtil;
 import webit.script.util.ClassNameBand;
@@ -65,7 +67,15 @@ abstract class AbstractParser {
             final Symbol astSymbol;
 
             //ISSUE: LexerProvider
-            lexer = new Lexer(template.resource.openReader());
+            final Resource resource = template.resource;
+            lexer = new Lexer(resource.openReader());
+
+            if (resource instanceof ResourceOffset) {
+                lexer.setOffset((ResourceOffset) resource);
+            } else {
+                lexer.setOffset(0, 0);
+            }
+
             this.template = template;
             this.engine = _engine = template.engine;
             lexer.setTrimCodeBlockBlankLine(_engine.isTrimCodeBlockBlankLine());
@@ -172,7 +182,7 @@ abstract class AbstractParser {
             throw new ParseException("No a static field: ".concat(path), line, column);
         }
     }
-    
+
     Statement createInterpolation(final Expression expr) {
         return new Interpolation(expr);
     }
