@@ -7,48 +7,10 @@ import webit.script.core.ast.Statement;
  *
  * @author Zqq
  */
-public class ParseException extends UncheckedException {
+public class ParseException extends TemplateException {
 
-    private int line = -1;
-    private int column = -1;
-
-    public int getLine() {
-        return line;
-    }
-
-    public void setLine(int line) {
-        this.line = line;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
-    public void setColumn(int column) {
-        this.column = column;
-    }
-
-    public final void initByStatement(Statement statement) {
-        if (statement != null) {
-            setPosition(statement.getLine(), statement.getColumn());
-        }
-    }
-
-    public ParseException setPosition(int line, int column) {
-        this.line = line;
-        this.column = column;
-        return this;
-    }
-
-    @Override
-    public void printBody(PrintStreamOrWriter out, String prefix) {
-        out.print(prefix)
-                .print("\tat line ")
-                .print(this.line)
-                .print("(")
-                .print(this.column)
-                .println(")");
-    }
+    protected int line = -1;
+    protected int column = -1;
 
     public ParseException(String message) {
         super(message);
@@ -61,8 +23,7 @@ public class ParseException extends UncheckedException {
     }
 
     public ParseException(String message, Statement statement) {
-        super(message);
-        initByStatement(statement);
+        this(message, statement.getLine(), statement.getColumn());
     }
 
     public ParseException(String message, Throwable cause) {
@@ -76,16 +37,35 @@ public class ParseException extends UncheckedException {
     }
 
     public ParseException(String message, Throwable cause, Statement statement) {
-        super(message, cause);
-        initByStatement(statement);
+        this(message, cause, statement.getLine(), statement.getColumn());
     }
 
     public ParseException(Throwable cause) {
         super(cause);
     }
 
-    public ParseException(Throwable cause, Statement statement) {
+    public ParseException(Throwable cause, int line, int column) {
         super(cause);
-        initByStatement(statement);
+    }
+
+    public ParseException(Throwable cause, Statement statement) {
+        this(cause, statement.getLine(), statement.getColumn());
+    }
+
+    @Override
+    protected void printBody(PrintStreamOrWriter out, String prefix) {
+        out.print(prefix)
+                .print("\tat ")
+                .print(this.line)
+                .print(":")
+                .print(this.column);
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public int getColumn() {
+        return column;
     }
 }

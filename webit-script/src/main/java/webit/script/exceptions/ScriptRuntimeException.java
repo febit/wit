@@ -8,33 +8,9 @@ import webit.script.util.Stack;
  *
  * @author Zqq
  */
-public class ScriptRuntimeException extends UncheckedException {
+public class ScriptRuntimeException extends TemplateException {
 
-    private final Stack<Statement> statementStack = new Stack<Statement>(8);
-
-    public final ScriptRuntimeException registStatement(Statement statement) {
-        statementStack.push(statement);
-        return this;
-    }
-
-    public Stack<Statement> getStatementStack() {
-        return statementStack;
-    }
-
-    @Override
-    public void printBody(PrintStreamOrWriter out, String prefix) {
-        Statement statement;
-        for (int i = statementStack.size() - 1; i >= 0; i--) {
-            statement = statementStack.peek(i);
-            out.print(prefix)
-                    .print("\tat line ")
-                    .print(statement.getLine())
-                    .print("(")
-                    .print(statement.getColumn())
-                    .print(") ")
-                    .println(statement.getClass().getSimpleName());
-        }
-    }
+    protected final Stack<Statement> statementStack = new Stack<Statement>(8);
 
     public ScriptRuntimeException(String message) {
         super(message);
@@ -61,5 +37,27 @@ public class ScriptRuntimeException extends UncheckedException {
     public ScriptRuntimeException(Throwable cause, Statement statement) {
         super(cause);
         registStatement(statement);
+    }
+
+    public final void registStatement(Statement statement) {
+        statementStack.push(statement);
+    }
+
+    public Stack<Statement> getStatementStack() {
+        return statementStack;
+    }
+
+    @Override
+    protected void printBody(PrintStreamOrWriter out, String prefix) {
+        Statement statement;
+        for (int i = statementStack.size() - 1; i >= 0; i--) {
+            statement = statementStack.peek(i);
+            out.print(prefix)
+                    .print("\tat ")
+                    .print(statement.getLine())
+                    .print(":")
+                    .print(statement.getColumn())
+                    .println(statement.getClass().getSimpleName());
+        }
     }
 }

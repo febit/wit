@@ -4,59 +4,38 @@ package webit.script.exceptions;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import webit.script.Template;
-import webit.script.util.ExceptionUtil;
 
 /**
  *
  * @author Zqq
  */
-public abstract class UncheckedException extends RuntimeException {
+public abstract class TemplateException extends RuntimeException {
 
-    protected String message;
     protected boolean isCause = false;
-    private Template template;
+    protected Template template;
+
+    public TemplateException(String message) {
+        super(message);
+    }
+
+    public TemplateException(Throwable cause) {
+        this(cause.getMessage(), cause);
+    }
+
+    public TemplateException(String message, Throwable cause) {
+        super(message, cause);
+        if (cause instanceof TemplateException) {
+            ((TemplateException) cause).isCause = true;
+        }
+    }
 
     public Template getTemplate() {
         return template;
     }
 
-    public final UncheckedException setTemplate(Template template) {
+    public TemplateException setTemplate(Template template) {
         this.template = template;
         return this;
-    }
-
-    public boolean isIsCause() {
-        return isCause;
-    }
-
-    public void setIsCause(boolean isCause) {
-        this.isCause = isCause;
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public String getLocalizedMessage() {
-        return getMessage();
-    }
-
-    public UncheckedException(String message) {
-        this.message = message;
-    }
-
-    public UncheckedException(Throwable cause) {
-        this(cause.getMessage(), cause);
-    }
-
-    public UncheckedException(String message, Throwable cause) {
-        super(cause);
-        this.message = message;
-        if (cause instanceof UncheckedException) {
-            ((UncheckedException) cause).setIsCause(true);
-        }
     }
 
     @Override
@@ -73,7 +52,7 @@ public abstract class UncheckedException extends RuntimeException {
         }
     }
 
-    public void printStackTrace(PrintStreamOrWriter out) {
+    protected void printStackTrace(PrintStreamOrWriter out) {
         String prefix = isCause ? "\t" : "";
 
         out.print(prefix).println(this);
@@ -84,21 +63,21 @@ public abstract class UncheckedException extends RuntimeException {
         }
         printBody(out, prefix);
 
-        Throwable ourCause;
-        if ((ourCause = getCause()) != null) {
+        Throwable ourCause = getCause();
+        if (ourCause != null) {
             out.print(prefix).println("\tCaused by: ");
             out.printStackTrace(ourCause);
         }
     }
 
     @Override
-    public synchronized Throwable fillInStackTrace() {
+    public Throwable fillInStackTrace() {
         return this;
     }
 
-    public abstract void printBody(PrintStreamOrWriter out, String prefix);
+    protected abstract void printBody(PrintStreamOrWriter out, String prefix);
 
-    protected abstract static interface PrintStreamOrWriter {
+    protected static interface PrintStreamOrWriter {
 
         PrintStreamOrWriter println(Object o);
 
@@ -126,7 +105,7 @@ public abstract class UncheckedException extends RuntimeException {
         }
 
         public void printStackTrace(Throwable cause) {
-            ExceptionUtil.printStackTrace(cause, out);
+            cause.printStackTrace(out);
         }
     }
 

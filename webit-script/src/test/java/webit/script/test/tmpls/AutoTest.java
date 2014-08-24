@@ -102,7 +102,6 @@ public class AutoTest {
             Context context = template.merge(out);
             System.out.println("\tassert count: " + context.getLocalVar(webit.script.tools.testunit.Assert.ASSERT_COUNT_KEY));
         } catch (ScriptRuntimeException e) {
-            ExceptionUtil.printStackTrace(e, System.out);
             throw e;
         }
     }

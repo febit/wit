@@ -22,7 +22,7 @@ public class StringLoaderTest {
 
         final StringWriter writer = new StringWriter();
 
-        Engine.createEngine("")
+        Engine.create("")
                 .getTemplate("string:<% echo \"Hello Webit Script！\"; %>")
                 .merge(writer);
         Assert.assertEquals("Hello Webit Script！", writer.toString());

@@ -470,11 +470,11 @@ public final class Engine {
         final Engine engine = new Engine(petite);
         petite.wireBean(engine);
 
+        engine.init();
+        if (engine.getLogger().isInfoEnabled()) {
+            engine.getLogger().info("Loaded props: ".concat(String.valueOf(petite.get(CFG.PROPS_FILE_LIST))));
+        }
         try {
-            engine.init();
-            if (engine.getLogger().isInfoEnabled()) {
-                engine.getLogger().info("Loaded props: ".concat(String.valueOf(petite.get(CFG.PROPS_FILE_LIST))));
-            }
             engine.executeInitTemplates();
         } catch (ResourceNotFoundException ex) {
             throw new RuntimeException(ex);

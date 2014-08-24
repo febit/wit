@@ -39,11 +39,11 @@ public class NativeConstructorDeclare implements MethodDeclare {
         try {
             return constructor.newInstance(methodArgs);
         } catch (InstantiationException ex) {
-            throw new ScriptRuntimeException("this a abstract class, can't create new instance: ".concat(ex.getLocalizedMessage()));
+            throw new ScriptRuntimeException("Can't create new instance: ".concat(ex.getLocalizedMessage()));
         } catch (IllegalAccessException ex) {
-            throw new ScriptRuntimeException("this method is inaccessible: ".concat(ex.getLocalizedMessage()));
+            throw new ScriptRuntimeException("Unaccessible method: ".concat(ex.getLocalizedMessage()));
         } catch (IllegalArgumentException ex) {
-            throw new ScriptRuntimeException("illegal argument: ".concat(ex.getLocalizedMessage()));
+            throw new ScriptRuntimeException("Illegal arguments: ".concat(ex.getLocalizedMessage()));
         } catch (InvocationTargetException ex) {
             throw new ScriptRuntimeException("this method throws an exception", ex.getTargetException());
         }

@@ -163,7 +163,7 @@ abstract class AbstractParser {
                 try {
                     return new DirectValue(field.get(null), line, column);
                 } catch (Exception ex) {
-                    throw new ParseException("Failed to static field value: ".concat(path), ex, line, column);
+                    throw new ParseException("Failed to get static field value: ".concat(path), ex, line, column);
                 }
             } else {
                 return new NativeStaticValue(field, line, column);

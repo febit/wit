@@ -5,7 +5,6 @@ import java.io.PrintStream;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.loggers.Logger;
-import webit.script.util.ExceptionUtil;
 import webit.script.util.StringUtil;
 
 /**
@@ -183,7 +182,7 @@ public final class SimpleLogger implements Logger, Initable {
         PrintStream out = error ? System.err : System.out;
         out.print(getMessage(msg));
         if (throwable != null) {
-            ExceptionUtil.printStackTrace(throwable, out);
+            throwable.printStackTrace(out);
         }
     }
 

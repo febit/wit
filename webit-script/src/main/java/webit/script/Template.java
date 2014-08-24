@@ -8,7 +8,7 @@ import webit.script.core.Parser;
 import webit.script.core.ast.TemplateAST;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.exceptions.UncheckedException;
+import webit.script.exceptions.TemplateException;
 import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
@@ -260,9 +260,9 @@ public final class Template {
                 && this.name.equals(other.name);
     }
 
-    private UncheckedException completeException(final Exception exception) {
-        return (exception instanceof UncheckedException)
-                ? ((UncheckedException) exception).setTemplate(this)
-                : new ScriptRuntimeException(exception).setTemplate(this);
+    private TemplateException completeException(final Exception exception) {
+        return ((exception instanceof TemplateException)
+                ? ((TemplateException) exception)
+                : new ScriptRuntimeException(exception)).setTemplate(this);
     }
 }

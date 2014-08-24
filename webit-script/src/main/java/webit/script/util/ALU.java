@@ -7,8 +7,7 @@ import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
 
 /**
- * ALU.
- * XXX: rethink about char
+ * ALU. XXX: rethink about char
  *
  * @author Zqq
  */
@@ -84,11 +83,10 @@ public class ALU {
                 }
             } else if (o1 instanceof Character) {
                 return ((Character) o1) + 1;
-            } else {
-                throw new ScriptRuntimeException("value not a number");
             }
+            throw unsupportedTypeException(o1);
         }
-        throw valueIsNullException(o1);
+        throw valueIsNullException();
     }
 
     // -1
@@ -114,11 +112,10 @@ public class ALU {
                 }
             } else if (o1 instanceof Character) {
                 return ((Character) o1) - 1;
-            } else {
-                throw new ScriptRuntimeException("value not a number");
             }
+            throw unsupportedTypeException(o1);
         }
-        throw valueIsNullException(o1);
+        throw valueIsNullException();
     }
 
     //+
@@ -146,11 +143,10 @@ public class ALU {
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).add(toBigDecimal(o2));
                 case CHAR:
-                    //TODO: @tbd
-                    throw unsupportedTypeException(o1, o2);
+                //TODO: @tbd
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
+            throw unsupportedTypeException(o1, o2);
         } else {
             return o1 != null ? o1 : o2;
         }
@@ -178,14 +174,12 @@ public class ALU {
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).subtract(toBigDecimal(o2));
                 case CHAR:
-                    //TODO: @tbd
-                    throw unsupportedTypeException(o1, o2);
+                //TODO: @tbd
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // negative
@@ -207,11 +201,10 @@ public class ALU {
                 case BIG_DECIMAL:
                     return ((BigDecimal) o1).negate();
                 default:
-                    throw unsupportedTypeException(o1);
             }
-        } else {
-            throw valueIsNullException(o1);
+            throw unsupportedTypeException(o1);
         }
+        throw valueIsNullException();
     }
 
     //*
@@ -236,11 +229,10 @@ public class ALU {
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).multiply(toBigDecimal(o2));
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // /
@@ -265,11 +257,10 @@ public class ALU {
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).divide(toBigDecimal(o2));
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // %
@@ -294,11 +285,10 @@ public class ALU {
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).remainder(toBigDecimal(o2));
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // &&
@@ -347,7 +337,6 @@ public class ALU {
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).compareTo(toBigDecimal(o2)) == 0;
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
         }
         return false;
@@ -382,11 +371,10 @@ public class ALU {
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).compareTo(toBigDecimal(o2)) > 0;
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // >=
@@ -413,11 +401,10 @@ public class ALU {
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).compareTo(toBigDecimal(o2)) >= 0;
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // <
@@ -444,11 +431,10 @@ public class ALU {
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).compareTo(toBigDecimal(o2)) < 0;
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // <=
@@ -475,11 +461,10 @@ public class ALU {
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).compareTo(toBigDecimal(o2)) <= 0;
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // &
@@ -502,11 +487,10 @@ public class ALU {
                     }
                 //Note: else unsupported
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // |
@@ -529,11 +513,10 @@ public class ALU {
                     }
                 //Note: else unsupported
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // ^ XOR
@@ -556,11 +539,10 @@ public class ALU {
                     }
                 //Note: else unsupported
                 default:
-                    throw unsupportedTypeException(o1, o2);
             }
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // ~ 
@@ -578,11 +560,10 @@ public class ALU {
                 case BIG_INTEGER:
                     return ((BigInteger) o1).not();
                 default:
-                    throw new ScriptRuntimeException(StringUtil.concatObjectClass("unsupported type:", o1));
             }
-        } else {
-            throw valueIsNullException(o1);
+            throw unsupportedTypeException(o1);
         }
+        throw valueIsNullException();
     }
 
     // <<
@@ -603,65 +584,61 @@ public class ALU {
                     case BIG_INTEGER:
                         return ((BigInteger) o1).shiftLeft(((Number) o2).intValue());
                     default:
-                        throw new ScriptRuntimeException(StringUtil.concatObjectClass("left value type is unsupported:", o1));
                 }
             }
-            throw new ScriptRuntimeException("right value not a number");
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // >>
     public static Object rshift(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
+                int right = ((Number) o2).intValue();
                 switch (getTypeMark(o1)) {
                     case CHAR:
-                        return ((Character) o1) >> ((Number) o2).intValue();
+                        return ((Character) o1) >> right;
                     case BYTE:
-                        return ((Byte) o1) >> ((Number) o2).intValue();
+                        return ((Byte) o1) >> right;
                     case SHORT:
-                        return ((Short) o1) >> ((Number) o2).intValue();
+                        return ((Short) o1) >> right;
                     case INTEGER:
-                        return ((Integer) o1) >> ((Number) o2).intValue();
+                        return ((Integer) o1) >> right;
                     case LONG:
-                        return ((Long) o1) >> ((Number) o2).intValue();
+                        return ((Long) o1) >> right;
                     case BIG_INTEGER:
-                        return ((BigInteger) o1).shiftRight(((Number) o2).intValue());
+                        return ((BigInteger) o1).shiftRight(right);
                     default:
-                        throw new ScriptRuntimeException(StringUtil.concatObjectClass("left value type is unsupported:", o1));
                 }
             }
-            throw new ScriptRuntimeException("right value not a number");
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     // >>>
     public static Object urshift(final Object o1, final Object o2) {
         if (o1 != null && o2 != null) {
             if (o2 instanceof Number) {
+                int right = ((Number) o2).intValue();
                 switch (getTypeMark(o1)) {
                     case CHAR:
-                        return ((Character) o1) >>> ((Number) o2).intValue();
+                        return ((Character) o1) >>> right;
                     case BYTE:
-                        return ((Byte) o1) >>> ((Number) o2).intValue();
+                        return ((Byte) o1) >>> right;
                     case SHORT:
-                        return ((Short) o1) >>> ((Number) o2).intValue();
+                        return ((Short) o1) >>> right;
                     case INTEGER:
-                        return ((Integer) o1) >>> ((Number) o2).intValue();
+                        return ((Integer) o1) >>> right;
                     case LONG:
-                        return ((Long) o1) >>> ((Number) o2).intValue();
+                        return ((Long) o1) >>> right;
                     default:
-                        throw new ScriptRuntimeException(StringUtil.concatObjectClass("left value type is unsupported:", o1));
                 }
             }
-            throw new ScriptRuntimeException("right value not a number");
-        } else {
-            throw valueIsNullException(o1, o2);
+            throw unsupportedTypeException(o1, o2);
         }
+        throw valueIsNullException(o1, o2);
     }
 
     private static int toInt(final Object o1) {
@@ -740,24 +717,17 @@ public class ALU {
     }
 
     private static ScriptRuntimeException unsupportedTypeException(final Object o1) {
-        return new ScriptRuntimeException(StringUtil.concat("Unsupported type: left[", o1.getClass().getName(), "]"));
+        return new ScriptRuntimeException(StringUtil.concat("Unsupported type: [", o1.getClass().getName(), "]"));
     }
 
-    private static ScriptRuntimeException valueIsNullException(final Object o1) {
+    private static ScriptRuntimeException valueIsNullException() {
         return new ScriptRuntimeException("value is null");
     }
 
     private static ScriptRuntimeException valueIsNullException(final Object o1, final Object o2) {
-        if (o1 == null) {
-            if (o2 == null) {
-                return new ScriptRuntimeException("left & right values are null");
-            } else {
-                return new ScriptRuntimeException("left value is null");
-            }
-        } else if (o2 == null) {
-            return new ScriptRuntimeException("right value is null");
-        } else {
-            return new ScriptRuntimeException("left & right values are not null");
-        }
+        return new ScriptRuntimeException(
+                o1 == null
+                ? (o2 == null ? "left & right values are null" : "left value is null")
+                : (o2 == null ? "right value is null" : "left & right values are not null"));
     }
 }

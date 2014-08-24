@@ -13,9 +13,13 @@ import webit.script.exceptions.ScriptRuntimeException;
 public class ExceptionUtil {
 
     public static ScriptRuntimeException castToScriptRuntimeException(final Exception e, final Statement statement) {
-        return (e instanceof ScriptRuntimeException)
-                ? ((ScriptRuntimeException) e).registStatement(statement)
-                : new ScriptRuntimeException(e, statement);
+        if (e instanceof ScriptRuntimeException) {
+            ScriptRuntimeException exception = (ScriptRuntimeException) e;
+            exception.registStatement(statement);
+            return exception;
+        } else {
+            return new ScriptRuntimeException(e, statement);
+        }
     }
 
     public static ScriptRuntimeException castToScriptRuntimeException(final Exception e) {
@@ -28,9 +32,5 @@ public class ExceptionUtil {
         return (e instanceof ParseException)
                 ? ((ParseException) e)
                 : new ParseException(e);
-    }
-
-    public static void printStackTrace(Throwable exception, PrintStream out) {
-        exception.printStackTrace(out);
     }
 }
