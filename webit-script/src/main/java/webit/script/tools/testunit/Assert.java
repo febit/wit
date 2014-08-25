@@ -93,7 +93,7 @@ public class Assert {
     private static void plusAssertCount(Context context) {
         context = context.topContext;
         Integer count = (Integer) context.getLocalVar(ASSERT_COUNT_KEY);
-        context.setLocalVar(ASSERT_COUNT_KEY, count != null ? count + 1 : 0);
+        context.setLocalVar(ASSERT_COUNT_KEY, count != null ? count + 1 : 1);
     }
 
     private static void assertObjectTrue(Object condition) {

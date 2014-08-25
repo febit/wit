@@ -20,7 +20,6 @@ import webit.script.io.Out;
 import webit.script.io.impl.DiscardOut;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.util.ClassLoaderUtil;
-import webit.script.util.ExceptionUtil;
 import webit.script.util.FastByteArrayOutputStream;
 import webit.script.util.FastByteBuffer;
 import webit.script.util.StringUtil;
