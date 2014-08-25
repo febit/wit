@@ -44,6 +44,7 @@ terminal Integer    VAR,
                     LBRACE, RBRACE, INTERPOLATION_END, // { }
                     LPAREN, RPAREN,  // ( )
                     LBRACK, RBRACK,  // [ ]
+                    LDEBUG, RDEBUG, LRDEBUG,  // [? ?] [?]
                     EQGT,  // =>
                     MINUSGT, // ->
                     AT,  // @
@@ -102,9 +103,10 @@ non terminal LambdaPart lambdaForHead1, lambdaForMapHead1;
 
 /* precedence */
 precedence left     SEMICOLON; // ;
+precedence left     LDEBUG; // [?
 precedence right    SELFEQ, EQ, MINUSGT; // (+ - * / %)=  (<< >> >>>)=  (& ^ |)=  = ->
 precedence left     DOTDOT;  // ..
-precedence right    QUESTION, QUESTION_COLON; // [? : ] ?:
+precedence right    QUESTION, QUESTION_COLON; // ?:
 precedence left     OROR; // ||
 precedence left     ANDAND; // &&
 precedence left     XOR; // ^
@@ -159,6 +161,12 @@ statement            ::= expression_statementable:expr SEMICOLON
 
                         |SEMICOLON
                         {: return NoneStatement.getInstance(); :}
+
+                        |LRDEBUG:sym
+                        {: return createBreakPointStatement(null, null, %sym.line%, %sym.column%); :}
+
+                        |LDEBUG:sym IDENTIFIER:label COLON RDEBUG
+                        {: return createBreakPointStatement(%label%, null, %sym.line%, %sym.column%); :}
 
                         |expression:expr INTERPOLATION_END
                         {: return createInterpolation(%expr%); :}
@@ -434,6 +442,12 @@ expression_statementable ::=
 
 expression      ::= expression_statementable:expr
                     {: return %expr%; :}
+
+                    |LDEBUG:sym expression:expr RDEBUG
+                    {: return createBreakPointExpression(null, %expr%, %sym.line%, %sym.column%); :}
+
+                    |LDEBUG:sym IDENTIFIER:label COLON expression:expr RDEBUG
+                    {: return createBreakPointExpression(%label%, %expr%, %sym.line%, %sym.column%); :}
 
                     //bitNotOper ~
                     |COMP:sym expression:expr

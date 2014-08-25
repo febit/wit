@@ -6,6 +6,7 @@ import java.io.Writer;
 import java.util.Map;
 import webit.script.core.Parser;
 import webit.script.core.ast.TemplateAST;
+import webit.script.debug.BreakPointListener;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.exceptions.TemplateException;
@@ -228,6 +229,15 @@ public final class Template {
                 ast = parse(false);
             }
             return ast.execute(new Context(parent, this, params));
+        } catch (Exception e) {
+            throw completeException(e);
+        }
+    }
+
+    public Context debug(final KeyValues root, final Out out, final BreakPointListener listener) throws ScriptRuntimeException, ParseException {
+        try {
+            TemplateAST ast = new Parser().parseTemplate(this, listener);
+            return ast.execute(new Context(this, out, root));
         } catch (Exception e) {
             throw completeException(e);
         }

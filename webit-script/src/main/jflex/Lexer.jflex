@@ -1,6 +1,7 @@
 package webit.script.core;
 
 import webit.script.exceptions.ParseException;
+import webit.script.loaders.ResourceOffset;
 import webit.script.util.FastCharBuffer;
 import webit.script.util.RepeatChars;
 
@@ -337,6 +338,11 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   
   
   /* separators */
+
+  "[?"                           { return symbol(Tokens.LDEBUG); }
+  "?]"                           { return symbol(Tokens.RDEBUG); }
+  "[?]"                          { return symbol(Tokens.LRDEBUG); }
+
   "("                            { return symbol(Tokens.LPAREN); }
   ")"                            { return symbol(Tokens.RPAREN); }
   "{"                            { return symbol(Tokens.LBRACE); }

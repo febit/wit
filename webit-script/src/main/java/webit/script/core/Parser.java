@@ -17,7 +17,7 @@ import webit.script.util.Stack;
 
 /**
  * 
- * @version Mon Aug 25 10:07:09 CST 2014
+ * @version Mon Aug 25 16:47:02 CST 2014
  */
 public class Parser extends AbstractParser {
 
@@ -32,12 +32,12 @@ public class Parser extends AbstractParser {
                 this.goonParse = false;
                 return myStack.peek(1).value;
             }
-            case 159: // funcExecuteExpr ::= expression AT contextValueExpr LPAREN expressionList RPAREN 
+            case 163: // funcExecuteExpr ::= expression AT contextValueExpr LPAREN expressionList RPAREN 
             {
                 Symbol funcExpr$Symbol = myStack.peek(3);
                 return new MethodExecute((Expression) funcExpr$Symbol.value, ((ExpressionList) myStack.peek(1).value).addFirst((Expression) myStack.peek(5).value).toArray(), funcExpr$Symbol.line, funcExpr$Symbol.column);
             }
-            case 158: // funcExecuteExpr ::= expression LPAREN expressionList RPAREN 
+            case 162: // funcExecuteExpr ::= expression LPAREN expressionList RPAREN 
             {
                 Symbol funcExpr$Symbol = myStack.peek(3);
                 return new MethodExecute((Expression) funcExpr$Symbol.value, ((ExpressionList) myStack.peek(1).value).toArray(), funcExpr$Symbol.line, funcExpr$Symbol.column);
@@ -47,42 +47,42 @@ public class Parser extends AbstractParser {
                 Symbol ident$Symbol = myStack.peek(0);
                 return ((IdentiferList) myStack.peek(2).value).add((String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column);
             }
-            case 49: // importPart2 ::= importPart1 IDENTIFIER 
+            case 51: // importPart2 ::= importPart1 IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
                 return ((ImportPart) myStack.peek(1).value).append((String) ident$Symbol.value, createContextValue(0, (String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column));
             }
-            case 51: // importPart2 ::= importPart2 COMMA IDENTIFIER 
+            case 53: // importPart2 ::= importPart2 COMMA IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
                 return ((ImportPart) myStack.peek(2).value).append((String) ident$Symbol.value, createContextValue(0, (String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column));
             }
-            case 139: // contextValueExpr ::= superCount IDENTIFIER 
+            case 143: // contextValueExpr ::= superCount IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
                 return createContextValue((Integer) myStack.peek(1).value, (String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column);
             }
-            case 142: // contextValueExpr ::= superCount FOR DOT IDENTIFIER 
+            case 146: // contextValueExpr ::= superCount FOR DOT IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
                 return createContextValue((Integer) myStack.peek(3).value, ("for." + (String) ident$Symbol.value), ident$Symbol.line, ident$Symbol.column);
             }
-            case 141: // contextValueExpr ::= FOR DOT IDENTIFIER 
+            case 145: // contextValueExpr ::= FOR DOT IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
                 return createContextValue(0, ("for." + (String) ident$Symbol.value), ident$Symbol.line, ident$Symbol.column);
             }
-            case 137: // contextValueExpr ::= IDENTIFIER 
+            case 141: // contextValueExpr ::= IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
                 return createContextValue(0, (String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column);
             }
-            case 140: // contextValueExpr ::= superCount THIS DOT IDENTIFIER 
+            case 144: // contextValueExpr ::= superCount THIS DOT IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
                 return createContextValueAtUpstair((Integer) myStack.peek(3).value, (String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column);
             }
-            case 138: // contextValueExpr ::= THIS DOT IDENTIFIER 
+            case 142: // contextValueExpr ::= THIS DOT IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
                 return createContextValueAtUpstair(0, (String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column);
@@ -92,420 +92,440 @@ public class Parser extends AbstractParser {
                 Symbol ident$Symbol = myStack.peek(0);
                 return new IdentiferList().add((String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column);
             }
-            case 44: // varPart ::= varPart COMMA IDENTIFIER 
+            case 46: // varPart ::= varPart COMMA IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
                 varmgr.assignVariant((String) ident$Symbol.value,ident$Symbol.line,ident$Symbol.column); return (StatementList) myStack.peek(2).value;
             }
-            case 42: // varPart ::= VAR IDENTIFIER 
+            case 44: // varPart ::= VAR IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
                 varmgr.assignVariant((String) ident$Symbol.value,ident$Symbol.line,ident$Symbol.column); return new StatementList();
             }
-            case 63: // lambdaForHead1 ::= FOR LPAREN IDENTIFIER MINUSGT 
-            case 164: // lambdaExprHead ::= IDENTIFIER MINUSGT 
+            case 65: // lambdaForHead1 ::= FOR LPAREN IDENTIFIER MINUSGT 
+            case 168: // lambdaExprHead ::= IDENTIFIER MINUSGT 
             {
                 Symbol ident$Symbol = myStack.peek(1);
                 Symbol sym$Symbol = myStack.peek(0);
                 return new LambdaPart(this.varmgr, sym$Symbol.line, sym$Symbol.column).appendArg((String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column);
             }
-            case 40: // varAssign ::= IDENTIFIER EQ expression 
-            case 41: // varAssign ::= IDENTIFIER EQ varAssign 
+            case 42: // varAssign ::= IDENTIFIER EQ expression 
+            case 43: // varAssign ::= IDENTIFIER EQ varAssign 
             {
                 Symbol ident$Symbol = myStack.peek(2);
                 Symbol sym$Symbol = myStack.peek(1);
                 return new Assign(castToResetableValueExpression(createContextValue(varmgr.assignVariantAddress((String) ident$Symbol.value,ident$Symbol.line,ident$Symbol.column), ident$Symbol.line, ident$Symbol.column)), (Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 153: // funcStatementHead ::= FUNCTION IDENTIFIER LPAREN RPAREN 
+            case 157: // funcStatementHead ::= FUNCTION IDENTIFIER LPAREN RPAREN 
             {
                 Symbol ident$Symbol = myStack.peek(2);
                 return new FunctionDeclarePart((String) ident$Symbol.value, this.varmgr, ident$Symbol.line, ident$Symbol.column);
             }
-            case 23: // statement ::= CONST IDENTIFIER EQ expression SEMICOLON 
+            case 25: // statement ::= CONST IDENTIFIER EQ expression SEMICOLON 
             {
                 Symbol ident$Symbol = myStack.peek(3);
                 assignConst((String) ident$Symbol.value, (Expression) myStack.peek(1).value, ident$Symbol.line, ident$Symbol.column); return NoneStatement.getInstance();
             }
-            case 154: // funcStatementHead ::= FUNCTION IDENTIFIER LPAREN identiferList RPAREN 
+            case 158: // funcStatementHead ::= FUNCTION IDENTIFIER LPAREN identiferList RPAREN 
             {
                 Symbol ident$Symbol = myStack.peek(3);
                 return new FunctionDeclarePart((String) ident$Symbol.value, this.varmgr, ident$Symbol.line, ident$Symbol.column).appendArgs((IdentiferList) myStack.peek(1).value);
             }
-            case 165: // lambdaExprHead ::= LPAREN IDENTIFIER COMMA identiferList RPAREN MINUSGT 
+            case 169: // lambdaExprHead ::= LPAREN IDENTIFIER COMMA identiferList RPAREN MINUSGT 
             {
                 Symbol ident$Symbol = myStack.peek(4);
                 Symbol sym$Symbol = myStack.peek(0);
                 return new LambdaPart(this.varmgr, sym$Symbol.line, sym$Symbol.column).appendArg((String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column).appendArgs((IdentiferList) myStack.peek(2).value);
             }
-            case 64: // lambdaForMapHead1 ::= FOR LPAREN IDENTIFIER COMMA IDENTIFIER MINUSGT 
+            case 66: // lambdaForMapHead1 ::= FOR LPAREN IDENTIFIER COMMA IDENTIFIER MINUSGT 
             {
                 Symbol key$Symbol = myStack.peek(3);
                 Symbol value$Symbol = myStack.peek(1);
                 Symbol sym$Symbol = myStack.peek(0);
                 return new LambdaPart(this.varmgr, sym$Symbol.line, sym$Symbol.column).appendArg((String) key$Symbol.value, key$Symbol.line, key$Symbol.column).appendArg((String) value$Symbol.value, value$Symbol.line, value$Symbol.column);
             }
-            case 161: // classNameList1 ::= classNameList1 COMMA className 
+            case 165: // classNameList1 ::= classNameList1 COMMA className 
             {
                 Symbol nameBand$Symbol = myStack.peek(0);
                 return ((ClassNameList) myStack.peek(2).value).add((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column);
             }
-            case 130: // expression ::= NATIVE classPureName 
+            case 134: // expression ::= NATIVE classPureName 
             {
                 Symbol nameBand$Symbol = myStack.peek(0);
                 return createNativeStaticValue((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column);
             }
-            case 160: // classNameList1 ::= className 
+            case 164: // classNameList1 ::= className 
             {
                 Symbol nameBand$Symbol = myStack.peek(0);
                 return new ClassNameList(this.nativeImportMgr).add((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column);
             }
-            case 24: // statement ::= varPart SEMICOLON 
+            case 26: // statement ::= varPart SEMICOLON 
             {
                 Symbol part$Symbol = myStack.peek(1);
                 return ((StatementList) part$Symbol.value).popStatementGroup(part$Symbol.line, part$Symbol.column);
             }
-            case 65: // lambdaForHead2 ::= lambdaForHead1 expression COLON 
+            case 67: // lambdaForHead2 ::= lambdaForHead1 expression COLON 
             {
                 Symbol part$Symbol = myStack.peek(2);
                 return new ForInPart(((LambdaPart) part$Symbol.value).getArg(0), ((LambdaPart) part$Symbol.value).popFunctionDeclare((Expression) myStack.peek(1).value), this.varmgr, part$Symbol.line, part$Symbol.column);
             }
-            case 67: // lambdaForHead2 ::= lambdaForMapHead1 expression COLON 
+            case 69: // lambdaForHead2 ::= lambdaForMapHead1 expression COLON 
             {
                 Symbol part$Symbol = myStack.peek(2);
                 return new ForMapPart(((LambdaPart) part$Symbol.value).getArg(0), ((LambdaPart) part$Symbol.value).getArg(1), ((LambdaPart) part$Symbol.value).popFunctionDeclare((Expression) myStack.peek(1).value), this.varmgr, part$Symbol.line, part$Symbol.column);
             }
-            case 66: // lambdaForHead2 ::= lambdaForHead1 LBRACE statementList RBRACE COLON 
+            case 68: // lambdaForHead2 ::= lambdaForHead1 LBRACE statementList RBRACE COLON 
             {
                 Symbol part$Symbol = myStack.peek(4);
                 return new ForInPart(((LambdaPart) part$Symbol.value).getArg(0), ((LambdaPart) part$Symbol.value).popFunctionDeclare((StatementList) myStack.peek(2).value), this.varmgr, part$Symbol.line, part$Symbol.column);
             }
-            case 68: // lambdaForHead2 ::= lambdaForMapHead1 LBRACE statementList RBRACE COLON 
+            case 70: // lambdaForHead2 ::= lambdaForMapHead1 LBRACE statementList RBRACE COLON 
             {
                 Symbol part$Symbol = myStack.peek(4);
                 return new ForMapPart(((LambdaPart) part$Symbol.value).getArg(0), ((LambdaPart) part$Symbol.value).getArg(1), ((LambdaPart) part$Symbol.value).popFunctionDeclare((StatementList) myStack.peek(2).value), this.varmgr, part$Symbol.line, part$Symbol.column);
             }
-            case 79: // caseBlockStat ::= blockPrepare 
+            case 81: // caseBlockStat ::= blockPrepare 
             {
                 Symbol prepare$Symbol = myStack.peek(0);
                 return new StatementList().popIBlock(varmgr.pop(), prepare$Symbol.line, prepare$Symbol.column);
             }
-            case 78: // caseBlockStat ::= blockPrepare statementList 
+            case 80: // caseBlockStat ::= blockPrepare statementList 
             {
                 Symbol prepare$Symbol = myStack.peek(1);
                 return ((StatementList) myStack.peek(0).value).popIBlock(varmgr.pop(), prepare$Symbol.line, prepare$Symbol.column);
             }
-            case 56: // block ::= blockPrepare2 RBRACE 
+            case 58: // block ::= blockPrepare2 RBRACE 
             {
                 Symbol prepare$Symbol = myStack.peek(1);
                 return new StatementList().popIBlock(varmgr.pop(), prepare$Symbol.line, prepare$Symbol.column);
             }
-            case 55: // block ::= blockPrepare2 statementList RBRACE 
+            case 57: // block ::= blockPrepare2 statementList RBRACE 
             {
                 Symbol prepare$Symbol = myStack.peek(2);
                 return ((StatementList) myStack.peek(1).value).popIBlock(varmgr.pop(), prepare$Symbol.line, prepare$Symbol.column);
             }
-            case 122: // expression ::= DIRECT_VALUE 
+            case 12: // statement ::= LRDEBUG 
+            {
+                Symbol sym$Symbol = myStack.peek(0);
+                return createBreakPointStatement(null, null, sym$Symbol.line, sym$Symbol.column);
+            }
+            case 126: // expression ::= DIRECT_VALUE 
             {
                 Symbol sym$Symbol = myStack.peek(0);
                 return new DirectValue((Object) sym$Symbol.value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 155: // funcHead ::= FUNCTION 
+            case 159: // funcHead ::= FUNCTION 
             {
                 Symbol sym$Symbol = myStack.peek(0);
                 return new FunctionDeclarePart(this.varmgr, sym$Symbol.line, sym$Symbol.column);
             }
-            case 90: // expression_statementable ::= expression MINUSMINUS 
+            case 92: // expression_statementable ::= expression MINUSMINUS 
             {
                 Symbol sym$Symbol = myStack.peek(0);
                 return new MinusMinusAfter(castToResetableValueExpression((Expression) myStack.peek(1).value), sym$Symbol.line, sym$Symbol.column);
             }
-            case 88: // expression_statementable ::= expression PLUSPLUS 
+            case 90: // expression_statementable ::= expression PLUSPLUS 
             {
                 Symbol sym$Symbol = myStack.peek(0);
                 return new PlusPlusAfter(castToResetableValueExpression((Expression) myStack.peek(1).value), sym$Symbol.line, sym$Symbol.column);
             }
-            case 22: // statement ::= TEXT_STATEMENT 
+            case 24: // statement ::= TEXT_STATEMENT 
             {
                 Symbol sym$Symbol = myStack.peek(0);
                 return textStatementFactory.getTextStatement(template, (char[]) sym$Symbol.value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 95: // expression ::= COMP expression 
+            case 99: // expression ::= COMP expression 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return StatementUtil.optimize(new BitNot((Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column));
             }
-            case 96: // expression ::= MINUS expression 
+            case 100: // expression ::= MINUS expression 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return StatementUtil.optimize(new Negative((Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column));
             }
-            case 97: // expression ::= NOT expression 
+            case 101: // expression ::= NOT expression 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return StatementUtil.optimize(new Not((Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column));
             }
-            case 100: // expression ::= expression MULT expression 
-            case 101: // expression ::= expression DIV expression 
-            case 102: // expression ::= expression MOD expression 
-            case 103: // expression ::= expression PLUS expression 
-            case 104: // expression ::= expression MINUS expression 
-            case 105: // expression ::= expression LSHIFT expression 
-            case 106: // expression ::= expression RSHIFT expression 
-            case 107: // expression ::= expression URSHIFT expression 
-            case 108: // expression ::= expression LT expression 
-            case 109: // expression ::= expression LTEQ expression 
-            case 110: // expression ::= expression GT expression 
-            case 111: // expression ::= expression GTEQ expression 
-            case 112: // expression ::= expression EQEQ expression 
-            case 113: // expression ::= expression NOTEQ expression 
-            case 114: // expression ::= expression AND expression 
-            case 115: // expression ::= expression OR expression 
-            case 116: // expression ::= expression XOR expression 
-            case 117: // expression ::= expression ANDAND expression 
-            case 118: // expression ::= expression DOTDOT expression 
-            case 119: // expression ::= expression OROR expression 
-            case 120: // expression ::= expression QUESTION_COLON expression 
+            case 104: // expression ::= expression MULT expression 
+            case 105: // expression ::= expression DIV expression 
+            case 106: // expression ::= expression MOD expression 
+            case 107: // expression ::= expression PLUS expression 
+            case 108: // expression ::= expression MINUS expression 
+            case 109: // expression ::= expression LSHIFT expression 
+            case 110: // expression ::= expression RSHIFT expression 
+            case 111: // expression ::= expression URSHIFT expression 
+            case 112: // expression ::= expression LT expression 
+            case 113: // expression ::= expression LTEQ expression 
+            case 114: // expression ::= expression GT expression 
+            case 115: // expression ::= expression GTEQ expression 
+            case 116: // expression ::= expression EQEQ expression 
+            case 117: // expression ::= expression NOTEQ expression 
+            case 118: // expression ::= expression AND expression 
+            case 119: // expression ::= expression OR expression 
+            case 120: // expression ::= expression XOR expression 
+            case 121: // expression ::= expression ANDAND expression 
+            case 122: // expression ::= expression DOTDOT expression 
+            case 123: // expression ::= expression OROR expression 
+            case 124: // expression ::= expression QUESTION_COLON expression 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return createBinaryOperator((Expression) myStack.peek(2).value, (Integer) sym$Symbol.value, (Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 91: // expression_statementable ::= expression SELFEQ expression 
+            case 93: // expression_statementable ::= expression SELFEQ expression 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return createSelfOperator((Expression) myStack.peek(2).value, (Integer) sym$Symbol.value, (Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 86: // expression_statementable ::= expression EQ expression 
+            case 88: // expression_statementable ::= expression EQ expression 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return new Assign(castToResetableValueExpression((Expression) myStack.peek(2).value), (Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 27: // statement ::= BREAK SEMICOLON 
+            case 29: // statement ::= BREAK SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return new Break(0, sym$Symbol.line, sym$Symbol.column);
             }
-            case 29: // statement ::= CONTINUE SEMICOLON 
+            case 31: // statement ::= CONTINUE SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return new Continue(0, sym$Symbol.line, sym$Symbol.column);
             }
-            case 46: // importPart1 ::= IMPORT expression 
+            case 48: // importPart1 ::= IMPORT expression 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return new ImportPart((Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 152: // mapValue ::= LBRACE RBRACE 
+            case 156: // mapValue ::= LBRACE RBRACE 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return new MapValue(new Object[0], new Expression[0], sym$Symbol.line,sym$Symbol.column);
             }
-            case 89: // expression_statementable ::= MINUSMINUS expression 
+            case 91: // expression_statementable ::= MINUSMINUS expression 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return new MinusMinusBefore(castToResetableValueExpression((Expression) myStack.peek(0).value), sym$Symbol.line, sym$Symbol.column);
             }
-            case 87: // expression_statementable ::= PLUSPLUS expression 
+            case 89: // expression_statementable ::= PLUSPLUS expression 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return new PlusPlusBefore(castToResetableValueExpression((Expression) myStack.peek(0).value), sym$Symbol.line, sym$Symbol.column);
             }
-            case 98: // expression ::= expression DOT IDENTIFIER 
+            case 102: // expression ::= expression DOT IDENTIFIER 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return new PropertyOperator((Expression) myStack.peek(2).value, (String) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 92: // expression_statementable ::= funcExecuteExpr EQGT expression 
+            case 94: // expression_statementable ::= funcExecuteExpr EQGT expression 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return new RedirectOutExpression((Expression) myStack.peek(2).value, castToResetableValueExpression((Expression) myStack.peek(0).value), sym$Symbol.line, sym$Symbol.column);
             }
-            case 31: // statement ::= RETURN SEMICOLON 
+            case 33: // statement ::= RETURN SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(1);
                 return new Return(null, sym$Symbol.line, sym$Symbol.column);
             }
-            case 26: // statement ::= NATIVE_IMPORT classPureName SEMICOLON 
+            case 28: // statement ::= NATIVE_IMPORT classPureName SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 nativeImportMgr.registClass((ClassNameBand) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column); return NoneStatement.getInstance();
             }
-            case 151: // mapValue ::= LBRACE mapValuePart RBRACE 
+            case 155: // mapValue ::= LBRACE mapValuePart RBRACE 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return ((MapValuePart) myStack.peek(1).value).pop(sym$Symbol.line, sym$Symbol.column);
             }
-            case 126: // expression ::= LBRACK expressionList RBRACK 
+            case 97: // expression ::= LDEBUG expression RDEBUG 
+            {
+                Symbol sym$Symbol = myStack.peek(2);
+                return createBreakPointExpression(null, (Expression) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
+            }
+            case 130: // expression ::= LBRACK expressionList RBRACK 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return new ArrayValue(((ExpressionList) myStack.peek(1).value).toArray(), sym$Symbol.line, sym$Symbol.column);
             }
-            case 28: // statement ::= BREAK IDENTIFIER SEMICOLON 
+            case 30: // statement ::= BREAK IDENTIFIER SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return new Break(getLabelIndex((String) myStack.peek(1).value), sym$Symbol.line, sym$Symbol.column);
             }
-            case 30: // statement ::= CONTINUE IDENTIFIER SEMICOLON 
+            case 32: // statement ::= CONTINUE IDENTIFIER SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return new Continue(getLabelIndex((String) myStack.peek(1).value), sym$Symbol.line, sym$Symbol.column);
             }
-            case 25: // statement ::= ECHO expression SEMICOLON 
+            case 27: // statement ::= ECHO expression SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return new Echo((Expression) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 156: // funcHead ::= FUNCTION LPAREN RPAREN 
+            case 160: // funcHead ::= FUNCTION LPAREN RPAREN 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return new FunctionDeclarePart(this.varmgr, sym$Symbol.line, sym$Symbol.column);
             }
-            case 47: // importPart1 ::= IMPORT expression mapValue 
+            case 49: // importPart1 ::= IMPORT expression mapValue 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return new ImportPart((Expression) myStack.peek(1).value, (MapValue) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 35: // statement ::= INCLUDE expression SEMICOLON 
+            case 37: // statement ::= INCLUDE expression SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return new Include((Expression) myStack.peek(1).value, null, this.template, sym$Symbol.line, sym$Symbol.column);
             }
-            case 99: // expression ::= expression LBRACK expression RBRACK 
+            case 103: // expression ::= expression LBRACK expression RBRACK 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return new IndexOperator((Expression) myStack.peek(3).value, (Expression) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 21: // statement ::= block EQGT expression SEMICOLON 
+            case 23: // statement ::= block EQGT expression SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return new RedirectOut((IBlock) myStack.peek(3).value, castToResetableValueExpression((Expression) myStack.peek(1).value), sym$Symbol.line, sym$Symbol.column);
             }
-            case 32: // statement ::= RETURN expression SEMICOLON 
+            case 34: // statement ::= RETURN expression SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(2);
                 return new Return((Expression) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 127: // expression ::= NATIVE LBRACK RBRACK className 
+            case 131: // expression ::= NATIVE LBRACK RBRACK className 
             {
                 Symbol sym$Symbol = myStack.peek(3);
                 Symbol nameBand$Symbol = myStack.peek(0);
                 return this.createNativeNewArrayDeclareExpression(nativeImportMgr.toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), sym$Symbol.line, sym$Symbol.column);
             }
-            case 128: // expression ::= NATIVE LBRACK className RBRACK 
+            case 132: // expression ::= NATIVE LBRACK className RBRACK 
             {
                 Symbol sym$Symbol = myStack.peek(3);
                 Symbol nameBand$Symbol = myStack.peek(1);
                 return this.createNativeNewArrayDeclareExpression(nativeImportMgr.toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), sym$Symbol.line, sym$Symbol.column);
             }
-            case 83: // switchPart0 ::= DEFAULT COLON caseBlockStat switchPart0 
+            case 85: // switchPart0 ::= DEFAULT COLON caseBlockStat switchPart0 
             {
                 Symbol sym$Symbol = myStack.peek(3);
                 return ((SwitchPart) myStack.peek(0).value).appendCase(null, (IBlock) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 157: // funcHead ::= FUNCTION LPAREN identiferList RPAREN 
+            case 13: // statement ::= LDEBUG IDENTIFIER COLON RDEBUG 
+            {
+                Symbol sym$Symbol = myStack.peek(3);
+                return createBreakPointStatement((String) myStack.peek(2).value, null, sym$Symbol.line, sym$Symbol.column);
+            }
+            case 161: // funcHead ::= FUNCTION LPAREN identiferList RPAREN 
             {
                 Symbol sym$Symbol = myStack.peek(3);
                 return new FunctionDeclarePart(this.varmgr, sym$Symbol.line, sym$Symbol.column).appendArgs((IdentiferList) myStack.peek(1).value);
             }
-            case 121: // expression ::= expression QUESTION expression COLON expression 
+            case 125: // expression ::= expression QUESTION expression COLON expression 
             {
                 Symbol sym$Symbol = myStack.peek(3);
                 return new IfOperator((Expression) myStack.peek(4).value, (Expression) myStack.peek(2).value, (Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 36: // statement ::= INCLUDE expression mapValue SEMICOLON 
+            case 38: // statement ::= INCLUDE expression mapValue SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(3);
                 return new Include((Expression) myStack.peek(2).value, (MapValue) myStack.peek(1).value, this.template, sym$Symbol.line, sym$Symbol.column);
             }
-            case 81: // switchPart0 ::= CASE DIRECT_VALUE COLON caseBlockStat switchPart0 
+            case 83: // switchPart0 ::= CASE DIRECT_VALUE COLON caseBlockStat switchPart0 
             {
                 Symbol sym$Symbol = myStack.peek(4);
                 return ((SwitchPart) myStack.peek(0).value).appendCase((Object) myStack.peek(3).value, (IBlock) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 57: // ifPart ::= IF LPAREN expression RPAREN block 
+            case 98: // expression ::= LDEBUG IDENTIFIER COLON expression RDEBUG 
+            {
+                Symbol sym$Symbol = myStack.peek(4);
+                return createBreakPointExpression((String) myStack.peek(3).value, (Expression) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
+            }
+            case 59: // ifPart ::= IF LPAREN expression RPAREN block 
             {
                 Symbol sym$Symbol = myStack.peek(4);
                 return new IfPart((Expression) myStack.peek(2).value, (IBlock) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 48: // importPart1 ::= IMPORT expression LBRACE expression RBRACE 
+            case 50: // importPart1 ::= IMPORT expression LBRACE expression RBRACE 
             {
                 Symbol sym$Symbol = myStack.peek(4);
                 return new ImportPart((Expression) myStack.peek(3).value, (Expression) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 76: // whilePart ::= WHILE LPAREN expression RPAREN block 
+            case 78: // whilePart ::= WHILE LPAREN expression RPAREN block 
             {
                 Symbol sym$Symbol = myStack.peek(4);
                 return new WhilePart((Expression) myStack.peek(2).value, (IBlock) myStack.peek(0).value, true, sym$Symbol.line, sym$Symbol.column);
             }
-            case 131: // expression ::= NATIVE NEW classPureName LPAREN classNameList RPAREN 
+            case 135: // expression ::= NATIVE NEW classPureName LPAREN classNameList RPAREN 
             {
                 Symbol sym$Symbol = myStack.peek(5);
                 Symbol nameBand$Symbol = myStack.peek(3);
                 return this.createNativeConstructorDeclareExpression(nativeImportMgr.toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), (ClassNameList) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 82: // switchPart0 ::= CASE MINUS DIRECT_VALUE COLON caseBlockStat switchPart0 
+            case 84: // switchPart0 ::= CASE MINUS DIRECT_VALUE COLON caseBlockStat switchPart0 
             {
                 Symbol sym$Symbol = myStack.peek(5);
                 return ((SwitchPart) myStack.peek(0).value).appendCase(ALU.negative((Object) myStack.peek(3).value), (IBlock) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 61: // forInHead ::= FOR LPAREN IDENTIFIER COLON expression RPAREN 
+            case 63: // forInHead ::= FOR LPAREN IDENTIFIER COLON expression RPAREN 
             {
                 Symbol sym$Symbol = myStack.peek(5);
                 return new ForInPart((String) myStack.peek(3).value, (Expression) myStack.peek(1).value, this.varmgr, sym$Symbol.line, sym$Symbol.column);
             }
-            case 37: // statement ::= INCLUDE expression LBRACE expression RBRACE SEMICOLON 
+            case 39: // statement ::= INCLUDE expression LBRACE expression RBRACE SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(5);
                 return new Include((Expression) myStack.peek(4).value, (Expression) myStack.peek(2).value, this.template, sym$Symbol.line, sym$Symbol.column);
             }
-            case 129: // expression ::= NATIVE classPureName DOT IDENTIFIER LPAREN classNameList RPAREN 
+            case 133: // expression ::= NATIVE classPureName DOT IDENTIFIER LPAREN classNameList RPAREN 
             {
                 Symbol sym$Symbol = myStack.peek(6);
                 Symbol nameBand$Symbol = myStack.peek(5);
                 return this.createNativeMethodDeclareExpression(nativeImportMgr.toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), (String) myStack.peek(3).value, (ClassNameList) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 84: // switchPart ::= SWITCH LPAREN expression RPAREN LBRACE switchPart0 RBRACE 
+            case 86: // switchPart ::= SWITCH LPAREN expression RPAREN LBRACE switchPart0 RBRACE 
             {
                 Symbol sym$Symbol = myStack.peek(6);
                 return ((SwitchPart) myStack.peek(1).value).setSwitchExpr((Expression) myStack.peek(4).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 77: // whilePart ::= DO block WHILE LPAREN expression RPAREN SEMICOLON 
+            case 79: // whilePart ::= DO block WHILE LPAREN expression RPAREN SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(6);
                 return new WhilePart((Expression) myStack.peek(2).value, (IBlock) myStack.peek(5).value, false, sym$Symbol.line, sym$Symbol.column);
             }
-            case 85: // switchPart ::= SWITCH LPAREN expression RPAREN LBRACE TEXT_STATEMENT switchPart0 RBRACE 
+            case 87: // switchPart ::= SWITCH LPAREN expression RPAREN LBRACE TEXT_STATEMENT switchPart0 RBRACE 
             {
                 Symbol sym$Symbol = myStack.peek(7);
                 return ((SwitchPart) myStack.peek(1).value).setSwitchExpr((Expression) myStack.peek(5).value, sym$Symbol.line, sym$Symbol.column);
             }
-            case 62: // forInHead ::= FOR LPAREN IDENTIFIER COMMA IDENTIFIER COLON expression RPAREN 
+            case 64: // forInHead ::= FOR LPAREN IDENTIFIER COMMA IDENTIFIER COLON expression RPAREN 
             {
                 Symbol sym$Symbol = myStack.peek(7);
                 return new ForMapPart((String) myStack.peek(5).value, (String) myStack.peek(3).value, (Expression) myStack.peek(1).value, this.varmgr, sym$Symbol.line, sym$Symbol.column);
             }
-            case 19: // statement ::= forInPart 
+            case 21: // statement ::= forInPart 
             {
                 return ((AbstractForInPart) myStack.peek(0).value).pop();
             }
-            case 20: // statement ::= IDENTIFIER COLON forInPart 
+            case 22: // statement ::= IDENTIFIER COLON forInPart 
             {
                 return ((AbstractForInPart) myStack.peek(0).value).pop(getLabelIndex((String) myStack.peek(2).value));
             }
-            case 69: // lambdaForHead ::= lambdaForHead2 expression RPAREN 
+            case 71: // lambdaForHead ::= lambdaForHead2 expression RPAREN 
             {
                 return ((AbstractForInPart) myStack.peek(2).value).setCollectionExpr((Expression) myStack.peek(1).value);
             }
-            case 75: // forInPart ::= forInBody ELSE block 
+            case 77: // forInPart ::= forInBody ELSE block 
             {
                 return ((AbstractForInPart) myStack.peek(2).value).setElse((IBlock) myStack.peek(0).value);
             }
-            case 71: // forInBody ::= forInHead LBRACE RBRACE 
-            case 73: // forInBody ::= lambdaForHead LBRACE RBRACE 
+            case 73: // forInBody ::= forInHead LBRACE RBRACE 
+            case 75: // forInBody ::= lambdaForHead LBRACE RBRACE 
             {
                 return ((AbstractForInPart) myStack.peek(2).value).setStatementList(new StatementList());
             }
-            case 70: // forInBody ::= forInHead LBRACE statementList RBRACE 
-            case 72: // forInBody ::= lambdaForHead LBRACE statementList RBRACE 
+            case 72: // forInBody ::= forInHead LBRACE statementList RBRACE 
+            case 74: // forInBody ::= lambdaForHead LBRACE statementList RBRACE 
             {
                 return ((AbstractForInPart) myStack.peek(3).value).setStatementList((StatementList) myStack.peek(1).value);
             }
@@ -517,58 +537,58 @@ public class Parser extends AbstractParser {
             {
                 return ((ClassNameBand) myStack.peek(2).value).plusArrayDepth();
             }
-            case 144: // expressionList1 ::= expressionList1 COMMA expression 
+            case 148: // expressionList1 ::= expressionList1 COMMA expression 
             {
                 return ((ExpressionList) myStack.peek(2).value).add((Expression) myStack.peek(0).value);
             }
-            case 39: // statement ::= funcStatementHead LBRACE RBRACE 
-            case 125: // expression ::= funcHead LBRACE RBRACE 
+            case 41: // statement ::= funcStatementHead LBRACE RBRACE 
+            case 129: // expression ::= funcHead LBRACE RBRACE 
             {
                 return ((FunctionDeclarePart) myStack.peek(2).value).pop(new StatementList());
             }
-            case 38: // statement ::= funcStatementHead LBRACE statementList RBRACE 
-            case 124: // expression ::= funcHead LBRACE statementList RBRACE 
+            case 40: // statement ::= funcStatementHead LBRACE statementList RBRACE 
+            case 128: // expression ::= funcHead LBRACE statementList RBRACE 
             {
                 return ((FunctionDeclarePart) myStack.peek(3).value).pop((StatementList) myStack.peek(1).value);
             }
-            case 58: // ifStat ::= ifPart 
+            case 60: // ifStat ::= ifPart 
             {
                 return ((IfPart) myStack.peek(0).value).pop();
             }
-            case 59: // ifStat ::= ifPart ELSE block 
+            case 61: // ifStat ::= ifPart ELSE block 
             {
                 return ((IfPart) myStack.peek(2).value).pop((IBlock) myStack.peek(0).value);
             }
-            case 60: // ifStat ::= ifPart ELSE ifStat 
+            case 62: // ifStat ::= ifPart ELSE ifStat 
             {
                 return ((IfPart) myStack.peek(2).value).pop((Statement) myStack.peek(0).value);
             }
-            case 33: // statement ::= importPart1 SEMICOLON 
-            case 34: // statement ::= importPart2 SEMICOLON 
+            case 35: // statement ::= importPart1 SEMICOLON 
+            case 36: // statement ::= importPart2 SEMICOLON 
             {
                 return ((ImportPart) myStack.peek(1).value).pop(this.template);
             }
-            case 50: // importPart2 ::= importPart1 contextValueExpr EQ IDENTIFIER 
+            case 52: // importPart2 ::= importPart1 contextValueExpr EQ IDENTIFIER 
             {
                 return ((ImportPart) myStack.peek(3).value).append((String) myStack.peek(0).value, (Expression) myStack.peek(2).value);
             }
-            case 52: // importPart2 ::= importPart2 COMMA contextValueExpr EQ IDENTIFIER 
+            case 54: // importPart2 ::= importPart2 COMMA contextValueExpr EQ IDENTIFIER 
             {
                 return ((ImportPart) myStack.peek(4).value).append((String) myStack.peek(0).value, (Expression) myStack.peek(2).value);
             }
-            case 166: // lambdaExpr ::= lambdaExprHead expression 
+            case 170: // lambdaExpr ::= lambdaExprHead expression 
             {
                 return ((LambdaPart) myStack.peek(1).value).pop((Expression) myStack.peek(0).value);
             }
-            case 167: // lambdaExpr ::= lambdaExprHead LBRACE statementList RBRACE 
+            case 171: // lambdaExpr ::= lambdaExprHead LBRACE statementList RBRACE 
             {
                 return ((LambdaPart) myStack.peek(3).value).pop((StatementList) myStack.peek(1).value);
             }
-            case 149: // mapValuePart ::= mapValuePart COMMA DIRECT_VALUE COLON expression 
+            case 153: // mapValuePart ::= mapValuePart COMMA DIRECT_VALUE COLON expression 
             {
                 return ((MapValuePart) myStack.peek(4).value).add((Object) myStack.peek(2).value, (Expression) myStack.peek(0).value);
             }
-            case 150: // mapValuePart ::= mapValuePart COMMA MINUS DIRECT_VALUE COLON expression 
+            case 154: // mapValuePart ::= mapValuePart COMMA MINUS DIRECT_VALUE COLON expression 
             {
                 return ((MapValuePart) myStack.peek(5).value).add(ALU.negative((Object) myStack.peek(2).value), (Expression) myStack.peek(0).value);
             }
@@ -580,27 +600,27 @@ public class Parser extends AbstractParser {
             {
                 return ((StatementList) myStack.peek(1).value).add((Statement) myStack.peek(0).value);
             }
-            case 45: // varPart ::= varPart COMMA varAssign 
+            case 47: // varPart ::= varPart COMMA varAssign 
             {
                 return ((StatementList) myStack.peek(2).value).add((Expression) myStack.peek(0).value);
             }
-            case 15: // statement ::= switchPart 
+            case 17: // statement ::= switchPart 
             {
                 return ((SwitchPart) myStack.peek(0).value).pop();
             }
-            case 16: // statement ::= IDENTIFIER COLON switchPart 
+            case 18: // statement ::= IDENTIFIER COLON switchPart 
             {
                 return ((SwitchPart) myStack.peek(0).value).pop(getLabelIndex((String) myStack.peek(2).value));
             }
-            case 17: // statement ::= whilePart 
+            case 19: // statement ::= whilePart 
             {
                 return ((WhilePart) myStack.peek(0).value).pop();
             }
-            case 18: // statement ::= IDENTIFIER COLON whilePart 
+            case 20: // statement ::= IDENTIFIER COLON whilePart 
             {
                 return ((WhilePart) myStack.peek(0).value).pop(getLabelIndex((String) myStack.peek(2).value));
             }
-            case 74: // forInPart ::= forInBody 
+            case 76: // forInPart ::= forInBody 
             {
                 return (AbstractForInPart) myStack.peek(0).value;
             }
@@ -608,43 +628,43 @@ public class Parser extends AbstractParser {
             {
                 return (ClassNameBand) myStack.peek(0).value;
             }
-            case 163: // classNameList ::= classNameList1 
+            case 167: // classNameList ::= classNameList1 
             {
                 return (ClassNameList) myStack.peek(0).value;
             }
-            case 93: // expression_statementable ::= funcExecuteExpr 
-            case 94: // expression ::= expression_statementable 
-            case 132: // expression ::= contextValueExpr 
-            case 134: // expression ::= lambdaExpr 
+            case 95: // expression_statementable ::= funcExecuteExpr 
+            case 96: // expression ::= expression_statementable 
+            case 136: // expression ::= contextValueExpr 
+            case 138: // expression ::= lambdaExpr 
             {
                 return (Expression) myStack.peek(0).value;
             }
             case 10: // statement ::= expression_statementable SEMICOLON 
-            case 123: // expression ::= LPAREN expression RPAREN 
+            case 127: // expression ::= LPAREN expression RPAREN 
             {
                 return (Expression) myStack.peek(1).value;
             }
-            case 146: // expressionList ::= expressionList1 
+            case 150: // expressionList ::= expressionList1 
             {
                 return (ExpressionList) myStack.peek(0).value;
             }
-            case 13: // statement ::= block 
+            case 15: // statement ::= block 
             {
                 return (IBlock) myStack.peek(0).value;
             }
-            case 136: // superCount ::= superCount SUPER DOT 
+            case 140: // superCount ::= superCount SUPER DOT 
             {
                 return (Integer) myStack.peek(2).value + 1;
             }
-            case 133: // expression ::= mapValue 
+            case 137: // expression ::= mapValue 
             {
                 return (MapValue) myStack.peek(0).value;
             }
-            case 14: // statement ::= ifStat 
+            case 16: // statement ::= ifStat 
             {
                 return (Statement) myStack.peek(0).value;
             }
-            case 135: // superCount ::= SUPER DOT 
+            case 139: // superCount ::= SUPER DOT 
             {
                 return 1;
             }
@@ -652,7 +672,7 @@ public class Parser extends AbstractParser {
             {
                 return NoneStatement.getInstance();
             }
-            case 12: // statement ::= expression INTERPOLATION_END 
+            case 14: // statement ::= expression INTERPOLATION_END 
             {
                 return createInterpolation((Expression) myStack.peek(1).value);
             }
@@ -660,27 +680,27 @@ public class Parser extends AbstractParser {
             {
                 return new ClassNameBand((String) myStack.peek(0).value);
             }
-            case 162: // classNameList ::= 
+            case 166: // classNameList ::= 
             {
                 return new ClassNameList(this.nativeImportMgr);
             }
-            case 143: // expressionList1 ::= expression 
+            case 147: // expressionList1 ::= expression 
             {
                 return new ExpressionList().add((Expression) myStack.peek(0).value);
             }
-            case 145: // expressionList ::= 
+            case 149: // expressionList ::= 
             {
                 return new ExpressionList();
             }
-            case 147: // mapValuePart ::= DIRECT_VALUE COLON expression 
+            case 151: // mapValuePart ::= DIRECT_VALUE COLON expression 
             {
                 return new MapValuePart().add((Object) myStack.peek(2).value, (Expression) myStack.peek(0).value);
             }
-            case 148: // mapValuePart ::= MINUS DIRECT_VALUE COLON expression 
+            case 152: // mapValuePart ::= MINUS DIRECT_VALUE COLON expression 
             {
                 return new MapValuePart().add(ALU.negative((Object) myStack.peek(2).value), (Expression) myStack.peek(0).value);
             }
-            case 43: // varPart ::= VAR varAssign 
+            case 45: // varPart ::= VAR varAssign 
             {
                 return new StatementList().add((Expression) myStack.peek(0).value);
             }
@@ -688,12 +708,12 @@ public class Parser extends AbstractParser {
             {
                 return new StatementList().add((Statement) myStack.peek(0).value);
             }
-            case 80: // switchPart0 ::= 
+            case 82: // switchPart0 ::= 
             {
                 return new SwitchPart();
             }
-            case 53: // blockPrepare ::= 
-            case 54: // blockPrepare2 ::= LBRACE 
+            case 55: // blockPrepare ::= 
+            case 56: // blockPrepare2 ::= LBRACE 
             {
                 varmgr.push(); return null;
             }

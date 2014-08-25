@@ -1,30 +1,32 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.core;
 
-import java.lang.reflect.Field;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.Engine;
 import webit.script.Template;
+import webit.script.core.VariantManager.VarAddress;
 import webit.script.core.ast.*;
+import webit.script.core.ast.TemplateAST;
 import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.operators.*;
-import webit.script.core.ast.TemplateAST;
-import webit.script.core.text.TextStatementFactory;
-import webit.script.core.VariantManager.VarAddress;
+import webit.script.core.ast.statements.BreakPointStatement;
 import webit.script.core.ast.statements.Interpolation;
+import webit.script.core.text.TextStatementFactory;
+import webit.script.debug.BreakPointListener;
 import webit.script.exceptions.ParseException;
 import webit.script.loaders.Resource;
 import webit.script.loaders.ResourceOffset;
 import webit.script.util.ClassLoaderUtil;
-import webit.script.util.ExceptionUtil;
 import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
+import webit.script.util.ExceptionUtil;
+import webit.script.util.Stack;
 import webit.script.util.StatementUtil;
 import webit.script.util.StringUtil;
-import webit.script.util.Stack;
 
 /**
  *
@@ -38,7 +40,7 @@ abstract class AbstractParser {
 
     final Stack<Symbol> _stack;
     boolean goonParse = false;
-    //
+    
     Engine engine;
     Template template;
     TextStatementFactory textStatementFactory;
@@ -48,11 +50,17 @@ abstract class AbstractParser {
     VariantManager varmgr;
     Map<String, Integer> labelsIndexMap;
     int currentLabelIndex;
+    BreakPointListener breakPointListener;
 
     AbstractParser() {
         this._stack = new Stack<Symbol>(24);
     }
 
+    public TemplateAST parseTemplate(final Template template, BreakPointListener breakPointListener) throws ParseException {
+        this.breakPointListener = breakPointListener;
+        return parseTemplate(template);
+    }
+    
     /**
      *
      * @param template Template
@@ -114,6 +122,20 @@ abstract class AbstractParser {
             labelsIndexMap.put(label, index);
         }
         return index;
+    }
+    
+    Expression createBreakPointExpression(String label, Expression expr, int line, int column){
+        if (breakPointListener == null) {
+            return expr;
+        }
+        return new BreakPointExpression(breakPointListener, label, expr, line, column);
+    }
+    
+    Statement createBreakPointStatement(String label, Statement statement, int line, int column){
+        if (breakPointListener == null) {
+            return statement;
+        }
+        return new BreakPointStatement(breakPointListener, label, statement, line, column);
     }
 
     Expression createContextValue(VarAddress addr, int line, int column) {
