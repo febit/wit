@@ -2,9 +2,11 @@
 package webit.script.core.ast.statements;
 
 import webit.script.core.VariantManager;
+import webit.script.core.ast.Expression;
 import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.StatementList;
+import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;
 
@@ -14,18 +16,26 @@ import webit.script.util.StatementUtil;
  */
 public abstract class AbstractForInPart extends Position {
 
-    IBlock bodyStatement;
-    Statement elseStatement;
-    final VariantManager varmgr;
+    protected IBlock bodyStatement;
+    protected Statement elseStatement;
+    protected final VariantManager varmgr;
+    protected Expression collectionExpr;
+    protected FunctionDeclare functionDeclareExpr;
+
     public AbstractForInPart(VariantManager varmgr, int line, int column) {
         super(line, column);
         this.varmgr = varmgr;
+    }
+    
+    public AbstractForInPart setCollectionExpr(Expression collectionExpr) {
+        this.collectionExpr = collectionExpr;
         varmgr.push();
         if (varmgr.assignVariant("for.iter", line, column) != 0) {
             throw new ParseException("assignVariant failed!");
         }
+        return this;
     }
-
+    
     public AbstractForInPart setStatementList(StatementList list) {
         this.bodyStatement = list.popIBlock(varmgr.pop(), line, column);
         return this;

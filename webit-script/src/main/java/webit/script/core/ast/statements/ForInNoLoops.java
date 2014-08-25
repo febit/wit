@@ -36,7 +36,7 @@ public final class ForInNoLoops extends AbstractStatement {
 
     public Object execute(final Context context) {
         Iter iter = CollectionUtil.toIter(StatementUtil.execute(collectionExpr, context));
-        if (functionDeclareExpr != null) {
+        if (iter != null && functionDeclareExpr != null) {
             iter = new IterMethodFilter(context,
                     functionDeclareExpr.execute(context),
                     iter);

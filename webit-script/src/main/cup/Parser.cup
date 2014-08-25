@@ -76,7 +76,7 @@ non terminal Expression varAssign;
 non terminal ImportPart importPart1, importPart2;
 non terminal Object blockPrepare, blockPrepare2;
 non terminal SwitchPart switchPart, switchPart0;
-non terminal AbstractForInPart forInHead, forInBody, forInPart;
+non terminal AbstractForInPart forInHead, forInBody, forInPart, lambdaForHead, lambdaForHead2;
 non terminal WhilePart whilePart;
 non terminal IfPart ifPart;
 
@@ -98,8 +98,7 @@ non terminal FunctionDeclarePart funcHead, funcStatementHead;
 non terminal Expression lambdaExpr;
 non terminal LambdaPart lambdaExprHead;
 
-non terminal LambdaPart lambdaForHead1;
-non terminal ForInPart lambdaForHead, lambdaForHead2;
+non terminal LambdaPart lambdaForHead1, lambdaForMapHead1;
 
 /* precedence */
 precedence left     SEMICOLON; // ;
@@ -329,10 +328,19 @@ lambdaForHead1   ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
                     ;
 
 
+lambdaForMapHead1   ::= FOR LPAREN IDENTIFIER:key COMMA IDENTIFIER:value MINUSGT:sym
+                    {: return new LambdaPart(this.varmgr, %sym.line%, %sym.column%).appendArg(%key%, %key.line%, %key.column%).appendArg(%value%, %value.line%, %value.column%); :}
+                    ;
+
+
 lambdaForHead2  ::= lambdaForHead1:part expression:expr COLON
                     {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.line%, %part.column%); :}
                     |lambdaForHead1:part LBRACE statementList:list RBRACE COLON
                     {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.line%, %part.column%); :}
+                    |lambdaForMapHead1:part expression:expr COLON
+                    {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.line%, %part.column%); :}
+                    |lambdaForMapHead1:part LBRACE statementList:list RBRACE COLON
+                    {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.line%, %part.column%); :}
                     ;
 
 

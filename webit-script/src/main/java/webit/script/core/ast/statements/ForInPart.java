@@ -12,32 +12,31 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class ForInPart extends AbstractForInPart {
+public class ForInPart extends AbstractForInPart {
 
-    private Expression collectionExpr;
-    private FunctionDeclare functionDeclareExpr;
+    protected final String itemVarName;
 
     public ForInPart(String item, Expression collectionExpr, VariantManager varmgr, int line, int column) {
         super(varmgr, line, column);
-        this.collectionExpr = collectionExpr;
-        if (varmgr.assignVariant(item, line, column) != 1) {
-            throw new ParseException("assignVariant failed!");
-        }
+        this.itemVarName = item;
+        setCollectionExpr(collectionExpr);
     }
 
     public ForInPart(String item, FunctionDeclare functionDeclareExpr, VariantManager varmgr, int line, int column) {
         super(varmgr, line, column);
+        this.itemVarName = item;
         this.functionDeclareExpr = functionDeclareExpr;
-        if (varmgr.assignVariant(item, line, column) != 1) {
-            throw new ParseException("assignVariant failed!");
-        }
     }
 
-    public ForInPart setCollectionExpr(Expression collectionExpr) {
-        this.collectionExpr = collectionExpr;
+    @Override
+    public final AbstractForInPart setCollectionExpr(Expression collectionExpr) {
+        super.setCollectionExpr(collectionExpr);
+        if (varmgr.assignVariant(itemVarName, line, column) != 1) {
+            throw new ParseException("assignVariant failed!");
+        }
         return this;
     }
-    
+
     @Override
     public Statement pop(int label) {
         if (bodyStatement.hasLoops()) {

@@ -7,7 +7,9 @@ import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
+import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.lang.KeyIter;
+import webit.script.lang.iter.KeyIterMethodFilter;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatementUtil;
 
@@ -17,13 +19,15 @@ import webit.script.util.StatementUtil;
  */
 public final class ForMapNoLoops extends AbstractStatement {
 
+    protected final FunctionDeclare functionDeclareExpr;
     private final Expression mapExpr;
     private final VariantIndexer varIndexer;
     private final Statement[] statements;
     private final Statement elseStatement;
 
-    public ForMapNoLoops( Expression mapExpr, VariantIndexer varIndexer, Statement[] statements, Statement elseStatement, int line, int column) {
+    public ForMapNoLoops(FunctionDeclare functionDeclareExpr, Expression mapExpr, VariantIndexer varIndexer, Statement[] statements, Statement elseStatement, int line, int column) {
         super(line, column);
+        this.functionDeclareExpr = functionDeclareExpr;
         this.mapExpr = mapExpr;
         this.varIndexer = varIndexer;
         this.statements = statements;
@@ -32,7 +36,12 @@ public final class ForMapNoLoops extends AbstractStatement {
 
     @SuppressWarnings("unchecked")
     public Object execute(final Context context) {
-        final KeyIter iter = CollectionUtil.toKeyIter(StatementUtil.execute(mapExpr, context));
+        KeyIter iter = CollectionUtil.toKeyIter(StatementUtil.execute(mapExpr, context));
+        if (iter != null && functionDeclareExpr != null) {
+            iter = new KeyIterMethodFilter(context,
+                    functionDeclareExpr.execute(context),
+                    iter);
+        }
         if (iter != null && iter.hasNext()) {
             final VariantStack vars;
             (vars = context.vars).push(varIndexer);

@@ -10,10 +10,13 @@ import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
+import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.lang.KeyIter;
+import webit.script.lang.iter.IterMethodFilter;
+import webit.script.lang.iter.KeyIterMethodFilter;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatementUtil;
 
@@ -23,6 +26,7 @@ import webit.script.util.StatementUtil;
  */
 public final class ForMap extends AbstractStatement implements Loopable {
 
+    protected final FunctionDeclare functionDeclareExpr;
     private final Expression mapExpr;
     private final VariantIndexer varIndexer;
     private final Statement[] statements;
@@ -30,8 +34,9 @@ public final class ForMap extends AbstractStatement implements Loopable {
     private final Statement elseStatement;
     private final int label;
 
-    public ForMap(Expression mapExpr, VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
+    public ForMap(FunctionDeclare functionDeclareExpr, Expression mapExpr, VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
         super(line, column);
+        this.functionDeclareExpr = functionDeclareExpr;
         this.mapExpr = mapExpr;
         this.varIndexer = varIndexer;
         this.statements = statements;
@@ -42,7 +47,12 @@ public final class ForMap extends AbstractStatement implements Loopable {
 
     @SuppressWarnings("unchecked")
     public Object execute(final Context context) {
-        final KeyIter iter = CollectionUtil.toKeyIter(StatementUtil.execute(mapExpr, context));
+        KeyIter iter = CollectionUtil.toKeyIter(StatementUtil.execute(mapExpr, context));
+        if (iter != null && functionDeclareExpr != null) {
+            iter = new KeyIterMethodFilter(context,
+                    functionDeclareExpr.execute(context),
+                    iter);
+        }
         if (iter != null && iter.hasNext()) {
             final LoopCtrl ctrl = context.loopCtrl;
             final VariantStack vars;

@@ -1,32 +1,76 @@
 <%
 
+{
+    var map = {};
+    var count = 0;
 
-var map = {};
+    for(k, v : null){
+        count++;
+    }
 
-var count = 0;
-for(k, v : null){
-    count++;
+    for(k, v : map){
+        count++;
+    }
+
+    for(k, v -> k && v : null){
+        count++;
+    }
+
+    for(k, v -> k && v : map){
+        count++;
+    }
+
+    assertEquals(0, count);
 }
-for(k, v : map){
-    count++;
+{
+    var map = {
+        101 : 1,
+        102 : 2,
+        111 : 11
+    };
+
+    var count = 0;
+
+    for(k, v : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(3, count);
+
+    count = 0;
+    for(k, v -> k && v : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(3, count);
+
+    count = 0;
+    for(k, v -> k>110 : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(1, count);
+
+    count = 0;
+    for(k, v -> v > 10 : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(1, count);
+
+    count = 0;
+    for(k, v -> k>110 || k==101 : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(2, count);
+
+    count = 0;
+    for(k, v -> k>110 || v == 1 : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(2, count);
 }
-
-assertEquals(0, count);
-
-
-map = {
-    101 : 1,
-    102 : 2,
-    111 : 11
-};
-
-count = 0;
-
-for(k, v : map){
-    assertEquals(v, k - 100);
-    count++;
-}
-assertEquals(3, count);
-
 
 %>
