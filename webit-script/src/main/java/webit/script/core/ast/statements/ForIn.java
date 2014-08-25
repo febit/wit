@@ -46,23 +46,21 @@ public class ForIn extends AbstractStatement implements Loopable {
 
     public Object execute(final Context context) {
         Iter iter = CollectionUtil.toIter(StatementUtil.execute(collectionExpr, context));
-        if (functionDeclareExpr != null) {
+        if (iter != null && functionDeclareExpr != null) {
             iter = new IterMethodFilter(context,
                     functionDeclareExpr.execute(context),
                     iter);
         }
         if (iter != null
                 && iter.hasNext()) {
-
             final VariantStack vars;
             final LoopCtrl ctrl = context.loopCtrl;
-            final Statement[] statements = this.statements;
             (vars = context.vars).push(varIndexer);
             vars.set(0, iter);
             label:
             do {
                 vars.resetForForIn(iter.next());
-                StatementUtil.executeInvertedAndCheckLoops(statements, context);
+                StatementUtil.executeInvertedAndCheckLoops(this.statements, context);
                 if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                     if (ctrl.matchLabel(label)) {
                         switch (ctrl.getLoopType()) {

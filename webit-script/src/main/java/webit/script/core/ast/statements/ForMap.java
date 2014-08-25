@@ -4,7 +4,6 @@ package webit.script.core.ast.statements;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
 import webit.script.core.VariantStack;
@@ -14,8 +13,7 @@ import webit.script.core.ast.Statement;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
-import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.lang.Iter;
+import webit.script.lang.KeyIter;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatementUtil;
 
@@ -44,29 +42,16 @@ public final class ForMap extends AbstractStatement implements Loopable {
 
     @SuppressWarnings("unchecked")
     public Object execute(final Context context) {
-        final Object object = StatementUtil.execute(mapExpr, context);
-        final Iter iter;
-        if (object != null) {
-            if (object instanceof Map) {
-                iter = CollectionUtil.toIter(((Map) object).entrySet());
-            } else {
-                throw new ScriptRuntimeException("Not a instance of java.util.Map");
-            }
-        } else {
-            iter = null;
-        }
+        final KeyIter iter = CollectionUtil.toKeyIter(StatementUtil.execute(mapExpr, context));
         if (iter != null && iter.hasNext()) {
             final LoopCtrl ctrl = context.loopCtrl;
-            final Statement[] statements = this.statements;
-            Map.Entry entry;
             final VariantStack vars;
             (vars = context.vars).push(varIndexer);
             vars.set(0, iter);
             label:
             do {
-                entry = (Map.Entry) iter.next();
-                vars.resetForForMap(entry.getKey(),entry.getValue());
-                StatementUtil.executeInvertedAndCheckLoops(statements, context);
+                vars.resetForForMap(iter.next(), iter.value());
+                StatementUtil.executeInvertedAndCheckLoops(this.statements, context);
                 if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                     if (ctrl.matchLabel(label)) {
                         switch (ctrl.getLoopType()) {

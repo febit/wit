@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.lang.KeyIter;
 
 /**
  *
@@ -36,9 +37,11 @@ public class CollectionUtil {
         final Class clazz;
         if (o1 == null) {
             return null;
-        } else if (o1 instanceof Iterable) {
+        }
+        if (o1 instanceof Iterable) {
             return new IteratorIterAdapter(((Iterable) o1).iterator());
-        } else if ((clazz = o1.getClass()).isArray()) {
+        }
+        if ((clazz = o1.getClass()).isArray()) {
             if (o1 instanceof Object[]) {
                 return new ArrayIterAdapter((Object[]) o1);
             } else if (clazz == int[].class) {
@@ -74,6 +77,16 @@ public class CollectionUtil {
     @SuppressWarnings("unchecked")
     public static Iter toIter(final Iterable o1) {
         return new IteratorIterAdapter(o1.iterator());
+    }
+
+    public static KeyIter toKeyIter(final Object o1) {
+        if (o1 == null) {
+            return null;
+        }
+        if (o1 instanceof Map) {
+            return new MapKeyIter((Map) o1);
+        }
+        throw new ScriptRuntimeException("Unsupported type: ".concat(o1.getClass().getName()));
     }
 
     public static boolean notEmpty(final Object object, final boolean defaultValue) {

@@ -1,0 +1,32 @@
+<%
+
+
+var map = {};
+
+var count = 0;
+for(k, v : null){
+    count++;
+}
+for(k, v : map){
+    count++;
+}
+
+assertEquals(0, count);
+
+
+map = {
+    101 : 1,
+    102 : 2,
+    111 : 11
+};
+
+count = 0;
+
+for(k, v : map){
+    assertEquals(v, k - 100);
+    count++;
+}
+assertEquals(3, count);
+
+
+%>
