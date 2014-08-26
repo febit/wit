@@ -37,12 +37,16 @@ public final class JCLLogger extends AbstractLogger implements Initable {
         switch (level) {
             case LEVEL_DEBUG:
                 log.debug(msg);
+                break;
             case LEVEL_INFO:
                 log.info(msg);
+                break;
             case LEVEL_WARN:
                 log.warn(msg);
+                break;
             case LEVEL_ERROR:
                 log.error(msg);
+                break;
         }
     }
 
@@ -50,12 +54,16 @@ public final class JCLLogger extends AbstractLogger implements Initable {
         switch (level) {
             case LEVEL_DEBUG:
                 log.debug(msg, throwable);
+                break;
             case LEVEL_INFO:
                 log.info(msg, throwable);
+                break;
             case LEVEL_WARN:
                 log.warn(msg, throwable);
+                break;
             case LEVEL_ERROR:
                 log.error(msg, throwable);
+                break;
         }
     }
 }
