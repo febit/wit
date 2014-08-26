@@ -9,17 +9,17 @@ import webit.script.loggers.Logger;
  */
 public final class NOPLogger implements Logger {
 
-    public boolean isTraceEnabled() {
+    public boolean isEnabled(int level) {
         return false;
     }
 
-    public void trace(String msg) {
+    public void log(int level, String msg) {
     }
 
-    public void trace(String format, Object... arguments) {
+    public void log(int level, String format, Object... args) {
     }
 
-    public void trace(String msg, Throwable t) {
+    public void log(int level, String msg, Throwable t) {
     }
 
     public boolean isDebugEnabled() {
@@ -29,7 +29,7 @@ public final class NOPLogger implements Logger {
     public void debug(String msg) {
     }
 
-    public void debug(String format, Object... arguments) {
+    public void debug(String format, Object... args) {
     }
 
     public void debug(String msg, Throwable t) {
@@ -42,7 +42,7 @@ public final class NOPLogger implements Logger {
     public void info(String msg) {
     }
 
-    public void info(String format, Object... arguments) {
+    public void info(String format, Object... args) {
     }
 
     public void info(String msg, Throwable t) {
@@ -55,7 +55,7 @@ public final class NOPLogger implements Logger {
     public void warn(String msg) {
     }
 
-    public void warn(String format, Object... arguments) {
+    public void warn(String format, Object... args) {
     }
 
     public void warn(String msg, Throwable t) {
@@ -68,7 +68,7 @@ public final class NOPLogger implements Logger {
     public void error(String msg) {
     }
 
-    public void error(String format, Object... arguments) {
+    public void error(String format, Object... args) {
     }
 
     public void error(String msg, Throwable t) {

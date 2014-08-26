@@ -7,21 +7,24 @@ package webit.script.loggers;
  */
 public interface Logger {
 
-    public static final String DEFAULT_NAME = "WebitScript";
+    public static final int LEVEL_DEBUG = 1;
+    public static final int LEVEL_INFO = 2;
+    public static final int LEVEL_WARN = 3;
+    public static final int LEVEL_ERROR = 4;
+    
+    public boolean isEnabled(int level);
 
-    public boolean isTraceEnabled();
+    public void log(int level, String msg);
 
-    public void trace(String msg);
+    public void log(int level, String format, Object... args);
 
-    public void trace(String format, Object... arguments);
-
-    public void trace(String msg, Throwable t);
-
+    public void log(int level, String msg, Throwable t);
+    
     public boolean isDebugEnabled();
 
     public void debug(String msg);
 
-    public void debug(String format, Object... arguments);
+    public void debug(String format, Object... args);
 
     public void debug(String msg, Throwable t);
 
@@ -29,7 +32,7 @@ public interface Logger {
 
     public void info(String msg);
 
-    public void info(String format, Object... arguments);
+    public void info(String format, Object... args);
 
     public void info(String msg, Throwable t);
 
@@ -37,7 +40,7 @@ public interface Logger {
 
     public void warn(String msg);
 
-    public void warn(String format, Object... arguments);
+    public void warn(String format, Object... args);
 
     public void warn(String msg, Throwable t);
 
@@ -45,7 +48,7 @@ public interface Logger {
 
     public void error(String msg);
 
-    public void error(String format, Object... arguments);
+    public void error(String format, Object... args);
 
     public void error(String msg, Throwable t);
 }

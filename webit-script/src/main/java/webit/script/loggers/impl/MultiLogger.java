@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
+import webit.script.loggers.AbstractLogger;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.loggers.Logger;
@@ -10,7 +11,7 @@ import webit.script.util.ClassEntry;
  *
  * @author zqq90
  */
-public final class MultiLogger implements Logger, Initable {
+public final class MultiLogger extends AbstractLogger implements Initable {
 
     private Logger[] _loggers;
 
@@ -20,17 +21,18 @@ public final class MultiLogger implements Logger, Initable {
     public void init(Engine engine) {
         if (loggers != null && loggers.length > 0) {
             int len = loggers.length;
-            _loggers = new Logger[loggers.length];
+            _loggers = new Logger[len];
             for (int i = 0; i < len; i++) {
                 _loggers[i] = (Logger) engine.getComponent(loggers[i]);
             }
         }
     }
 
-    public boolean isTraceEnabled() {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                if (_loggers[i].isTraceEnabled()) {
+    public boolean isEnabled(int level) {
+        Logger[] logs = this._loggers;
+        if (logs != null) {
+            for (int i = 0, len = logs.length; i < len; i++) {
+                if (logs[i].isEnabled(level)) {
                     return true;
                 }
             }
@@ -38,166 +40,20 @@ public final class MultiLogger implements Logger, Initable {
         return false;
     }
 
-    public void trace(String msg) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].trace(msg);
+    public void log(int level, String msg) {
+        Logger[] logs = this._loggers;
+        if (logs != null) {
+            for (int i = 0, len = logs.length; i < len; i++) {
+                logs[i].log(level, msg);
             }
         }
     }
 
-    public void trace(String format, Object... arguments) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].trace(format, arguments);
-            }
-        }
-    }
-
-    public void trace(String msg, Throwable t) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].trace(msg, t);
-            }
-        }
-    }
-
-    public boolean isDebugEnabled() {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                if (_loggers[i].isDebugEnabled()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void debug(String msg) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].debug(msg);
-            }
-        }
-    }
-
-    public void debug(String format, Object... arguments) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].debug(format, arguments);
-            }
-        }
-    }
-
-    public void debug(String msg, Throwable t) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].debug(msg, t);
-            }
-        }
-    }
-
-    public boolean isInfoEnabled() {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                if (_loggers[i].isInfoEnabled()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void info(String msg) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].info(msg);
-            }
-        }
-    }
-
-    public void info(String format, Object... arguments) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].info(format, arguments);
-            }
-        }
-    }
-
-    public void info(String msg, Throwable t) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].info(msg, t);
-            }
-        }
-    }
-
-    public boolean isWarnEnabled() {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                if (_loggers[i].isWarnEnabled()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void warn(String msg) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].warn(msg);
-            }
-        }
-    }
-
-    public void warn(String format, Object... arguments) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].warn(format, arguments);
-            }
-        }
-    }
-
-    public void warn(String msg, Throwable t) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].warn(msg, t);
-            }
-        }
-    }
-
-    public boolean isErrorEnabled() {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                if (_loggers[i].isErrorEnabled()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void error(String msg) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].error(msg);
-            }
-        }
-    }
-
-    public void error(String format, Object... arguments) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].error(format, arguments);
-            }
-        }
-    }
-
-    public void error(String msg, Throwable t) {
-        if (_loggers != null) {
-            for (int i = 0, len = _loggers.length; i < len; i++) {
-                _loggers[i].error(msg, t);
+    public void log(int level, String msg, Throwable throwable) {
+        Logger[] logs = this._loggers;
+        if (logs != null) {
+            for (int i = 0, len = logs.length; i < len; i++) {
+                logs[i].log(level, msg, throwable);
             }
         }
     }
