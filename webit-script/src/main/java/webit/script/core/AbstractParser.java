@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import webit.script.Engine;
 import webit.script.Template;
@@ -34,19 +35,20 @@ import webit.script.util.StringUtil;
  */
 abstract class AbstractParser {
 
-    private static final short[][] PRODUCTION_TABLE = loadFromDataFile("Production");
-    private static final short[][] ACTION_TABLE = loadFromDataFile("Action");
-    private static final short[][] REDUCE_TABLE = loadFromDataFile("Reduce");
+    private static final short[][] PRODUCTION_TABLE = loadData("Production");
+    private static final short[][] ACTION_TABLE = loadData("Action");
+    private static final short[][] REDUCE_TABLE = loadData("Reduce");
+
+    private final Map<String, String> importedClasses;
 
     final Stack<Symbol> _stack;
-    boolean goonParse = false;
-    
+    boolean goonParse;
+
     Engine engine;
     Template template;
     TextStatementFactory textStatementFactory;
     NativeFactory nativeFactory;
     boolean locateVarForce;
-    NativeImportManager nativeImportMgr;
     VariantManager varmgr;
     Map<String, Integer> labelsIndexMap;
     int currentLabelIndex;
@@ -54,20 +56,21 @@ abstract class AbstractParser {
 
     AbstractParser() {
         this._stack = new Stack<Symbol>(24);
+        this.importedClasses = new HashMap<String, String>();
     }
 
-    public TemplateAST parseTemplate(final Template template, BreakPointListener breakPointListener) throws ParseException {
+    public TemplateAST parse(final Template template, BreakPointListener breakPointListener) throws ParseException {
         this.breakPointListener = breakPointListener;
-        return parseTemplate(template);
+        return parse(template);
     }
-    
+
     /**
      *
      * @param template Template
      * @return TemplateAST
      * @throws ParseException
      */
-    public TemplateAST parseTemplate(final Template template) throws ParseException {
+    public TemplateAST parse(final Template template) throws ParseException {
         Lexer lexer = null;
         try {
             final Engine _engine;
@@ -89,7 +92,6 @@ abstract class AbstractParser {
             lexer.setTrimCodeBlockBlankLine(_engine.isTrimCodeBlockBlankLine());
             this.textStatementFactory = _textStatementFactory = _engine.getTextStatementFactory();
             this.locateVarForce = !_engine.isLooseVar();
-            this.nativeImportMgr = new NativeImportManager();
             this.nativeFactory = _engine.getNativeFactory();
             this.varmgr = new VariantManager(_engine);
 
@@ -115,6 +117,51 @@ abstract class AbstractParser {
 
     abstract Object doAction(int act_num) throws ParseException;
 
+    boolean registClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
+        final String className = classNameBand.getClassSimpleName();
+        if (ClassUtil.getCachedClass(className) != null) {
+            throw new ParseException("Duplicate class simple name:".concat(classNameBand.getClassPureName()), line, column);
+        }
+        if (importedClasses.containsKey(className)) {
+            throw new ParseException("Duplicate class register:".concat(classNameBand.getClassPureName()), line, column);
+        }
+        importedClasses.put(className, classNameBand.getClassPureName());
+        return true;
+    }
+
+    Class<?> toClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
+        String classPureName;
+        if (classNameBand.isSimpleName()) {
+            //1. find from @imports
+            //2. if not array, find from cached
+            //3. find from java.lang.*
+            //4. use simpleName
+            String simpleName = classNameBand.getClassSimpleName();
+            classPureName = importedClasses.get(simpleName);
+            if (classPureName == null) {
+                if (!classNameBand.isArray()) {
+                    Class cls = ClassUtil.getCachedClass(simpleName);
+                    if (cls != null) {
+                        return cls;
+                    }
+                }
+                try {
+                    classPureName = "java.lang.".concat(simpleName);
+                    ClassUtil.getClass(classPureName);
+                } catch (ClassNotFoundException e) {
+                    classPureName = simpleName;
+                }
+            }
+        } else {
+            classPureName = classNameBand.getClassPureName();
+        }
+        try {
+            return ClassUtil.getClass(classPureName, classNameBand.getArrayDepth());
+        } catch (ClassNotFoundException ex) {
+            throw new ParseException("Class not found:".concat(classPureName), line, column);
+        }
+    }
+
     int getLabelIndex(String label) {
         Integer index = labelsIndexMap.get(label);
         if (index == null) {
@@ -123,15 +170,15 @@ abstract class AbstractParser {
         }
         return index;
     }
-    
-    Expression createBreakPointExpression(String label, Expression expr, int line, int column){
+
+    Expression createBreakPointExpression(String label, Expression expr, int line, int column) {
         if (breakPointListener == null) {
             return expr;
         }
         return new BreakPointExpression(breakPointListener, label, expr, line, column);
     }
-    
-    Statement createBreakPointStatement(String label, Statement statement, int line, int column){
+
+    Statement createBreakPointStatement(String label, Statement statement, int line, int column) {
         if (breakPointListener == null) {
             return statement;
         }
@@ -178,7 +225,7 @@ abstract class AbstractParser {
             throw new ParseException("native static need a filed name.", line, column);
         }
         final String fieldName = classNameBand.pop();
-        final Class clazz = nativeImportMgr.toClass(classNameBand, line, column);
+        final Class clazz = toClass(classNameBand, line, column);
         final String path = (StringUtil.concat(clazz.getName(), ".", fieldName));
         if (!this.engine.getNativeSecurityManager().access(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
@@ -213,12 +260,12 @@ abstract class AbstractParser {
         return new DirectValue(this.nativeFactory.createNativeNewArrayMethodDeclare(componentType, line, column), line, column);
     }
 
-    Expression createNativeMethodDeclareExpression(Class clazz, String methodName, ClassNameList list, int line, int column) {
-        return new DirectValue(this.nativeFactory.createNativeMethodDeclare(clazz, methodName, list.toArray(), line, column), line, column);
+    Expression createNativeMethodDeclareExpression(Class clazz, String methodName, List<Class> list, int line, int column) {
+        return new DirectValue(this.nativeFactory.createNativeMethodDeclare(clazz, methodName, list.toArray(new Class[list.size()]), line, column), line, column);
     }
 
-    Expression createNativeConstructorDeclareExpression(Class clazz, ClassNameList list, int line, int column) {
-        return new DirectValue(this.nativeFactory.createNativeConstructorDeclare(clazz, list.toArray(), line, column), line, column);
+    Expression createNativeConstructorDeclareExpression(Class clazz, List<Class> list, int line, int column) {
+        return new DirectValue(this.nativeFactory.createNativeConstructorDeclare(clazz, list.toArray(new Class[list.size()]), line, column), line, column);
     }
 
     static ResetableValueExpression castToResetableValueExpression(Expression expr) {
@@ -404,7 +451,7 @@ abstract class AbstractParser {
      * documentation for the class regarding how shift/reduce parsers operate
      * and how the various tables are used.
      */
-    private Symbol parse(final Lexer myLexer) throws Exception {
+    private Symbol parse(final Lexer lexer) throws Exception {
 
         int act;
         Symbol currentToken;
@@ -421,7 +468,7 @@ abstract class AbstractParser {
         final short[][] reduceTable = REDUCE_TABLE;
         final short[][] productionTable = PRODUCTION_TABLE;
 
-        currentToken = myLexer.nextToken();
+        currentToken = lexer.nextToken();
 
         /* continue until we are told to stop */
         goonParse = true;
@@ -437,7 +484,7 @@ abstract class AbstractParser {
                 stack.push(currentSymbol = currentToken);
 
                 /* advance to the next Symbol */
-                currentToken = myLexer.nextToken();
+                currentToken = lexer.nextToken();
             } else if (act < 0) {
                 /* if its less than zero, then it encodes a reduce action */
                 act = (-act) - 1;
@@ -461,22 +508,20 @@ abstract class AbstractParser {
 
             } else {
                 //act == 0
-                throw new ParseException(StringUtil.concat("Syntax error before: ", Integer.toString(myLexer.getLine()), "(", Integer.toString(myLexer.getColumn()), ")", ". Hints: ", getSimpleHintMessage(currentSymbol)), myLexer.getLine(), myLexer.getColumn());
+                throw new ParseException(StringUtil.concat("Syntax error before: ", Integer.toString(lexer.getLine()), "(", Integer.toString(lexer.getColumn()), ")", ". Hints: ", getSimpleHintMessage(currentSymbol)), lexer.getLine(), lexer.getColumn());
             }
         } while (goonParse);
 
         return stack.peek();
     }
 
-    private static short[][] loadFromDataFile(String name) {
+    private static short[][] loadData(String name) {
         ObjectInputStream in = null;
         try {
             in = new ObjectInputStream(ClassLoaderUtil.getDefaultClassLoader()
                     .getResourceAsStream(StringUtil.concat("webit/script/core/Parser$", name, ".data")));
             return (short[][]) in.readObject();
-        } catch (IOException e) {
-            throw new Error(e);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             throw new Error(e);
         } finally {
             if (in != null) {
@@ -617,7 +662,7 @@ abstract class AbstractParser {
         "UNKNOWN"
     };
 
-    static String symbolToString(final short sym) {
+    private static String symbolToString(final short sym) {
         if (sym >= 0 && sym < SYMBOL_STRS.length) {
             return SYMBOL_STRS[sym];
         }

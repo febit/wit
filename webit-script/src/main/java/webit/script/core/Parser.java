@@ -5,6 +5,8 @@
 
 package webit.script.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import webit.script.core.ast.*;
 import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.operators.*;
@@ -12,12 +14,12 @@ import webit.script.core.ast.statements.*;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ALU;
 import webit.script.util.ClassNameBand;
-import webit.script.util.StatementUtil;
 import webit.script.util.Stack;
+import webit.script.util.StatementUtil;
 
 /**
  * 
- * @version Mon Aug 25 16:47:02 CST 2014
+ * @version Tue Aug 26 12:00:28 CST 2014
  */
 public class Parser extends AbstractParser {
 
@@ -146,18 +148,19 @@ public class Parser extends AbstractParser {
             }
             case 165: // classNameList1 ::= classNameList1 COMMA className 
             {
+                Symbol list$Symbol = myStack.peek(2);
                 Symbol nameBand$Symbol = myStack.peek(0);
-                return ((ClassNameList) myStack.peek(2).value).add((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column);
+                ((List<Class>) list$Symbol.value).add(toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column)); return (List<Class>) list$Symbol.value;
+            }
+            case 164: // classNameList1 ::= className 
+            {
+                Symbol nameBand$Symbol = myStack.peek(0);
+                List<Class> list = new ArrayList<Class>(); list.add(toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column)); return list;
             }
             case 134: // expression ::= NATIVE classPureName 
             {
                 Symbol nameBand$Symbol = myStack.peek(0);
                 return createNativeStaticValue((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column);
-            }
-            case 164: // classNameList1 ::= className 
-            {
-                Symbol nameBand$Symbol = myStack.peek(0);
-                return new ClassNameList(this.nativeImportMgr).add((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column);
             }
             case 26: // statement ::= varPart SEMICOLON 
             {
@@ -332,7 +335,7 @@ public class Parser extends AbstractParser {
             case 28: // statement ::= NATIVE_IMPORT classPureName SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(2);
-                nativeImportMgr.registClass((ClassNameBand) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column); return NoneStatement.getInstance();
+                registClass((ClassNameBand) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column); return NoneStatement.getInstance();
             }
             case 155: // mapValue ::= LBRACE mapValuePart RBRACE 
             {
@@ -398,13 +401,13 @@ public class Parser extends AbstractParser {
             {
                 Symbol sym$Symbol = myStack.peek(3);
                 Symbol nameBand$Symbol = myStack.peek(0);
-                return this.createNativeNewArrayDeclareExpression(nativeImportMgr.toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), sym$Symbol.line, sym$Symbol.column);
+                return this.createNativeNewArrayDeclareExpression(toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), sym$Symbol.line, sym$Symbol.column);
             }
             case 132: // expression ::= NATIVE LBRACK className RBRACK 
             {
                 Symbol sym$Symbol = myStack.peek(3);
                 Symbol nameBand$Symbol = myStack.peek(1);
-                return this.createNativeNewArrayDeclareExpression(nativeImportMgr.toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), sym$Symbol.line, sym$Symbol.column);
+                return this.createNativeNewArrayDeclareExpression(toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), sym$Symbol.line, sym$Symbol.column);
             }
             case 85: // switchPart0 ::= DEFAULT COLON caseBlockStat switchPart0 
             {
@@ -460,7 +463,7 @@ public class Parser extends AbstractParser {
             {
                 Symbol sym$Symbol = myStack.peek(5);
                 Symbol nameBand$Symbol = myStack.peek(3);
-                return this.createNativeConstructorDeclareExpression(nativeImportMgr.toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), (ClassNameList) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
+                return this.createNativeConstructorDeclareExpression(toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), (List<Class>) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
             case 84: // switchPart0 ::= CASE MINUS DIRECT_VALUE COLON caseBlockStat switchPart0 
             {
@@ -481,7 +484,7 @@ public class Parser extends AbstractParser {
             {
                 Symbol sym$Symbol = myStack.peek(6);
                 Symbol nameBand$Symbol = myStack.peek(5);
-                return this.createNativeMethodDeclareExpression(nativeImportMgr.toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), (String) myStack.peek(3).value, (ClassNameList) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
+                return this.createNativeMethodDeclareExpression(toClass((ClassNameBand) nameBand$Symbol.value, nameBand$Symbol.line, nameBand$Symbol.column), (String) myStack.peek(3).value, (List<Class>) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column);
             }
             case 86: // switchPart ::= SWITCH LPAREN expression RPAREN LBRACE switchPart0 RBRACE 
             {
@@ -628,10 +631,6 @@ public class Parser extends AbstractParser {
             {
                 return (ClassNameBand) myStack.peek(0).value;
             }
-            case 167: // classNameList ::= classNameList1 
-            {
-                return (ClassNameList) myStack.peek(0).value;
-            }
             case 95: // expression_statementable ::= funcExecuteExpr 
             case 96: // expression ::= expression_statementable 
             case 136: // expression ::= contextValueExpr 
@@ -656,6 +655,10 @@ public class Parser extends AbstractParser {
             {
                 return (Integer) myStack.peek(2).value + 1;
             }
+            case 167: // classNameList ::= classNameList1 
+            {
+                return (List<Class>) myStack.peek(0).value;
+            }
             case 137: // expression ::= mapValue 
             {
                 return (MapValue) myStack.peek(0).value;
@@ -676,13 +679,13 @@ public class Parser extends AbstractParser {
             {
                 return createInterpolation((Expression) myStack.peek(1).value);
             }
+            case 166: // classNameList ::= 
+            {
+                return new ArrayList<Class>();
+            }
             case 4: // classPureName ::= IDENTIFIER 
             {
                 return new ClassNameBand((String) myStack.peek(0).value);
-            }
-            case 166: // classNameList ::= 
-            {
-                return new ClassNameList(this.nativeImportMgr);
             }
             case 147: // expressionList1 ::= expression 
             {

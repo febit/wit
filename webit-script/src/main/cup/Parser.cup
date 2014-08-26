@@ -2,6 +2,8 @@
 
 package webit.script.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import webit.script.core.ast.*;
 import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.operators.*;
@@ -89,7 +91,7 @@ non terminal MapValue mapValue;
 
 non terminal Integer superCount;
 non terminal Expression contextValueExpr;
-non terminal ClassNameList classNameList, classNameList1;
+non terminal List<Class> classNameList, classNameList1;
 
 /* function */
 non terminal Expression funcExecuteExpr;
@@ -217,7 +219,7 @@ statement            ::= expression_statementable:expr SEMICOLON
 
                         //@import
                         |NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
-                        {: nativeImportMgr.registClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatement.getInstance(); :}
+                        {: registClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatement.getInstance(); :}
                         
                         //BREAK
                         |BREAK:sym SEMICOLON
@@ -561,13 +563,13 @@ expression      ::= expression_statementable:expr
 
                     //NativeNewArrayDeclareExpression 
                     |NATIVE:sym LBRACK RBRACK className:nameBand
-                    {: return this.createNativeNewArrayDeclareExpression(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
+                    {: return this.createNativeNewArrayDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
                     |NATIVE:sym LBRACK className:nameBand RBRACK
-                    {: return this.createNativeNewArrayDeclareExpression(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
+                    {: return this.createNativeNewArrayDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
 
                     //nativeMethodExpr
                     |NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN classNameList:list RPAREN
-                    {: return this.createNativeMethodDeclareExpression(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %ident%, %list%, %sym.line%, %sym.column%); :}
+                    {: return this.createNativeMethodDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %ident%, %list%, %sym.line%, %sym.column%); :}
 
                     //native static field
                     |NATIVE classPureName:nameBand
@@ -575,7 +577,7 @@ expression      ::= expression_statementable:expr
 
                     //nativeConstructorExpr
                     |NATIVE:sym NEW classPureName:nameBand LPAREN classNameList:list RPAREN
-                    {: return this.createNativeConstructorDeclareExpression(nativeImportMgr.toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %list%, %sym.line%, %sym.column%); :}
+                    {: return this.createNativeConstructorDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %list%, %sym.line%, %sym.column%); :}
 
                     |contextValueExpr:expr
                     {: return %expr%; :}
@@ -671,13 +673,13 @@ funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list RPAREN
 
 
 classNameList1      ::= className:nameBand
-                        {: return new ClassNameList(this.nativeImportMgr).add(%nameBand%, %nameBand.line%, %nameBand.column%); :}
+                        {: List<Class> list = new ArrayList<Class>(); list.add(toClass(%nameBand%, %nameBand.line%, %nameBand.column%)); return list; :}
                         |classNameList1:list COMMA className:nameBand
-                        {: return (%list%).add(%nameBand%, %nameBand.line%, %nameBand.column%); :}
+                        {: (%list%).add(toClass(%nameBand%, %nameBand.line%, %nameBand.column%)); return %list%; :}
                         ;
 
 classNameList       ::= 
-                        {: return new ClassNameList(this.nativeImportMgr); :}
+                        {: return new ArrayList<Class>(); :}
                         |classNameList1:list
                         {: return %list%; :}
                         ;
