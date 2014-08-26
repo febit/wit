@@ -3,7 +3,6 @@ package webit.script.core;
 import webit.script.exceptions.ParseException;
 import webit.script.loaders.ResourceOffset;
 import webit.script.util.FastCharBuffer;
-import webit.script.util.RepeatChars;
 
 
 %%
@@ -86,18 +85,16 @@ import webit.script.util.RepeatChars;
     }
 
     private void appendToString(char c, int repeat) {
-        if(repeat > 12){
-            stringBuffer.append(new RepeatChars(c, repeat));
-        }else if(repeat >2){
+        if (repeat == 1) {
+            stringBuffer.append(c);
+        } else if (repeat == 2) {
+            stringBuffer.append(c).append(c);
+        } else if(repeat != 0){
             final char[] chars = new char[repeat];
             while (repeat != 0) {
                 chars[--repeat] = c;
             }
             stringBuffer.append(chars);
-        }else if (repeat == 2) {
-            stringBuffer.append(c).append(c);
-        }else if (repeat == 1) {
-            stringBuffer.append(c);
         }
     }
 
