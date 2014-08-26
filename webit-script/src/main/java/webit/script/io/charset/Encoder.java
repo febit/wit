@@ -10,8 +10,6 @@ import java.io.OutputStream;
  */
 public interface Encoder {
 
-    public static final byte REPLACEMENT = (byte) '?';
-
     void write(char[] chars, int offset, int length, OutputStream out) throws IOException;
 
     void write(String string, int offset, int length, OutputStream out) throws IOException;

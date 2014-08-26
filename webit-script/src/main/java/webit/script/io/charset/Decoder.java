@@ -10,7 +10,5 @@ import java.io.Writer;
  */
 public interface Decoder {
 
-    public static final char REPLACEMENT = '\uFFFD';
-
     void write(byte[] bytes, int off, int len, Writer writer) throws IOException;
 }

@@ -1,10 +1,6 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util.charset;
 
-import webit.script.io.charset.Decoder;
-import webit.script.io.charset.Encoder;
-import webit.script.util.CharUtil;
-
 public class UTF_8 {
 
     public static final int MAX_BYTES_PER_CHAR = 3;
@@ -55,20 +51,19 @@ public class UTF_8 {
                         ^ ((byte) 0x80 << 6)
                         ^ ((byte) 0x80))));
                 if (Character.isSupplementaryCodePoint(uc)) {
-                    da[count++] = CharUtil.highSurrogate(uc);
-                    da[count++] = CharUtil.lowSurrogate(uc);
+                    da[count++] = (char) ((uc >>> 10) + (Character.MIN_HIGH_SURROGATE - (Character.MIN_SUPPLEMENTARY_CODE_POINT >>> 10)));
+                    da[count++] = (char) ((uc & 0x3ff) + Character.MIN_LOW_SURROGATE);
                     continue;
                 }
                 index -= 3;
             }
-            da[count++] = Decoder.REPLACEMENT;
+            da[count++] = '\uFFFD';
         }
         return count;
     }
 
     public static int encode(final byte[] da, final char[] sa, int from, final int to) {
         int dp = 0;
-
         char c;
         char d;
         int uc;
@@ -76,31 +71,36 @@ public class UTF_8 {
             if ((c = sa[from++]) < 0x80) {
                 // Have at most seven bits
                 da[dp++] = (byte) c;
-            } else if (c < 0x800) {
+                continue;
+            }
+            if (c < 0x800) {
                 // 2 bytes, 11 bits
                 da[dp++] = (byte) (0xc0 | (c >> 6));
                 da[dp++] = (byte) (0x80 | (c & 0x3f));
-            } else if (c < Character.MIN_HIGH_SURROGATE || c > Character.MAX_LOW_SURROGATE) {
+                continue;
+            }
+            if (c >>> 11 != 0x1B) {
+                //if not SURROGATE: c < Character.MIN_HIGH_SURROGATE || c > Character.MAX_LOW_SURROGATE
                 // 3 bytes, 16 bits
                 da[dp++] = (byte) (0xe0 | ((c >> 12)));
                 da[dp++] = (byte) (0x80 | ((c >> 6) & 0x3f));
                 da[dp++] = (byte) (0x80 | (c & 0x3f));
-            } else if (c <= Character.MAX_HIGH_SURROGATE && from < to) {
+                continue;
+            }
+            if (c <= Character.MAX_HIGH_SURROGATE && from < to) {
                 // if is HIGH_SURROGATE && has next char
-                if ((d = sa[from++]) >= Character.MIN_LOW_SURROGATE && d <= Character.MAX_LOW_SURROGATE) {
-                    // if is LOW_SURROGATE
+                if ((d = sa[from++]) >>> 10 == 0x37) {
+                    // if is LOW_SURROGATE: Character.MIN_LOW_SURROGATE <= d <= Character.MAX_LOW_SURROGATE
                     uc = Character.toCodePoint(c, d);
                     da[dp++] = (byte) (0xf0 | ((uc >> 18)));
                     da[dp++] = (byte) (0x80 | ((uc >> 12) & 0x3f));
                     da[dp++] = (byte) (0x80 | ((uc >> 6) & 0x3f));
                     da[dp++] = (byte) (0x80 | (uc & 0x3f));
-                } else {
-                    --from; // back the LOW_SURROGATE char
-                    da[dp++] = Encoder.REPLACEMENT;
+                    continue;
                 }
-            } else {
-                da[dp++] = Encoder.REPLACEMENT;
+                --from; // back the LOW_SURROGATE char
             }
+            da[dp++] = '?';
         }
         return dp;
     }
