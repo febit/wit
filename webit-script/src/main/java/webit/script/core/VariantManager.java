@@ -123,9 +123,9 @@ public class VariantManager {
                     return VarAddress.constValue(elements[i].getConstValue(name));
                 }
             }
-            throw new ParseException("Can't locate variant: ".concat(name), line, column);
+            throw new ParseException("Can't locate vars: ".concat(name), line, column);
         } else {
-            throw new ParseException(StringUtil.concat("Stack overflow when locate variant in given upstair: ", name, "-", Integer.toString(upstair)), line, column);
+            throw new ParseException(StringUtil.concat("Stack overflow when locate vars in given upstair: ", name, "-", Integer.toString(upstair)), line, column);
         }
     }
 
@@ -150,7 +150,7 @@ public class VariantManager {
         }
 
         if (force) {
-            throw new ParseException("Can't locate variant: ".concat(name), line, column);
+            throw new ParseException("Can't locate vars: ".concat(name), line, column);
         } else {
             return assignVariantAtRoot(name, line, column);
         }

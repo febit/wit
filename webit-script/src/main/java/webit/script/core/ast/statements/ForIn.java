@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
@@ -53,13 +52,12 @@ public class ForIn extends AbstractStatement implements Loopable {
         }
         if (iter != null
                 && iter.hasNext()) {
-            final VariantStack vars;
             final LoopCtrl ctrl = context.loopCtrl;
-            (vars = context.vars).push(varIndexer);
-            vars.set(0, iter);
+            context.push(varIndexer);
+            context.set(0, iter);
             label:
             do {
-                vars.resetForForIn(iter.next());
+                context.resetForForIn(iter.next());
                 StatementUtil.executeInvertedAndCheckLoops(this.statements, context);
                 if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                     if (ctrl.matchLabel(label)) {
@@ -81,7 +79,7 @@ public class ForIn extends AbstractStatement implements Loopable {
                     }
                 }
             } while (iter.hasNext());
-            vars.pop();
+            context.pop();
             return null;
         } else if (elseStatement != null) {
             StatementUtil.execute(elseStatement, context);

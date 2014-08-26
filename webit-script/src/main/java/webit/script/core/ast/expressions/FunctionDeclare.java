@@ -2,9 +2,8 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
-import webit.script.core.VariantContext;
+import webit.script.core.Variants;
 import webit.script.core.VariantIndexer;
-import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Statement;
 import webit.script.lang.method.FunctionMethodDeclare;
@@ -32,37 +31,35 @@ public final class FunctionDeclare extends AbstractExpression {
     }
 
     public FunctionMethodDeclare execute(final Context context) {
-        final VariantContext[] variantContexts;
+        final Variants[] varses;
         final int[] overflowUpstairs;
         final boolean containsRootContext;
         if ((overflowUpstairs = this._overflowUpstairs) != null) {
             final int len;
             final int max;
             int j = -1;
-            final VariantStack vars = context.vars;
-            variantContexts = new VariantContext[(max = overflowUpstairs[(len = overflowUpstairs.length) - 1]) + 1];
+            varses = new Variants[(max = overflowUpstairs[(len = overflowUpstairs.length) - 1]) + 1];
             for (int i = 0; i < len; i++) {
-                variantContexts[max - (j = overflowUpstairs[i])] = vars.getContext(j);
+                varses[max - (j = overflowUpstairs[i])] = context.getVars(j);
             }
-            containsRootContext = j == vars.getCurrentDepth();
+            containsRootContext = j == context.getCurrentVarsDepth();
         } else {
-            variantContexts = null;
+            varses = null;
             containsRootContext = false;
         }
-        return new FunctionMethodDeclare(this, context.template, variantContexts, containsRootContext);
+        return new FunctionMethodDeclare(this, context.template, varses, containsRootContext);
     }
 
     public Object invoke(final Context context, final Object[] args) {
-        final VariantStack vars;
-        (vars = context.vars).push(varIndexer);
-        vars.setArgumentsForFunction(argsCount, args);
+        context.push(varIndexer);
+        context.setArgumentsForFunction(argsCount, args);
         if (hasReturnLoops) {
             StatementUtil.executeInvertedAndCheckLoops(statements, context);
-            vars.pop();
+            context.pop();
             return context.loopCtrl.resetReturnLoop();
         } else {
             StatementUtil.executeInverted(statements, context);
-            vars.pop();
+            context.pop();
             return Context.VOID;
         }
     }

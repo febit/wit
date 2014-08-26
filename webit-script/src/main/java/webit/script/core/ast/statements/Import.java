@@ -3,6 +3,7 @@ package webit.script.core.ast.statements;
 
 import webit.script.Context;
 import webit.script.Template;
+import webit.script.core.Variants;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.util.StatementUtil;
@@ -33,9 +34,12 @@ public final class Import extends AbstractInclude {
     public Object execute(final Context context) {
         final Context childContext = mergeTemplate(context);
         if (exportAll) {
-            context.vars.mergeCurrentContext(childContext.vars);
+            Variants vars = context.getCurrentVars();
+            if (vars != null) {
+                vars.merge(childContext.getCurrentVars());
+            }
         } else {
-            final Object[] vars = childContext.vars.get(exportNames);
+            final Object[] vars = childContext.get(exportNames);
             final ResetableValueExpression[] myToResetableValues = this.toResetableValues;
             for (int i = 0, len = vars.length; i < len; i++) {
                 StatementUtil.executeSetValue(myToResetableValues[i], context, vars[i]);

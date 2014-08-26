@@ -3,7 +3,6 @@ package webit.script.core.ast.statements;
 
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
@@ -28,14 +27,13 @@ public final class WhileNoLoops extends AbstractStatement {
     }
 
     public Object execute(final Context context) {
-        final VariantStack vars;
-        (vars = context.vars).push(varIndexer);
+        context.push(varIndexer);
         final Statement[] statements = this.statements;
         while (ALU.isTrue(StatementUtil.execute(whileExpr, context))) {
             StatementUtil.executeInverted(statements, context);
-            vars.resetCurrent();
+            context.resetCurrentVars();
         }
-        vars.pop();
+        context.pop();
         return null;
     }
 }

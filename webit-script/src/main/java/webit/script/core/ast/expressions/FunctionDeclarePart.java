@@ -46,7 +46,7 @@ public class FunctionDeclarePart extends Position {
         varmgr.push();
         varmgr.pushVarWall();
         if (varmgr.assignVariant("arguments", line, column) != 0) {
-            throw new ParseException("Failed to assign variant!");
+            throw new ParseException("Failed to assign vars!");
         }
     }
 
@@ -59,7 +59,7 @@ public class FunctionDeclarePart extends Position {
 
     public FunctionDeclarePart appendArg(String name, int line, int column) {
         if (varmgr.assignVariant(name, line, column) != (++this.argsCount)) {
-            throw new ParseException("Failed to assign variant!");
+            throw new ParseException("Failed to assign vars!");
         }
         this.args.add(name);
         return this;

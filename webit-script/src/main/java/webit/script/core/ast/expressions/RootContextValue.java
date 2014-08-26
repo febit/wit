@@ -19,11 +19,11 @@ public final class RootContextValue extends AbstractExpression implements Reseta
     }
 
     public Object execute(final Context context) {
-        return context.vars.getFromRoot(index);
+        return context.getFromRoot(index);
     }
 
     public Object setValue(final Context context, final Object value) {
-        context.vars.setToRoot(index, value);
+        context.setToRoot(index, value);
         return value;
     }
 }

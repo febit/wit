@@ -3,7 +3,6 @@ package webit.script.core.ast.statements;
 
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
@@ -25,10 +24,9 @@ public class BlockNoLoops extends AbstractStatement implements IBlock, Optimizab
     }
 
     public Object execute(final Context context) {
-        final VariantStack vars;
-        (vars = context.vars).push(varIndexer);
+        context.push(varIndexer);
         StatementUtil.executeInverted(statements, context);
-        vars.pop();
+        context.pop();
         return null;
     }
 

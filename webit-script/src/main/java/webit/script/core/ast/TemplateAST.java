@@ -20,9 +20,9 @@ public class TemplateAST {
     }
 
     public Context execute(final Context context) {
-        context.pushRootVars(this.varIndexer);
+        context.pushWithRootParams(this.varIndexer);
         StatementUtil.executeInverted(this.statements, context);
-        //Note: don't vars.pop(), to keep the top variant(s)
+        //Note: don't vars.pop(), to keep the top vars(s)
         return context;
     }
 }

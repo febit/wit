@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.loop.LoopInfo;
@@ -31,10 +30,9 @@ public final class Block extends AbstractStatement implements Loopable, IBlock {
     }
 
     public Object execute(final Context context) {
-        final VariantStack vars;
-        (vars = context.vars).push(varIndexer);
+        context.push(varIndexer);
         StatementUtil.executeInvertedAndCheckLoops(statements, context);
-        vars.pop();
+        context.pop();
         return null;
     }
 

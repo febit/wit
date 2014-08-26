@@ -26,7 +26,7 @@ public class ConetextTest {
 
         Map map = new HashMap();
 
-        assertEquals("a", context.vars.get("a"));
+        assertEquals("a", context.get("a"));
 
         context.exportTo(map);
         assertTrue(map.containsKey("a"));

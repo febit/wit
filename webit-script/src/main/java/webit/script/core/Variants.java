@@ -8,12 +8,12 @@ import webit.script.lang.KeyValueAccepter;
  *
  * @author Zqq
  */
-public final class VariantContext implements KeyValueAccepter {
+public final class Variants implements KeyValueAccepter {
 
-    final Object[] values;
-    final VariantIndexer varIndexer;
+    public final Object[] values;
+    public final VariantIndexer varIndexer;
 
-    public VariantContext(final VariantIndexer varIndexer) {
+    public Variants(final VariantIndexer varIndexer) {
         this.values = new Object[(this.varIndexer = varIndexer).size];
     }
 
@@ -53,8 +53,20 @@ public final class VariantContext implements KeyValueAccepter {
         }
     }
 
-    public int size() {
-        return values.length;
+    public void merge(Variants src) {
+        if (src == null) {
+            return;
+        }
+        final String[] srcNames = src.varIndexer.getNames();
+        final Object[] srcValues = src.values;
+        final VariantIndexer destIndexer = this.varIndexer;
+        final Object[] destValues = this.values;
+        int index;
+        for (int i = 0, size = srcNames.length; i < size; i++) {
+            if ((index = destIndexer.getIndex(srcNames[i])) >= 0) {
+                destValues[index] = srcValues[i];
+            }
+        }
     }
 
     public void set(String key, Object value) {

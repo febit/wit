@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
@@ -15,7 +14,6 @@ import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.lang.KeyIter;
-import webit.script.lang.iter.IterMethodFilter;
 import webit.script.lang.iter.KeyIterMethodFilter;
 import webit.script.util.CollectionUtil;
 import webit.script.util.StatementUtil;
@@ -55,12 +53,11 @@ public final class ForMap extends AbstractStatement implements Loopable {
         }
         if (iter != null && iter.hasNext()) {
             final LoopCtrl ctrl = context.loopCtrl;
-            final VariantStack vars;
-            (vars = context.vars).push(varIndexer);
-            vars.set(0, iter);
+            context.push(varIndexer);
+            context.set(0, iter);
             label:
             do {
-                vars.resetForForMap(iter.next(), iter.value());
+                context.resetForForMap(iter.next(), iter.value());
                 StatementUtil.executeInvertedAndCheckLoops(this.statements, context);
                 if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                     if (ctrl.matchLabel(label)) {
@@ -82,7 +79,7 @@ public final class ForMap extends AbstractStatement implements Loopable {
                     }
                 }
             } while (iter.hasNext());
-            vars.pop();
+            context.pop();
             return null;
         } else if (elseStatement != null) {
             StatementUtil.execute(elseStatement, context);

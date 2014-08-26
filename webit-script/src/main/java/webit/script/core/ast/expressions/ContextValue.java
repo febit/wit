@@ -21,11 +21,11 @@ public final class ContextValue extends AbstractExpression implements ResetableV
     }
 
     public Object execute(final Context context) {
-        return context.vars.get(upstairs, index);
+        return context.get(upstairs, index);
     }
 
     public Object setValue(final Context context, final Object value) {
-        context.vars.set(upstairs, index, value);
+        context.set(upstairs, index, value);
         return value;
     }
 }

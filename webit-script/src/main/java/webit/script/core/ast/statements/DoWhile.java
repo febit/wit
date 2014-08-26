@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.VariantStack;
 import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
@@ -40,8 +39,7 @@ public final class DoWhile extends AbstractStatement implements Loopable {
     public Object execute(final Context context) {
         final LoopCtrl ctrl = context.loopCtrl;
         final Statement[] statements = this.statements;
-        final VariantStack vars;
-        (vars = context.vars).push(varIndexer);
+        context.push(varIndexer);
         label:
         do {
             StatementUtil.executeInvertedAndCheckLoops(statements, context);
@@ -64,9 +62,9 @@ public final class DoWhile extends AbstractStatement implements Loopable {
                     break;
                 }
             }
-            vars.resetCurrent();
+            context.resetCurrentVars();
         } while (ALU.isTrue(StatementUtil.execute(whileExpr, context)));
-        vars.pop();
+        context.pop();
         return null;
     }
 

@@ -19,11 +19,11 @@ public final class CurrentContextValue extends AbstractExpression implements Res
     }
 
     public Object execute(final Context context) {
-        return context.vars.get(index);
+        return context.get(index);
     }
 
     public Object setValue(final Context context, final Object value) {
-        context.vars.set(index, value);
+        context.set(index, value);
         return value;
     }
 }
