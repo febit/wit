@@ -5,23 +5,13 @@ package webit.script.util;
  *
  * @author Zqq
  */
-public class UnixStyleFileNameUtil {
+public class FileNameUtil {
 
     private static final char UNIX_SEPARATOR = '/';
     private static final char WINDOWS_SEPARATOR = '\\';
-    //
 
     private static boolean isSeparator(char ch) {
         return (ch == UNIX_SEPARATOR) || (ch == WINDOWS_SEPARATOR);
-    }
-
-    // ---------------------------------------------------------------- normalization
-    public static String normalize(String filename) {
-        return doNormalize(filename, true);
-    }
-
-    public static String normalizeNoEndSeparator(String filename) {
-        return doNormalize(filename, false);
     }
 
     public static String getPath(String filename) {
@@ -36,17 +26,17 @@ public class UnixStyleFileNameUtil {
     }
 
     public static String concat(String basePath, String fullFilenameToAdd) {
-        int prefix;
-        int len;
         if (basePath != null) {
-            if ((prefix = getPrefixLength(fullFilenameToAdd)) == 0 && (len = basePath.length()) != 0) {
+            int len = basePath.length();
+            int prefix = getPrefixLength(fullFilenameToAdd);
+            if (prefix == 0 && len != 0) {
                 if (isSeparator(basePath.charAt(len - 1))) {
-                    return doNormalize(basePath.concat(fullFilenameToAdd), true);
+                    return normalize(basePath.concat(fullFilenameToAdd));
                 } else {
-                    return doNormalize(StringUtil.concat(basePath, "/", fullFilenameToAdd), true);
+                    return normalize(StringUtil.concat(basePath, "/", fullFilenameToAdd));
                 }
             } else if (prefix > 0) {
-                return doNormalize(fullFilenameToAdd, true);
+                return normalize(fullFilenameToAdd);
             } else {
                 return null;
             }
@@ -58,11 +48,9 @@ public class UnixStyleFileNameUtil {
      * Internal method to perform the normalization.
      *
      * @param filename file name
-     * @param separator separator character to use
-     * @param keepSeparator <code>true</code> to keep the final separator
      * @return normalized filename
      */
-    private static String doNormalize(String filename, boolean keepSeparator) {
+    public static String normalize(String filename) {
         if (filename == null) {
             return null;
         }
@@ -86,10 +74,8 @@ public class UnixStyleFileNameUtil {
         }
 
         // add extra separator on the end to simplify code below
-        boolean lastIsDirectory = true;
         if (array[size - 1] != UNIX_SEPARATOR) {
             array[size++] = UNIX_SEPARATOR;
-            lastIsDirectory = false;
         }
 
         // adjoining slashes
@@ -105,9 +91,6 @@ public class UnixStyleFileNameUtil {
         for (int i = prefix + 1; i < size; i++) {
             if (array[i] == UNIX_SEPARATOR && array[i - 1] == '.'
                     && (i == prefix + 1 || array[i - 2] == UNIX_SEPARATOR)) {
-                if (i == size - 1) {
-                    lastIsDirectory = true;
-                }
                 System.arraycopy(array, i + 1, array, i - 1, size - i);
                 size -= 2;
                 i--;
@@ -121,9 +104,6 @@ public class UnixStyleFileNameUtil {
                     && (i == prefix + 2 || array[i - 3] == UNIX_SEPARATOR)) {
                 if (i == prefix + 2) {
                     return null;
-                }
-                if (i == size - 1) {
-                    lastIsDirectory = true;
                 }
                 int j;
                 for (j = i - 4; j >= prefix; j--) {
@@ -147,9 +127,6 @@ public class UnixStyleFileNameUtil {
         }
         if (size <= prefix) {  // should never be less than prefix
             return new String(array, 0, size);
-        }
-        if (lastIsDirectory && keepSeparator) {
-            return new String(array, 0, size);  // keep trailing separator
         }
         return new String(array, 0, size - 1);  // lose trailing separator
     }
@@ -187,53 +164,57 @@ public class UnixStyleFileNameUtil {
      * @param filename the filename to find the prefix in, null returns -1
      * @return the length of the prefix, -1 if invalid or null
      */
-    public static int getPrefixLength(String filename) {
+    private static int getPrefixLength(String filename) {
         if (filename == null) {
             return -1;
         }
-        int len;
+        final int len;
         if ((len = filename.length()) == 0) {
             return 0;
         }
-        char ch0;
-        if ((ch0 = filename.charAt(0)) == ':') {
+        final char ch0 = filename.charAt(0);
+        if (ch0 == '.') {
+            return 0;
+        }
+        if (ch0 == ':') {
             return -1;
         }
         if (len == 1) {
-//            if (ch0 == '~') {
-//                return 2;  // return a length greater than the input
-//            }
-            return (isSeparator(ch0) ? 1 : (ch0 == '~' ? 2 : 0));
+            if (isSeparator(ch0)) {
+                return 1;
+            }
+            return ch0 == '~' ? 2 : 0;
         } else {
-            char ch1;
+            char ch1 = filename.charAt(1);
             if (ch0 == '~') {
                 int posUnix = filename.indexOf(UNIX_SEPARATOR, 1);
-                int posWin = filename.indexOf(WINDOWS_SEPARATOR, 1);
-                if (posUnix == -1 && posWin == -1) {
+                if (posUnix == -1) {
                     return len + 1;  // return a length greater than the input
                 }
-                posUnix = (posUnix == -1 ? posWin : posUnix);
-                posWin = (posWin == -1 ? posUnix : posWin);
-                return Math.min(posUnix, posWin) + 1;
-            } else if ((ch1 = filename.charAt(1)) == ':') {
+                return posUnix + 1;
+            } else if (ch1 == ':') {
                 if ((ch0 >= 'A' && ch0 <= 'Z') || (ch0 >= 'a' && ch0 <= 'z')) {
-                    if (len == 2 || isSeparator(filename.charAt(2)) == false) {
+                    if (len == 2 || !isSeparator(filename.charAt(2))) {
                         return 2;
                     }
                     return 3;
                 }
                 return -1;
-            } else if (isSeparator(ch0) && isSeparator(ch1)) {
-                int posUnix = filename.indexOf(UNIX_SEPARATOR, 2);
-                int posWin = filename.indexOf(WINDOWS_SEPARATOR, 2);
-                if ((posUnix == -1 && posWin == -1) || posUnix == 2 || posWin == 2) {
-                    return -1;
+            } else if (isSeparator(ch0)) {
+                if (isSeparator(ch1)) {
+                    int posUnix = filename.indexOf(UNIX_SEPARATOR, 2);
+                    int posWin = filename.indexOf(WINDOWS_SEPARATOR, 2);
+                    if ((posUnix == -1 && posWin == -1) || posUnix == 2 || posWin == 2) {
+                        return -1;
+                    }
+                    posUnix = (posUnix == -1 ? posWin : posUnix);
+                    posWin = (posWin == -1 ? posUnix : posWin);
+                    return Math.min(posUnix, posWin) + 1;
+                } else {
+                    return 1;
                 }
-                posUnix = (posUnix == -1 ? posWin : posUnix);
-                posWin = (posWin == -1 ? posUnix : posWin);
-                return Math.min(posUnix, posWin) + 1;
             } else {
-                return (isSeparator(ch0) ? 1 : 0);
+                return 0;
             }
         }
     }

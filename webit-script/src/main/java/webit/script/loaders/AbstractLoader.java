@@ -4,7 +4,7 @@ package webit.script.loaders;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.util.StringUtil;
-import webit.script.util.UnixStyleFileNameUtil;
+import webit.script.util.FileNameUtil;
 
 /**
  *
@@ -53,7 +53,7 @@ public abstract class AbstractLoader implements Loader, Initable {
      * @return child template's name
      */
     public String concat(final String parent, final String name) {
-        return parent != null ? UnixStyleFileNameUtil.concat(UnixStyleFileNameUtil.getPath(parent), name) : name;
+        return parent != null ? FileNameUtil.concat(FileNameUtil.getPath(parent), name) : name;
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class AbstractLoader implements Loader, Initable {
     public String normalize(String name) {
         if (name != null) {
             final String newName;
-            newName = UnixStyleFileNameUtil.normalize(StringUtil.prefixChar(name, '/'));
+            newName = FileNameUtil.normalize(StringUtil.prefixChar(name, '/'));
             if (this.appendLostSuffix == false
                     || newName.endsWith(this.suffix)
                     || newName.charAt(newName.length() - 1) == '/') {
@@ -106,7 +106,7 @@ public abstract class AbstractLoader implements Loader, Initable {
     }
 
     public void setRoot(String root) {
-        root = UnixStyleFileNameUtil.normalizeNoEndSeparator(root);
+        root = FileNameUtil.normalize(root);
         if (root != null && root.length() == 0) {
             root = null;
         }

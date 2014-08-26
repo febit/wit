@@ -12,7 +12,7 @@ import webit.script.lang.MethodDeclare;
 import webit.script.loggers.Logger;
 import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ClassUtil;
-import webit.script.util.UnixStyleFileNameUtil;
+import webit.script.util.FileNameUtil;
 
 /**
  *
@@ -30,7 +30,7 @@ public class TLDGlobalRegister implements GlobalRegister, Initable {
 
     public void regist(GlobalManager manager) {
         final InputStream inputStream = ClassLoaderUtil.getDefaultClassLoader()
-                .getResourceAsStream(UnixStyleFileNameUtil.concat("META-INF/", tld));
+                .getResourceAsStream(FileNameUtil.concat("META-INF/", tld));
         if (inputStream == null) {
             throw new RuntimeException("TLD file not found: " + tld);
         }
