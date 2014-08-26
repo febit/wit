@@ -10,9 +10,11 @@ import webit.script.core.ast.Statement;
  *
  * @author Zqq
  */
-public final class NoneStatement extends AbstractStatement implements Optimizable{
+public final class NoneStatement extends AbstractStatement implements Optimizable {
 
-    public NoneStatement() {
+    public static final NoneStatement INSTANCE = new NoneStatement();
+
+    private NoneStatement() {
         this(-1, -1);
     }
 
@@ -22,14 +24,6 @@ public final class NoneStatement extends AbstractStatement implements Optimizabl
 
     public Object execute(final Context context) {
         return null;
-    }
-    private static NoneStatement instance;
-
-    public static NoneStatement getInstance() {
-        if (instance == null) {
-            instance = new NoneStatement();
-        }
-        return instance;
     }
 
     public Statement optimize() {

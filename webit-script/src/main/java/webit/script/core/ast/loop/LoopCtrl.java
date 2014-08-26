@@ -9,53 +9,52 @@ import webit.script.Context;
  */
 public final class LoopCtrl {
 
-    private Object _loopValue = null;
-    private int _label = LoopInfo.NO_LABEL;
-    private int _loopType = LoopInfo.NO_LOOP;
+    private Object value = null;
+    private int label = LoopInfo.NO_LABEL;
+    private int type = LoopInfo.NO_LOOP;
 
     public boolean matchLabel(int label) {
-        return this._label == LoopInfo.NO_LABEL || this._label == label;
+        return this.label == LoopInfo.NO_LABEL || this.label == label;
     }
 
     public void breakLoop(int label) {
-        //this.loopValue = null;
-        this._label = label;
-        this._loopType = LoopInfo.BREAK;
+        this.label = label;
+        this.type = LoopInfo.BREAK;
     }
 
     public void continueLoop(int label) {
-        //this.loopValue = null;
-        this._label = label;
-        this._loopType = LoopInfo.CONTINUE;
+        this.label = label;
+        this.type = LoopInfo.CONTINUE;
     }
 
     public void returnLoop(Object value) {
-        this._loopValue = value;
-        this._label = LoopInfo.NO_LABEL;
-        this._loopType = LoopInfo.RETURN;
+        this.value = value;
+        this.label = LoopInfo.NO_LABEL;
+        this.type = LoopInfo.RETURN;
     }
 
     public void reset() {
-        this._loopValue = null;
-        this._label = LoopInfo.NO_LABEL;
-        this._loopType = LoopInfo.NO_LOOP;
+        this.value = null;
+        this.label = LoopInfo.NO_LABEL;
+        this.type = LoopInfo.NO_LOOP;
     }
 
     public void resetBreakLoopIfMatch(int label) {
-        if (this._loopType == LoopInfo.BREAK && (this._label == LoopInfo.NO_LABEL || this._label == label)) {
+        //TODO: rethink
+        if (this.type == LoopInfo.BREAK && (this.label == LoopInfo.NO_LABEL || this.label == label)) {
             this.reset();
         }
     }
 
     public Object resetReturnLoop() {
-        Object result = this._loopType == LoopInfo.RETURN ? this._loopValue : Context.VOID;
-        this._loopValue = null;
-        this._label = LoopInfo.NO_LABEL;
-        this._loopType = LoopInfo.NO_LOOP;
+        Object result = this.type == LoopInfo.RETURN ? this.value : Context.VOID;
+        this.value = null;
+        this.label = LoopInfo.NO_LABEL;
+        this.type = LoopInfo.NO_LOOP;
         return result;
     }
 
     public int getLoopType() {
-        return this._loopType;
+        return this.type;
     }
 }

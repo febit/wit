@@ -16,12 +16,12 @@ import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.operators.*;
 import webit.script.core.ast.statements.BreakPointStatement;
 import webit.script.core.ast.statements.Interpolation;
+import webit.script.core.ast.statements.NoneStatement;
 import webit.script.core.text.TextStatementFactory;
 import webit.script.debug.BreakPointListener;
 import webit.script.exceptions.ParseException;
 import webit.script.loaders.Resource;
 import webit.script.loaders.ResourceOffset;
-import webit.script.util.ClassLoaderUtil;
 import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
 import webit.script.util.ExceptionUtil;
@@ -40,23 +40,24 @@ abstract class AbstractParser {
     private static final short[][] REDUCE_TABLE = loadData("Reduce");
 
     private final Map<String, String> importedClasses;
+    private final Map<String, Integer> labelsIndexMap;
+
+    private TextStatementFactory textStatementFactory;
+    private BreakPointListener breakPointListener;
+    private Engine engine;
+    private NativeFactory nativeFactory;
+    private boolean locateVarForce;
+    private int currentLabelIndex;
 
     final Stack<Symbol> _stack;
     boolean goonParse;
-
-    Engine engine;
     Template template;
-    TextStatementFactory textStatementFactory;
-    NativeFactory nativeFactory;
-    boolean locateVarForce;
     VariantManager varmgr;
-    Map<String, Integer> labelsIndexMap;
-    int currentLabelIndex;
-    BreakPointListener breakPointListener;
 
     AbstractParser() {
         this._stack = new Stack<Symbol>(24);
         this.importedClasses = new HashMap<String, String>();
+        this.labelsIndexMap = new HashMap<String, Integer>();
     }
 
     public TemplateAST parse(final Template template, BreakPointListener breakPointListener) throws ParseException {
@@ -72,40 +73,32 @@ abstract class AbstractParser {
      */
     public TemplateAST parse(final Template template) throws ParseException {
         Lexer lexer = null;
+        final Engine _engine;
+        final TextStatementFactory _textStatementFactory;
+        final Resource resource = template.resource;
+        this.template = template;
+        this.engine = _engine = template.engine;
+        this.textStatementFactory = _textStatementFactory = _engine.getTextStatementFactory();
+        this.locateVarForce = !_engine.isLooseVar();
+        this.nativeFactory = _engine.getNativeFactory();
+        this.varmgr = new VariantManager(_engine);
+        this.currentLabelIndex = 0;
+        this.labelsIndexMap.put(null, 0);
         try {
-            final Engine _engine;
-            final TextStatementFactory _textStatementFactory;
-            final Symbol astSymbol;
-
             //ISSUE: LexerProvider
-            final Resource resource = template.resource;
             lexer = new Lexer(resource.openReader());
-
+            lexer.setTrimCodeBlockBlankLine(_engine.isTrimCodeBlockBlankLine());
             if (resource instanceof ResourceOffset) {
                 lexer.setOffset((ResourceOffset) resource);
             } else {
                 lexer.setOffset(0, 0);
             }
-
-            this.template = template;
-            this.engine = _engine = template.engine;
-            lexer.setTrimCodeBlockBlankLine(_engine.isTrimCodeBlockBlankLine());
-            this.textStatementFactory = _textStatementFactory = _engine.getTextStatementFactory();
-            this.locateVarForce = !_engine.isLooseVar();
-            this.nativeFactory = _engine.getNativeFactory();
-            this.varmgr = new VariantManager(_engine);
-
-            //init labelsIndexMap
-            (this.labelsIndexMap = new HashMap<String, Integer>())
-                    .put(null, this.currentLabelIndex = 0);
-
             _textStatementFactory.startTemplateParser(template);
-            astSymbol = this.parse(lexer);
-            _textStatementFactory.finishTemplateParser(template);
-            return (TemplateAST) astSymbol.value;
+            return (TemplateAST) this.parse(lexer).value;
         } catch (Exception e) {
             throw ExceptionUtil.castToParseException(e);
         } finally {
+            _textStatementFactory.finishTemplateParser(template);
             if (lexer != null) {
                 try {
                     lexer.yyclose();
@@ -183,6 +176,13 @@ abstract class AbstractParser {
             return statement;
         }
         return new BreakPointStatement(breakPointListener, label, statement, line, column);
+    }
+
+    Statement createTextStatement(char[] text, int line, int column) {
+        if (text == null || text.length == 0) {
+            return NoneStatement.INSTANCE;
+        }
+        return this.textStatementFactory.getTextStatement(template, text, line, column);
     }
 
     Expression createContextValue(VarAddress addr, int line, int column) {
@@ -518,7 +518,7 @@ abstract class AbstractParser {
     private static short[][] loadData(String name) {
         ObjectInputStream in = null;
         try {
-            in = new ObjectInputStream(ClassLoaderUtil.getDefaultClassLoader()
+            in = new ObjectInputStream(ClassUtil.getDefaultClassLoader()
                     .getResourceAsStream(StringUtil.concat("webit/script/core/Parser$", name, ".data")));
             return (short[][]) in.readObject();
         } catch (Exception e) {
@@ -564,24 +564,20 @@ abstract class AbstractParser {
         return sb.toString();
     }
 
-    private static final short[] HINTS_LEVEL_1 = new short[]{
-        Tokens.COLON, //":"
-        Tokens.SEMICOLON, //";"
-        Tokens.RBRACE, //"}"
-        Tokens.INTERPOLATION_END, //"}"
-        Tokens.RPAREN, //")"
-        Tokens.RBRACK, //"]"
-        Tokens.IDENTIFIER, //"IDENTIFIER"
-        Tokens.DIRECT_VALUE, //"DIRECT_VALUE"
-    };
-
     private static boolean isHintLevelOne(short sym) {
-        for (int i = 0, len = HINTS_LEVEL_1.length; i < len; i++) {
-            if (HINTS_LEVEL_1[i] == sym) {
+        switch (sym) {
+            case Tokens.COLON: //":"
+            case Tokens.SEMICOLON: //";"
+            case Tokens.RBRACE: //"}"
+            case Tokens.INTERPOLATION_END: //"}"
+            case Tokens.RPAREN: //")"
+            case Tokens.RBRACK: //"]"
+            case Tokens.IDENTIFIER: //"IDENTIFIER"
+            case Tokens.DIRECT_VALUE: //"DIRECT_VALUE"
                 return true;
-            }
+            default:
+                return false;
         }
-        return false;
     }
 
     private static final String[] SYMBOL_STRS = new String[]{

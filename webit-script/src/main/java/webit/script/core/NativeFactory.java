@@ -12,7 +12,6 @@ import webit.script.lang.method.NativeMethodDeclare;
 import webit.script.lang.method.NativeNewArrayDeclare;
 import webit.script.loggers.Logger;
 import webit.script.security.NativeSecurityManager;
-import webit.script.util.ClassUtil;
 import webit.script.util.StringUtil;
 
 /**
@@ -59,25 +58,25 @@ public class NativeFactory implements Initable {
         return new NativeNewArrayDeclare(componentType);
     }
 
-    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses) {
-        return createNativeMethodDeclare(clazz, methodName, paramClasses, -1, -1);
+    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes) {
+        return createNativeMethodDeclare(clazz, methodName, paramTypes, -1, -1);
     }
 
-    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses, boolean checkAccess) {
-        return createNativeMethodDeclare(clazz, methodName, paramClasses, -1, -1, checkAccess);
+    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, boolean checkAccess) {
+        return createNativeMethodDeclare(clazz, methodName, paramTypes, -1, -1, checkAccess);
     }
 
-    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses, int line, int column) {
-        return createNativeMethodDeclare(clazz, methodName, paramClasses, line, column, true);
+    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, int line, int column) {
+        return createNativeMethodDeclare(clazz, methodName, paramTypes, line, column, true);
     }
 
-    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramClasses, int line, int column, boolean checkAccess) {
+    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, int line, int column, boolean checkAccess) {
         final String path = StringUtil.concat(clazz.getName(), ".", methodName);
         if (checkAccess && !this.nativeSecurityManager.access(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
         try {
-            Method method = ClassUtil.searchMethod(clazz, methodName, paramClasses, false);
+            Method method = clazz.getMethod(methodName, paramTypes);
             return createNativeMethodDeclare(clazz, method, line, column);
         } catch (NoSuchMethodException ex) {
             throw new ParseException(ex.getMessage(), line, column);
@@ -90,26 +89,26 @@ public class NativeFactory implements Initable {
         return new NativeMethodDeclare(method);
     }
 
-    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramClasses) {
-        return createNativeConstructorDeclare(clazz, paramClasses, -1, -1);
+    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramTypes) {
+        return createNativeConstructorDeclare(clazz, paramTypes, -1, -1);
     }
 
-    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramClasses, boolean checkAccess) {
-        return createNativeConstructorDeclare(clazz, paramClasses, -1, -1, checkAccess);
+    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramTypes, boolean checkAccess) {
+        return createNativeConstructorDeclare(clazz, paramTypes, -1, -1, checkAccess);
     }
 
-    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramClasses, int line, int column) {
-        return createNativeConstructorDeclare(clazz, paramClasses, line, column, true);
+    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramTypes, int line, int column) {
+        return createNativeConstructorDeclare(clazz, paramTypes, line, column, true);
     }
 
     @SuppressWarnings("unchecked")
-    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramClasses, int line, int column, boolean checkAccess) {
+    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramTypes, int line, int column, boolean checkAccess) {
         final String path = clazz.getName().concat(".<init>");
         if (checkAccess && !this.nativeSecurityManager.access(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
         try {
-            Constructor constructor = clazz.getConstructor(paramClasses);
+            Constructor constructor = clazz.getConstructor(paramTypes);
             return createNativeConstructorDeclare(clazz, constructor, line, column);
         } catch (NoSuchMethodException ex) {
             throw new ParseException(ex.getMessage(), line, column);

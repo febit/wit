@@ -122,7 +122,7 @@ public class StatementUtil {
 
     public static Expression optimize(Expression expression) {
         try {
-            return expression != null && expression instanceof Optimizable
+            return expression instanceof Optimizable
                     ? (Expression) ((Optimizable) expression).optimize()
                     : expression;
         } catch (Exception e) {
@@ -132,7 +132,7 @@ public class StatementUtil {
 
     public static Statement optimize(Statement statement) {
         try {
-            return statement != null && statement instanceof Optimizable
+            return statement instanceof Optimizable
                     ? ((Optimizable) statement).optimize()
                     : statement;
         } catch (Exception e) {
@@ -141,7 +141,7 @@ public class StatementUtil {
     }
 
     public static List<LoopInfo> collectPossibleLoopsInfo(Statement statement) {
-        return (statement != null && statement instanceof Loopable)
+        return statement instanceof Loopable
                 ? ((Loopable) statement).collectPossibleLoopsInfo()
                 : null;
     }

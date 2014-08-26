@@ -28,12 +28,12 @@ public final class WhilePart extends Position {
         if (bodyStatement.hasLoops()) {
             LoopInfo[] loopInfos = StatementUtil.collectPossibleLoopsInfoForWhile(bodyStatement, null, label);
             return doWhileAtFirst
-                    ? new While(whileExpr, bodyStatement.getVarMap(), bodyStatement.getStatements(), loopInfos, label, line, column)
-                    : new DoWhile(whileExpr, bodyStatement.getVarMap(), bodyStatement.getStatements(), loopInfos, label, line, column);
+                    ? new While(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), loopInfos, label, line, column)
+                    : new DoWhile(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), loopInfos, label, line, column);
         } else {
             return doWhileAtFirst
-                    ? new WhileNoLoops(whileExpr, bodyStatement.getVarMap(), bodyStatement.getStatements(), line, column)
-                    : new DoWhileNoLoops(whileExpr, bodyStatement.getVarMap(), bodyStatement.getStatements(), line, column);
+                    ? new WhileNoLoops(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), line, column)
+                    : new DoWhileNoLoops(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), line, column);
         }
     }
 

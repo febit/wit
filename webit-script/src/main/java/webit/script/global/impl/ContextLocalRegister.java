@@ -14,27 +14,31 @@ import webit.script.lang.MethodDeclare;
  */
 public class ContextLocalRegister implements GlobalRegister {
 
-    private static final String DEFAULT_NAME = "LOCAL";
-    private String name = DEFAULT_NAME;
+    private String name = "LOCAL";
 
     public void regist(GlobalManager manager) {
-        manager.getConstBag().set(this.name, new MethodDeclare() {
-
-            public Object invoke(Context context, Object[] args) {
-                final int i;
-                if ((i = args.length - 1) > 0) {
-                    context.topContext.setLocalVar(args[0], args[1]);
-                    return args[1];
-                } else if (i == 0) {
-                    return context.topContext.getLocalVar(args[0]);
-                } else {
-                    throw new ScriptRuntimeException("Function need at least 1 arg: ".concat(ContextLocalRegister.this.name));
-                }
-            }
-        });
+        manager.getConstBag().set(this.name, new LocalMethodDeclare());
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    private static class LocalMethodDeclare implements MethodDeclare {
+
+        LocalMethodDeclare() {
+        }
+
+        public Object invoke(Context context, Object[] args) {
+            final int i;
+            if ((i = args.length - 1) > 0) {
+                context.topContext.setLocalVar(args[0], args[1]);
+                return args[1];
+            } else if (i == 0) {
+                return context.topContext.getLocalVar(args[0]);
+            } else {
+                throw new ScriptRuntimeException("This function need at least 1 arg: ");
+            }
+        }
     }
 }

@@ -3,13 +3,12 @@ package webit.script.core.text.impl;
 
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatement;
-import webit.script.core.ast.Optimizable;
 
 /**
  *
  * @author Zqq
  */
-public final class CharArrayTextStatement extends AbstractStatement implements Optimizable {
+public final class CharArrayTextStatement extends AbstractStatement {
 
     private final char[] chars;
 
@@ -19,11 +18,7 @@ public final class CharArrayTextStatement extends AbstractStatement implements O
     }
 
     public Object execute(final Context context) {
-        context.out(chars);
+        context.outNotNull(chars);
         return null;
-    }
-
-    public CharArrayTextStatement optimize() {
-        return chars != null && chars.length > 0 ? this : null;
     }
 }

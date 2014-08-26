@@ -8,9 +8,9 @@ import webit.script.core.ast.Statement;
  *
  * @author Zqq
  */
-public interface IBlock extends Statement{
+public interface IBlock extends Statement {
 
-    public VariantIndexer getVarMap();
+    public VariantIndexer getVarIndexer();
 
     public Statement[] getStatements();
 

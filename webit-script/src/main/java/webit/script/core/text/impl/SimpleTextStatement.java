@@ -3,13 +3,12 @@ package webit.script.core.text.impl;
 
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatement;
-import webit.script.core.ast.Optimizable;
 
 /**
  *
  * @author Zqq
  */
-public final class SimpleTextStatement extends AbstractStatement implements Optimizable {
+public final class SimpleTextStatement extends AbstractStatement {
 
     private final String encoding;
     private final char[] text;
@@ -24,14 +23,10 @@ public final class SimpleTextStatement extends AbstractStatement implements Opti
 
     public Object execute(final Context context) {
         if (context.isByteStream && encoding == context.encoding) {
-            context.out(textBytes);
+            context.outNotNull(textBytes);
         } else {
-            context.out(text);
+            context.outNotNull(text);
         }
         return null;
-    }
-
-    public SimpleTextStatement optimize() {
-        return text != null && text.length > 0 ? this : null;
     }
 }

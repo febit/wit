@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.Template;
@@ -28,8 +29,8 @@ public class ImportPart extends Position {
         super(line, column);
         this.expr = expr;
         this.paramsExpr = paramsExpr;
-        this.exportNameList = new LinkedList<String>();
-        this.toResetableValueList = new LinkedList<ResetableValueExpression>();
+        this.exportNameList = new ArrayList<String>();
+        this.toResetableValueList = new ArrayList<ResetableValueExpression>();
     }
 
     public ImportPart append(String name, Expression to) {

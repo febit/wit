@@ -2,7 +2,6 @@
 package webit.script.loggers.impl;
 
 import webit.script.loggers.AbstractLogger;
-import java.io.PrintStream;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.util.StringUtil;

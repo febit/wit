@@ -36,7 +36,7 @@ public final class IfPart extends Position {
         } else if (elseStatement != null) {
             return new IfNot(ifExpr, elseStatement, line, column);
         } else {
-            return NoneStatement.getInstance();
+            return NoneStatement.INSTANCE;
         }
     }
 }

@@ -3,8 +3,6 @@ package webit.script.asm;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import webit.script.asm.AsmMethodAccessor;
-import webit.script.asm.AsmMethodAccessorManager;
 import webit.script.core.NativeFactory;
 import webit.script.lang.MethodDeclare;
 import webit.script.util.ClassUtil;

@@ -19,7 +19,7 @@ import webit.script.util.StatementUtil;
 
 /**
  * 
- * @version Tue Aug 26 12:00:28 CST 2014
+ * @version Tue Aug 26 21:43:51 CST 2014
  */
 public class Parser extends AbstractParser {
 
@@ -126,7 +126,7 @@ public class Parser extends AbstractParser {
             case 25: // statement ::= CONST IDENTIFIER EQ expression SEMICOLON 
             {
                 Symbol ident$Symbol = myStack.peek(3);
-                assignConst((String) ident$Symbol.value, (Expression) myStack.peek(1).value, ident$Symbol.line, ident$Symbol.column); return NoneStatement.getInstance();
+                assignConst((String) ident$Symbol.value, (Expression) myStack.peek(1).value, ident$Symbol.line, ident$Symbol.column); return NoneStatement.INSTANCE;
             }
             case 158: // funcStatementHead ::= FUNCTION IDENTIFIER LPAREN identiferList RPAREN 
             {
@@ -212,6 +212,11 @@ public class Parser extends AbstractParser {
                 Symbol sym$Symbol = myStack.peek(0);
                 return createBreakPointStatement(null, null, sym$Symbol.line, sym$Symbol.column);
             }
+            case 24: // statement ::= TEXT_STATEMENT 
+            {
+                Symbol sym$Symbol = myStack.peek(0);
+                return createTextStatement((char[]) sym$Symbol.value, sym$Symbol.line, sym$Symbol.column);
+            }
             case 126: // expression ::= DIRECT_VALUE 
             {
                 Symbol sym$Symbol = myStack.peek(0);
@@ -231,11 +236,6 @@ public class Parser extends AbstractParser {
             {
                 Symbol sym$Symbol = myStack.peek(0);
                 return new PlusPlusAfter(castToResetableValueExpression((Expression) myStack.peek(1).value), sym$Symbol.line, sym$Symbol.column);
-            }
-            case 24: // statement ::= TEXT_STATEMENT 
-            {
-                Symbol sym$Symbol = myStack.peek(0);
-                return textStatementFactory.getTextStatement(template, (char[]) sym$Symbol.value, sym$Symbol.line, sym$Symbol.column);
             }
             case 99: // expression ::= COMP expression 
             {
@@ -335,7 +335,7 @@ public class Parser extends AbstractParser {
             case 28: // statement ::= NATIVE_IMPORT classPureName SEMICOLON 
             {
                 Symbol sym$Symbol = myStack.peek(2);
-                registClass((ClassNameBand) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column); return NoneStatement.getInstance();
+                registClass((ClassNameBand) myStack.peek(1).value, sym$Symbol.line, sym$Symbol.column); return NoneStatement.INSTANCE;
             }
             case 155: // mapValue ::= LBRACE mapValuePart RBRACE 
             {
@@ -673,7 +673,7 @@ public class Parser extends AbstractParser {
             }
             case 11: // statement ::= SEMICOLON 
             {
-                return NoneStatement.getInstance();
+                return NoneStatement.INSTANCE;
             }
             case 14: // statement ::= expression INTERPOLATION_END 
             {

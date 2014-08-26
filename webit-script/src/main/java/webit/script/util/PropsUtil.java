@@ -180,7 +180,7 @@ public class PropsUtil {
         private static final String CLASSPATH_PREFIX = "%CLASS_PATH%/";
 
         public InputStream openInputStream(String path) {
-            return ClassLoaderUtil.getDefaultClassLoader().getResourceAsStream(path.charAt(0) == '/'
+            return ClassUtil.getDefaultClassLoader().getResourceAsStream(path.charAt(0) == '/'
                     ? path.substring(1)
                     : path);
         }

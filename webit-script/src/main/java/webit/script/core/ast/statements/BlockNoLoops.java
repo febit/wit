@@ -30,7 +30,7 @@ public class BlockNoLoops extends AbstractStatement implements IBlock, Optimizab
         return null;
     }
 
-    public VariantIndexer getVarMap() {
+    public VariantIndexer getVarIndexer() {
         return varIndexer;
     }
 

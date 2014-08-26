@@ -19,9 +19,9 @@ public final class Variants implements KeyValueAccepter {
 
     @SuppressWarnings("unchecked")
     public void exportTo(final Map map) {
-        final Object[] vars;
+        final Object[] vars = this.values;
         final VariantIndexer indexer = this.varIndexer;
-        for (int i = 0, len = (vars = this.values).length; i < len; i++) {
+        for (int i = 0, len = vars.length; i < len; i++) {
             map.put(indexer.getName(i), vars[i]);
         }
     }
@@ -62,7 +62,7 @@ public final class Variants implements KeyValueAccepter {
         final VariantIndexer destIndexer = this.varIndexer;
         final Object[] destValues = this.values;
         int index;
-        for (int i = 0, size = srcNames.length; i < size; i++) {
+        for (int i = 0, len = srcNames.length; i < len; i++) {
             if ((index = destIndexer.getIndex(srcNames[i])) >= 0) {
                 destValues[index] = srcValues[i];
             }

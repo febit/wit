@@ -17,6 +17,7 @@ public class LazyLoader implements Loader, Initable {
 
     protected int timeout;
     protected ClassEntry _loader;
+    protected Loader loader;
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
@@ -25,8 +26,6 @@ public class LazyLoader implements Loader, Initable {
     public void setLoader(ClassEntry _loader) {
         this._loader = _loader;
     }
-    //
-    protected Loader loader;
 
     public void init(Engine engine) {
         this.loader = (Loader) engine.getComponent(_loader);

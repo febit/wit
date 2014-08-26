@@ -31,7 +31,7 @@ public class StatementGroup extends AbstractStatement implements Optimizable {
 
     public Statement optimize() throws Exception {
         if (this.list.length == 0) {
-            return NoneStatement.getInstance();
+            return NoneStatement.INSTANCE;
         } else {
             return this;
         }

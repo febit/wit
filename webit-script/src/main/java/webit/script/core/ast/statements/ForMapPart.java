@@ -44,11 +44,11 @@ public class ForMapPart extends AbstractForInPart {
     @Override
     public Statement pop(int label) {
         if (bodyStatement.hasLoops()) {
-            return new ForMap(functionDeclareExpr, collectionExpr, bodyStatement.getVarMap(), bodyStatement.getStatements(),
+            return new ForMap(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(),
                     StatementUtil.collectPossibleLoopsInfoForWhile(bodyStatement, elseStatement, label),
                     elseStatement, label, line, column);
         } else {
-            return new ForMapNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarMap(), bodyStatement.getStatements(), elseStatement, line, column);
+            return new ForMapNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), elseStatement, line, column);
         }
     }
 }

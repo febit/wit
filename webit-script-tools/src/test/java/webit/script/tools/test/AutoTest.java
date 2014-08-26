@@ -19,7 +19,7 @@ import webit.script.io.Out;
 import webit.script.io.impl.DiscardOut;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.tools.EngineManager;
-import webit.script.util.ClassLoaderUtil;
+import webit.script.util.ClassUtil;
 import webit.script.util.FastByteArrayOutputStream;
 import webit.script.util.FastByteBuffer;
 import webit.script.util.StringUtil;
@@ -36,7 +36,7 @@ public class AutoTest {
     private Map<String, String> collectAutoTestTemplates() {
         final Map<String, String> templates = new TreeMap<String, String>();
 
-        ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
+        ClassLoader classLoader = ClassUtil.getDefaultClassLoader();
         try {
             URL url = classLoader.getResource(AUTO_TEST_PATH);
             File file = new File(url.getFile());
@@ -57,7 +57,7 @@ public class AutoTest {
     public void test() throws ResourceNotFoundException, IOException {
 
         Map<String, String> templates = collectAutoTestTemplates();
-        ClassLoader classLoader = ClassLoaderUtil.getDefaultClassLoader();
+        ClassLoader classLoader = ClassUtil.getDefaultClassLoader();
 
         final FastByteBuffer bytesBuffer = new FastByteBuffer();
         final byte[] buffer = new byte[BUFFER_SIZE];
@@ -72,7 +72,7 @@ public class AutoTest {
                     out.reset();
                     mergeTemplate(templatePath, out);
 
-                    //read out 
+                    //read outNotNull 
                     InputStream in;
                     if ((in = classLoader.getResourceAsStream(AUTO_TEST_PATH.concat(outPath))) != null) {
                         int read;

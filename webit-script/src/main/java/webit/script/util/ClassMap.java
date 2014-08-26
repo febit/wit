@@ -3,9 +3,8 @@ package webit.script.util;
 
 public final class ClassMap<V> {
 
-    private static final int DEFAULT_CAPACITY = 64;
-    private static final int MINIMUM_CAPACITY = 4;
     private static final int MAXIMUM_CAPACITY = 1 << 29;
+
     private Entry<V> table[];
     private int threshold;
     private int count;
@@ -13,12 +12,11 @@ public final class ClassMap<V> {
     private final Object lock = new Object();
 
     public ClassMap(int initialCapacity) {
-
         int initlen;
-        if (initialCapacity > MAXIMUM_CAPACITY || initialCapacity < 0) {
+        if (initialCapacity > MAXIMUM_CAPACITY) {
             initlen = MAXIMUM_CAPACITY;
         } else {
-            initlen = MINIMUM_CAPACITY;
+            initlen = 4;
             while (initlen < initialCapacity) {
                 initlen <<= 1;
             }
@@ -27,7 +25,7 @@ public final class ClassMap<V> {
     }
 
     public ClassMap() {
-        init(DEFAULT_CAPACITY);
+        init(64);
     }
 
     @SuppressWarnings("unchecked")
@@ -107,7 +105,7 @@ public final class ClassMap<V> {
         Entry<V>[] tab;
         Entry<V> e = (tab = table)[index = (id = key.hashCode()) & (tab.length - 1)];
         for (; e != null; e = e.next) {
-            if (e.id == id) {
+            if (key == e.key) {
                 return e.value;
             }
         }

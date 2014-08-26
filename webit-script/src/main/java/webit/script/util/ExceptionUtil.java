@@ -1,7 +1,6 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util;
 
-import java.io.PrintStream;
 import webit.script.core.ast.Statement;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;

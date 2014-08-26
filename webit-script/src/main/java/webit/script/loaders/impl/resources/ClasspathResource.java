@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import webit.script.exceptions.ResourceNotFoundException;
 import webit.script.loaders.Resource;
-import webit.script.util.ClassLoaderUtil;
+import webit.script.util.ClassUtil;
 
 /**
  *
@@ -27,7 +27,7 @@ public class ClasspathResource implements Resource {
      * @since 1.4.1
      */
     public boolean exists() {
-        return ClassLoaderUtil.getDefaultClassLoader().getResource(path) != null;
+        return ClassUtil.getDefaultClassLoader().getResource(path) != null;
     }
 
     public boolean isModified() {
@@ -35,7 +35,7 @@ public class ClasspathResource implements Resource {
     }
 
     public Reader openReader() throws IOException {
-        final InputStream in = ClassLoaderUtil.getDefaultClassLoader()
+        final InputStream in = ClassUtil.getDefaultClassLoader()
                 .getResourceAsStream(path);
         if (in != null) {
             return encoding == null

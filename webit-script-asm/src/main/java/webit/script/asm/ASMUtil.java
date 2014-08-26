@@ -6,7 +6,7 @@ import webit.script.asm3.Opcodes;
 import webit.script.asm3.Type;
 import webit.script.asm3.commons.GeneratorAdapter;
 import webit.script.asm3.commons.Method;
-import webit.script.util.ClassLoaderUtil;
+import webit.script.util.ClassUtil;
 import webit.script.util.StringUtil;
 
 /**
@@ -88,7 +88,7 @@ public class ASMUtil {
 
         @Override
         protected Class<?> findClass(String name) throws ClassNotFoundException {
-            return ClassLoaderUtil.getDefaultClassLoader().loadClass(name);
+            return ClassUtil.getDefaultClassLoader().loadClass(name);
         }
 
         Class<?> loadClass(String name, byte[] b, int off, int len)

@@ -2,9 +2,7 @@
 package webit.script.util;
 
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 /**
@@ -13,33 +11,11 @@ import java.lang.reflect.Modifier;
  */
 public class ClassUtil {
 
-    private ClassUtil() {
+    public static ClassLoader getDefaultClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
     }
 
-    public static Class getBoxedClass(final Class type) {
-        if (type.isPrimitive()) {
-            if (type == int.class) {
-                return Integer.class;
-            } else if (type == boolean.class) {
-                return Boolean.class;
-            } else if (type == long.class) {
-                return Long.class;
-            } else if (type == double.class) {
-                return Double.class;
-            } else if (type == float.class) {
-                return Float.class;
-            } else if (type == short.class) {
-                return Short.class;
-            } else if (type == char.class) {
-                return Character.class;
-            } else if (type == byte.class) {
-                return Byte.class;
-            } else {
-                return Void.class;
-            }
-        } else {
-            return type;
-        }
+    private ClassUtil() {
     }
 
     public static char getAliasOfBaseType(final String name) {
@@ -217,7 +193,7 @@ public class ClassUtil {
     }
 
     private static Class getClassByInternalName(String name) throws ClassNotFoundException {
-        return Class.forName(name, true, ClassLoaderUtil.getDefaultClassLoader());
+        return Class.forName(name, true, getDefaultClassLoader());
     }
 
     public static boolean isStatic(Member member) {
@@ -228,20 +204,8 @@ public class ClassUtil {
         return Modifier.isFinal(member.getModifiers());
     }
 
-    public static boolean isStatic(Method method) {
-        return Modifier.isStatic(method.getModifiers());
-    }
-
     public static boolean isPublic(Class cls) {
         return Modifier.isPublic(cls.getModifiers());
-    }
-
-    public static boolean isPublic(Constructor member) {
-        return Modifier.isPublic(member.getModifiers());
-    }
-
-    public static boolean isPublic(Method member) {
-        return Modifier.isPublic(member.getModifiers());
     }
 
     public static boolean isPublic(Member member) {
@@ -255,11 +219,6 @@ public class ClassUtil {
             } catch (SecurityException ignore) {
             }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Method searchMethod(Class currentClass, String name, Class[] parameterTypes, boolean boxed) throws NoSuchMethodException {
-        return currentClass.getMethod(name, parameterTypes);
     }
 
     public static Object newInstance(final Class type) {

@@ -1,7 +1,6 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.loaders.impl;
 
-import java.util.ArrayList;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.loaders.Loader;

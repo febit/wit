@@ -7,25 +7,22 @@ package webit.script.util;
  */
 public final class ClassNameBand {
 
-    private static final int DEFAULT_ARRAY_CAPACITY = 8;
     private String[] array;
     private int index;
     private int length;
-    private boolean isArray = false;
-    private int arrayDepth = 0;
+    private boolean isArray;
+    private int arrayDepth;
 
-    /**
-     * Creates <code>ClassNameBand</code> with provided content.
-     */
     public ClassNameBand(String s) {
-        array = new String[DEFAULT_ARRAY_CAPACITY];
-        array[0] = s;
-        index = 1;
-        length = s.length();
+        this.arrayDepth = 0;
+        this.isArray = false;
+        this.array = new String[8];
+        this.array[0] = s;
+        this.index = 1;
+        this.length = s.length();
     }
 
     public ClassNameBand append(String s) {
-
         if (index >= array.length) {
             System.arraycopy(array, 0, array = new String[array.length << 1], 0, index);
         }
@@ -62,8 +59,6 @@ public final class ClassNameBand {
     }
 
     public String getClassSimpleName() {
-
-        // special cases
         if (index == 0) {
             return null;
         }
@@ -71,8 +66,6 @@ public final class ClassNameBand {
     }
 
     public String getClassPureName() {
-
-        // special cases
         if (index == 0) {
             return null;
         }
@@ -99,14 +92,12 @@ public final class ClassNameBand {
     @Override
     public String toString() {
 
-        // special cases
         if (index == 0) {
             return null;
         }
         if (index == 1 && isArray == false) {
             return array[0];
         }
-
         // join strings
         final char[] destination = new char[length + index - 1 + arrayDepth * 2];
         int start = 0;

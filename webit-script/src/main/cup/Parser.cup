@@ -11,8 +11,8 @@ import webit.script.core.ast.statements.*;
 import webit.script.exceptions.ParseException;
 import webit.script.util.ALU;
 import webit.script.util.ClassNameBand;
-import webit.script.util.StatementUtil;
 import webit.script.util.Stack;
+import webit.script.util.StatementUtil;
 
 /* Terminals */
 terminal Integer    VAR,
@@ -162,7 +162,7 @@ statement            ::= expression_statementable:expr SEMICOLON
                         {: return %expr%; :}
 
                         |SEMICOLON
-                        {: return NoneStatement.getInstance(); :}
+                        {: return NoneStatement.INSTANCE; :}
 
                         |LRDEBUG:sym
                         {: return createBreakPointStatement(null, null, %sym.line%, %sym.column%); :}
@@ -203,11 +203,11 @@ statement            ::= expression_statementable:expr SEMICOLON
 
                         //textStat
                         |TEXT_STATEMENT:sym
-                        {: return textStatementFactory.getTextStatement(template, %sym%, %sym.line%, %sym.column%); :}
+                        {: return createTextStatement(%sym%, %sym.line%, %sym.column%); :}
 
                         //
                         |CONST IDENTIFIER:ident EQ expression:expr SEMICOLON
-                        {: assignConst(%ident%, %expr%, %ident.line%, %ident.column%); return NoneStatement.getInstance(); :}
+                        {: assignConst(%ident%, %expr%, %ident.line%, %ident.column%); return NoneStatement.INSTANCE; :}
                         
                         //var
                         |varPart:part SEMICOLON
@@ -219,7 +219,7 @@ statement            ::= expression_statementable:expr SEMICOLON
 
                         //@import
                         |NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
-                        {: registClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatement.getInstance(); :}
+                        {: registClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatement.INSTANCE; :}
                         
                         //BREAK
                         |BREAK:sym SEMICOLON

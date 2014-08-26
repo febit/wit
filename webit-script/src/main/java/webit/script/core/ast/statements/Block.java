@@ -44,7 +44,7 @@ public final class Block extends AbstractStatement implements Loopable, IBlock {
         return true;
     }
 
-    public VariantIndexer getVarMap() {
+    public VariantIndexer getVarIndexer() {
         return varIndexer;
     }
 

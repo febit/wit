@@ -135,22 +135,12 @@ public final class Context {
         return this.out;
     }
 
-    public void out(final byte[] bytes) {
-        if (bytes != null) {
-            this.out.write(bytes);
-        }
+    public void outNotNull(final byte[] bytes) {
+        this.out.write(bytes);
     }
 
-    public void out(final char[] chars) {
-        if (chars != null) {
-            this.out.write(chars);
-        }
-    }
-
-    public void out(final String string) {
-        if (string != null) {
-            this.out.write(string);
-        }
+    public void outNotNull(final char[] chars) {
+        this.out.write(chars);
     }
 
     public void out(final Object object) {
@@ -176,7 +166,6 @@ public final class Context {
             (this.localMap = new HashMap<Object, Object>()).put(key, value);
         }
     }
-
 
     public void push(final VariantIndexer varIndexer) {
         final int i;

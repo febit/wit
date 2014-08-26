@@ -3,13 +3,12 @@ package webit.script.core.text.impl;
 
 import webit.script.Context;
 import webit.script.core.ast.AbstractStatement;
-import webit.script.core.ast.Optimizable;
 
 /**
  *
  * @author Zqq
  */
-public final class ByteArrayTextStatement extends AbstractStatement implements Optimizable {
+public final class ByteArrayTextStatement extends AbstractStatement {
 
     private final byte[] bytes;
 
@@ -19,11 +18,7 @@ public final class ByteArrayTextStatement extends AbstractStatement implements O
     }
 
     public Object execute(final Context context) {
-        context.out(bytes);
+        context.outNotNull(bytes);
         return null;
-    }
-
-    public ByteArrayTextStatement optimize() {
-        return bytes != null && bytes.length > 0 ? this : null;
     }
 }

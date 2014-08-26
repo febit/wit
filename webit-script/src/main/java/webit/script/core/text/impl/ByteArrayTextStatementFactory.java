@@ -18,10 +18,10 @@ import webit.script.util.FastByteArrayOutputStream;
  */
 public class ByteArrayTextStatementFactory implements TextStatementFactory, Initable {
 
-    private String encoding;
-    private CoderFactory coderFactory;
-    private final ThreadLocal<Encoder> encoders = new ThreadLocal<Encoder>();
-    private final ThreadLocal<FastByteArrayOutputStream> outputs = new ThreadLocal<FastByteArrayOutputStream>();
+    protected String encoding;
+    protected CoderFactory coderFactory;
+    protected final ThreadLocal<Encoder> encoders = new ThreadLocal<Encoder>();
+    protected final ThreadLocal<FastByteArrayOutputStream> outputs = new ThreadLocal<FastByteArrayOutputStream>();
 
     public void init(Engine engine) {
         encoding = engine.getEncoding();
@@ -38,23 +38,19 @@ public class ByteArrayTextStatementFactory implements TextStatementFactory, Init
         outputs.remove();
     }
 
-    private byte[] getBytes(char[] text) {
-        if (text != null) {
-            try {
-                final FastByteArrayOutputStream outputStream;
-                encoders.get().write(text, 0, text.length, outputStream = outputs.get());
-                final byte[] bytes = outputStream.toByteArray();
-                outputStream.reset();
-                return bytes;
-            } catch (IOException ex) {
-                throw new ScriptRuntimeException(ex);
-            }
+    protected byte[] getBytes(char[] text) {
+        try {
+            final FastByteArrayOutputStream outputStream = outputs.get();
+            encoders.get().write(text, 0, text.length, outputStream);
+            final byte[] bytes = outputStream.toByteArray();
+            outputStream.reset();
+            return bytes;
+        } catch (IOException ex) {
+            throw new ScriptRuntimeException(ex);
         }
-        return null;
     }
 
     public Statement getTextStatement(Template template, char[] text, int line, int column) {
-        return new ByteArrayTextStatement(text != null ? getBytes(text) : null, line, column);
+        return new ByteArrayTextStatement(getBytes(text), line, column);
     }
 }
-
