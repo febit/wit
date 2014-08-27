@@ -4,7 +4,6 @@ package webit.script.resolvers.impl;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.Iter;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.util.StringUtil;
 
 /**
@@ -12,10 +11,6 @@ import webit.script.util.StringUtil;
  * @author Zqq
  */
 public class IterGetResolver implements GetResolver {
-
-    public MatchMode getMatchMode() {
-        return MatchMode.INSTANCEOF;
-    }
 
     public Class<?> getMatchClass() {
         return Iter.class;

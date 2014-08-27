@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.resolvers;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import webit.script.Engine;
 import webit.script.Initable;
@@ -146,10 +147,9 @@ public class ResolverManager implements Initable {
         if (resolvers != null) {
             for (ClassEntry item : resolvers) {
                 Resolver resolver = (Resolver) engine.getComponent(item);
-                if (resolver.getMatchMode() == MatchMode.REGIST) {
+                registResolver(resolver.getMatchClass(), resolver);
+                if (resolver instanceof RegistModeResolver) {
                     ((RegistModeResolver) resolver).regist(this);
-                } else {
-                    registResolver(resolver.getMatchClass(), resolver, resolver.getMatchMode());
                 }
             }
             getResolvers.trimToSize();
@@ -161,41 +161,42 @@ public class ResolverManager implements Initable {
         }
     }
 
-    public boolean registResolver(Class type, Resolver resolver, MatchMode matchMode) {
-        switch (matchMode) {
-            case INSTANCEOF:
-                if (resolver instanceof GetResolver) {
-                    getResolverTypes.add(type);
-                    getResolvers.add((GetResolver) resolver);
-                }
-                if (resolver instanceof SetResolver) {
-                    setResolverTypes.add(type);
-                    setResolvers.add((SetResolver) resolver);
-                }
-                if (resolver instanceof OutResolver) {
-                    outResolverTypes.add(type);
-                    outResolvers.add((OutResolver) resolver);
-                }
-                break;
-
-            case EQUALS:
-                if (resolver instanceof GetResolver) {
-                    getResolverMap.putIfAbsent(type, (GetResolver) resolver);
-                }
-                if (resolver instanceof SetResolver) {
-                    setResolverMap.putIfAbsent(type, (SetResolver) resolver);
-                }
-                if (resolver instanceof OutResolver) {
-                    outResolverMap.putIfAbsent(type, (OutResolver) resolver);
-                }
-                break;
-            case REGIST:
-            default:
-                //Error??
-                return false;
+    public void registResolver(Class type, Resolver resolver) {
+        if (type == null) {
+            return;
         }
 
-        return true;
+        int modifier = type.getModifiers();
+        boolean notAbstract = !Modifier.isAbstract(modifier) || type.isArray();
+        boolean notFinal = !Modifier.isFinal(modifier) || Object[].class.isAssignableFrom(type);
+
+        if (resolver instanceof GetResolver) {
+            if (notFinal) {
+                getResolverTypes.add(type);
+                getResolvers.add((GetResolver) resolver);
+            }
+            if (notAbstract) {
+                getResolverMap.putIfAbsent(type, (GetResolver) resolver);
+            }
+        }
+        if (resolver instanceof SetResolver) {
+            if (notFinal) {
+                setResolverTypes.add(type);
+                setResolvers.add((SetResolver) resolver);
+            }
+            if (notAbstract) {
+                setResolverMap.putIfAbsent(type, (SetResolver) resolver);
+            }
+        }
+        if (resolver instanceof OutResolver) {
+            if (notFinal) {
+                outResolverTypes.add(type);
+                outResolvers.add((OutResolver) resolver);
+            }
+            if (notAbstract) {
+                outResolverMap.putIfAbsent(type, (OutResolver) resolver);
+            }
+        }
     }
 
     public Object get(Object bean, Object property) {

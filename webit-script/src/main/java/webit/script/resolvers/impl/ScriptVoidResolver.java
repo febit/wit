@@ -5,7 +5,6 @@ import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.lang.Void;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.SetResolver;
 
@@ -17,10 +16,6 @@ public class ScriptVoidResolver implements GetResolver, SetResolver, OutResolver
 
     public Object get(Object object, Object property) {
         throw new ScriptRuntimeException("'Void' type has no propertys.");
-    }
-
-    public MatchMode getMatchMode() {
-        return MatchMode.EQUALS;
     }
 
     public Class<?> getMatchClass() {

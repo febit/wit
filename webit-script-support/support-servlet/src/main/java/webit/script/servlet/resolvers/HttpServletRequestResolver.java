@@ -3,7 +3,6 @@ package webit.script.servlet.resolvers;
 
 import javax.servlet.http.HttpServletRequest;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.servlet.HttpServletRequestAttributes;
 import webit.script.servlet.HttpServletRequestHeader;
 import webit.script.servlet.HttpServletRequestHeaders;
@@ -242,10 +241,6 @@ public class HttpServletRequestResolver implements GetResolver {
             default:
         }
         return null;
-    }
-
-    public MatchMode getMatchMode() {
-        return MatchMode.INSTANCEOF;
     }
 
     public Class<?> getMatchClass() {

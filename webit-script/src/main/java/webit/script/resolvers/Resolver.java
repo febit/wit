@@ -7,7 +7,5 @@ package webit.script.resolvers;
  */
 public interface Resolver {
 
-    MatchMode getMatchMode();
-
     Class<?> getMatchClass();
 }

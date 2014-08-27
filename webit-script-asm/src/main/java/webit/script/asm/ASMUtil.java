@@ -25,7 +25,6 @@ public class ASMUtil {
     public static final Type TYPE_SYSTEM = Type.getObjectType("java/lang/System");
     public static final Type TYPE_OBJECT_ARR = Type.getObjectType("[Ljava/lang/Object;");
     public static final Type TYPE_SCRIPT_RUNTIME_EXCEPTION = Type.getObjectType("webit/script/exceptions/ScriptRuntimeException");
-    public static final Type TYPE_MATCH_MODE = Type.getObjectType("webit/script/resolvers/MatchMode");
 
     public static final Method METHOD_HASH_CODE = new Method("hashCode", "()I");
     public static final Method METHOD_EQUALS = new Method("equals", "(Ljava/lang/Object;)Z");
@@ -37,7 +36,6 @@ public class ASMUtil {
     public static final Method METHOD_CONSTRUCTOR_SCRIPT_RUNTIME_EXCEPTION = new Method("<init>", "(Ljava/lang/String;)V");
 
     public static final Method METHOD_ASM_RESOLVER_getMatchClass = new Method("getMatchClass", "()Ljava/lang/Class;");
-    public static final Method METHOD_ASM_RESOLVER_getMatchMode = new Method("getMatchMode", "()Lwebit/script/resolvers/MatchMode;");
     public static final Method METHOD_ASM_RESOLVER_GET = new Method("get", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
     public static final Method METHOD_ASM_RESOLVER_SET = new Method("set", "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z");
     //AsmMethodCaller#execute(Object[])

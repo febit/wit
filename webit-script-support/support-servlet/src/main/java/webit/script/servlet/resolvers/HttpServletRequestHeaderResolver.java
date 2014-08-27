@@ -2,7 +2,6 @@
 package webit.script.servlet.resolvers;
 
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.servlet.HttpServletRequestHeader;
 
 /**
@@ -13,10 +12,6 @@ public class HttpServletRequestHeaderResolver implements GetResolver{
 
     public Object get(Object bean, Object property) {
         return ((HttpServletRequestHeader) bean).get(property.toString());
-    }
-
-    public MatchMode getMatchMode() {
-        return MatchMode.EQUALS;
     }
 
     public Class<?> getMatchClass() {

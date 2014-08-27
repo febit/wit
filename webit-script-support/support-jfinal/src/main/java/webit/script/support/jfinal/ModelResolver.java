@@ -3,7 +3,6 @@ package webit.script.support.jfinal;
 
 import com.jfinal.plugin.activerecord.Model;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
 
 /**
@@ -12,19 +11,18 @@ import webit.script.resolvers.SetResolver;
  */
 public class ModelResolver implements GetResolver, SetResolver {
 
+    @Override
     public Object get(Object bean, Object property) {
         return ((Model) bean).get(property.toString());
     }
 
+    @Override
     public boolean set(Object bean, Object property, Object value) {
         ((Model) bean).set(property.toString(), value);
         return true;
     }
 
-    public MatchMode getMatchMode() {
-        return MatchMode.INSTANCEOF;
-    }
-
+    @Override
     public Class<?> getMatchClass() {
         return Model.class;
     }

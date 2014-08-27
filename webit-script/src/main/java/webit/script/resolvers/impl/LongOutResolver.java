@@ -2,7 +2,6 @@
 package webit.script.resolvers.impl;
 
 import webit.script.io.Out;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.OutResolver;
 import webit.script.util.NumberUtil;
 
@@ -14,10 +13,6 @@ public class LongOutResolver implements OutResolver {
 
     public void render(final Out out, Object number) {
         NumberUtil.print((Long) number, out);
-    }
-
-    public MatchMode getMatchMode() {
-        return MatchMode.EQUALS;
     }
 
     public Class<?> getMatchClass() {

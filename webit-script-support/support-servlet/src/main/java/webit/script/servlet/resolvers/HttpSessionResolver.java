@@ -3,7 +3,6 @@ package webit.script.servlet.resolvers;
 
 import javax.servlet.http.HttpSession;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
 
 /**
@@ -19,10 +18,6 @@ public class HttpSessionResolver implements GetResolver, SetResolver {
     public boolean set(Object bean, Object property, Object value) {
         ((HttpSession) bean).setAttribute(property.toString(), value);
         return true;
-    }
-
-    public MatchMode getMatchMode() {
-        return MatchMode.INSTANCEOF;
     }
 
     public Class<?> getMatchClass() {

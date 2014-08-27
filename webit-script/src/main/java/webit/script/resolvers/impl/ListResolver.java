@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
 import webit.script.util.StringUtil;
 
@@ -14,10 +13,6 @@ import webit.script.util.StringUtil;
  * @author Zqq
  */
 public class ListResolver implements GetResolver, SetResolver {
-
-    public MatchMode getMatchMode() {
-        return MatchMode.INSTANCEOF;
-    }
 
     public Class<?> getMatchClass() {
         return Collection.class;

@@ -1,6 +1,5 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 
-
 import java.io.PrintStream;
 import org.junit.Test;
 import webit.script.asm.ASMUtil;
@@ -9,7 +8,6 @@ import webit.script.asm3.Opcodes;
 import webit.script.asm3.Type;
 import webit.script.asm3.commons.GeneratorAdapter;
 import webit.script.asm3.commons.Method;
-import webit.script.resolvers.MatchMode;
 
 /**
  *
@@ -43,35 +41,22 @@ public class AsmTest extends ClassLoader implements Opcodes {
 
         final int var_str = mg.newLocal(Type.getType(String.class));
         final int var_str2 = mg.newLocal(Type.getType(String.class));
-        final int var_enum = mg.newLocal(Type.getType(MatchMode.class));
         final int var_class = mg.newLocal(Type.getType(Class.class));
-
 
         final int var_out = mg.newLocal(Type.getType(PrintStream.class));
 
-
         mg.push(Type.getType(String.class));
         mg.storeLocal(var_class);
-        
-        //
-        mg.getStatic(Type.getType(MatchMode.class), "INSTANCEOF",
-                Type.getType(MatchMode.class));
-        mg.storeLocal(var_enum);
 
-
-        
         //
         mg.getStatic(Type.getType(System.class), "out",
                 Type.getType(PrintStream.class));
         mg.storeLocal(var_out);
-        
-
 
         mg.push("Hello 1!");
         mg.storeLocal(var_str);
 
         //
-
         mg.push("Hello 2!");
         mg.storeLocal(var_str2);
 

@@ -2,7 +2,6 @@
 package webit.script.servlet.resolvers;
 
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
 import webit.script.servlet.HttpServletRequestAttributes;
 
@@ -19,10 +18,6 @@ public class HttpServletRequestAttributesResolver implements GetResolver, SetRes
     public boolean set(Object bean, Object property, Object value) {
         ((HttpServletRequestAttributes) bean).set(property.toString(), value);
         return true;
-    }
-
-    public MatchMode getMatchMode() {
-        return MatchMode.EQUALS;
     }
 
     public Class<?> getMatchClass() {

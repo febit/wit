@@ -55,7 +55,6 @@ public class AsmResolverFactory {
         appendSetMethod(classWriter, beanClass, fieldsDescription);
 
         appendGetMatchClassMethod(classWriter, beanClass);
-        appendGetMatchModeMethod(classWriter);
 
         //End Class Writer
         classWriter.visitEnd();
@@ -239,13 +238,6 @@ public class AsmResolverFactory {
     private static void appendGetMatchClassMethod(ClassWriter classWriter, Class beanClass) {
         final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_ASM_RESOLVER_getMatchClass, null, null, classWriter);
         mg.push(Type.getType(beanClass));
-        mg.returnValue();
-        mg.endMethod();
-    }
-
-    private static void appendGetMatchModeMethod(ClassWriter classWriter) {
-        final GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, ASMUtil.METHOD_ASM_RESOLVER_getMatchMode, null, null, classWriter);
-        mg.getStatic(ASMUtil.TYPE_MATCH_MODE, "EQUALS", ASMUtil.TYPE_MATCH_MODE);
         mg.returnValue();
         mg.endMethod();
     }

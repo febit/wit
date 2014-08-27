@@ -4,7 +4,6 @@ package webit.script.resolvers.impl;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.RegistModeResolver;
 import webit.script.resolvers.ResolverManager;
@@ -18,12 +17,8 @@ import webit.script.util.StringUtil;
  */
 public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolver, OutResolver {
 
-    public MatchMode getMatchMode() {
-        return MatchMode.REGIST;
-    }
-
     public Class<?> getMatchClass() {
-        return Object[].class;
+        return null;
     }
 
     public Object get(Object object, Object property) {
@@ -49,15 +44,15 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
     }
 
     public void regist(ResolverManager resolverManager) {
-        resolverManager.registResolver(Object[].class, this, MatchMode.INSTANCEOF);
-        resolverManager.registResolver(int[].class, this, MatchMode.EQUALS);
-        resolverManager.registResolver(boolean[].class, this, MatchMode.EQUALS);
-        resolverManager.registResolver(char[].class, this, MatchMode.EQUALS);
-        resolverManager.registResolver(float[].class, this, MatchMode.EQUALS);
-        resolverManager.registResolver(double[].class, this, MatchMode.EQUALS);
-        resolverManager.registResolver(long[].class, this, MatchMode.EQUALS);
-        resolverManager.registResolver(short[].class, this, MatchMode.EQUALS);
-        resolverManager.registResolver(byte[].class, this, MatchMode.EQUALS);
+        resolverManager.registResolver(Object[].class, this);
+        resolverManager.registResolver(int[].class, this);
+        resolverManager.registResolver(boolean[].class, this);
+        resolverManager.registResolver(char[].class, this);
+        resolverManager.registResolver(float[].class, this);
+        resolverManager.registResolver(double[].class, this);
+        resolverManager.registResolver(long[].class, this);
+        resolverManager.registResolver(short[].class, this);
+        resolverManager.registResolver(byte[].class, this);
     }
 
     public void render(final Out out, Object bean) {

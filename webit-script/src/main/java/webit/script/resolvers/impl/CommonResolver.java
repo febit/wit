@@ -4,7 +4,6 @@ package webit.script.resolvers.impl;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.SetResolver;
 import webit.script.util.bean.BeanUtil;
@@ -34,10 +33,6 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver {
 
     public void render(final Out out, final Object bean) {
         out.write(bean.toString());
-    }
-
-    public MatchMode getMatchMode() {
-        return MatchMode.INSTANCEOF;
     }
 
     public Class<?> getMatchClass() {

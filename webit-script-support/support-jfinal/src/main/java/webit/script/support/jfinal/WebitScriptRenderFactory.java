@@ -88,10 +88,12 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
         }
     }
 
+    @Override
     public Render getRender(final String view) {
         return new WebitScriptRender(this, view);
     }
 
+    @Override
     public String getViewExtension() {
         return suffix;
     }

@@ -3,7 +3,6 @@ package webit.script.resolvers.impl;
 
 import webit.script.lang.Bag;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
 
 /**
@@ -19,10 +18,6 @@ public class BagResolver implements GetResolver, SetResolver {
     public boolean set(Object object, Object property, Object value) {
         ((Bag) object).set(property, value);
         return true;
-    }
-
-    public MatchMode getMatchMode() {
-        return MatchMode.INSTANCEOF;
     }
 
     public Class<?> getMatchClass() {

@@ -2,7 +2,6 @@
 package webit.script.resolvers.impl;
 
 import webit.script.io.Out;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.RegistModeResolver;
 import webit.script.resolvers.ResolverManager;
@@ -18,16 +17,12 @@ public class IntegerOutResolver implements OutResolver, RegistModeResolver {
         NumberUtil.print((Integer) number, out);
     }
 
-    public MatchMode getMatchMode() {
-        return MatchMode.REGIST;
-    }
-
     public Class<?> getMatchClass() {
         return Integer.class;
     }
 
     public void regist(ResolverManager resolverManager) {
-        resolverManager.registResolver(Integer.class, this, MatchMode.EQUALS);
-        resolverManager.registResolver(Short.class, this, MatchMode.EQUALS);
+        resolverManager.registResolver(Integer.class, this);
+        resolverManager.registResolver(Short.class, this);
     }
 }

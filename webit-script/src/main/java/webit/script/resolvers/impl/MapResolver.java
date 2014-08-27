@@ -3,7 +3,6 @@ package webit.script.resolvers.impl;
 
 import java.util.Map;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
 
 /**
@@ -11,10 +10,6 @@ import webit.script.resolvers.SetResolver;
  * @author Zqq
  */
 public class MapResolver implements GetResolver, SetResolver {
-
-    public MatchMode getMatchMode() {
-        return MatchMode.INSTANCEOF;
-    }
 
     public Class<?> getMatchClass() {
         return Map.class;

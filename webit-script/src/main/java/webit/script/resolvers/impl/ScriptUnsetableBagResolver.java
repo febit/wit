@@ -4,7 +4,6 @@ package webit.script.resolvers.impl;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.SimpleUnsetableBag;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.MatchMode;
 import webit.script.resolvers.SetResolver;
 
 /**
@@ -21,10 +20,6 @@ public class ScriptUnsetableBagResolver implements GetResolver, SetResolver {
 
     public boolean set(Object object, Object property, Object value) {
         throw new ScriptRuntimeException("This is an unsetable Object!");
-    }
-
-    public MatchMode getMatchMode() {
-        return MatchMode.INSTANCEOF;
     }
 
     public Class<?> getMatchClass() {

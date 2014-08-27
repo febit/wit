@@ -4,7 +4,6 @@ package webit.script.asm;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.resolvers.MatchMode;
 
 /**
  *
@@ -83,11 +82,7 @@ public class AsmResolverFactoryTest {
 
         AsmResolver resolver = (AsmResolver) clazz.newInstance();
 
-        assertEquals(Foo.class, resolver.getMatchClass());
-        assertEquals(MatchMode.EQUALS, resolver.getMatchMode());
-
         assertEquals(resolver.getMatchClass(), Foo.class);
-        assertEquals(resolver.getMatchMode(), MatchMode.EQUALS);
 
 
         int i = 0;
