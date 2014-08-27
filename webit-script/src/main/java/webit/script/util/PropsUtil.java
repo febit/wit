@@ -17,43 +17,46 @@ import webit.script.CFG;
  */
 public class PropsUtil {
 
+    public static final ClasspathInputResolver CLASSPATH_INPUT_RESOLVER = new ClasspathInputResolver();
+
     public static Props loadFromClasspath(final Props props, final String... pathSets) {
-        return load(props, new ClasspathInputStreamResolver(), pathSets);
+        return load(props, CLASSPATH_INPUT_RESOLVER, pathSets);
     }
 
-    public static Props load(final Props props, InputStreamResolver inputStreamResolver, final String... pathSets) {
-        new PropsLoader(inputStreamResolver, props).load(pathSets);
+    public static Props load(final Props props, final InputResolver inputResolver, final String... pathSets) {
+        if (pathSets != null) {
+            new PropsLoader(props).load(inputResolver, pathSets);
+        }
         return props;
     }
 
     private static class PropsLoader {
 
-        private static final int BUFFER_SIZE = 3072;
-        private static final String PROPS_MODULES = "@modules";
-
-        private final InputStreamResolver mainInputStreamResolver;
         private final Props props;
-        private final boolean isModuleMode;
-        //
+        private final char[] _buffer;
+        private final FastCharBuffer _charsBuffer;
+
         private Set<String> loadedModules;
         private Map<String, Props> modulePropsCache;
-        private InputStreamResolver moduleInputStreamResolver;
-        //
-        final FastCharBuffer _charsBuffer = new FastCharBuffer();
-        final char[] _buffer = new char[BUFFER_SIZE];
 
-        public PropsLoader(InputStreamResolver mainInputStreamResolver, Props props) {
-            this.mainInputStreamResolver = mainInputStreamResolver;
+        PropsLoader(Props props) {
             this.props = props;
-
-            if ((this.isModuleMode = (mainInputStreamResolver instanceof ClasspathInputStreamResolver))) {
-                this.moduleInputStreamResolver = mainInputStreamResolver;
-            }
+            this._buffer = new char[3072];
+            this._charsBuffer = new FastCharBuffer();
         }
 
-        private void initForModules() {
-            if (this.moduleInputStreamResolver == null) {
-                this.moduleInputStreamResolver = new ClasspathInputStreamResolver();
+        private void mergeProps(Props src, String name) {
+            this.props.merge(src);
+            this.props.append(CFG.PROPS_FILE_LIST, name);
+        }
+
+        private void resolveModules(Props src) {
+            resolveModules(src.remove("@modules"));
+        }
+
+        private void resolveModules(String modules) {
+            if (modules == null) {
+                return;
             }
             if (this.loadedModules == null) {
                 this.loadedModules = new HashSet<String>();
@@ -61,63 +64,36 @@ public class PropsUtil {
             if (this.modulePropsCache == null) {
                 this.modulePropsCache = new HashMap<String, Props>();
             }
-        }
-
-        private void logPropsFiles(String name) {
-            this.props.append(CFG.PROPS_FILE_LIST, name);
-        }
-
-        private void resolveModules(String modules) {
-            if (modules == null) {
-                return;
-            }
-            this.initForModules();
-            for (String module : StringUtil.splitAndTrimAll(modules)) {
-                if (module.length() != 0) {
-                    if (module.charAt(0) == '/') {
-                        module = module.substring(1);
-                    }
+            for (String module : StringUtil.splitAndRemoveBlank(modules)) {
+                if (loadedModules.contains(module)) {
+                    continue;
+                }
+                Props moduleProps = modulePropsCache.get(module);
+                if (moduleProps == null) {
+                    moduleProps = loadProps(CLASSPATH_INPUT_RESOLVER, module);
+                    modulePropsCache.put(module, moduleProps);
+                    resolveModules(moduleProps);
                     if (loadedModules.contains(module)) {
+                        //XXX: show warning: self depended!
                         continue;
                     }
-                    Props moduleProps;
-                    if ((moduleProps = modulePropsCache.get(module)) == null) {
-                        modulePropsCache.put(module,
-                                moduleProps = loadProps(this.moduleInputStreamResolver, module));
-                        //resolve PROPS_MODULES after loaded
-                        if (moduleProps == null) {
-                            throw new RuntimeException("Not found props named:" + module);
-                        }
-                        resolveModules(moduleProps.remove(PROPS_MODULES));
-
-                        if (loadedModules.contains(module)) {
-                            //XXX: show warning: self depended!
-                            continue;
-                        }
-                    }
-                    loadedModules.add(module);
-                    this.props.merge(moduleProps);
-                    logPropsFiles(this.moduleInputStreamResolver.getViewPath(module));
                 }
+                loadedModules.add(module);
+                mergeProps(moduleProps, CLASSPATH_INPUT_RESOLVER.getViewPath(module));
             }
         }
 
-        private Props loadProps(InputStreamResolver inputStreamResolver, final String path) {
-
+        private Props loadProps(InputResolver inputResolver, final String path) {
             final FastCharBuffer charsBuffer = this._charsBuffer;
             final char[] buffer = this._buffer;
-
-            final InputStream in;
+            final InputStream in = inputResolver.openInputStream(path);
             Reader reader = null;
-            if ((in = inputStreamResolver.openInputStream(path)) != null) {
+            if (in != null) {
                 try {
-                    reader = new InputStreamReader(in, StringUtil.endsWithIgnoreCase(path, ".properties")
-                            ? "ISO-8859-1"
-                            : "UTF-8");
-
+                    reader = new InputStreamReader(in, "UTF-8");
                     charsBuffer.clear();
                     int read;
-                    while ((read = reader.read(buffer, 0, BUFFER_SIZE)) >= 0) {
+                    while ((read = reader.read(buffer)) >= 0) {
                         charsBuffer.append(buffer, 0, read);
                     }
                     final Props tempProps = new Props();
@@ -136,48 +112,37 @@ public class PropsUtil {
                     }
                 }
             }
-            return null;
+            throw new RuntimeException("Not found props: ".concat(inputResolver.getViewPath(path)));
         }
 
-        void load(final String... paths) {
-            if (paths == null) {
-                return;
-            }
-            if (this.isModuleMode) {
+        void load(InputResolver inputResolver, final String... paths) {
+            if (inputResolver instanceof ClasspathInputResolver) {
                 for (String modules : paths) {
                     resolveModules(modules);
                 }
             } else {
                 for (String path : paths) {
-                    if (path == null || (path = path.trim()).length() == 0) {
-                        continue;
-                    }
-                    for (String subpath : StringUtil.splitAndTrimAll(path)) {
-                        if (subpath.length() != 0) {
-                            Props temp = loadProps(this.mainInputStreamResolver, subpath);
-                            if (temp == null) {
-                                throw new RuntimeException("Not found props named:" + temp);
-                            }
-                            resolveModules(temp.remove(PROPS_MODULES));
-                            this.props.merge(temp);
-                            logPropsFiles(this.mainInputStreamResolver.getViewPath(subpath));
-                        }
+                    for (String subpath : StringUtil.splitAndRemoveBlank(path)) {
+                        Props temp = loadProps(inputResolver, subpath);
+                        resolveModules(temp);
+                        mergeProps(temp, inputResolver.getViewPath(subpath));
                     }
                 }
             }
         }
     }
 
-    public static interface InputStreamResolver {
+    public static interface InputResolver {
 
         InputStream openInputStream(String path);
 
         String getViewPath(String path);
     }
 
-    public static class ClasspathInputStreamResolver implements InputStreamResolver {
+    public static class ClasspathInputResolver implements InputResolver {
 
-        private static final String CLASSPATH_PREFIX = "%CLASS_PATH%/";
+        ClasspathInputResolver() {
+        }
 
         public InputStream openInputStream(String path) {
             return ClassUtil.getDefaultClassLoader().getResourceAsStream(path.charAt(0) == '/'
@@ -186,7 +151,7 @@ public class PropsUtil {
         }
 
         public String getViewPath(String path) {
-            return CLASSPATH_PREFIX.concat(path.charAt(0) == '/'
+            return "%CLASS_PATH%/".concat(path.charAt(0) == '/'
                     ? path.substring(1)
                     : path);
         }

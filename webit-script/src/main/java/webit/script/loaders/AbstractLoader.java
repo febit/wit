@@ -16,11 +16,10 @@ public abstract class AbstractLoader implements Loader, Initable {
     protected String root = null;
     protected boolean appendLostSuffix;
     protected String suffix;
-    protected String[] assistantSuffixs = null;
+    protected String[] assistantSuffixs;
     protected boolean enableCache = true;
     //
     protected boolean appendLostSuffixSettedFlag = false;
-    protected boolean assistantSuffixsSettedFlag = false;
 
     public void init(Engine engine) {
         if (this.encoding == null) {
@@ -32,8 +31,11 @@ public abstract class AbstractLoader implements Loader, Initable {
         if (this.suffix == null) {
             this.suffix = engine.getSuffix();
         }
-        if (this.assistantSuffixsSettedFlag == false) {
+        if (this.assistantSuffixs == null) {
             this.assistantSuffixs = engine.getAssistantSuffixs();
+            if (this.assistantSuffixs == null) {
+                this.assistantSuffixs = StringUtil.EMPTY_ARRAY;
+            }
         }
     }
 
@@ -83,26 +85,31 @@ public abstract class AbstractLoader implements Loader, Initable {
      * @return normalized name
      */
     public String normalize(String name) {
-        if (name != null) {
-            final String newName;
-            newName = FileNameUtil.normalize(StringUtil.prefixChar(name, '/'));
-            if (this.appendLostSuffix == false
-                    || newName.endsWith(this.suffix)
-                    || newName.charAt(newName.length() - 1) == '/') {
-                return newName;
-            } else {
-                final String[] myAssistantSuffixs;
-                if ((myAssistantSuffixs = this.assistantSuffixs) != null) {
-                    for (int i = 0, len = myAssistantSuffixs.length; i < len; i++) {
-                        if (newName.endsWith(myAssistantSuffixs[i])) {
-                            return newName;
-                        }
-                    }
-                }
-                return newName.concat(this.suffix);
-            }
+        if (name == null) {
+            return null;
         }
-        return null;
+        if (name.length() == 0) {
+            return "/";
+        }
+        if (name.charAt(0) != '/' && name.charAt(0) != '\\') {
+            name = "/".concat(name);
+        }
+        name = FileNameUtil.normalize(name);
+        if (name == null) {
+            return null;
+        }
+        if (this.appendLostSuffix == false
+                || name.endsWith(this.suffix)
+                || name.charAt(name.length() - 1) == '/') {
+            return name;
+        } else {
+            for (String item: this.assistantSuffixs) {
+                if (name.endsWith(item)) {
+                    return name;
+                }
+            }
+            return name.concat(this.suffix);
+        }
     }
 
     public void setRoot(String root) {
@@ -128,7 +135,6 @@ public abstract class AbstractLoader implements Loader, Initable {
 
     public void setAssistantSuffixs(String assistantSuffixs) {
         this.assistantSuffixs = StringUtil.splitAndRemoveBlank(assistantSuffixs);
-        this.assistantSuffixsSettedFlag = true;
     }
 
     public boolean isEnableCache(String name) {

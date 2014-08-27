@@ -713,11 +713,11 @@ public class ALU {
     }
 
     private static ScriptRuntimeException unsupportedTypeException(final Object o1, final Object o2) {
-        return new ScriptRuntimeException(StringUtil.concat("Unsupported type: left[", o1.getClass().getName(), "], right[", o2.getClass().getName(), "]"));
+        return new ScriptRuntimeException(StringUtil.format("Unsupported type: left[{}], right[{}]", o1.getClass(), o2.getClass()));
     }
 
     private static ScriptRuntimeException unsupportedTypeException(final Object o1) {
-        return new ScriptRuntimeException(StringUtil.concat("Unsupported type: [", o1.getClass().getName(), "]"));
+        return new ScriptRuntimeException(StringUtil.format("Unsupported type: [{}]", o1.getClass()));
     }
 
     private static ScriptRuntimeException valueIsNullException() {

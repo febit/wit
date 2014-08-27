@@ -67,7 +67,7 @@ public class FileNameUtil {
         filename.getChars(0, filename.length(), array, 0);
 
         // fix separators throughout
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < size; i++) {
             if (array[i] == WINDOWS_SEPARATOR) {
                 array[i] = UNIX_SEPARATOR;
             }

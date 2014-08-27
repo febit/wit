@@ -15,7 +15,7 @@ import webit.script.util.StringUtil;
  */
 public class SimpleSecurityLoader implements Loader, Initable {
 
-    protected String[] list = new String[0];
+    protected String[] list = StringUtil.EMPTY_ARRAY;
     protected ClassEntry _loader;
 
     protected Loader loader;
@@ -25,9 +25,8 @@ public class SimpleSecurityLoader implements Loader, Initable {
     }
 
     public Resource get(String name) {
-        final String[] whiteList = this.list;
-        for (int i = 0, len = whiteList.length; i < len; i++) {
-            if (name.startsWith(whiteList[i])) {
+        for (String item : this.list) {
+            if (name.startsWith(item)) {
                 return this.loader.get(name);
             }
         }

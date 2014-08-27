@@ -44,10 +44,10 @@ public final class Engine {
     private ClassEntry loggerType;
     private ClassEntry resolverManagerType;
     private ClassEntry nativeFactoryType;
-    private boolean looseVar = false;
-    private boolean shareRootData = true;
-    private boolean trimCodeBlockBlankLine = true;
-    private boolean appendLostSuffix = false;
+    private boolean looseVar;
+    private boolean shareRootData;
+    private boolean trimCodeBlockBlankLine;
+    private boolean appendLostSuffix;
     private String suffix;
     private String encoding;
     private String inits;
@@ -68,6 +68,10 @@ public final class Engine {
     private final Petite petite;
 
     private Engine(final Petite petite) {
+        this.appendLostSuffix = false;
+        this.trimCodeBlockBlankLine = true;
+        this.shareRootData = true;
+        this.looseVar = false;
         this.suffix = DEFAULT_SUFFIX;
         this.encoding = EncodingPool.UTF_8;
         this.petite = petite;
@@ -113,17 +117,14 @@ public final class Engine {
                 globalBag, globalBag,
                 constBag, constBag
             });
-            for (String templateName : StringUtil.split(this.inits)) {
-                templateName = templateName.trim();
-                if (templateName.length() != 0) {
-                    if (this.logger.isInfoEnabled()) {
-                        this.logger.info("Merge init template: " + templateName);
-                    }
-                    this.getTemplate(templateName)
-                            .merge(params, out);
-                    //Commit Global
-                    myGlobalManager.commit();
+            for (String templateName : StringUtil.splitAndRemoveBlank(this.inits)) {
+                if (this.logger.isInfoEnabled()) {
+                    this.logger.info("Merge init template: {}", templateName);
                 }
+                this.getTemplate(templateName)
+                        .merge(params, out);
+                //Commit Global
+                myGlobalManager.commit();
             }
         }
     }
@@ -472,7 +473,7 @@ public final class Engine {
 
         engine.init();
         if (engine.getLogger().isInfoEnabled()) {
-            engine.getLogger().info("Loaded props: ".concat(String.valueOf(petite.get(CFG.PROPS_FILE_LIST))));
+            engine.getLogger().info("Loaded props: {}", petite.get(CFG.PROPS_FILE_LIST));
         }
         try {
             engine.executeInitTemplates();

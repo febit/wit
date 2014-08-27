@@ -18,41 +18,80 @@ public class KeyValuesUtil {
     };
 
     public static KeyValues wrap(final KeyValues v1, final KeyValues v2) {
-        return new KeyValues() {
-            public void exportTo(KeyValueAccepter accepter) {
-                v1.exportTo(accepter);
-                v2.exportTo(accepter);
-            }
-        };
+        return new TwoKeyValues(v1, v2);
     }
 
     public static KeyValues wrap(final KeyValues... valueses) {
-        return new KeyValues() {
-            public void exportTo(KeyValueAccepter accepter) {
-                for (int i = 0, len = valueses.length; i < len; i++) {
-                    valueses[i].exportTo(accepter);
-                }
-            }
-        };
+        if (valueses != null) {
+            return new ListKeyValues(valueses);
+        } else {
+            return EMPTY_KEY_VALUES;
+        }
     }
 
-    public static KeyValues wrap(final String key, final Object values) {
-        return new KeyValues() {
-            public void exportTo(KeyValueAccepter accepter) {
-                accepter.set(key, values);
-            }
-        };
+    public static KeyValues wrap(final String key, final Object value) {
+        return new OneKeyValues(key, value);
     }
 
     public static KeyValues wrap(final String[] keys, final Object[] values) {
-        return new ArrayKeyValues(keys, values);
+        if (keys != null && values != null) {
+            return new ArrayKeyValues(keys, values);
+        } else {
+            return EMPTY_KEY_VALUES;
+        }
     }
 
     public static KeyValues wrap(final Map<String, Object> map) {
-        if (map != null) {
+        if (map != null && !map.isEmpty()) {
             return new MapKeyValues(map);
         } else {
             return EMPTY_KEY_VALUES;
+        }
+    }
+
+    private static final class OneKeyValues implements KeyValues {
+
+        private final String key;
+        private final Object value;
+
+        OneKeyValues(String key, Object value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public void exportTo(KeyValueAccepter accepter) {
+            accepter.set(key, value);
+        }
+    }
+
+    private static final class TwoKeyValues implements KeyValues {
+
+        private final KeyValues v1;
+        private final KeyValues v2;
+
+        TwoKeyValues(KeyValues v1, KeyValues v2) {
+            this.v1 = v1;
+            this.v2 = v2;
+        }
+
+        public void exportTo(KeyValueAccepter accepter) {
+            v1.exportTo(accepter);
+            v2.exportTo(accepter);
+        }
+    }
+
+    private static final class ListKeyValues implements KeyValues {
+
+        private final KeyValues[] array;
+
+        ListKeyValues(KeyValues[] array) {
+            this.array = array;
+        }
+
+        public void exportTo(KeyValueAccepter accepter) {
+            for (KeyValues item : this.array) {
+                item.exportTo(accepter);
+            }
         }
     }
 
@@ -80,11 +119,7 @@ public class KeyValuesUtil {
         ArrayKeyValues(String[] keys, Object[] values) {
             this.keys = keys;
             this.values = values;
-            if (keys == null || values == null) {
-                this.size = 0;
-            } else {
-                this.size = Math.min(keys.length, values.length);
-            }
+            this.size = Math.min(keys.length, values.length);
         }
 
         public void exportTo(KeyValueAccepter accepter) {

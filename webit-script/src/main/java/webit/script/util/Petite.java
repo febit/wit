@@ -47,11 +47,8 @@ public final class Petite {
         injects.add(beanName);
 
         //inject @extends first
-        final Object extendsString = datas.get(beanName.concat(".@extends"));
-        if (extendsString != null) {
-            for (String profile : StringUtil.splitAndRemoveBlank(String.valueOf(extendsString))) {
-                wireBean(profile, bean, injects);
-            }
+        for (String profile : StringUtil.splitAndRemoveBlank(String.valueOf(datas.get(beanName.concat(".@extends"))))) {
+            wireBean(profile, bean, injects);
         }
 
         Entry entry = entrys.get(beanName);

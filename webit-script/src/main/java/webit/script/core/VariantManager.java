@@ -30,10 +30,9 @@ public class VariantManager {
 
         this.elements = new VarIndexer[10];
         final VarIndexer root = elements[0] = new VarIndexer(); //current
-        final String[] vars;
-        if ((vars = engine.getVars()) != null) {
-            for (int i = 0, len = vars.length; i < len; i++) {
-                String var = vars[i];
+        final String[] vars = engine.getVars();
+        if (vars != null) {
+            for (String var : vars) {
                 if (!root.contains(var)) {
                     root.assignVar(var, -1, -1);
                 }
@@ -125,7 +124,7 @@ public class VariantManager {
             }
             throw new ParseException("Can't locate vars: ".concat(name), line, column);
         } else {
-            throw new ParseException(StringUtil.concat("Stack overflow when locate vars in given upstair: ", name, "-", Integer.toString(upstair)), line, column);
+            throw new ParseException(StringUtil.format("Stack overflow when locate vars '{}' at upstair {}", name, upstair), line, column);
         }
     }
 

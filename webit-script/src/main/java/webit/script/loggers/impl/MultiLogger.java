@@ -25,36 +25,29 @@ public final class MultiLogger extends AbstractLogger implements Initable {
             for (int i = 0; i < len; i++) {
                 _loggers[i] = (Logger) engine.getComponent(loggers[i]);
             }
+        } else {
+            _loggers = new Logger[0];
         }
     }
 
     public boolean isEnabled(int level) {
-        Logger[] logs = this._loggers;
-        if (logs != null) {
-            for (int i = 0, len = logs.length; i < len; i++) {
-                if (logs[i].isEnabled(level)) {
-                    return true;
-                }
+        for (Logger logger : this._loggers) {
+            if (logger.isEnabled(level)) {
+                return true;
             }
         }
         return false;
     }
 
     public void log(int level, String msg) {
-        Logger[] logs = this._loggers;
-        if (logs != null) {
-            for (int i = 0, len = logs.length; i < len; i++) {
-                logs[i].log(level, msg);
-            }
+        for (Logger logger : this._loggers) {
+            logger.log(level, msg);
         }
     }
 
     public void log(int level, String msg, Throwable throwable) {
-        Logger[] logs = this._loggers;
-        if (logs != null) {
-            for (int i = 0, len = logs.length; i < len; i++) {
-                logs[i].log(level, msg, throwable);
-            }
+        for (Logger logger : this._loggers) {
+            logger.log(level, msg, throwable);
         }
     }
 

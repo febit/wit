@@ -23,6 +23,7 @@ import webit.script.util.StatementUtil;
  */
 public class Parser extends AbstractParser {
 
+    @SuppressWarnings("unchecked")
     final Object doAction(int actionId) throws ParseException {
         Stack<Symbol> myStack = this._stack;
 

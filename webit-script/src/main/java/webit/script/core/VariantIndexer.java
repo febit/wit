@@ -3,6 +3,7 @@ package webit.script.core;
 
 import java.util.HashMap;
 import java.util.Map;
+import webit.script.util.StringUtil;
 
 /**
  *
@@ -10,7 +11,7 @@ import java.util.Map;
  */
 public class VariantIndexer {
 
-    public static final VariantIndexer EMPTY = new VariantIndexer(new String[0]);
+    public static final VariantIndexer EMPTY = new VariantIndexer(StringUtil.EMPTY_ARRAY);
 
     public final int size;
     final String[] names;

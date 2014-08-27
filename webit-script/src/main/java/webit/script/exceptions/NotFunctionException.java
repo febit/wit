@@ -10,6 +10,6 @@ import webit.script.util.StringUtil;
 public class NotFunctionException extends RuntimeException {
 
     public NotFunctionException(Object real) {
-        super(StringUtil.concat("Not a function but a [", real == null ? "null" : real.getClass().getName(), "]."));
+        super(StringUtil.format("Not a function but a [{}].", real == null ? "null" : real.getClass()));
     }
 }

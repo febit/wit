@@ -25,17 +25,16 @@ public class NativeStaticValue extends AbstractExpression implements ResetableVa
         try {
             return field.get(null);
         } catch (Exception ex) {
-            throw new ScriptRuntimeException(StringUtil.concat("Failed to get static field value: ".concat(field.toString())), ex, this);
+            return new ScriptRuntimeException("Failed to get static field value: ".concat(field.toString()), ex, this);
         }
     }
 
     public Object setValue(Context context, Object value) {
         try {
-            field.set(null,value);
+            field.set(null, value);
             return value;
         } catch (Exception ex) {
-            throw new ScriptRuntimeException(StringUtil.concat("Failed to get static field value: ".concat(field.toString())), ex, this);
+            return new ScriptRuntimeException("Failed to set static field value: ".concat(field.toString()), ex, this);
         }
     }
-
 }

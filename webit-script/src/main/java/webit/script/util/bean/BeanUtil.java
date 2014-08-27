@@ -22,7 +22,7 @@ public class BeanUtil {
         if ((getter = getFieldDescriptor(bean.getClass(), name).getter) != null) {
             return getter.get(bean);
         } else {
-            throw new BeanUtilException(StringUtil.concat("Unable to get getter for ", bean.getClass().getName(), "#", name));
+            throw new BeanUtilException(StringUtil.format("Unable to get getter for {}#{}", bean.getClass(), name));
         }
     }
 
@@ -38,7 +38,7 @@ public class BeanUtil {
             }
             setter.set(bean, value);
         } else {
-            throw new BeanUtilException(StringUtil.concat("Unable to get setter for ", bean.getClass().getName(), "#", name));
+            throw new BeanUtilException(StringUtil.format("Unable to get setter for {}#{}", bean.getClass(), name));
         }
     }
 
@@ -61,16 +61,14 @@ public class BeanUtil {
         if ((fieldDescriptor = descs.get(name)) != null) {
             return fieldDescriptor;
         } else {
-            throw new BeanUtilException(StringUtil.concat("Unable to get field: ", cls.getName(), "#", name));
+            throw new BeanUtilException(StringUtil.format("Unable to get field: {}#{}", cls.getName(), name));
         }
     }
 
     private static Map<String, FieldDescriptor> resolveFieldDescriptors(Class cls) {
         final FieldInfo[] fieldInfos = FieldInfoResolver.resolve(cls);
         final Map<String, FieldDescriptor> map = new HashMap<String, FieldDescriptor>(fieldInfos.length * 4 / 3 + 1, 0.75f);
-        FieldInfo fieldInfo;
-        for (int i = 0, len = fieldInfos.length; i < len;) {
-            fieldInfo = fieldInfos[i++];
+        for (FieldInfo fieldInfo : fieldInfos) {
             //Getter
             final Getter getter;
             if (fieldInfo.getGetterMethod() != null) {

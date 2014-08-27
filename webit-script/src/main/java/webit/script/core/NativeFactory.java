@@ -70,6 +70,7 @@ public class NativeFactory implements Initable {
         return createNativeMethodDeclare(clazz, methodName, paramTypes, line, column, true);
     }
 
+    @SuppressWarnings("unchecked")
     public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, int line, int column, boolean checkAccess) {
         final String path = StringUtil.concat(clazz.getName(), ".", methodName);
         if (checkAccess && !this.nativeSecurityManager.access(path)) {

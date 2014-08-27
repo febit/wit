@@ -37,7 +37,7 @@ public class ResolverManager implements Initable {
 
     public ResolverManager() {
         this.ignoreNullPointer = true;
-        
+
         getResolverMap = new ClassMap<GetResolver>();
         setResolverMap = new ClassMap<SetResolver>();
         outResolverMap = new ClassMap<OutResolver>();
@@ -63,8 +63,9 @@ public class ResolverManager implements Initable {
     protected GetResolver resolveGetResolverIfAbsent(final Class type) {
         GetResolver resolver = getResolverMap.get(type);
         if (resolver == null) {
-            for (int i = 0; i < getResolverTypes.size(); i++) {
-                if (getResolverTypes.get(i).isAssignableFrom(type)) {
+            ArrayList<Class> types = getResolverTypes;
+            for (int i = 0, len = types.size(); i < len; i++) {
+                if (types.get(i).isAssignableFrom(type)) {
                     resolver = getResolvers.get(i);
                     break;
                 }
@@ -93,8 +94,9 @@ public class ResolverManager implements Initable {
         SetResolver resolver;
         resolver = setResolverMap.get(type);
         if (resolver == null) {
-            for (int i = 0; i < setResolverTypes.size(); i++) {
-                if (setResolverTypes.get(i).isAssignableFrom(type)) {
+            ArrayList<Class> types = setResolverTypes;
+            for (int i = 0, len = types.size(); i < len; i++) {
+                if (types.get(i).isAssignableFrom(type)) {
                     resolver = setResolvers.get(i);
                     break;
                 }
@@ -123,8 +125,9 @@ public class ResolverManager implements Initable {
         OutResolver resolver;
         resolver = outResolverMap.get(type);
         if (resolver == null) {
-            for (int i = 0; i < outResolverTypes.size(); i++) {
-                if (outResolverTypes.get(i).isAssignableFrom(type)) {
+            ArrayList<Class> types = outResolverTypes;
+            for (int i = 0, len = types.size(); i < len; i++) {
+                if (types.get(i).isAssignableFrom(type)) {
                     resolver = outResolvers.get(i);
                     break;
                 }
@@ -140,21 +143,22 @@ public class ResolverManager implements Initable {
 
     public void init(Engine engine) {
         this.logger = engine.getLogger();
-        for (int i = 0, len = resolvers.length; i < len; i++) {
-            Resolver resolver = (Resolver) engine.getComponent(resolvers[i]);
-            if (resolver.getMatchMode() == MatchMode.REGIST) {
-                ((RegistModeResolver) resolver).regist(this);
-            } else {
-                registResolver(resolver.getMatchClass(), resolver, resolver.getMatchMode());
+        if (resolvers != null) {
+            for (ClassEntry item : resolvers) {
+                Resolver resolver = (Resolver) engine.getComponent(item);
+                if (resolver.getMatchMode() == MatchMode.REGIST) {
+                    ((RegistModeResolver) resolver).regist(this);
+                } else {
+                    registResolver(resolver.getMatchClass(), resolver, resolver.getMatchMode());
+                }
             }
+            getResolvers.trimToSize();
+            setResolvers.trimToSize();
+            outResolvers.trimToSize();
+            getResolverTypes.trimToSize();
+            setResolverTypes.trimToSize();
+            outResolverTypes.trimToSize();
         }
-
-        getResolvers.trimToSize();
-        setResolvers.trimToSize();
-        outResolvers.trimToSize();
-        getResolverTypes.trimToSize();
-        setResolverTypes.trimToSize();
-        outResolverTypes.trimToSize();
     }
 
     public boolean registResolver(Class type, Resolver resolver, MatchMode matchMode) {

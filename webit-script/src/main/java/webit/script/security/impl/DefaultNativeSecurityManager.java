@@ -16,11 +16,10 @@ import webit.script.util.StringUtil;
  */
 public class DefaultNativeSecurityManager implements NativeSecurityManager, Initable {
 
-    //settings
-    private String list;
-    //
     private static final String ROOT_NODE_NAME = "*";
     private ConcurrentMap<String, Node> allNodes;
+    //settings
+    private String list;
 
     public boolean access(String path) {
         return getOrCreateNode(path).isAccess();
@@ -37,20 +36,15 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         rootNode.setAccess(false);
         nodes.put(ROOT_NODE_NAME, rootNode);
 
-        if (list != null) {
-            String[] nodeRules = StringUtil.splitAndRemoveBlank(list);
-            char firstChar;
+        for (String rule : StringUtil.splitAndRemoveBlank(list)) {
+            char firstChar = rule.charAt(0);
             boolean access;
-            String rule;
-            for (int i = 0, len = nodeRules.length; i < len; i++) {
-                rule = nodeRules[i];
-                if ((access = (firstChar = rule.charAt(0)) == '+') || firstChar == '-') {
-                    rule = rule.substring(1).trim();
-                } else {
-                    access = true;
-                }
-                getOrCreateNode(nodes, rule).setAccess(access);
+            if ((access = firstChar == '+') || firstChar == '-') {
+                rule = rule.substring(1).trim();
+            } else {
+                access = true;
             }
+            getOrCreateNode(nodes, rule).setAccess(access);
         }
         allNodes = new ConcurrentHashMap<String, Node>(nodes);
     }

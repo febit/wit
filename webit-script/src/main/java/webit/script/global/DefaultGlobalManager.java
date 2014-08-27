@@ -31,8 +31,8 @@ public class DefaultGlobalManager implements GlobalManager, Initable {
     public void init(Engine engine) {
         if (registers != null) {
             try {
-                for (int i = 0, len = registers.length; i < len; i++) {
-                    ((GlobalRegister) engine.getComponent(registers[i]))
+                for (ClassEntry entry : registers) {
+                    ((GlobalRegister) engine.getComponent(entry))
                             .regist(this);
                     this.commit();
                 }
@@ -115,29 +115,44 @@ public class DefaultGlobalManager implements GlobalManager, Initable {
     }
 
     public Bag getConstBag() {
-        return new Bag() {
-
-            public Object get(Object key) {
-                return constMap.get(key);
-            }
-
-            public void set(Object key, Object value) {
-                constMap.put(String.valueOf(key), value);
-            }
-        };
+        return new ConstBag(this);
     }
 
     public Bag getGlobalBag() {
-        return new Bag() {
-
-            public Object get(Object key) {
-                return getGlobal(String.valueOf(key));
-            }
-
-            public void set(Object key, Object value) {
-                setGlobal(String.valueOf(key), value);
-            }
-        };
+        return new GlobalBag(this);
     }
 
+    private static class ConstBag implements Bag {
+
+        final DefaultGlobalManager manager;
+
+        ConstBag(DefaultGlobalManager manager) {
+            this.manager = manager;
+        }
+
+        public Object get(Object key) {
+            return this.manager.getConst(String.valueOf(key));
+        }
+
+        public void set(Object key, Object value) {
+            this.manager.setConst(String.valueOf(key), value);
+        }
+    }
+
+    private static class GlobalBag implements Bag {
+
+        final DefaultGlobalManager manager;
+
+        GlobalBag(DefaultGlobalManager manager) {
+            this.manager = manager;
+        }
+
+        public Object get(Object key) {
+            return this.manager.getGlobal(String.valueOf(key));
+        }
+
+        public void set(Object key, Object value) {
+            this.manager.setGlobal(String.valueOf(key), value);
+        }
+    }
 }

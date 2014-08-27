@@ -9,24 +9,10 @@ import java.util.List;
  */
 public class StringUtil {
 
+    public static final String[] EMPTY_ARRAY = new String[0];
+
     public static String concat(String s1, String s2, String s3) {
         return s1.concat(s2).concat(s3);
-    }
-
-    public static String concat(String... strings) {
-        int len = 0;
-        int i;
-        final int size;
-        i = size = strings.length;
-        while (i != 0) {
-            --i;
-            len += strings[i].length();
-        }
-        StringBuilder sb = new StringBuilder(len);
-        for (i = 0; i < size; i++) {
-            sb.append(strings[i]);
-        }
-        return sb.toString();
     }
 
     public static String concat(String s1, String s2, String s3, String s4) {
@@ -65,7 +51,7 @@ public class StringUtil {
             return s;
         }
         char[] str = s.toCharArray();
-        for (int i = startIndex; i < str.length; i++) {
+        for (int i = startIndex,len = str.length; i < len; i++) {
             if (str[i] == sub) {
                 str[i] = with;
             }
@@ -154,16 +140,6 @@ public class StringUtil {
             sb.append(strings[j]);
         }
         return sb.toString();
-    }
-
-    public static String prefixChar(String string, char prefix) {
-        if (string != null && string.length() > 0) {
-            return string.charAt(0) == prefix
-                    ? string
-                    : prefix + string;
-        } else {
-            return String.valueOf(prefix);
-        }
     }
 
     public static void trimAll(final String[] strings) {
@@ -286,33 +262,26 @@ public class StringUtil {
 
     private static final char[] DEFAULT_DELIMITERS = ",\n\r".toCharArray();
 
-    public static String[] split(String src) {
-        return splitc(src, DEFAULT_DELIMITERS);
-    }
-
     public static String[] splitAndRemoveBlank(String src) {
         if (src == null) {
-            return null;
+            return EMPTY_ARRAY;
         }
         final String[] array = splitc(src, DEFAULT_DELIMITERS);
         int count = 0;
-        for (int i = 0; i < array.length; i++) {
-            String item = array[i].trim();
+        for (String array1 : array) {
+            String item = array1.trim();
             if (item.length() == 0) {
                 continue;
             }
             array[count++] = item;
         }
+        if (count == 0) {
+            return EMPTY_ARRAY;
+        }
         if (count != array.length) {
             return ArrayUtil.subarray(array, 0, count);
         }
         return array;
-    }
-
-    public static String[] splitAndTrimAll(String src) {
-        final String[] result = splitc(src, DEFAULT_DELIMITERS);
-        trimAll(result);
-        return result;
     }
 
     /**

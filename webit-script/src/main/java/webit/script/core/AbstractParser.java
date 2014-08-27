@@ -226,7 +226,7 @@ abstract class AbstractParser {
         }
         final String fieldName = classNameBand.pop();
         final Class clazz = toClass(classNameBand, line, column);
-        final String path = (StringUtil.concat(clazz.getName(), ".", fieldName));
+        final String path = StringUtil.concat(clazz.getName(), ".", fieldName);
         if (!this.engine.getNativeSecurityManager().access(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
@@ -508,7 +508,7 @@ abstract class AbstractParser {
 
             } else {
                 //act == 0
-                throw new ParseException(StringUtil.concat("Syntax error before: ", Integer.toString(lexer.getLine()), "(", Integer.toString(lexer.getColumn()), ")", ". Hints: ", getSimpleHintMessage(currentSymbol)), lexer.getLine(), lexer.getColumn());
+                throw new ParseException(StringUtil.format("Syntax error at line {} column {}, Hints: {}", lexer.getLine(), lexer.getColumn(), getSimpleHintMessage(currentSymbol)), lexer.getLine(), lexer.getColumn());
             }
         } while (goonParse);
 
