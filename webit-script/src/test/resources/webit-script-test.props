@@ -7,7 +7,7 @@
 '''
 
 [engine]
-logger=webit.script.loggers.impl.Slf4jLogger
+logger=webit.script.loggers.impl.SimpleLogger
 vars+=request,request2,session,session
 assistantSuffixs+=.whtml, .wit2
 appendLostSuffix=true

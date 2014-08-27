@@ -56,10 +56,10 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
     }
 
     public void render(final Out out, Object bean) {
-        final Class objClass;
-        if ((objClass = bean.getClass()) == char[].class) {
+        final Class type;
+        if ((type = bean.getClass()) == char[].class) {
             out.write((char[]) bean);
-        } else if (objClass == byte[].class) {
+        } else if (type == byte[].class) {
             out.write((byte[]) bean);
         } else {
             out.write(ArrayUtil.arrayToString(bean));

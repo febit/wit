@@ -18,7 +18,7 @@ public class ClassUtil {
     private ClassUtil() {
     }
 
-    public static char getAliasOfBaseType(final String name) {
+    private static char getAliasOfBaseType(final String name) {
         switch (name.charAt(0)) {
             case 'v':
                 if ("void".equals(name)) {
@@ -106,34 +106,42 @@ public class ClassUtil {
                 if (name.equals("byte")) {
                     return byte.class;
                 }
+                break;
             case 'c':
                 if (name.equals("char")) {
                     return char.class;
                 }
+                break;
             case 's':
                 if (name.equals("short")) {
                     return short.class;
                 }
+                break;
             case 'i':
                 if (name.equals("int")) {
                     return int.class;
                 }
+                break;
             case 'l':
                 if (name.equals("long")) {
                     return long.class;
                 }
+                break;
             case 'f':
                 if (name.equals("float")) {
                     return float.class;
                 }
+                break;
             case 'd':
                 if (name.equals("double")) {
                     return double.class;
                 }
+                break;
             case 'v':
                 if (name.equals("void")) {
                     return void.class;
                 }
+                break;
             case 'B':
                 if (name.equals("Boolean")) {
                     return Boolean.class;
@@ -141,6 +149,7 @@ public class ClassUtil {
                 if (name.equals("Byte")) {
                     return Byte.class;
                 }
+                break;
             case 'C':
                 if (name.equals("Character")) {
                     return Character.class;
@@ -148,6 +157,7 @@ public class ClassUtil {
                 if (name.equals("Class")) {
                     return Class.class;
                 }
+                break;
             case 'S':
                 if (name.equals("String")) {
                     return String.class;
@@ -155,30 +165,37 @@ public class ClassUtil {
                 if (name.equals("Short")) {
                     return Short.class;
                 }
+                break;
             case 'I':
                 if (name.equals("Integer")) {
                     return Integer.class;
                 }
+                break;
             case 'L':
                 if (name.equals("Long")) {
                     return Long.class;
                 }
+                break;
             case 'F':
                 if (name.equals("Float")) {
                     return Float.class;
                 }
+                break;
             case 'D':
                 if (name.equals("Double")) {
                     return Double.class;
                 }
+                break;
             case 'N':
                 if (name.equals("Number")) {
                     return Number.class;
                 }
+                break;
             case 'O':
                 if (name.equals("Object")) {
                     return Object.class;
                 }
+                break;
             case 'V':
                 if (name.equals("Void")) {
                     return Void.class;

@@ -20,18 +20,13 @@ public final class SimpleLogger extends AbstractLogger implements Initable {
 
     public void init(Engine engine) {
         prefix = StringUtil.concat("[", name, "] ");
+
         String levelString = level.trim().toLowerCase();
-        if ("error".equals(levelString)) {
-            levelNum = LEVEL_ERROR;
-        } else if ("warn".equals(levelString)) {
-            levelNum = LEVEL_WARN;
-        } else if ("info".equals(levelString)) {
-            levelNum = LEVEL_INFO;
-        } else if ("debug".equals(levelString)) {
-            levelNum = LEVEL_DEBUG;
-        } else {
-            levelNum = Integer.MAX_VALUE;
-        }
+        levelNum = "error".equals(levelString) ? LEVEL_ERROR
+                : "warn".equals(levelString) ? LEVEL_WARN
+                : "info".equals(levelString) ? LEVEL_INFO
+                : "debug".equals(levelString) ? LEVEL_DEBUG
+                : Integer.MAX_VALUE;
     }
 
     public boolean isEnabled(int level) {
@@ -48,10 +43,7 @@ public final class SimpleLogger extends AbstractLogger implements Initable {
 
     protected void printLog(int level, String msg, Throwable throwable) {
         if (isEnabled(level)) {
-            if (prefix != null) {
-                msg = prefix.concat(msg != null ? msg : "null");
-            }
-            System.out.print(msg);
+            System.out.println(prefix == null ? msg : prefix.concat(msg != null ? msg : "null"));
             if (throwable != null) {
                 throwable.printStackTrace(System.out);
             }

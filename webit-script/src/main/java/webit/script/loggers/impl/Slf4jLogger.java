@@ -35,16 +35,16 @@ public class Slf4jLogger extends AbstractLogger implements Initable {
         switch (level) {
             case LEVEL_DEBUG:
                 log.debug(msg);
-                break;
+                return;
             case LEVEL_INFO:
                 log.info(msg);
-                break;
+                return;
             case LEVEL_WARN:
                 log.warn(msg);
-                break;
+                return;
             case LEVEL_ERROR:
                 log.error(msg);
-                break;
+                return;
         }
     }
 
@@ -52,16 +52,16 @@ public class Slf4jLogger extends AbstractLogger implements Initable {
         switch (level) {
             case LEVEL_DEBUG:
                 log.debug(msg, throwable);
-                break;
+                return;
             case LEVEL_INFO:
                 log.info(msg, throwable);
-                break;
+                return;
             case LEVEL_WARN:
                 log.warn(msg, throwable);
-                break;
+                return;
             case LEVEL_ERROR:
                 log.error(msg, throwable);
-                break;
+                return;
         }
     }
 }

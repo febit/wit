@@ -18,7 +18,7 @@ public class IntegerOutResolver implements OutResolver, RegistModeResolver {
     }
 
     public Class<?> getMatchClass() {
-        return Integer.class;
+        return null;
     }
 
     public void regist(ResolverManager resolverManager) {

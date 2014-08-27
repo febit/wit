@@ -19,11 +19,12 @@ public final class MultiLogger extends AbstractLogger implements Initable {
     private ClassEntry[] loggers;
 
     public void init(Engine engine) {
-        if (loggers != null && loggers.length > 0) {
-            int len = loggers.length;
+        ClassEntry[] entrys = this.loggers;
+        if (entrys != null) {
+            int len = entrys.length;
             _loggers = new Logger[len];
             for (int i = 0; i < len; i++) {
-                _loggers[i] = (Logger) engine.getComponent(loggers[i]);
+                _loggers[i] = (Logger) engine.getComponent(entrys[i]);
             }
         } else {
             _loggers = new Logger[0];
