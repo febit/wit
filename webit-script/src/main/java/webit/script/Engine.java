@@ -88,7 +88,7 @@ public final class Engine {
         this.nativeSecurityManager = (NativeSecurityManager) newComponentInstance(this.nativeSecurityManagerType, webit.script.security.impl.NoneNativeSecurityManager.class);
         this.textStatementFactory = (TextStatementFactory) newComponentInstance(this.textStatementFactoryType, webit.script.core.text.impl.SimpleTextStatementFactory.class);
         this.resourceLoader = (Loader) newComponentInstance(this.resourceLoaderType, webit.script.loaders.impl.ClasspathLoader.class);
-        this.globalManager = (GlobalManager) newComponentInstance(this.globalManagerType, webit.script.global.DefaultGlobalManager.class);
+        this.globalManager = (GlobalManager) newComponentInstance(this.globalManagerType, webit.script.global.GlobalManager.class);
 
         resolveComponent(this.logger, this.loggerType);
         this.petite.setLogger(this.logger);
@@ -110,13 +110,10 @@ public final class Engine {
             final GlobalManager myGlobalManager = this.globalManager;
             final Bag globalBag = myGlobalManager.getGlobalBag();
             final Bag constBag = myGlobalManager.getGlobalBag();
-            final KeyValues params = KeyValuesUtil.wrap(new String[]{
-                "GLOBAL", "GLOBAL_MAP",
-                "CONST", "CONST_MAP"
-            }, new Object[]{
-                globalBag, globalBag,
-                constBag, constBag
-            });
+            final KeyValues params = KeyValuesUtil.wrap(
+                    new String[]{"GLOBAL", "CONST"},
+                    new Object[]{globalBag, constBag}
+            );
             for (String templateName : StringUtil.splitAndRemoveBlank(this.inits)) {
                 if (this.logger.isInfoEnabled()) {
                     this.logger.info("Merge init template: {}", templateName);

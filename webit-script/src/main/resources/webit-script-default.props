@@ -8,10 +8,7 @@ encoding=${DEFAULT_ENCODING}
 resourceLoader=webit.script.loaders.impl.RouteLoader-main
 assistantSuffixs+=.wit
 # textStatementFactory=webit.script.core.text.impl.SimpleTextStatementFactory
-### nativeSecurityManager=webit.script.security.impl.DefaultNativeSecurityManager
 # nativeSecurityManager=webit.script.security.impl.NoneNativeSecurityManager
-# globalManager=webit.script.global.DefaultGlobalManager
-# filter=webit.script.filters.impl.MutiFilter
 # logger=webit.script.loggers.impl.NOPLogger
 
 # looseVar=false
@@ -28,7 +25,7 @@ assistantSuffixs+=.wit
 resolvers='''
     webit.script.resolvers.impl.ScriptUnsetableBagResolver
     webit.script.resolvers.impl.MapResolver
-    webit.script.resolvers.impl.SimpleBagResolver
+    webit.script.resolvers.impl.BagResolver
     webit.script.resolvers.impl.ListResolver
     webit.script.resolvers.impl.CharSequenceResolver
     webit.script.resolvers.impl.ArrayResolver
@@ -65,7 +62,7 @@ list +='''
 [webit.script.asm.AsmResolverManager]
 @extends=resolverManager
 
-[webit.script.global.DefaultGlobalManager]
+[webit.script.global.GlobalManager]
 @extends=global
 
 [webit.script.security.impl.DefaultNativeSecurityManager]
@@ -82,9 +79,6 @@ root=
 @extends=routeLoader-main
 
 [webit.script.loaders.impl.ClasspathLoader]
-@extends=loader
-
-[webit.script.web.loaders.ServletLoader]
 @extends=loader
 
 [webit.script.loaders.impl.FileLoader]

@@ -39,7 +39,7 @@ public class AsmResolverFactory {
                     className = resolveClassName(beanClass),
                     generateClassBody(className, beanClass));
         } else {
-            throw new Exception(StringUtil.concat("Class [", beanClass.getName(), "] is not a public class"));
+            throw new Exception(StringUtil.format("Class [{}] is not public", beanClass));
         }
     }
 

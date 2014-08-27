@@ -6,7 +6,6 @@ import java.util.List;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.core.NativeFactory;
-import webit.script.lang.Bag;
 
 /**
  *
@@ -19,20 +18,18 @@ public class TestGlobalRegister implements GlobalRegister, Initable {
     public void regist(final GlobalManager manager) {
 
         //Globals
-        Bag globalBag = manager.getGlobalBag();
-        globalBag.set("MY_GLOBAL", "MY_GLOBAL");
-        globalBag.set("MY_GLOBAL_2", "MY_GLOBAL_2");
+        manager.setGlobal("MY_GLOBAL", "MY_GLOBAL");
+        manager.setGlobal("MY_GLOBAL_2", "MY_GLOBAL_2");
 
         //Consts
-        Bag constBag = manager.getConstBag();
-        constBag.set("MY_CONST", "MY_CONST");
-        constBag.set("MY_CONST_2", "MY_CONST_2");
+        manager.setConst("MY_CONST", "MY_CONST");
+        manager.setConst("MY_CONST_2", "MY_CONST_2");
 
         //Native
-        constBag.set("new_list", this.nativeFactory.createNativeConstructorDeclare(ArrayList.class, null));
-        constBag.set("list_size", this.nativeFactory.createNativeMethodDeclare(List.class, "size", null));
-        constBag.set("list_add", this.nativeFactory.createNativeMethodDeclare(List.class, "add", new Class[]{Object.class}));
-        constBag.set("substring", this.nativeFactory.createNativeMethodDeclare(String.class, "substring", new Class[]{int.class, int.class}));
+        manager.setConst("new_list", this.nativeFactory.createNativeConstructorDeclare(ArrayList.class, null));
+        manager.setConst("list_size", this.nativeFactory.createNativeMethodDeclare(List.class, "size", null));
+        manager.setConst("list_add", this.nativeFactory.createNativeMethodDeclare(List.class, "add", new Class[]{Object.class}));
+        manager.setConst("substring", this.nativeFactory.createNativeMethodDeclare(String.class, "substring", new Class[]{int.class, int.class}));
     }
 
     public void init(Engine engine) {

@@ -11,7 +11,6 @@ import webit.script.global.GlobalRegister;
 import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
-import webit.script.lang.Bag;
 import webit.script.lang.MethodDeclare;
 import webit.script.tools.cache.impl.SimpleCacheProvider;
 import webit.script.util.ArrayUtil;
@@ -35,15 +34,12 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
     protected CacheProvider _cacheProvider;
 
     public void regist(GlobalManager manager) {
-
-        final Bag constBag = manager.getConstBag();
-
-        constBag.set(name, new CacheMethodDeclare(_cacheProvider));
+        manager.setConst(name, new CacheMethodDeclare(_cacheProvider));
         if (registCacheRemove) {
-            constBag.set(name + "_remove", new CacheRemoveMethodDeclare(_cacheProvider));
+            manager.setConst(name + "_remove", new CacheRemoveMethodDeclare(_cacheProvider));
         }
         if (registCacheClear) {
-            constBag.set(name + "_clear", new CacheClearMethodDeclare(_cacheProvider));
+            manager.setConst(name + "_clear", new CacheClearMethodDeclare(_cacheProvider));
         }
     }
 

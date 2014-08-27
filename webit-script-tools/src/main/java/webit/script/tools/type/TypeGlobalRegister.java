@@ -3,7 +3,6 @@ package webit.script.tools.type;
 
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
-import webit.script.lang.Bag;
 
 /**
  *
@@ -12,13 +11,11 @@ import webit.script.lang.Bag;
 public class TypeGlobalRegister implements GlobalRegister {
 
     public void regist(GlobalManager manager) {
-        final Bag constBag = manager.getConstBag();
-
-        constBag.set("is_array", TypeMethods.is_array);
-        constBag.set("is_bool", TypeMethods.is_bool);
-        constBag.set("is_function", TypeMethods.is_function);
-        constBag.set("is_callable", TypeMethods.is_function);
-        constBag.set("is_null", TypeMethods.is_null);
-        constBag.set("is_number", TypeMethods.is_number);
+        manager.setConst("is_array", TypeMethods.is_array);
+        manager.setConst("is_bool", TypeMethods.is_bool);
+        manager.setConst("is_function", TypeMethods.is_function);
+        manager.setConst("is_callable", TypeMethods.is_function);
+        manager.setConst("is_null", TypeMethods.is_null);
+        manager.setConst("is_number", TypeMethods.is_number);
     }
 }

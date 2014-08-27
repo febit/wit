@@ -3,7 +3,6 @@ package webit.script.tools.testunit;
 
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
-import webit.script.lang.Bag;
 
 /**
  *
@@ -12,15 +11,13 @@ import webit.script.lang.Bag;
 public class AssertGlobalRegister implements GlobalRegister {
 
     public void regist(final GlobalManager manager) {
-        final Bag constBag = manager.getConstBag();
-
-        constBag.set("assertTrue", Assert.assertTrue);
-        constBag.set("assertFalse", Assert.assertFalse);
-        constBag.set("assertNull", Assert.assertNull);
-        constBag.set("assertNotNull", Assert.assertNotNull);
-        constBag.set("assertSame", Assert.assertSame);
-        constBag.set("assertNotSame", Assert.assertNotSame);
-        constBag.set("assertEquals", Assert.assertEquals);
-        constBag.set("assertArrayEquals", Assert.assertArrayEquals);
+        manager.setConst("assertTrue", Assert.assertTrue);
+        manager.setConst("assertFalse", Assert.assertFalse);
+        manager.setConst("assertNull", Assert.assertNull);
+        manager.setConst("assertNotNull", Assert.assertNotNull);
+        manager.setConst("assertSame", Assert.assertSame);
+        manager.setConst("assertNotSame", Assert.assertNotSame);
+        manager.setConst("assertEquals", Assert.assertEquals);
+        manager.setConst("assertArrayEquals", Assert.assertArrayEquals);
     }
 }

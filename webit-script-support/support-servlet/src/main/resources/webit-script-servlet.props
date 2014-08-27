@@ -1,7 +1,7 @@
 
 
 [routeLoader-main]
-default=webit.script.web.loaders.ServletLoader
+default=webit.script.servlet.loaders.ServletLoader
 
 
 [engine]
@@ -27,9 +27,9 @@ resolvers +='''
 @extends=servlet,loader
 root=/WEB-INF/templates
 
-[webit.script.web.loaders.ServletLoader]
-@extends=servletLoader
+[webit.script.servlet.loaders.ServletLoader]
+@extends=loader,servletLoader
 
 
 [global]
-registers+=webit.script.web.global.GlobalServletRegister
+registers+=webit.script.servlet.global.GlobalServletRegister

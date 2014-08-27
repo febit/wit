@@ -19,7 +19,6 @@ import webit.script.util.Props;
 public class ServletEngineUtil {
 
     private static final String DEFAULT_WEB_PROPERTIES = "/webit-script-servlet.props";
-    private static final String WEB_ROOT_PREFIX = "%WEB_ROOT%/";
 
     public static Engine createEngine(final ServletContext servletContext, final String configFiles) {
         return createEngine(servletContext, configFiles, null);
@@ -29,7 +28,7 @@ public class ServletEngineUtil {
     public static Engine createEngine(final ServletContext servletContext, final String configFiles, final Map<String, Object> extraSettings) {
         final Map<String, Object> settings;
         final Props props;
-        props = loadFromServletContextPath(Engine.createConfigProps(DEFAULT_WEB_PROPERTIES), servletContext, configFiles);
+        props = loadProps(Engine.createConfigProps(DEFAULT_WEB_PROPERTIES), servletContext, configFiles);
         settings = new HashMap<String, Object>();
         settings.put(CFG.SERVLET_CONTEXT, servletContext);
         if (extraSettings != null) {
@@ -38,31 +37,39 @@ public class ServletEngineUtil {
         return Engine.create(props, settings);
     }
 
-    public static Props loadFromServletContextPath(final Props props, final ServletContext servletContext, final String... paths) {
-
-        return PropsUtil.load(props, new PropsUtil.InputStreamResolver() {
-
-            public InputStream openInputStream(String path) {
-                if (path.charAt(0) == '/') {
-                    path = path.substring(1);
-                }
-                final InputStream in;
-                if ((in = servletContext.getResourceAsStream(path)) != null) {
-                    return in;
-                }
-                try {
-                    //try read file by real path
-                    return new FileInputStream(servletContext.getRealPath(path));
-                } catch (FileNotFoundException ignore) {
-                }
-                return null;
-            }
-
-            public String getViewPath(String path) {
-                return WEB_ROOT_PREFIX.concat(path.charAt(0) == '/'
-                        ? path.substring(1)
-                        : path);
-            }
-        }, paths);
+    public static Props loadProps(final Props props, final ServletContext servletContext, final String... paths) {
+        return PropsUtil.load(props, new ServletContextInputResolver(servletContext), paths);
     }
+
+    private static class ServletContextInputResolver implements PropsUtil.InputResolver {
+
+        private final ServletContext servletContext;
+
+        ServletContextInputResolver(ServletContext servletContext) {
+            this.servletContext = servletContext;
+        }
+
+        public InputStream openInputStream(String path) {
+            if (path.charAt(0) == '/') {
+                path = path.substring(1);
+            }
+            final InputStream in;
+            if ((in = servletContext.getResourceAsStream(path)) != null) {
+                return in;
+            }
+            try {
+                //try read file by real path
+                return new FileInputStream(servletContext.getRealPath(path));
+            } catch (FileNotFoundException ignore) {
+            }
+            return null;
+        }
+
+        public String getViewPath(String path) {
+            return "%WEB_ROOT%/".concat(path.charAt(0) == '/'
+                    ? path.substring(1)
+                    : path);
+        }
+    }
+
 }

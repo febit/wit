@@ -10,7 +10,7 @@ import webit.script.resolvers.SetResolver;
  *
  * @author zqq90
  */
-public class SimpleBagResolver implements GetResolver, SetResolver {
+public class BagResolver implements GetResolver, SetResolver {
 
     public Object get(Object object, Object property) {
         return ((Bag) object).get(property);

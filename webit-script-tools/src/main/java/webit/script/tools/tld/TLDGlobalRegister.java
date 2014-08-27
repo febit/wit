@@ -7,7 +7,6 @@ import webit.script.Initable;
 import webit.script.core.NativeFactory;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
-import webit.script.lang.Bag;
 import webit.script.lang.MethodDeclare;
 import webit.script.loggers.Logger;
 import webit.script.util.ClassUtil;
@@ -23,7 +22,6 @@ public class TLDGlobalRegister implements GlobalRegister, Initable {
     protected String tld;
     protected boolean checkAccess = false;
 
-    //
     protected Engine engine;
     protected NativeFactory nativeFactory;
 
@@ -38,13 +36,11 @@ public class TLDGlobalRegister implements GlobalRegister, Initable {
             logger.info("Load TLD file: "+ tld);
         }
 
-        final Bag constBag = manager.getConstBag();
-
         try {
             TLDFunction[] functions = TLDDocumentParser.parse(inputStream);
             for (int i = 0, len = functions.length; i < len; i++) {
                 TLDFunction func = functions[i];
-                constBag.set(this.prefix + func.name, createMethodDeclare(func));
+                manager.setConst(this.prefix + func.name, createMethodDeclare(func));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
