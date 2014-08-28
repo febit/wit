@@ -65,7 +65,7 @@ public class VariantManager {
 
     public void checkVarWall(int index) {
         for (int i = 0, len = varWallStack.size(); i < len; i++) {
-            if (varWallStack.peek(i).checkOverflow(index) == false) {
+            if (!varWallStack.peek(i).checkOverflow(index)) {
                 break;
             }
         }

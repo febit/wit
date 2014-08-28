@@ -82,7 +82,7 @@ public class BeanUtil {
             final Setter setter;
             if (fieldInfo.getSetterMethod() != null) {
                 setter = new MethodSetter(fieldInfo.getSetterMethod());
-            } else if (fieldInfo.getField() != null && fieldInfo.isIsFinal() == false) {
+            } else if (fieldInfo.getField() != null && !fieldInfo.isIsFinal()) {
                 setter = new FieldSetter(fieldInfo.getField());
             } else {
                 setter = null;

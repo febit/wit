@@ -17,7 +17,7 @@ public class AsmResolverManager extends ResolverManager{
     @Override
     protected SetResolver resolveSetResolver(Class type) {
         try {
-            return webit.script.asm.AsmResolverManager.getAsmResolver(type);
+            return getAsmResolver(type);
         } catch (Exception e) {
             logger.warn("Failed to generate AsmResolver for type '{}', use default resolver instead.", type.getName());
         }
@@ -27,7 +27,7 @@ public class AsmResolverManager extends ResolverManager{
     @Override
     protected GetResolver resolveGetResolver(Class type) {
         try {
-            return webit.script.asm.AsmResolverManager.getAsmResolver(type);
+            return getAsmResolver(type);
         } catch (Exception e) {
             logger.warn("Failed to generate AsmResolver for type '{}', use default resolver instead.", type.getName());
         }

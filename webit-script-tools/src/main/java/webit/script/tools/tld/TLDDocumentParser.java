@@ -39,7 +39,7 @@ public class TLDDocumentParser {
             final int lparenIndex = functionSignature.indexOf('(');
             int methodNameEnd = lparenIndex;
             while (methodNameEnd >= 0) {
-                if (CharUtil.isWhitespace(functionSignature.charAt(--methodNameEnd)) == false) {
+                if (!CharUtil.isWhitespace(functionSignature.charAt(--methodNameEnd))) {
                     methodNameEnd++;
                     break;
                 }

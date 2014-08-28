@@ -223,7 +223,7 @@ public class AsmMethodAccessorFactory {
             mg.mark(pushArgs);
 
             int i_args = 0;
-            if (isStatic == false) {
+            if (!isStatic) {
                 mg.loadLocal(var_args);
                 mg.push(0);
                 mg.arrayLoad(ASMUtil.TYPE_OBJECT);

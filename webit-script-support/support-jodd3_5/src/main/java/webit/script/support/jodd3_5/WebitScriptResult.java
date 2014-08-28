@@ -76,7 +76,7 @@ public class WebitScriptResult extends BaseActionResult<Object> implements WebEn
             customPath = resultValue.toString();
         }
 
-        if (contentTypeSetted == false && contentType != null) {
+        if (!contentTypeSetted && contentType != null) {
             response.setContentType(contentType);
         }
 

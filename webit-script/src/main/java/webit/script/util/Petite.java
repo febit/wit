@@ -121,7 +121,7 @@ public final class Petite {
     }
 
     private void initalize() {
-        if (initalized == false) {
+        if (!initalized) {
             Map<String, Entry> paramEntrys = new HashMap<String, Entry>();
             for (Map.Entry<String, Object> entry : datas.entrySet()) {
                 String key = entry.getKey();

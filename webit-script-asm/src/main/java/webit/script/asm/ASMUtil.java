@@ -186,7 +186,7 @@ public class ASMUtil {
         }
         // else ignore
     }
-
+    
     public static void appendThrowScriptRuntimeException(final GeneratorAdapter mg, final String message) {
         mg.newInstance(TYPE_SCRIPT_RUNTIME_EXCEPTION);
         mg.dup();

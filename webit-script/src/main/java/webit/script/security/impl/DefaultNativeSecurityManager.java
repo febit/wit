@@ -104,10 +104,10 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
          * @return the value after set
          */
         public final boolean setAccess(boolean access) {
-            if (this.inherit == false) {
+            if (!this.inherit) {
                 //if already has a value
                 //black list has higher priority
-                if (access == false) {
+                if (!access) {
                     this.access = false;
                     return false;
                 } else {

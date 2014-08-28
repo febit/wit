@@ -25,7 +25,7 @@ public abstract class AbstractLoader implements Loader, Initable {
         if (this.encoding == null) {
             this.encoding = engine.getEncoding();
         }
-        if (this.appendLostSuffixSettedFlag == false) {
+        if (!this.appendLostSuffixSettedFlag) {
             this.appendLostSuffix = engine.isAppendLostSuffix();
         }
         if (this.suffix == null) {
@@ -98,7 +98,7 @@ public abstract class AbstractLoader implements Loader, Initable {
         if (name == null) {
             return null;
         }
-        if (this.appendLostSuffix == false
+        if (!this.appendLostSuffix
                 || name.endsWith(this.suffix)
                 || name.charAt(name.length() - 1) == '/') {
             return name;

@@ -95,7 +95,7 @@ public final class ClassNameBand {
         if (index == 0) {
             return null;
         }
-        if (index == 1 && isArray == false) {
+        if (index == 1 && !isArray) {
             return array[0];
         }
         // join strings

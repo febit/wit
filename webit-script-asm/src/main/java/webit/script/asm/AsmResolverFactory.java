@@ -164,7 +164,7 @@ public class AsmResolverFactory {
             ASMUtil.appendUnBoxCodeIfNeed(mg, fieldClass);
             mg.invokeVirtual(beanType, setterMethod);
             appendReturnTrue(mg);
-        } else if (fieldInfo.getField() != null && fieldInfo.isIsFinal() == false) {
+        } else if (fieldInfo.getField() != null && !fieldInfo.isIsFinal()) {
             //return book.name = (String) name;
             Class fieldClass = fieldInfo.getField().getType();
             Type fieldType = Type.getType(fieldClass);
