@@ -34,10 +34,9 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
         }
     }
 
-    public boolean set(Object object, Object property, Object value) {
+    public void set(Object object, Object property, Object value) {
         if (property instanceof Number) {
             ArrayUtil.setByIndex(object, ((Number) property).intValue(), value);
-            return true;
         } else {
             throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: array#", property));
         }

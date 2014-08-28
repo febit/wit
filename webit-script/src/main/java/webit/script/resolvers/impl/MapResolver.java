@@ -20,8 +20,7 @@ public class MapResolver implements GetResolver, SetResolver {
     }
 
     @SuppressWarnings("unchecked")
-    public boolean set(Object object, Object property, Object value) {
+    public void set(Object object, Object property, Object value) {
         ((Map) object).put(property, value);
-        return true;
     }
 }

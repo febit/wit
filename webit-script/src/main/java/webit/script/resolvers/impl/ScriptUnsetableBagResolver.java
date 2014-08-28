@@ -18,7 +18,7 @@ public class ScriptUnsetableBagResolver implements GetResolver, SetResolver {
         return ((SimpleUnsetableBag) object).get(property);
     }
 
-    public boolean set(Object object, Object property, Object value) {
+    public void set(Object object, Object property, Object value) {
         throw new ScriptRuntimeException("This is an unsetable Object!");
     }
 

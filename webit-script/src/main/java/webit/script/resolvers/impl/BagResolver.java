@@ -15,9 +15,8 @@ public class BagResolver implements GetResolver, SetResolver {
         return ((Bag) object).get(property);
     }
 
-    public boolean set(Object object, Object property, Object value) {
+    public void set(Object object, Object property, Object value) {
         ((Bag) object).set(property, value);
-        return true;
     }
 
     public Class<?> getMatchClass() {

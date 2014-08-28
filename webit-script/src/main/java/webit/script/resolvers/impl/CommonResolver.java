@@ -22,10 +22,9 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver {
         }
     }
 
-    public boolean set(final Object object, final Object property, final Object value) {
+    public void set(final Object object, final Object property, final Object value) {
         try {
             BeanUtil.set(object, String.valueOf(property), value);
-            return true;
         } catch (Exception e) {
             throw new ScriptRuntimeException(e.getMessage());
         }

@@ -7,5 +7,5 @@ package webit.script.resolvers;
  */
 public interface SetResolver extends Resolver {
 
-    boolean set(Object object, Object property, Object value);
+    void set(Object object, Object property, Object value);
 }

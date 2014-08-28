@@ -37,7 +37,7 @@ public class ASMUtil {
 
     public static final Method METHOD_ASM_RESOLVER_getMatchClass = new Method("getMatchClass", "()Ljava/lang/Class;");
     public static final Method METHOD_ASM_RESOLVER_GET = new Method("get", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
-    public static final Method METHOD_ASM_RESOLVER_SET = new Method("set", "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z");
+    public static final Method METHOD_ASM_RESOLVER_SET = new Method("set", "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V");
     //AsmMethodCaller#execute(Object[])
     public static final Method METHOD_EXECUTE = new Method("execute", "([Ljava/lang/Object;)Ljava/lang/Object;");
     //System#arraycopy

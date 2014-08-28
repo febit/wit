@@ -15,15 +15,15 @@ import webit.script.resolvers.SetResolver;
 public class ScriptVoidResolver implements GetResolver, SetResolver, OutResolver {
 
     public Object get(Object object, Object property) {
-        throw new ScriptRuntimeException("'Void' type has no propertys.");
+        throw new ScriptRuntimeException("'Void' type has no property.");
     }
 
     public Class<?> getMatchClass() {
         return Void.class;
     }
 
-    public boolean set(Object object, Object property, Object value) {
-        throw new ScriptRuntimeException("'Void' type has no propertys.");
+    public void set(Object object, Object property, Object value) {
+        throw new ScriptRuntimeException("'Void' type has no property.");
     }
 
     public void render(Out out, Object bean) {

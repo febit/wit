@@ -163,7 +163,7 @@ public class AsmResolverFactory {
             mg.checkCast(ASMUtil.getBoxedType(fieldClass));
             ASMUtil.appendUnBoxCodeIfNeed(mg, fieldClass);
             mg.invokeVirtual(beanType, setterMethod);
-            appendReturnTrue(mg);
+            mg.returnValue();
         } else if (fieldInfo.getField() != null && !fieldInfo.isIsFinal()) {
             //return book.name = (String) name;
             Class fieldClass = fieldInfo.getField().getType();
@@ -178,7 +178,7 @@ public class AsmResolverFactory {
             mg.checkCast(boxedFieldType);
             ASMUtil.appendUnBoxCodeIfNeed(mg, fieldClass);
             mg.putField(beanType, fieldInfo.name, fieldType);
-            appendReturnTrue(mg);
+            mg.returnValue();
         } else {
             //UnwriteableException
             appendThrowUnwriteableException(mg, fieldInfo);
@@ -240,11 +240,6 @@ public class AsmResolverFactory {
         mg.push(Type.getType(beanClass));
         mg.returnValue();
         mg.endMethod();
-    }
-
-    private static void appendReturnTrue(final GeneratorAdapter mg) {
-        mg.push(true);
-        mg.returnValue();
     }
 
     private static void appendIfFieldSameGoto(final GeneratorAdapter mg, FieldInfo fieldInfo, Label l_goto) {

@@ -36,7 +36,7 @@ public class ListResolver implements GetResolver, SetResolver {
     }
 
     @SuppressWarnings("unchecked")
-    public boolean set(Object object, Object property, Object value) {
+    public void set(Object object, Object property, Object value) {
         if (property instanceof Number) {
             final int index;
             final int size;
@@ -50,7 +50,6 @@ public class ListResolver implements GetResolver, SetResolver {
             } else {
                 list.set(index, value);
             }
-            return true;
         } else {
             throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: java.util.List#", property));
         }
