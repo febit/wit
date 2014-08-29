@@ -3,7 +3,6 @@ package webit.script.core.ast.statements;
 
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.util.ALU;
@@ -13,7 +12,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class WhileNoLoops extends AbstractStatement {
+public final class WhileNoLoops extends Statement {
 
     private final Expression whileExpr;
     private final VariantIndexer varIndexer;

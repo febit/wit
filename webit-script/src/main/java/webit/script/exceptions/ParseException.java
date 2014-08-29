@@ -23,7 +23,7 @@ public class ParseException extends TemplateException {
     }
 
     public ParseException(String message, Statement statement) {
-        this(message, statement.getLine(), statement.getColumn());
+        this(message, statement.line, statement.column);
     }
 
     public ParseException(String message, Throwable cause) {
@@ -37,7 +37,7 @@ public class ParseException extends TemplateException {
     }
 
     public ParseException(String message, Throwable cause, Statement statement) {
-        this(message, cause, statement.getLine(), statement.getColumn());
+        this(message, cause, statement.line, statement.column);
     }
 
     public ParseException(Throwable cause) {
@@ -49,7 +49,7 @@ public class ParseException extends TemplateException {
     }
 
     public ParseException(Throwable cause, Statement statement) {
-        this(cause, statement.getLine(), statement.getColumn());
+        this(cause, statement.line, statement.column);
     }
 
     @Override

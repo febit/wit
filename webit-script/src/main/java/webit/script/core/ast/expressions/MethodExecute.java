@@ -2,7 +2,6 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.MethodDeclare;
@@ -12,7 +11,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class MethodExecute extends AbstractExpression {
+public final class MethodExecute extends Expression {
 
     private final Expression funcExpr;
     private final Expression[] paramExprs;

@@ -2,13 +2,13 @@
 package webit.script.core.text.impl;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractStatement;
+import webit.script.core.ast.Statement;
 
 /**
  *
  * @author Zqq
  */
-public final class SimpleTextStatement extends AbstractStatement {
+public final class SimpleTextStatement extends Statement {
 
     private final String encoding;
     private final char[] text;

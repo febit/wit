@@ -2,7 +2,6 @@
 package webit.script.core.ast.operators;
 
 import webit.script.Context;
-import webit.script.core.ast.BinaryOperator;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.util.StatementUtil;
@@ -11,12 +10,17 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class IndexOperator extends BinaryOperator implements ResetableValueExpression {
+public final class IndexOperator extends ResetableValueExpression {
 
-    public IndexOperator(Expression leftExpr, Expression rightExpr, int line, int column) {
-        super(leftExpr, rightExpr, line, column);
+    public final Expression leftExpr;
+    public final Expression rightExpr;
+
+    public IndexOperator(Expression leftExp, Expression rightExp, int line, int column) {
+        super(line, column);
+        this.leftExpr = leftExp;
+        this.rightExpr = rightExp;
     }
-
+    
     public Object execute(final Context context) {
         return context.resolverManager.get(StatementUtil.execute(leftExpr, context), StatementUtil.execute(rightExpr, context));
     }

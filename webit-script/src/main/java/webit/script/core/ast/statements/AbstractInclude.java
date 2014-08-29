@@ -5,8 +5,8 @@ import java.util.Map;
 import webit.script.Context;
 import webit.script.Engine;
 import webit.script.Template;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
+import webit.script.core.ast.Statement;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.KeyValues;
 import webit.script.util.KeyValuesUtil;
@@ -16,7 +16,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public abstract class AbstractInclude extends AbstractStatement {
+public abstract class AbstractInclude extends Statement {
 
     private final Expression templateNameExpr;
     private final Expression paramsExpr;

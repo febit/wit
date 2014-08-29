@@ -2,7 +2,6 @@
 package webit.script.core.ast.operators;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.expressions.DirectValue;
@@ -13,7 +12,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class Negative extends AbstractExpression implements Optimizable {
+public final class Negative extends Expression implements Optimizable {
 
     private final Expression expr;
 

@@ -2,7 +2,6 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.global.GlobalManager;
 
@@ -10,7 +9,7 @@ import webit.script.global.GlobalManager;
  *
  * @author Zqq
  */
-public final class GlobalValue extends AbstractExpression implements ResetableValueExpression {
+public final class GlobalValue extends ResetableValueExpression {
 
     private final GlobalManager manager;
     private final int index;

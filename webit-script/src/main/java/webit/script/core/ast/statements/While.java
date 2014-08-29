@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.loop.LoopCtrl;
@@ -19,7 +18,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class While extends AbstractStatement implements Loopable {
+public final class While extends Statement implements Loopable {
 
     private final Expression whileExpr;
     private final VariantIndexer varIndexer;

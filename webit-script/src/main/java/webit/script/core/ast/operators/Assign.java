@@ -2,7 +2,6 @@
 package webit.script.core.ast.operators;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.util.StatementUtil;
@@ -11,7 +10,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class Assign extends AbstractExpression {
+public final class Assign extends Expression {
 
     private final Expression rexpr;
     private final ResetableValueExpression lexpr;

@@ -7,11 +7,15 @@ import webit.script.Context;
  *
  * @author Zqq
  */
-public interface Statement {
+public abstract class Statement {
 
-    int getLine();
+    public final int line;
+    public final int column;
 
-    int getColumn();
+    protected Statement(int line, int column) {
+        this.line = line;
+        this.column = column;
+    }
 
-    Object execute(Context context);
+    public abstract Object execute(Context context);
 }

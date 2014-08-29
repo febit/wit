@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.expressions.FunctionDeclare;
@@ -22,7 +21,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public class ForIn extends AbstractStatement implements Loopable {
+public class ForIn extends Statement implements Loopable {
 
     protected final FunctionDeclare functionDeclareExpr;
     protected final Expression collectionExpr;

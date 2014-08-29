@@ -2,7 +2,6 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.io.Out;
@@ -16,7 +15,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public class RedirectOutExpression extends AbstractExpression {
+public class RedirectOutExpression extends Expression {
 
     private final Expression srcExpr;
     private final ResetableValueExpression toExpr;

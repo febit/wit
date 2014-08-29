@@ -2,13 +2,13 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
+import webit.script.core.ast.Expression;
 
 /**
  *
  * @author Zqq
  */
-public final class DirectValue extends AbstractExpression {
+public final class DirectValue extends Expression {
 
     public final Object value;
 

@@ -2,7 +2,6 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.util.StatementUtil;
 
@@ -10,7 +9,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class ArrayValue extends AbstractExpression {
+public final class ArrayValue extends Expression {
 
     private final Expression[] valueExprs;
 

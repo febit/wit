@@ -3,7 +3,6 @@ package webit.script.core.ast.statements;
 
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.expressions.FunctionDeclare;
@@ -16,7 +15,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class ForMapNoLoops extends AbstractStatement {
+public final class ForMapNoLoops extends Statement {
 
     protected final FunctionDeclare functionDeclareExpr;
     private final Expression mapExpr;

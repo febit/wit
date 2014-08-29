@@ -4,7 +4,7 @@ package webit.script.core.ast.statements;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
-import webit.script.core.ast.AbstractStatement;
+import webit.script.core.ast.Statement;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
 
@@ -12,7 +12,7 @@ import webit.script.core.ast.loop.Loopable;
  *
  * @author Zqq
  */
-public final class Continue extends AbstractStatement implements Loopable {
+public final class Continue extends Statement implements Loopable {
 
     private final int label;
 

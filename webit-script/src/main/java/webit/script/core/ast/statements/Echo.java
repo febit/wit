@@ -2,20 +2,20 @@
 package webit.script.core.ast.statements;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
+import webit.script.core.ast.Statement;
 import webit.script.util.StatementUtil;
 
 /**
  *
  * @author Zqq
  */
-public final class Echo extends AbstractStatement {
+public final class Echo extends Statement {
 
     private final Expression expr;
 
     public Echo(Expression expr) {
-        super(expr.getLine(), expr.getColumn());
+        super(expr.line, expr.column);
         this.expr = expr;
     }
 

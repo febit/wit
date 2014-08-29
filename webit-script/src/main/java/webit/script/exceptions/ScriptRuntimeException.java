@@ -54,9 +54,9 @@ public class ScriptRuntimeException extends TemplateException {
             statement = statementStack.peek(i);
             out.print(prefix)
                     .print("\tat ")
-                    .print(statement.getLine())
+                    .print(statement.line)
                     .print(":")
-                    .print(statement.getColumn())
+                    .print(statement.column)
                     .print(" ")
                     .println(statement.getClass().getSimpleName());
         }

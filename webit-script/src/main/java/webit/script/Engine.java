@@ -23,9 +23,9 @@ import webit.script.util.ClassUtil;
 import webit.script.util.EncodingPool;
 import webit.script.util.KeyValuesUtil;
 import webit.script.util.Petite;
+import webit.script.util.Props;
 import webit.script.util.PropsUtil;
 import webit.script.util.StringUtil;
-import webit.script.util.Props;
 
 /**
  *

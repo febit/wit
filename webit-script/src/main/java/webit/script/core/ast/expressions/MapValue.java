@@ -4,7 +4,6 @@ package webit.script.core.ast.expressions;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.util.StatementUtil;
 
@@ -12,7 +11,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class MapValue extends AbstractExpression {
+public final class MapValue extends Expression {
 
     private static final float DEFAULT_MAP_FACTOR = 0.75f;
     private static final int MIN_MAP_CAPACITY = 4;

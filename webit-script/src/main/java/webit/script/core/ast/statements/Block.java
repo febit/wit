@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
@@ -16,7 +15,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class Block extends AbstractStatement implements Loopable, IBlock {
+public final class Block extends IBlock implements Loopable {
 
     public final VariantIndexer varIndexer;
     public final Statement[] statements;

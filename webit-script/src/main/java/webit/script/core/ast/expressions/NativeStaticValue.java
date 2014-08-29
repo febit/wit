@@ -3,16 +3,14 @@ package webit.script.core.ast.expressions;
 
 import java.lang.reflect.Field;
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.util.StringUtil;
 
 /**
  *
  * @author zqq90
  */
-public class NativeStaticValue extends AbstractExpression implements ResetableValueExpression {
+public class NativeStaticValue extends ResetableValueExpression {
 
     private final Field field;
 

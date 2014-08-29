@@ -2,7 +2,6 @@
 package webit.script.core.ast.statements;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import webit.script.Template;
 import webit.script.core.ast.Expression;

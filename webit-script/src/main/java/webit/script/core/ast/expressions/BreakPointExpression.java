@@ -3,7 +3,6 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.Expression;
 import webit.script.debug.BreakPointListener;
 import webit.script.util.StatementUtil;
@@ -12,7 +11,7 @@ import webit.script.util.StatementUtil;
  *
  * @author zqq
  */
-public class BreakPointExpression  extends AbstractExpression {
+public class BreakPointExpression  extends Expression {
 
     private final BreakPointListener listener;
     private final String label;

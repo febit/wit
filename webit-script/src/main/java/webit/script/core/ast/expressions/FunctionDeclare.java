@@ -2,9 +2,9 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
-import webit.script.core.Variants;
 import webit.script.core.VariantIndexer;
-import webit.script.core.ast.AbstractExpression;
+import webit.script.core.Variants;
+import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.lang.method.FunctionMethodDeclare;
 import webit.script.util.StatementUtil;
@@ -13,7 +13,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class FunctionDeclare extends AbstractExpression {
+public final class FunctionDeclare extends Expression {
 
     private final int argsCount;
     public final int[] _overflowUpstairs;

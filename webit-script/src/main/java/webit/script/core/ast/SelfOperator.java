@@ -8,7 +8,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public abstract class SelfOperator extends AbstractExpression {
+public abstract class SelfOperator extends Expression {
 
     protected final ResetableValueExpression leftExpr;
     protected final Expression rightExpr;

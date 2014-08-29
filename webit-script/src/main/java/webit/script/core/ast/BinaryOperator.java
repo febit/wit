@@ -5,7 +5,7 @@ package webit.script.core.ast;
  *
  * @author Zqq
  */
-public abstract class BinaryOperator extends AbstractExpression {
+public abstract class BinaryOperator extends Expression {
 
     public final Expression leftExpr;
     public final Expression rightExpr;

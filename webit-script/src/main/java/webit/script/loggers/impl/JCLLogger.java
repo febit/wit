@@ -1,11 +1,11 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
-import webit.script.loggers.AbstractLogger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import webit.script.Engine;
 import webit.script.Initable;
+import webit.script.loggers.AbstractLogger;
 
 /**
  *

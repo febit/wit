@@ -2,7 +2,6 @@
 package webit.script.core.ast.statements;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
 
@@ -10,7 +9,7 @@ import webit.script.core.ast.Statement;
  *
  * @author Zqq
  */
-public final class NoneStatement extends AbstractStatement implements Optimizable {
+public final class NoneStatement extends Statement implements Optimizable {
 
     public static final NoneStatement INSTANCE = new NoneStatement();
 

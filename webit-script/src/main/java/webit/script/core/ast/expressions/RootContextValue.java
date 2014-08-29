@@ -2,14 +2,13 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
 import webit.script.core.ast.ResetableValueExpression;
 
 /**
  *
  * @author Zqq
  */
-public final class RootContextValue extends AbstractExpression implements ResetableValueExpression {
+public final class RootContextValue extends ResetableValueExpression {
 
     private final int index;
 

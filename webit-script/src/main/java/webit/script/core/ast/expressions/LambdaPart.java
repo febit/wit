@@ -26,7 +26,7 @@ public class LambdaPart extends FunctionDeclarePart{
     
     protected StatementList toStatementList(Expression expr){
         StatementList statementList = new StatementList();
-        statementList.add(new Return(expr, expr.getLine(), expr.getColumn()));
+        statementList.add(new Return(expr, expr.line, expr.column));
         return statementList;
     }
 }

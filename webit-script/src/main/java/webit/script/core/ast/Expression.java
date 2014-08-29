@@ -5,5 +5,9 @@ package webit.script.core.ast;
  *
  * @author Zqq
  */
-public interface Expression extends Statement {
+public abstract class Expression extends Statement{
+
+    protected Expression(int line, int column) {
+        super(line, column);
+    }
 }

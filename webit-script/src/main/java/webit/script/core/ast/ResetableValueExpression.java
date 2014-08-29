@@ -7,7 +7,11 @@ import webit.script.Context;
  *
  * @author Zqq
  */
-public interface ResetableValueExpression extends Expression {
+public abstract class ResetableValueExpression extends Expression {
 
-    Object setValue(Context context, Object value);
+    public ResetableValueExpression(int line, int column) {
+        super(line, column);
+    }
+
+    public abstract Object setValue(Context context, Object value);
 }

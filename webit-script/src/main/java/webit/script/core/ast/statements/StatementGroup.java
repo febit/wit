@@ -2,7 +2,6 @@
 package webit.script.core.ast.statements;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
 import webit.script.util.StatementUtil;
@@ -11,7 +10,7 @@ import webit.script.util.StatementUtil;
  *
  * @author zqq90
  */
-public class StatementGroup extends AbstractStatement implements Optimizable {
+public class StatementGroup extends Statement implements Optimizable {
 
     private final Statement[] list;
 

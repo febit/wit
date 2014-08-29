@@ -3,7 +3,6 @@ package webit.script.core.ast.statements;
 
 import java.util.List;
 import webit.script.Context;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.loop.LoopInfo;
@@ -15,7 +14,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class IfNot extends AbstractStatement implements Loopable {
+public final class IfNot extends Statement implements Loopable {
 
     private final Expression ifExpr;
     private final Statement elseStatement;

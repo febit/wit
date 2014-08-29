@@ -3,7 +3,6 @@ package webit.script.core.ast.statements;
 
 import webit.script.Context;
 import webit.script.core.VariantIndexer;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
 import webit.script.util.StatementUtil;
@@ -12,7 +11,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public class BlockNoLoops extends AbstractStatement implements IBlock, Optimizable {
+public class BlockNoLoops extends IBlock implements Optimizable {
 
     private final VariantIndexer varIndexer;
     private final Statement[] statements;

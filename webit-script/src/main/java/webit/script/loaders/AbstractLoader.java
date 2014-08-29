@@ -3,8 +3,8 @@ package webit.script.loaders;
 
 import webit.script.Engine;
 import webit.script.Initable;
-import webit.script.util.StringUtil;
 import webit.script.util.FileNameUtil;
+import webit.script.util.StringUtil;
 
 /**
  *

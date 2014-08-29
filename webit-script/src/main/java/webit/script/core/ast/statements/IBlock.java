@@ -8,11 +8,15 @@ import webit.script.core.ast.Statement;
  *
  * @author Zqq
  */
-public interface IBlock extends Statement {
+public abstract class IBlock extends Statement {
 
-    public VariantIndexer getVarIndexer();
+    public IBlock(int line, int column) {
+        super(line, column);
+    }
 
-    public Statement[] getStatements();
+    public abstract VariantIndexer getVarIndexer();
 
-    public boolean hasLoops();
+    public abstract Statement[] getStatements();
+
+    public abstract boolean hasLoops();
 }

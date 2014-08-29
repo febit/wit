@@ -2,7 +2,6 @@
 package webit.script.core.ast.statements;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractStatement;
 import webit.script.core.ast.Statement;
 import webit.script.debug.BreakPointListener;
 import webit.script.util.StatementUtil;
@@ -11,7 +10,7 @@ import webit.script.util.StatementUtil;
  *
  * @author zqq
  */
-public class BreakPointStatement extends AbstractStatement {
+public class BreakPointStatement extends Statement {
 
     private final BreakPointListener listener;
     private final String label;

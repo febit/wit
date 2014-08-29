@@ -2,7 +2,7 @@
 package webit.script.core.ast.operators;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractExpression;
+import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.util.ALU;
 import webit.script.util.StatementUtil;
@@ -11,7 +11,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class MinusMinusAfter extends AbstractExpression {
+public final class MinusMinusAfter extends Expression {
 
     private final ResetableValueExpression expr;
 

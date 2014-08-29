@@ -2,13 +2,13 @@
 package webit.script.core.text.impl;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractStatement;
+import webit.script.core.ast.Statement;
 
 /**
  *
  * @author Zqq
  */
-public final class ByteArrayTextStatement extends AbstractStatement {
+public final class ByteArrayTextStatement extends Statement {
 
     private final byte[] bytes;
 

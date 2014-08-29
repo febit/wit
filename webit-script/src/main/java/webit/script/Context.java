@@ -1,10 +1,10 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script;
 
-import webit.script.core.Variants;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.core.VariantIndexer;
+import webit.script.core.Variants;
 import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.exceptions.NotFunctionException;
 import webit.script.exceptions.ScriptRuntimeException;

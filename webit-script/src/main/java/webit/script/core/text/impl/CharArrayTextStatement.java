@@ -2,13 +2,13 @@
 package webit.script.core.text.impl;
 
 import webit.script.Context;
-import webit.script.core.ast.AbstractStatement;
+import webit.script.core.ast.Statement;
 
 /**
  *
  * @author Zqq
  */
-public final class CharArrayTextStatement extends AbstractStatement {
+public final class CharArrayTextStatement extends Statement {
 
     private final char[] chars;
 
