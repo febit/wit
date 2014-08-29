@@ -18,7 +18,6 @@
     
     <modules>
         <module>webit-script</module>
-        <module>webit-script-asm</module>
         <module>webit-script-tools</module>
         <module>webit-script-support</module>
     </modules>

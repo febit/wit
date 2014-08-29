@@ -37,22 +37,6 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>visual-vm</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine> -agentpath:"D:/Program Files/visualvm_136/profiler/lib/deployed/jdk16/windows/profilerinterface.dll"="D:\Program Files\visualvm_136\profiler\lib",5145 </argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     <build>
         <pluginManagement>
             <plugins>
@@ -60,7 +44,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
-                        <excludePackageNames>webit.script.asm3,webit.script.util.props</excludePackageNames>
+                        <excludePackageNames>webit.script.asm.lib</excludePackageNames>
                     </configuration>
                 </plugin>
             </plugins>

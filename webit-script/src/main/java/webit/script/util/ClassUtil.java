@@ -4,6 +4,7 @@ package webit.script.util;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 /**
  *
@@ -76,19 +77,13 @@ public class ClassUtil {
         final char[] chars;
         if (alias == '\0') {
             chars = new char[name.length() + 2 + arrayDepth];
-            int i = arrayDepth - 1;
-            while (i >= 0) {
-                chars[i--] = '[';
-            }
+            Arrays.fill(chars, 0, arrayDepth,'[');
             chars[arrayDepth] = 'L';
             name.getChars(0, name.length(), chars, arrayDepth + 1);
             chars[chars.length - 1] = ';';
         } else {
             chars = new char[arrayDepth + 1];
-            int i = arrayDepth - 1;
-            while (i >= 0) {
-                chars[i--] = '[';
-            }
+            Arrays.fill(chars, 0, arrayDepth,'[');
             chars[arrayDepth] = alias;
         }
         return getClassByInternalName(new String(chars));

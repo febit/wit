@@ -38,28 +38,6 @@ public class StringUtil {
     }
 
     /**
-     * Replaces all occurrences of a character in a string.
-     *
-     * @param s input string
-     * @param sub character to replace
-     * @param with character to replace with
-     * @return String
-     */
-    public static String replaceChar(String s, char sub, char with) {
-        int startIndex;
-        if ((startIndex = s.indexOf(sub)) < 0) {
-            return s;
-        }
-        char[] str = s.toCharArray();
-        for (int i = startIndex,len = str.length; i < len; i++) {
-            if (str[i] == sub) {
-                str[i] = with;
-            }
-        }
-        return new String(str);
-    }
-
-    /**
      * Tests if this string ends with the specified suffix.
      *
      * @param src String to test

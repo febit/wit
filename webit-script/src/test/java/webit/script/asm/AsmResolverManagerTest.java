@@ -9,7 +9,7 @@ import webit.script.exceptions.ScriptRuntimeException;
  *
  * @author Zqq
  */
-public class AsmResolverFactoryTest {
+public class AsmResolverManagerTest {
 
     public static class Foo {
 
@@ -35,7 +35,7 @@ public class AsmResolverFactoryTest {
         public void setF5(int f5) {
             this.f5 = f5;
         }
-        
+
         public String getF2() {
             return f2;
         }
@@ -62,28 +62,23 @@ public class AsmResolverFactoryTest {
 
     @Test
     public void testPrivateClass() throws Exception {
-
         Exception exception = null;
         try {
-            AsmResolverFactory.createResolverClass(Book.class);
+            assertNull(AsmResolverManager.createResolverClass(Book.class).newInstance());
         } catch (Exception e) {
             exception = e;
         }
         assertNotNull(exception);
-
     }
 
     @Test
     public void test() throws Exception {
 
-        Class clazz = AsmResolverFactory.createResolverClass(Foo.class);
-
         Foo foo = new Foo();
 
-        AsmResolver resolver = (AsmResolver) clazz.newInstance();
+        AsmResolver resolver = (AsmResolver) AsmResolverManager.createResolverClass(Foo.class).newInstance();
 
         assertEquals(resolver.getMatchClass(), Foo.class);
-
 
         int i = 0;
         assertEquals(resolver.get(foo, "f" + (i + 1)), "foo:f1");
@@ -114,8 +109,7 @@ public class AsmResolverFactoryTest {
         }
         assertNotNull(exception);
         assertEquals("Unreadable property " + Foo.class.getName() + "#unreadable", exception.getMessage());
-        
-        
+
         exception = null;
         try {
             resolver.set(foo, "unwriteable", "unwriteable");
@@ -125,7 +119,6 @@ public class AsmResolverFactoryTest {
         assertNotNull(exception);
         assertEquals("Unwriteable property " + Foo.class.getName() + "#unwriteable", exception.getMessage());
 
-        
         exception = null;
         try {
             resolver.set(foo, "unXable", "unXable");
@@ -135,7 +128,6 @@ public class AsmResolverFactoryTest {
         assertNotNull(exception);
         assertEquals("Invalid property " + Foo.class.getName() + "#unXable", exception.getMessage());
 
-        
         exception = null;
         try {
             resolver.get(foo, "unXable");
@@ -145,6 +137,5 @@ public class AsmResolverFactoryTest {
         assertNotNull(exception);
         assertEquals("Invalid property " + Foo.class.getName() + "#unXable", exception.getMessage());
 
-        
     }
 }
