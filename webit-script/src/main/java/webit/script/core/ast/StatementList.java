@@ -42,8 +42,8 @@ public final class StatementList {
     }
 
     public Statement[] toInvertArray() {
-        final Statement[] statements;
-        ArrayUtil.invert(statements = toArray());
+        final Statement[] statements = toArray();
+        ArrayUtil.invert(statements);
         return statements;
     }
 

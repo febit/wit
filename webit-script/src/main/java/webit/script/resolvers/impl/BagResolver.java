@@ -19,7 +19,7 @@ public class BagResolver implements GetResolver, SetResolver {
         ((Bag) object).set(property, value);
     }
 
-    public Class<?> getMatchClass() {
+    public Class getMatchClass() {
         return Bag.class;
     }
 }

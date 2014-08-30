@@ -12,7 +12,7 @@ import webit.script.util.StringUtil;
  */
 public class IterGetResolver implements GetResolver {
 
-    public Class<?> getMatchClass() {
+    public Class getMatchClass() {
         return Iter.class;
     }
 

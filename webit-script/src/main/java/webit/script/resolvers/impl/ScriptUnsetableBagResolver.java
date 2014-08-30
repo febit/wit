@@ -19,10 +19,10 @@ public class ScriptUnsetableBagResolver implements GetResolver, SetResolver {
     }
 
     public void set(Object object, Object property, Object value) {
-        throw new ScriptRuntimeException("This is an unsetable Object!");
+        throw new ScriptRuntimeException("This is an unsetable Object.s");
     }
 
-    public Class<?> getMatchClass() {
+    public Class getMatchClass() {
         return SimpleUnsetableBag.class;
     }
 }

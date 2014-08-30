@@ -2,12 +2,11 @@
 package webit.script.resolvers.impl;
 
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.io.Out;
 import webit.script.resolvers.GetResolver;
-import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.RegistModeResolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.resolvers.SetResolver;
+import webit.script.util.ALU;
 import webit.script.util.ArrayUtil;
 import webit.script.util.StringUtil;
 
@@ -15,35 +14,101 @@ import webit.script.util.StringUtil;
  *
  * @author Zqq
  */
-public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolver, OutResolver {
-
-    public Class<?> getMatchClass() {
-        return null;
-    }
+public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolver {
 
     public Object get(Object object, Object property) {
         if (property instanceof Number) {
-            return ArrayUtil.getByIndex(object, ((Number) property).intValue());
-        } else {
-            if ("length".equals(property) || "size".equals(property)) {
-                return ArrayUtil.getSize(object);
-            } else if ("isEmpty".equals(property)) {
-                return ArrayUtil.getSize(object) == 0;
+            int index = ((Number) property).intValue();
+            final Class cls = object.getClass();
+            try {
+                if (cls == int[].class) {
+                    return ((int[]) object)[index];
+                }
+                if (cls == boolean[].class) {
+                    return ((boolean[]) object)[index];
+                }
+                if (cls == char[].class) {
+                    return ((char[]) object)[index];
+                }
+                if (cls == float[].class) {
+                    return ((float[]) object)[index];
+                }
+                if (cls == double[].class) {
+                    return ((double[]) object)[index];
+                }
+                if (cls == long[].class) {
+                    return ((long[]) object)[index];
+                }
+                if (cls == short[].class) {
+                    return ((short[]) object)[index];
+                }
+                if (cls == byte[].class) {
+                    return ((byte[]) object)[index];
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new ScriptRuntimeException(StringUtil.concat("Array index out of bounds, index=", index));
             }
-            throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: array#", property));
         }
+        if ("length".equals(property) || "size".equals(property)) {
+            return ArrayUtil.getSize(object);
+        }
+        if ("isEmpty".equals(property)) {
+            return ArrayUtil.getSize(object) == 0;
+        }
+        throw new ScriptRuntimeException(StringUtil.concat("Invalid property: array#", property));
     }
 
-    public void set(Object object, Object property, Object value) {
+    public void set(Object o1, Object property, Object value) {
         if (property instanceof Number) {
-            ArrayUtil.setByIndex(object, ((Number) property).intValue(), value);
-        } else {
-            throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: array#", property));
+            int index = ((Number) property).intValue();
+            final Class cls = o1.getClass();
+            try {
+                if (cls == int[].class) {
+                    ((int[]) o1)[index] = ((Number) value).intValue();
+                    return;
+                }
+                if (cls == char[].class) {
+                    ((char[]) o1)[index] = (Character) value;
+                    return;
+                }
+                if (cls == long[].class) {
+                    ((long[]) o1)[index] = ((Number) value).longValue();
+                    return;
+                }
+                if (cls == short[].class) {
+                    ((short[]) o1)[index] = ((Number) value).shortValue();
+                    return;
+                }
+                if (cls == double[].class) {
+                    ((double[]) o1)[index] = ((Number) value).doubleValue();
+                    return;
+                }
+                if (cls == boolean[].class) {
+                    ((boolean[]) o1)[index] = ALU.isTrue(value);
+                    return;
+                }
+                if (cls == float[].class) {
+                    ((float[]) o1)[index] = ((Number) value).floatValue();
+                    return;
+                }
+                if (cls == byte[].class) {
+                    ((byte[]) o1)[index] = ((Number) value).byteValue();
+                    return;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new ScriptRuntimeException(StringUtil.concat("Array index out of bounds, index=", index));
+            } catch (ClassCastException e) {
+                throw new ScriptRuntimeException(e.getMessage());
+            }
         }
+        throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: array#", property));
+    }
+
+    public Class getMatchClass() {
+        return null;
     }
 
     public void regist(ResolverManager resolverManager) {
-        resolverManager.registResolver(Object[].class, this);
         resolverManager.registResolver(int[].class, this);
         resolverManager.registResolver(boolean[].class, this);
         resolverManager.registResolver(char[].class, this);
@@ -52,16 +117,5 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
         resolverManager.registResolver(long[].class, this);
         resolverManager.registResolver(short[].class, this);
         resolverManager.registResolver(byte[].class, this);
-    }
-
-    public void render(final Out out, Object bean) {
-        final Class type;
-        if ((type = bean.getClass()) == char[].class) {
-            out.write((char[]) bean);
-        } else if (type == byte[].class) {
-            out.write((byte[]) bean);
-        } else {
-            out.write(ArrayUtil.arrayToString(bean));
-        }
     }
 }

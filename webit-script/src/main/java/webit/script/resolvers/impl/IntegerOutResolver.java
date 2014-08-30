@@ -17,7 +17,7 @@ public class IntegerOutResolver implements OutResolver, RegistModeResolver {
         NumberUtil.print((Integer) number, out);
     }
 
-    public Class<?> getMatchClass() {
+    public Class getMatchClass() {
         return null;
     }
 

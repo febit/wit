@@ -15,7 +15,7 @@ public class LongOutResolver implements OutResolver {
         NumberUtil.print((Long) number, out);
     }
 
-    public Class<?> getMatchClass() {
+    public Class getMatchClass() {
         return Long.class;
     }
 }

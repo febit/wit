@@ -11,10 +11,6 @@ import webit.script.util.StringUtil;
  */
 public class CharSequenceResolver implements GetResolver {
 
-    public Class<?> getMatchClass() {
-        return CharSequence.class;
-    }
-
     public Object get(final Object object, final Object property) {
         if (property instanceof Number) {
             try {
@@ -22,13 +18,17 @@ public class CharSequenceResolver implements GetResolver {
             } catch (IndexOutOfBoundsException e) {
                 throw new ScriptRuntimeException(StringUtil.concat("index out of bounds:", property));
             }
-        } else {
-            if ("size".equals(property)) {
-                return ((CharSequence) object).length();
-            } else if ("isEmpty".equals(property)) {
-                return ((CharSequence) object).length() == 0;
-            }
-            throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: java.lang.CharSequence#", property));
         }
+        if ("length".equals(property) || "size".equals(property)) {
+            return ((CharSequence) object).length();
+        }
+        if ("isEmpty".equals(property)) {
+            return ((CharSequence) object).length() == 0;
+        }
+        throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: java.lang.CharSequence#", property));
+    }
+
+    public Class getMatchClass() {
+        return CharSequence.class;
     }
 }

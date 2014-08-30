@@ -18,7 +18,7 @@ public class ScriptVoidResolver implements GetResolver, SetResolver, OutResolver
         throw new ScriptRuntimeException("'Void' type has no property.");
     }
 
-    public Class<?> getMatchClass() {
+    public Class getMatchClass() {
         return Void.class;
     }
 

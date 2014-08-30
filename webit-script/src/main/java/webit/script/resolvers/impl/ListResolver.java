@@ -14,7 +14,7 @@ import webit.script.util.StringUtil;
  */
 public class ListResolver implements GetResolver, SetResolver {
 
-    public Class<?> getMatchClass() {
+    public Class getMatchClass() {
         return Collection.class;
     }
 
@@ -25,14 +25,14 @@ public class ListResolver implements GetResolver, SetResolver {
             } catch (IndexOutOfBoundsException e) {
                 throw new ScriptRuntimeException(StringUtil.concat("index out of bounds:", property));
             }
-        } else {
-            if ("size".equals(property)) {
-                return ((List) object).size();
-            } else if ("isEmpty".equals(property)) {
-                return ((List) object).isEmpty();
-            }
-            throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: java.util.List#", property));
         }
+        if ("size".equals(property)) {
+            return ((List) object).size();
+        }
+        if ("isEmpty".equals(property)) {
+            return ((List) object).isEmpty();
+        }
+        throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: java.util.List#", property));
     }
 
     @SuppressWarnings("unchecked")
@@ -47,11 +47,12 @@ public class ListResolver implements GetResolver, SetResolver {
                     list.add(null);
                 }
                 list.add(value);
+                return;
             } else {
                 list.set(index, value);
+                return;
             }
-        } else {
-            throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: java.util.List#", property));
         }
+        throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: java.util.List#", property));
     }
 }

@@ -11,7 +11,7 @@ import webit.script.resolvers.SetResolver;
  */
 public class MapResolver implements GetResolver, SetResolver {
 
-    public Class<?> getMatchClass() {
+    public Class getMatchClass() {
         return Map.class;
     }
 

@@ -34,7 +34,7 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver {
         out.write(bean.toString());
     }
 
-    public Class<?> getMatchClass() {
+    public Class getMatchClass() {
         return Object.class;
     }
 }

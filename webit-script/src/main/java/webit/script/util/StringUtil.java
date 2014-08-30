@@ -257,7 +257,9 @@ public class StringUtil {
             return EMPTY_ARRAY;
         }
         if (count != array.length) {
-            return ArrayUtil.subarray(array, 0, count);
+            String dest[] = new String[count];
+            System.arraycopy(array, 0, dest, 0, count);
+            return dest;
         }
         return array;
     }

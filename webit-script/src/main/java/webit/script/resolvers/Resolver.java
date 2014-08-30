@@ -7,5 +7,5 @@ package webit.script.resolvers;
  */
 public interface Resolver {
 
-    Class<?> getMatchClass();
+    Class getMatchClass();
 }

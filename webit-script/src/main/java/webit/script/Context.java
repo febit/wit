@@ -77,10 +77,6 @@ public final class Context implements KeyValueAccepter {
         }
     }
 
-    public Out getOut() {
-        return this.out;
-    }
-
     public void outNotNull(final byte[] bytes) {
         this.out.write(bytes);
     }
