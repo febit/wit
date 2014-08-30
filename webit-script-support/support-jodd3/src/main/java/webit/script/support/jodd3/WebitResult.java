@@ -1,5 +1,5 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.support.jodd3_5;
+package webit.script.support.jodd3;
 
 import java.util.HashMap;
 import javax.servlet.ServletContext;
@@ -20,13 +20,13 @@ import webit.script.servlet.WebEngineManager;
  *
  * @author zqq90
  */
-public class WebitScriptResult extends BaseActionResult<Object> implements WebEngineManager.ServletContextProvider {
+public class WebitResult extends BaseActionResult<Object> implements WebEngineManager.ServletContextProvider {
 
-    public static final WebitScriptResultData DEFAULT_RESULT = new WebitScriptResultData(null, null);
+    public static final WebitData DEFAULT_RESULT = new WebitData(null, null);
 
     public static final String NAME = "wit";
 
-    public WebitScriptResult() {
+    public WebitResult() {
         super(NAME);
         this.targetCache = new HashMap<String, String>();
         this.engineManager
@@ -34,16 +34,16 @@ public class WebitScriptResult extends BaseActionResult<Object> implements WebEn
                 .setProperties(CFG.APPEND_LOST_SUFFIX, Boolean.TRUE);
     }
 
-    public static WebitScriptResultData render() {
+    public static WebitData render() {
         return DEFAULT_RESULT;
     }
 
-    public static WebitScriptResultData render(String path) {
-        return new WebitScriptResultData(path, null);
+    public static WebitData render(String path) {
+        return new WebitData(path, null);
     }
 
-    public static WebitScriptResultData render(String path, String contentType) {
-        return new WebitScriptResultData(path, contentType);
+    public static WebitData render(String path, String contentType) {
+        return new WebitData(path, contentType);
     }
 
     @In(scope = ScopeType.CONTEXT)
@@ -65,8 +65,8 @@ public class WebitScriptResult extends BaseActionResult<Object> implements WebEn
 
         if (resultValue == null) {
             customPath = null;
-        } else if (resultValue instanceof WebitScriptResultData) {
-            final WebitScriptResultData data = (WebitScriptResultData) resultValue;
+        } else if (resultValue instanceof WebitData) {
+            final WebitData data = (WebitData) resultValue;
             if (data.contentType != null) {
                 response.setContentType(data.contentType);
                 contentTypeSetted = true;

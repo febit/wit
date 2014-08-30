@@ -15,13 +15,13 @@ import webit.script.servlet.WebEngineManager.ServletContextProvider;
  *
  * @author Zqq
  */
-public class WebitScriptViewResolver extends AbstractTemplateViewResolver implements InitializingBean {
+public class WebitViewResolver extends AbstractTemplateViewResolver implements InitializingBean {
 
     protected final WebEngineManager engineManager;
 
     @Override
     protected Class<?> requiredViewClass() {
-        return WebitScriptView.class;
+        return WebitView.class;
     }
 
     public void afterPropertiesSet() throws Exception {
@@ -30,13 +30,13 @@ public class WebitScriptViewResolver extends AbstractTemplateViewResolver implem
         }
     }
 
-    public WebitScriptViewResolver() {
+    public WebitViewResolver() {
         setViewClass(requiredViewClass());
 
         this.engineManager = new WebEngineManager(new ServletContextProvider() {
 
             public ServletContext getServletContext() {
-                return WebitScriptViewResolver.this.getServletContext();
+                return WebitViewResolver.this.getServletContext();
             }
         });
     }
@@ -50,8 +50,8 @@ public class WebitScriptViewResolver extends AbstractTemplateViewResolver implem
     }
 
     @Override
-    protected WebitScriptView buildView(String viewName) throws Exception {
-        WebitScriptView view = (WebitScriptView) super.buildView(viewName);
+    protected WebitView buildView(String viewName) throws Exception {
+        WebitView view = (WebitView) super.buildView(viewName);
         view.setResolver(this);
         return view;
     }

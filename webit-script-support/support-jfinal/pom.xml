@@ -4,7 +4,7 @@
 
     <parent>
         <groupId>com.github.zqq90.webit-script</groupId>
-        <artifactId>webit-script-support</artifactId>
+        <artifactId>support</artifactId>
         <version>1.5.0-SNAPSHOT</version>
     </parent>
 

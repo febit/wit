@@ -1,5 +1,5 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.support.jodd.madvoc;
+package webit.script.support.jodd3_4;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -11,23 +11,22 @@ import jodd.madvoc.result.ActionResult;
 import webit.script.CFG;
 import webit.script.servlet.ServletUtil;
 import webit.script.servlet.WebEngineManager;
-import webit.script.servlet.WebEngineManager.ServletContextProvider;
 
 /**
  *
  * @author Zqq
  */
-public class WebitScriptResult extends ActionResult implements ServletContextProvider {
+public class WebitResult extends ActionResult implements WebEngineManager.ServletContextProvider {
 
     public static final String NAME = "wit";
-    //
+
     @In(scope = ScopeType.CONTEXT)
     protected MadvocController madvocController;
     protected String contentType;
-    //
+
     protected final WebEngineManager engineManager;
 
-    public WebitScriptResult() {
+    public WebitResult() {
         super(NAME);
         this.engineManager
                 = new WebEngineManager(this)

@@ -10,11 +10,11 @@ import org.springframework.web.servlet.view.AbstractTemplateView;
  *
  * @author Zqq
  */
-public class WebitScriptView extends AbstractTemplateView {
+public class WebitView extends AbstractTemplateView {
 
-    private WebitScriptViewResolver resolver;
+    private WebitViewResolver resolver;
 
-    public void setResolver(WebitScriptViewResolver resolver) {
+    public void setResolver(WebitViewResolver resolver) {
         this.resolver = resolver;
     }
 

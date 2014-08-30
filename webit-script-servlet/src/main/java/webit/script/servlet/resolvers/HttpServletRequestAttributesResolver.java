@@ -15,9 +15,8 @@ public class HttpServletRequestAttributesResolver implements GetResolver, SetRes
         return ((HttpServletRequestAttributes) bean).get(property.toString());
     }
 
-    public boolean set(Object bean, Object property, Object value) {
+    public void set(Object bean, Object property, Object value) {
         ((HttpServletRequestAttributes) bean).set(property.toString(), value);
-        return true;
     }
 
     public Class<?> getMatchClass() {

@@ -15,8 +15,7 @@ import webit.script.lang.KeyValues;
  */
 public class WebEngineManager {
 
-    private static final String DEFAULT_CONFIG = "/WEB-INF/webit-script-webpage.props";
-    private String configPath = DEFAULT_CONFIG;
+    private String configPath = "/WEB-INF/webpage.wim";
     private final ServletContextProvider servletContextProvider;
     private Map<String, Object> extraProperties;
     private Engine engine;

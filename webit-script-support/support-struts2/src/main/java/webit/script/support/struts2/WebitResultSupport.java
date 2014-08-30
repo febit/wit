@@ -10,18 +10,17 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StrutsResultSupport;
 import webit.script.util.KeyValuesUtil;
 import webit.script.servlet.WebEngineManager;
-import webit.script.servlet.WebEngineManager.ServletContextProvider;
 
 /**
  *
  * @author Zqq
  */
-public class WebitScriptResultSupport extends StrutsResultSupport {
+public class WebitResultSupport extends StrutsResultSupport {
 
     private final static WebEngineManager engineManager;
 
     static {
-        engineManager = new WebEngineManager(new ServletContextProvider() {
+        engineManager = new WebEngineManager(new WebEngineManager.ServletContextProvider() {
 
             public ServletContext getServletContext() {
                 return ServletActionContext.getServletContext();
@@ -36,7 +35,7 @@ public class WebitScriptResultSupport extends StrutsResultSupport {
     }
 
     public static void setContentType(String contentType) {
-        WebitScriptResultSupport.contentType = contentType;
+        WebitResultSupport.contentType = contentType;
     }
 
     public static void resetEngine() {

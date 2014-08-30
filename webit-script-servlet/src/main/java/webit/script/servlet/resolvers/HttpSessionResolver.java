@@ -15,9 +15,8 @@ public class HttpSessionResolver implements GetResolver, SetResolver {
         return ((HttpSession) bean).getAttribute(property.toString());
     }
 
-    public boolean set(Object bean, Object property, Object value) {
+    public void set(Object bean, Object property, Object value) {
         ((HttpSession) bean).setAttribute(property.toString(), value);
-        return true;
     }
 
     public Class<?> getMatchClass() {

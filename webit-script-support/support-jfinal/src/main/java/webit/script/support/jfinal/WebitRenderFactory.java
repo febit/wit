@@ -18,7 +18,7 @@ import webit.script.servlet.WebEngineManager;
  *
  * @author Zqq
  */
-public class WebitScriptRenderFactory implements IMainRenderFactory {
+public class WebitRenderFactory implements IMainRenderFactory {
 
     protected static final String encoding = Render.getEncoding();
     protected static final String contentType = "text/html; charset=" + encoding;
@@ -26,11 +26,11 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
     protected final WebEngineManager engineManager;
     protected final String suffix;
 
-    public WebitScriptRenderFactory() {
+    public WebitRenderFactory() {
         this(Engine.DEFAULT_SUFFIX);
     }
 
-    public WebitScriptRenderFactory(String suffix) {
+    public WebitRenderFactory(String suffix) {
         this.suffix = suffix;
         this.engineManager
                 = new WebEngineManager(JFinal.me().getServletContext())
@@ -45,17 +45,17 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
         this.engineManager.resetEngine();
     }
 
-    public WebitScriptRenderFactory setProperties(String key, Object value) {
+    public WebitRenderFactory setProperties(String key, Object value) {
         this.engineManager.setProperties(key, value);
         return this;
     }
 
-    public WebitScriptRenderFactory setProperties(Map<String, Object> map) {
+    public WebitRenderFactory setProperties(Map<String, Object> map) {
         this.engineManager.setProperties(map);
         return this;
     }
 
-    public WebitScriptRenderFactory appendProperties(String key, String value) {
+    public WebitRenderFactory appendProperties(String key, String value) {
         this.engineManager.appendProperties(key, value);
         return this;
     }
@@ -64,11 +64,11 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
         return this.engineManager.removeProperties(key);
     }
 
-    private static class WebitScriptRender extends Render {
+    protected static class WebitRender extends Render {
 
-        private final WebitScriptRenderFactory renderFactory;
+        private final WebitRenderFactory renderFactory;
 
-        public WebitScriptRender(WebitScriptRenderFactory renderFactory, String view) {
+        public WebitRender(WebitRenderFactory renderFactory, String view) {
             this.view = view;
             this.renderFactory = renderFactory;
         }
@@ -90,7 +90,7 @@ public class WebitScriptRenderFactory implements IMainRenderFactory {
 
     @Override
     public Render getRender(final String view) {
-        return new WebitScriptRender(this, view);
+        return new WebitRender(this, view);
     }
 
     @Override

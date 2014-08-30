@@ -17,9 +17,8 @@ public class RecordResolver implements GetResolver, SetResolver {
     }
 
     @Override
-    public boolean set(Object bean, Object property, Object value) {
+    public void set(Object bean, Object property, Object value) {
         ((Record) bean).set(property.toString(), value);
-        return true;
     }
 
     @Override
