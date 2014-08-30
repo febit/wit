@@ -127,7 +127,7 @@ public class AsmNativeFactory extends NativeFactory {
                 m.checkCast(ownerClass);
                 m.visitMethodInsn(isInterface ? Constants.INVOKEINTERFACE
                         : Constants.INVOKEVIRTUAL, ownerClass, destName, destDesc);
-                ASMUtil.visitBoxIfNeed(m, int.class);
+                ASMUtil.visitBoxIfNeed(m, returnType);
                 m.visitInsn(Constants.ARETURN);
                 m.visitLabel(toExcaption);
                 ASMUtil.visitScriptRuntimeException(m, "First argument can't be null.");

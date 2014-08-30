@@ -19,14 +19,19 @@ public class AsmNativeFactoryTest {
     @SuppressWarnings("unchecked")
     public void test() throws Exception {
 
+        MethodDeclare str_toString = AsmNativeFactory.createAccessor(String.class.getMethod("toString", new Class[0]));
+        
         MethodDeclare currentTimeMillis = AsmNativeFactory.createAccessor(System.class.getMethod("currentTimeMillis", new Class[0]));
         MethodDeclare newList = AsmNativeFactory.createAccessor(ArrayList.class.getConstructor());
         MethodDeclare listSize = AsmNativeFactory.createAccessor(ArrayList.class.getMethod("size", new Class[0]));
+        
         MethodDeclare listAdd = AsmNativeFactory.createAccessor(List.class.getMethod("add", new Class[]{Object.class}));
         MethodDeclare newListWithInitSize = AsmNativeFactory.createAccessor(ArrayList.class.getConstructor(new Class[]{int.class}));
         MethodDeclare listAddToIndex = AsmNativeFactory.createAccessor(List.class.getMethod("add", new Class[]{int.class, Object.class}));
         MethodDeclare arraycopy = AsmNativeFactory.createAccessor(System.class.getMethod("arraycopy", new Class[]{Object.class, int.class, Object.class, int.class, int.class}));
 
+        assertEquals("aaa", str_toString.invoke(null, new Object[]{"aaa"}));
+        
         assertEquals(currentTimeMillis.invoke(null, null).getClass(), Long.class);
         assertEquals(currentTimeMillis.invoke(null, new Object[0]).getClass(), Long.class);
         assertEquals(currentTimeMillis.invoke(null, new Object[]{1, 2, 3}).getClass(), Long.class);
