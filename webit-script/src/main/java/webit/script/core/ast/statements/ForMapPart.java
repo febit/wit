@@ -16,6 +16,8 @@ public class ForMapPart extends AbstractForInPart {
 
     protected final String keyVarName;
     protected final String valueVarName;
+    protected int keyIndex;
+    protected int valueIndex;
 
     public ForMapPart(String key, String value, Expression collectionExpr, VariantManager varmgr, int line, int column) {
         super(varmgr, line, column);
@@ -34,21 +36,19 @@ public class ForMapPart extends AbstractForInPart {
     @Override
     public final AbstractForInPart setCollectionExpr(Expression collectionExpr) {
         super.setCollectionExpr(collectionExpr);
-        if (varmgr.assignVariant(keyVarName, line, column) != 1
-                || varmgr.assignVariant(valueVarName, line, column) != 2) {
-            throw new ParseException("assignVariant failed!");
-        }
+        this.keyIndex = varmgr.assignVariant(keyVarName, line, column);
+        this.valueIndex = varmgr.assignVariant(valueVarName, line, column);
         return this;
     }
 
     @Override
     public Statement pop(int label) {
         if (bodyStatement.hasLoops()) {
-            return new ForMap(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(),
+            return new ForMap(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), iterIndex, keyIndex, valueIndex, bodyStatement.getStatements(),
                     StatementUtil.collectPossibleLoopsInfoForWhile(bodyStatement, elseStatement, label),
                     elseStatement, label, line, column);
         } else {
-            return new ForMapNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), elseStatement, line, column);
+            return new ForMapNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), iterIndex, keyIndex, valueIndex, bodyStatement.getStatements(), elseStatement, line, column);
         }
     }
 }

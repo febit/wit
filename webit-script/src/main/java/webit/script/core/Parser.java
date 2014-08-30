@@ -19,7 +19,7 @@ import webit.script.util.StatementUtil;
 
 /**
  * 
- * @version Tue Aug 26 21:43:51 CST 2014
+ * @version Sat Aug 30 17:18:41 CST 2014
  */
 public class Parser extends AbstractParser {
 
@@ -60,6 +60,11 @@ public class Parser extends AbstractParser {
                 Symbol ident$Symbol = myStack.peek(0);
                 return ((ImportPart) myStack.peek(2).value).append((String) ident$Symbol.value, createContextValue(0, (String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column));
             }
+            case 46: // varPart ::= varPart COMMA IDENTIFIER 
+            {
+                Symbol ident$Symbol = myStack.peek(0);
+                return ((StatementList) myStack.peek(2).value).add(declearVar((String) ident$Symbol.value,ident$Symbol.line,ident$Symbol.column));
+            }
             case 143: // contextValueExpr ::= superCount IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
@@ -95,15 +100,10 @@ public class Parser extends AbstractParser {
                 Symbol ident$Symbol = myStack.peek(0);
                 return new IdentiferList().add((String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column);
             }
-            case 46: // varPart ::= varPart COMMA IDENTIFIER 
-            {
-                Symbol ident$Symbol = myStack.peek(0);
-                varmgr.assignVariant((String) ident$Symbol.value,ident$Symbol.line,ident$Symbol.column); return (StatementList) myStack.peek(2).value;
-            }
             case 44: // varPart ::= VAR IDENTIFIER 
             {
                 Symbol ident$Symbol = myStack.peek(0);
-                varmgr.assignVariant((String) ident$Symbol.value,ident$Symbol.line,ident$Symbol.column); return new StatementList();
+                return new StatementList().add(declearVar((String) ident$Symbol.value,ident$Symbol.line,ident$Symbol.column));
             }
             case 65: // lambdaForHead1 ::= FOR LPAREN IDENTIFIER MINUSGT 
             case 168: // lambdaExprHead ::= IDENTIFIER MINUSGT 
@@ -598,7 +598,7 @@ public class Parser extends AbstractParser {
             }
             case 0: // templateAST ::= statementList 
             {
-                return ((StatementList) myStack.peek(0).value).popTemplateAST(varmgr.pop());
+                return ((StatementList) myStack.peek(0).value).popTemplateAST(varmgr);
             }
             case 3: // statementList ::= statementList statement 
             {

@@ -17,21 +17,22 @@ import webit.script.util.StatementUtil;
  */
 public final class Block extends IBlock implements Loopable {
 
-    public final VariantIndexer varIndexer;
+    public final int indexer;
     public final Statement[] statements;
     public final LoopInfo[] possibleLoopsInfo;
 
-    public Block(VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, int line, int column) {
+    public Block(int indexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, int line, int column) {
         super(line, column);
-        this.varIndexer = varIndexer;
+        this.indexer = indexer;
         this.statements = statements;
         this.possibleLoopsInfo = possibleLoopsInfo;
     }
 
     public Object execute(final Context context) {
-        context.push(varIndexer);
+        final int preIndex = context.indexer;
+        context.indexer = indexer;
         StatementUtil.executeInvertedAndCheckLoops(statements, context);
-        context.pop();
+        context.indexer = preIndex;
         return null;
     }
 
@@ -43,8 +44,8 @@ public final class Block extends IBlock implements Loopable {
         return true;
     }
 
-    public VariantIndexer getVarIndexer() {
-        return varIndexer;
+    public int getVarIndexer() {
+        return indexer;
     }
 
     public Statement[] getStatements() {

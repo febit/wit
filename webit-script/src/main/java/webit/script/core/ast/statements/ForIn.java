@@ -25,39 +25,46 @@ public class ForIn extends Statement implements Loopable {
 
     protected final FunctionDeclare functionDeclareExpr;
     protected final Expression collectionExpr;
-    protected final VariantIndexer varIndexer;
+    protected final int indexer;
     protected final Statement[] statements;
     protected final LoopInfo[] possibleLoopsInfo;
     protected final Statement elseStatement;
     protected final int label;
+    protected final int iterIndex;
+    protected final int itemIndex;
 
-    public ForIn(FunctionDeclare functionDeclareExpr, Expression collectionExpr, VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
+    public ForIn(FunctionDeclare functionDeclareExpr, Expression collectionExpr, int indexer, int iterIndex, int itemIndex, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
         super(line, column);
         this.functionDeclareExpr = functionDeclareExpr;
         this.collectionExpr = collectionExpr;
-        this.varIndexer = varIndexer;
+        this.indexer = indexer;
         this.statements = statements;
         this.possibleLoopsInfo = possibleLoopsInfo;
         this.elseStatement = elseStatement;
         this.label = label;
+        this.iterIndex = iterIndex;
+        this.itemIndex = itemIndex;
     }
 
     public Object execute(final Context context) {
         Iter iter = CollectionUtil.toIter(StatementUtil.execute(collectionExpr, context));
         if (iter != null && functionDeclareExpr != null) {
-            iter = new IterMethodFilter(context,
-                    functionDeclareExpr.execute(context),
-                    iter);
+            iter = new IterMethodFilter(context, functionDeclareExpr.execute(context), iter);
         }
         if (iter != null
                 && iter.hasNext()) {
             final LoopCtrl ctrl = context.loopCtrl;
-            context.push(varIndexer);
-            context.set(0, iter);
+        final int preIndex = context.indexer;
+        context.indexer = indexer;
+            final Statement[] statements = this.statements;
+            final int label = this.label;
+            final int itemIndex = this.itemIndex;
+            final Object[] vars = context.vars;
+            vars[iterIndex] = iter;
             label:
             do {
-                context.resetForForIn(iter.next());
-                StatementUtil.executeInvertedAndCheckLoops(this.statements, context);
+                vars[itemIndex] = iter.next();
+                StatementUtil.executeInvertedAndCheckLoops(statements, context);
                 if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                     if (ctrl.matchLabel(label)) {
                         switch (ctrl.getLoopType()) {
@@ -78,7 +85,7 @@ public class ForIn extends Statement implements Loopable {
                     }
                 }
             } while (iter.hasNext());
-            context.pop();
+            context.indexer = preIndex;
             return null;
         } else if (elseStatement != null) {
             StatementUtil.execute(elseStatement, context);

@@ -1,7 +1,6 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Statement;
 
 /**
@@ -14,7 +13,7 @@ public abstract class IBlock extends Statement {
         super(line, column);
     }
 
-    public abstract VariantIndexer getVarIndexer();
+    public abstract int getVarIndexer();
 
     public abstract Statement[] getStatements();
 

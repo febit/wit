@@ -5,13 +5,13 @@ var v1,v2;
     var back1;
     var back2;
 
-    assertEquals(v1,"V1");
-    assertEquals(v2,"V2");
+    assertEquals(v1, "V1");
+    assertEquals(v2, "V2");
 
     import "/shareData.inlude.wit" {"a1":"A1","a2":"A2"};
 
-    assertEquals(back1, "BACK1");
-    assertEquals(back2, "BACK2");
+    assertEquals("BACK1", back1);
+    assertEquals("BACK2", back2);
 }
 
 %>

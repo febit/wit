@@ -4,8 +4,6 @@ package webit.script.core.ast.expressions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import webit.script.core.VariantIndexer;
 import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Identifer;
@@ -27,6 +25,7 @@ public class FunctionDeclarePart extends Position {
 
     private int argsCount = 0;
     private final int assignToIndex;
+    private final int start;
     private final VariantManager varmgr;
     private final List<String> args;
 
@@ -44,10 +43,7 @@ public class FunctionDeclarePart extends Position {
         this.assignToIndex = assignToIndex;
         this.args = new ArrayList<String>();
         varmgr.push();
-        varmgr.pushVarWall();
-        if (varmgr.assignVariant("arguments", line, column) != 0) {
-            throw new ParseException("Failed to assign vars!");
-        }
+        start = varmgr.assignVariant("arguments", line, column);
     }
 
     public FunctionDeclarePart appendArgs(IdentiferList identiferList) {
@@ -58,7 +54,7 @@ public class FunctionDeclarePart extends Position {
     }
 
     public FunctionDeclarePart appendArg(String name, int line, int column) {
-        if (varmgr.assignVariant(name, line, column) != (++this.argsCount)) {
+        if (varmgr.assignVariant(name, line, column) != (start + (++this.argsCount))) {
             throw new ParseException("Failed to assign vars!");
         }
         this.args.add(name);
@@ -76,23 +72,18 @@ public class FunctionDeclarePart extends Position {
     public Expression pop(StatementList list) {
         final Expression expr = popFunctionDeclare(list);
         if (this.assignToIndex >= 0) {
-            return new Assign(new CurrentContextValue(this.assignToIndex, line, column), expr, line, column);
+            return new Assign(new ContextValue(this.assignToIndex, line, column), expr, line, column);
         } else {
             return expr;
         }
     }
-    
+
     public FunctionDeclare popFunctionDeclare(StatementList list) {
         Statement[] statements = list.toInvertArray();
-
-        int[] overflowUpstairs = varmgr.popVarWall();
-        Map<String, Integer> varIndexer = varmgr.pop();
-
+        int varIndexer = varmgr.pop();
         boolean hasReturnLoops = false;
         List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(statements);
-
         if (loopInfos != null) {
-
             for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
                 LoopInfo loopInfo = it.next();
                 if (loopInfo.type == LoopInfo.RETURN) {
@@ -106,9 +97,9 @@ public class FunctionDeclarePart extends Position {
         }
 
         return new FunctionDeclare(argsCount,
-                overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null,
-                VariantIndexer.getVariantIndexer(varIndexer),
+                varIndexer,
                 statements,
+                start,
                 hasReturnLoops,
                 line, column);
     }

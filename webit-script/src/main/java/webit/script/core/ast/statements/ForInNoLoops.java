@@ -18,37 +18,42 @@ import webit.script.util.StatementUtil;
 public final class ForInNoLoops extends Statement {
 
     private final Expression collectionExpr;
-    private final VariantIndexer varIndexer;
+    private final int indexer;
     private final Statement[] statements;
     private final Statement elseStatement;
     protected final FunctionDeclare functionDeclareExpr;
+    protected final int iterIndex;
+    protected final int itemIndex;
 
-    public ForInNoLoops(FunctionDeclare functionDeclareExpr, Expression collectionExpr, VariantIndexer varIndexer, Statement[] statements, Statement elseStatement, int line, int column) {
+    public ForInNoLoops(FunctionDeclare functionDeclareExpr, Expression collectionExpr, int indexer, int iterIndex, int itemIndex, Statement[] statements, Statement elseStatement, int line, int column) {
         super(line, column);
         this.functionDeclareExpr = functionDeclareExpr;
         this.collectionExpr = collectionExpr;
-        this.varIndexer = varIndexer;
+        this.indexer = indexer;
         this.statements = statements;
         this.elseStatement = elseStatement;
+        this.iterIndex = iterIndex;
+        this.itemIndex = itemIndex;
     }
 
     public Object execute(final Context context) {
         Iter iter = CollectionUtil.toIter(StatementUtil.execute(collectionExpr, context));
         if (iter != null && functionDeclareExpr != null) {
-            iter = new IterMethodFilter(context,
-                    functionDeclareExpr.execute(context),
-                    iter);
+            iter = new IterMethodFilter(context, functionDeclareExpr.execute(context), iter);
         }
         if (iter != null
                 && iter.hasNext()) {
+        final int preIndex = context.indexer;
+        context.indexer = indexer;
             final Statement[] statements = this.statements;
-            context.push(varIndexer);
-            context.set(0, iter);
+            final int itemIndex = this.itemIndex;
+            final Object[] vars = context.vars;
+            vars[iterIndex] = iter;
             do {
-                context.resetForForIn(iter.next());
+                vars[itemIndex] = iter.next();
                 StatementUtil.executeInverted(statements, context);
             } while (iter.hasNext());
-            context.pop();
+            context.indexer = preIndex;
             return null;
         } else if (elseStatement != null) {
             StatementUtil.execute(elseStatement, context);

@@ -15,24 +15,24 @@ import webit.script.util.StatementUtil;
 public final class DoWhileNoLoops extends Statement {
 
     private final Expression whileExpr;
-    private final VariantIndexer varIndexer;
+    private final int indexer;
     private final Statement[] statements;
 
-    public DoWhileNoLoops(Expression whileExpr, VariantIndexer varIndexer, Statement[] statements, int line, int column) {
+    public DoWhileNoLoops(Expression whileExpr, int indexer, Statement[] statements, int line, int column) {
         super(line, column);
         this.whileExpr = whileExpr;
-        this.varIndexer = varIndexer;
+        this.indexer = indexer;
         this.statements = statements;
     }
 
     public Object execute(final Context context) {
         final Statement[] statements = this.statements;
-        context.push(varIndexer);
+        final int preIndex = context.indexer;
+        context.indexer = indexer;
         do {
             StatementUtil.executeInverted(statements, context);
-            context.resetCurrentVars();
         } while (ALU.isTrue(StatementUtil.execute(whileExpr, context)));
-        context.pop();
+        context.indexer = preIndex;
         return null;
     }
 }

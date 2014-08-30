@@ -13,24 +13,25 @@ import webit.script.util.StatementUtil;
  */
 public class BlockNoLoops extends IBlock implements Optimizable {
 
-    private final VariantIndexer varIndexer;
+    private final int indexer;
     private final Statement[] statements;
 
-    public BlockNoLoops(VariantIndexer varIndexer, Statement[] statements, int line, int column) {
+    public BlockNoLoops(int indexer, Statement[] statements, int line, int column) {
         super(line, column);
-        this.varIndexer = varIndexer;
+        this.indexer = indexer;
         this.statements = statements;
     }
 
     public Object execute(final Context context) {
-        context.push(varIndexer);
+        final int preIndex = context.indexer;
+        context.indexer = indexer;
         StatementUtil.executeInverted(statements, context);
-        context.pop();
+        context.indexer = preIndex;
         return null;
     }
 
-    public VariantIndexer getVarIndexer() {
-        return varIndexer;
+    public int getVarIndexer() {
+        return indexer;
     }
 
     public Statement[] getStatements() {

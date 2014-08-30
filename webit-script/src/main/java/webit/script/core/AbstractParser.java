@@ -187,19 +187,13 @@ abstract class AbstractParser {
 
     Expression createContextValue(VarAddress addr, int line, int column) {
         switch (addr.type) {
-            case VarAddress.ROOT:
-                return new RootContextValue(addr.index, line, column);
             case VarAddress.GLOBAL:
                 return new GlobalValue(this.engine.getGlobalManager(), addr.index, line, column);
             case VarAddress.CONST:
                 return new DirectValue(addr.constValue, line, column);
             default:
                 //VarAddress.CONTEXT
-                if (addr.upstairs == 0) {
-                    return new CurrentContextValue(addr.index, line, column);
-                } else {
-                    return new ContextValue(addr.upstairs, addr.index, line, column);
-                }
+                return new ContextValue(addr.index, line, column);
         }
     }
 
@@ -266,6 +260,12 @@ abstract class AbstractParser {
 
     Expression createNativeConstructorDeclareExpression(Class clazz, List<Class> list, int line, int column) {
         return new DirectValue(this.nativeFactory.createNativeConstructorDeclare(clazz, list.toArray(new Class[list.size()]), line, column), line, column);
+    }
+    
+    Statement declearVar(String ident, int line, int column){
+        //XXX: Should Check var used before init;
+        varmgr.assignVariant(ident, line, column);
+        return NoneStatement.INSTANCE;
     }
 
     static ResetableValueExpression castToResetableValueExpression(Expression expr) {

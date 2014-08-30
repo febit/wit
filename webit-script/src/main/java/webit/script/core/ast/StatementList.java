@@ -4,8 +4,8 @@ package webit.script.core.ast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import webit.script.core.VariantIndexer;
+import webit.script.core.VariantManager;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.statements.Block;
 import webit.script.core.ast.statements.BlockNoLoops;
@@ -51,27 +51,25 @@ public final class StatementList {
         return new StatementGroup(toArray(), line, column);
     }
 
-    public TemplateAST popTemplateAST(Map<String, Integer> varIndexer) {
-
+    public TemplateAST popTemplateAST(VariantManager varmgr) {
         Statement[] statements = this.toInvertArray();
-
         List<LoopInfo> loopInfos;
         if ((loopInfos = StatementUtil.collectPossibleLoopsInfo(statements)) == null) {
-            return new TemplateAST(VariantIndexer.getVariantIndexer(varIndexer), statements);
+            return new TemplateAST(varmgr.getIndexers(), statements, varmgr.getVarCount());
         } else {
             throw new ParseException("loop overflow: ".concat(StringUtil.join(loopInfos, ",")));
         }
     }
 
-    public IBlock popIBlock(Map<String, Integer> varIndexer, int line, int column) {
+    public IBlock popIBlock(int varIndexer, int line, int column) {
         Statement[] statements;
 
         List<LoopInfo> loopInfoList = StatementUtil.collectPossibleLoopsInfo(
                 statements = this.toInvertArray());
 
         return loopInfoList != null
-                ? new Block(VariantIndexer.getVariantIndexer(varIndexer), statements, loopInfoList.toArray(new LoopInfo[loopInfoList.size()]), line, column)
-                : new BlockNoLoops(VariantIndexer.getVariantIndexer(varIndexer), statements, line, column);
+                ? new Block(varIndexer, statements, loopInfoList.toArray(new LoopInfo[loopInfoList.size()]), line, column)
+                : new BlockNoLoops(varIndexer, statements, line, column);
     }
 
 }

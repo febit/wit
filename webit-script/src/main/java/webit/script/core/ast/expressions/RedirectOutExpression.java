@@ -28,28 +28,22 @@ public class RedirectOutExpression extends Expression {
 
     public Object execute(final Context context) {
 
-        final Out current;
+        final Out current = context.out;
         final Object result;
-        if ((current = context.getOut()).isByteStream()) {
-
+        if (current.isByteStream()) {
             FastByteArrayOutputStream out = new FastByteArrayOutputStream(256);
-
-            result = StatementUtil.execute(srcExpr, context, new OutputStreamOut(out, (OutputStreamOut) current));
+            context.out = new OutputStreamOut(out, (OutputStreamOut) current);
+            result = StatementUtil.execute(srcExpr, context);
             StatementUtil.executeSetValue(toExpr, context, out.toByteArray());
-
-            return result;
         } else {
             FastCharArrayWriter writer = new FastCharArrayWriter(256);
-
-            result = StatementUtil.execute(srcExpr, context,
-                    current instanceof WriterOut
+            context.out = current instanceof WriterOut
                     ? new WriterOut(writer, (WriterOut) current)
-                    : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
-            
+                    : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory());
+            result = StatementUtil.execute(srcExpr, context);
             StatementUtil.executeSetValue(toExpr, context, writer.toCharArray());
-
-            return result;
         }
-
+        context.out = current;
+        return result;
     }
 }

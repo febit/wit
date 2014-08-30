@@ -128,7 +128,7 @@ precedence left     DOT, LBRACK, LPAREN, LBRACE, AT; // . [ ( { @
 /* templateAST */
 
 templateAST            ::= statementList:list
-                        {: return (%list%).popTemplateAST(varmgr.pop()); :}
+                        {: return (%list%).popTemplateAST(varmgr); :}
                         ;
 
 statementList           ::= statement:stat
@@ -268,11 +268,11 @@ varAssign       ::= IDENTIFIER:ident EQ:sym expression:expr
                     ;
 
 varPart         ::= VAR IDENTIFIER:ident
-                    {: varmgr.assignVariant(%ident%,%ident.line%,%ident.column%); return new StatementList();:}
+                    {: return new StatementList().add(declearVar(%ident%,%ident.line%,%ident.column%));:}
                     | VAR varAssign:expr
                     {: return new StatementList().add(%expr%); :}
                     | varPart:part COMMA IDENTIFIER:ident
-                    {: varmgr.assignVariant(%ident%,%ident.line%,%ident.column%); return %part%;:}
+                    {: return (%part%).add(declearVar(%ident%,%ident.line%,%ident.column%)); :}
                     | varPart:part COMMA varAssign:expr
                     {: return (%part%).add(%expr%); :}
                     ;

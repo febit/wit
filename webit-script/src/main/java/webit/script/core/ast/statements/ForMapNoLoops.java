@@ -19,35 +19,45 @@ public final class ForMapNoLoops extends Statement {
 
     protected final FunctionDeclare functionDeclareExpr;
     private final Expression mapExpr;
-    private final VariantIndexer varIndexer;
+    private final int indexer;
     private final Statement[] statements;
     private final Statement elseStatement;
+    private final int iterIndex;
+    private final int keyIndex;
+    private final int valueIndex;
 
-    public ForMapNoLoops(FunctionDeclare functionDeclareExpr, Expression mapExpr, VariantIndexer varIndexer, Statement[] statements, Statement elseStatement, int line, int column) {
+    public ForMapNoLoops(FunctionDeclare functionDeclareExpr, Expression mapExpr, int indexer, int iterIndex, int keyIndex, int valueIndex, Statement[] statements, Statement elseStatement, int line, int column) {
         super(line, column);
         this.functionDeclareExpr = functionDeclareExpr;
         this.mapExpr = mapExpr;
-        this.varIndexer = varIndexer;
+        this.indexer = indexer;
         this.statements = statements;
         this.elseStatement = elseStatement;
+        this.iterIndex = iterIndex;
+        this.keyIndex = keyIndex;
+        this.valueIndex = valueIndex;
     }
 
     @SuppressWarnings("unchecked")
     public Object execute(final Context context) {
         KeyIter iter = CollectionUtil.toKeyIter(StatementUtil.execute(mapExpr, context));
         if (iter != null && functionDeclareExpr != null) {
-            iter = new KeyIterMethodFilter(context,
-                    functionDeclareExpr.execute(context),
-                    iter);
+            iter = new KeyIterMethodFilter(context, functionDeclareExpr.execute(context), iter);
         }
         if (iter != null && iter.hasNext()) {
-            context.push(varIndexer);
-            context.set(0, iter);
+        final int preIndex = context.indexer;
+        context.indexer = indexer;
+            final Statement[] statements = this.statements;
+            final int keyIndex = this.keyIndex;
+            final int valueIndex = this.valueIndex;
+            final Object[] vars = context.vars;
+            vars[iterIndex] = iter;
             do {
-                context.resetForForMap(iter.next(), iter.value());
-                StatementUtil.executeInverted(this.statements, context);
+                vars[keyIndex] = iter.next();
+                vars[valueIndex] = iter.value();
+                StatementUtil.executeInverted(statements, context);
             } while (iter.hasNext());
-            context.pop();
+            context.indexer = preIndex;
             return null;
         } else if (elseStatement != null) {
             StatementUtil.execute(elseStatement, context);

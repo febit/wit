@@ -7,7 +7,6 @@ import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.StatementList;
 import webit.script.core.ast.expressions.FunctionDeclare;
-import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;
 
 /**
@@ -21,6 +20,7 @@ public abstract class AbstractForInPart extends Position {
     protected final VariantManager varmgr;
     protected Expression collectionExpr;
     protected FunctionDeclare functionDeclareExpr;
+    protected int iterIndex;
 
     public AbstractForInPart(VariantManager varmgr, int line, int column) {
         super(line, column);
@@ -30,9 +30,7 @@ public abstract class AbstractForInPart extends Position {
     public AbstractForInPart setCollectionExpr(Expression collectionExpr) {
         this.collectionExpr = collectionExpr;
         varmgr.push();
-        if (varmgr.assignVariant("for.iter", line, column) != 0) {
-            throw new ParseException("assignVariant failed!");
-        }
+        iterIndex = varmgr.assignVariant("for.iter", line, column);
         return this;
     }
     

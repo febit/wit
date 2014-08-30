@@ -10,21 +10,18 @@ import webit.script.core.ast.ResetableValueExpression;
  */
 public final class ContextValue extends ResetableValueExpression {
 
-    private final int upstairs;
     private final int index;
 
-    public ContextValue(int upstairs, int index, int line, int column) {
+    public ContextValue(int index, int line, int column) {
         super(line, column);
-        this.upstairs = upstairs;
         this.index = index;
     }
 
     public Object execute(final Context context) {
-        return context.get(upstairs, index);
+        return context.vars[index];
     }
 
     public Object setValue(final Context context, final Object value) {
-        context.set(upstairs, index, value);
-        return value;
+        return context.vars[index] = value;
     }
 }

@@ -11,18 +11,23 @@ import webit.script.util.StatementUtil;
  */
 public class TemplateAST {
 
-    private final VariantIndexer varIndexer;
     private final Statement[] statements;
+    private final VariantIndexer[] indexers;
+    private final int varSize;
 
-    public TemplateAST(VariantIndexer varIndexer, Statement[] statements) {
-        this.varIndexer = varIndexer;
+    public TemplateAST(VariantIndexer[] indexers, Statement[] statements, int varSize) {
+        this.indexers = indexers;
         this.statements = statements;
+        this.varSize = varSize;
     }
 
     public Context execute(final Context context) {
-        context.pushWithRootParams(this.varIndexer);
+        context.indexers = this.indexers;
+        context.indexer = 0;
+        context.vars = new Object[varSize];
+        context.pushRootParams();
         StatementUtil.executeInverted(this.statements, context);
-        //Note: don't vars.pop(), to keep the top vars(s)
+        context.indexer = 0;
         return context;
     }
 }

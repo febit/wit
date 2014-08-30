@@ -5,7 +5,6 @@ import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.expressions.FunctionDeclare;
-import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;
 
 /**
@@ -15,6 +14,7 @@ import webit.script.util.StatementUtil;
 public class ForInPart extends AbstractForInPart {
 
     protected final String itemVarName;
+    protected int itemIndex;
 
     public ForInPart(String item, Expression collectionExpr, VariantManager varmgr, int line, int column) {
         super(varmgr, line, column);
@@ -31,20 +31,18 @@ public class ForInPart extends AbstractForInPart {
     @Override
     public final AbstractForInPart setCollectionExpr(Expression collectionExpr) {
         super.setCollectionExpr(collectionExpr);
-        if (varmgr.assignVariant(itemVarName, line, column) != 1) {
-            throw new ParseException("assignVariant failed!");
-        }
+        itemIndex = varmgr.assignVariant(itemVarName, line, column);
         return this;
     }
 
     @Override
     public Statement pop(int label) {
         if (bodyStatement.hasLoops()) {
-            return new ForIn(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(),
+            return new ForIn(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), iterIndex, itemIndex, bodyStatement.getStatements(),
                     StatementUtil.collectPossibleLoopsInfoForWhile(bodyStatement, elseStatement, label),
                     elseStatement, label, line, column);
         } else {
-            return new ForInNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), elseStatement, line, column);
+            return new ForInNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), iterIndex, itemIndex, bodyStatement.getStatements(), elseStatement, line, column);
         }
     }
 }

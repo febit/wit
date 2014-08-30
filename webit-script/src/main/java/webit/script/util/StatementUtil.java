@@ -13,36 +13,12 @@ import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.exceptions.ParseException;
-import webit.script.io.Out;
 
 /**
  *
  * @author Zqq
  */
 public class StatementUtil {
-
-    @SuppressWarnings("deprecation")
-    public static Object execute(final Expression expression, final Context context, final Out out) {
-        try {
-            context.pushOut(out);
-            Object result = expression.execute(context);
-            context.popOut();
-            return result;
-        } catch (Exception e) {
-            throw ExceptionUtil.castToScriptRuntimeException(e, expression);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void execute(final Statement statement, final Context context, final Out out) {
-        try {
-            context.pushOut(out);
-            statement.execute(context);
-            context.popOut();
-        } catch (Exception e) {
-            throw ExceptionUtil.castToScriptRuntimeException(e, statement);
-        }
-    }
 
     public static Object execute(final Expression expression, final Context context) {
         try {

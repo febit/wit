@@ -27,27 +27,21 @@ public class RedirectOut extends Statement {
     }
 
     public Object execute(final Context context) {
-
-        final Out current;
-        if ((current = context.getOut()).isByteStream()) {
-
-            final FastByteArrayOutputStream out = new FastByteArrayOutputStream(128);
-
-            StatementUtil.execute(srcStatement, context, new OutputStreamOut(out, (OutputStreamOut) current));
+        final Out current = context.out;
+        if (current.isByteStream()) {
+            FastByteArrayOutputStream out = new FastByteArrayOutputStream(256);
+            context.out = new OutputStreamOut(out, (OutputStreamOut) current);
+            StatementUtil.execute(srcStatement, context);
             StatementUtil.executeSetValue(toExpr, context, out.toByteArray());
-
         } else {
-
-            final FastCharArrayWriter writer = new FastCharArrayWriter();
-
-            StatementUtil.execute(srcStatement, context,
-                    current instanceof WriterOut
+            FastCharArrayWriter writer = new FastCharArrayWriter(256);
+            context.out = current instanceof WriterOut
                     ? new WriterOut(writer, (WriterOut) current)
-                    : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
-            
+                    : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory());
+            StatementUtil.execute(srcStatement, context);
             StatementUtil.executeSetValue(toExpr, context, writer.toCharArray());
-
         }
+        context.out = current;
         return null;
     }
 }

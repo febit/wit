@@ -2,8 +2,6 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
-import webit.script.core.VariantIndexer;
-import webit.script.core.Variants;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.lang.method.FunctionMethodDeclare;
@@ -16,50 +14,52 @@ import webit.script.util.StatementUtil;
 public final class FunctionDeclare extends Expression {
 
     private final int argsCount;
-    public final int[] _overflowUpstairs;
-    private final VariantIndexer varIndexer;
+    private final int indexer;
     private final Statement[] statements;
     private final boolean hasReturnLoops;
+    private final int start;
 
-    public FunctionDeclare(int argsCount, int[] overflowUpstairs, VariantIndexer varIndexer, Statement[] statements, boolean hasReturnLoops, int line, int column) {
+    public FunctionDeclare(int argsCount, int indexer, Statement[] statements, int start, boolean hasReturnLoops, int line, int column) {
         super(line, column);
         this.argsCount = argsCount;
-        this._overflowUpstairs = overflowUpstairs != null && overflowUpstairs.length != 0 ? overflowUpstairs : null;
-        this.varIndexer = varIndexer;
+        this.indexer = indexer;
         this.statements = statements;
         this.hasReturnLoops = hasReturnLoops;
+        this.start = start;
     }
 
     public FunctionMethodDeclare execute(final Context context) {
-        final Variants[] varses;
-        final int[] overflowUpstairs;
-        final boolean containsRootContext;
-        if ((overflowUpstairs = this._overflowUpstairs) != null) {
-            final int len;
-            final int max;
-            int j = -1;
-            varses = new Variants[(max = overflowUpstairs[(len = overflowUpstairs.length) - 1]) + 1];
-            for (int i = 0; i < len; i++) {
-                varses[max - (j = overflowUpstairs[i])] = context.getVars(j);
-            }
-            containsRootContext = j == context.getCurrentVarsDepth();
-        } else {
-            varses = null;
-            containsRootContext = false;
-        }
-        return new FunctionMethodDeclare(this, context.template, varses, containsRootContext);
+        return new FunctionMethodDeclare(this, context.template, context.vars, context.indexers);
     }
 
     public Object invoke(final Context context, final Object[] args) {
-        context.push(varIndexer);
-        context.setArgumentsForFunction(argsCount, args);
+        final int preIndex = context.indexer;
+        context.indexer = indexer;
+        final int argsCount = this.argsCount;
+        final Object[] vars = context.vars;
+        int start = this.start;
+        vars[start++] = args;
+        int len = args != null ? args.length : 0;
+        if (argsCount != 0) {
+            int nextEnd = argsCount > len ? len : argsCount;
+            int i;
+            for (i = 0; i < nextEnd; i++) {
+                vars[start++] = args[i];
+            }
+            if (argsCount > len) {
+                nextEnd = argsCount - len;
+                for (i = 0; i < nextEnd; i++) {
+                    vars[start++] = null;
+                }
+            }
+        }
         if (hasReturnLoops) {
             StatementUtil.executeInvertedAndCheckLoops(statements, context);
-            context.pop();
+            context.indexer = preIndex;
             return context.loopCtrl.resetReturnLoop();
         } else {
             StatementUtil.executeInverted(statements, context);
-            context.pop();
+            context.indexer = preIndex;
             return Context.VOID;
         }
     }

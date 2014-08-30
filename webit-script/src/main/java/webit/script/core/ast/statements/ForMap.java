@@ -25,39 +25,51 @@ public final class ForMap extends Statement implements Loopable {
 
     protected final FunctionDeclare functionDeclareExpr;
     private final Expression mapExpr;
-    private final VariantIndexer varIndexer;
+    private final int indexer;
     private final Statement[] statements;
     public final LoopInfo[] possibleLoopsInfo;
     private final Statement elseStatement;
     private final int label;
+    private final int iterIndex;
+    private final int keyIndex;
+    private final int valueIndex;
 
-    public ForMap(FunctionDeclare functionDeclareExpr, Expression mapExpr, VariantIndexer varIndexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
+    public ForMap(FunctionDeclare functionDeclareExpr, Expression mapExpr, int indexer, int iterIndex, int keyIndex, int valueIndex, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
         super(line, column);
         this.functionDeclareExpr = functionDeclareExpr;
         this.mapExpr = mapExpr;
-        this.varIndexer = varIndexer;
+        this.indexer = indexer;
         this.statements = statements;
         this.possibleLoopsInfo = possibleLoopsInfo;
         this.elseStatement = elseStatement;
         this.label = label;
+        this.iterIndex = iterIndex;
+        this.keyIndex = keyIndex;
+        this.valueIndex = valueIndex;
     }
 
     @SuppressWarnings("unchecked")
     public Object execute(final Context context) {
         KeyIter iter = CollectionUtil.toKeyIter(StatementUtil.execute(mapExpr, context));
         if (iter != null && functionDeclareExpr != null) {
-            iter = new KeyIterMethodFilter(context,
-                    functionDeclareExpr.execute(context),
-                    iter);
+            iter = new KeyIterMethodFilter(context, functionDeclareExpr.execute(context), iter);
         }
         if (iter != null && iter.hasNext()) {
             final LoopCtrl ctrl = context.loopCtrl;
-            context.push(varIndexer);
-            context.set(0, iter);
+        final int preIndex = context.indexer;
+        context.indexer = indexer;
+
+            final Statement[] statements = this.statements;
+            final int label = this.label;
+            final int keyIndex = this.keyIndex;
+            final int valueIndex = this.valueIndex;
+            final Object[] vars = context.vars;
+            vars[iterIndex] = iter;
             label:
             do {
-                context.resetForForMap(iter.next(), iter.value());
-                StatementUtil.executeInvertedAndCheckLoops(this.statements, context);
+                vars[keyIndex] = iter.next();
+                vars[valueIndex] = iter.value();
+                StatementUtil.executeInvertedAndCheckLoops(statements, context);
                 if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                     if (ctrl.matchLabel(label)) {
                         switch (ctrl.getLoopType()) {
@@ -78,7 +90,7 @@ public final class ForMap extends Statement implements Loopable {
                     }
                 }
             } while (iter.hasNext());
-            context.pop();
+            context.indexer = preIndex;
             return null;
         } else if (elseStatement != null) {
             StatementUtil.execute(elseStatement, context);
