@@ -7,8 +7,8 @@ DEFAULT_ENCODING=UTF-8
 encoding=${DEFAULT_ENCODING}
 resourceLoader=webit.script.loaders.impl.RouteLoader-main
 assistantSuffixs+=.wit
-nativeFactory=webit.script.asm.AsmNativeFactory
-resolverManager=webit.script.asm.AsmResolverManager
+# nativeFactory=webit.script.asm.AsmNativeFactory
+# resolverManager=webit.script.asm.AsmResolverManager
 # textStatementFactory=webit.script.core.text.impl.SimpleTextStatementFactory
 # nativeSecurityManager=webit.script.security.impl.NoneNativeSecurityManager
 # logger=webit.script.loggers.impl.NOPLogger
@@ -103,10 +103,10 @@ root=
 
 
 [global]
-registers =\
-    webit.script.global.impl.GlobalMapRegister, \
+registers ='''
+    webit.script.global.impl.GlobalMapRegister
     webit.script.global.impl.ContextLocalRegister
-
+'''
 
 [nativeSecurity]
 list='''
@@ -120,22 +120,7 @@ list='''
   float
   double
 
-  Object
-  Boolean
-  Character
-  Byte
-  Short
-  Integer
-  Long
-  Float
-  Double
-  String
-
-  Number
-  Math
-
   java.lang.Object
-
   java.lang.Boolean
   java.lang.Character
   java.lang.Byte
@@ -145,27 +130,8 @@ list='''
   java.lang.Float
   java.lang.Double
   java.lang.String
-
   java.lang.Number
-  java.lang.Math
 
-  java.math
-
-  java.util.List
-  java.util.ArrayList
-  java.util.Map
-  java.util.HashMap
-  java.util.Set
-  java.util.HashSet
-
-  java.util.Calendar
-  java.util.Date
-
-  java.text.SimpleDateFormat
-  
-  jodd.datetime
-  jodd.util.StringUtil
-  jodd.util.ArraysUtil
 '''
 
 

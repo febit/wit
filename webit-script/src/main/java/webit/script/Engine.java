@@ -82,8 +82,8 @@ public final class Engine {
     @SuppressWarnings("unchecked")
     private void init() {
         this.logger = (Logger) newComponentInstance(this.loggerType, webit.script.loggers.impl.NOPLogger.class);
-        this.nativeFactory = (NativeFactory) newComponentInstance(this.nativeFactoryType, NativeFactory.class);
-        this.resolverManager = (ResolverManager) newComponentInstance(this.resolverManagerType, ResolverManager.class);
+        this.nativeFactory = (NativeFactory) newComponentInstance(this.nativeFactoryType, webit.script.asm.AsmNativeFactory.class);
+        this.resolverManager = (ResolverManager) newComponentInstance(this.resolverManagerType, webit.script.asm.AsmResolverManager.class);
         this.coderFactory = (CoderFactory) newComponentInstance(this.coderFactoryType, webit.script.io.charset.impl.DefaultCoderFactory.class);
         this.nativeSecurityManager = (NativeSecurityManager) newComponentInstance(this.nativeSecurityManagerType, webit.script.security.impl.NoneNativeSecurityManager.class);
         this.textStatementFactory = (TextStatementFactory) newComponentInstance(this.textStatementFactoryType, webit.script.core.text.impl.SimpleTextStatementFactory.class);
@@ -416,7 +416,7 @@ public final class Engine {
     }
 
     public static Props createConfigProps(final String configPath) {
-        return PropsUtil.loadFromClasspath(new Props(), CFG.DEFAULT_PROPERTIES, configPath);
+        return PropsUtil.loadFromClasspath(new Props(), CFG.DEFAULT_WIM, configPath);
     }
 
     /**
@@ -470,7 +470,7 @@ public final class Engine {
 
         engine.init();
         if (engine.getLogger().isInfoEnabled()) {
-            engine.getLogger().info("Loaded props: {}", petite.get(CFG.PROPS_FILE_LIST));
+            engine.getLogger().info("Loaded props: {}", petite.get(CFG.WIM_FILE_LIST));
         }
         try {
             engine.executeInitTemplates();

@@ -47,7 +47,7 @@ public class PropsUtil {
 
         private void mergeProps(Props src, String name) {
             this.props.merge(src);
-            this.props.append(CFG.PROPS_FILE_LIST, name);
+            this.props.append(CFG.WIM_FILE_LIST, name);
         }
 
         private void resolveModules(Props src) {

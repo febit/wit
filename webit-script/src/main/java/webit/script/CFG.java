@@ -7,8 +7,8 @@ package webit.script;
  */
 public interface CFG {
 
-    public static final String DEFAULT_PROPERTIES = "/webit-script-default.props";
-    public static final String PROPS_FILE_LIST  = "$$propsFiles";
+    public static final String DEFAULT_WIM = "/default.wim";
+    public static final String WIM_FILE_LIST  = "$$WIMS";
     public static final String DEFAULT_ENCODING = "DEFAULT_ENCODING";
     
     public static final String ENGINE           = "engine";
