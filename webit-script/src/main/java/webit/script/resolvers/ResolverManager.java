@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.io.Out;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.impl.CommonResolver;
 import webit.script.util.ClassEntry;
@@ -20,9 +19,9 @@ public class ResolverManager implements Initable {
 
     protected Logger logger;
 
-    protected final ClassMap<GetResolver> getResolverMap;
-    protected final ClassMap<SetResolver> setResolverMap;
-    protected final ClassMap<OutResolver> outResolverMap;
+    protected final ClassMap<GetResolver> getterMap;
+    protected final ClassMap<SetResolver> setterMap;
+    public final ClassMap<OutResolver> outterMap;
 
     protected final ArrayList<GetResolver> getResolvers;
     protected final ArrayList<SetResolver> setResolvers;
@@ -39,9 +38,9 @@ public class ResolverManager implements Initable {
     public ResolverManager() {
         this.ignoreNullPointer = true;
 
-        getResolverMap = new ClassMap<GetResolver>();
-        setResolverMap = new ClassMap<SetResolver>();
-        outResolverMap = new ClassMap<OutResolver>();
+        getterMap = new ClassMap<GetResolver>();
+        setterMap = new ClassMap<SetResolver>();
+        outterMap = new ClassMap<OutResolver>();
 
         getResolvers = new ArrayList<GetResolver>();
         setResolvers = new ArrayList<SetResolver>();
@@ -53,16 +52,9 @@ public class ResolverManager implements Initable {
         commonResolver = new CommonResolver();
     }
 
-    protected GetResolver getGetResolver(final Class type) {
-        GetResolver resolver;
-        return (resolver = getResolverMap.unsafeGet(type)) != null
-                ? resolver
-                : resolveGetResolverIfAbsent(type);
-    }
-
     @SuppressWarnings("unchecked")
     protected GetResolver resolveGetResolverIfAbsent(final Class type) {
-        GetResolver resolver = getResolverMap.get(type);
+        GetResolver resolver = getterMap.get(type);
         if (resolver == null) {
             ArrayList<Class> types = getResolverTypes;
             for (int i = 0, len = types.size(); i < len; i++) {
@@ -74,7 +66,7 @@ public class ResolverManager implements Initable {
             if (resolver == null) {
                 resolver = resolveGetResolver(type);
             }
-            resolver = getResolverMap.putIfAbsent(type, resolver);
+            resolver = getterMap.putIfAbsent(type, resolver);
         }
         return resolver;
     }
@@ -83,17 +75,10 @@ public class ResolverManager implements Initable {
         return commonResolver;
     }
 
-    protected SetResolver getSetResolver(final Class type) {
-        SetResolver resolver;
-        return (resolver = setResolverMap.unsafeGet(type)) != null
-                ? resolver
-                : resolveSetResolverIfAbsent(type);
-    }
-
     @SuppressWarnings("unchecked")
     protected SetResolver resolveSetResolverIfAbsent(final Class type) {
         SetResolver resolver;
-        resolver = setResolverMap.get(type);
+        resolver = setterMap.get(type);
         if (resolver == null) {
             ArrayList<Class> types = setResolverTypes;
             for (int i = 0, len = types.size(); i < len; i++) {
@@ -105,7 +90,7 @@ public class ResolverManager implements Initable {
             if (resolver == null) {
                 resolver = resolveSetResolver(type);
             }
-            resolver = setResolverMap.putIfAbsent(type, resolver);
+            resolver = setterMap.putIfAbsent(type, resolver);
         }
         return resolver;
     }
@@ -114,17 +99,10 @@ public class ResolverManager implements Initable {
         return commonResolver;
     }
 
-    protected OutResolver getOutResolver(final Class type) {
-        OutResolver resolver;
-        return (resolver = outResolverMap.unsafeGet(type)) != null
-                ? resolver
-                : resolveOutResolver(type);
-    }
-
     @SuppressWarnings("unchecked")
-    protected OutResolver resolveOutResolver(final Class type) {
+    public OutResolver resolveOutResolver(final Class type) {
         OutResolver resolver;
-        resolver = outResolverMap.get(type);
+        resolver = outterMap.get(type);
         if (resolver == null) {
             ArrayList<Class> types = outResolverTypes;
             for (int i = 0, len = types.size(); i < len; i++) {
@@ -137,7 +115,7 @@ public class ResolverManager implements Initable {
             if (resolver == null) {
                 resolver = commonResolver;
             }
-            resolver = outResolverMap.putIfAbsent(type, resolver);
+            resolver = outterMap.putIfAbsent(type, resolver);
         }
         return resolver;
     }
@@ -176,7 +154,7 @@ public class ResolverManager implements Initable {
                 getResolvers.add((GetResolver) resolver);
             }
             if (notAbstract) {
-                getResolverMap.putIfAbsent(type, (GetResolver) resolver);
+                getterMap.putIfAbsent(type, (GetResolver) resolver);
             }
         }
         if (resolver instanceof SetResolver) {
@@ -185,7 +163,7 @@ public class ResolverManager implements Initable {
                 setResolvers.add((SetResolver) resolver);
             }
             if (notAbstract) {
-                setResolverMap.putIfAbsent(type, (SetResolver) resolver);
+                setterMap.putIfAbsent(type, (SetResolver) resolver);
             }
         }
         if (resolver instanceof OutResolver) {
@@ -194,31 +172,35 @@ public class ResolverManager implements Initable {
                 outResolvers.add((OutResolver) resolver);
             }
             if (notAbstract) {
-                outResolverMap.putIfAbsent(type, (OutResolver) resolver);
+                outterMap.putIfAbsent(type, (OutResolver) resolver);
             }
         }
     }
 
-    public Object get(Object bean, Object property) {
+    public final Object get(Object bean, Object property) {
         if (bean != null) {
-            return getGetResolver(bean.getClass()).get(bean, property);
-        } else if (ignoreNullPointer) {
+            final GetResolver resolver;
+            final Class type = bean.getClass();
+            return ((resolver = this.getterMap.unsafeGet(type)) != null
+                    ? resolver
+                    : resolveGetResolverIfAbsent(type)).get(bean, property);
+        } else if (this.ignoreNullPointer) {
             return null;
         } else {
             throw new ScriptRuntimeException("Null pointer.");
         }
     }
 
-    public void set(Object bean, Object property, Object value) {
+    public final void set(Object bean, Object property, Object value) {
         if (bean != null) {
-            getSetResolver(bean.getClass()).set(bean, property, value);
+            final SetResolver resolver;
+            final Class type = bean.getClass();
+            ((resolver = this.setterMap.unsafeGet(type)) != null
+                    ? resolver
+                    : resolveSetResolverIfAbsent(type)).set(bean, property, value);
         } else if (!ignoreNullPointer) {
             throw new ScriptRuntimeException("Null pointer.");
         }
-    }
-
-    public void render(final Out out, final Object bean) {
-        getOutResolver(bean.getClass()).render(out, bean);
     }
 
     public void setIgnoreNullPointer(boolean ignoreNullPointer) {

@@ -163,14 +163,21 @@ public class AsmResolverManager extends ResolverManager {
 
     private static void visitXetFields(boolean isGetter, final MethodWriter m, FieldInfo[] fieldInfos, final int start, final int end, String beanName, Label l_failedMatch) {
         Label[] gotoTable = new Label[end - start];
-        //if equals
+        //if ==
         for (int i = start; i < end; i++) {
             Label label = gotoTable[i - start] = new Label();
             m.visitLdcInsn(fieldInfos[i].name);
             m.visitVarInsn(Constants.ALOAD, 2);
+            // if == goto
+            m.visitJumpInsn(Constants.IF_ACMPEQ, label);
+        }
+        //if equals
+        for (int i = start; i < end; i++) {
+            m.visitLdcInsn(fieldInfos[i].name);
+            m.visitVarInsn(Constants.ALOAD, 2);
             m.invokeVirtual("java/lang/String", "equals", "(Ljava/lang/Object;)Z");
             // if true goto
-            m.visitJumpInsn(Constants.IFNE, label);
+            m.visitJumpInsn(Constants.IFNE, gotoTable[i - start]);
         }
         //failed, to end
         m.visitJumpInsn(Constants.GOTO, l_failedMatch);

@@ -12,7 +12,9 @@ import webit.script.io.Out;
 import webit.script.lang.KeyValues;
 import webit.script.lang.MethodDeclare;
 import webit.script.lang.Void;
+import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.ResolverManager;
+import webit.script.util.ClassMap;
 import webit.script.util.KeyValuesUtil;
 import webit.script.util.Stack;
 
@@ -41,6 +43,7 @@ public final class Context {
     public final LoopCtrl loopCtrl;
     public final Template template;
     public final ResolverManager resolverManager;
+    public final ClassMap<OutResolver> outterMap;
     public final boolean isByteStream;
 
     public Context(final Template template, final Out out, final KeyValues rootParams) {
@@ -50,7 +53,8 @@ public final class Context {
         this.rootParams = rootParams;
         this.encoding = out.getEncoding();
         this.isByteStream = out.isByteStream();
-        this.resolverManager = template.engine.getResolverManager();
+        ResolverManager resolverManager = this.resolverManager = template.engine.getResolverManager();
+        this.outterMap = resolverManager.outterMap;
         this.loopCtrl = new LoopCtrl();
 
         this.varses = new Variants[DEFAULT_CAPACITY];
@@ -67,6 +71,7 @@ public final class Context {
         this.encoding = parent.encoding;
         this.isByteStream = parent.isByteStream;
         this.resolverManager = parent.resolverManager;
+        this.outterMap = parent.outterMap;
         this.loopCtrl = new LoopCtrl();
 
         this.varses = new Variants[DEFAULT_CAPACITY];
@@ -81,6 +86,7 @@ public final class Context {
         this.encoding = parent.encoding;
         this.isByteStream = parent.isByteStream;
         this.resolverManager = parent.resolverManager;
+        this.outterMap = parent.outterMap;
         this.loopCtrl = new LoopCtrl();
 
         if (parentVarses != null) {
@@ -145,11 +151,17 @@ public final class Context {
 
     public void out(final Object object) {
         if (object != null) {
-            if (object.getClass() == String.class) {
+            final Class type;
+            if ((type = object.getClass()) == String.class) {
                 this.out.write((String) object);
-            } else {
-                this.resolverManager.render(this.out, object);
+                return;
             }
+            final OutResolver resolver;
+            if ((resolver = this.outterMap.unsafeGet(type)) != null) {
+                resolver.render(this.out, object);
+                return;
+            }
+            this.resolverManager.resolveOutResolver(type).render(this.out, object);
         }
     }
 
