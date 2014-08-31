@@ -20,16 +20,24 @@ public final class IndexOperator extends ResetableValueExpression {
         this.leftExpr = leftExp;
         this.rightExpr = rightExp;
     }
-    
+
     public Object execute(final Context context) {
-        return context.resolverManager.get(StatementUtil.execute(leftExpr, context), StatementUtil.execute(rightExpr, context));
+        try {
+            return context.resolverManager.get(leftExpr.execute(context), rightExpr.execute(context));
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 
     public Object setValue(final Context context, final Object value) {
-        context.resolverManager.set(
-                StatementUtil.execute(leftExpr, context),
-                StatementUtil.execute(rightExpr, context),
-                value);
-        return value;
+        try {
+            context.resolverManager.set(
+                    leftExpr.execute(context),
+                    rightExpr.execute(context),
+                    value);
+            return value;
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 }

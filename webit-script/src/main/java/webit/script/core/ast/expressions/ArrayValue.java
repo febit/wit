@@ -3,7 +3,6 @@ package webit.script.core.ast.expressions;
 
 import webit.script.Context;
 import webit.script.core.ast.Expression;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -24,7 +23,7 @@ public final class ArrayValue extends Expression {
         final Object[] value = new Object[len = (valueExprs = this.valueExprs).length];
         int i = 0;
         while (i < len) {
-            value[i] = StatementUtil.execute(valueExprs[i], context);
+            value[i] = valueExprs[i].execute(context);
             i++;
         }
         return value;

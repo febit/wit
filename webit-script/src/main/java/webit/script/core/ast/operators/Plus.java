@@ -20,7 +20,11 @@ public final class Plus extends BinaryOperator implements Optimizable {
     }
 
     public Object execute(final Context context) {
-        return ALU.plus(StatementUtil.execute(leftExpr, context), StatementUtil.execute(rightExpr, context));
+        try {
+            return ALU.plus(leftExpr.execute(context), rightExpr.execute(context));
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 
     public Expression optimize() {

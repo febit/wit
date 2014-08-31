@@ -3,8 +3,8 @@ package webit.script.io.charset.impl.special;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import webit.script.io.charset.Encoder;
 import webit.script.io.Buffers;
+import webit.script.io.charset.Encoder;
 import webit.script.util.charset.UTF_8;
 
 /**

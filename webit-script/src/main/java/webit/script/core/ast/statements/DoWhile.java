@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.loop.LoopCtrl;
@@ -62,7 +61,7 @@ public final class DoWhile extends Statement implements Loopable {
                     break;
                 }
             }
-        } while (ALU.isTrue(StatementUtil.execute(whileExpr, context)));
+        } while (ALU.isTrue(whileExpr.execute(context)));
         context.indexer = preIndex;
         return null;
     }

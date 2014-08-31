@@ -9,7 +9,6 @@ import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.util.ByteArrayOutputStream;
 import webit.script.util.CharArrayWriter;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -33,15 +32,15 @@ public class RedirectOutExpression extends Expression {
         if (current.isByteStream()) {
             ByteArrayOutputStream out = new ByteArrayOutputStream(256);
             context.out = new OutputStreamOut(out, (OutputStreamOut) current);
-            result = StatementUtil.execute(srcExpr, context);
-            StatementUtil.executeSetValue(toExpr, context, out.toArray());
+            result = srcExpr.execute(context);
+            toExpr.setValue(context, out.toArray());
         } else {
             CharArrayWriter writer = new CharArrayWriter(256);
             context.out = current instanceof WriterOut
                     ? new WriterOut(writer, (WriterOut) current)
                     : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory());
-            result = StatementUtil.execute(srcExpr, context);
-            StatementUtil.executeSetValue(toExpr, context, writer.toArray());
+            result = srcExpr.execute(context);
+            toExpr.setValue(context, writer.toArray());
         }
         context.out = current;
         return result;

@@ -22,7 +22,11 @@ public final class BitNot extends Expression implements Optimizable {
     }
 
     public Object execute(final Context context) {
-        return ALU.bitNot(StatementUtil.execute(expr, context));
+        try {
+            return ALU.bitNot(expr.execute(context));
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 
     public Expression optimize() {

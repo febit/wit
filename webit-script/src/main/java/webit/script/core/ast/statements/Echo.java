@@ -4,7 +4,6 @@ package webit.script.core.ast.statements;
 import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -25,7 +24,7 @@ public final class Echo extends Statement {
     }
 
     public Object execute(final Context context) {
-        context.out(StatementUtil.execute(expr, context));
+        context.out(expr.execute(context));
         return null;
     }
 }

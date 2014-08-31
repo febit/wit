@@ -6,7 +6,6 @@ import webit.script.Template;
 import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -54,7 +53,7 @@ public final class Import extends AbstractInclude {
             final Object[] vars = childContext.get(exportNames);
             final ResetableValueExpression[] myToResetableValues = this.toResetableValues;
             for (int i = 0, len = vars.length; i < len; i++) {
-                StatementUtil.executeSetValue(myToResetableValues[i], context, vars[i]);
+                myToResetableValues[i].setValue(context, vars[i]);
             }
         }
         return null;

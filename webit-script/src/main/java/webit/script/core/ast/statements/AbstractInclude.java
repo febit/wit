@@ -10,7 +10,6 @@ import webit.script.core.ast.Statement;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.KeyValues;
 import webit.script.util.KeyValuesUtil;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -34,11 +33,11 @@ public abstract class AbstractInclude extends Statement {
     @SuppressWarnings("unchecked")
     protected Context mergeTemplate(final Context context) {
         final Object templateName;
-        if ((templateName = StatementUtil.execute(templateNameExpr, context)) != null) {
+        if ((templateName = templateNameExpr.execute(context)) != null) {
             final KeyValues params;
             final Object paramsObject;
             if (paramsExpr != null
-                    && (paramsObject = StatementUtil.execute(paramsExpr, context)) != null) {
+                    && (paramsObject = paramsExpr.execute(context)) != null) {
                 if (paramsObject instanceof Map) {
                     params = KeyValuesUtil.wrap((Map) paramsObject);
                 } else {

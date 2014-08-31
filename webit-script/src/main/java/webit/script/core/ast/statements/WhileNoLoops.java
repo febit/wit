@@ -2,7 +2,6 @@
 package webit.script.core.ast.statements;
 
 import webit.script.Context;
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.util.ALU;
@@ -29,7 +28,7 @@ public final class WhileNoLoops extends Statement {
         final int preIndex = context.indexer;
         context.indexer = indexer;
         final Statement[] statements = this.statements;
-        while (ALU.isTrue(StatementUtil.execute(whileExpr, context))) {
+        while (ALU.isTrue(whileExpr.execute(context))) {
             StatementUtil.executeInverted(statements, context);
         }
         context.indexer = preIndex;

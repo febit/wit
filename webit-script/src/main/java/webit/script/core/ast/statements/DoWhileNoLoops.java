@@ -2,7 +2,6 @@
 package webit.script.core.ast.statements;
 
 import webit.script.Context;
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.util.ALU;
@@ -31,7 +30,7 @@ public final class DoWhileNoLoops extends Statement {
         context.indexer = indexer;
         do {
             StatementUtil.executeInverted(statements, context);
-        } while (ALU.isTrue(StatementUtil.execute(whileExpr, context)));
+        } while (ALU.isTrue(whileExpr.execute(context)));
         context.indexer = preIndex;
         return null;
     }

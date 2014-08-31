@@ -22,7 +22,11 @@ public final class Negative extends Expression implements Optimizable {
     }
 
     public Object execute(final Context context) {
-        return ALU.negative(StatementUtil.execute(expr, context));
+        try {
+            return ALU.negative(expr.execute(context));
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 
     public Expression optimize() {

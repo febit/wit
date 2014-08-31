@@ -28,9 +28,8 @@ public final class IfElse extends Statement implements Loopable {
     }
 
     public Object execute(final Context context) {
-        StatementUtil.execute(
-                ALU.isTrue(StatementUtil.execute(ifExpr, context))
-                ? thenStatement : elseStatement, context);
+        (ALU.isTrue(ifExpr.execute(context))
+                ? thenStatement : elseStatement).execute(context);
         return null;
     }
 

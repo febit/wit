@@ -3,9 +3,7 @@ package webit.script.core.ast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import webit.script.core.VariantIndexer;
 import webit.script.core.VariantManager;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.statements.Block;

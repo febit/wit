@@ -2,7 +2,6 @@
 package webit.script.core.ast.statements;
 
 import webit.script.Context;
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
 import webit.script.util.StatementUtil;

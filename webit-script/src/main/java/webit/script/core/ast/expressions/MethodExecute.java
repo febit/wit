@@ -5,7 +5,6 @@ import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.MethodDeclare;
-import webit.script.util.ExceptionUtil;
 import webit.script.util.StatementUtil;
 
 /**
@@ -25,7 +24,7 @@ public final class MethodExecute extends Expression {
 
     public Object execute(final Context context) {
         final Object funcObject;
-        if ((funcObject = StatementUtil.execute(funcExpr, context)) instanceof MethodDeclare) {
+        if ((funcObject = funcExpr.execute(context)) instanceof MethodDeclare) {
             final Expression[] paramExprs = this.paramExprs;
             int i = 0;
             final int len;
@@ -35,10 +34,10 @@ public final class MethodExecute extends Expression {
                     results[i] = paramExprs[i].execute(context);
                 }
             } catch (Exception e) {
-                throw ExceptionUtil.castToScriptRuntimeException(e, paramExprs[i]);
+                throw StatementUtil.castToScriptRuntimeException(e, paramExprs[i]);
             }
             return ((MethodDeclare) funcObject).invoke(context, results);
         }
-        throw new ScriptRuntimeException("not a function");
+        throw new ScriptRuntimeException("not a function", this);
     }
 }

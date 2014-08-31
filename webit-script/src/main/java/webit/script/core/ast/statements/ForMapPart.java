@@ -5,7 +5,6 @@ import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.expressions.FunctionDeclare;
-import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;
 
 /**

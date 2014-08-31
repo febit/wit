@@ -4,7 +4,6 @@ package webit.script.core.ast.statements;
 import webit.script.Context;
 import webit.script.core.ast.Statement;
 import webit.script.debug.BreakPointListener;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -25,7 +24,7 @@ public class BreakPointStatement extends Statement {
 
     public Object execute(Context context) {
         if (statement != null) {
-            StatementUtil.execute(statement, context);
+            statement.execute(context);
         }
         listener.onBreak(label, context, this, null);
         return null;

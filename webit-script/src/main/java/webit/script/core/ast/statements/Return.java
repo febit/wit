@@ -8,7 +8,6 @@ import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -26,7 +25,7 @@ public final class Return extends Statement implements Loopable {
     public Object execute(final Context context) {
         context.loopCtrl.returnLoop(
                 expr != null
-                ? StatementUtil.execute(expr, context)
+                ? expr.execute(context)
                 : Context.VOID);
         return null;
     }

@@ -5,7 +5,6 @@ import webit.script.Context;
 import webit.script.core.ast.BinaryOperator;
 import webit.script.core.ast.Expression;
 import webit.script.util.ALU;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -19,8 +18,8 @@ public final class IfOrOperator extends BinaryOperator {
 
     public Object execute(final Context context) {
         Object ifResult;
-        return ALU.isTrue(ifResult = StatementUtil.execute(leftExpr, context))
+        return ALU.isTrue(ifResult = leftExpr.execute(context))
                 ? ifResult
-                : StatementUtil.execute(rightExpr, context);
+                : rightExpr.execute(context);
     }
 }

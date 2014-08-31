@@ -5,7 +5,6 @@ package webit.script.core.ast.expressions;
 import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.debug.BreakPointListener;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -25,7 +24,7 @@ public class BreakPointExpression  extends Expression {
     }
     
     public Object execute(Context context) {
-        Object result = StatementUtil.execute(expression, context);
+        Object result = expression.execute(context);
         listener.onBreak(label, context, this, result);
         return result;
     }

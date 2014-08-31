@@ -2,12 +2,12 @@
 package webit.script.io.charset.impl;
 
 import webit.script.Engine;
+import webit.script.io.Buffers;
 import webit.script.io.charset.CoderFactory;
 import webit.script.io.charset.Decoder;
 import webit.script.io.charset.Encoder;
 import webit.script.io.charset.impl.special.UTF_8_Decoder;
 import webit.script.io.charset.impl.special.UTF_8_Encoder;
-import webit.script.io.Buffers;
 
 /**
  *

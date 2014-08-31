@@ -2,7 +2,6 @@
 package webit.script.core.ast.statements;
 
 import webit.script.Context;
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.expressions.FunctionDeclare;
@@ -37,7 +36,7 @@ public final class ForInNoLoops extends Statement {
     }
 
     public Object execute(final Context context) {
-        Iter iter = CollectionUtil.toIter(StatementUtil.execute(collectionExpr, context));
+        Iter iter = CollectionUtil.toIter(collectionExpr.execute(context), this);
         if (iter != null && functionDeclareExpr != null) {
             iter = new IterMethodFilter(context, functionDeclareExpr.execute(context), iter);
         }
@@ -56,7 +55,7 @@ public final class ForInNoLoops extends Statement {
             context.indexer = preIndex;
             return null;
         } else if (elseStatement != null) {
-            StatementUtil.execute(elseStatement, context);
+            elseStatement.execute(context);
         }
         return null;
     }

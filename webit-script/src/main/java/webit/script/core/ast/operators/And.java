@@ -7,7 +7,6 @@ import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.expressions.DirectValue;
 import webit.script.util.ALU;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -21,8 +20,8 @@ public final class And extends BinaryOperator implements Optimizable {
 
     public Object execute(final Context context) {
         Object left;
-        return ALU.isTrue(left = StatementUtil.execute(leftExpr, context))
-                ? StatementUtil.execute(rightExpr, context)
+        return ALU.isTrue(left = leftExpr.execute(context))
+                ? rightExpr.execute(context)
                 : left;
     }
 

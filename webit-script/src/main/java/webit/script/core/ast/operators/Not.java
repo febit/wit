@@ -6,7 +6,6 @@ import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.expressions.DirectValue;
 import webit.script.util.ALU;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -22,7 +21,7 @@ public final class Not extends Expression implements Optimizable {
     }
 
     public Object execute(final Context context) {
-        return !ALU.isTrue(StatementUtil.execute(expr, context));
+        return !ALU.isTrue(expr.execute(context));
     }
 
     public Expression optimize() {

@@ -21,10 +21,14 @@ public final class PlusPlusAfter extends Expression {
     }
 
     public Object execute(final Context context) {
-        final Object value;
-        final ResetableValueExpression _expr;
-        StatementUtil.executeSetValue(_expr = this.expr, context,ALU.plusOne(
-                 value = StatementUtil.execute(_expr, context)));
-        return value;
+        try {
+            final Object value;
+            final ResetableValueExpression _expr;
+            (_expr = this.expr).setValue(context, ALU.plusOne(
+                    value = _expr.execute(context)));
+            return value;
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 }

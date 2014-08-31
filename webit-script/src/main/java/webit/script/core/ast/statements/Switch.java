@@ -33,7 +33,7 @@ public final class Switch extends Statement implements Loopable {
 
     public Object execute(final Context context) {
         CaseEntry caseStatement;
-        if ((caseStatement = caseMap.get(StatementUtil.execute(switchExpr, context))) == null) {
+        if ((caseStatement = caseMap.get(switchExpr.execute(context))) == null) {
             caseStatement = defaultStatement; //default
         }
         if (caseStatement != null) {
@@ -44,7 +44,7 @@ public final class Switch extends Statement implements Loopable {
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        
+
         LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
         List<LoopInfo> list;
         //XXX: May have duplicated LoopInfo caused by duplicated CaseEntry
@@ -76,7 +76,7 @@ public final class Switch extends Statement implements Loopable {
         }
 
         Object execute(final Context context) {
-            StatementUtil.execute(body, context);
+            body.execute(context);
             if (context.loopCtrl.getLoopType() == LoopInfo.NO_LOOP && next != null) {
                 next.execute(context);
             }

@@ -4,7 +4,6 @@ package webit.script.core.ast.operators;
 import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.util.ALU;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -24,11 +23,7 @@ public final class IfOperator extends Expression {
     }
 
     public Object execute(final Context context) {
-        return StatementUtil.execute(
-                ALU.isTrue(StatementUtil.execute(ifExpr, context))
-                ? leftValueExpr
-                : rightValueExpr,
-                context);
+        return (ALU.isTrue(ifExpr.execute(context)) ? leftValueExpr : rightValueExpr).execute(context);
 
     }
 }

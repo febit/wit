@@ -26,8 +26,8 @@ public final class IfNot extends Statement implements Loopable {
     }
 
     public Object execute(final Context context) {
-        if (!ALU.isTrue(StatementUtil.execute(ifExpr, context))) {
-            StatementUtil.execute(elseStatement, context);
+        if (!ALU.isTrue(ifExpr.execute(context))) {
+            elseStatement.execute(context);
         }
         return null;
     }

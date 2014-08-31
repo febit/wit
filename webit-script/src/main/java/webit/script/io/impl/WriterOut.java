@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.io.Writer;
 import webit.script.Engine;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.io.Buffers;
 import webit.script.io.Out;
 import webit.script.io.charset.CoderFactory;
 import webit.script.io.charset.Decoder;
-import webit.script.io.Buffers;
 
 /**
  *

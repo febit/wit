@@ -20,7 +20,11 @@ public final class Mult extends BinaryOperator implements Optimizable {
     }
 
     public Object execute(final Context context) {
-        return ALU.mult(StatementUtil.execute(leftExpr, context), StatementUtil.execute(rightExpr, context));
+        try {
+            return ALU.mult(leftExpr.execute(context), rightExpr.execute(context));
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 
     public Expression optimize() {

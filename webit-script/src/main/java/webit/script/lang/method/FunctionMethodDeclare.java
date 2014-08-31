@@ -7,7 +7,7 @@ import webit.script.core.VariantIndexer;
 import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.MethodDeclare;
-import webit.script.util.ExceptionUtil;
+import webit.script.util.StatementUtil;
 
 /**
  *
@@ -32,7 +32,7 @@ public final class FunctionMethodDeclare implements MethodDeclare {
             try {
                 return function.invoke(context, args);
             } catch (Exception e) {
-                throw ExceptionUtil.castToScriptRuntimeException(e, function);
+                throw StatementUtil.castToScriptRuntimeException(e, function);
             }
         } else {
             try {
@@ -46,7 +46,7 @@ public final class FunctionMethodDeclare implements MethodDeclare {
                 context.indexers = bakIndexers;
                 return result;
             } catch (Exception e) {
-                throw new ScriptRuntimeException(ExceptionUtil.castToScriptRuntimeException(e, function).setTemplate(template));
+                throw new ScriptRuntimeException(StatementUtil.castToScriptRuntimeException(e, function).setTemplate(template));
             }
         }
     }

@@ -22,15 +22,23 @@ public final class PropertyOperator extends ResetableValueExpression {
     }
 
     public Object execute(final Context context) {
-        return context.resolverManager.get(
-                StatementUtil.execute(expr, context),
-                property);
+        try {
+            return context.resolverManager.get(
+                    expr.execute(context),
+                    property);
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 
     public Object setValue(final Context context, final Object value) {
-        context.resolverManager.set(
-                StatementUtil.execute(expr, context),
-                property, value);
-        return value;
+        try {
+            context.resolverManager.set(
+                    expr.execute(context),
+                    property, value);
+            return value;
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 }

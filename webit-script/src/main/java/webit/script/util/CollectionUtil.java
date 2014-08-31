@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
+import webit.script.core.ast.Statement;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.KeyIter;
 
@@ -36,7 +37,7 @@ public class CollectionUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static Iter toIter(final Object o1) {
+    public static Iter toIter(final Object o1, Statement statement) {
         final Class clazz;
         if (o1 == null) {
             return null;
@@ -73,18 +74,17 @@ public class CollectionUtil {
         } else if (o1 instanceof CharSequence) {
             return new CharSequenceIterAdapter((CharSequence) o1);
         }
-
-        throw new ScriptRuntimeException("Unsupported type: ".concat(o1.getClass().getName()));
+        throw new ScriptRuntimeException("Unsupported type: ".concat(o1.getClass().getName()), statement);
     }
 
-    public static KeyIter toKeyIter(final Object o1) {
+    public static KeyIter toKeyIter(final Object o1, Statement statement) {
         if (o1 == null) {
             return null;
         }
         if (o1 instanceof Map) {
             return new MapKeyIter((Map) o1);
         }
-        throw new ScriptRuntimeException("Unsupported type: ".concat(o1.getClass().getName()));
+        throw new ScriptRuntimeException("Unsupported type: ".concat(o1.getClass().getName()), statement);
     }
 
     public static boolean notEmpty(final Object object, final boolean defaultValue) {

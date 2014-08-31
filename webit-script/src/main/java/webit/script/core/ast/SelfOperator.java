@@ -20,10 +20,13 @@ public abstract class SelfOperator extends Expression {
     }
 
     public Object execute(final Context context) {
-        //final ResetableValue resetableValue;
-        ResetableValueExpression _leftExpr;
-        return StatementUtil.executeSetValue(_leftExpr = this.leftExpr, context, doOperate(StatementUtil.execute(rightExpr, context),
-                StatementUtil.execute(_leftExpr, context)));
+        try {
+            ResetableValueExpression _leftExpr;
+            return (_leftExpr = this.leftExpr).setValue(context, doOperate(rightExpr.execute(context),
+                    _leftExpr.execute(context)));
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 
     protected abstract Object doOperate(Object right, Object left);

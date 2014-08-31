@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;

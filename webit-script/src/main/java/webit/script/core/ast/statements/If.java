@@ -26,8 +26,8 @@ public final class If extends Statement implements Loopable {
     }
 
     public Object execute(final Context context) {
-        if (ALU.isTrue(StatementUtil.execute(ifExpr, context))) {
-            StatementUtil.execute(thenStatement, context);
+        if (ALU.isTrue(ifExpr.execute(context))) {
+            thenStatement.execute(context);
         }
         return null;
     }

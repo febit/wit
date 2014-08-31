@@ -4,7 +4,6 @@ package webit.script.core.ast.operators;
 import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -22,6 +21,6 @@ public final class Assign extends Expression {
     }
 
     public Object execute(final Context context) {
-        return StatementUtil.executeSetValue(lexpr, context, StatementUtil.execute(rexpr, context));
+        return lexpr.setValue(context, rexpr.execute(context));
     }
 }

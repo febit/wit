@@ -8,8 +8,8 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.UnsupportedCharsetException;
-import webit.script.io.charset.Encoder;
 import webit.script.io.Buffers;
+import webit.script.io.charset.Encoder;
 
 /**
  *

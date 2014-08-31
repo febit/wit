@@ -21,8 +21,12 @@ public final class MinusMinusBefore extends Expression {
     }
 
     public Object execute(final Context context) {
-        final ResetableValueExpression _expr;
-        return StatementUtil.executeSetValue(_expr = this.expr, context, ALU.minusOne(
-                StatementUtil.execute(_expr, context)));
+        try {
+            final ResetableValueExpression _expr;
+            return (_expr = this.expr).setValue(context, ALU.minusOne(
+                    _expr.execute(context)));
+        } catch (Exception e) {
+            throw StatementUtil.castToScriptRuntimeException(e, this);
+        }
     }
 }

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.loop.LoopCtrl;
@@ -41,7 +40,7 @@ public final class While extends Statement implements Loopable {
         final int preIndex = context.indexer;
         context.indexer = indexer;
         label:
-        while (ALU.isTrue(StatementUtil.execute(whileExpr, context))) {
+        while (ALU.isTrue(whileExpr.execute(context))) {
             StatementUtil.executeInvertedAndCheckLoops(statements, context);
             if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                 if (ctrl.matchLabel(label)) {

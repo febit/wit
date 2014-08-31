@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.expressions.FunctionDeclare;
@@ -47,15 +46,15 @@ public class ForIn extends Statement implements Loopable {
     }
 
     public Object execute(final Context context) {
-        Iter iter = CollectionUtil.toIter(StatementUtil.execute(collectionExpr, context));
+        Iter iter = CollectionUtil.toIter(collectionExpr.execute(context), this);
         if (iter != null && functionDeclareExpr != null) {
             iter = new IterMethodFilter(context, functionDeclareExpr.execute(context), iter);
         }
         if (iter != null
                 && iter.hasNext()) {
             final LoopCtrl ctrl = context.loopCtrl;
-        final int preIndex = context.indexer;
-        context.indexer = indexer;
+            final int preIndex = context.indexer;
+            context.indexer = indexer;
             final Statement[] statements = this.statements;
             final int label = this.label;
             final int itemIndex = this.itemIndex;
@@ -88,7 +87,7 @@ public class ForIn extends Statement implements Loopable {
             context.indexer = preIndex;
             return null;
         } else if (elseStatement != null) {
-            StatementUtil.execute(elseStatement, context);
+            elseStatement.execute(context);
         }
         return null;
     }

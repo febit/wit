@@ -7,7 +7,6 @@ import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.expressions.DirectValue;
 import webit.script.util.ALU;
-import webit.script.util.StatementUtil;
 
 /**
  *
@@ -20,7 +19,7 @@ public final class NotEqual extends BinaryOperator implements Optimizable {
     }
 
     public Object execute(final Context context) {
-        return ALU.notEqual(StatementUtil.execute(leftExpr, context), StatementUtil.execute(rightExpr, context));
+        return ALU.notEqual(leftExpr.execute(context), rightExpr.execute(context));
     }
 
     public Expression optimize() {

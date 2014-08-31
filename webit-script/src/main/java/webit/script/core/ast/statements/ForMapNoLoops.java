@@ -2,7 +2,6 @@
 package webit.script.core.ast.statements;
 
 import webit.script.Context;
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.expressions.FunctionDeclare;
@@ -40,13 +39,13 @@ public final class ForMapNoLoops extends Statement {
 
     @SuppressWarnings("unchecked")
     public Object execute(final Context context) {
-        KeyIter iter = CollectionUtil.toKeyIter(StatementUtil.execute(mapExpr, context));
+        KeyIter iter = CollectionUtil.toKeyIter(mapExpr.execute(context), this);
         if (iter != null && functionDeclareExpr != null) {
             iter = new KeyIterMethodFilter(context, functionDeclareExpr.execute(context), iter);
         }
         if (iter != null && iter.hasNext()) {
-        final int preIndex = context.indexer;
-        context.indexer = indexer;
+            final int preIndex = context.indexer;
+            context.indexer = indexer;
             final Statement[] statements = this.statements;
             final int keyIndex = this.keyIndex;
             final int valueIndex = this.valueIndex;
@@ -60,7 +59,7 @@ public final class ForMapNoLoops extends Statement {
             context.indexer = preIndex;
             return null;
         } else if (elseStatement != null) {
-            StatementUtil.execute(elseStatement, context);
+            elseStatement.execute(context);
         }
         return null;
     }
