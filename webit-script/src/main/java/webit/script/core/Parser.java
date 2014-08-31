@@ -19,7 +19,7 @@ import webit.script.util.StatementUtil;
 
 /**
  * 
- * @version Sat Aug 30 17:18:41 CST 2014
+ * @version Sun Aug 31 14:51:04 CST 2014
  */
 public class Parser extends AbstractParser {
 
@@ -117,7 +117,7 @@ public class Parser extends AbstractParser {
             {
                 Symbol ident$Symbol = myStack.peek(2);
                 Symbol sym$Symbol = myStack.peek(1);
-                return new Assign(castToResetableValueExpression(createContextValue(varmgr.assignVariantAddress((String) ident$Symbol.value,ident$Symbol.line,ident$Symbol.column), ident$Symbol.line, ident$Symbol.column)), (Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
+                return new Assign(createContextValue((String) ident$Symbol.value, ident$Symbol.line, ident$Symbol.column), (Expression) myStack.peek(0).value, sym$Symbol.line, sym$Symbol.column);
             }
             case 157: // funcStatementHead ::= FUNCTION IDENTIFIER LPAREN RPAREN 
             {

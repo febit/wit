@@ -18,37 +18,28 @@ import webit.script.util.StringUtil;
 public class VariantManager {
 
     private int varCount;
-    private final Stack<IndexerRaw> rawStack;
-    private final List<IndexerRaw> raws;
-    private final IndexerRaw root;
+    private final Stack<VarStair> stairStack;
+    private final List<VarStair> stairs;
+    private final VarStair root;
     private final GlobalManager globalManager;
 
-    @SuppressWarnings("unchecked")
     VariantManager(Engine engine) {
         this.globalManager = engine.getGlobalManager();
-        this.raws = new ArrayList<IndexerRaw>();
-        this.rawStack = new Stack<IndexerRaw>();
+        this.stairs = new ArrayList<VarStair>();
+        this.stairStack = new Stack<VarStair>();
         this.root = push(-1);
-        final String[] vars = engine.getVars();
-        if (vars != null) {
-            for (String var : vars) {
-                if (!root.contains(var)) {
-                    root.assignVar(var, -1, -1);
-                }
-                //ignore duplicate
-            }
-        }
+        this.root.assignVarsIfAbsent(engine.getVars());
     }
 
-    private IndexerRaw push(int parentId) {
-        IndexerRaw raw = new IndexerRaw(this.raws.size(), parentId);
-        this.raws.add(raw);
-        this.rawStack.push(raw);
-        return raw;
+    private VarStair push(int parentId) {
+        final VarStair stair = new VarStair(this.stairs.size(), parentId);
+        this.stairs.add(stair);
+        this.stairStack.push(stair);
+        return stair;
     }
 
     public void push() {
-        push(rawStack.peek().id);
+        push(stairStack.peek().id);
     }
 
     public int getVarCount() {
@@ -56,95 +47,51 @@ public class VariantManager {
     }
 
     public int pop() {
-        return rawStack.pop().id;
+        return stairStack.pop().id;
     }
 
     public VariantIndexer[] getIndexers() {
-        List<IndexerRaw> raws = this.raws;
-        final int size = raws.size();
+        final List<VarStair> stairs = this.stairs;
+        final int size = stairs.size();
         final VariantIndexer[] result = new VariantIndexer[size];
         for (int i = 0; i < size; i++) {
-            IndexerRaw raw = raws.get(i);
-            //assert i == raw.id
+            VarStair stair = stairs.get(i);
+            //assert i == stair.id
             //remove consts
-            final Map<String, Integer> indexerMap = raw.values;
-            if (raw.constMap != null) {
-                for (String key : raw.constMap.keySet()) {
+            final Map<String, Integer> indexerMap = stair.values;
+            if (stair.constMap != null) {
+                for (String key : stair.constMap.keySet()) {
                     indexerMap.remove(key);
                 }
             }
-            result[i] = getVariantIndexer(i, raw.parentId >= 0 ? result[raw.parentId] : null, indexerMap);
+            result[i] = getVariantIndexer(i, stair.parentId >= 0 ? result[stair.parentId] : null, indexerMap);
         }
         return result;
     }
 
-    private static VariantIndexer getVariantIndexer(final int id, final VariantIndexer parent, final Map<String, Integer> map) {
-        if (map == null || map.isEmpty()) {
-            if (parent != null) {
-                return parent;
-            } else {
-                return new VariantIndexer(id, null, StringUtil.EMPTY_ARRAY, null);
-            }
-        }
-        final int size = map.size();
-        final String[] names = new String[size];
-        final int[] indexs = new int[size];
-        int i = 0;
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            names[i] = entry.getKey();
-            indexs[i] = entry.getValue();
-            i++;
-        }
-        return new VariantIndexer(id, parent, names, indexs);
-    }
-
-    public VarAddress assignVariantAddress(String name, int line, int column) {
-        return context(assignVariant(name, line, column));
-    }
-
     public int assignVariant(String name, int line, int column) {
-        return rawStack.peek().assignVar(name, line, column);
+        return stairStack.peek().assignVar(name, line, column);
     }
 
     public void assignConst(String name, Object value, int line, int column) {
-        rawStack.peek().assignConst(name, value, line, column);
-    }
-
-    public VarAddress assignVariantAtRoot(final String name, int line, int column) {
-        root.checkDuplicate(name, line, column);
-        final int address = root.assignVar(name, line, column);
-        return context(address);
+        stairStack.peek().assignConst(name, value, line, column);
     }
 
     public VarAddress locateAtUpstair(String name, int upstair, int line, int column) {
-        try {
-            IndexerRaw raw = rawStack.peek(upstair);
-            Integer index;
-            if ((index = raw.getIndex(name)) != null) {
-                if (index >= 0) {
-                    return context(index);
-                } else {
-                    return constValue(raw.getConstValue(name));
-                }
-            }
-            throw new ParseException("Can't locate vars: ".concat(name), line, column);
-        } catch (IndexOutOfBoundsException e) {
-            throw new ParseException(StringUtil.format("Stack overflow when locate vars '{}' at upstair {}", name, upstair), line, column);
+        VarAddress address = stairStack.peek(upstair).locate(name);
+        if (address != null) {
+            return address;
         }
+        throw new ParseException("Can't locate vars: ".concat(name), line, column);
     }
 
     public VarAddress locate(String name, int fromUpstair, boolean force, int line, int column) {
 
         //local var/const
-        for (; fromUpstair < rawStack.size(); fromUpstair++) {
-            IndexerRaw raw = rawStack.peek(fromUpstair);
-            Integer index;
-            if ((index = raw.getIndex(name)) != null) {
-                if (index >= 0) {
-                    return context(index);
-                } else {
-                    return constValue(raw.getConstValue(name));
-                }
+        for (; fromUpstair < stairStack.size(); fromUpstair++) {
+            VarAddress address = stairStack.peek(fromUpstair).locate(name);
+            if (address != null) {
+                return address;
             }
         }
 
@@ -162,53 +109,77 @@ public class VariantManager {
         if (force) {
             throw new ParseException("Can't locate vars: ".concat(name), line, column);
         }
-        return assignVariantAtRoot(name, line, column);
+        //assign at root
+        return context(root.assignVar(name, line, column));
     }
 
-    private static VarAddress context(int index) {
+    private static VariantIndexer getVariantIndexer(final int id, final VariantIndexer parent, final Map<String, Integer> map) {
+        if (map.isEmpty()) {
+            if (parent != null) {
+                return parent;
+            }
+            return new VariantIndexer(id, null, StringUtil.EMPTY_ARRAY, null);
+        }
+        final int size = map.size();
+        final String[] names = new String[size];
+        final int[] indexs = new int[size];
+        int i = 0;
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            names[i] = entry.getKey();
+            indexs[i] = entry.getValue();
+            i++;
+        }
+        return new VariantIndexer(id, parent, names, indexs);
+    }
+
+    static VarAddress context(int index) {
         return new VarAddress(VarAddress.CONTEXT, index, null);
     }
 
-    private static VarAddress global(int index) {
+    static VarAddress global(int index) {
         return new VarAddress(VarAddress.GLOBAL, index, null);
     }
 
-    private static VarAddress constValue(Object value) {
+    static VarAddress constValue(Object value) {
         return new VarAddress(VarAddress.CONST, -1, value);
     }
 
-    private class IndexerRaw {
+    private class VarStair {
 
         final int id;
         final int parentId;
         final Map<String, Integer> values;
         Map<String, Object> constMap;
 
-        IndexerRaw(int id, int parentId) {
+        VarStair(int id, int parentId) {
+            this.id = id;
             this.parentId = parentId;
             this.values = new HashMap<String, Integer>();
-            this.id = id;
         }
 
-        Integer getIndex(String name) {
-            return this.values.get(name);
-        }
-
-        Object getConstValue(String name) {
-            return this.constMap != null
-                    ? this.constMap.get(name)
-                    : null;
-        }
-
-        boolean contains(String name) {
-            return this.values.containsKey(name);
+        VarAddress locate(String name) {
+            Integer index = this.values.get(name);
+            if (index == null) {
+                return null;
+            }
+            if (index < 0) {
+                return constValue(this.constMap.get(name));
+            }
+            return context(index);
         }
 
         void checkDuplicate(final String name, int line, int column) {
-            //XXX: recheck
             if (this.values.containsKey(name)) {
                 throw new ParseException("Duplicate Variant declare: ".concat(name), line, column);
             }
+        }
+
+        Integer assignVar(final String name, int line, int column) {
+            checkDuplicate(name, line, column);
+            //XXX: recheck
+            int index = VariantManager.this.varCount++;
+            this.values.put(name, index);
+            return index;
         }
 
         void assignConst(final String name, final Object value, int line, int column) {
@@ -220,12 +191,15 @@ public class VariantManager {
             this.constMap.put(name, value);
         }
 
-        Integer assignVar(final String name, int line, int column) {
-            checkDuplicate(name, line, column);
-            //XXX: recheck
-            int index = VariantManager.this.varCount++;
-            this.values.put(name, index);
-            return index;
+        void assignVarsIfAbsent(String[] vars) {
+            if (vars == null) {
+                return;
+            }
+            for (String var : vars) {
+                if (!this.values.containsKey(var)) {
+                    assignVar(var, -1, -1);
+                }
+            }
         }
     }
 

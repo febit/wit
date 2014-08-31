@@ -262,9 +262,9 @@ statement            ::= expression_statementable:expr SEMICOLON
 
 
 varAssign       ::= IDENTIFIER:ident EQ:sym expression:expr
-                    {: return new Assign(castToResetableValueExpression(createContextValue(varmgr.assignVariantAddress(%ident%,%ident.line%,%ident.column%), %ident.line%, %ident.column%)), %expr%, %sym.line%, %sym.column%); :}
+                    {: return new Assign(createContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
                     | IDENTIFIER:ident EQ:sym varAssign:expr
-                    {: return new Assign(castToResetableValueExpression(createContextValue(varmgr.assignVariantAddress(%ident%,%ident.line%,%ident.column%), %ident.line%, %ident.column%)), %expr%, %sym.line%, %sym.column%); :}
+                    {: return new Assign(createContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
                     ;
 
 varPart         ::= VAR IDENTIFIER:ident

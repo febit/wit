@@ -185,6 +185,10 @@ abstract class AbstractParser {
         return this.textStatementFactory.getTextStatement(template, text, line, column);
     }
 
+    ContextValue createContextValue(String name, int line, int column) {
+        return new ContextValue(varmgr.assignVariant(name, line, column), line, column);
+    }
+
     Expression createContextValue(VarAddress addr, int line, int column) {
         switch (addr.type) {
             case VarAddress.GLOBAL:
@@ -261,8 +265,8 @@ abstract class AbstractParser {
     Expression createNativeConstructorDeclareExpression(Class clazz, List<Class> list, int line, int column) {
         return new DirectValue(this.nativeFactory.createNativeConstructorDeclare(clazz, list.toArray(new Class[list.size()]), line, column), line, column);
     }
-    
-    Statement declearVar(String ident, int line, int column){
+
+    Statement declearVar(String ident, int line, int column) {
         //XXX: Should Check var used before init;
         varmgr.assignVariant(ident, line, column);
         return NoneStatement.INSTANCE;
@@ -460,7 +464,7 @@ abstract class AbstractParser {
         stack.clear();
 
         //Start Symbol
-        currentSymbol = new Symbol(0, null);
+        currentSymbol = new Symbol(0, -1, -1, null);
         currentSymbol.state = 0;
         stack.push(currentSymbol);
 
@@ -494,7 +498,7 @@ abstract class AbstractParser {
                 symId = (row = productionTable[act])[0];
                 handleSize = row[1];
                 if (handleSize == 0) {
-                    currentSymbol = new Symbol(symId, result);
+                    currentSymbol = new Symbol(symId, -1, -1, result);
                 } else {
                     currentSymbol = new Symbol(symId, result, stack.peek(handleSize - 1)); //position based on left
                     //pop the handle
