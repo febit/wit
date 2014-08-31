@@ -110,9 +110,9 @@ public final class Context implements KeyValueAccepter {
         final Map<Object, Object> map;
         if ((map = this.localMap) != null) {
             map.put(key, value);
-        } else {
-            (this.localMap = new HashMap<Object, Object>()).put(key, value);
+            return;
         }
+        (this.localMap = new HashMap<Object, Object>()).put(key, value);
     }
 
     public void setArgumentsForFunction(final int argsCount, final Object[] args, final int start) {

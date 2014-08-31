@@ -17,7 +17,7 @@ public class ContextLocalRegister implements GlobalRegister {
     private String name = "LOCAL";
 
     public void regist(GlobalManager manager) {
-        manager.getConstBag().set(this.name, new LocalMethodDeclare());
+        manager.setConst(this.name, new LocalMethodDeclare());
     }
 
     public void setName(String name) {
@@ -34,11 +34,11 @@ public class ContextLocalRegister implements GlobalRegister {
             if ((i = args.length - 1) > 0) {
                 context.topContext.setLocalVar(args[0], args[1]);
                 return args[1];
-            } else if (i == 0) {
-                return context.topContext.getLocalVar(args[0]);
-            } else {
-                throw new ScriptRuntimeException("This function need at least 1 arg: ");
             }
+            if (i == 0) {
+                return context.topContext.getLocalVar(args[0]);
+            }
+            throw new ScriptRuntimeException("This function need at least 1 arg: ");
         }
     }
 }

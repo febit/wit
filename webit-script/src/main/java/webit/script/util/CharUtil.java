@@ -71,24 +71,6 @@ public class CharUtil {
         return c <= ' ';
     }
 
-    public static int lastNotWhitespaceOrNewLine(final char[] buf, final int from, final int end) {
-        int pos;
-
-        for (pos = end - 1; pos >= from; pos--) {
-            switch (buf[pos]) {
-                case ' ':
-                case '\t':
-                case '\b':
-                case '\f':
-                    continue;
-                default:
-                    // not a blank line
-                    return pos;
-            }
-        }
-        return pos;
-    }
-
     public static int indexOf(char[] source, char[] target, int fromIndex) {
         final int sourceCount = source.length;
         final int targetCount = target.length;

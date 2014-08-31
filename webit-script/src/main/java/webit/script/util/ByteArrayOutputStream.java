@@ -3,7 +3,7 @@ package webit.script.util;
 
 import java.io.OutputStream;
 
-public class ByteArrayOutputStream extends OutputStream {
+public final class ByteArrayOutputStream extends OutputStream {
 
     private byte[][] buffers = new byte[16][];
     private int currentBufferIndex = -1;
@@ -28,21 +28,16 @@ public class ByteArrayOutputStream extends OutputStream {
      * <code>minChunkLen</code>.
      */
     private void needNewBuffer(int newSize) {
-        int delta = newSize - size;
-        int newBufferSize = Math.max(minChunkLen, delta);
 
-        currentBufferIndex++;
-        currentBuffer = new byte[newBufferSize];
-        offset = 0;
-
-        // add buffer
         if (currentBufferIndex >= buffers.length) {
             int newLen = buffers.length << 1;
             byte[][] newBuffers = new byte[newLen][];
             System.arraycopy(buffers, 0, newBuffers, 0, buffers.length);
             buffers = newBuffers;
         }
-        buffers[currentBufferIndex] = currentBuffer;
+        currentBufferIndex++;
+        offset = 0;
+        buffers[currentBufferIndex] = currentBuffer = new byte[Math.max(minChunkLen, newSize - size)];
     }
 
     @Override

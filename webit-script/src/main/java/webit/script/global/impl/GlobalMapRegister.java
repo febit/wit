@@ -12,17 +12,17 @@ import webit.script.global.GlobalRegister;
  */
 public class GlobalMapRegister implements GlobalRegister {
 
-    private static final String DEFAULT_NAME = "$GLOBAL";
-    private String name = DEFAULT_NAME;
+    private String name;
 
     private final Map vars;
 
     public GlobalMapRegister() {
+        this.name = "$GLOBAL";
         this.vars = new ConcurrentHashMap();
     }
 
     public void regist(GlobalManager manager) {
-        manager.getConstBag().set(this.name, this.vars);
+        manager.setConst(this.name, this.vars);
     }
 
     public Map getVars() {

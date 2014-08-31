@@ -24,7 +24,6 @@ import webit.script.loaders.Resource;
 import webit.script.loaders.ResourceOffset;
 import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
-import webit.script.util.ExceptionUtil;
 import webit.script.util.Stack;
 import webit.script.util.StatementUtil;
 import webit.script.util.StringUtil;
@@ -96,7 +95,9 @@ abstract class AbstractParser {
             _textStatementFactory.startTemplateParser(template);
             return (TemplateAST) this.parse(lexer).value;
         } catch (Exception e) {
-            throw ExceptionUtil.castToParseException(e);
+            throw (e instanceof ParseException)
+                    ? ((ParseException) e)
+                    : new ParseException(e);
         } finally {
             _textStatementFactory.finishTemplateParser(template);
             if (lexer != null) {

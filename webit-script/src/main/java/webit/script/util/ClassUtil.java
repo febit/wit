@@ -12,11 +12,11 @@ import java.util.Arrays;
  */
 public class ClassUtil {
 
-    public static ClassLoader getDefaultClassLoader() {
-        return Thread.currentThread().getContextClassLoader();
+    private ClassUtil() {
     }
 
-    private ClassUtil() {
+    public static ClassLoader getDefaultClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
     }
 
     private static char getAliasOfBaseType(final String name) {
@@ -77,13 +77,13 @@ public class ClassUtil {
         final char[] chars;
         if (alias == '\0') {
             chars = new char[name.length() + 2 + arrayDepth];
-            Arrays.fill(chars, 0, arrayDepth,'[');
+            Arrays.fill(chars, 0, arrayDepth, '[');
             chars[arrayDepth] = 'L';
             name.getChars(0, name.length(), chars, arrayDepth + 1);
             chars[chars.length - 1] = ';';
         } else {
             chars = new char[arrayDepth + 1];
-            Arrays.fill(chars, 0, arrayDepth,'[');
+            Arrays.fill(chars, 0, arrayDepth, '[');
             chars[arrayDepth] = alias;
         }
         return getClassByInternalName(new String(chars));

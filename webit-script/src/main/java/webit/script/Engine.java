@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +21,6 @@ import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
 import webit.script.util.ClassEntry;
 import webit.script.util.ClassUtil;
-import webit.script.util.EncodingPool;
 import webit.script.util.KeyValuesUtil;
 import webit.script.util.Petite;
 import webit.script.util.Props;
@@ -34,6 +34,15 @@ import webit.script.util.StringUtil;
 public final class Engine {
 
     public static final String DEFAULT_SUFFIX = ".wit";
+    public static final String UTF_8 = "UTF-8";
+    
+    public static String internEncoding(final String encoding) {
+        try {
+            return Charset.forName(encoding).name();
+        } catch (Exception e) {
+            return encoding.intern();
+        }
+    }
 
     //settings
     private ClassEntry resourceLoaderType;
@@ -73,7 +82,7 @@ public final class Engine {
         this.shareRootData = true;
         this.looseVar = false;
         this.suffix = DEFAULT_SUFFIX;
-        this.encoding = EncodingPool.UTF_8;
+        this.encoding = UTF_8;
         this.petite = petite;
         this.templateCache = new ConcurrentHashMap<String, Template>();
         this.componentContainer = new HashMap<String, Object>();
@@ -143,7 +152,7 @@ public final class Engine {
      */
     private void resolveComponent(final Object bean, final ClassEntry type) {
         String profile = type != null
-                ? type.getProfile()
+                ? type.profile
                 : this.petite.resolveBeanName(bean.getClass());
         this.petite.wireBean(profile, bean);
         if (bean instanceof Initable) {
@@ -169,9 +178,9 @@ public final class Engine {
      * @since 1.4.0
      */
     public synchronized Object getComponent(final ClassEntry type) {
-        Object bean = this.componentContainer.get(type.getProfile());
+        Object bean = this.componentContainer.get(type.profile);
         if (bean == null) {
-            bean = ClassUtil.newInstance(type.getValue());
+            bean = ClassUtil.newInstance(type.value);
             resolveComponent(bean, type);
         }
         return bean;
@@ -310,7 +319,7 @@ public final class Engine {
 
     public void setEncoding(String encoding) {
         if (encoding != null) {
-            this.encoding = EncodingPool.intern(encoding);
+            this.encoding = internEncoding(encoding);
         }
         //else ignore
     }
@@ -410,7 +419,7 @@ public final class Engine {
         if (classEntry == null) {
             return ClassUtil.newInstance(defaultType);
         }
-        return ClassUtil.newInstance(classEntry.getValue());
+        return ClassUtil.newInstance(classEntry.value);
     }
 
     public static Props createConfigProps(final String configPath) {

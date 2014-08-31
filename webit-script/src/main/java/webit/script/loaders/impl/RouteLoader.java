@@ -2,13 +2,16 @@
 package webit.script.loaders.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.loaders.Loader;
 import webit.script.loaders.Resource;
+import webit.script.util.ArrayUtil;
 import webit.script.util.ClassEntry;
 import webit.script.util.StringUtil;
 
@@ -23,13 +26,32 @@ public class RouteLoader implements Loader, Initable {
     protected ClassEntry defaultLoader;
 
     protected Loader _defaultLoader;
-    protected LoaderEntry[] _loaderEntrys;
+    protected LoaderEntry[] entrys;
     protected String[] _rules;
 
     public void init(final Engine engine) {
         try {
             //init Route rules
-            initLoaderRoute(engine);
+            final String[] raws = StringUtil.splitAndRemoveBlank(this.loaders);
+            final int size = raws.length;
+            final String[] rules = this._rules = new String[size];
+            final Map<String, LoaderEntry> loaderMap = new HashMap<String, LoaderEntry>();
+            for (int i = 0; i < size; i++) {
+                final String raw = raws[i];
+                final int index = raw.indexOf(' ');
+                if (index < 0) {
+                    throw new RuntimeException("Illegal rule: ".concat(raw));
+                }
+                final String rule = rules[i] = raw.substring(0, index);
+                loaderMap.put(rule, new LoaderEntry(rule,
+                        (Loader) engine.getComponent(ClassEntry.wrap(raw.substring(index + 1).trim()))));
+            }
+            Arrays.sort(rules);
+            ArrayUtil.invert(rules);
+            final LoaderEntry[] loaderEntrys = this.entrys = new LoaderEntry[size];
+            for (int i = 0; i < size; i++) {
+                loaderEntrys[i] = loaderMap.get(rules[i]);
+            }
             //default Loader
             _defaultLoader = (Loader) engine.getComponent(defaultLoader != null ? defaultLoader : ClassEntry.wrap(ClasspathLoader.class));
         } catch (Exception ex) {
@@ -37,79 +59,42 @@ public class RouteLoader implements Loader, Initable {
         }
     }
 
-    protected void initLoaderRoute(Engine engine) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        final String[] raws = StringUtil.splitAndRemoveBlank(this.loaders);
-        final List<String> rules = new ArrayList<String>(raws.length);
-        final Map<String, LoaderEntry> loaderMap = new HashMap<String, LoaderEntry>();
-        for (String raw : raws) {
-            final int index = raw.indexOf(' ');
-            if (index < 0) {
-                throw new RuntimeException("Illegal rule: ".concat(raw));
-            } else {
-                final String rule = raw.substring(0, index);
-                boolean inserted = false;
-                for (int j = 0; j < rules.size(); j++) {
-                    if (rule.startsWith(rules.get(j))) {
-                        rules.add(j, rule);
-                        inserted = true;
-                        break;
-                    }
-                }
-                if (!inserted) {
-                    rules.add(rule);
-                }
-                loaderMap.put(rule,
-                        new LoaderEntry(rule, (Loader) engine.getComponent(
-                                        ClassEntry.wrap(raw.substring(index + 1).trim()))));
-
-            }
-        }
-        final int size = rules.size();
-        rules.toArray(this._rules = new String[size]);
-        this._loaderEntrys = new LoaderEntry[size];
-        for (int i = 0; i < size; i++) {
-            this._loaderEntrys[i] = loaderMap.get(this._rules[i]);
-        }
-    }
-
     protected LoaderEntry getLoaderEntry(String resourceName) {
         final String[] rules = this._rules;
         for (int i = 0, len = rules.length; i < len; i++) {
             if (resourceName.startsWith(rules[i])) {
-                return _loaderEntrys[i];
+                return this.entrys[i];
             }
         }
         return null;
     }
 
     public Resource get(String name) {
-        final LoaderEntry entry = getLoaderEntry(name);
-        if (entry != null) {
+        final LoaderEntry entry;
+        if ((entry = getLoaderEntry(name)) != null) {
             return entry.get(name);
-        } else {
-            return this._defaultLoader.get(name);
         }
+        return this._defaultLoader.get(name);
     }
 
     public String concat(String parent, String name) {
         final LoaderEntry entry;
-        final LoaderEntry parentLoaderEntry;
+        final LoaderEntry parentEntry;
         if ((entry = getLoaderEntry(name)) != null) {
             return entry.normalize(name);
-        } else if ((parentLoaderEntry = getLoaderEntry(parent)) != null) {
-            return parentLoaderEntry.concat(parent, name);
-        } else {
-            return this._defaultLoader.concat(parent, name);
         }
+        if ((parentEntry = getLoaderEntry(parent)) != null) {
+            return parentEntry.concat(parent, name);
+        }
+        return this._defaultLoader.concat(parent, name);
     }
 
     public String normalize(String name) {
-        final LoaderEntry entry = getLoaderEntry(name);
-        if (entry != null) {
+        final LoaderEntry entry;
+        if ((entry = getLoaderEntry(name)) != null) {
             return entry.normalize(name);
-        } else {
-            return this._defaultLoader.normalize(name);
         }
+        return this._defaultLoader.normalize(name);
     }
 
     public void setLoaders(String loaders) {
@@ -121,12 +106,11 @@ public class RouteLoader implements Loader, Initable {
     }
 
     public boolean isEnableCache(String name) {
-        final LoaderEntry entry = getLoaderEntry(name);
-        if (entry != null) {
+        final LoaderEntry entry;
+        if ((entry = getLoaderEntry(name)) != null) {
             return entry.isEnableCache(name);
-        } else {
-            return this._defaultLoader.isEnableCache(name);
         }
+        return this._defaultLoader.isEnableCache(name);
     }
 
     protected static class LoaderEntry {
@@ -154,9 +138,10 @@ public class RouteLoader implements Loader, Initable {
         }
 
         public String fix(final String name) {
-            return name != null
-                    ? this.prefix.concat(name)
-                    : null;
+            if (name != null) {
+                return this.prefix.concat(name);
+            }
+            return null;
         }
 
         private boolean isEnableCache(String name) {

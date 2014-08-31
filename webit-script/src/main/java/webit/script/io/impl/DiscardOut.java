@@ -1,8 +1,8 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.io.impl;
 
+import webit.script.Engine;
 import webit.script.io.Out;
-import webit.script.util.EncodingPool;
 
 /**
  *
@@ -14,7 +14,7 @@ public class DiscardOut implements Out {
     private final boolean isByteStream;
 
     public DiscardOut() {
-        this(EncodingPool.UTF_8, false);
+        this(Engine.UTF_8, false);
     }
 
     public DiscardOut(String encoding, boolean isByteStream) {

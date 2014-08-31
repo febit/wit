@@ -3,7 +3,7 @@ package webit.script.util;
 
 import java.io.Writer;
 
-public class CharArrayWriter extends Writer {
+public final class CharArrayWriter extends Writer {
 
     private char[][] buffers = new char[16][];
     private char[] currentBuffer;
@@ -39,21 +39,16 @@ public class CharArrayWriter extends Writer {
      * <code>minChunkLen</code>.
      */
     private void needNewBuffer(int newSize) {
-        int delta = newSize - size;
-        int newBufferSize = Math.max(minChunkLen, delta);
 
-        currentBufferIndex++;
-        currentBuffer = new char[newBufferSize];
-        offset = 0;
-
-        // add buffer
         if (currentBufferIndex >= buffers.length) {
             int newLen = buffers.length << 1;
             char[][] newBuffers = new char[newLen][];
             System.arraycopy(buffers, 0, newBuffers, 0, buffers.length);
             buffers = newBuffers;
         }
-        buffers[currentBufferIndex] = currentBuffer;
+        currentBufferIndex++;
+        offset = 0;
+        buffers[currentBufferIndex] = currentBuffer = new char[Math.max(minChunkLen, newSize - size)];;
     }
 
     public CharArrayWriter append(char[] array, int off, int len) {
@@ -220,7 +215,7 @@ public class CharArrayWriter extends Writer {
                 tmp_offset = this.offset;
                 notLastOne = true;
             }
-            int pos = CharUtil.lastNotWhitespaceOrNewLine(tmp_buf, 0, tmp_offset);
+            int pos = lastNotWhitespaceOrNewLine(tmp_buf, 0, tmp_offset);
             if (pos < 0) {
                 //All blank
                 tmp_count -= tmp_offset;
@@ -240,5 +235,23 @@ public class CharArrayWriter extends Writer {
     @Override
     public String toString() {
         return new String(toArray());
+    }
+
+    private static int lastNotWhitespaceOrNewLine(final char[] buf, final int from, final int end) {
+        int pos;
+
+        for (pos = end - 1; pos >= from; pos--) {
+            switch (buf[pos]) {
+                case ' ':
+                case '\t':
+                case '\b':
+                case '\f':
+                    continue;
+                default:
+                    // not a blank line
+                    return pos;
+            }
+        }
+        return pos;
     }
 }

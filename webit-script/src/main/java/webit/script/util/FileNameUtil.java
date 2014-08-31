@@ -15,14 +15,14 @@ public class FileNameUtil {
     }
 
     public static String getPath(String filename) {
-        if (filename != null) {
-            int index;
-            return (index = filename.lastIndexOf(UNIX_SEPARATOR)) >= 0
-                    ? filename.substring(0, index + 1)
-                    : "";
-        } else {
+        if (filename == null) {
             return null;
         }
+        int index;
+        if ((index = filename.lastIndexOf(UNIX_SEPARATOR)) < 0) {
+            return "";
+        }
+        return filename.substring(0, index + 1);
     }
 
     public static String concat(String basePath, String fullFilenameToAdd) {

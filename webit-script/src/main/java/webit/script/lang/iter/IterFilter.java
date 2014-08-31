@@ -24,18 +24,17 @@ public abstract class IterFilter extends AbstractIter {
     protected boolean fetchNext() {
         if (gotNext) {
             return true;
-        } else {
-            Iter it = this.iter;
-            while (it.hasNext()) {
-                Object item = it.next();
-                if (valid(item)) {
-                    gotNext = true;
-                    nextItem = item;
-                    return true;
-                }
-            }
-            return false;
         }
+        Iter it = this.iter;
+        while (it.hasNext()) {
+            Object item = it.next();
+            if (valid(item)) {
+                gotNext = true;
+                nextItem = item;
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
