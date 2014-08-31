@@ -32,8 +32,7 @@ public class GlobalManager implements Initable {
         if (registers != null) {
             try {
                 for (ClassEntry entry : registers) {
-                    ((GlobalRegister) engine.getComponent(entry))
-                            .regist(this);
+                    ((GlobalRegister) engine.getComponent(entry)).regist(this);
                     this.commit();
                 }
             } catch (Exception ex) {
