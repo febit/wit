@@ -15,8 +15,8 @@ import webit.script.lang.MethodDeclare;
 import webit.script.tools.cache.impl.SimpleCacheProvider;
 import webit.script.util.ArrayUtil;
 import webit.script.util.ClassEntry;
-import webit.script.util.FastByteArrayOutputStream;
-import webit.script.util.FastCharArrayWriter;
+import webit.script.util.ByteArrayOutputStream;
+import webit.script.util.CharArrayWriter;
 
 /**
  *
@@ -143,7 +143,7 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
                 }
                 preOut = context.out;
                 if (preOut.isByteStream()) {
-                    final FastByteArrayOutputStream out = new FastByteArrayOutputStream(256);
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream(256);
 
                     context.out = new OutputStreamOut(out, (OutputStreamOut) preOut);
 
@@ -152,9 +152,9 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
                     } finally {
                         context.out = preOut;
                     }
-                    outted = out.toByteArray();
+                    outted = out.toArray();
                 } else {
-                    final FastCharArrayWriter writer = new FastCharArrayWriter(256);
+                    final CharArrayWriter writer = new CharArrayWriter(256);
 
                     context.out = preOut instanceof WriterOut
                             ? new WriterOut(writer, (WriterOut) preOut)
@@ -162,7 +162,7 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
 
                     try {
                         returned = methodDeclare.invoke(context, methodArgs);
-                        outted = writer.toCharArray();
+                        outted = writer.toArray();
                     } finally {
                         context.out = preOut;
                     }

@@ -19,8 +19,7 @@ import webit.script.io.Out;
 import webit.script.io.impl.DiscardOut;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.util.ClassUtil;
-import webit.script.util.FastByteArrayOutputStream;
-import webit.script.util.FastByteBuffer;
+import webit.script.util.ByteArrayOutputStream;
 import static org.junit.Assert.*;
 
 /**
@@ -58,10 +57,10 @@ public class AutoTest {
         Map<String, String> templates = collectAutoTestTemplates();
         ClassLoader classLoader = ClassUtil.getDefaultClassLoader();
 
-        final FastByteBuffer bytesBuffer = new FastByteBuffer();
+        final ByteArrayOutputStream bytesBuffer = new ByteArrayOutputStream();
         final byte[] buffer = new byte[BUFFER_SIZE];
 
-        FastByteArrayOutputStream out = new FastByteArrayOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         for (Map.Entry<String, String> entry : templates.entrySet()) {
             String templatePath = entry.getKey();
             String outPath = entry.getValue();
@@ -73,14 +72,14 @@ public class AutoTest {
                 InputStream in;
                 if ((in = classLoader.getResourceAsStream(AUTO_TEST_PATH.concat(outPath))) != null) {
                     int read;
-                    bytesBuffer.clear();
+                    bytesBuffer.reset();
                     while ((read = in.read(buffer, 0, BUFFER_SIZE)) >= 0) {
-                        bytesBuffer.append(buffer, 0, read);
+                        bytesBuffer.write(buffer, 0, read);
                     }
-                    assertArrayEquals(bytesBuffer.toArray(), out.toByteArray());
+                    assertArrayEquals(bytesBuffer.toArray(), out.toArray());
                     System.out.println("\tresult match to: " + outPath);
 
-                    bytesBuffer.clear();
+                    bytesBuffer.reset();
                 }
                 out.reset();
             } else {

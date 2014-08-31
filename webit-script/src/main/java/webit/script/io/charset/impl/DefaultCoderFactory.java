@@ -6,7 +6,7 @@ import webit.script.io.charset.Decoder;
 import webit.script.io.charset.Encoder;
 import webit.script.io.charset.impl.special.UTF_8_Decoder;
 import webit.script.io.charset.impl.special.UTF_8_Encoder;
-import webit.script.util.BufferPeers;
+import webit.script.io.Buffers;
 import webit.script.util.EncodingPool;
 
 /**
@@ -16,26 +16,26 @@ import webit.script.util.EncodingPool;
 public class DefaultCoderFactory implements CoderFactory {
 
     public Encoder newEncoder(final String encoding) {
-        return this.newEncoder(encoding, BufferPeers.getNormalSizePeers());
+        return this.newEncoder(encoding, Buffers.getNormalPeers());
     }
 
     public Decoder newDecoder(final String encoding) {
-        return this.newDecoder(encoding, BufferPeers.getMiniSizePeers());
+        return this.newDecoder(encoding, Buffers.getMiniPeers());
     }
 
-    public Encoder newEncoder(String encoding, BufferPeers bufferPeers) {
+    public Encoder newEncoder(String encoding, Buffers buffers) {
         if (encoding == EncodingPool.UTF_8) {
-            return new UTF_8_Encoder(bufferPeers);
+            return new UTF_8_Encoder(buffers);
         } else {
-            return new DefaultEncoder(encoding, bufferPeers);
+            return new DefaultEncoder(encoding, buffers);
         }
     }
 
-    public Decoder newDecoder(String encoding, BufferPeers bufferPeers) {
+    public Decoder newDecoder(String encoding, Buffers buffers) {
         if (encoding == EncodingPool.UTF_8) {
-            return new UTF_8_Decoder(bufferPeers);
+            return new UTF_8_Decoder(buffers);
         } else {
-            return new DefaultDecoder(encoding, bufferPeers);
+            return new DefaultDecoder(encoding, buffers);
         }
     }
 }

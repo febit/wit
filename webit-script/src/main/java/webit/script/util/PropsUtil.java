@@ -34,7 +34,7 @@ public class PropsUtil {
 
         private final Props props;
         private final char[] _buffer;
-        private final FastCharBuffer _charsBuffer;
+        private final CharArrayWriter _charsBuffer;
 
         private Set<String> loadedModules;
         private Map<String, Props> modulePropsCache;
@@ -42,7 +42,7 @@ public class PropsUtil {
         PropsLoader(Props props) {
             this.props = props;
             this._buffer = new char[3072];
-            this._charsBuffer = new FastCharBuffer();
+            this._charsBuffer = new CharArrayWriter();
         }
 
         private void mergeProps(Props src, String name) {
@@ -84,21 +84,21 @@ public class PropsUtil {
         }
 
         private Props loadProps(InputResolver inputResolver, final String path) {
-            final FastCharBuffer charsBuffer = this._charsBuffer;
+            final CharArrayWriter charsBuffer = this._charsBuffer;
             final char[] buffer = this._buffer;
             final InputStream in = inputResolver.openInputStream(path);
             Reader reader = null;
             if (in != null) {
                 try {
                     reader = new InputStreamReader(in, "UTF-8");
-                    charsBuffer.clear();
+                    charsBuffer.reset();
                     int read;
                     while ((read = reader.read(buffer)) >= 0) {
                         charsBuffer.append(buffer, 0, read);
                     }
                     final Props tempProps = new Props();
                     tempProps.load(charsBuffer.toArray());
-                    charsBuffer.clear();
+                    charsBuffer.reset();
                     return tempProps;
                 } catch (IOException ignore) {
                 } finally {

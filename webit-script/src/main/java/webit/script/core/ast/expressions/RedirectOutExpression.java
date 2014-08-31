@@ -7,8 +7,8 @@ import webit.script.core.ast.ResetableValueExpression;
 import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
-import webit.script.util.FastByteArrayOutputStream;
-import webit.script.util.FastCharArrayWriter;
+import webit.script.util.ByteArrayOutputStream;
+import webit.script.util.CharArrayWriter;
 import webit.script.util.StatementUtil;
 
 /**
@@ -31,17 +31,17 @@ public class RedirectOutExpression extends Expression {
         final Out current = context.out;
         final Object result;
         if (current.isByteStream()) {
-            FastByteArrayOutputStream out = new FastByteArrayOutputStream(256);
+            ByteArrayOutputStream out = new ByteArrayOutputStream(256);
             context.out = new OutputStreamOut(out, (OutputStreamOut) current);
             result = StatementUtil.execute(srcExpr, context);
-            StatementUtil.executeSetValue(toExpr, context, out.toByteArray());
+            StatementUtil.executeSetValue(toExpr, context, out.toArray());
         } else {
-            FastCharArrayWriter writer = new FastCharArrayWriter(256);
+            CharArrayWriter writer = new CharArrayWriter(256);
             context.out = current instanceof WriterOut
                     ? new WriterOut(writer, (WriterOut) current)
                     : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory());
             result = StatementUtil.execute(srcExpr, context);
-            StatementUtil.executeSetValue(toExpr, context, writer.toCharArray());
+            StatementUtil.executeSetValue(toExpr, context, writer.toArray());
         }
         context.out = current;
         return result;

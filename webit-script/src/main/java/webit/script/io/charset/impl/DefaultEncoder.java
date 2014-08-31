@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.UnsupportedCharsetException;
 import webit.script.io.charset.Encoder;
-import webit.script.util.BufferPeers;
+import webit.script.io.Buffers;
 
 /**
  *
@@ -19,17 +19,17 @@ public class DefaultEncoder implements Encoder {
 
     private final CharsetEncoder charsetEncoder;
     private final double expansionFactor;
-    private final BufferPeers bufferPeers;
+    private final Buffers buffers;
 
-    public DefaultEncoder(String encoding, BufferPeers bufferPeers) {
+    public DefaultEncoder(String encoding, Buffers buffers) {
         this.expansionFactor = (double) (this.charsetEncoder = newEncoder(encoding)).maxBytesPerChar();
-        this.bufferPeers = bufferPeers;
+        this.buffers = buffers;
     }
 
     public void write(final String string, final int offset, final int length, final OutputStream out) throws IOException {
         char[] chars;
         string.getChars(offset, offset + length,
-                chars = this.bufferPeers.getChars(length),
+                chars = this.buffers.getChars(length),
                 0);
         write(chars, 0, length, out);
     }
@@ -41,7 +41,7 @@ public class DefaultEncoder implements Encoder {
             final ByteBuffer bb;
             (encoder = this.charsetEncoder).reset().encode(
                     CharBuffer.wrap(chars, offset, length),
-                    bb = ByteBuffer.wrap(bytes = this.bufferPeers.getBytes((int) (length * this.expansionFactor))),
+                    bb = ByteBuffer.wrap(bytes = this.buffers.getBytes((int) (length * this.expansionFactor))),
                     true);
             encoder.flush(bb);
             out.write(bytes, 0, bb.position());

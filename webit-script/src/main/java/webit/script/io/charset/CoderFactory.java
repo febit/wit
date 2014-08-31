@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.io.charset;
 
-import webit.script.util.BufferPeers;
+import webit.script.io.Buffers;
 
 /**
  *
@@ -10,8 +10,8 @@ import webit.script.util.BufferPeers;
 public interface CoderFactory {
 
     Encoder newEncoder(String encoding);
-    Encoder newEncoder(String encoding, BufferPeers bufferPeers);
+    Encoder newEncoder(String encoding, Buffers buffers);
 
     Decoder newDecoder(String encoding);
-    Decoder newDecoder(String encoding, BufferPeers bufferPeers);
+    Decoder newDecoder(String encoding, Buffers buffers);
 }

@@ -4,7 +4,7 @@ package webit.script.core;
 
 import webit.script.exceptions.ParseException;
 import webit.script.loaders.ResourceOffset;
-import webit.script.util.FastCharBuffer;
+import webit.script.util.CharArrayWriter;
 
 
 /**
@@ -927,7 +927,7 @@ public class Lexer {
     private boolean leftInterpolationFlag = true;
 
     private boolean trimCodeBlockBlankLine = false;
-    private final FastCharBuffer stringBuffer = new FastCharBuffer(256);
+    private final CharArrayWriter stringBuffer = new CharArrayWriter(256);
     private int stringLine = 0;
     private int stringColumn = 0;
     
@@ -961,13 +961,13 @@ public class Lexer {
 
     private char[] popAsCharArray() {
         char[] chars = stringBuffer.toArray();
-        stringBuffer.clear();
+        stringBuffer.reset();
         return chars;
     }
 
     private char[] popAsCharArraySkipIfLeftNewLine() {
         char[] chars = stringBuffer.toArraySkipIfLeftNewLine();
-        stringBuffer.clear();
+        stringBuffer.reset();
         return chars;
     }
 
@@ -976,7 +976,7 @@ public class Lexer {
     }
 
     private void resetString() {
-        stringBuffer.clear();
+        stringBuffer.reset();
         stringLine = yyline;
         stringColumn = yycolumn;
     }
@@ -999,17 +999,17 @@ public class Lexer {
         }
     }
 
-    private void appendToString(String string) {
-        stringBuffer.append(string);
+    private void appendToString(char c, char c2) {
+        stringBuffer.append(c).append(c2);
     }
 
     private void pullToString() {
         stringBuffer.append(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
     }
 
-    private void pullToString(int startOffset, int endOffset) {
-        stringBuffer.append(zzBuffer, zzStartRead + startOffset, zzMarkedPos - zzStartRead + endOffset);
-    }
+//    private void pullToString(int startOffset, int endOffset) {
+//        stringBuffer.append(zzBuffer, zzStartRead + startOffset, zzMarkedPos - zzStartRead + endOffset);
+//    }
 
     private Symbol symbol(int sym) {
         return new Symbol(sym, yyline + 1, yycolumn + 1, sym);
@@ -1605,11 +1605,11 @@ public class Lexer {
           }
         case 164: break;
         case 36: 
-          { int length = yylength() - TEXT_BLOCK_END_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(false);} else {appendToString("<%");}
+          { int length = yylength() - TEXT_BLOCK_END_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(false);} else {appendToString('<', '%');}
           }
         case 165: break;
         case 37: 
-          { int length = yylength() - INTERPOLATION_START_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(true);} else {appendToString("${");}
+          { int length = yylength() - INTERPOLATION_START_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(true);} else {appendToString('$', '{');}
           }
         case 166: break;
         case 38: 

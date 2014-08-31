@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.UnsupportedCharsetException;
 import webit.script.io.charset.Decoder;
-import webit.script.util.BufferPeers;
+import webit.script.io.Buffers;
 
 /**
  *
@@ -19,11 +19,11 @@ public class DefaultDecoder implements Decoder {
 
     private final CharsetDecoder charsetDecoder;
     private final double expansionFactor;
-    private final BufferPeers bufferPeers;
+    private final Buffers buffers;
 
-    public DefaultDecoder(String encoding, BufferPeers bufferPeers) {
+    public DefaultDecoder(String encoding, Buffers buffers) {
         this.expansionFactor = (double) (this.charsetDecoder = newDecoder(encoding)).maxCharsPerByte();
-        this.bufferPeers = bufferPeers;
+        this.buffers = buffers;
     }
 
     public void write(final byte[] bytes, final int offset, final int length, final Writer writer) throws IOException {
@@ -33,7 +33,7 @@ public class DefaultDecoder implements Decoder {
             final CharBuffer cb;
             (decoder = this.charsetDecoder).reset().decode(
                     ByteBuffer.wrap(bytes, offset, length),
-                    cb = CharBuffer.wrap(chars = this.bufferPeers.getChars((int) (length * this.expansionFactor))),
+                    cb = CharBuffer.wrap(chars = this.buffers.getChars((int) (length * this.expansionFactor))),
                     true);
             decoder.flush(cb);
             writer.write(chars, 0, cb.position());

@@ -2,14 +2,11 @@ package webit.script.core;
 
 import webit.script.exceptions.ParseException;
 import webit.script.loaders.ResourceOffset;
-import webit.script.util.FastCharBuffer;
-
+import webit.script.util.CharArrayWriter;
 
 %%
 %public
 %class Lexer
-/* %cup */
-/* %implements Tokens */
 %function nextToken
 %type Symbol
 %line
@@ -26,7 +23,7 @@ import webit.script.util.FastCharBuffer;
     private boolean leftInterpolationFlag = true;
 
     private boolean trimCodeBlockBlankLine = false;
-    private final FastCharBuffer stringBuffer = new FastCharBuffer(256);
+    private final CharArrayWriter stringBuffer = new CharArrayWriter(256);
     private int stringLine = 0;
     private int stringColumn = 0;
     
@@ -60,13 +57,13 @@ import webit.script.util.FastCharBuffer;
 
     private char[] popAsCharArray() {
         char[] chars = stringBuffer.toArray();
-        stringBuffer.clear();
+        stringBuffer.reset();
         return chars;
     }
 
     private char[] popAsCharArraySkipIfLeftNewLine() {
         char[] chars = stringBuffer.toArraySkipIfLeftNewLine();
-        stringBuffer.clear();
+        stringBuffer.reset();
         return chars;
     }
 
@@ -75,7 +72,7 @@ import webit.script.util.FastCharBuffer;
     }
 
     private void resetString() {
-        stringBuffer.clear();
+        stringBuffer.reset();
         stringLine = yyline;
         stringColumn = yycolumn;
     }
@@ -98,17 +95,17 @@ import webit.script.util.FastCharBuffer;
         }
     }
 
-    private void appendToString(String string) {
-        stringBuffer.append(string);
+    private void appendToString(char c, char c2) {
+        stringBuffer.append(c).append(c2);
     }
 
     private void pullToString() {
         stringBuffer.append(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
     }
 
-    private void pullToString(int startOffset, int endOffset) {
-        stringBuffer.append(zzBuffer, zzStartRead + startOffset, zzMarkedPos - zzStartRead + endOffset);
-    }
+//    private void pullToString(int startOffset, int endOffset) {
+//        stringBuffer.append(zzBuffer, zzStartRead + startOffset, zzMarkedPos - zzStartRead + endOffset);
+//    }
 
     private Symbol symbol(int sym) {
         return new Symbol(sym, yyline + 1, yycolumn + 1, sym);
@@ -269,10 +266,10 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
 <YYINITIAL>{
 
   /* if to YYSTATEMENT */
-  {DelimiterStatementStartMatch}        { int length = yylength() - TEXT_BLOCK_END_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(false);} else {appendToString("<%");} }
+  {DelimiterStatementStartMatch}        { int length = yylength() - TEXT_BLOCK_END_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(false);} else {appendToString('<', '%');} }
 
   /* if to INTERPOLATION */
-  {DelimiterInterpolationStartMatch}      { int length = yylength() - INTERPOLATION_START_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(true);} else {appendToString("${");} }
+  {DelimiterInterpolationStartMatch}      { int length = yylength() - INTERPOLATION_START_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(true);} else {appendToString('$', '{');} }
   
 
   [^]                                  { pullToString(); }
