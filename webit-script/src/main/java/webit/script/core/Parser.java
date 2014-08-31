@@ -19,15 +19,14 @@ import webit.script.util.StatementUtil;
 
 /**
  * 
- * @version Sun Aug 31 14:51:04 CST 2014
+ * @version Sun Aug 31 21:35:17 CST 2014
  */
 public class Parser extends AbstractParser {
 
     @SuppressWarnings("unchecked")
     final Object doAction(int actionId) throws ParseException {
-        Stack<Symbol> myStack = this._stack;
+        final Stack<Symbol> myStack = this._stack;
 
-        /* select the action based on the action number */
         switch (actionId){
             case 1: // $START ::= templateAST EOF 
             {
@@ -624,34 +623,6 @@ public class Parser extends AbstractParser {
             {
                 return ((WhilePart) myStack.peek(0).value).pop(getLabelIndex((String) myStack.peek(2).value));
             }
-            case 76: // forInPart ::= forInBody 
-            {
-                return (AbstractForInPart) myStack.peek(0).value;
-            }
-            case 6: // className ::= classPureName 
-            {
-                return (ClassNameBand) myStack.peek(0).value;
-            }
-            case 95: // expression_statementable ::= funcExecuteExpr 
-            case 96: // expression ::= expression_statementable 
-            case 136: // expression ::= contextValueExpr 
-            case 138: // expression ::= lambdaExpr 
-            {
-                return (Expression) myStack.peek(0).value;
-            }
-            case 10: // statement ::= expression_statementable SEMICOLON 
-            case 127: // expression ::= LPAREN expression RPAREN 
-            {
-                return (Expression) myStack.peek(1).value;
-            }
-            case 150: // expressionList ::= expressionList1 
-            {
-                return (ExpressionList) myStack.peek(0).value;
-            }
-            case 15: // statement ::= block 
-            {
-                return (IBlock) myStack.peek(0).value;
-            }
             case 140: // superCount ::= superCount SUPER DOT 
             {
                 return (Integer) myStack.peek(2).value + 1;
@@ -659,14 +630,6 @@ public class Parser extends AbstractParser {
             case 167: // classNameList ::= classNameList1 
             {
                 return (List<Class>) myStack.peek(0).value;
-            }
-            case 137: // expression ::= mapValue 
-            {
-                return (MapValue) myStack.peek(0).value;
-            }
-            case 16: // statement ::= ifStat 
-            {
-                return (Statement) myStack.peek(0).value;
             }
             case 139: // superCount ::= SUPER DOT 
             {
@@ -679,6 +642,24 @@ public class Parser extends AbstractParser {
             case 14: // statement ::= expression INTERPOLATION_END 
             {
                 return createInterpolation((Expression) myStack.peek(1).value);
+            }
+            case 6: // className ::= classPureName 
+            case 15: // statement ::= block 
+            case 16: // statement ::= ifStat 
+            case 76: // forInPart ::= forInBody 
+            case 95: // expression_statementable ::= funcExecuteExpr 
+            case 96: // expression ::= expression_statementable 
+            case 136: // expression ::= contextValueExpr 
+            case 137: // expression ::= mapValue 
+            case 138: // expression ::= lambdaExpr 
+            case 150: // expressionList ::= expressionList1 
+            {
+                return myStack.peek(0).value;
+            }
+            case 10: // statement ::= expression_statementable SEMICOLON 
+            case 127: // expression ::= LPAREN expression RPAREN 
+            {
+                return myStack.peek(1).value;
             }
             case 166: // classNameList ::= 
             {
@@ -722,7 +703,7 @@ public class Parser extends AbstractParser {
                 varmgr.push(); return null;
             }
             default:
-                throw new ParseException("Invalid action number found in internal parse table");
+                throw new ParseException("Invalid action id.");
         }
     }
 

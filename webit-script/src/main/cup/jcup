@@ -2,7 +2,7 @@
 cd $(dirname $0)
 
 
-$JAVA_HOME/bin/java -Dfile.encoding=UTF-8 -jar java_cup_for_webit_script-20140720.jar -parser Parser -symbols Tokens -interface -noscanner -nopositions -destdir ../java/webit/script/core -destresdir ../resources/webit/script/core Parser.cup
+$JAVA_HOME/bin/java -Dfile.encoding=UTF-8 -jar java_cup_for_webit_script-20140831.jar -parser Parser -symbols Tokens -interface -noscanner -nopositions -destdir ../java/webit/script/core -destresdir ../resources/webit/script/core Parser.cup
 
 echo 'Press any to exit...'
 read -n 1
