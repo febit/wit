@@ -382,6 +382,7 @@ abstract class AbstractParser {
                 oper = new NotEqual(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.OROR: // ||
+            case Tokens.QUESTION_COLON: // ?:
                 oper = new Or(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.PLUS: // +
@@ -392,9 +393,6 @@ abstract class AbstractParser {
                 break;
             case Tokens.URSHIFT: // >>>
                 oper = new URShift(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.QUESTION_COLON: // ?:
-                oper = new IfOrOperator(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.DOTDOT: // ..
                 oper = new IntStep(leftExpr, rightExpr, line, column);

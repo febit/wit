@@ -24,6 +24,5 @@ public final class IfOperator extends Expression {
 
     public Object execute(final Context context) {
         return (ALU.isTrue(ifExpr.execute(context)) ? leftValueExpr : rightValueExpr).execute(context);
-
     }
 }
