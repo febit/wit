@@ -29,31 +29,32 @@ class ASMUtil {
         if (type.isPrimitive()) {
             if (type == int.class) {
                 return "java/lang/Integer";
-            } else if (type == boolean.class) {
-                return "java/lang/Boolean";
-            } else if (type == long.class) {
-                return "java/lang/Long";
-            } else if (type == double.class) {
-                return "java/lang/Double";
-            } else if (type == float.class) {
-                return "java/lang/Float";
-            } else if (type == short.class) {
-                return "java/lang/Short";
-            } else if (type == char.class) {
-                return "java/lang/Character";
-            } else if (type == byte.class) {
-                return "java/lang/Byte";
-            } else {
-                //void.class
-                return "java/lang/Void";
             }
-        } else {
-            return ASMUtil.getInternalName(type);
+            if (type == boolean.class) {
+                return "java/lang/Boolean";
+            }
+            if (type == long.class) {
+                return "java/lang/Long";
+            }
+            if (type == double.class) {
+                return "java/lang/Double";
+            }
+            if (type == float.class) {
+                return "java/lang/Float";
+            }
+            if (type == short.class) {
+                return "java/lang/Short";
+            }
+            if (type == char.class) {
+                return "java/lang/Character";
+            }
+            if (type == byte.class) {
+                return "java/lang/Byte";
+            }
+            //void.class
+            return "java/lang/Void";
         }
-    }
-
-    static String getInternalName(final Class c) {
-        return getInternalName(c.getName());
+        return ASMUtil.getInternalName(type.getName());
     }
 
     static String getInternalName(String className) {
@@ -93,24 +94,30 @@ class ASMUtil {
         if (c.isPrimitive()) {
             if (c == int.class) {
                 return "I";
-            } else if (c == boolean.class) {
-                return "Z";
-            } else if (c == byte.class) {
-                return "B";
-            } else if (c == char.class) {
-                return "C";
-            } else if (c == short.class) {
-                return "S";
-            } else if (c == double.class) {
-                return "D";
-            } else if (c == float.class) {
-                return "F";
-            } else if (c == long.class) {
-                return "J";
-            } else {
-                //Void.TYPE
-                return "V";
             }
+            if (c == boolean.class) {
+                return "Z";
+            }
+            if (c == byte.class) {
+                return "B";
+            }
+            if (c == char.class) {
+                return "C";
+            }
+            if (c == short.class) {
+                return "S";
+            }
+            if (c == double.class) {
+                return "D";
+            }
+            if (c == float.class) {
+                return "F";
+            }
+            if (c == long.class) {
+                return "J";
+            }
+            //Void.TYPE
+            return "V";
         }
         String internalName = getInternalName(c.getName());
         if (c.isArray()) {
@@ -123,24 +130,38 @@ class ASMUtil {
         if (type.isPrimitive()) {
             if (type == int.class) {
                 m.invokeStatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
-            } else if (type == boolean.class) {
-                m.invokeStatic("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
-            } else if (type == long.class) {
-                m.invokeStatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
-            } else if (type == double.class) {
-                m.invokeStatic("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;");
-            } else if (type == float.class) {
-                m.invokeStatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
-            } else if (type == short.class) {
-                m.invokeStatic("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;");
-            } else if (type == char.class) {
-                m.invokeStatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
-            } else if (type == byte.class) {
-                m.invokeStatic("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
-            } else {
-                //void.class
-                m.visitFieldInsn(Constants.GETSTATIC, "webit/script/Context", "VOID", "Lwebit/script/lang/Void;");
+                return;
             }
+            if (type == boolean.class) {
+                m.invokeStatic("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
+                return;
+            }
+            if (type == long.class) {
+                m.invokeStatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
+                return;
+            }
+            if (type == double.class) {
+                m.invokeStatic("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;");
+                return;
+            }
+            if (type == float.class) {
+                m.invokeStatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
+                return;
+            }
+            if (type == short.class) {
+                m.invokeStatic("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;");
+                return;
+            }
+            if (type == char.class) {
+                m.invokeStatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
+                return;
+            }
+            if (type == byte.class) {
+                m.invokeStatic("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
+                return;
+            }
+            //void.class
+            m.visitFieldInsn(Constants.GETSTATIC, "webit/script/Context", "VOID", "Lwebit/script/lang/Void;");
         }
     }
 
@@ -148,20 +169,35 @@ class ASMUtil {
         if (type.isPrimitive()) {
             if (type == int.class) {
                 m.invokeVirtual("java/lang/Integer", "intValue", "()I");
-            } else if (type == boolean.class) {
+                return;
+            }
+            if (type == boolean.class) {
                 m.invokeVirtual("java/lang/Boolean", "booleanValue", "()Z");
-            } else if (type == long.class) {
+                return;
+            }
+            if (type == long.class) {
                 m.invokeVirtual("java/lang/Long", "longValue", "()J");
-            } else if (type == double.class) {
+                return;
+            }
+            if (type == double.class) {
                 m.invokeVirtual("java/lang/Double", "doubleValue", "()D");
-            } else if (type == float.class) {
+                return;
+            }
+            if (type == float.class) {
                 m.invokeVirtual("java/lang/Float", "floatValue", "()F");
-            } else if (type == short.class) {
+                return;
+            }
+            if (type == short.class) {
                 m.invokeVirtual("java/lang/Short", "shortValue", "()S");
-            } else if (type == char.class) {
+                return;
+            }
+            if (type == char.class) {
                 m.invokeVirtual("java/lang/Character", "charValue", "()C");
-            } else if (type == byte.class) {
+                return;
+            }
+            if (type == byte.class) {
                 m.invokeVirtual("java/lang/Byte", "byteValue", "()B");
+                return;
             }
             //ignore void.class
         }

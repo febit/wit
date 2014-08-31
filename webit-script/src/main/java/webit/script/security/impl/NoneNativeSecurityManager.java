@@ -8,7 +8,7 @@ import webit.script.security.NativeSecurityManager;
  * @since 1.4.0
  * @author zqq90
  */
-public class NoneNativeSecurityManager implements NativeSecurityManager {
+public final class NoneNativeSecurityManager implements NativeSecurityManager {
 
     public boolean access(String path) {
         return true;

@@ -3,7 +3,7 @@ package webit.script.asm.lib;
 /**
  * bytes buffer.
  */
-class ByteBuffer {
+final class ByteBuffer {
 
     byte[] data;
 

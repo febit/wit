@@ -17,7 +17,6 @@ import webit.script.util.StringUtil;
  */
 public class VariantManager {
 
-    private int indexerCount;
     private int varCount;
     private final Stack<IndexerRaw> rawStack;
     private final List<IndexerRaw> raws;
@@ -25,13 +24,11 @@ public class VariantManager {
     private final GlobalManager globalManager;
 
     @SuppressWarnings("unchecked")
-    public VariantManager(Engine engine) {
-        this.indexerCount = 0;
+    VariantManager(Engine engine) {
         this.globalManager = engine.getGlobalManager();
         this.raws = new ArrayList<IndexerRaw>();
         this.rawStack = new Stack<IndexerRaw>();
-        final IndexerRaw root = this.root = new IndexerRaw(-1);
-        this.rawStack.push(root);
+        this.root = push(-1);
         final String[] vars = engine.getVars();
         if (vars != null) {
             for (String var : vars) {
@@ -43,14 +40,15 @@ public class VariantManager {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void push() {
-        IndexerRaw parent = rawStack.peek();
-        this.rawStack.push(new IndexerRaw(parent.id));
+    private IndexerRaw push(int parentId) {
+        IndexerRaw raw = new IndexerRaw(this.raws.size(), parentId);
+        this.raws.add(raw);
+        this.rawStack.push(raw);
+        return raw;
     }
 
-    public int getIndexerCount() {
-        return indexerCount;
+    public void push() {
+        push(rawStack.peek().id);
     }
 
     public int getVarCount() {
@@ -70,14 +68,12 @@ public class VariantManager {
             //assert i == raw.id
             //remove consts
             final Map<String, Integer> indexerMap = raw.values;
-            final Map<String, Object> constMap = raw.constMap;
-            if (constMap != null) {
-                for (Map.Entry<String, Object> entry : constMap.entrySet()) {
-                    indexerMap.remove(entry.getKey());
+            if (raw.constMap != null) {
+                for (String key : raw.constMap.keySet()) {
+                    indexerMap.remove(key);
                 }
             }
-            VariantIndexer parent = raw.parentId >= 0 ? result[raw.parentId] : null;
-            result[i] = getVariantIndexer(i, parent, indexerMap);
+            result[i] = getVariantIndexer(i, raw.parentId >= 0 ? result[raw.parentId] : null, indexerMap);
         }
         return result;
     }
@@ -103,7 +99,7 @@ public class VariantManager {
     }
 
     public VarAddress assignVariantAddress(String name, int line, int column) {
-        return VarAddress.context(assignVariant(name, line, column));
+        return context(assignVariant(name, line, column));
     }
 
     public int assignVariant(String name, int line, int column) {
@@ -117,7 +113,7 @@ public class VariantManager {
     public VarAddress assignVariantAtRoot(final String name, int line, int column) {
         root.checkDuplicate(name, line, column);
         final int address = root.assignVar(name, line, column);
-        return VarAddress.context(address);
+        return context(address);
     }
 
     public VarAddress locateAtUpstair(String name, int upstair, int line, int column) {
@@ -126,9 +122,9 @@ public class VariantManager {
             Integer index;
             if ((index = raw.getIndex(name)) != null) {
                 if (index >= 0) {
-                    return VarAddress.context(index);
+                    return context(index);
                 } else {
-                    return VarAddress.constValue(raw.getConstValue(name));
+                    return constValue(raw.getConstValue(name));
                 }
             }
             throw new ParseException("Can't locate vars: ".concat(name), line, column);
@@ -138,30 +134,47 @@ public class VariantManager {
     }
 
     public VarAddress locate(String name, int fromUpstair, boolean force, int line, int column) {
+
+        //local var/const
         for (; fromUpstair < rawStack.size(); fromUpstair++) {
             IndexerRaw raw = rawStack.peek(fromUpstair);
             Integer index;
             if ((index = raw.getIndex(name)) != null) {
                 if (index >= 0) {
-                    return VarAddress.context(index);
+                    return context(index);
                 } else {
-                    return VarAddress.constValue(raw.getConstValue(name));
+                    return constValue(raw.getConstValue(name));
                 }
             }
         }
 
-        int index;
-        if ((index = this.globalManager.getGlobalIndex(name)) >= 0) {
-            return VarAddress.global(index);
-        } else if (this.globalManager.hasConst(name)) {
-            return VarAddress.constValue(this.globalManager.getConst(name));
+        //global var/const
+        final GlobalManager globalManager = this.globalManager;
+        final int index = globalManager.getGlobalIndex(name);
+        if (index >= 0) {
+            return global(index);
+        }
+        if (globalManager.hasConst(name)) {
+            return constValue(globalManager.getConst(name));
         }
 
+        //failed
         if (force) {
             throw new ParseException("Can't locate vars: ".concat(name), line, column);
-        } else {
-            return assignVariantAtRoot(name, line, column);
         }
+        return assignVariantAtRoot(name, line, column);
+    }
+
+    private static VarAddress context(int index) {
+        return new VarAddress(VarAddress.CONTEXT, index, null);
+    }
+
+    private static VarAddress global(int index) {
+        return new VarAddress(VarAddress.GLOBAL, index, null);
+    }
+
+    private static VarAddress constValue(Object value) {
+        return new VarAddress(VarAddress.CONST, -1, value);
     }
 
     private class IndexerRaw {
@@ -171,11 +184,10 @@ public class VariantManager {
         final Map<String, Integer> values;
         Map<String, Object> constMap;
 
-        IndexerRaw(int parentId) {
+        IndexerRaw(int id, int parentId) {
             this.parentId = parentId;
             this.values = new HashMap<String, Integer>();
-            this.id = VariantManager.this.indexerCount++;
-            VariantManager.this.raws.add(this);
+            this.id = id;
         }
 
         Integer getIndex(String name) {
@@ -188,17 +200,12 @@ public class VariantManager {
                     : null;
         }
 
-        private void prepareConstMap() {
-            if (this.constMap == null) {
-                this.constMap = new HashMap<String, Object>();
-            }
-        }
-
         boolean contains(String name) {
             return this.values.containsKey(name);
         }
 
         void checkDuplicate(final String name, int line, int column) {
+            //XXX: recheck
             if (this.values.containsKey(name)) {
                 throw new ParseException("Duplicate Variant declare: ".concat(name), line, column);
             }
@@ -206,13 +213,16 @@ public class VariantManager {
 
         void assignConst(final String name, final Object value, int line, int column) {
             checkDuplicate(name, line, column);
-            prepareConstMap();
+            if (this.constMap == null) {
+                this.constMap = new HashMap<String, Object>();
+            }
             this.values.put(name, -1);
             this.constMap.put(name, value);
         }
 
         Integer assignVar(final String name, int line, int column) {
             checkDuplicate(name, line, column);
+            //XXX: recheck
             int index = VariantManager.this.varCount++;
             this.values.put(name, index);
             return index;
@@ -222,29 +232,17 @@ public class VariantManager {
     public static class VarAddress {
 
         public static final int CONTEXT = 0;
-        public static final int GLOBAL = 2;
-        public static final int CONST = 3;
+        public static final int GLOBAL = 1;
+        public static final int CONST = 2;
 
-        public final int index;
         public final int type;
+        public final int index;
         public final Object constValue;
 
-        public VarAddress(int index, int type, Object constValue) {
-            this.index = index;
+        VarAddress(int type, int index, Object constValue) {
             this.type = type;
+            this.index = index;
             this.constValue = constValue;
-        }
-
-        public static VarAddress context(int index) {
-            return new VarAddress(index, CONTEXT, null);
-        }
-
-        public static VarAddress global(int index) {
-            return new VarAddress(index, GLOBAL, null);
-        }
-
-        public static VarAddress constValue(Object value) {
-            return new VarAddress(-1, CONST, value);
         }
     }
 }

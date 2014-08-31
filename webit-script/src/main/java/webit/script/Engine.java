@@ -217,42 +217,40 @@ public final class Engine {
         final Loader loader;
         if ((normalizedName = (loader = this.resourceLoader).normalize(resourceName)) != null) {
             return loader.get(normalizedName).exists();
-        } else {
-            return false;
         }
+        return false;
     }
 
     private Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
         Template template;
         final Loader loader = this.resourceLoader;
         final String normalizedName = loader.normalize(name);
-        if (normalizedName != null) {
-            template = this.templateCache.get(normalizedName);
-            if (template == null) {
-                //then create Template
-                template = new Template(this, normalizedName,
-                        loader.get(normalizedName));
-                if (loader.isEnableCache(normalizedName)) {
-                    Template oldTemplate;
-                    oldTemplate = this.templateCache.putIfAbsent(normalizedName, template);
-                    //if old Template exist, use the old one
-                    if (oldTemplate != null) {
-                        template = oldTemplate;
-                    }
-                    if (!name.equals(normalizedName)) {
-                        // cache Template with un-normalized name
-                        oldTemplate = this.templateCache.putIfAbsent(name, template);
-                        if (oldTemplate != null) {
-                            template = oldTemplate;
-                        }
-                    }
-                }
-            }
-            return template;
-        } else {
+        if (normalizedName == null) {
             //if normalized-name is null means not found resource.
             throw new ResourceNotFoundException("Illegal template path: ".concat(name));
         }
+        template = this.templateCache.get(normalizedName);
+        if (template == null) {
+            //then create Template
+            template = new Template(this, normalizedName,
+                    loader.get(normalizedName));
+            if (loader.isEnableCache(normalizedName)) {
+                Template oldTemplate;
+                oldTemplate = this.templateCache.putIfAbsent(normalizedName, template);
+                //if old Template exist, use the old one
+                if (oldTemplate != null) {
+                    template = oldTemplate;
+                }
+                if (!name.equals(normalizedName)) {
+                    // cache Template with un-normalized name
+                    oldTemplate = this.templateCache.putIfAbsent(name, template);
+                    if (oldTemplate != null) {
+                        template = oldTemplate;
+                    }
+                }
+            }
+        }
+        return template;
     }
 
     public boolean checkNativeAccess(String path) {
@@ -477,7 +475,6 @@ public final class Engine {
         } catch (ResourceNotFoundException ex) {
             throw new RuntimeException(ex);
         }
-
         return engine;
     }
 

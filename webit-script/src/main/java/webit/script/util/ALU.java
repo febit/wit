@@ -34,21 +34,29 @@ public class ALU {
             final Class cls = o1.getClass();
             if (cls == String.class) {
                 return STRING;
-            } else if (cls == Integer.class) {
+            }
+            if (cls == Integer.class) {
                 return INTEGER;
-            } else if (cls == Long.class) {
+            }
+            if (cls == Long.class) {
                 return LONG;
-            } else if (cls == Short.class) {
+            }
+            if (cls == Short.class) {
                 return SHORT;
-            } else if (cls == Double.class) {
+            }
+            if (cls == Double.class) {
                 return DOUBLE;
-            } else if (cls == Float.class) {
+            }
+            if (cls == Float.class) {
                 return FLOAT;
-            } else if (cls == Character.class) {
+            }
+            if (cls == Character.class) {
                 return CHAR;
-            } else if (cls == Byte.class) {
+            }
+            if (cls == Byte.class) {
                 return BYTE;
-            } else if (o1 instanceof Number) {
+            }
+            if (o1 instanceof Number) {
                 if (o1 instanceof BigInteger) {
                     return BIG_INTEGER;
                 }
@@ -644,7 +652,8 @@ public class ALU {
     private static int toInt(final Object o1) {
         if (o1 instanceof Number) {
             return ((Number) o1).intValue();
-        } else if (o1 instanceof Character) {
+        }
+        if (o1 instanceof Character) {
             return (Character) o1;
         }
         throw new ScriptRuntimeException("value not a number");
@@ -695,12 +704,12 @@ public class ALU {
     public static boolean isTrue(final Object o) {
         if (o == null || o == Context.VOID) {
             return false;
-        } else if (o instanceof Boolean) {
-            return (Boolean) o;
-        } else {
-            //if Collection empty 
-            return CollectionUtil.notEmpty(o, true);
         }
+        if (o instanceof Boolean) {
+            return (Boolean) o;
+        }
+        //if Collection empty 
+        return CollectionUtil.notEmpty(o, true);
     }
 
     private static boolean notDoubleOrFloat(Object o1) {

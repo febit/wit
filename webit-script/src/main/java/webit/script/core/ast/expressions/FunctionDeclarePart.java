@@ -92,7 +92,7 @@ public class FunctionDeclarePart extends Position {
                 }
             }
             if (loopInfos.size() > 0) {
-                throw new ParseException("Loops overflow in function body: ".concat(StringUtil.join(loopInfos, ",")));
+                throw new ParseException("Loops overflow in function body: ".concat(StringUtil.join(loopInfos, ',')));
             }
         }
 

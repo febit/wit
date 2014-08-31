@@ -3,6 +3,7 @@ package webit.script.core.ast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import webit.script.core.VariantIndexer;
 import webit.script.core.VariantManager;
@@ -57,7 +58,7 @@ public final class StatementList {
         if ((loopInfos = StatementUtil.collectPossibleLoopsInfo(statements)) == null) {
             return new TemplateAST(varmgr.getIndexers(), statements, varmgr.getVarCount());
         } else {
-            throw new ParseException("loop overflow: ".concat(StringUtil.join(loopInfos, ",")));
+            throw new ParseException("loop overflow: ".concat(StringUtil.join(loopInfos, ',')));
         }
     }
 

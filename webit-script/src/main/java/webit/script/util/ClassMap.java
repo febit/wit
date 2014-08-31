@@ -39,7 +39,6 @@ public final class ClassMap<V> {
     }
 
     public V unsafeGet(final Class key) {
-
         Entry<V> e;
         final Entry<V>[] tab;
         e = (tab = table)[key.hashCode() & (tab.length - 1)];
@@ -98,7 +97,6 @@ public final class ClassMap<V> {
 
     @SuppressWarnings("unchecked")
     private V unsafePutIfAbsent(Class key, V value) {
-
         final int id;
         int index;
 

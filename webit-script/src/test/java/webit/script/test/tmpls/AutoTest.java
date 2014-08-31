@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
-import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
 import webit.script.Context;
 import webit.script.EngineManager;
@@ -22,7 +21,7 @@ import webit.script.io.impl.OutputStreamOut;
 import webit.script.util.ClassUtil;
 import webit.script.util.FastByteArrayOutputStream;
 import webit.script.util.FastByteBuffer;
-import webit.script.util.StringUtil;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -43,7 +42,7 @@ public class AutoTest {
             String[] files = file.list();
             for (int i = 0, len = files.length; i < len; i++) {
                 String path = files[i];
-                if (StringUtil.endsWithIgnoreCase(path, ".wit")) {
+                if (path.endsWith(".wit")) {
                     String outPath = path.concat(".out");
                     templates.put("/auto/".concat(path), new File(file, outPath).exists() ? outPath : null);
                 }
@@ -99,7 +98,7 @@ public class AutoTest {
         Template template = EngineManager.getEngine().getTemplate(templatePath);
         try {
             Context context = template.merge(out);
-            System.out.println("\tassert count: " + context.getLocalVar(webit.script.tools.testunit.Assert.ASSERT_COUNT_KEY));
+            System.out.println("\tassert count: " + context.getLocalVar(webit.script.tools.testunit.AssertGlobalRegister.ASSERT_COUNT_KEY));
         } catch (ScriptRuntimeException e) {
             throw e;
         }

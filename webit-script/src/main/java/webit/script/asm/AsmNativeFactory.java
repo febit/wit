@@ -52,54 +52,44 @@ public class AsmNativeFactory extends NativeFactory {
 
     static MethodDeclare createAccessor(Member obj) throws InstantiationException, IllegalAccessException {
         final String className = "webit.script.asm.Accessor_".concat(ASMUtil.getSn());
-
         final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", ASM_METHOD_ACCESSOR);
+        
         ASMUtil.visitConstructor(classWriter);
-
+        
+        final boolean isInterface;
+        final boolean isStatic;
+        final boolean isConstructor;
+        final String ownerClass;
+        final String destName;
+        final String destDesc;
+        final Class[] paramTypes;
+        final Class returnType;
+        
         if (obj instanceof Method) {
             Method method = (Method) obj;
-            appendExecuteMethod(
-                    classWriter,
-                    method.getDeclaringClass().isInterface(),
-                    ClassUtil.isStatic(method),
-                    false,
-                    ASMUtil.getInternalName(method.getDeclaringClass().getName()),
-                    method.getName(),
-                    ASMUtil.getDescriptor(method),
-                    method.getParameterTypes(),
-                    method.getReturnType()
-            );
+            isInterface = method.getDeclaringClass().isInterface();
+            isStatic = ClassUtil.isStatic(method);
+            isConstructor = false;
+            ownerClass = ASMUtil.getInternalName(method.getDeclaringClass().getName());
+            destName = method.getName();
+            destDesc = ASMUtil.getDescriptor(method);
+            paramTypes = method.getParameterTypes();
+            returnType = method.getReturnType();
         } else {
             Constructor constructor = (Constructor) obj;
-            appendExecuteMethod(
-                    classWriter,
-                    false,
-                    false,
-                    true,
-                    ASMUtil.getInternalName(constructor.getDeclaringClass().getName()),
-                    "<init>",
-                    ASMUtil.getDescriptor(constructor),
-                    constructor.getParameterTypes(),
-                    constructor.getDeclaringClass()
-            );
+            isInterface = false;
+            isStatic = false;
+            isConstructor = true;
+            ownerClass = ASMUtil.getInternalName(constructor.getDeclaringClass().getName());
+            destName = "<init>";
+            destDesc = ASMUtil.getDescriptor(constructor);
+            paramTypes = constructor.getParameterTypes();
+            returnType = constructor.getDeclaringClass();
         }
-        return (MethodDeclare) ASMUtil.loadClass(className, classWriter).newInstance();
-    }
-
-    private static void appendExecuteMethod(
-            final ClassWriter classWriter,
-            final boolean isInterface,
-            final boolean isStatic,
-            final boolean isConstructor,
-            final String ownerClass,
-            final String destName,
-            final String destDesc,
-            final Class[] paramTypes,
-            final Class returnType
-    ) {
+        
+        final int paramTypesLen = paramTypes.length;
         final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke", "(Lwebit/script/Context;[Ljava/lang/Object;)Ljava/lang/Object;", null);
 
-        final int paramTypesLen = paramTypes.length;
         if (paramTypesLen == 0) {
             if (isStatic) {
                 m.invokeStatic(ownerClass, destName, destDesc);
@@ -170,5 +160,7 @@ public class AsmNativeFactory extends NativeFactory {
             m.visitInsn(Constants.ARETURN);
         }
         m.visitMaxs();
+        
+        return (MethodDeclare) ASMUtil.loadClass(className, classWriter).newInstance();
     }
 }

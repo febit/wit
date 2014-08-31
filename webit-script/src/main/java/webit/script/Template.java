@@ -28,7 +28,7 @@ public final class Template {
     public final String name;
     public final Resource resource;
 
-    private final Object reloadLock = new Object();
+    private final Object parseLock = new Object();
 
     private TemplateAST ast;
     private long lastModified;
@@ -51,7 +51,7 @@ public final class Template {
 
     private TemplateAST parse(boolean force) throws ParseException {
         TemplateAST ast = this.ast;
-        synchronized (this.reloadLock) {
+        synchronized (this.parseLock) {
             if (force || ast == null || this.resource.isModified()) {
                 ast = new Parser().parse(this);
                 this.ast = ast;

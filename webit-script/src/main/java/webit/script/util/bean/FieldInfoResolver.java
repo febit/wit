@@ -6,8 +6,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import webit.script.util.CharUtil;
 import webit.script.util.ClassUtil;
-import webit.script.util.StringUtil;
 
 /**
  *
@@ -18,7 +18,7 @@ public final class FieldInfoResolver {
     private final Class beanClass;
     private final Map<String, FieldInfo> fieldInfos;
 
-    public FieldInfoResolver(Class beanClass) {
+    FieldInfoResolver(Class beanClass) {
         this.beanClass = beanClass;
         this.fieldInfos = new HashMap<String, FieldInfo>();
     }
@@ -27,7 +27,7 @@ public final class FieldInfoResolver {
         return new FieldInfoResolver(beanClass).resolve();
     }
 
-    public FieldInfo[] resolve() {
+    private FieldInfo[] resolve() {
 
         for (Field field : beanClass.getFields()) {
             if (!ClassUtil.isStatic(field)) {
@@ -45,16 +45,16 @@ public final class FieldInfoResolver {
                     if (argsCount == 1
                             && methodNameLength > 3
                             && methodName.startsWith("set")) {
-                        registSetterMethod(StringUtil.cutFieldName(methodName, 3), method);
+                        registSetterMethod(cutFieldName(methodName, 3), method);
                     }
                 } else {
                     if (argsCount == 0) {
                         if (methodNameLength > 3
                                 && methodName.startsWith("get")) {
-                            registGetterMethod(StringUtil.cutFieldName(methodName, 3), method);
+                            registGetterMethod(cutFieldName(methodName, 3), method);
                         } else if (methodNameLength > 2
                                 && methodName.startsWith("is")) {
-                            registGetterMethod(StringUtil.cutFieldName(methodName, 2), method);
+                            registGetterMethod(cutFieldName(methodName, 2), method);
                         }
                     }
                 }
@@ -85,5 +85,19 @@ public final class FieldInfoResolver {
 
     private void registSetterMethod(String name, Method method) {
         getOrCreateFieldInfo(name).setSetterMethod(method);
+    }
+
+    static String cutFieldName(final String string, final int from) {
+        final int nextIndex = from + 1;
+        final int len = string.length();
+        if (len > nextIndex
+                && CharUtil.isUppercaseAlpha(string.charAt(nextIndex))) {
+            return string.substring(from);
+        } else {
+            char[] buffer = new char[len - from];
+            string.getChars(from, len, buffer, 0);
+            buffer[0] = CharUtil.toLowerAscii(buffer[0]);
+            return new String(buffer);
+        }
     }
 }

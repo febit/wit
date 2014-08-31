@@ -32,13 +32,11 @@ public class FileNameUtil {
             if (prefix == 0 && len != 0) {
                 if (isSeparator(basePath.charAt(len - 1))) {
                     return normalize(basePath.concat(fullFilenameToAdd));
-                } else {
-                    return normalize(StringUtil.concat(basePath, "/", fullFilenameToAdd));
                 }
-            } else if (prefix > 0) {
+                return normalize(StringUtil.concat(basePath, "/", fullFilenameToAdd));
+            }
+            if (prefix > 0) {
                 return normalize(fullFilenameToAdd);
-            } else {
-                return null;
             }
         }
         return null;
@@ -192,7 +190,8 @@ public class FileNameUtil {
                     return len + 1;  // return a length greater than the input
                 }
                 return posUnix + 1;
-            } else if (ch1 == ':') {
+            }
+            if (ch1 == ':') {
                 if ((ch0 >= 'A' && ch0 <= 'Z') || (ch0 >= 'a' && ch0 <= 'z')) {
                     if (len == 2 || !isSeparator(filename.charAt(2))) {
                         return 2;
@@ -200,7 +199,8 @@ public class FileNameUtil {
                     return 3;
                 }
                 return -1;
-            } else if (isSeparator(ch0)) {
+            }
+            if (isSeparator(ch0)) {
                 if (isSeparator(ch1)) {
                     int posUnix = filename.indexOf(UNIX_SEPARATOR, 2);
                     int posWin = filename.indexOf(WINDOWS_SEPARATOR, 2);
@@ -210,12 +210,10 @@ public class FileNameUtil {
                     posUnix = (posUnix == -1 ? posWin : posUnix);
                     posWin = (posWin == -1 ? posUnix : posWin);
                     return Math.min(posUnix, posWin) + 1;
-                } else {
-                    return 1;
                 }
-            } else {
-                return 0;
+                return 1;
             }
+            return 0;
         }
     }
 }

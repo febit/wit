@@ -10,15 +10,6 @@ import org.junit.Test;
  */
 public class StringUtilTest {
 
-    @Test
-    public void cutFieldNameTest() {
-        assertEquals("a", StringUtil.cutFieldName("getA", 3));
-        assertEquals("ab", StringUtil.cutFieldName("getAb", 3));
-        assertEquals("AB", StringUtil.cutFieldName("getAB", 3));
-        assertEquals("ABc", StringUtil.cutFieldName("getABc", 3));
-        assertEquals("ABC", StringUtil.cutFieldName("getABC", 3));
-        assertEquals("aB", StringUtil.cutFieldName("getaB", 3));
-    }
     
     @Test
     public void format() {

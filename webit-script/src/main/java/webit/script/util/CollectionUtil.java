@@ -19,17 +19,20 @@ public class CollectionUtil {
     public static int getSize(final Object object) {
         if (object == null) {
             return 0;
-        } else if (object.getClass().isArray()) {
-            return ArrayUtil.getSize(object);
-        } else if (object instanceof Collection) {
-            return ((Collection) object).size();
-        } else if (object instanceof Map) {
-            return ((Map) object).size();
-        } else if (object instanceof CharSequence) {
-            return ((CharSequence) object).length();
-        } else {
-            return -1;
         }
+        if (object.getClass().isArray()) {
+            return ArrayUtil.getSize(object);
+        }
+        if (object instanceof Collection) {
+            return ((Collection) object).size();
+        }
+        if (object instanceof Map) {
+            return ((Map) object).size();
+        }
+        if (object instanceof CharSequence) {
+            return ((CharSequence) object).length();
+        }
+        return -1;
     }
 
     @SuppressWarnings("unchecked")
@@ -88,13 +91,17 @@ public class CollectionUtil {
         final int size;
         if ((size = getSize(object)) == 0) {
             return false;
-        } else if (size > 0) {
+        }
+        if (size > 0) {
             return true;
-        } else if (object instanceof Iterable) {
+        }
+        if (object instanceof Iterable) {
             return ((Iterable) object).iterator().hasNext();
-        } else if (object instanceof Iterator) {
+        }
+        if (object instanceof Iterator) {
             return ((Iterator) object).hasNext();
-        } else if (object instanceof Enumeration) {
+        }
+        if (object instanceof Enumeration) {
             return ((Enumeration) object).hasMoreElements();
         }
 

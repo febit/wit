@@ -38,84 +38,29 @@ public class StringUtil {
     }
 
     /**
-     * Tests if this string ends with the specified suffix.
-     *
-     * @param src String to test
-     * @param subS suffix
-     * @return
-     */
-    public static boolean endsWithIgnoreCase(String src, String subS) {
-        String sub = subS.toLowerCase();
-        int sublen = sub.length();
-        int j = 0;
-        int i = src.length() - sublen;
-        if (i < 0) {
-            return false;
-        }
-        while (j < sublen) {
-            char source = Character.toLowerCase(src.charAt(i));
-            if (sub.charAt(j) != source) {
-                return false;
-            }
-            j++;
-            i++;
-        }
-        return true;
-    }
-
-    /**
-     *
-     * @since 1.4.0
-     */
-    public static String cutFieldName(final String string, final int from) {
-        final int nextIndex = from + 1;
-        final int len = string.length();
-        if (len > nextIndex
-                && CharUtil.isUppercaseAlpha(string.charAt(nextIndex))) {
-            return string.substring(from);
-        } else {
-            char[] buffer = new char[len - from];
-            string.getChars(from, len, buffer, 0);
-            buffer[0] = CharUtil.toLowerAscii(buffer[0]);
-            return new String(buffer);
-        }
-    }
-
-    /**
      * Joins list of iterable elements. Separator string may be
      * <code>null</code>.
      */
-    public static String join(List elements, String separator) {
-        if (elements == null) {
+    public static String join(List list, char separator) {
+        if (list == null) {
             return "";
         }
-        int size = elements.size();
+        int size = list.size();
         if (size == 0) {
             return "";
-        } else if (size == 1) {
-            return String.valueOf(elements.get(0));
+        } 
+        if (size == 1) {
+            return String.valueOf(list.get(0));
         }
-
-        int len = separator.length() * (size - 1);
-        String[] strings = new String[size];
-        int i = 0;
-        String str;
-        for (Object element : elements) {
-            str = String.valueOf(element);
-            len += str.length();
-            strings[i] = str;
-            i++;
-        }
-
-        StringBuilder sb = new StringBuilder(len);
+        StringBuilder sb = new StringBuilder();
         boolean notfirst = false;
-        for (int j = 0; j < size; j++) {
+        for (Object item : list) {
             if (notfirst) {
                 sb.append(separator);
             } else {
                 notfirst = true;
             }
-            sb.append(strings[j]);
+            sb.append(item);
         }
         return sb.toString();
     }

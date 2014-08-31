@@ -55,6 +55,7 @@ public abstract class AbstractLoader implements Loader, Initable {
      * @return child template's name
      */
     public String concat(final String parent, final String name) {
+        //XXX: rethink FileNameUtil.concat
         return parent != null ? FileNameUtil.concat(FileNameUtil.getPath(parent), name) : name;
     }
 

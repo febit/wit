@@ -34,7 +34,7 @@ package webit.script.asm.lib;
  *
  * @author Eric Bruneton
  */
-public class Label {
+public final class Label {
 
     /**
      * Indicates if the position of this label is known.

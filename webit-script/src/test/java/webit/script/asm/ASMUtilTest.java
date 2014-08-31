@@ -11,24 +11,28 @@ import org.junit.Test;
  */
 public class ASMUtilTest {
 
+    static String getInternalName(final Class c) {
+        return ASMUtil.getInternalName(c.getName());
+    }
+    
     @Test
     public void getInternalName() {
-        assertEquals("java/lang/Integer", ASMUtil.getInternalName(Integer.class));
-        assertEquals("java/lang/String", ASMUtil.getInternalName(String.class));
-        assertEquals("java/util/Map", ASMUtil.getInternalName(Map.class));
+        assertEquals("java/lang/Integer", getInternalName(Integer.class));
+        assertEquals("java/lang/String", getInternalName(String.class));
+        assertEquals("java/util/Map", getInternalName(Map.class));
 
-        assertEquals("int", ASMUtil.getInternalName(int.class));
-        assertEquals("boolean", ASMUtil.getInternalName(boolean.class));
-        assertEquals("void", ASMUtil.getInternalName(Void.TYPE));
-        assertEquals("java/lang/Void", ASMUtil.getInternalName(Void.class));
+        assertEquals("int", getInternalName(int.class));
+        assertEquals("boolean", getInternalName(boolean.class));
+        assertEquals("void", getInternalName(Void.TYPE));
+        assertEquals("java/lang/Void", getInternalName(Void.class));
 
-        assertEquals("[I", ASMUtil.getInternalName(int[].class));
-        assertEquals("[[I", ASMUtil.getInternalName(int[][].class));
-        assertEquals("[[[I", ASMUtil.getInternalName(int[][][].class));
+        assertEquals("[I", getInternalName(int[].class));
+        assertEquals("[[I", getInternalName(int[][].class));
+        assertEquals("[[[I", getInternalName(int[][][].class));
 
-        assertEquals("[Ljava/lang/Integer;", ASMUtil.getInternalName(Integer[].class));
-        assertEquals("[[Ljava/lang/Integer;", ASMUtil.getInternalName(Integer[][].class));
-        assertEquals("[[[Ljava/lang/Integer;", ASMUtil.getInternalName(Integer[][][].class));
+        assertEquals("[Ljava/lang/Integer;", getInternalName(Integer[].class));
+        assertEquals("[[Ljava/lang/Integer;", getInternalName(Integer[][].class));
+        assertEquals("[[[Ljava/lang/Integer;", getInternalName(Integer[][][].class));
 
     }
 

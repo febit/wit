@@ -36,7 +36,7 @@ package webit.script.asm.lib;
  * @author Eric Bruneton
  */
 
-class Edge {
+final class Edge {
 
   /**
    * The (relative) stack size in the basic block from which this edge
