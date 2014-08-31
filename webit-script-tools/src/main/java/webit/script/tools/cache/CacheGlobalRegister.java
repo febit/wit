@@ -25,7 +25,7 @@ import webit.script.util.FastCharArrayWriter;
 public class CacheGlobalRegister implements GlobalRegister, Initable {
 
     protected final static String DEFAULT_NAME = "cache";
-    //
+
     protected String name = DEFAULT_NAME;
     protected ClassEntry cacheProvider;
     protected boolean registCacheClear = false;
@@ -130,7 +130,7 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
             if ((result = (CachingEntry) this.cacheProvider.get(key)) == null) {
                 final Object returned;
                 final Object outted;
-                final Out current;
+                final Out preOut;
 
                 final Object[] methodArgs;
 
@@ -141,30 +141,30 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
                 } else {
                     methodArgs = EMPTY_ARRAY;
                 }
-
-                if ((current = context.getOut()).isByteStream()) {
+                preOut = context.out;
+                if (preOut.isByteStream()) {
                     final FastByteArrayOutputStream out = new FastByteArrayOutputStream(256);
 
-                    context.pushOut(new OutputStreamOut(out, (OutputStreamOut) current));
+                    context.out = new OutputStreamOut(out, (OutputStreamOut) preOut);
 
                     try {
                         returned = methodDeclare.invoke(context, methodArgs);
                     } finally {
-                        context.popOut();
+                        context.out = preOut;
                     }
                     outted = out.toByteArray();
                 } else {
                     final FastCharArrayWriter writer = new FastCharArrayWriter(256);
 
-                    context.pushOut(current instanceof WriterOut
-                            ? new WriterOut(writer, (WriterOut) current)
-                            : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory()));
+                    context.out = preOut instanceof WriterOut
+                            ? new WriterOut(writer, (WriterOut) preOut)
+                            : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory());
 
                     try {
                         returned = methodDeclare.invoke(context, methodArgs);
                         outted = writer.toCharArray();
                     } finally {
-                        context.popOut();
+                        context.out = preOut;
                     }
                 }
                 this.cacheProvider.put(key, result = new CachingEntry(returned, outted));
