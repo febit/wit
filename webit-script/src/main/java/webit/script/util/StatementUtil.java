@@ -134,7 +134,7 @@ public class StatementUtil {
             exception.registStatement(statement);
             return exception;
         } else {
-            return new ScriptRuntimeException(e, statement);
+            return new ScriptRuntimeException(e.toString(), e, statement);
         }
     }
 }
