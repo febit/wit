@@ -221,7 +221,7 @@ abstract class AbstractParser {
 
     Expression createNativeStaticValue(ClassNameBand classNameBand, int line, int column) {
         if (classNameBand.size() < 2) {
-            throw new ParseException("native static need a filed name.", line, column);
+            throw new ParseException("native static need a field name.", line, column);
         }
         final String fieldName = classNameBand.pop();
         final Class clazz = toClass(classNameBand, line, column);
