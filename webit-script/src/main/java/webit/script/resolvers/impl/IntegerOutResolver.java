@@ -14,7 +14,7 @@ import webit.script.util.NumberUtil;
 public class IntegerOutResolver implements OutResolver, RegistModeResolver {
 
     public void render(final Out out, final Object number) {
-        NumberUtil.print((Integer) number, out);
+        NumberUtil.print(((Number) number).intValue(), out);
     }
 
     public Class getMatchClass() {
@@ -24,5 +24,6 @@ public class IntegerOutResolver implements OutResolver, RegistModeResolver {
     public void regist(ResolverManager resolverManager) {
         resolverManager.registResolver(Integer.class, this);
         resolverManager.registResolver(Short.class, this);
+        resolverManager.registResolver(Byte.class, this);
     }
 }
