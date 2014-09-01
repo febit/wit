@@ -1,89 +1,76 @@
-// Copyright (c) 2003-2014, Jodd Team (jodd.org). All Rights Reserved.
+// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util;
 
 import java.io.OutputStream;
 
 public final class ByteArrayOutputStream extends OutputStream {
 
-    private byte[][] buffers = new byte[16][];
-    private int currentBufferIndex = -1;
+    private final int defaultBufferSize;
+    private byte[][] buffers;
     private byte[] currentBuffer;
+    private int currentBufferIndex;
     private int offset;
     private int size;
-    private final int minChunkLen;
 
     public ByteArrayOutputStream() {
-        this.minChunkLen = 1024;
+        this(256);
     }
 
     public ByteArrayOutputStream(int size) {
         if (size < 0) {
             throw new IllegalArgumentException("Invalid size: " + size);
         }
-        this.minChunkLen = size;
+        this.defaultBufferSize = size;
+        this.buffers = new byte[16][];
+        this.currentBufferIndex = 0;
+        this.buffers[0] = this.currentBuffer = new byte[size];
     }
 
-    /**
-     * Prepares next chunk to match new size. The minimal length of new chunk is
-     * <code>minChunkLen</code>.
-     */
-    private void needNewBuffer(int newSize) {
-
-        if (currentBufferIndex >= buffers.length) {
-            int newLen = buffers.length << 1;
-            byte[][] newBuffers = new byte[newLen][];
-            System.arraycopy(buffers, 0, newBuffers, 0, buffers.length);
-            buffers = newBuffers;
+    private byte[] needNewBuffer(int newSize) {
+        final int index = ++currentBufferIndex;
+        byte[][] buffers = this.buffers;
+        if (index == buffers.length) {
+            System.arraycopy(buffers, 0, this.buffers = buffers = new byte[index << 1][], 0, index);
         }
-        currentBufferIndex++;
         offset = 0;
-        buffers[currentBufferIndex] = currentBuffer = new byte[Math.max(minChunkLen, newSize - size)];
+        return buffers[index] = currentBuffer = new byte[Math.max(defaultBufferSize, newSize - size)];
     }
 
     @Override
     public void write(byte[] array, int off, int len) {
-        int end = off + len;
-        if ((off < 0)
-                || (len < 0)
-                || (end > array.length)) {
-            throw new IndexOutOfBoundsException();
-        }
         if (len == 0) {
             return;
         }
-        int newSize = size + len;
-        int remaining = len;
-
-        if (currentBuffer != null) {
-            // first try to fill current buffer
-            int part = Math.min(remaining, currentBuffer.length - offset);
-            System.arraycopy(array, end - remaining, currentBuffer, offset, part);
-            remaining -= part;
-            offset += part;
-            size += part;
+        int end = off + len;
+        if ((off < 0) || (len < 0) || (end > array.length)) {
+            throw new IndexOutOfBoundsException();
         }
+        int part;
 
+        byte[] buffer = currentBuffer;
+        part = Math.min(len, buffer.length - offset);
+        System.arraycopy(array, off, buffer, offset, part);
+        offset += part;
+        size += part;
+
+        int remaining = len - part;
         if (remaining > 0) {
-            // still some data left
-            // ask for new buffer
-            needNewBuffer(newSize);
-            // then copy remaining
-            // but this time we are sure that it will fit
-            int part = Math.min(remaining, currentBuffer.length - offset);
-            System.arraycopy(array, end - remaining, currentBuffer, offset, part);
-            offset += part;
+            buffer = needNewBuffer(size + remaining);
+            //assert offset = 0
+            part = Math.min(remaining, buffer.length);
+            System.arraycopy(array, end - remaining, buffer, 0, part);
+            offset = part;
             size += part;
         }
     }
 
     @Override
     public void write(int b) {
-        if ((currentBuffer == null) || (offset == currentBuffer.length)) {
-            needNewBuffer(size + 1);
+        byte[] buffer = currentBuffer;
+        if (offset == buffer.length) {
+            buffer = needNewBuffer(size + 1);
         }
-
-        currentBuffer[offset] = (byte) b;
-        offset++;
+        buffer[offset++] = (byte) b;
         size++;
     }
 
@@ -99,32 +86,24 @@ public final class ByteArrayOutputStream extends OutputStream {
         return size;
     }
 
-    /**
-     * Resets the buffer content.
-     */
     public void reset() {
         size = 0;
         offset = 0;
-        currentBufferIndex = -1;
-        currentBuffer = null;
+        currentBufferIndex = 0;
+        currentBuffer = buffers[0];
     }
 
     public byte[] toArray() {
         int pos = 0;
-        byte[] array = new byte[size];
-
-        if (currentBufferIndex == -1) {
-            return array;
-        }
-
+        final byte[] array = new byte[size];
+        final int currentBufferIndex = this.currentBufferIndex;
+        final byte[][] buffers = this.buffers;
         for (int i = 0; i < currentBufferIndex; i++) {
             int len = buffers[i].length;
             System.arraycopy(buffers[i], 0, array, pos, len);
             pos += len;
         }
-
         System.arraycopy(buffers[currentBufferIndex], 0, array, pos, offset);
-
         return array;
     }
 }

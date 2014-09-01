@@ -1,102 +1,77 @@
-// Copyright (c) 2003-2014, Jodd Team (jodd.org). All Rights Reserved.
+// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util;
 
 import java.io.Writer;
 
-public final class CharArrayWriter extends Writer {
+public class CharArrayWriter extends Writer {
 
-    private char[][] buffers = new char[16][];
+    private final int defaultBufferSize;
+    private char[][] buffers;
     private char[] currentBuffer;
-    protected int currentBufferIndex = -1;
-    protected int offset;
+    int currentBufferIndex;
+    int offset;
     private int size;
-    private final int minChunkLen;
 
-    /**
-     * Creates a new <code>char</code> buffer. The buffer capacity is initially
-     * 1024 bytes, though its size increases if necessary.
-     */
     public CharArrayWriter() {
-        this.minChunkLen = 1024;
+        this(256);
     }
 
-    /**
-     * Creates a new <code>char</code> buffer, with a buffer capacity of the
-     * specified size, in bytes.
-     *
-     * @param size the initial size.
-     * @throws IllegalArgumentException if size is negative.
-     */
     public CharArrayWriter(int size) {
         if (size < 0) {
             throw new IllegalArgumentException("Invalid size: " + size);
         }
-        this.minChunkLen = size;
+        this.defaultBufferSize = size;
+        this.buffers = new char[16][];
+        this.currentBufferIndex = 0;
+        this.buffers[0] = this.currentBuffer = new char[size];
     }
 
-    /**
-     * Prepares next chunk to match new size. The minimal length of new chunk is
-     * <code>minChunkLen</code>.
-     */
-    private void needNewBuffer(int newSize) {
-
-        if (currentBufferIndex >= buffers.length) {
-            int newLen = buffers.length << 1;
-            char[][] newBuffers = new char[newLen][];
-            System.arraycopy(buffers, 0, newBuffers, 0, buffers.length);
-            buffers = newBuffers;
+    private char[] needNewBuffer(int newSize) {
+        final int index = ++currentBufferIndex;
+        char[][] buffers = this.buffers;
+        if (index == buffers.length) {
+            System.arraycopy(buffers, 0, this.buffers = buffers = new char[index << 1][], 0, index);
         }
-        currentBufferIndex++;
         offset = 0;
-        buffers[currentBufferIndex] = currentBuffer = new char[Math.max(minChunkLen, newSize - size)];;
-    }
-
-    public CharArrayWriter append(char[] array, int off, int len) {
-        int end = off + len;
-        if ((off < 0)
-                || (len < 0)
-                || (end > array.length)) {
-            throw new IndexOutOfBoundsException();
-        }
-        if (len == 0) {
-            return this;
-        }
-        int newSize = size + len;
-        int remaining = len;
-
-        if (currentBuffer != null) {
-            // first try to fill current buffer
-            int part = Math.min(remaining, currentBuffer.length - offset);
-            System.arraycopy(array, end - remaining, currentBuffer, offset, part);
-            remaining -= part;
-            offset += part;
-            size += part;
-        }
-
-        if (remaining > 0) {
-            // still some data left
-            // ask for new buffer
-            needNewBuffer(newSize);
-
-            // then copy remaining
-            // but this time we are sure that it will fit
-            int part = Math.min(remaining, currentBuffer.length - offset);
-            System.arraycopy(array, end - remaining, currentBuffer, offset, part);
-            offset += part;
-            size += part;
-        }
-
-        return this;
+        return buffers[index] = currentBuffer = new char[Math.max(defaultBufferSize, newSize - size)];
     }
 
     @Override
-    public void write(char[] b, int off, int len) {
-        append(b, off, len);
+    public void write(char[] array, int off, int len) {
+        if (len == 0) {
+            return;
+        }
+        int end = off + len;
+        if ((off < 0) || (len < 0) || (end > array.length)) {
+            throw new IndexOutOfBoundsException();
+        }
+        int part;
+
+        char[] buffer = currentBuffer;
+        part = Math.min(len, buffer.length - offset);
+        System.arraycopy(array, off, buffer, offset, part);
+        offset += part;
+        size += part;
+
+        int remaining = len - part;
+        if (remaining > 0) {
+            buffer = needNewBuffer(size + remaining);
+            //assert offset = 0
+            part = Math.min(remaining, buffer.length);
+            System.arraycopy(array, end - remaining, buffer, 0, part);
+            offset = part;
+            size += part;
+        }
     }
 
     @Override
     public void write(int b) {
-        append((char) b);
+        char[] buffer = currentBuffer;
+        if (offset == buffer.length) {
+            buffer = needNewBuffer(size + 1);
+        }
+        buffer[offset++] = (char) b;
+        size++;
     }
 
     @Override
@@ -112,20 +87,22 @@ public final class CharArrayWriter extends Writer {
     public void flush() {
     }
 
+    public CharArrayWriter append(char[] array, int off, int len) {
+        write(array, off, len);
+        return this;
+    }
+
     public CharArrayWriter append(char[] array) {
         return append(array, 0, array.length);
     }
 
+    public CharArrayWriter append(String array) {
+        return append(array.toCharArray());
+    }
+
     @Override
-    public CharArrayWriter append(char element) {
-        if ((currentBuffer == null) || (offset == currentBuffer.length)) {
-            needNewBuffer(size + 1);
-        }
-
-        currentBuffer[offset] = element;
-        offset++;
-        size++;
-
+    public CharArrayWriter append(char c) {
+        write(c);
         return this;
     }
 
@@ -136,40 +113,40 @@ public final class CharArrayWriter extends Writer {
     public void reset() {
         size = 0;
         offset = 0;
-        currentBufferIndex = -1;
-        currentBuffer = null;
+        currentBufferIndex = 0;
+        currentBuffer = buffers[0];
     }
 
     public char[] toArray() {
         int pos = 0;
-        char[] array = new char[size];
-
-        if (currentBufferIndex == -1) {
-            return array;
-        }
-
+        final char[] array = new char[size];
+        final int currentBufferIndex = this.currentBufferIndex;
+        final char[][] buffers = this.buffers;
         for (int i = 0; i < currentBufferIndex; i++) {
             int len = buffers[i].length;
             System.arraycopy(buffers[i], 0, array, pos, len);
             pos += len;
         }
-
         System.arraycopy(buffers[currentBufferIndex], 0, array, pos, offset);
-
         return array;
     }
 
     public char[] toArraySkipIfLeftNewLine() {
-        if (this.size == 0) {
+        final int size = this.size;
+        if (size == 0) {
             return new char[0];
         }
+        final char[][] buffers = this.buffers;
         final int skip;
         char[] first = buffers[0];
         if (first[0] == '\n') {
             skip = 1;
         } else if (first[0] == '\r') {
-            if (this.size > 1) {
+            if (size > 1) {
                 if (first[1] == '\n') {
+                    if (size == 2) {
+                        return new char[0];
+                    }
                     skip = 2;
                 } else {
                     skip = 1;
@@ -178,25 +155,21 @@ public final class CharArrayWriter extends Writer {
                 return new char[0];
             }
         } else {
-            skip = 0;
-        }
-        if (skip == 0) {
             return toArray();
         }
-        int remaining = this.size - skip;
         int pos = 0;
-        char[] array = new char[remaining];
-        //first
-        int c = Math.min(first.length - skip, remaining);
-        System.arraycopy(first, skip, array, pos, c);
-        pos += c;
-        remaining -= c;
-        for (int i = 1; remaining > 0 && i < buffers.length;) {
-            char[] buf = buffers[i++];
-            c = Math.min(buf.length, remaining);
-            System.arraycopy(buf, 0, array, pos, c);
-            pos += c;
-            remaining -= c;
+        final char[] array = new char[size - skip];
+        final int currentBufferIndex = this.currentBufferIndex;
+        if (currentBufferIndex == 0) {
+            System.arraycopy(buffers[0], skip, array, 0, offset - skip);
+        } else {
+            System.arraycopy(buffers[0], skip, array, 0, pos = buffers[0].length - skip);
+            for (int i = 1; i < currentBufferIndex; i++) {
+                int len = buffers[i].length;
+                System.arraycopy(buffers[i], 0, array, pos, len);
+                pos += len;
+            }
+            System.arraycopy(buffers[currentBufferIndex], 0, array, pos, offset);
         }
         return array;
     }
