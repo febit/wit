@@ -69,7 +69,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final OutputStream outputStream) throws ScriptRuntimeException, ParseException {
-        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(outputStream, engine));
+        return Template.this.merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(outputStream, engine));
     }
 
     /**
@@ -82,7 +82,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParseException {
-        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(outputStream, encoding != null ? Engine.internEncoding(encoding) : engine.getEncoding(), engine.getCoderFactory()));
+        return Template.this.merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(outputStream, encoding != null ? Engine.internEncoding(encoding) : engine.getEncoding(), engine.getCoderFactory()));
     }
 
     /**
@@ -94,7 +94,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Writer writer) throws ScriptRuntimeException, ParseException {
-        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new WriterOut(writer, engine));
+        return Template.this.merge(KeyValuesUtil.EMPTY_KEY_VALUES, new WriterOut(writer, engine));
     }
 
     /**
@@ -107,7 +107,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> root, final OutputStream outputStream) throws ScriptRuntimeException, ParseException {
-        return merge(KeyValuesUtil.wrap(root), new OutputStreamOut(outputStream, engine));
+        return Template.this.merge(KeyValuesUtil.wrap(root), new OutputStreamOut(outputStream, engine));
     }
 
     /**
@@ -121,7 +121,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> root, final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParseException {
-        return merge(KeyValuesUtil.wrap(root), new OutputStreamOut(outputStream, encoding != null ? Engine.internEncoding(encoding) : engine.getEncoding(), engine.getCoderFactory()));
+        return Template.this.merge(KeyValuesUtil.wrap(root), new OutputStreamOut(outputStream, encoding != null ? Engine.internEncoding(encoding) : engine.getEncoding(), engine.getCoderFactory()));
     }
 
     /**
@@ -134,7 +134,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> root, final Writer writer) throws ScriptRuntimeException, ParseException {
-        return merge(KeyValuesUtil.wrap(root), new WriterOut(writer, engine));
+        return Template.this.merge(KeyValuesUtil.wrap(root), new WriterOut(writer, engine));
     }
 
     /**
@@ -147,7 +147,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final KeyValues root, final OutputStream outputStream) throws ScriptRuntimeException, ParseException {
-        return merge(root, new OutputStreamOut(outputStream, engine));
+        return Template.this.merge(root, new OutputStreamOut(outputStream, engine));
     }
 
     /**
@@ -161,7 +161,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final KeyValues root, final OutputStream outputStream, final String encoding) throws ScriptRuntimeException, ParseException {
-        return merge(root, new OutputStreamOut(outputStream, encoding != null ? Engine.internEncoding(encoding) : engine.getEncoding(), engine.getCoderFactory()));
+        return Template.this.merge(root, new OutputStreamOut(outputStream, encoding != null ? Engine.internEncoding(encoding) : engine.getEncoding(), engine.getCoderFactory()));
     }
 
     /**
@@ -174,7 +174,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final KeyValues root, final Writer writer) throws ScriptRuntimeException, ParseException {
-        return merge(root, new WriterOut(writer, engine));
+        return Template.this.merge(root, new WriterOut(writer, engine));
     }
 
     /**
@@ -214,20 +214,20 @@ public final class Template {
     /**
      * Merge this template as a child Template, used by include/import.
      *
-     * @since 1.4.0
-     * @param parent
+     * @since 1.5.0
+     * @param context
      * @param params
      * @return Context
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context mergeForInlude(final Context parent, KeyValues params) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Context context, KeyValues params) throws ScriptRuntimeException, ParseException {
         try {
             TemplateAST ast = this.ast;
             if (ast == null || this.resource.isModified()) {
                 ast = parse(false);
             }
-            return ast.execute(new Context(parent, this, params));
+            return ast.execute(context);
         } catch (Exception e) {
             throw completeException(e);
         }

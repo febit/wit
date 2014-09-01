@@ -32,5 +32,8 @@ public class ConetextTest {
         assertTrue(map.containsKey("a"));
         assertTrue(map.containsKey("b"));
         assertFalse(map.containsKey("c"));
+
+        assertEquals("a", map.get("a"));
+        assertEquals("b", map.get("b"));
     }
 }

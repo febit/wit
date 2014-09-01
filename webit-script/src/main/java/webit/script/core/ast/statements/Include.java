@@ -16,7 +16,7 @@ public final class Include extends AbstractInclude {
     }
 
     public Object execute(final Context context) {
-        mergeTemplate(context);
+        mergeTemplate(context, false);
         return null;
     }
 }

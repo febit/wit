@@ -1,11 +1,13 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
+import java.util.Map;
 import webit.script.Context;
 import webit.script.Template;
 import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
+import webit.script.lang.KeyValues;
 
 /**
  *
@@ -31,29 +33,24 @@ public final class Import extends AbstractInclude {
     }
 
     public Object execute(final Context context) {
-        final Context childContext = mergeTemplate(context);
+        final Map<String, Object> results = mergeTemplate(context, true);
         if (exportAll) {
             final VariantIndexer destIndexer = context.indexers[context.indexer];
             if (context.indexer == destIndexer.id) {
-
                 final Object[] destValues = context.vars;
-
-                final VariantIndexer srcIndexer = childContext.indexers[0];
-                final String[] srcNames = srcIndexer.names;
-                final int[] srcIndexs = srcIndexer.indexs;
-                final Object[] srcValues = childContext.vars;
-                for (int i = 0, len = srcNames.length; i < len; i++) {
-                    int index = destIndexer.getCurrentIndex(srcNames[i]);
+                for (Map.Entry<String, Object> entry : results.entrySet()) {
+                    int index = destIndexer.getCurrentIndex(entry.getKey());
                     if (index >= 0) {
-                        destValues[index] = srcValues[srcIndexs[i]];
+                        destValues[index] = entry.getValue();
                     }
                 }
             }
         } else {
-            final Object[] vars = childContext.get(exportNames);
+            final String [] exportNames = this.exportNames;
+            final int len = exportNames.length;
             final ResetableValueExpression[] myToResetableValues = this.toResetableValues;
-            for (int i = 0, len = vars.length; i < len; i++) {
-                myToResetableValues[i].setValue(context, vars[i]);
+            for (int i = 0; i < len; i++) {
+                myToResetableValues[i].setValue(context, results.get(exportNames[i]));
             }
         }
         return null;

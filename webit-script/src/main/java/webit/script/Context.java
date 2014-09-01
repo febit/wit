@@ -15,7 +15,6 @@ import webit.script.lang.Void;
 import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.util.ClassMap;
-import webit.script.util.KeyValuesUtil;
 
 /**
  *
@@ -25,44 +24,28 @@ public final class Context implements KeyValueAccepter {
 
     public static final Void VOID = new Void();
 
-    private Map<Object, Object> localMap;
-    public final Context topContext;
-    public final KeyValues rootParams;
-    public final String encoding;
+    private Map<Object, Object> locals;
     public final LoopCtrl loopCtrl;
-    public final Template template;
     public final ResolverManager resolverManager;
     public final ClassMap<OutResolver> outterMap;
-    public final boolean isByteStream;
 
+    public Template template;
+    public KeyValues rootParams;
     public Object[] vars;
     public VariantIndexer[] indexers;
     public int indexer;
     public Out out;
+    public boolean isByteStream;
+    public String encoding;
 
     public Context(final Template template, final Out out, final KeyValues rootParams) {
         this.template = template;
         this.out = out;
-        this.topContext = this;
         this.rootParams = rootParams;
         this.encoding = out.getEncoding();
         this.isByteStream = out.isByteStream();
         ResolverManager resolverManager = this.resolverManager = template.engine.getResolverManager();
         this.outterMap = resolverManager.outterMap;
-        this.loopCtrl = new LoopCtrl();
-    }
-
-    public Context(final Context parent, final Template template, final KeyValues params) {
-        this.template = template;
-        this.out = parent.out;
-        this.topContext = parent.topContext;
-        this.rootParams = template.engine.isShareRootData()
-                ? KeyValuesUtil.wrap(parent.rootParams, params)
-                : params;
-        this.encoding = parent.encoding;
-        this.isByteStream = parent.isByteStream;
-        this.resolverManager = parent.resolverManager;
-        this.outterMap = parent.outterMap;
         this.loopCtrl = new LoopCtrl();
     }
 
@@ -103,26 +86,16 @@ public final class Context implements KeyValueAccepter {
 
     public Object getLocalVar(final Object key) {
         final Map<Object, Object> map;
-        return (map = this.localMap) != null ? map.get(key) : null;
+        return (map = this.locals) != null ? map.get(key) : null;
     }
 
     public void setLocalVar(final Object key, final Object value) {
         final Map<Object, Object> map;
-        if ((map = this.localMap) != null) {
+        if ((map = this.locals) != null) {
             map.put(key, value);
             return;
         }
-        (this.localMap = new HashMap<Object, Object>()).put(key, value);
-    }
-
-    public void setArgumentsForFunction(final int argsCount, final Object[] args, final int start) {
-        final int len;
-        final Object[] values;
-        if (((values = vars)[start] = args) != null
-                && argsCount != 0
-                && (len = args.length) != 0) {
-            System.arraycopy(args, 0, values, start + 1, argsCount > len ? len : argsCount);
-        }
+        (this.locals = new HashMap<Object, Object>()).put(key, value);
     }
 
     public Object[] get(final String[] keys) {
