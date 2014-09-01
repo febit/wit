@@ -9,7 +9,7 @@ import webit.script.lang.KeyIter;
  *
  * @author zqq
  */
-public class MapKeyIter extends AbstractIter implements KeyIter {
+public final class MapKeyIter extends AbstractIter implements KeyIter {
 
     private final Iterator<Map.Entry> iterator;
     private Map.Entry current;

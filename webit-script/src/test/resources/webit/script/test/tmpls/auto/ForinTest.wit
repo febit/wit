@@ -10,6 +10,20 @@
     }
 }
 {
+    var new_ints = native [int];
+    var ints = new_ints(4);
+    ints[0] = 3;
+    ints[1] = 4;
+    ints[2] = 5;
+    ints[3] = 6;
+    assertEquals(4, ints.size);
+    var s = "";
+    for(i : ints){
+        s +=  for.iter.isOdd? "1":"0";
+    }
+    assertEquals("1010", s);
+}
+{
     var s = "";
     for(i : 3..6){
         s +=  for.iter.isOdd? "1":"0";

@@ -10,7 +10,7 @@ import webit.script.util.ALU;
  *
  * @author zqq
  */
-public class KeyIterMethodFilter extends IterFilter implements KeyIter {
+public final class KeyIterMethodFilter extends IterFilter implements KeyIter {
 
     protected final Context context;
     protected final MethodDeclare method;

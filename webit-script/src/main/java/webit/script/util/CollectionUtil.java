@@ -43,36 +43,36 @@ public class CollectionUtil {
             return null;
         }
         if (o1 instanceof Iterable) {
-            return new IteratorIterAdapter(((Iterable) o1).iterator());
+            return new IteratorIter(((Iterable) o1).iterator());
         }
         if ((clazz = o1.getClass()).isArray()) {
             if (o1 instanceof Object[]) {
-                return new ArrayIterAdapter((Object[]) o1);
+                return new ArrayIter((Object[]) o1);
             } else if (clazz == int[].class) {
-                return new IntArrayIterAdapter((int[]) o1);
+                return new IntArrayIter((int[]) o1);
             } else if (clazz == boolean[].class) {
-                return new BooleanArrayIterAdapter((boolean[]) o1);
+                return new BooleanArrayIter((boolean[]) o1);
             } else if (clazz == char[].class) {
-                return new CharArrayIterAdapter((char[]) o1);
+                return new CharArrayIter((char[]) o1);
             } else if (clazz == float[].class) {
-                return new FloatArrayIterAdapter((float[]) o1);
+                return new FloatArrayIter((float[]) o1);
             } else if (clazz == double[].class) {
-                return new DoubleArrayIterAdapter((double[]) o1);
+                return new DoubleArrayIter((double[]) o1);
             } else if (clazz == long[].class) {
-                return new LongArrayIterAdapter((long[]) o1);
+                return new LongArrayIter((long[]) o1);
             } else if (clazz == short[].class) {
-                return new ShortArrayIterAdapter((short[]) o1);
+                return new ShortArrayIter((short[]) o1);
             } else if (clazz == byte[].class) {
-                return new ByteArrayIterAdapter((byte[]) o1);
+                return new ByteArrayIter((byte[]) o1);
             }
         } else if (o1 instanceof Iterator) {
-            return new IteratorIterAdapter((Iterator) o1);
+            return new IteratorIter((Iterator) o1);
         } else if (o1 instanceof Iter) {
             return (Iter) o1;
         } else if (o1 instanceof Enumeration) {
-            return new EnumerationIterAdapter((Enumeration) o1);
+            return new EnumerationIter((Enumeration) o1);
         } else if (o1 instanceof CharSequence) {
-            return new CharSequenceIterAdapter((CharSequence) o1);
+            return new CharSequenceIter((CharSequence) o1);
         }
         throw new ScriptRuntimeException("Unsupported type: ".concat(o1.getClass().getName()), statement);
     }

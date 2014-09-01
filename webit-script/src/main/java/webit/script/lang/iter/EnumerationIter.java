@@ -7,11 +7,11 @@ import java.util.Enumeration;
  *
  * @author Zqq
  */
-public class EnumerationIterAdapter extends AbstractIter {
+public final class EnumerationIter extends AbstractIter {
 
     private final Enumeration enumeration;
 
-    public EnumerationIterAdapter(Enumeration enumeration) {
+    public EnumerationIter(Enumeration enumeration) {
         this.enumeration = enumeration;
     }
 

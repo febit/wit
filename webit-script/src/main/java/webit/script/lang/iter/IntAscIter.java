@@ -8,30 +8,30 @@ import webit.script.lang.Iter;
  *
  * @author Zqq
  */
-public class IntegerDescStepIter implements Iter {
+public final class IntAscIter implements Iter {
 
     private final int from;
     private final int to;
     private int current;
 
-    public IntegerDescStepIter(int int1, int int2) {
-        if (int1 > int2) {
+    public IntAscIter(int int1, int int2) {
+        if (int1 < int2) {
             from = int1;
             to = int2;
         } else {
             from = int2;
             to = int1;
         }
-        current = from + 1;
+        current = from - 1;
     }
 
     public boolean hasNext() {
-        return current > to;
+        return current < to;
     }
 
     public Integer next() {
-        if (current > to) {
-            return --current;
+        if (current < to) {
+            return ++current;
         } else {
             throw new NoSuchElementException("no more next");
         }
@@ -42,6 +42,6 @@ public class IntegerDescStepIter implements Iter {
     }
 
     public int index() {
-        return from - current;
+        return current - from;
     }
 }

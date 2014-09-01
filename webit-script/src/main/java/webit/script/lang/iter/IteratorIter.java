@@ -7,11 +7,11 @@ import java.util.Iterator;
  *
  * @author Zqq
  */
-public class IteratorIterAdapter<E> extends AbstractIter {
+public final class IteratorIter<E> extends AbstractIter {
 
     private final Iterator<E> iterator;
 
-    public IteratorIterAdapter(Iterator<E> iterator) {
+    public IteratorIter(Iterator<E> iterator) {
         this.iterator = iterator;
     }
 

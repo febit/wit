@@ -9,7 +9,11 @@ import webit.script.lang.Iter;
  */
 public abstract class AbstractIter implements Iter {
 
-    protected int _index = -1;
+    protected int _index;
+
+    protected AbstractIter() {
+        this._index = -1;
+    }
 
     public Object next() {
         ++_index;

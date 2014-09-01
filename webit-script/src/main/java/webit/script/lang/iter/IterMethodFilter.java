@@ -10,7 +10,7 @@ import webit.script.util.ALU;
  *
  * @author zqq
  */
-public class IterMethodFilter extends IterFilter {
+public final class IterMethodFilter extends IterFilter {
 
     protected final Context context;
     protected final MethodDeclare method;

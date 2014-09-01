@@ -5,8 +5,8 @@ import webit.script.Context;
 import webit.script.core.ast.BinaryOperator;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
-import webit.script.lang.iter.IntegerAscStepIter;
-import webit.script.lang.iter.IntegerDescStepIter;
+import webit.script.lang.iter.IntAscIter;
+import webit.script.lang.iter.IntDescIter;
 import webit.script.util.StringUtil;
 
 /**
@@ -34,9 +34,9 @@ public class IntStep extends BinaryOperator {
             throw new ScriptRuntimeException(StringUtil.concatObjectClass("right need a int, but found ", result), this);
         }
         if (num1 < num2) {
-            return new IntegerAscStepIter(num1, num2);
+            return new IntAscIter(num1, num2);
         } else {
-            return new IntegerDescStepIter(num1, num2);
+            return new IntDescIter(num1, num2);
         }
     }
 }
