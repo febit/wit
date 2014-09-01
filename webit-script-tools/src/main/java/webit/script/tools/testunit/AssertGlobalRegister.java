@@ -16,7 +16,10 @@ public class AssertGlobalRegister implements GlobalRegister {
 
     public static final String ASSERT_COUNT_KEY = "$$LIB_ASSERT_COUNT";
 
-    protected static final MethodDeclare assertTrue = new MethodDeclare() {
+    protected static class AssertTrue implements MethodDeclare {
+
+        AssertTrue() {
+        }
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
@@ -25,7 +28,10 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
     };
 
-    protected static final MethodDeclare assertFalse = new MethodDeclare() {
+    protected static class AssertFalse implements MethodDeclare {
+
+        AssertFalse() {
+        }
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
@@ -34,7 +40,10 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
     };
 
-    protected static final MethodDeclare assertNotNull = new MethodDeclare() {
+    protected static class AssertNotNull implements MethodDeclare {
+
+        AssertNotNull() {
+        }
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
@@ -43,7 +52,10 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
     };
 
-    protected static final MethodDeclare assertNull = new MethodDeclare() {
+    protected static class AssertNull implements MethodDeclare {
+
+        AssertNull() {
+        }
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
@@ -52,7 +64,10 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
     };
 
-    protected static final MethodDeclare assertEquals = new MethodDeclare() {
+    protected static class AssertEquals implements MethodDeclare {
+
+        AssertEquals() {
+        }
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
@@ -62,7 +77,10 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
     };
 
-    protected static final MethodDeclare assertSame = new MethodDeclare() {
+    protected static class AssertSame implements MethodDeclare {
+
+        AssertSame() {
+        }
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
@@ -72,7 +90,10 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
     };
 
-    protected static final MethodDeclare assertNotSame = new MethodDeclare() {
+    protected static class AssertNotSame implements MethodDeclare {
+
+        AssertNotSame() {
+        }
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
@@ -82,7 +103,10 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
     };
 
-    protected static final MethodDeclare assertArrayEquals = new MethodDeclare() {
+    protected static class AssertArrayEquals implements MethodDeclare {
+
+        AssertArrayEquals() {
+        }
 
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
@@ -93,14 +117,14 @@ public class AssertGlobalRegister implements GlobalRegister {
     };
 
     public void regist(final GlobalManager manager) {
-        manager.setConst("assertTrue", assertTrue);
-        manager.setConst("assertFalse", assertFalse);
-        manager.setConst("assertNull", assertNull);
-        manager.setConst("assertNotNull", assertNotNull);
-        manager.setConst("assertSame", assertSame);
-        manager.setConst("assertNotSame", assertNotSame);
-        manager.setConst("assertEquals", assertEquals);
-        manager.setConst("assertArrayEquals", assertArrayEquals);
+        manager.setConst("assertTrue", new AssertTrue());
+        manager.setConst("assertFalse", new AssertFalse());
+        manager.setConst("assertNull", new AssertNull());
+        manager.setConst("assertNotNull", new AssertNotNull());
+        manager.setConst("assertSame", new AssertSame());
+        manager.setConst("assertNotSame", new AssertNotSame());
+        manager.setConst("assertEquals", new AssertEquals());
+        manager.setConst("assertArrayEquals", new AssertArrayEquals());
     }
 
     private static void plusAssertCount(Context context) {

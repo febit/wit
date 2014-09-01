@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import webit.script.Context;
 import webit.script.EngineManager;
@@ -18,9 +19,9 @@ import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.io.impl.DiscardOut;
 import webit.script.io.impl.OutputStreamOut;
-import webit.script.util.ClassUtil;
+import webit.script.tools.testunit.AssertGlobalRegister;
 import webit.script.util.ByteArrayOutputStream;
-import static org.junit.Assert.*;
+import webit.script.util.ClassUtil;
 
 /**
  *
@@ -97,7 +98,7 @@ public class AutoTest {
         Template template = EngineManager.getEngine().getTemplate(templatePath);
         try {
             Context context = template.merge(out);
-            System.out.println("\tassert count: " + context.getLocalVar(webit.script.tools.testunit.AssertGlobalRegister.ASSERT_COUNT_KEY));
+            System.out.println("\tassert count: " + context.getLocalVar(AssertGlobalRegister.ASSERT_COUNT_KEY));
         } catch (ScriptRuntimeException e) {
             throw e;
         }
