@@ -28,12 +28,12 @@ public final class MapValue extends Expression {
 
     @SuppressWarnings("unchecked")
     public Object execute(final Context context) {
-        final Object[] keys = this.keys;
-        final Expression[] valueExprs = this.valueExprs;
-        final int len = valueExprs.length;
+        final Object[] mapKeys = this.keys;
+        final Expression[] exprs = this.valueExprs;
+        final int len = exprs.length;
         final Map value = new HashMap(initialCapacity, DEFAULT_MAP_FACTOR);
         for (int i = 0; i < len; i++) {
-            value.put(keys[i], valueExprs[i].execute(context));
+            value.put(mapKeys[i], exprs[i].execute(context));
         }
         return value;
     }

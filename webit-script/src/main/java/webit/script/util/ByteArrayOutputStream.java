@@ -28,12 +28,12 @@ public final class ByteArrayOutputStream extends OutputStream {
 
     private byte[] needNewBuffer(int newSize) {
         final int index = ++currentBufferIndex;
-        byte[][] buffers = this.buffers;
-        if (index == buffers.length) {
-            System.arraycopy(buffers, 0, this.buffers = buffers = new byte[index << 1][], 0, index);
+        byte[][] myBuffers = this.buffers;
+        if (index == myBuffers.length) {
+            System.arraycopy(myBuffers, 0, this.buffers = myBuffers = new byte[index << 1][], 0, index);
         }
         offset = 0;
-        return buffers[index] = currentBuffer = new byte[Math.max(defaultBufferSize, newSize - size)];
+        return myBuffers[index] = currentBuffer = new byte[Math.max(defaultBufferSize, newSize - size)];
     }
 
     @Override
@@ -96,14 +96,14 @@ public final class ByteArrayOutputStream extends OutputStream {
     public byte[] toArray() {
         int pos = 0;
         final byte[] array = new byte[size];
-        final int currentBufferIndex = this.currentBufferIndex;
-        final byte[][] buffers = this.buffers;
-        for (int i = 0; i < currentBufferIndex; i++) {
-            int len = buffers[i].length;
-            System.arraycopy(buffers[i], 0, array, pos, len);
+        final int bufferIndex = this.currentBufferIndex;
+        final byte[][] myBuffers = this.buffers;
+        for (int i = 0; i < bufferIndex; i++) {
+            int len = myBuffers[i].length;
+            System.arraycopy(myBuffers[i], 0, array, pos, len);
             pos += len;
         }
-        System.arraycopy(buffers[currentBufferIndex], 0, array, pos, offset);
+        System.arraycopy(myBuffers[bufferIndex], 0, array, pos, offset);
         return array;
     }
 }

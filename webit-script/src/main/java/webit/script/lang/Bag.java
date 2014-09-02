@@ -7,7 +7,7 @@ package webit.script.lang;
  */
 public interface Bag {
 
-    public Object get(Object key);
+    Object get(Object key);
 
-    public void set(Object key, Object value);
+    void set(Object key, Object value);
 }

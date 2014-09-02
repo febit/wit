@@ -22,10 +22,10 @@ public final class MinusMinusAfter extends Expression {
 
     public Object execute(final Context context) {
         final Object value;
-        final ResetableValueExpression _expr;
+        final ResetableValueExpression resetable;
         try {
-            (_expr = this.expr).setValue(context, ALU.minusOne(
-                    value = _expr.execute(context)));
+            (resetable = this.expr).setValue(context, ALU.minusOne(
+                    value = resetable.execute(context)));
             return value;
         } catch (Exception e) {
             throw StatementUtil.castToScriptRuntimeException(e, this);

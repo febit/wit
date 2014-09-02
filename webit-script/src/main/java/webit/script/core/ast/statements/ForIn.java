@@ -55,17 +55,17 @@ public class ForIn extends Statement implements Loopable {
             final LoopCtrl ctrl = context.loopCtrl;
             final int preIndex = context.indexer;
             context.indexer = indexer;
-            final Statement[] statements = this.statements;
-            final int label = this.label;
-            final int itemIndex = this.itemIndex;
+            final Statement[] stats = this.statements;
+            final int myLabel = this.label;
+            final int index = this.itemIndex;
             final Object[] vars = context.vars;
             vars[iterIndex] = iter;
             label:
             do {
-                vars[itemIndex] = iter.next();
-                StatementUtil.executeInvertedAndCheckLoops(statements, context);
+                vars[index] = iter.next();
+                StatementUtil.executeInvertedAndCheckLoops(stats, context);
                 if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
-                    if (ctrl.matchLabel(label)) {
+                    if (ctrl.matchLabel(myLabel)) {
                         switch (ctrl.getLoopType()) {
                             case LoopInfo.BREAK:
                                 ctrl.reset();

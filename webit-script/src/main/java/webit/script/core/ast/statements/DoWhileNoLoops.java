@@ -25,11 +25,11 @@ public final class DoWhileNoLoops extends Statement {
     }
 
     public Object execute(final Context context) {
-        final Statement[] statements = this.statements;
+        final Statement[] stats = this.statements;
         final int preIndex = context.indexer;
         context.indexer = indexer;
         do {
-            StatementUtil.executeInverted(statements, context);
+            StatementUtil.executeInverted(stats, context);
         } while (ALU.isTrue(whileExpr.execute(context)));
         context.indexer = preIndex;
         return null;

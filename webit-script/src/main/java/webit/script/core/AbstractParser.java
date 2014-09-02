@@ -48,13 +48,13 @@ abstract class AbstractParser {
     private boolean locateVarForce;
     private int currentLabelIndex;
 
-    final Stack<Symbol> _stack;
+    final Stack<Symbol> symbolStack;
     boolean goonParse;
     Template template;
     VariantManager varmgr;
 
     AbstractParser() {
-        this._stack = new Stack<Symbol>(24);
+        this.symbolStack = new Stack<Symbol>(24);
         this.importedClasses = new HashMap<String, String>();
         this.labelsIndexMap = new HashMap<String, Integer>();
     }
@@ -72,34 +72,34 @@ abstract class AbstractParser {
      */
     public TemplateAST parse(final Template template) throws ParseException {
         Lexer lexer = null;
-        final Engine _engine;
-        final TextStatementFactory _textStatementFactory;
+        final Engine myEngine = template.engine;
         final Resource resource = template.resource;
+        final TextStatementFactory textStatFactory = myEngine.getTextStatementFactory();
         this.template = template;
-        this.engine = _engine = template.engine;
-        this.textStatementFactory = _textStatementFactory = _engine.getTextStatementFactory();
-        this.locateVarForce = !_engine.isLooseVar();
-        this.nativeFactory = _engine.getNativeFactory();
-        this.varmgr = new VariantManager(_engine);
+        this.engine = myEngine;
+        this.textStatementFactory = textStatFactory;
+        this.locateVarForce = !myEngine.isLooseVar();
+        this.nativeFactory = myEngine.getNativeFactory();
+        this.varmgr = new VariantManager(myEngine);
         this.currentLabelIndex = 0;
         this.labelsIndexMap.put(null, 0);
         try {
             //ISSUE: LexerProvider
             lexer = new Lexer(resource.openReader());
-            lexer.setTrimCodeBlockBlankLine(_engine.isTrimCodeBlockBlankLine());
+            lexer.setTrimCodeBlockBlankLine(myEngine.isTrimCodeBlockBlankLine());
             if (resource instanceof ResourceOffset) {
                 lexer.setOffset((ResourceOffset) resource);
             } else {
                 lexer.setOffset(0, 0);
             }
-            _textStatementFactory.startTemplateParser(template);
+            textStatFactory.startTemplateParser(template);
             return (TemplateAST) this.parse(lexer).value;
+        } catch (ParseException e) {
+            throw e;
         } catch (Exception e) {
-            throw (e instanceof ParseException)
-                    ? ((ParseException) e)
-                    : new ParseException(e);
+            throw new ParseException(e);
         } finally {
-            _textStatementFactory.finishTemplateParser(template);
+            textStatFactory.finishTemplateParser(template);
             if (lexer != null) {
                 try {
                     lexer.yyclose();
@@ -109,7 +109,7 @@ abstract class AbstractParser {
         }
     }
 
-    abstract Object doAction(int act_num) throws ParseException;
+    abstract Object doAction(int actionId) throws ParseException;
 
     boolean registClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
         final String className = classNameBand.getClassSimpleName();
@@ -123,7 +123,7 @@ abstract class AbstractParser {
         return true;
     }
 
-    Class<?> toClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
+    Class toClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
         String classPureName;
         if (classNameBand.isSimpleName()) {
             //1. find from @imports
@@ -268,7 +268,7 @@ abstract class AbstractParser {
     }
 
     Statement declearVar(String ident, int line, int column) {
-        //XXX: Should Check var used before init;
+        //XXX: Should Check var used before init
         varmgr.assignVariant(ident, line, column);
         return NoneStatement.INSTANCE;
     }
@@ -404,18 +404,19 @@ abstract class AbstractParser {
     }
 
     private static short getAction(final short[] row, final int sym) {
-        int first, last, probe, row_len;
-
+        final int len;
+        int probe;
         /* linear search if we are < 10 entries, otherwise binary search */
-        if ((row_len = row.length) < 20) {
-            for (probe = 0; probe < row_len; probe++) {
+        if ((len = row.length) < 20) {
+            for (probe = 0; probe < len; probe++) {
                 if (row[probe++] == sym) {
                     return row[probe];
                 }
             }
         } else {
+            int first, last;
             first = 0;
-            last = ((row_len - 1) >> 1);
+            last = ((len - 1) >> 1);
 
             int probe_2;
             while (first <= last) {
@@ -435,9 +436,8 @@ abstract class AbstractParser {
     }
 
     private static short getReduce(final short[] row, int sym) {
-        int probe, len;
         if (row != null) {
-            for (probe = 0, len = row.length; probe < len; probe++) {
+            for (int probe = 0, len = row.length; probe < len; probe++) {
                 if (row[probe++] == sym) {
                     return row[probe];
                 }
@@ -459,7 +459,7 @@ abstract class AbstractParser {
         int act;
         Symbol currentToken;
         Symbol currentSymbol;
-        final Stack<Symbol> stack = this._stack;
+        final Stack<Symbol> stack = this.symbolStack;
         stack.clear();
 
         //Start Symbol
@@ -499,7 +499,8 @@ abstract class AbstractParser {
                 if (handleSize == 0) {
                     currentSymbol = new Symbol(symId, -1, -1, result);
                 } else {
-                    currentSymbol = new Symbol(symId, result, stack.peek(handleSize - 1)); //position based on left
+                     //position based on left
+                    currentSymbol = new Symbol(symId, result, stack.peek(handleSize - 1));
                     //pop the handle
                     stack.pops(handleSize);
                 }

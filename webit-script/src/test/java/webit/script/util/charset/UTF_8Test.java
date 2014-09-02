@@ -13,11 +13,11 @@ public class UTF_8Test {
 
     public boolean matchEncode(String string) throws UnsupportedEncodingException {
         
-        byte[] buffer = new byte[(int) (string.length() * UTF_8.MAX_BYTES_PER_CHAR)];
+        byte[] buffer = new byte[(int) (string.length() * UTF8.MAX_BYTES_PER_CHAR)];
 
         byte[] expr = string.getBytes("utf-8");
         
-        int used = UTF_8.encode(buffer, string.toCharArray(), 0, string.length());
+        int used = UTF8.encode(buffer, string.toCharArray(), 0, string.length());
 
         if (used != expr.length) {
             return false;
@@ -39,7 +39,7 @@ public class UTF_8Test {
         
         char [] buffer = new char[(int)(src.length)];
 
-        int used = UTF_8.decode(src, 0, src.length, buffer);
+        int used = UTF8.decode(src, 0, src.length, buffer);
         
         if (used != expr.length) {
             return false;

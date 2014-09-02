@@ -18,12 +18,12 @@ public final class ArrayValue extends Expression {
     }
 
     public Object execute(final Context context) {
-        final Expression[] valueExprs;
+        final Expression[] exprs;
         final int len;
-        final Object[] value = new Object[len = (valueExprs = this.valueExprs).length];
+        final Object[] value = new Object[len = (exprs = this.valueExprs).length];
         int i = 0;
         while (i < len) {
-            value[i] = valueExprs[i].execute(context);
+            value[i] = exprs[i].execute(context);
             i++;
         }
         return value;

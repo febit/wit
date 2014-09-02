@@ -22,9 +22,9 @@ public final class PlusPlusBefore extends Expression {
 
     public Object execute(final Context context) {
         try {
-            final ResetableValueExpression _expr;
-            return (_expr = this.expr).setValue(context, ALU.plusOne(
-                    _expr.execute(context)));
+            final ResetableValueExpression resetable;
+            return (resetable = this.expr).setValue(context, ALU.plusOne(
+                    resetable.execute(context)));
         } catch (Exception e) {
             throw StatementUtil.castToScriptRuntimeException(e, this);
         }

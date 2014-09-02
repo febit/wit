@@ -53,7 +53,9 @@ public class AsmResolverManager extends ResolverManager {
                     try {
                         resolver = (AsmResolver) createResolverClass(type).newInstance();
                         resolver = CACHE.putIfAbsent(type, resolver);
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
+                        logger.error("Failed to create resolver for:".concat(type.getName()), e);
+                    } catch (Error e) {
                         logger.error("Failed to create resolver for:".concat(type.getName()), e);
                     }
                 }
@@ -63,7 +65,7 @@ public class AsmResolverManager extends ResolverManager {
     }
 
     static Class createResolverClass(Class beanClass) throws Exception {
-
+        //XXX: recheck
         if (ClassUtil.isPublic(beanClass)) {
             final String className = "webit.script.asm.Resolver_".concat(ASMUtil.getSn());
 
@@ -115,7 +117,7 @@ public class AsmResolverManager extends ResolverManager {
         }
     }
 
-    private static void visitXetMethod(boolean isGetter, final ClassWriter classWriter, final Class beanClass, final FieldInfo[] all, int[] hashs, int[] indexer) {
+    private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class beanClass, final FieldInfo[] all, final int[] hashs, final int[] indexer) {
         final String beanName = ASMUtil.getBoxedInternalName(beanClass);
         final MethodWriter m;
         if (isGetter) {
@@ -125,9 +127,9 @@ public class AsmResolverManager extends ResolverManager {
         }
         final int fieldInfosLength = all.length;
         if (fieldInfosLength != 0) {
-            final Label end_switch = new Label();
+            final Label finalEndLabel = new Label();
             if (fieldInfosLength < 4) {
-                visitXetFields(isGetter, m, all, 0, fieldInfosLength, beanName, end_switch);
+                visitXetFields(isGetter, m, all, 0, fieldInfosLength, beanName, finalEndLabel);
             } else {
                 m.visitVarInsn(Constants.ALOAD, 2);
                 m.invokeVirtual("java/lang/Object", "hashCode", "()I");
@@ -138,16 +140,16 @@ public class AsmResolverManager extends ResolverManager {
                     labels[i] = new Label();
                 }
 
-                m.visitLookupSwitchInsn(end_switch, hashs, labels);
+                m.visitLookupSwitchInsn(finalEndLabel, hashs, labels);
                 int start = 0;
                 for (int i = 0; i < size; i++) {
                     int end = indexer[i];
                     m.visitLabel(labels[i]);
-                    visitXetFields(isGetter, m, all, start, end, beanName, end_switch);
+                    visitXetFields(isGetter, m, all, start, end, beanName, finalEndLabel);
                     start = end;
                 }
             }
-            m.visitLabel(end_switch);
+            m.visitLabel(finalEndLabel);
         }
         //Exception
         m.visitTypeInsn(Constants.NEW, "webit/script/exceptions/ScriptRuntimeException");
@@ -161,11 +163,12 @@ public class AsmResolverManager extends ResolverManager {
         m.visitMaxs();
     }
 
-    private static void visitXetFields(boolean isGetter, final MethodWriter m, FieldInfo[] fieldInfos, final int start, final int end, String beanName, Label l_failedMatch) {
-        Label[] gotoTable = new Label[end - start];
+    private static void visitXetFields(final boolean isGetter, final MethodWriter m, final FieldInfo[] fieldInfos, final int start, final int end, final String beanName, final Label failedMatchLabel) {
+        final Label[] gotoTable = new Label[end - start];
         //if ==
         for (int i = start; i < end; i++) {
-            Label label = gotoTable[i - start] = new Label();
+            Label label = new Label();
+            gotoTable[i - start] = label;
             m.visitLdcInsn(fieldInfos[i].name);
             m.visitVarInsn(Constants.ALOAD, 2);
             // if == goto
@@ -180,7 +183,7 @@ public class AsmResolverManager extends ResolverManager {
             m.visitJumpInsn(Constants.IFNE, gotoTable[i - start]);
         }
         //failed, to end
-        m.visitJumpInsn(Constants.GOTO, l_failedMatch);
+        m.visitJumpInsn(Constants.GOTO, failedMatchLabel);
         //actions
         for (int i = start; i < end; i++) {
             m.visitLabel(gotoTable[i - start]);
@@ -215,7 +218,7 @@ public class AsmResolverManager extends ResolverManager {
         }
     }
 
-    private static void appendSetFieldCode(final MethodWriter m, FieldInfo fieldInfo, String beanName) {
+    private static void appendSetFieldCode(final MethodWriter m, final FieldInfo fieldInfo, final String beanName) {
         Method setter = fieldInfo.getSetterMethod();
         Field field = fieldInfo.getField();
         if (setter != null || (field != null && !fieldInfo.isIsFinal())) {

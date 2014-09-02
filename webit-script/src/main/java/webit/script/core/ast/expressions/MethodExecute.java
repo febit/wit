@@ -25,16 +25,16 @@ public final class MethodExecute extends Expression {
     public Object execute(final Context context) {
         final Object funcObject;
         if ((funcObject = funcExpr.execute(context)) instanceof MethodDeclare) {
-            final Expression[] paramExprs = this.paramExprs;
             int i = 0;
             final int len;
-            final Object[] results = new Object[len = paramExprs.length];
+            final Expression[] exprs = this.paramExprs;
+            final Object[] results = new Object[len = exprs.length];
             try {
                 for (i = 0; i < len; i++) {
-                    results[i] = paramExprs[i].execute(context);
+                    results[i] = exprs[i].execute(context);
                 }
             } catch (Exception e) {
-                throw StatementUtil.castToScriptRuntimeException(e, paramExprs[i]);
+                throw StatementUtil.castToScriptRuntimeException(e, exprs[i]);
             }
             return ((MethodDeclare) funcObject).invoke(context, results);
         }

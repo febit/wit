@@ -66,7 +66,7 @@ public abstract class TemplateException extends RuntimeException {
         Throwable ourCause = getCause();
         if (ourCause != null) {
             out.print(prefix).println("\tCaused by: ");
-            out.printStackTrace(ourCause);
+            out.printTrace(ourCause);
         }
     }
 
@@ -83,7 +83,7 @@ public abstract class TemplateException extends RuntimeException {
 
         PrintStreamOrWriter print(Object o);
 
-        void printStackTrace(Throwable cause);
+        void printTrace(Throwable cause);
     }
 
     private static class WrappedPrintStream implements PrintStreamOrWriter {
@@ -104,7 +104,7 @@ public abstract class TemplateException extends RuntimeException {
             return this;
         }
 
-        public void printStackTrace(Throwable cause) {
+        public void printTrace(Throwable cause) {
             cause.printStackTrace(out);
         }
     }
@@ -127,7 +127,7 @@ public abstract class TemplateException extends RuntimeException {
             return this;
         }
 
-        public void printStackTrace(Throwable cause) {
+        public void printTrace(Throwable cause) {
             cause.printStackTrace(out);
         }
     }

@@ -23,9 +23,9 @@ public final class PlusPlusAfter extends Expression {
     public Object execute(final Context context) {
         try {
             final Object value;
-            final ResetableValueExpression _expr;
-            (_expr = this.expr).setValue(context, ALU.plusOne(
-                    value = _expr.execute(context)));
+            final ResetableValueExpression resetable;
+            (resetable = this.expr).setValue(context, ALU.plusOne(
+                    value = resetable.execute(context)));
             return value;
         } catch (Exception e) {
             throw StatementUtil.castToScriptRuntimeException(e, this);

@@ -64,7 +64,7 @@ public class PropsUtil {
             if (this.modulePropsCache == null) {
                 this.modulePropsCache = new HashMap<String, Props>();
             }
-            for (String module : StringUtil.splitAndRemoveBlank(modules)) {
+            for (String module : StringUtil.toArray(modules)) {
                 if (loadedModules.contains(module)) {
                     continue;
                 }
@@ -122,7 +122,7 @@ public class PropsUtil {
                 }
             } else {
                 for (String path : paths) {
-                    for (String subpath : StringUtil.splitAndRemoveBlank(path)) {
+                    for (String subpath : StringUtil.toArray(path)) {
                         Props temp = loadProps(inputResolver, subpath);
                         resolveModules(temp);
                         mergeProps(temp, inputResolver.getViewPath(subpath));

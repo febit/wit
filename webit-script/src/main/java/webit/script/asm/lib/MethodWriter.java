@@ -951,7 +951,7 @@ public final class MethodWriter {
     private static int getArgumentsAndReturnSizes(final String desc) {
         int n = 1;
         int c = 1;
-        while (true) {
+        for (;;) {
             char car = desc.charAt(c++);
             if (car == ')') {
                 car = desc.charAt(c);

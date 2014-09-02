@@ -51,11 +51,11 @@ public class VariantManager {
     }
 
     public VariantIndexer[] getIndexers() {
-        final List<VarStair> stairs = this.stairs;
-        final int size = stairs.size();
+        final List<VarStair> varStairs = this.stairs;
+        final int size = varStairs.size();
         final VariantIndexer[] result = new VariantIndexer[size];
         for (int i = 0; i < size; i++) {
-            VarStair stair = stairs.get(i);
+            VarStair stair = varStairs.get(i);
             //assert i == stair.id
             //remove consts
             final Map<String, Integer> indexerMap = stair.values;
@@ -96,13 +96,13 @@ public class VariantManager {
         }
 
         //global var/const
-        final GlobalManager globalManager = this.globalManager;
-        final int index = globalManager.getGlobalIndex(name);
+        final GlobalManager globalMgr = this.globalManager;
+        final int index = globalMgr.getGlobalIndex(name);
         if (index >= 0) {
             return global(index);
         }
-        if (globalManager.hasConst(name)) {
-            return constValue(globalManager.getConst(name));
+        if (globalMgr.hasConst(name)) {
+            return constValue(globalMgr.getConst(name));
         }
 
         //failed

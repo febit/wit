@@ -49,11 +49,11 @@ public class WebEngineManager {
     public WebEngineManager appendProperties(String key, String value) {
         checkExtraProperties();
         key = key.concat("+");
-        Object oldValue;
-        this.extraProperties.put(key,
-                (oldValue = this.extraProperties.get(key)) != null
-                ? String.valueOf(oldValue) + ',' + value
-                : value);
+        Object oldValue = this.extraProperties.get(key);
+        if (oldValue != null) {
+            value = String.valueOf(oldValue) + ',' + value;
+        }
+        this.extraProperties.put(key, value);
         return this;
     }
 
@@ -74,29 +74,25 @@ public class WebEngineManager {
         Engine engine;
         if ((engine = this.engine) != null) {
             return engine;
-        } else {
-            return this.engine = ServletEngineUtil.createEngine(
-                    this.servletContextProvider.getServletContext(),
-                    this.configPath,
-                    this.extraProperties);
         }
+        return this.engine = ServletEngineUtil.createEngine(
+                this.servletContextProvider.getServletContext(),
+                this.configPath,
+                this.extraProperties);
     }
 
     public void renderTemplate(final String name, final Map<String, Object> parameters, final HttpServletResponse response) throws IOException {
-        getEngine()
-                .getTemplate(name)
+        getEngine().getTemplate(name)
                 .merge(parameters, response.getOutputStream());
     }
 
     public void renderTemplate(final String name, final KeyValues parameters, final HttpServletResponse response) throws IOException {
-        getEngine()
-                .getTemplate(name)
+        getEngine().getTemplate(name)
                 .merge(parameters, response.getOutputStream());
     }
 
     public void renderTemplate(final String parent, final String name, final KeyValues parameters, final HttpServletResponse response) throws IOException {
-        getEngine()
-                .getTemplate(parent, name)
+        getEngine().getTemplate(parent, name)
                 .merge(parameters, response.getOutputStream());
     }
 

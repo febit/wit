@@ -225,12 +225,12 @@ class ASMUtil {
         }
 
         @Override
-        protected Class<?> findClass(String name) throws ClassNotFoundException {
+        protected Class findClass(String name) throws ClassNotFoundException {
             return ClassUtil.getDefaultClassLoader().loadClass(name);
         }
 
-        Class<?> loadClass(String name, byte[] b) throws ClassFormatError {
+        Class loadClass(String name, byte[] b) throws ClassFormatError {
             return defineClass(name, b, 0, b.length, null);
         }
-    };
+    }
 }

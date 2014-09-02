@@ -5,7 +5,7 @@ public final class ClassMap<V> {
 
     private static final int MAXIMUM_CAPACITY = 1 << 29;
 
-    private Entry<V> table[];
+    private Entry<V>[] table;
     private int threshold;
     private int count;
 
@@ -75,7 +75,7 @@ public final class ClassMap<V> {
                 return;
             }
             final int newMark = newCapacity - 1;
-            final Entry<V> newTable[] = new Entry[newCapacity];
+            final Entry<V>[] newTable = new Entry[newCapacity];
 
             for (int i = oldCapacity; i-- > 0;) {
                 int index;

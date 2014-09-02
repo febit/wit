@@ -21,11 +21,11 @@ public final class VariantIndexer {
 
     public int getCurrentIndex(final String name) {
         int i;
-        final String[] _names;
-        i = (_names = this.names).length;
+        final String[] myNames;
+        i = (myNames = this.names).length;
         while (i != 0) {
             --i;
-            if (_names[i].equals(name)) {
+            if (myNames[i].equals(name)) {
                 return indexs[i];
             }
         }
@@ -41,11 +41,11 @@ public final class VariantIndexer {
 
     public int getIndex(final String name) {
         int i;
-        final String[] _names;
-        i = (_names = this.names).length;
+        final String[] myNames;
+        i = (myNames = this.names).length;
         while (i != 0) {
             --i;
-            if (_names[i].equals(name)) {
+            if (myNames[i].equals(name)) {
                 return indexs[i];
             }
         }

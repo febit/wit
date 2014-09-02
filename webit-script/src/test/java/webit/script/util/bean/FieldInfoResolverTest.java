@@ -3,7 +3,6 @@ package webit.script.util.bean;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import webit.script.util.bean.FieldInfoResolver;
 
 /**
  *

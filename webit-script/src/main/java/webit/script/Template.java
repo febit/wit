@@ -49,15 +49,15 @@ public final class Template {
     }
 
     private TemplateAST parse(boolean force) throws ParseException {
-        TemplateAST ast = this.ast;
+        TemplateAST myAst = this.ast;
         synchronized (this.parseLock) {
-            if (force || ast == null || this.resource.isModified()) {
-                ast = new Parser().parse(this);
-                this.ast = ast;
+            if (force || myAst == null || this.resource.isModified()) {
+                myAst = new Parser().parse(this);
+                this.ast = myAst;
                 this.lastModified = System.currentTimeMillis();
             }
         }
-        return ast;
+        return myAst;
     }
 
     /**
@@ -201,11 +201,11 @@ public final class Template {
      */
     public Context merge(final KeyValues root, final Out out) throws ScriptRuntimeException, ParseException {
         try {
-            TemplateAST ast = this.ast;
-            if (ast == null || this.resource.isModified()) {
-                ast = parse(false);
-            }
-            return ast.execute(new Context(this, out, root));
+            final TemplateAST myAst;
+            return (((myAst = this.ast) == null || this.resource.isModified())
+                    ? parse(false)
+                    : myAst)
+                    .execute(new Context(this, out, root));
         } catch (Exception e) {
             throw completeException(e);
         }
@@ -223,11 +223,11 @@ public final class Template {
      */
     public Context merge(final Context context, KeyValues params) throws ScriptRuntimeException, ParseException {
         try {
-            TemplateAST ast = this.ast;
-            if (ast == null || this.resource.isModified()) {
-                ast = parse(false);
-            }
-            return ast.execute(context);
+            final TemplateAST myAst;
+            return (((myAst = this.ast) == null || this.resource.isModified())
+                    ? parse(false)
+                    : myAst)
+                    .execute(context);
         } catch (Exception e) {
             throw completeException(e);
         }
@@ -235,8 +235,8 @@ public final class Template {
 
     public Context debug(final KeyValues root, final Out out, final BreakPointListener listener) throws ScriptRuntimeException, ParseException {
         try {
-            TemplateAST ast = new Parser().parse(this, listener);
-            return ast.execute(new Context(this, out, root));
+            return new Parser().parse(this, listener)
+                    .execute(new Context(this, out, root));
         } catch (Exception e) {
             throw completeException(e);
         }

@@ -37,10 +37,6 @@ public class StringUtil {
         return string.concat(object != null ? object.toString() : "null");
     }
 
-    /**
-     * Joins list of iterable elements. Separator string may be
-     * <code>null</code>.
-     */
     public static String join(List list, char separator) {
         if (list == null) {
             return "";
@@ -48,7 +44,7 @@ public class StringUtil {
         int size = list.size();
         if (size == 0) {
             return "";
-        } 
+        }
         if (size == 1) {
             return String.valueOf(list.get(0));
         }
@@ -65,30 +61,28 @@ public class StringUtil {
         return sb.toString();
     }
 
-    public static void trimAll(final String[] strings) {
-        if (strings != null) {
-            String item;
-            for (int i = 0, len = strings.length; i < len; i++) {
-                if ((item = strings[i]) != null) {
-                    strings[i] = item.trim();
-                }
+    private static int findFirstDiff(char[] source, int index) {
+        for (int i = index; i < source.length; i++) {
+            char c = source[i];
+            if (c != ',' && c != '\n' && c != '\r') {
+                return i;
             }
         }
+        return -1;
     }
 
-    /**
-     * Splits a string in several parts (tokens) that are separated by single
-     * delimiter characters. Delimiter is always surrounded by two strings.
-     *
-     * @param src source to examine
-     * @param delimiter delimiter character
-     *
-     * @return array of tokens
-     */
-    public static String[] splitc(String src, char delimiter) {
-        if (src.length() == 0) {
-            return new String[]{""};
+    private static int findFirstEqual(char[] source, int index) {
+        for (int i = index; i < source.length; i++) {
+            char c = source[i];
+            if (c == ',' || c == '\n' || c == '\r') {
+                return i;
+            }
         }
+        return -1;
+    }
+
+    private static String[] splitc(String src) {
+        //XXX: recheck
         char[] srcc = src.toCharArray();
 
         int maxparts = srcc.length + 1;
@@ -99,18 +93,22 @@ public class StringUtil {
 
         start[0] = 0;
         int s = 0, e;
-        if (srcc[0] == delimiter) {	// string starts with delimiter
+        char c = srcc[0];
+        if (c == ',' || c == '\n' || c == '\r') {
+            // string starts with delimiter
             end[0] = 0;
             count++;
-            s = CharUtil.findFirstDiff(srcc, 1, delimiter);
-            if (s == -1) {							// nothing after delimiters
-                return new String[]{"", ""};
+            s = findFirstDiff(srcc, 1);
+            if (s == -1) {
+                // nothing after delimiters
+                return EMPTY_ARRAY;
             }
-            start[1] = s;							// new start
+            // new start
+            start[1] = s;
         }
-        while (true) {
+        for (;;) {
             // find new end
-            e = CharUtil.findFirstEqual(srcc, s, delimiter);
+            e = findFirstEqual(srcc, s);
             if (e == -1) {
                 end[count] = srcc.length;
                 break;
@@ -119,7 +117,7 @@ public class StringUtil {
 
             // find new start
             count++;
-            s = CharUtil.findFirstDiff(srcc, e, delimiter);
+            s = findFirstDiff(srcc, e);
             if (s == -1) {
                 start[count] = end[count] = srcc.length;
                 break;
@@ -134,62 +132,11 @@ public class StringUtil {
         return result;
     }
 
-    public static String[] splitc(String src, char[] delimiters) {
-        if ((delimiters.length == 0) || (src.length() == 0)) {
-            return new String[]{src};
-        }
-        char[] srcc = src.toCharArray();
-
-        int maxparts = srcc.length + 1;
-        int[] start = new int[maxparts];
-        int[] end = new int[maxparts];
-
-        int count = 0;
-
-        start[0] = 0;
-        int s = 0, e;
-        if (CharUtil.equalsOne(srcc[0], delimiters)) {	// string starts with delimiter
-            end[0] = 0;
-            count++;
-            s = CharUtil.findFirstDiff(srcc, 1, delimiters);
-            if (s == -1) {							// nothing after delimiters
-                return new String[]{"", ""};
-            }
-            start[1] = s;							// new start
-        }
-        while (true) {
-            // find new end
-            e = CharUtil.findFirstEqual(srcc, s, delimiters);
-            if (e == -1) {
-                end[count] = srcc.length;
-                break;
-            }
-            end[count] = e;
-
-            // find new start
-            count++;
-            s = CharUtil.findFirstDiff(srcc, e, delimiters);
-            if (s == -1) {
-                start[count] = end[count] = srcc.length;
-                break;
-            }
-            start[count] = s;
-        }
-        count++;
-        String[] result = new String[count];
-        for (int i = 0; i < count; i++) {
-            result[i] = src.substring(start[i], end[i]);
-        }
-        return result;
-    }
-
-    private static final char[] DEFAULT_DELIMITERS = ",\n\r".toCharArray();
-
-    public static String[] splitAndRemoveBlank(String src) {
-        if (src == null) {
+    public static String[] toArray(String src) {
+        if (src == null || src.length() == 0) {
             return EMPTY_ARRAY;
         }
-        final String[] array = splitc(src, DEFAULT_DELIMITERS);
+        final String[] array = splitc(src);
         int count = 0;
         for (String array1 : array) {
             String item = array1.trim();
@@ -202,7 +149,7 @@ public class StringUtil {
             return EMPTY_ARRAY;
         }
         if (count != array.length) {
-            String dest[] = new String[count];
+            String[] dest = new String[count];
             System.arraycopy(array, 0, dest, 0, count);
             return dest;
         }
@@ -246,22 +193,22 @@ public class StringUtil {
                 continue;
             }
             ndx += 1;
-            int ndx_end = template.indexOf('}', ndx);
-            if (ndx_end == -1) {
+            int ndxEnd = template.indexOf('}', ndx);
+            if (ndxEnd == -1) {
                 throw new IllegalArgumentException(StringUtil.concat("Invalid message, unclosed macro at: ", ndx - 1));
             }
-            if (ndx == ndx_end) {
+            if (ndx == ndxEnd) {
                 index = currentIndex++;
             } else {
                 index = template.charAt(ndx) - '0';
-                for (int k = ndx + 1; k < ndx_end; k++) {
+                for (int k = ndx + 1; k < ndxEnd; k++) {
                     index = index * 10 + (template.charAt(k) - '0');
                 }
             }
             if (index < arrayLen && index >= 0 && array[index] != null) {
                 result.append(array[index].toString());
             }
-            i = ndx_end + 1;
+            i = ndxEnd + 1;
         }
         return result.toString();
     }

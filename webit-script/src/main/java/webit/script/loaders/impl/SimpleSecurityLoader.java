@@ -16,12 +16,12 @@ import webit.script.util.StringUtil;
 public class SimpleSecurityLoader implements Loader, Initable {
 
     protected String[] list = StringUtil.EMPTY_ARRAY;
-    protected ClassEntry _loader;
+    protected ClassEntry loaderType;
 
     protected Loader loader;
 
     public void init(Engine engine) {
-        this.loader = (Loader) engine.getComponent(_loader);
+        this.loader = (Loader) engine.getComponent(loaderType);
     }
 
     public Resource get(String name) {
@@ -46,10 +46,10 @@ public class SimpleSecurityLoader implements Loader, Initable {
     }
 
     public void setList(String list) {
-        this.list = StringUtil.splitAndRemoveBlank(list);
+        this.list = StringUtil.toArray(list);
     }
 
-    public void setLoader(ClassEntry _loader) {
-        this._loader = _loader;
+    public void setLoader(ClassEntry loaderType) {
+        this.loaderType = loaderType;
     }
 }

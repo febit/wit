@@ -7,51 +7,6 @@ package webit.script.util;
  */
 public class CharUtil {
 
-    public static boolean equalsOne(final char c, final char[] match) {
-        for (int i = 0, len = match.length; i < len; i++) {
-            if (c == match[i]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static int findFirstDiff(char[] source, int index, char match) {
-        for (int i = index; i < source.length; i++) {
-            if (source[i] != match) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public static int findFirstDiff(char[] source, int index, char[] match) {
-        for (int i = index; i < source.length; i++) {
-            if (!equalsOne(source[i], match)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public static int findFirstEqual(char[] source, int index, char match) {
-        for (int i = index; i < source.length; i++) {
-            if (source[i] == match) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public static int findFirstEqual(char[] source, int index, char[] match) {
-        for (int i = index; i < source.length; i++) {
-            if (equalsOne(source[i], match)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     public static char toLowerAscii(char c) {
         if ((c >= 'A') && (c <= 'Z')) {
             return (char) (c + 0x20);
@@ -59,16 +14,8 @@ public class CharUtil {
         return c;
     }
 
-    public static boolean isLowercaseAlpha(char c) {
-        return (c >= 'a') && (c <= 'z');
-    }
-
     public static boolean isUppercaseAlpha(char c) {
         return (c >= 'A') && (c <= 'Z');
-    }
-
-    public static boolean isWhitespace(char c) {
-        return c <= ' ';
     }
 
     public static int indexOf(char[] source, char[] target, int fromIndex) {

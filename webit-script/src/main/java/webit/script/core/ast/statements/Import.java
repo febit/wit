@@ -7,7 +7,6 @@ import webit.script.Template;
 import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
-import webit.script.lang.KeyValues;
 
 /**
  *
@@ -46,11 +45,11 @@ public final class Import extends AbstractInclude {
                 }
             }
         } else {
-            final String [] exportNames = this.exportNames;
-            final int len = exportNames.length;
+            final String [] names = this.exportNames;
+            final int len = names.length;
             final ResetableValueExpression[] myToResetableValues = this.toResetableValues;
             for (int i = 0; i < len; i++) {
-                myToResetableValues[i].setValue(context, results.get(exportNames[i]));
+                myToResetableValues[i].setValue(context, results.get(names[i]));
             }
         }
         return null;

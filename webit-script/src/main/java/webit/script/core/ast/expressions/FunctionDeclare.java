@@ -35,21 +35,21 @@ public final class FunctionDeclare extends Expression {
     public Object invoke(final Context context, final Object[] args) {
         final int preIndex = context.indexer;
         context.indexer = indexer;
-        final int argsCount = this.argsCount;
+        final int argsTotalCount = this.argsCount;
         final Object[] vars = context.vars;
-        int start = this.start;
-        vars[start++] = args;
+        int argsStart = this.start;
+        vars[argsStart++] = args;
         int len = args != null ? args.length : 0;
-        if (argsCount != 0) {
-            int nextEnd = argsCount > len ? len : argsCount;
+        if (argsTotalCount != 0) {
+            int nextEnd = argsTotalCount > len ? len : argsTotalCount;
             int i;
             for (i = 0; i < nextEnd; i++) {
-                vars[start++] = args[i];
+                vars[argsStart++] = args[i];
             }
-            if (argsCount > len) {
-                nextEnd = argsCount - len;
+            if (argsTotalCount > len) {
+                nextEnd = argsTotalCount - len;
                 for (i = 0; i < nextEnd; i++) {
-                    vars[start++] = null;
+                    vars[argsStart++] = null;
                 }
             }
         }

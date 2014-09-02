@@ -55,7 +55,6 @@ public abstract class AbstractLoader implements Loader, Initable {
      * @return child template's name
      */
     public String concat(final String parent, final String name) {
-        //XXX: rethink FileNameUtil.concat
         return parent != null ? FileNameUtil.concat(FileNameUtil.getPath(parent), name) : name;
     }
 
@@ -135,7 +134,7 @@ public abstract class AbstractLoader implements Loader, Initable {
     }
 
     public void setAssistantSuffixs(String assistantSuffixs) {
-        this.assistantSuffixs = StringUtil.splitAndRemoveBlank(assistantSuffixs);
+        this.assistantSuffixs = StringUtil.toArray(assistantSuffixs);
     }
 
     public boolean isEnableCache(String name) {

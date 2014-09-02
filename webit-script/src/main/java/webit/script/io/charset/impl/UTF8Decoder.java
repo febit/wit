@@ -1,20 +1,20 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
-package webit.script.io.charset.impl.special;
+package webit.script.io.charset.impl;
 
 import java.io.IOException;
 import java.io.Writer;
 import webit.script.io.Buffers;
 import webit.script.io.charset.Decoder;
-import webit.script.util.charset.UTF_8;
+import webit.script.util.charset.UTF8;
 
 /**
  *
  * @author Zqq
  */
-public final class UTF_8_Decoder implements Decoder {
+public final class UTF8Decoder implements Decoder {
     private final Buffers buffers;
 
-    public UTF_8_Decoder(Buffers buffers) {
+    public UTF8Decoder(Buffers buffers) {
         this.buffers = buffers;
     }
 
@@ -23,7 +23,7 @@ public final class UTF_8_Decoder implements Decoder {
             return;
         }
         final char[] chars;
-        int used = UTF_8.decode(bytes, off, len, 
+        int used = UTF8.decode(bytes, off, len, 
                 chars = this.buffers.getChars(len));
         writer.write(chars, 0, used);
     }

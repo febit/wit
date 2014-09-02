@@ -36,12 +36,12 @@ public final class DoWhile extends Statement implements Loopable {
 
     public Object execute(final Context context) {
         final LoopCtrl ctrl = context.loopCtrl;
-        final Statement[] statements = this.statements;
+        final Statement[] stats = this.statements;
         final int preIndex = context.indexer;
         context.indexer = indexer;
         label:
         do {
-            StatementUtil.executeInvertedAndCheckLoops(statements, context);
+            StatementUtil.executeInvertedAndCheckLoops(stats, context);
             if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
                 if (ctrl.matchLabel(label)) {
                     switch (ctrl.getLoopType()) {

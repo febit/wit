@@ -39,7 +39,7 @@ public class TLDDocumentParser {
             final int lparenIndex = functionSignature.indexOf('(');
             int methodNameEnd = lparenIndex;
             while (methodNameEnd >= 0) {
-                if (!CharUtil.isWhitespace(functionSignature.charAt(--methodNameEnd))) {
+                if (functionSignature.charAt(--methodNameEnd) > ' ') {
                     methodNameEnd++;
                     break;
                 }
@@ -51,8 +51,7 @@ public class TLDDocumentParser {
 
             String parameterTypesString = functionSignature.substring(lparenIndex + 1, functionSignature.lastIndexOf(')')).trim();
             if (parameterTypesString.length() != 0) {
-                parameterTypes = StringUtil.splitc(parameterTypesString, ',');
-                StringUtil.trimAll(parameterTypes);
+                parameterTypes = StringUtil.toArray(parameterTypesString);
             } else {
                 parameterTypes = null;
             }

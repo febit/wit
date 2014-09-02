@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util.charset;
 
-public class UTF_8 {
+public class UTF8 {
 
     public static final int MAX_BYTES_PER_CHAR = 3;
 

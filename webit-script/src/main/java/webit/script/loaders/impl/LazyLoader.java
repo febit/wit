@@ -16,19 +16,19 @@ import webit.script.util.ClassEntry;
 public class LazyLoader implements Loader, Initable {
 
     protected int timeout;
-    protected ClassEntry _loader;
+    protected ClassEntry loaderType;
     protected Loader loader;
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
 
-    public void setLoader(ClassEntry _loader) {
-        this._loader = _loader;
+    public void setLoader(ClassEntry loaderType) {
+        this.loaderType = loaderType;
     }
 
     public void init(Engine engine) {
-        this.loader = (Loader) engine.getComponent(_loader);
+        this.loader = (Loader) engine.getComponent(loaderType);
     }
 
     public Resource get(String name) {

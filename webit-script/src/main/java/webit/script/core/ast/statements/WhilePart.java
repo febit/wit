@@ -38,6 +38,6 @@ public final class WhilePart extends Position {
     }
 
     public Statement pop() {
-        return pop(0);  //default label is zero;
+        return pop(0);  //default label is zero
     }
 }

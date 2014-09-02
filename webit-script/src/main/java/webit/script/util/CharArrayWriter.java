@@ -28,12 +28,12 @@ public class CharArrayWriter extends Writer {
 
     private char[] needNewBuffer(int newSize) {
         final int index = ++currentBufferIndex;
-        char[][] buffers = this.buffers;
-        if (index == buffers.length) {
-            System.arraycopy(buffers, 0, this.buffers = buffers = new char[index << 1][], 0, index);
+        char[][] myBuffers = this.buffers;
+        if (index == myBuffers.length) {
+            System.arraycopy(myBuffers, 0, this.buffers = myBuffers = new char[index << 1][], 0, index);
         }
         offset = 0;
-        return buffers[index] = currentBuffer = new char[Math.max(defaultBufferSize, newSize - size)];
+        return myBuffers[index] = currentBuffer = new char[Math.max(defaultBufferSize, newSize - size)];
     }
 
     @Override
@@ -120,31 +120,31 @@ public class CharArrayWriter extends Writer {
     public char[] toArray() {
         int pos = 0;
         final char[] array = new char[size];
-        final int currentBufferIndex = this.currentBufferIndex;
-        final char[][] buffers = this.buffers;
-        for (int i = 0; i < currentBufferIndex; i++) {
-            int len = buffers[i].length;
-            System.arraycopy(buffers[i], 0, array, pos, len);
+        final int bufferIndex = this.currentBufferIndex;
+        final char[][] myBuffers = this.buffers;
+        for (int i = 0; i < bufferIndex; i++) {
+            int len = myBuffers[i].length;
+            System.arraycopy(myBuffers[i], 0, array, pos, len);
             pos += len;
         }
-        System.arraycopy(buffers[currentBufferIndex], 0, array, pos, offset);
+        System.arraycopy(myBuffers[bufferIndex], 0, array, pos, offset);
         return array;
     }
 
     public char[] toArraySkipIfLeftNewLine() {
-        final int size = this.size;
-        if (size == 0) {
+        final int mySize = this.size;
+        if (mySize == 0) {
             return new char[0];
         }
-        final char[][] buffers = this.buffers;
+        final char[][] myBuffers = this.buffers;
         final int skip;
-        char[] first = buffers[0];
+        char[] first = myBuffers[0];
         if (first[0] == '\n') {
             skip = 1;
         } else if (first[0] == '\r') {
-            if (size > 1) {
+            if (mySize > 1) {
                 if (first[1] == '\n') {
-                    if (size == 2) {
+                    if (mySize == 2) {
                         return new char[0];
                     }
                     skip = 2;
@@ -157,46 +157,46 @@ public class CharArrayWriter extends Writer {
         } else {
             return toArray();
         }
-        int pos = 0;
-        final char[] array = new char[size - skip];
-        final int currentBufferIndex = this.currentBufferIndex;
-        if (currentBufferIndex == 0) {
-            System.arraycopy(buffers[0], skip, array, 0, offset - skip);
+        final char[] array = new char[mySize - skip];
+        final int bufferIndex = this.currentBufferIndex;
+        if (bufferIndex == 0) {
+            System.arraycopy(myBuffers[0], skip, array, 0, offset - skip);
         } else {
-            System.arraycopy(buffers[0], skip, array, 0, pos = buffers[0].length - skip);
-            for (int i = 1; i < currentBufferIndex; i++) {
-                int len = buffers[i].length;
-                System.arraycopy(buffers[i], 0, array, pos, len);
+            int pos;
+            System.arraycopy(myBuffers[0], skip, array, 0, pos = myBuffers[0].length - skip);
+            for (int i = 1; i < bufferIndex; i++) {
+                int len = myBuffers[i].length;
+                System.arraycopy(myBuffers[i], 0, array, pos, len);
                 pos += len;
             }
-            System.arraycopy(buffers[currentBufferIndex], 0, array, pos, offset);
+            System.arraycopy(myBuffers[bufferIndex], 0, array, pos, offset);
         }
         return array;
     }
 
     public void trimRightBlankToNewLine() {
-        int tmp_offset;
-        int tmp_count = this.size;
-        char[] tmp_buf; // = this.currentBuffer;
-        int tmp_currentBufferIndex = this.currentBufferIndex;
+        int tmpOffset;
+        int tmpSize = this.size;
+        char[] tmpBuffer;
+        int tmpCurrentBufferIndex = this.currentBufferIndex;
         boolean notLastOne = false;
-        for (; tmp_currentBufferIndex >= 0; tmp_currentBufferIndex--) {
-            tmp_buf = buffers[tmp_currentBufferIndex];
+        for (; tmpCurrentBufferIndex >= 0; tmpCurrentBufferIndex--) {
+            tmpBuffer = buffers[tmpCurrentBufferIndex];
             if (notLastOne) {
-                tmp_offset = tmp_buf.length;
+                tmpOffset = tmpBuffer.length;
             } else {
-                tmp_offset = this.offset;
+                tmpOffset = this.offset;
                 notLastOne = true;
             }
-            int pos = lastNotWhitespaceOrNewLine(tmp_buf, 0, tmp_offset);
+            int pos = lastNotWhitespaceOrNewLine(tmpBuffer, 0, tmpOffset);
             if (pos < 0) {
                 //All blank
-                tmp_count -= tmp_offset;
-            } else if (tmp_buf[pos] == '\n' || tmp_buf[pos] == '\r') {
-                this.size = tmp_count - tmp_offset + pos + 1;
+                tmpSize -= tmpOffset;
+            } else if (tmpBuffer[pos] == '\n' || tmpBuffer[pos] == '\r') {
+                this.size = tmpSize - tmpOffset + pos + 1;
                 offset = pos + 1;
-                currentBufferIndex = tmp_currentBufferIndex;
-                currentBuffer = tmp_buf;
+                currentBufferIndex = tmpCurrentBufferIndex;
+                currentBuffer = tmpBuffer;
                 return;
             } else {
                 //Not new Line

@@ -83,13 +83,14 @@ public class Convert {
     }
 
     private static String[] toStringArray(String string) {
-        String[] strings = StringUtil.splitc(string, ',');
-        StringUtil.trimAll(strings);
-        return strings;
+        if (string == null) {
+            return null;
+        }
+        return StringUtil.toArray(string);
     }
 
     private static Class[] toClassArray(String string) {
-        final String[] strings = StringUtil.splitAndRemoveBlank(string);
+        final String[] strings = StringUtil.toArray(string);
         final int len = strings.length;
         final Class[] entrys = new Class[len];
         for (int i = 0; i < len; i++) {
@@ -99,7 +100,7 @@ public class Convert {
     }
 
     private static boolean[] toBoolArray(String string) {
-        final String[] strings = StringUtil.splitAndRemoveBlank(string);
+        final String[] strings = StringUtil.toArray(string);
         final int len = strings.length;
         final boolean[] entrys = new boolean[len];
         for (int i = 0; i < len; i++) {
@@ -109,7 +110,7 @@ public class Convert {
     }
 
     private static Boolean[] toBooleanArray(String string) {
-        final String[] strings = StringUtil.splitAndRemoveBlank(string);
+        final String[] strings = StringUtil.toArray(string);
         final int len = strings.length;
         final Boolean[] entrys = new Boolean[len];
         for (int i = 0; i < len; i++) {
@@ -119,7 +120,7 @@ public class Convert {
     }
 
     private static int[] toIntArray(String string) {
-        final String[] strings = StringUtil.splitAndRemoveBlank(string);
+        final String[] strings = StringUtil.toArray(string);
         final int len = strings.length;
         final int[] entrys = new int[len];
         for (int i = 0; i < len; i++) {
@@ -129,7 +130,7 @@ public class Convert {
     }
 
     private static Integer[] toIntegerArray(String string) {
-        final String[] strings = StringUtil.splitAndRemoveBlank(string);
+        final String[] strings = StringUtil.toArray(string);
         final int len = strings.length;
         final Integer[] entrys = new Integer[len];
         for (int i = 0; i < len; i++) {
@@ -139,7 +140,7 @@ public class Convert {
     }
 
     private static ClassEntry[] toClassEntryArray(final String string) {
-        final String[] strings = StringUtil.splitAndRemoveBlank(string);
+        final String[] strings = StringUtil.toArray(string);
         final int len = strings.length;
         final ClassEntry[] entrys = new ClassEntry[len];
         for (int i = 0; i < len; i++) {

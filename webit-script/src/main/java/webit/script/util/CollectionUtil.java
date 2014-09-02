@@ -1,15 +1,15 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util;
 
-import webit.script.lang.Iter;
-import webit.script.lang.iter.*;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import webit.script.core.ast.Statement;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.lang.Iter;
 import webit.script.lang.KeyIter;
+import webit.script.lang.iter.*;
 
 /**
  *

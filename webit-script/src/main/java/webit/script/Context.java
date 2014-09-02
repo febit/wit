@@ -44,8 +44,8 @@ public final class Context implements KeyValueAccepter {
         this.rootParams = rootParams;
         this.encoding = out.getEncoding();
         this.isByteStream = out.isByteStream();
-        ResolverManager resolverManager = this.resolverManager = template.engine.getResolverManager();
-        this.outterMap = resolverManager.outterMap;
+        ResolverManager resolverMgr = this.resolverManager = template.engine.getResolverManager();
+        this.outterMap = resolverMgr.outterMap;
         this.loopCtrl = new LoopCtrl();
     }
 
@@ -146,12 +146,12 @@ public final class Context implements KeyValueAccepter {
      */
     @SuppressWarnings("unchecked")
     public void exportTo(final Map map) {
-        VariantIndexer indexer = indexers[this.indexer];
-        String[] names = indexer.names;
-        int[] indexs = indexer.indexs;
-        Object[] vars = this.vars;
+        final VariantIndexer varIndexer = indexers[this.indexer];
+        final String[] names = varIndexer.names;
+        final int[] indexs = varIndexer.indexs;
+        final Object[] varsPool = this.vars;
         for (int i = 0, len = names.length; i < len; i++) {
-            map.put(names[i], vars[indexs[i]]);
+            map.put(names[i], varsPool[indexs[i]]);
         }
     }
 }

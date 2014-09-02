@@ -189,7 +189,7 @@ public final class Props {
                     state = STATE_TEXT;
                 }
             } else if (state == STATE_ESCAPE) {
-                state = stateOnEscape;//STATE_VALUE;
+                state = stateOnEscape;//STATE_VALUE
                 switch (c) {
                     case '\r':
                     case '\n':
@@ -269,7 +269,6 @@ public final class Props {
                             break;
                         }
                         append = true;
-                        //ndx++;
                         continue;
                     case '=':
                         if (key == null) {

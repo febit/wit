@@ -22,40 +22,41 @@ public class AsmNativeFactory extends NativeFactory {
 
     @Override
     public MethodDeclare createNativeConstructorDeclare(Class type, Constructor constructor, int line, int column) {
-        if (ClassUtil.isPublic(type) && ClassUtil.isPublic(constructor)) {
-            try {
-                MethodDeclare accessor = createAccessor(constructor);
-                if (accessor != null) {
-                    return accessor;
-                }
-            } catch (Throwable e) {
-                logger.error("Failed to create ASMMethodDeclare for '{}'.", constructor, e);
-            }
+        MethodDeclare accessor = createMethodDeclare(type, constructor);
+        if (accessor != null) {
+            return accessor;
         }
         return super.createNativeConstructorDeclare(type, constructor, line, column);
     }
 
     @Override
     public MethodDeclare createNativeMethodDeclare(Class type, Method method, int line, int column) {
-        if (ClassUtil.isPublic(type) && ClassUtil.isPublic(method)) {
-            try {
-                MethodDeclare accessor = createAccessor(method);
-                if (accessor != null) {
-                    return accessor;
-                }
-            } catch (Throwable e) {
-                logger.error("Failed to create ASMMethodDeclare for '{}'.", method, e);
-            }
+        MethodDeclare accessor = createMethodDeclare(type, method);
+        if (accessor != null) {
+            return accessor;
         }
         return super.createNativeMethodDeclare(type, method, line, column);
+    }
+
+    protected MethodDeclare createMethodDeclare(Class type, Member member) {
+        if (ClassUtil.isPublic(type) && ClassUtil.isPublic(member)) {
+            try {
+                return createAccessor(member);
+            } catch (Exception e) {
+                logger.error("Failed to create ASMMethodDeclare for '{}'.", member, e);
+            } catch (Error e) {
+                logger.error("Failed to create ASMMethodDeclare for '{}'.", member, e);
+            }
+        }
+        return null;
     }
 
     static MethodDeclare createAccessor(Member obj) throws InstantiationException, IllegalAccessException {
         final String className = "webit.script.asm.Accessor_".concat(ASMUtil.getSn());
         final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", ASM_METHOD_ACCESSOR);
-        
+
         ASMUtil.visitConstructor(classWriter);
-        
+
         final boolean isInterface;
         final boolean isStatic;
         final boolean isConstructor;
@@ -64,7 +65,7 @@ public class AsmNativeFactory extends NativeFactory {
         final String destDesc;
         final Class[] paramTypes;
         final Class returnType;
-        
+
         if (obj instanceof Method) {
             Method method = (Method) obj;
             isInterface = method.getDeclaringClass().isInterface();
@@ -86,7 +87,7 @@ public class AsmNativeFactory extends NativeFactory {
             paramTypes = constructor.getParameterTypes();
             returnType = constructor.getDeclaringClass();
         }
-        
+
         final int paramTypesLen = paramTypes.length;
         final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke", "(Lwebit/script/Context;[Ljava/lang/Object;)Ljava/lang/Object;", null);
 
@@ -134,22 +135,22 @@ public class AsmNativeFactory extends NativeFactory {
             m.invokeStatic("webit/script/util/ArrayUtil", "ensureMinSize", "([Ljava/lang/Object;I)[Ljava/lang/Object;");
             m.visitVarInsn(Constants.ASTORE, 2);
 
-            int i_args = 0;
+            int paramCount = 0;
             if (!isStatic && !isConstructor) {
                 m.visitVarInsn(Constants.ALOAD, 2);
                 m.visitInsn(Constants.ICONST_0);
                 m.visitInsn(Constants.AALOAD);
                 m.checkCast(ownerClass);
-                i_args = 1;
+                paramCount++;
             }
 
             for (Class paramType : paramTypes) {
                 m.visitVarInsn(Constants.ALOAD, 2);
-                m.push(i_args);
+                m.push(paramCount);
                 m.visitInsn(Constants.AALOAD);
                 m.checkCast(ASMUtil.getBoxedInternalName(paramType));
                 ASMUtil.visitUnboxIfNeed(m, paramType);
-                i_args++;
+                paramCount++;
             }
 
             //Invoke Method
@@ -160,7 +161,7 @@ public class AsmNativeFactory extends NativeFactory {
             m.visitInsn(Constants.ARETURN);
         }
         m.visitMaxs();
-        
+
         return (MethodDeclare) ASMUtil.loadClass(className, classWriter).newInstance();
     }
 }

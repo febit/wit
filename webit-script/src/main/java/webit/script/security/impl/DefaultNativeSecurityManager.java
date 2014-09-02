@@ -33,7 +33,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
 
     public void init(Engine engine) {
 
-        for (String rule : StringUtil.splitAndRemoveBlank(list)) {
+        for (String rule : StringUtil.toArray(list)) {
             char firstChar = rule.charAt(0);
             boolean access;
             if ((access = firstChar == '+') || firstChar == '-') {

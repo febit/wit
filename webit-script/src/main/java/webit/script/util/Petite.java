@@ -26,7 +26,7 @@ public final class Petite {
         this.datas = new HashMap<String, Object>();
     }
 
-    public String resolveBeanName(Class<?> type) {
+    public String resolveBeanName(Class type) {
         return type.getName();
     }
 
@@ -47,7 +47,7 @@ public final class Petite {
         injects.add(beanName);
 
         //inject @extends first
-        for (String profile : StringUtil.splitAndRemoveBlank(String.valueOf(datas.get(beanName.concat(".@extends"))))) {
+        for (String profile : StringUtil.toArray(String.valueOf(datas.get(beanName.concat(".@extends"))))) {
             wireBean(profile, bean, injects);
         }
 

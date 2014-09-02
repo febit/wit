@@ -79,7 +79,7 @@ public class FunctionDeclarePart extends Position {
     }
 
     public FunctionDeclare popFunctionDeclare(StatementList list) {
-        Statement[] statements = list.toInvertArray();
+        final Statement[] statements = list.toInvertArray();
         int varIndexer = varmgr.pop();
         boolean hasReturnLoops = false;
         List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(statements);
@@ -91,7 +91,7 @@ public class FunctionDeclarePart extends Position {
                     it.remove();
                 }
             }
-            if (loopInfos.size() > 0) {
+            if (!loopInfos.isEmpty()) {
                 throw new ParseException("Loops overflow in function body: ".concat(StringUtil.join(loopInfos, ',')));
             }
         }

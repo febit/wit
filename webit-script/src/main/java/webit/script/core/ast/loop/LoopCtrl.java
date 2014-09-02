@@ -40,7 +40,7 @@ public final class LoopCtrl {
     }
 
     public void resetBreakLoopIfMatch(int label) {
-        //TODO: rethink
+        //XXX: recheck
         if (this.type == LoopInfo.BREAK && (this.label == LoopInfo.NO_LABEL || this.label == label)) {
             this.reset();
         }

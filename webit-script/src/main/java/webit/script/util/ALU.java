@@ -7,7 +7,6 @@ import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
 
 /**
- * ALU. XXX: rethink about char
  *
  * @author Zqq
  */
@@ -702,11 +701,14 @@ public class ALU {
     }
 
     public static boolean isTrue(final Object o) {
-        if (o == null || o == Context.VOID) {
+        if (o == null) {
             return false;
         }
-        if (o instanceof Boolean) {
+        if (o.getClass() == Boolean.class) {
             return (Boolean) o;
+        }
+        if (o == Context.VOID) {
+            return false;
         }
         //if Collection empty 
         return CollectionUtil.notEmpty(o, true);

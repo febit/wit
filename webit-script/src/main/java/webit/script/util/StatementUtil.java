@@ -20,6 +20,9 @@ import webit.script.exceptions.ScriptRuntimeException;
  */
 public class StatementUtil {
 
+    private StatementUtil() {
+    }
+
     public static void execute(final Statement[] statements, final Context context) {
         int i = 0;
         int len = statements.length;
@@ -46,7 +49,7 @@ public class StatementUtil {
     }
 
     public static void executeInvertedAndCheckLoops(final Statement[] statements, final Context context) {
-        int i = statements.length; //assert >0;
+        int i = statements.length;
         final LoopCtrl ctrl = context.loopCtrl;
         try {
             do {
@@ -79,25 +82,26 @@ public class StatementUtil {
     }
 
     public static List<LoopInfo> collectPossibleLoopsInfo(Statement statement) {
-        return statement instanceof Loopable
-                ? ((Loopable) statement).collectPossibleLoopsInfo()
-                : null;
+        if (statement instanceof Loopable) {
+            return ((Loopable) statement).collectPossibleLoopsInfo();
+        }
+        return null;
     }
 
     public static List<LoopInfo> collectPossibleLoopsInfo(Statement[] statements) {
         int i;
-        if (statements != null && (i = statements.length) > 0) {
-            LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
-            List<LoopInfo> list;
-            do {
-                --i;
-                if ((list = collectPossibleLoopsInfo(statements[i])) != null) {
-                    loopInfos.addAll(list);
-                }
-            } while (i != 0);
-            return loopInfos.size() > 0 ? loopInfos : null;
+        if (statements == null || (i = statements.length) == 0) {
+            return null;
         }
-        return null;
+        LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
+        List<LoopInfo> list;
+        do {
+            --i;
+            if ((list = collectPossibleLoopsInfo(statements[i])) != null) {
+                loopInfos.addAll(list);
+            }
+        } while (i != 0);
+        return loopInfos.isEmpty() ? null : loopInfos;
     }
 
     public static LoopInfo[] collectPossibleLoopsInfoForWhile(Statement bodyStatement, Statement elseStatement, int label) {
@@ -106,7 +110,8 @@ public class StatementUtil {
         LoopInfo loopInfo;
         if ((list = StatementUtil.collectPossibleLoopsInfo(bodyStatement)) != null) {
             for (Iterator<LoopInfo> it = list.iterator(); it.hasNext();) {
-                if ((loopInfo = it.next()).matchLabel(label)
+                loopInfo = it.next();
+                if (loopInfo.matchLabel(label)
                         && (loopInfo.type == LoopInfo.BREAK
                         || loopInfo.type == LoopInfo.CONTINUE)) {
                     it.remove();
@@ -123,18 +128,18 @@ public class StatementUtil {
                 list.addAll(list2);
             }
         }
-        return list != null && list.size() > 0
-                ? list.toArray(new LoopInfo[list.size()])
-                : null;
+        return list == null || list.isEmpty()
+                ? null
+                : list.toArray(new LoopInfo[list.size()]);
     }
 
-    public static ScriptRuntimeException castToScriptRuntimeException(final Exception e, final Statement statement) {
-        if (e instanceof ScriptRuntimeException) {
-            ScriptRuntimeException exception = (ScriptRuntimeException) e;
-            exception.registStatement(statement);
-            return exception;
+    public static ScriptRuntimeException castToScriptRuntimeException(final Exception exception, final Statement statement) {
+        if (exception instanceof ScriptRuntimeException) {
+            ScriptRuntimeException scriptException = (ScriptRuntimeException) exception;
+            scriptException.registStatement(statement);
+            return scriptException;
         } else {
-            return new ScriptRuntimeException(e.toString(), e, statement);
+            return new ScriptRuntimeException(exception.toString(), exception, statement);
         }
     }
 }

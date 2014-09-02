@@ -35,14 +35,6 @@ public final class Engine {
 
     public static final String DEFAULT_SUFFIX = ".wit";
     public static final String UTF_8 = "UTF-8";
-    
-    public static String internEncoding(final String encoding) {
-        try {
-            return Charset.forName(encoding).name();
-        } catch (Exception e) {
-            return encoding.intern();
-        }
-    }
 
     //settings
     private ClassEntry resourceLoaderType;
@@ -123,7 +115,7 @@ public final class Engine {
                     new String[]{"GLOBAL", "CONST"},
                     new Object[]{globalBag, constBag}
             );
-            for (String templateName : StringUtil.splitAndRemoveBlank(this.inits)) {
+            for (String templateName : StringUtil.toArray(this.inits)) {
                 if (this.logger.isInfoEnabled()) {
                     this.logger.info("Merge init template: {}", templateName);
                 }
@@ -397,7 +389,7 @@ public final class Engine {
     }
 
     public void setVars(String vars) {
-        this.vars = StringUtil.splitAndRemoveBlank(vars);
+        this.vars = StringUtil.toArray(vars);
     }
 
     public String[] getAssistantSuffixs() {
@@ -405,7 +397,7 @@ public final class Engine {
     }
 
     public void setAssistantSuffixs(String assistantSuffixs) {
-        this.assistantSuffixs = StringUtil.splitAndRemoveBlank(assistantSuffixs);
+        this.assistantSuffixs = StringUtil.toArray(assistantSuffixs);
     }
 
     public void setInits(String inits) {
@@ -487,11 +479,17 @@ public final class Engine {
         return engine;
     }
 
+    /**
+     * @deprecated
+     */
     @Deprecated
     public static Engine createEngine(final String configPath) {
         return create(configPath, null);
     }
 
+    /**
+     * @deprecated
+     */
     @Deprecated
     public static Engine createEngine(final String configPath, final Map<String, Object> parameters) {
         return create(configPath, parameters);
@@ -504,5 +502,20 @@ public final class Engine {
     @Deprecated
     public static Engine createEngine(final Props props, final Map<String, Object> parameters) {
         return create(props, parameters);
+    }
+
+    /**
+     * Intern encoding
+     *
+     * @param encoding
+     * @return
+     * @since 1.5.0
+     */
+    public static String internEncoding(final String encoding) {
+        try {
+            return Charset.forName(encoding).name();
+        } catch (Exception e) {
+            return encoding.intern();
+        }
     }
 }

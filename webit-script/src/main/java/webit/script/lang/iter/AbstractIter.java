@@ -15,18 +15,18 @@ public abstract class AbstractIter implements Iter {
         this._index = -1;
     }
 
-    public Object next() {
+    protected abstract Object _next();
+
+    public final Object next() {
         ++_index;
         return _next();
     }
 
-    protected abstract Object _next();
-
-    public boolean isFirst() {
+    public final boolean isFirst() {
         return _index == 0;
     }
 
-    public int index() {
+    public final int index() {
         return _index;
     }
 }

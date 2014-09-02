@@ -44,13 +44,13 @@ public final class ForInNoLoops extends Statement {
                 && iter.hasNext()) {
         final int preIndex = context.indexer;
         context.indexer = indexer;
-            final Statement[] statements = this.statements;
-            final int itemIndex = this.itemIndex;
+            final Statement[] stats = this.statements;
+            final int i = this.itemIndex;
             final Object[] vars = context.vars;
             vars[iterIndex] = iter;
             do {
-                vars[itemIndex] = iter.next();
-                StatementUtil.executeInverted(statements, context);
+                vars[i] = iter.next();
+                StatementUtil.executeInverted(stats, context);
             } while (iter.hasNext());
             context.indexer = preIndex;
             return null;

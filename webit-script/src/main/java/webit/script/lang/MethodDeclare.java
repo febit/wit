@@ -7,7 +7,7 @@ import webit.script.Context;
  *
  * @author Zqq
  */
-public interface MethodDeclare{
+public interface MethodDeclare {
 
     Object invoke(Context context, Object[] args);
 }

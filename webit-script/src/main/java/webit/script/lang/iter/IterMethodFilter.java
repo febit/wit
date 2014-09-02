@@ -15,8 +15,8 @@ public final class IterMethodFilter extends IterFilter {
     protected final Context context;
     protected final MethodDeclare method;
 
-    public IterMethodFilter(Context context, MethodDeclare method, Iter Iter) {
-        super(Iter);
+    public IterMethodFilter(Context context, MethodDeclare method, Iter iter) {
+        super(iter);
         this.context = context;
         this.method = method;
     }
