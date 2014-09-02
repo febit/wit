@@ -12,18 +12,18 @@ This is a template engine, all writen in Java, **support Java 5+**.
 <dependency>
   <groupId>com.github.zqq90.webit-script</groupId>
   <artifactId>webit-script</artifactId>
-  <version>1.4.0</version>
+  <version>1.5</version>
 </dependency>
 ~~~~~
 
 ## Yeah, only one jar
 
-> `webit-script-*.jar` *<400KB*
+> `webit-script-1.5.jar` *<300KB*
 
 ## How to use
 
 ~~~~~java
-Engine engine = Engine.createEngine("/webit-script-config.props", extraSettingsMap);
+Engine engine = Engine.create("/webit-script-config.props", extraSettings);
 Template template = engine.getTemplate("/your/template/path/filename.ext");
 template.merge(parametersMap, outputStream); 
 //template.merge(parametersMap, writer);
@@ -77,20 +77,8 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
 
 ## Performance(性能)
 
-> by [zqq90/ebm][zqq90_ebm]
-
 ~~~~~
-Engine                          Time
-
-JetbrickTemplate-1.0.0          6532
-HTTL-1.0.11                     6690
-BSL-2.0.2                       8801
-WebitScript-1.2.0               8956
-DirectOut-system                11519
-BeeTL-1.25.01                   11603
-Rythm-1.0.0-b10-SNAPSHOT        12671
-Velocity-1.7                    24075
-FreeMarker-2.3.19               32546
+// Waiting update
 ~~~~~
 
 
@@ -103,15 +91,14 @@ details.
 
 ## Third-party Licenses
 
-+ **Jodd**  under the BSD License. [License file][jodd_license]
-+ **ASM-3.3.1**  under the BSD License.[License file][asm_license]
++ **Jodd-props**  under the BSD License. [License file][jodd_license]
++ **ASM**  under the BSD License.[License file][asm_license]
 
 ## Bug report
 
 > [github-issue][new_issue_github]
 > [OSC-issue][new_issue_osc]
 
-[zqq90_ebm]: https://github.com/zqq90/ebm
 [mvc-demo]: https://github.com/zqq90/webitscript-mvc-demo
 [tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
 
