@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.github.zqq90.webit-script</groupId>
         <artifactId>support</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.5</version>
     </parent>
 
     <artifactId>webit-script-struts2</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5</version>
     
     <name>Webit Script :: Struts2</name>
     <dependencies>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>webit-script-servlet</artifactId>
-            <version>1.5.0-SNAPSHOT</version>
+            <version>1.5</version>
         </dependency>
     </dependencies>
 </project>
