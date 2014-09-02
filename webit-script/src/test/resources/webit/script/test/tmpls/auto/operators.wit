@@ -12,8 +12,32 @@
     assertEquals(-2, -5 >> 2);
     assertEquals(1073741822, -5 >>> 2);
 
+    //chars
+    //a : 97
+    var a = 'a';
+    var temp = 'a' +1;
 
-    // ？:
+    assertTrue(97 >= a);
+    assertTrue(97 <= a);
+    assertTrue(97 == a);
+    assertTrue(98 >= a);
+    assertTrue(98 > a);
+    assertTrue(90 < a);
+    assertTrue(90 <= a);
+
+    assertEquals(97 +1 , temp);
+    assertEquals(97 +1 , a +1);
+    assertEquals(97 +1 , a +1);
+    assertEquals(97 +1 , 1+ a);
+    assertEquals(1- 97 , 1- a);
+    assertEquals(97 -1 , a -1);
+
+    assertEquals(97/2 , a/2);
+    assertEquals(97 * 2 , a * 2);
+    assertEquals(97 >> 2 , a >> 2);
+    assertEquals(97 % 2 , a % 2);
+
+    // ?:
     assertEquals(1, true?1:2);
     assertEquals(1, 1?:2);
     assertEquals(2, null?:2);
