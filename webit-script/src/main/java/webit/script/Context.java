@@ -4,7 +4,7 @@ package webit.script;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.core.VariantIndexer;
-import webit.script.core.ast.loop.LoopCtrl;
+import webit.script.core.ast.loop.LoopInfo;
 import webit.script.exceptions.NotFunctionException;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
@@ -25,7 +25,6 @@ public final class Context implements KeyValueAccepter {
     public static final Void VOID = new Void();
 
     private Map<Object, Object> locals;
-    public final LoopCtrl loopCtrl;
     public final ResolverManager resolverManager;
     public final ClassMap<OutResolver> outterMap;
 
@@ -38,19 +37,75 @@ public final class Context implements KeyValueAccepter {
     public boolean isByteStream;
     public String encoding;
 
+    private Object returned = null;
+    private int label = LoopInfo.NO_LABEL;
+    private int loopType = LoopInfo.NO_LOOP;
+
     public Context(final Template template, final Out out, final KeyValues rootParams) {
         this.template = template;
         this.out = out;
         this.rootParams = rootParams;
         this.encoding = out.getEncoding();
         this.isByteStream = out.isByteStream();
-        ResolverManager resolverMgr = this.resolverManager = template.engine.getResolverManager();
+        ResolverManager resolverMgr = template.engine.getResolverManager();
+        this.resolverManager = resolverMgr;
         this.outterMap = resolverMgr.outterMap;
-        this.loopCtrl = new LoopCtrl();
     }
 
     public void pushRootParams() {
         rootParams.exportTo(this);
+    }
+
+    public boolean matchLabel(int label) {
+        return this.label == LoopInfo.NO_LABEL || this.label == label;
+    }
+
+    public void breakLoop(int label) {
+        this.label = label;
+        this.loopType = LoopInfo.BREAK;
+    }
+
+    public void continueLoop(int label) {
+        this.label = label;
+        this.loopType = LoopInfo.CONTINUE;
+    }
+
+    public void returnLoop(Object value) {
+        this.returned = value;
+        this.label = LoopInfo.NO_LABEL;
+        this.loopType = LoopInfo.RETURN;
+    }
+
+    public void resetLoop() {
+        this.returned = null;
+        this.label = LoopInfo.NO_LABEL;
+        this.loopType = LoopInfo.NO_LOOP;
+    }
+
+    public void resetBreakLoopIfMatch(int label) {
+        if (this.loopType == LoopInfo.BREAK && (this.label == LoopInfo.NO_LABEL || this.label == label)) {
+            this.resetLoop();
+        }
+    }
+
+    public Object resetReturnLoop() {
+        Object result = this.loopType == LoopInfo.RETURN ? this.returned : Context.VOID;
+        this.returned = null;
+        this.label = LoopInfo.NO_LABEL;
+        this.loopType = LoopInfo.NO_LOOP;
+        return result;
+    }
+
+    public int getLoopType() {
+        return this.loopType;
+    }
+
+    public boolean noLoop() {
+        return this.loopType == LoopInfo.NO_LOOP;
+    }
+
+    public boolean hasLoop() {
+        return this.loopType != LoopInfo.NO_LOOP;
     }
 
     public void set(String key, Object value) {

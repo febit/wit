@@ -23,7 +23,7 @@ public final class Return extends Statement implements Loopable {
     }
 
     public Object execute(final Context context) {
-        context.loopCtrl.returnLoop(
+        context.returnLoop(
                 expr != null
                 ? expr.execute(context)
                 : Context.VOID);

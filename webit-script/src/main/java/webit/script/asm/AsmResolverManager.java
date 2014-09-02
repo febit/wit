@@ -65,7 +65,7 @@ public class AsmResolverManager extends ResolverManager {
     }
 
     static Class createResolverClass(Class beanClass) throws Exception {
-        //XXX: recheck
+        //XXX: rewrite
         if (ClassUtil.isPublic(beanClass)) {
             final String className = "webit.script.asm.Resolver_".concat(ASMUtil.getSn());
 

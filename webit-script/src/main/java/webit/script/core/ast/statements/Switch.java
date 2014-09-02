@@ -38,7 +38,7 @@ public final class Switch extends Statement implements Loopable {
         }
         if (caseStatement != null) {
             caseStatement.execute(context);
-            context.loopCtrl.resetBreakLoopIfMatch(label);
+            context.resetBreakLoopIfMatch(label);
         }
         return null;
     }
@@ -77,7 +77,7 @@ public final class Switch extends Statement implements Loopable {
 
         Object execute(final Context context) {
             body.execute(context);
-            if (context.loopCtrl.getLoopType() == LoopInfo.NO_LOOP && next != null) {
+            if (context.noLoop() && next != null) {
                 next.execute(context);
             }
             return null;

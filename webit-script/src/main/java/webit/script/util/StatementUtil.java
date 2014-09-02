@@ -8,7 +8,6 @@ import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
-import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.exceptions.ParseException;
@@ -50,12 +49,11 @@ public class StatementUtil {
 
     public static void executeInvertedAndCheckLoops(final Statement[] statements, final Context context) {
         int i = statements.length;
-        final LoopCtrl ctrl = context.loopCtrl;
         try {
             do {
                 --i;
                 statements[i].execute(context);
-            } while (i != 0 && ctrl.getLoopType() == LoopInfo.NO_LOOP);
+            } while (i != 0 && context.noLoop());
         } catch (Exception e) {
             throw castToScriptRuntimeException(e, statements[i]);
         }

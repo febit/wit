@@ -176,7 +176,7 @@ public class VariantManager {
 
         Integer assignVar(final String name, int line, int column) {
             checkDuplicate(name, line, column);
-            //XXX: recheck
+            //XXX: rewrite
             int index = VariantManager.this.varCount++;
             this.values.put(name, index);
             return index;

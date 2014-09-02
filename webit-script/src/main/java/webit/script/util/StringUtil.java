@@ -82,7 +82,7 @@ public class StringUtil {
     }
 
     private static String[] splitc(String src) {
-        //XXX: recheck
+        //XXX: rewrite
         char[] srcc = src.toCharArray();
 
         int maxparts = srcc.length + 1;

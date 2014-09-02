@@ -51,6 +51,7 @@ var func_switch2 = function(a,b){
 };
 
 assertEquals("2|3", func_switch2(2,1));
+assertEquals("2|3", func_switch2(2,4));
 assertEquals("2,2", func_switch2(2,2));
 assertEquals("2,3", func_switch2(2,3));
 

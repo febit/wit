@@ -7,7 +7,6 @@ import java.util.List;
 import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
-import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.util.ALU;
@@ -35,24 +34,23 @@ public final class DoWhile extends Statement implements Loopable {
     }
 
     public Object execute(final Context context) {
-        final LoopCtrl ctrl = context.loopCtrl;
         final Statement[] stats = this.statements;
         final int preIndex = context.indexer;
         context.indexer = indexer;
         label:
         do {
             StatementUtil.executeInvertedAndCheckLoops(stats, context);
-            if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
-                if (ctrl.matchLabel(label)) {
-                    switch (ctrl.getLoopType()) {
+            if (context.hasLoop()) {
+                if (context.matchLabel(label)) {
+                    switch (context.getLoopType()) {
                         case LoopInfo.BREAK:
-                            ctrl.reset();
+                            context.resetLoop();
                             break label; // while
                         case LoopInfo.RETURN:
                             //can't deal
                             break label; //while
                         case LoopInfo.CONTINUE:
-                            ctrl.reset();
+                            context.resetLoop();
                             break; //switch
                         default:
                             break label; //while

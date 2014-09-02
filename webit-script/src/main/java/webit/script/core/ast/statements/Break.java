@@ -22,7 +22,7 @@ public final class Break extends Statement implements Loopable {
     }
 
     public Object execute(final Context context) {
-        context.loopCtrl.breakLoop(label);
+        context.breakLoop(label);
         return null;
     }
 

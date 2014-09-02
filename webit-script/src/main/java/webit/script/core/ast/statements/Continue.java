@@ -22,7 +22,7 @@ public final class Continue extends Statement implements Loopable {
     }
 
     public Object execute(final Context context) {
-        context.loopCtrl.continueLoop(label);
+        context.continueLoop(label);
         return null;
     }
 

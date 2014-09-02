@@ -142,7 +142,7 @@ public class AssertGlobalRegister implements GlobalRegister {
 
     private static void assertTrue(boolean condition) {
         if (!condition) {
-            fail(null);
+            fail("is false");
         }
     }
 

@@ -56,7 +56,7 @@ public final class FunctionDeclare extends Expression {
         if (hasReturnLoops) {
             StatementUtil.executeInvertedAndCheckLoops(statements, context);
             context.indexer = preIndex;
-            return context.loopCtrl.resetReturnLoop();
+            return context.resetReturnLoop();
         } else {
             StatementUtil.executeInverted(statements, context);
             context.indexer = preIndex;

@@ -8,7 +8,6 @@ import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.expressions.FunctionDeclare;
-import webit.script.core.ast.loop.LoopCtrl;
 import webit.script.core.ast.loop.LoopInfo;
 import webit.script.core.ast.loop.Loopable;
 import webit.script.lang.Iter;
@@ -52,7 +51,6 @@ public class ForIn extends Statement implements Loopable {
         }
         if (iter != null
                 && iter.hasNext()) {
-            final LoopCtrl ctrl = context.loopCtrl;
             final int preIndex = context.indexer;
             context.indexer = indexer;
             final Statement[] stats = this.statements;
@@ -64,17 +62,17 @@ public class ForIn extends Statement implements Loopable {
             do {
                 vars[index] = iter.next();
                 StatementUtil.executeInvertedAndCheckLoops(stats, context);
-                if (ctrl.getLoopType() != LoopInfo.NO_LOOP) {
-                    if (ctrl.matchLabel(myLabel)) {
-                        switch (ctrl.getLoopType()) {
+                if (context.hasLoop()) {
+                    if (context.matchLabel(myLabel)) {
+                        switch (context.getLoopType()) {
                             case LoopInfo.BREAK:
-                                ctrl.reset();
+                                context.resetLoop();
                                 break label; // while
                             case LoopInfo.RETURN:
                                 //can't deal
                                 break label; //while
                             case LoopInfo.CONTINUE:
-                                ctrl.reset();
+                                context.resetLoop();
                                 break; //switch
                             default:
                                 break label; //while
