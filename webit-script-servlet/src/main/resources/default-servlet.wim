@@ -11,12 +11,12 @@ vars=request,response
 
 [resolverManager]
 resolvers +='''
-    webit.script.web.resolvers.HttpSessionResolver
-    webit.script.web.resolvers.HttpServletRequestResolver
-    webit.script.web.resolvers.HttpServletRequestParametersResolver
-    webit.script.web.resolvers.HttpServletRequestAttributesResolver
-    webit.script.web.resolvers.HttpServletRequestHeaderResolver
-    webit.script.web.resolvers.HttpServletRequestHeadersResolver
+    webit.script.servlet.resolvers.HttpSessionResolver
+    webit.script.servlet.resolvers.HttpServletRequestResolver
+    webit.script.servlet.resolvers.HttpServletRequestParametersResolver
+    webit.script.servlet.resolvers.HttpServletRequestAttributesResolver
+    webit.script.servlet.resolvers.HttpServletRequestHeaderResolver
+    webit.script.servlet.resolvers.HttpServletRequestHeadersResolver
 '''
 
 # [servlet]
