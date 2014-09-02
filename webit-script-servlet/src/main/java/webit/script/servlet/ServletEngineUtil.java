@@ -18,7 +18,7 @@ import webit.script.util.Props;
  */
 public class ServletEngineUtil {
 
-    private static final String DEFAULT_WEB_PROPERTIES = "/webit-script-servlet.props";
+    private static final String DEFAULT_WEB_PROPERTIES = "/default-servlet.wim";
 
     public static Engine createEngine(final ServletContext servletContext, final String configFiles) {
         return createEngine(servletContext, configFiles, null);
