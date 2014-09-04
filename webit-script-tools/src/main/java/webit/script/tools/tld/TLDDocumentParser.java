@@ -5,7 +5,6 @@ import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import webit.script.util.CharUtil;
 import webit.script.util.StringUtil;
 
 /**
