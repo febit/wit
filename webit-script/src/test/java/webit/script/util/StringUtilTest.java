@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
@@ -10,6 +10,21 @@ import org.junit.Test;
  */
 public class StringUtilTest {
 
+    
+    @Test
+    
+    public void toArray() {
+        assertArrayEquals(new String[]{"abc", "def","g"}, StringUtil.toArray("abc,def,g"));
+        assertArrayEquals(new String[]{"abc", "def","g"}, StringUtil.toArray(" abc , def , g "));
+        assertArrayEquals(new String[]{"abc", "def","g"}, StringUtil.toArray("\t\n abc\n\r \n, def \n,,, g ,,, "));
+        
+        assertArrayEquals(new String[]{"a", "b","c"}, StringUtil.toArray("a,b,c"));
+        assertSame(StringUtil.EMPTY_ARRAY, StringUtil.toArray("\t\n ,,,  "));
+        assertSame(StringUtil.EMPTY_ARRAY, StringUtil.toArray(","));
+        assertSame(StringUtil.EMPTY_ARRAY, StringUtil.toArray(",, ,,"));
+        assertSame(StringUtil.EMPTY_ARRAY, StringUtil.toArray(null));
+    }
+    
     
     @Test
     public void format() {
