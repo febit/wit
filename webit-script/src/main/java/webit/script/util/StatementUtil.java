@@ -24,39 +24,24 @@ public class StatementUtil {
 
     public static void execute(final Statement[] statements, final Context context) {
         int i = 0;
-        int len = statements.length;
-        try {
-            while (i < len) {
-                statements[i].execute(context);
-                i++;
-            }
-        } catch (Exception e) {
-            throw castToScriptRuntimeException(e, statements[i]);
+        final int len = statements.length;
+        while (i < len) {
+            statements[i++].execute(context);
         }
     }
 
     public static void executeInverted(final Statement[] statements, final Context context) {
         int i = statements.length;
-        try {
-            while (i != 0) {
-                --i;
-                statements[i].execute(context);
-            }
-        } catch (Exception e) {
-            throw castToScriptRuntimeException(e, statements[i]);
+        while (i != 0) {
+            statements[--i].execute(context);
         }
     }
 
     public static void executeInvertedAndCheckLoops(final Statement[] statements, final Context context) {
         int i = statements.length;
-        try {
-            do {
-                --i;
-                statements[i].execute(context);
-            } while (i != 0 && context.noLoop());
-        } catch (Exception e) {
-            throw castToScriptRuntimeException(e, statements[i]);
-        }
+        do {
+            statements[--i].execute(context);
+        } while (i != 0 && context.noLoop());
     }
 
     public static Expression optimize(Expression expression) {
@@ -91,11 +76,10 @@ public class StatementUtil {
         if (statements == null || (i = statements.length) == 0) {
             return null;
         }
-        LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
-        List<LoopInfo> list;
+        final LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
         do {
-            --i;
-            if ((list = collectPossibleLoopsInfo(statements[i])) != null) {
+            List<LoopInfo> list = collectPossibleLoopsInfo(statements[--i]);
+            if (list != null) {
                 loopInfos.addAll(list);
             }
         } while (i != 0);
