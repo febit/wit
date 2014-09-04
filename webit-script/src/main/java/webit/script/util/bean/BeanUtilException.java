@@ -5,21 +5,14 @@ package webit.script.util.bean;
  *
  * @author Zqq
  */
-public class BeanUtilException extends RuntimeException{
-
-    public BeanUtilException() {
-    }
+public class BeanUtilException extends RuntimeException {
 
     public BeanUtilException(String message) {
         super(message);
     }
 
-    public BeanUtilException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public Throwable fillInStackTrace() {
+        return this;
     }
-
-    public BeanUtilException(Throwable cause) {
-        super(cause);
-    }
-    
 }

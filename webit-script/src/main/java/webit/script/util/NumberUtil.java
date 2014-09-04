@@ -9,7 +9,6 @@ import webit.script.io.Out;
  */
 public class NumberUtil {
 
-    private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     private static final char[] DIGIT_TENS = {
         '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
         '1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
@@ -52,14 +51,15 @@ public class NumberUtil {
         } else {
             negative = false;
         }
-
+        final char[] digitOnes = DIGIT_ONES;
+        final char[] digitsTens = DIGIT_TENS;
         while (i > Integer.MAX_VALUE) {
             q = i / 100;
             // really: r = i - (q * 100)
             r = (int) (i - ((q << 6) + (q << 5) + (q << 2)));
             i = q;
-            buf[--charPos] = DIGIT_ONES[r];
-            buf[--charPos] = DIGIT_TENS[r];
+            buf[--charPos] = digitOnes[r];
+            buf[--charPos] = digitsTens[r];
         }
 
         int q2;
@@ -69,13 +69,13 @@ public class NumberUtil {
             // really: r = i2 - (q * 100)
             r = i2 - ((q2 << 6) + (q2 << 5) + (q2 << 2));
             i2 = q2;
-            buf[--charPos] = DIGIT_ONES[r];
-            buf[--charPos] = DIGIT_TENS[r];
+            buf[--charPos] = digitOnes[r];
+            buf[--charPos] = digitsTens[r];
         }
 
         for (;;) {
             q2 = (i2 * 52429) >>> (16 + 3);
-            buf[--charPos] = DIGITS[i2 - ((q2 << 3) + (q2 << 1))]; // DIGITS[i2-(q2*10)]
+            buf[--charPos] = digitOnes[i2 - ((q2 << 3) + (q2 << 1))]; // DIGITS[i2-(q2*10)]
             i2 = q2;
             if (i2 == 0) {
                 break;
@@ -104,18 +104,20 @@ public class NumberUtil {
             negative = false;
         }
 
+        final char[] digitOnes = DIGIT_ONES;
+        final char[] digitsTens = DIGIT_TENS;
         while (i >= 65536) {
             q = i / 100;
             // really: r = i - (q * 100)
             r = i - ((q << 6) + (q << 5) + (q << 2));
             i = q;
-            buf[--charPos] = DIGIT_ONES[r];
-            buf[--charPos] = DIGIT_TENS[r];
+            buf[--charPos] = digitOnes[r];
+            buf[--charPos] = digitsTens[r];
         }
 
         for (;;) {
             q = (i * 52429) >>> (16 + 3);
-            buf[--charPos] = DIGITS[i - ((q << 3) + (q << 1))]; // DIGITS[i-(q*10)]
+            buf[--charPos] = digitOnes[i - ((q << 3) + (q << 1))]; // DIGITS[i-(q*10)]
             i = q;
             if (i == 0) {
                 break;

@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import webit.script.util.ClassEntry;
 import webit.script.util.ClassMap;
 import webit.script.util.ClassUtil;
 import webit.script.util.StringUtil;
@@ -15,15 +16,14 @@ import webit.script.util.StringUtil;
  */
 public class BeanUtil {
 
-    private static final ClassMap<FieldDescriptorsBox> CACHE = new ClassMap<FieldDescriptorsBox>();
+    private static final ClassMap<Map<String, Accessor>> CACHE = new ClassMap<Map<String, Accessor>>();
 
     public static Object get(final Object bean, final String name) throws BeanUtilException {
         Getter getter;
-        if ((getter = getFieldDescriptor(bean.getClass(), name).getter) != null) {
+        if ((getter = getAccessor(bean.getClass(), name).getter) != null) {
             return getter.get(bean);
-        } else {
-            throw new BeanUtilException(StringUtil.format("Unable to get getter for {}#{}", bean.getClass(), name));
         }
+        throw new BeanUtilException(StringUtil.format("Unable to get getter for {}#{}", bean.getClass(), name));
     }
 
     public static void set(final Object bean, final String name, Object value) throws BeanUtilException {
@@ -32,99 +32,225 @@ public class BeanUtil {
 
     public static void set(final Object bean, final String name, Object value, boolean convertIfNeed) throws BeanUtilException {
         Setter setter;
-        if ((setter = getFieldDescriptor(bean.getClass(), name).setter) != null) {
+        if ((setter = getAccessor(bean.getClass(), name).setter) != null) {
             if (convertIfNeed && (value == null || value instanceof String)) {
-                value = Convert.convert((String) value, setter.getPropertyType());
+                value = convert((String) value, setter.getType());
             }
             setter.set(bean, value);
-        } else {
-            throw new BeanUtilException(StringUtil.format("Unable to get setter for {}#{}", bean.getClass(), name));
+            return;
         }
+        throw new BeanUtilException(StringUtil.format("Unable to get setter for {}#{}", bean.getClass(), name));
     }
 
-    private static FieldDescriptor getFieldDescriptor(final Class cls, final String name) throws BeanUtilException {
-        FieldDescriptorsBox box;
-        if ((box = CACHE.unsafeGet(cls)) == null) {
-            box = CACHE.putIfAbsent(cls, new FieldDescriptorsBox());
-        }
-        Map<String, FieldDescriptor> descs;
-        if ((descs = box.items) == null) {
-            synchronized (box) {
-                if ((descs = box.items) == null) {
-                    descs = resolveFieldDescriptors(cls);
-                    box.items = descs;
-                }
-            }
+    private static Accessor getAccessor(final Class cls, final String name) throws BeanUtilException {
+
+        Map<String, Accessor> descs;
+        if ((descs = CACHE.unsafeGet(cls)) == null) {
+            descs = CACHE.putIfAbsent(cls, resolveAccessors(cls));
         }
 
-        FieldDescriptor fieldDescriptor;
+        Accessor fieldDescriptor;
         if ((fieldDescriptor = descs.get(name)) != null) {
             return fieldDescriptor;
-        } else {
-            throw new BeanUtilException(StringUtil.format("Unable to get field: {}#{}", cls.getName(), name));
         }
+        throw new BeanUtilException(StringUtil.format("Unable to get field: {}#{}", cls.getName(), name));
     }
 
-    private static Map<String, FieldDescriptor> resolveFieldDescriptors(Class cls) {
+    private static Map<String, Accessor> resolveAccessors(Class cls) {
         final FieldInfo[] fieldInfos = FieldInfoResolver.resolve(cls);
-        final Map<String, FieldDescriptor> map = new HashMap<String, FieldDescriptor>(fieldInfos.length * 4 / 3 + 1, 0.75f);
+        final Map<String, Accessor> map = new HashMap<String, Accessor>(fieldInfos.length * 4 / 3 + 1, 0.75f);
         for (FieldInfo fieldInfo : fieldInfos) {
-            //Getter
-            final Getter getter;
-            if (fieldInfo.getGetterMethod() != null) {
-                getter = new MethodGetter(fieldInfo.getGetterMethod());
-            } else if (fieldInfo.getField() != null) {
-                getter = new FieldGetter(fieldInfo.getField());
-            } else {
-                getter = null;
-            }
 
-            final Setter setter;
-            if (fieldInfo.getSetterMethod() != null) {
-                setter = new MethodSetter(fieldInfo.getSetterMethod());
-            } else if (fieldInfo.getField() != null && !fieldInfo.isIsFinal()) {
-                setter = new FieldSetter(fieldInfo.getField());
-            } else {
-                setter = null;
-            }
-
-            map.put(fieldInfo.name, new FieldDescriptor(getter, setter));
+            map.put(fieldInfo.name, new Accessor(
+                    fieldInfo.getGetter() != null ? new MethodGetter(fieldInfo.getGetter())
+                    : fieldInfo.getField() != null ? new FieldGetter(fieldInfo.getField())
+                    : null,
+                    fieldInfo.getSetter() != null ? new MethodSetter(fieldInfo.getSetter())
+                    : fieldInfo.isFieldSettable() ? new FieldSetter(fieldInfo.getField())
+                    : null));
         }
         return map;
     }
 
-    private static final class FieldDescriptorsBox {
+    private static Object convert(String string, Class cls) {
+        if (cls == String.class) {
+            return string;
+        }
+        if (cls == int.class) {
+            if (string == null || string.length() == 0) {
+                return 0;
+            }
+            return toInt(string);
+        }
+        if (cls == boolean.class) {
+            return toBoolean(string);
+        }
+        if (string == null) {
+            return null;
+        }
+        if (cls.isArray()) {
+            if (cls == Class[].class) {
+                return toClassArray(string);
+            }
+            if (cls == ClassEntry[].class) {
+                return toClassEntryArray(string);
+            }
+            if (cls == String[].class) {
+                return toStringArray(string);
+            }
+            if (cls == int[].class) {
+                return toIntArray(string);
+            }
+            if (cls == Integer[].class) {
+                return toIntegerArray(string);
+            }
+            if (cls == boolean[].class) {
+                return toBoolArray(string);
+            }
+            if (cls == Boolean[].class) {
+                return toBooleanArray(string);
+            }
+        } else {
+            if (cls == Boolean.class) {
+                return toBoolean(string);
+            }
+            if (string.length() == 0) {
+                return null;
+            }
+            if (cls == Class.class) {
+                return toClass(string);
+            }
+            if (cls == ClassEntry.class) {
+                return toClassEntry(string);
+            }
+            if (cls == Integer.class) {
+                return toInt(string);
+            }
+        }
+        return string;
+    }
 
-        Map<String, FieldDescriptor> items;
-
-        FieldDescriptorsBox() {
+    private static Class toClass(String string) {
+        try {
+            return ClassUtil.getClass(string);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
-    private static final class FieldDescriptor {
+    private static boolean toBoolean(String string) {
+        return string != null && string.equalsIgnoreCase("true");
+    }
+
+    private static int toInt(String string) {
+        return Integer.valueOf(string);
+    }
+
+    private static ClassEntry toClassEntry(String string) {
+        try {
+            return ClassEntry.wrap(string);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static String[] toStringArray(String string) {
+        if (string == null) {
+            return null;
+        }
+        return StringUtil.toArray(string);
+    }
+
+    private static Class[] toClassArray(String string) {
+        final String[] strings = StringUtil.toArray(string);
+        final int len = strings.length;
+        final Class[] entrys = new Class[len];
+        for (int i = 0; i < len; i++) {
+            entrys[i] = toClass(strings[i]);
+        }
+        return entrys;
+    }
+
+    private static boolean[] toBoolArray(String string) {
+        final String[] strings = StringUtil.toArray(string);
+        final int len = strings.length;
+        final boolean[] entrys = new boolean[len];
+        for (int i = 0; i < len; i++) {
+            entrys[i] = toBoolean(strings[i]);
+        }
+        return entrys;
+    }
+
+    private static Boolean[] toBooleanArray(String string) {
+        final String[] strings = StringUtil.toArray(string);
+        final int len = strings.length;
+        final Boolean[] entrys = new Boolean[len];
+        for (int i = 0; i < len; i++) {
+            entrys[i] = toBoolean(strings[i]);
+        }
+        return entrys;
+    }
+
+    private static int[] toIntArray(String string) {
+        final String[] strings = StringUtil.toArray(string);
+        final int len = strings.length;
+        final int[] entrys = new int[len];
+        for (int i = 0; i < len; i++) {
+            entrys[i] = toInt(strings[i]);
+        }
+        return entrys;
+    }
+
+    private static Integer[] toIntegerArray(String string) {
+        final String[] strings = StringUtil.toArray(string);
+        final int len = strings.length;
+        final Integer[] entrys = new Integer[len];
+        for (int i = 0; i < len; i++) {
+            entrys[i] = toInt(strings[i]);
+        }
+        return entrys;
+    }
+
+    private static ClassEntry[] toClassEntryArray(final String string) {
+        final String[] strings = StringUtil.toArray(string);
+        final int len = strings.length;
+        final ClassEntry[] entrys = new ClassEntry[len];
+        for (int i = 0; i < len; i++) {
+            entrys[i] = toClassEntry(strings[i]);
+        }
+        return entrys;
+    }
+
+    private static final class Accessor {
 
         final Getter getter;
         final Setter setter;
 
-        FieldDescriptor(Getter getter, Setter setter) {
+        Accessor(Getter getter, Setter setter) {
             this.getter = getter;
             this.setter = setter;
         }
     }
 
-    private static interface Getter {
+    private static abstract class Getter {
 
-        Object get(Object bean);
+        Getter() {
+        }
+
+        abstract Object get(Object bean);
     }
 
-    private static interface Setter {
+    private static abstract class Setter {
 
-        Class getPropertyType();
+        Setter() {
+        }
 
-        void set(Object bean, Object value);
+        abstract Class getType();
+
+        abstract void set(Object bean, Object value);
     }
 
-    private static final class MethodGetter implements Getter {
+    private static final class MethodGetter extends Getter {
 
         private final Method method;
 
@@ -133,16 +259,17 @@ public class BeanUtil {
             this.method = method;
         }
 
-        public Object get(Object bean) throws BeanUtilException {
+        @Override
+        Object get(Object bean) throws BeanUtilException {
             try {
                 return this.method.invoke(bean, (Object[]) null);
             } catch (Exception ex) {
-                throw new BeanUtilException(ex.getMessage());
+                throw new BeanUtilException(ex.toString());
             }
         }
     }
 
-    private static final class MethodSetter implements Setter {
+    private static final class MethodSetter extends Setter {
 
         private final Method method;
         private final Class fieldType;
@@ -153,20 +280,22 @@ public class BeanUtil {
             this.fieldType = method.getParameterTypes()[0];
         }
 
-        public Class getPropertyType() {
+        @Override
+        Class getType() {
             return this.fieldType;
         }
 
-        public void set(Object bean, Object value) throws BeanUtilException {
+        @Override
+        void set(Object bean, Object value) throws BeanUtilException {
             try {
                 this.method.invoke(bean, new Object[]{value});
             } catch (Exception ex) {
-                throw new BeanUtilException(ex.getMessage());
+                throw new BeanUtilException(ex.toString());
             }
         }
     }
 
-    private static final class FieldGetter implements Getter {
+    private static final class FieldGetter extends Getter {
 
         private final Field field;
 
@@ -175,36 +304,37 @@ public class BeanUtil {
             this.field = field;
         }
 
-        public Object get(Object bean) throws BeanUtilException {
+        @Override
+        Object get(Object bean) throws BeanUtilException {
             try {
                 return this.field.get(bean);
             } catch (Exception ex) {
-                throw new BeanUtilException(ex.getMessage());
+                throw new BeanUtilException(ex.toString());
             }
         }
     }
 
-    private static final class FieldSetter implements Setter {
+    private static final class FieldSetter extends Setter {
 
         private final Field field;
-        private final Class fieldType;
 
         FieldSetter(Field field) {
             ClassUtil.setAccessible(field);
             this.field = field;
-            this.fieldType = field.getType();
         }
 
-        public void set(Object bean, Object value) throws BeanUtilException {
+        @Override
+        void set(Object bean, Object value) throws BeanUtilException {
             try {
                 this.field.set(bean, value);
             } catch (Exception ex) {
-                throw new BeanUtilException(ex.getMessage());
+                throw new BeanUtilException(ex.toString());
             }
         }
 
-        public Class getPropertyType() {
-            return this.fieldType;
+        @Override
+        Class getType() {
+            return this.field.getType();
         }
     }
 }

@@ -10,8 +10,6 @@ import java.util.Map;
  */
 public final class Props {
 
-    private static final char[] MULTILINE_END = "'''".toCharArray();
-
     private static final int STATE_TEXT = 1;
     private static final int STATE_ESCAPE = 2;
     private static final int STATE_ESCAPE_NEWLINE = 3;
@@ -170,7 +168,7 @@ public final class Props {
 
         final StringBuilder sb = new StringBuilder();
         final int len = in.length;
-        
+
         int state = STATE_TEXT;
         int stateOnEscape = -1;
 
@@ -331,11 +329,22 @@ public final class Props {
                                 && sb.charAt(1) == '\''
                                 && sb.charAt(2) == '\'') {
 
-                            int endIndex = CharUtil.indexOf(in, MULTILINE_END, ndx);
-                            if (endIndex == -1) {
-                                endIndex = len;
+                            int end = ndx;
+                            int count = 0;
+                            while (end < len) {
+                                if (in[end] == '\'') {
+                                    if (count == 2) {
+                                        end -= 2;
+                                        break;
+                                    }
+                                    count++;
+                                } else {
+                                    count = 0;
+                                }
+                                end++;
                             }
-                            put(currentSection, key, new String(in, ndx, endIndex - ndx), append);
+
+                            put(currentSection, key, new String(in, ndx, end - ndx), append);
 
                             sb.setLength(0);
                             key = null;
@@ -343,7 +352,7 @@ public final class Props {
 
                             // end of value, continue to text
                             state = STATE_TEXT;
-                            ndx = endIndex + 3;
+                            ndx = end + 3;
                         }
                 }
             }

@@ -13,43 +13,31 @@ public final class FieldInfo implements Comparable<FieldInfo> {
 
     public final String name;
     public final int hashCode;
-    public final Class parent;
-    private Field field;
-    private Method getterMethod;
-    private Method setterMethod;
+    public final Class owner;
+    Field field;
+    Method getter;
+    Method setter;
 
-    public FieldInfo(Class parent, String name) {
-        this.parent = parent;
+    public FieldInfo(Class owner, String name) {
+        this.owner = owner;
         this.name = name;
         this.hashCode = name.hashCode();
     }
 
-    public Method getGetterMethod() {
-        return getterMethod;
+    public Method getGetter() {
+        return getter;
     }
 
-    public void setGetterMethod(Method getterMethod) {
-        this.getterMethod = getterMethod;
-    }
-
-    public Method getSetterMethod() {
-        return setterMethod;
-    }
-
-    public void setSetterMethod(Method setterMethod) {
-        this.setterMethod = setterMethod;
+    public Method getSetter() {
+        return setter;
     }
 
     public Field getField() {
         return field;
     }
 
-    public void setField(Field field) {
-        this.field = field;
-    }
-
-    public boolean isIsFinal() {
-        return this.field != null && Modifier.isFinal(field.getModifiers());
+    public boolean isFieldSettable() {
+        return this.field != null && !Modifier.isFinal(this.field.getModifiers());
     }
 
     public int compareTo(final FieldInfo o) {
@@ -67,10 +55,10 @@ public final class FieldInfo implements Comparable<FieldInfo> {
             return true;
         }
         if (obj == null
-                ||!(obj instanceof FieldInfo)) {
+                || !(obj instanceof FieldInfo)) {
             return false;
         }
         final FieldInfo other = (FieldInfo) obj;
-        return this.parent == other.parent && this.name.equals(other.name);
+        return this.owner == other.owner && this.name.equals(other.name);
     }
 }

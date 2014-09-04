@@ -197,8 +197,8 @@ public class AsmResolverManager extends ResolverManager {
     }
 
     private static void appendGetFieldCode(final MethodWriter m, final FieldInfo fieldInfo, final String beanName) {
-        Method getter = fieldInfo.getGetterMethod();
-        Field field = fieldInfo.getField();
+        final Method getter = fieldInfo.getGetter();
+        final Field field = fieldInfo.getField();
         if (getter != null || field != null) {
             Class resultType = getter != null ? getter.getReturnType() : field.getType();
             m.visitVarInsn(Constants.ALOAD, 1);
@@ -214,15 +214,14 @@ public class AsmResolverManager extends ResolverManager {
             m.visitInsn(Constants.ARETURN);
         } else {
             //Unreadable Exception
-            ASMUtil.visitScriptRuntimeException(m, StringUtil.concat("Unreadable property ", fieldInfo.parent.getName(), "#", fieldInfo.name));
+            ASMUtil.visitScriptRuntimeException(m, StringUtil.concat("Unreadable property ", fieldInfo.owner.getName(), "#", fieldInfo.name));
         }
     }
 
     private static void appendSetFieldCode(final MethodWriter m, final FieldInfo fieldInfo, final String beanName) {
-        Method setter = fieldInfo.getSetterMethod();
-        Field field = fieldInfo.getField();
-        if (setter != null || (field != null && !fieldInfo.isIsFinal())) {
-            Class fieldClass = setter != null ? setter.getParameterTypes()[0] : field.getType();
+        final Method setter = fieldInfo.getSetter();
+        if (setter != null || fieldInfo.isFieldSettable()) {
+            Class fieldClass = setter != null ? setter.getParameterTypes()[0] : fieldInfo.getField().getType();
             m.visitVarInsn(Constants.ALOAD, 1);
             m.checkCast(beanName);
             m.visitVarInsn(Constants.ALOAD, 3);
@@ -239,7 +238,7 @@ public class AsmResolverManager extends ResolverManager {
             m.visitInsn(Constants.RETURN);
         } else {
             //UnwriteableException
-            ASMUtil.visitScriptRuntimeException(m, StringUtil.concat("Unwriteable property ", fieldInfo.parent.getName(), "#", fieldInfo.name));
+            ASMUtil.visitScriptRuntimeException(m, StringUtil.concat("Unwriteable property ", fieldInfo.owner.getName(), "#", fieldInfo.name));
         }
     }
 }

@@ -13,12 +13,15 @@ public class StringUtil {
     public static final String[] EMPTY_ARRAY = new String[0];
 
     public static String concat(String s1, String s2, String s3) {
-        return s1.concat(s2).concat(s3);
+        return new StringBuilder(s1.length() + s2.length() + s3.length())
+                .append(s1)
+                .append(s2)
+                .append(s3)
+                .toString();
     }
 
     public static String concat(String s1, String s2, String s3, String s4) {
-        int len = s1.length() + s2.length() + s3.length() + s4.length();
-        return new StringBuilder(len)
+        return new StringBuilder(s1.length() + s2.length() + s3.length() + s4.length())
                 .append(s1)
                 .append(s2)
                 .append(s3)
