@@ -12,7 +12,6 @@ import webit.script.exceptions.ScriptRuntimeException;
  */
 public class ALU {
 
-    private static final int NULL = (1 << 30) - 1;
     private static final int OBJECT = (1 << 29) - 1;
     private static final int STRING = (1 << 10) - 1;
     private static final int CHAR = (1 << 9) - 1;
@@ -29,42 +28,39 @@ public class ALU {
     }
 
     private static int getTypeMark(final Object o1) {
-        if (o1 != null) {
-            final Class cls = o1.getClass();
-            if (cls == String.class) {
-                return STRING;
-            }
-            if (cls == Integer.class) {
-                return INTEGER;
-            }
-            if (cls == Long.class) {
-                return LONG;
-            }
-            if (cls == Short.class) {
-                return SHORT;
-            }
-            if (cls == Double.class) {
-                return DOUBLE;
-            }
-            if (cls == Float.class) {
-                return FLOAT;
-            }
-            if (cls == Character.class) {
-                return CHAR;
-            }
-            if (cls == Byte.class) {
-                return BYTE;
-            }
-            if (o1 instanceof Number) {
-                if (o1 instanceof BigInteger) {
-                    return BIG_INTEGER;
-                }
-                //Note: otherwise, treat as BigDecimal
-                return BIG_DECIMAL;
-            }
-            return OBJECT;
+        final Class cls = o1.getClass();
+        if (cls == String.class) {
+            return STRING;
         }
-        return NULL;
+        if (cls == Integer.class) {
+            return INTEGER;
+        }
+        if (cls == Long.class) {
+            return LONG;
+        }
+        if (cls == Short.class) {
+            return SHORT;
+        }
+        if (cls == Double.class) {
+            return DOUBLE;
+        }
+        if (cls == Float.class) {
+            return FLOAT;
+        }
+        if (cls == Character.class) {
+            return CHAR;
+        }
+        if (cls == Byte.class) {
+            return BYTE;
+        }
+        if (o1 instanceof Number) {
+            if (o1 instanceof BigInteger) {
+                return BIG_INTEGER;
+            }
+            //Note: otherwise, treat as BigDecimal
+            return BIG_DECIMAL;
+        }
+        return OBJECT;
     }
 
     // +1
@@ -131,7 +127,7 @@ public class ALU {
             switch (getTypeMark(o1) | getTypeMark(o2)) {
                 case STRING:
                 case OBJECT:
-                    return String.valueOf(o1).concat(String.valueOf(o2));
+                    return o1.toString().concat(o2.toString());
                 case INTEGER:
                 case SHORT:
                 case BYTE:
