@@ -75,16 +75,9 @@ public class CharArrayWriter extends Writer {
     }
 
     @Override
-    public void write(String s, int off, int len) {
-        write(s.toCharArray(), off, len);
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
-    public void flush() {
+    public CharArrayWriter append(char c) {
+        write(c);
+        return this;
     }
 
     public CharArrayWriter append(char[] array, int off, int len) {
@@ -98,16 +91,6 @@ public class CharArrayWriter extends Writer {
 
     public CharArrayWriter append(String array) {
         return append(array.toCharArray());
-    }
-
-    @Override
-    public CharArrayWriter append(char c) {
-        write(c);
-        return this;
-    }
-
-    public int size() {
-        return size;
     }
 
     public void reset() {
@@ -175,56 +158,59 @@ public class CharArrayWriter extends Writer {
     }
 
     public void trimRightBlankToNewLine() {
-        int tmpOffset;
         int tmpSize = this.size;
-        char[] tmpBuffer;
-        int tmpCurrentBufferIndex = this.currentBufferIndex;
-        boolean notLastOne = false;
-        for (; tmpCurrentBufferIndex >= 0; tmpCurrentBufferIndex--) {
-            tmpBuffer = buffers[tmpCurrentBufferIndex];
-            if (notLastOne) {
-                tmpOffset = tmpBuffer.length;
+        boolean notLastBuffer = false;
+        int bufferIndex = this.currentBufferIndex;
+        for (; bufferIndex >= 0; bufferIndex--) {
+            final char[] buffer = buffers[bufferIndex];
+            final int currentBuffeValidSize;
+            if (notLastBuffer) {
+                currentBuffeValidSize = buffer.length;
             } else {
-                tmpOffset = this.offset;
-                notLastOne = true;
+                currentBuffeValidSize = this.offset;
+                notLastBuffer = true;
             }
-            int pos = lastNotWhitespaceOrNewLine(tmpBuffer, 0, tmpOffset);
+            int pos = currentBuffeValidSize - 1;
+            char c;
+            while (pos >= 0) {
+                c = buffer[pos];
+                if (c != ' ' && c != '\t') {
+                    break;
+                }
+                pos--;
+            }
             if (pos < 0) {
                 //All blank
-                tmpSize -= tmpOffset;
-            } else if (tmpBuffer[pos] == '\n' || tmpBuffer[pos] == '\r') {
-                this.size = tmpSize - tmpOffset + pos + 1;
-                offset = pos + 1;
-                currentBufferIndex = tmpCurrentBufferIndex;
-                currentBuffer = tmpBuffer;
-                return;
-            } else {
-                //Not new Line
-                break;
+                tmpSize -= currentBuffeValidSize;
+                continue;
             }
+            c = buffer[pos];
+            if (c == '\n' || c == '\r') {
+                //do trim
+                this.offset = pos + 1;
+                this.size = tmpSize - currentBuffeValidSize + pos + 1;
+                this.currentBufferIndex = bufferIndex;
+                this.currentBuffer = buffer;
+            }
+            //else not need to trim
+            return;
         }
+    }
+
+    public int size() {
+        return this.size;
+    }
+
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public void flush() {
     }
 
     @Override
     public String toString() {
         return new String(toArray());
-    }
-
-    private static int lastNotWhitespaceOrNewLine(final char[] buf, final int from, final int end) {
-        int pos;
-
-        for (pos = end - 1; pos >= from; pos--) {
-            switch (buf[pos]) {
-                case ' ':
-                case '\t':
-                case '\b':
-                case '\f':
-                    continue;
-                default:
-                    // not a blank line
-                    return pos;
-            }
-        }
-        return pos;
     }
 }
