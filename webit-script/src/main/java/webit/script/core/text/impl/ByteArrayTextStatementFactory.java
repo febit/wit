@@ -40,10 +40,10 @@ public class ByteArrayTextStatementFactory implements TextStatementFactory, Init
 
     protected byte[] getBytes(char[] text) {
         try {
-            final ByteArrayOutputStream outputStream = outputs.get();
-            encoders.get().write(text, 0, text.length, outputStream);
-            final byte[] bytes = outputStream.toArray();
-            outputStream.reset();
+            final ByteArrayOutputStream out = outputs.get();
+            encoders.get().write(text, 0, text.length, out);
+            final byte[] bytes = out.toArray();
+            out.reset();
             return bytes;
         } catch (IOException ex) {
             throw new ScriptRuntimeException(ex);

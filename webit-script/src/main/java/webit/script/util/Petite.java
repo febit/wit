@@ -25,12 +25,12 @@ public final class Petite {
         this.datas = new HashMap<String, Object>();
     }
 
-    public String resolveBeanName(Class type) {
-        return type.getName();
+    public static String resolveBeanName(Object bean) {
+        return bean.getClass().getName();
     }
 
     public void wireBean(Object bean) {
-        wireBean(resolveBeanName(bean.getClass()), bean);
+        wireBean(resolveBeanName(bean), bean);
     }
 
     public void wireBean(String beanName, final Object bean) {
@@ -38,16 +38,16 @@ public final class Petite {
         wireBean(beanName, bean, new HashSet<String>());
     }
 
-    private void wireBean(final String beanName, final Object bean, final Set<String> injects) {
+    private void wireBean(final String beanName, final Object bean, final Set<String> injected) {
 
-        if (injects.contains(beanName)) {
+        if (injected.contains(beanName)) {
             return;
         }
-        injects.add(beanName);
+        injected.add(beanName);
 
         //inject @extends first
         for (String profile : StringUtil.toArray(String.valueOf(datas.get(beanName.concat(".@extends"))))) {
-            wireBean(profile, bean, injects);
+            wireBean(profile, bean, injected);
         }
 
         Entry entry = entrys.get(beanName);
@@ -63,11 +63,6 @@ public final class Petite {
         }
     }
 
-    public void set(Map<String, Object> parameters) {
-        parameters.putAll(parameters);
-        initalized = false;
-    }
-
     public void set(Props props, Map<String, Object> parameters) {
         if (props == null) {
             props = new Props();
@@ -76,23 +71,23 @@ public final class Petite {
         if (parameters != null) {
             extras = new HashMap<String, Object>();
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-                String name = entry.getKey();
-                if (name == null) {
+                String key = entry.getKey();
+                if (key == null) {
                     continue;
                 }
-                name = name.trim();
+                key = key.trim();
                 Object value = entry.getValue();
                 if (value instanceof String) {
-                    int len = name.length();
+                    int len = key.length();
                     if (len > 0) {
-                        if (name.charAt(len - 1) == '+') {
-                            props.append(name.substring(0, len - 1).trim(), (String) value);
+                        if (key.charAt(len - 1) == '+') {
+                            props.append(key.substring(0, len - 1).trim(), (String) value);
                         } else {
-                            props.set(name, (String) value);
+                            props.set(key, (String) value);
                         }
                     }
                 } else {
-                    extras.put(name, value);
+                    extras.put(key, value);
                 }
             }
         } else {
@@ -100,7 +95,7 @@ public final class Petite {
         }
 
         props.extractTo(this.datas);
-        if (extras != null && !extras.isEmpty()) {
+        if (extras != null) {
             this.datas.putAll(extras);
         }
         initalized = false;
@@ -120,38 +115,39 @@ public final class Petite {
     }
 
     private void initalize() {
-        if (!initalized) {
-            Map<String, Entry> paramEntrys = new HashMap<String, Entry>();
-            for (Map.Entry<String, Object> entry : datas.entrySet()) {
-                String key = entry.getKey();
-                int index = key.lastIndexOf('.');
-                int index2;
-                if (index > 0
-                        && (index2 = index + 1) < key.length()
-                        && key.charAt(index2) != '@') {
-                    String bean = key.substring(0, index);
-                    paramEntrys.put(bean,
-                            new Entry(
-                                    key.substring(index2),
-                                    entry.getValue(),
-                                    paramEntrys.get(bean)));
-                }
-            }
-            this.entrys = paramEntrys;
-            initalized = true;
+        if (initalized) {
+            return;
         }
+        final Map<String, Entry> paramEntrys = new HashMap<String, Entry>();
+        for (Map.Entry<String, Object> entry : datas.entrySet()) {
+            String key = entry.getKey();
+            int index = key.lastIndexOf('.');
+            int index2;
+            if (index > 0
+                    && (index2 = index + 1) < key.length()
+                    && key.charAt(index2) != '@') {
+                String beanName = key.substring(0, index);
+                paramEntrys.put(beanName,
+                        new Entry(
+                                key.substring(index2),
+                                entry.getValue(),
+                                paramEntrys.get(beanName)));
+            }
+        }
+        this.entrys = paramEntrys;
+        this.initalized = true;
     }
 
-    private static class Entry {
+    private static final class Entry {
 
-        final Entry next;
         final String name;
         final Object value;
+        final Entry next;
 
         Entry(String name, Object value, Entry next) {
-            this.next = next;
             this.name = name;
             this.value = value;
+            this.next = next;
         }
     }
 }

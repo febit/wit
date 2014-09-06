@@ -20,50 +20,35 @@ public class ClassUtil {
     }
 
     private static char getAliasOfBaseType(final String name) {
-        switch (name.charAt(0)) {
-            case 'v':
-                if ("void".equals(name)) {
-                    return 'V';
-                }
-                break;
-            case 'b':
-                if ("boolean".equals(name)) {
-                    return 'Z';
-                }
-                if ("byte".equals(name)) {
-                    return 'B';
-                }
-                break;
-            case 'c':
-                if ("char".equals(name)) {
-                    return 'C';
-                }
-                break;
-            case 'd':
-                if ("double".equals(name)) {
-                    return 'D';
-                }
-                break;
-            case 'f':
-                if ("float".equals(name)) {
-                    return 'F';
-                }
-                break;
-            case 'i':
-                if ("int".equals(name)) {
-                    return 'I';
-                }
-                break;
-            case 'l':
-                if ("long".equals(name)) {
-                    return 'J';
-                }
-                break;
-            case 's':
-                if ("short".equals(name)) {
-                    return 'S';
-                }
-                break;
+        //fast check if under root package and start with lower(except 'a')
+        if (name.charAt(0) > 'a' && name.indexOf('.', 1) < 0) {
+            if ("int".equals(name)) {
+                return 'I';
+            }
+            if ("long".equals(name)) {
+                return 'J';
+            }
+            if ("short".equals(name)) {
+                return 'S';
+            }
+            if ("boolean".equals(name)) {
+                return 'Z';
+            }
+            if ("char".equals(name)) {
+                return 'C';
+            }
+            if ("double".equals(name)) {
+                return 'D';
+            }
+            if ("float".equals(name)) {
+                return 'F';
+            }
+            if ("byte".equals(name)) {
+                return 'B';
+            }
+            if ("void".equals(name)) {
+                return 'V';
+            }
         }
         return '\0';
     }
@@ -89,119 +74,43 @@ public class ClassUtil {
         return getClassByInternalName(new String(chars));
     }
 
-    public static Class getCachedClass(final String name) {
-        if (name == null || name.length() == 0) {
-            return null;
-        }
-        switch (name.charAt(0)) {
-            case 'b':
-                if (name.equals("boolean")) {
-                    return boolean.class;
-                }
-                if (name.equals("byte")) {
-                    return byte.class;
-                }
-                break;
-            case 'c':
-                if (name.equals("char")) {
-                    return char.class;
-                }
-                break;
-            case 's':
-                if (name.equals("short")) {
-                    return short.class;
-                }
-                break;
-            case 'i':
-                if (name.equals("int")) {
-                    return int.class;
-                }
-                break;
-            case 'l':
-                if (name.equals("long")) {
-                    return long.class;
-                }
-                break;
-            case 'f':
-                if (name.equals("float")) {
-                    return float.class;
-                }
-                break;
-            case 'd':
-                if (name.equals("double")) {
-                    return double.class;
-                }
-                break;
-            case 'v':
-                if (name.equals("void")) {
-                    return void.class;
-                }
-                break;
-            case 'B':
-                if (name.equals("Boolean")) {
-                    return Boolean.class;
-                }
-                if (name.equals("Byte")) {
-                    return Byte.class;
-                }
-                break;
-            case 'C':
-                if (name.equals("Character")) {
-                    return Character.class;
-                }
-                if (name.equals("Class")) {
-                    return Class.class;
-                }
-                break;
-            case 'S':
-                if (name.equals("String")) {
-                    return String.class;
-                }
-                if (name.equals("Short")) {
-                    return Short.class;
-                }
-                break;
-            case 'I':
-                if (name.equals("Integer")) {
-                    return Integer.class;
-                }
-                break;
-            case 'L':
-                if (name.equals("Long")) {
-                    return Long.class;
-                }
-                break;
-            case 'F':
-                if (name.equals("Float")) {
-                    return Float.class;
-                }
-                break;
-            case 'D':
-                if (name.equals("Double")) {
-                    return Double.class;
-                }
-                break;
-            case 'N':
-                if (name.equals("Number")) {
-                    return Number.class;
-                }
-                break;
-            case 'O':
-                if (name.equals("Object")) {
-                    return Object.class;
-                }
-                break;
-            case 'V':
-                if (name.equals("Void")) {
-                    return Void.class;
-                }
+    public static Class getPrimitiveClass(final String name) {
+        if (name != null && name.length() != 0 && name.charAt(0) > 'a' && name.indexOf('.', 1) < 0) {
+
+            if (name.equals("int")) {
+                return int.class;
+            }
+            if (name.equals("long")) {
+                return long.class;
+            }
+            if (name.equals("short")) {
+                return short.class;
+            }
+            if (name.equals("boolean")) {
+                return boolean.class;
+            }
+            if (name.equals("char")) {
+                return char.class;
+            }
+            if (name.equals("double")) {
+                return double.class;
+            }
+            if (name.equals("float")) {
+                return float.class;
+            }
+            if (name.equals("byte")) {
+                return byte.class;
+            }
+            if (name.equals("void")) {
+                return void.class;
+            }
         }
         return null;
     }
 
     public static Class getClass(final String name) throws ClassNotFoundException {
         Class cls;
-        return (cls = getCachedClass(name)) != null ? cls : getClassByInternalName(name);
+        return (cls = getPrimitiveClass(name)) != null ? cls : getClassByInternalName(name);
     }
 
     private static Class getClassByInternalName(String name) throws ClassNotFoundException {

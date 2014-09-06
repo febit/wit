@@ -24,8 +24,8 @@ public class KeyValuesUtil {
     public static KeyValues wrap(final KeyValues... valueses) {
         if (valueses != null) {
             return new ListKeyValues(valueses);
-        } 
-            return EMPTY_KEY_VALUES;
+        }
+        return EMPTY_KEY_VALUES;
     }
 
     public static KeyValues wrap(final String key, final Object value) {
@@ -35,15 +35,15 @@ public class KeyValuesUtil {
     public static KeyValues wrap(final String[] keys, final Object[] values) {
         if (keys != null && values != null) {
             return new ArrayKeyValues(keys, values);
-        } 
-            return EMPTY_KEY_VALUES;
+        }
+        return EMPTY_KEY_VALUES;
     }
 
     public static KeyValues wrap(final Map<String, Object> map) {
         if (map != null && !map.isEmpty()) {
             return new MapKeyValues(map);
         }
-            return EMPTY_KEY_VALUES;
+        return EMPTY_KEY_VALUES;
     }
 
     private static final class OneKeyValues implements KeyValues {

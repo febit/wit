@@ -5,7 +5,6 @@ import webit.script.loaders.ResourceOffset;
 import webit.script.util.CharArrayWriter;
 
 %%
-%public
 %class Lexer
 %function nextToken
 %type Symbol
@@ -376,17 +375,17 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   "<<"                           { return symbol(Tokens.LSHIFT); }
   ">>"                           { return symbol(Tokens.RSHIFT); }
   ">>>"                          { return symbol(Tokens.URSHIFT); }
-  "+="                           { return symbol(Tokens.SELFEQ, Operators.PLUSEQ); }
-  "-="                           { return symbol(Tokens.SELFEQ, Operators.MINUSEQ); }
-  "*="                           { return symbol(Tokens.SELFEQ, Operators.MULTEQ); }
-  "/="                           { return symbol(Tokens.SELFEQ, Operators.DIVEQ); }
-  "&="                           { return symbol(Tokens.SELFEQ, Operators.ANDEQ); }
-  "|="                           { return symbol(Tokens.SELFEQ, Operators.OREQ); }
-  "^="                           { return symbol(Tokens.SELFEQ, Operators.XOREQ); }
-  "%="                           { return symbol(Tokens.SELFEQ, Operators.MODEQ); }
-  "<<="                          { return symbol(Tokens.SELFEQ, Operators.LSHIFTEQ); }
-  ">>="                          { return symbol(Tokens.SELFEQ, Operators.RSHIFTEQ); }
-  ">>>="                         { return symbol(Tokens.SELFEQ, Operators.URSHIFTEQ); }
+  "+="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_PLUSEQ); }
+  "-="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_MINUSEQ); }
+  "*="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_MULTEQ); }
+  "/="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_DIVEQ); }
+  "&="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_ANDEQ); }
+  "|="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_OREQ); }
+  "^="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_XOREQ); }
+  "%="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_MODEQ); }
+  "<<="                          { return symbol(Tokens.SELFEQ, AbstractParser.OP_LSHIFTEQ); }
+  ">>="                          { return symbol(Tokens.SELFEQ, AbstractParser.OP_RSHIFTEQ); }
+  ">>>="                         { return symbol(Tokens.SELFEQ, AbstractParser.OP_URSHIFTEQ); }
 
   "@"                            { return symbol(Tokens.AT); }
   "=>"                           { return symbol(Tokens.EQGT); }

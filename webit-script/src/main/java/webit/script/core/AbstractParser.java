@@ -34,6 +34,19 @@ import webit.script.util.StringUtil;
  */
 abstract class AbstractParser {
 
+    //Self Operators
+    static final int OP_PLUSEQ = 0;
+    static final int OP_MINUSEQ = 1;
+    static final int OP_MULTEQ = 2;
+    static final int OP_DIVEQ = 3;
+    static final int OP_MODEQ = 4;
+    static final int OP_LSHIFTEQ = 5;
+    static final int OP_RSHIFTEQ = 6;
+    static final int OP_URSHIFTEQ = 7;
+    static final int OP_ANDEQ = 8;
+    static final int OP_XOREQ = 9;
+    static final int OP_OREQ = 10;
+
     private static final short[][] PRODUCTION_TABLE = loadData("Production");
     private static final short[][] ACTION_TABLE = loadData("Action");
     private static final short[][] REDUCE_TABLE = loadData("Reduce");
@@ -113,7 +126,7 @@ abstract class AbstractParser {
 
     boolean registClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
         final String className = classNameBand.getClassSimpleName();
-        if (ClassUtil.getCachedClass(className) != null) {
+        if (ClassUtil.getPrimitiveClass(className) != null) {
             throw new ParseException("Duplicate class simple name:".concat(classNameBand.getClassPureName()), line, column);
         }
         if (importedClasses.containsKey(className)) {
@@ -127,22 +140,25 @@ abstract class AbstractParser {
         String classPureName;
         if (classNameBand.isSimpleName()) {
             //1. find from @imports
-            //2. if not array, find from cached
-            //3. find from java.lang.*
-            //4. use simpleName
+            //2. find as primitive type
+            //3. find as java.lang.*
+            //4. if not array, return
             String simpleName = classNameBand.getClassSimpleName();
             classPureName = importedClasses.get(simpleName);
             if (classPureName == null) {
-                if (!classNameBand.isArray()) {
-                    Class cls = ClassUtil.getCachedClass(simpleName);
-                    if (cls != null) {
-                        return cls;
+                Class cls = ClassUtil.getPrimitiveClass(simpleName);
+                if (cls == null) {
+                    try {
+                        cls = ClassUtil.getClass("java.lang.".concat(simpleName));
+                    } catch (ClassNotFoundException ex) {
                     }
                 }
-                try {
-                    classPureName = "java.lang.".concat(simpleName);
-                    ClassUtil.getClass(classPureName);
-                } catch (ClassNotFoundException e) {
+                if (cls != null) {
+                    if (!classNameBand.isArray()) {
+                        return cls;
+                    }
+                    classPureName = cls.getName();
+                } else {
                     classPureName = simpleName;
                 }
             }
@@ -287,41 +303,41 @@ abstract class AbstractParser {
         switch (sym) {
 
             // (+ - * / %)=
-            case Operators.PLUSEQ:
+            case OP_PLUSEQ:
                 oper = new SelfPlus(leftExpr, rightExpr, line, column);
                 break;
-            case Operators.MINUSEQ:
+            case OP_MINUSEQ:
                 oper = new SelfMinus(leftExpr, rightExpr, line, column);
                 break;
-            case Operators.MULTEQ:
+            case OP_MULTEQ:
                 oper = new SelfMult(leftExpr, rightExpr, line, column);
                 break;
-            case Operators.DIVEQ:
+            case OP_DIVEQ:
                 oper = new SelfDiv(leftExpr, rightExpr, line, column);
                 break;
-            case Operators.MODEQ:
+            case OP_MODEQ:
                 oper = new SelfMod(leftExpr, rightExpr, line, column);
                 break;
 
             // (<< >> >>>)=
-            case Operators.LSHIFTEQ:
+            case OP_LSHIFTEQ:
                 oper = new SelfLShift(leftExpr, rightExpr, line, column);
                 break;
-            case Operators.RSHIFTEQ:
+            case OP_RSHIFTEQ:
                 oper = new SelfRShift(leftExpr, rightExpr, line, column);
                 break;
-            case Operators.URSHIFTEQ:
+            case OP_URSHIFTEQ:
                 oper = new SelfURShift(leftExpr, rightExpr, line, column);
                 break;
 
             // (& ^ |)=
-            case Operators.ANDEQ:
+            case OP_ANDEQ:
                 oper = new SelfBitAnd(leftExpr, rightExpr, line, column);
                 break;
-            case Operators.XOREQ:
+            case OP_XOREQ:
                 oper = new SelfBitXor(leftExpr, rightExpr, line, column);
                 break;
-            case Operators.OREQ:
+            case OP_OREQ:
                 oper = new SelfBitOr(leftExpr, rightExpr, line, column);
                 break;
 
@@ -499,7 +515,7 @@ abstract class AbstractParser {
                 if (handleSize == 0) {
                     currentSymbol = new Symbol(symId, -1, -1, result);
                 } else {
-                     //position based on left
+                    //position based on left
                     currentSymbol = new Symbol(symId, result, stack.peek(handleSize - 1));
                     //pop the handle
                     stack.pops(handleSize);

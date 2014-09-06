@@ -137,14 +137,14 @@ public final class Engine {
      * @since 1.4.0
      */
     private void resolveComponent(final Object bean, final ClassEntry type) {
-        String profile = type != null
+        String beanName = type != null
                 ? type.profile
-                : this.petite.resolveBeanName(bean.getClass());
-        this.petite.wireBean(profile, bean);
+                : Petite.resolveBeanName(bean);
+        this.petite.wireBean(beanName, bean);
         if (bean instanceof Initable) {
             ((Initable) bean).init(this);
         }
-        this.componentContainer.put(profile, bean);
+        this.componentContainer.put(beanName, bean);
     }
 
     /**

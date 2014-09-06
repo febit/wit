@@ -12,7 +12,7 @@ import webit.script.util.CharArrayWriter;
  * <a href="http://www.jflex.de/">JFlex</a> 1.6.0
  * from the specification file <tt>Lexer.jflex</tt>
  */
-public class Lexer {
+class Lexer {
 
   /** This character denotes the end of file */
   public static final int YYEOF = -1;
@@ -1105,7 +1105,7 @@ public class Lexer {
    *
    * @param   in  the java.io.Reader to read input from.
    */
-  public Lexer(java.io.Reader in) {
+  Lexer(java.io.Reader in) {
     this.zzReader = in;
   }
 
@@ -1613,11 +1613,11 @@ public class Lexer {
           }
         case 166: break;
         case 38: 
-          { return symbol(Tokens.SELFEQ, Operators.DIVEQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_DIVEQ);
           }
         case 167: break;
         case 39: 
-          { return symbol(Tokens.SELFEQ, Operators.MULTEQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_MULTEQ);
           }
         case 168: break;
         case 40: 
@@ -1653,7 +1653,7 @@ public class Lexer {
           }
         case 176: break;
         case 48: 
-          { return symbol(Tokens.SELFEQ, Operators.MINUSEQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_MINUSEQ);
           }
         case 177: break;
         case 49: 
@@ -1669,7 +1669,7 @@ public class Lexer {
           }
         case 180: break;
         case 52: 
-          { return symbol(Tokens.SELFEQ, Operators.MODEQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_MODEQ);
           }
         case 181: break;
         case 53: 
@@ -1713,7 +1713,7 @@ public class Lexer {
           }
         case 191: break;
         case 63: 
-          { return symbol(Tokens.SELFEQ, Operators.ANDEQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_ANDEQ);
           }
         case 192: break;
         case 64: 
@@ -1721,7 +1721,7 @@ public class Lexer {
           }
         case 193: break;
         case 65: 
-          { return symbol(Tokens.SELFEQ, Operators.OREQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_OREQ);
           }
         case 194: break;
         case 66: 
@@ -1729,7 +1729,7 @@ public class Lexer {
           }
         case 195: break;
         case 67: 
-          { return symbol(Tokens.SELFEQ, Operators.PLUSEQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_PLUSEQ);
           }
         case 196: break;
         case 68: 
@@ -1737,7 +1737,7 @@ public class Lexer {
           }
         case 197: break;
         case 69: 
-          { return symbol(Tokens.SELFEQ, Operators.XOREQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_XOREQ);
           }
         case 198: break;
         case 70: 
@@ -1801,7 +1801,7 @@ public class Lexer {
           }
         case 213: break;
         case 85: 
-          { return symbol(Tokens.SELFEQ, Operators.LSHIFTEQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_LSHIFTEQ);
           }
         case 214: break;
         case 86: 
@@ -1809,7 +1809,7 @@ public class Lexer {
           }
         case 215: break;
         case 87: 
-          { return symbol(Tokens.SELFEQ, Operators.RSHIFTEQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_RSHIFTEQ);
           }
         case 216: break;
         case 88: 
@@ -1877,7 +1877,7 @@ public class Lexer {
           }
         case 232: break;
         case 104: 
-          { return symbol(Tokens.SELFEQ, Operators.URSHIFTEQ);
+          { return symbol(Tokens.SELFEQ, AbstractParser.OP_URSHIFTEQ);
           }
         case 233: break;
         case 105: 
