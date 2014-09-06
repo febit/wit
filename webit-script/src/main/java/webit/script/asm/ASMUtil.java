@@ -14,7 +14,7 @@ import webit.script.util.ClassUtil;
  */
 class ASMUtil {
 
-    private static int sn = 1;
+    private static int sn;
     private static final AsmClassLoader CLASS_LOADER = new AsmClassLoader();
 
     static synchronized String getSn() {

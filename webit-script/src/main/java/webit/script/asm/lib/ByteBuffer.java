@@ -6,7 +6,6 @@ package webit.script.asm.lib;
 final class ByteBuffer {
 
     byte[] data;
-
     int length;
 
     ByteBuffer() {

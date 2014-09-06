@@ -9,8 +9,8 @@ import webit.script.core.ast.Statement;
  */
 public class ParseException extends TemplateException {
 
-    protected int line = -1;
-    protected int column = -1;
+    protected int line;
+    protected int column;
 
     public ParseException(String message) {
         super(message);

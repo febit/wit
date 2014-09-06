@@ -11,7 +11,7 @@ import webit.script.Template;
  */
 public abstract class TemplateException extends RuntimeException {
 
-    protected boolean isCause = false;
+    protected boolean isCause;
     protected Template template;
 
     public TemplateException(String message) {

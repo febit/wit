@@ -16,7 +16,6 @@ public abstract class IterFilter implements Iter {
     protected int _index;
 
     protected IterFilter(Iter iter) {
-        this.gotNext = false;
         this.iter = iter;
         this._index = -1;
     }

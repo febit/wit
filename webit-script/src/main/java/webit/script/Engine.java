@@ -46,11 +46,11 @@ public final class Engine {
     private ClassEntry resolverManagerType;
     private ClassEntry nativeFactoryType;
     private boolean looseVar;
-    private boolean shareRootData;
-    private boolean trimCodeBlockBlankLine;
+    private boolean shareRootData = true;
+    private boolean trimCodeBlockBlankLine = true;
     private boolean appendLostSuffix;
-    private String suffix;
-    private String encoding;
+    private String suffix = DEFAULT_SUFFIX;
+    private String encoding = UTF_8;
     private String inits;
     private String[] vars;
     private String[] assistantSuffixs;
@@ -69,12 +69,6 @@ public final class Engine {
     private final Petite petite;
 
     private Engine(final Petite petite) {
-        this.appendLostSuffix = false;
-        this.trimCodeBlockBlankLine = true;
-        this.shareRootData = true;
-        this.looseVar = false;
-        this.suffix = DEFAULT_SUFFIX;
-        this.encoding = UTF_8;
         this.petite = petite;
         this.templateCache = new ConcurrentHashMap<String, Template>();
         this.componentContainer = new HashMap<String, Object>();

@@ -22,7 +22,6 @@ public final class Petite {
     private Logger logger;
 
     public Petite() {
-        this.initalized = false;
         this.datas = new HashMap<String, Object>();
     }
 

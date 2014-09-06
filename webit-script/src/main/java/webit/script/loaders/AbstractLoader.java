@@ -18,8 +18,8 @@ public abstract class AbstractLoader implements Loader, Initable {
     protected String suffix;
     protected String[] assistantSuffixs;
     protected boolean enableCache = true;
-    //
-    protected boolean appendLostSuffixSettedFlag = false;
+
+    protected boolean appendLostSuffixSettedFlag;
 
     public void init(Engine engine) {
         if (this.encoding == null) {
@@ -103,7 +103,7 @@ public abstract class AbstractLoader implements Loader, Initable {
                 || name.charAt(name.length() - 1) == '/') {
             return name;
         } else {
-            for (String item: this.assistantSuffixs) {
+            for (String item : this.assistantSuffixs) {
                 if (name.endsWith(item)) {
                     return name;
                 }

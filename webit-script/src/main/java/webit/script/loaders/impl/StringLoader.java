@@ -11,7 +11,7 @@ import webit.script.loaders.impl.resources.StringResource;
  */
 public class StringLoader implements Loader {
 
-    protected boolean enableCache = false;
+    protected boolean enableCache;
 
     public Resource get(String name) {
         return new StringResource(name);

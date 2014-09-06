@@ -15,7 +15,6 @@ public final class ClassNameBand {
 
     public ClassNameBand(String s) {
         this.arrayDepth = 0;
-        this.isArray = false;
         this.array = new String[8];
         this.array[0] = s;
         this.index = 1;

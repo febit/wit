@@ -64,7 +64,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
 
     protected static class Node {
 
-        private boolean inherit;
+        private boolean inherited;
         private boolean access;
         public final Node parent;
         public final String name;
@@ -72,25 +72,24 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         public Node(Node parent, String name) {
             this.parent = parent;
             this.name = name;
-            this.inherit = true;
-            this.access = false;
         }
 
         public final boolean isAccess() {
-            if (inherit) {
-                access = parent.isAccess();
-                inherit = false;
+            if (this.inherited) {
+                return this.access;
             }
-            return access;
+            this.inherited = true;
+            return this.access = this.parent.isAccess();
         }
 
         /**
+         * set access.
          *
          * @param access
          * @return the value after set
          */
         public final boolean setAccess(boolean access) {
-            if (!this.inherit) {
+            if (this.inherited) {
                 //if already has a value
                 //black list has higher priority
                 if (!access) {
@@ -99,7 +98,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
                 }
                 return this.access;
             }
-            this.inherit = false;
+            this.inherited = true;
             this.access = access;
             return access;
         }
