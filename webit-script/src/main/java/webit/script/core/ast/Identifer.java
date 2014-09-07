@@ -7,25 +7,13 @@ package webit.script.core.ast;
  */
 public class Identifer {
     
-    protected final String name;
-    protected final int line;
-    protected final int column;
+    public final String name;
+    public final int line;
+    public final int column;
 
     public Identifer(String name, int line, int column) {
         this.name = name;
         this.line = line;
         this.column = column;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getLine() {
-        return line;
-    }
-
-    public int getColumn() {
-        return column;
     }
 }

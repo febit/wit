@@ -27,7 +27,7 @@ public class TemplateAST {
         context.vars = new Object[varSize];
         context.pushRootParams();
         StatementUtil.executeInverted(this.statements, context);
-        context.indexer = 0;
+        //assert context.indexer = 0
         return context;
     }
 }

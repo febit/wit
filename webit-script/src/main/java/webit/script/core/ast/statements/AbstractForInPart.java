@@ -3,7 +3,6 @@ package webit.script.core.ast.statements;
 
 import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.StatementList;
 import webit.script.core.ast.expressions.FunctionDeclare;
@@ -13,8 +12,10 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public abstract class AbstractForInPart extends Position {
+public abstract class AbstractForInPart {
 
+    protected final int line;
+    protected final int column;
     protected IBlock bodyStatement;
     protected Statement elseStatement;
     protected final VariantManager varmgr;
@@ -23,7 +24,8 @@ public abstract class AbstractForInPart extends Position {
     protected int iterIndex;
 
     public AbstractForInPart(VariantManager varmgr, int line, int column) {
-        super(line, column);
+        this.line = line;
+        this.column = column;
         this.varmgr = varmgr;
     }
     

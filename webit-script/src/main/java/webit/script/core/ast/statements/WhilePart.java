@@ -2,23 +2,25 @@
 package webit.script.core.ast.statements;
 
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
-import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.LoopInfo;
 import webit.script.util.StatementUtil;
 
 /**
  *
  * @author Zqq
  */
-public final class WhilePart extends Position {
+public final class WhilePart {
 
+    protected final int line;
+    protected final int column;
     private Expression whileExpr;
     private IBlock bodyStatement;
     private boolean doWhileAtFirst;
 
     public WhilePart(Expression whileExpr, IBlock bodyStatement, boolean doWhileAtFirst, int line, int column) {
-        super(line, column);
+        this.line = line;
+        this.column = column;
         this.whileExpr = whileExpr;
         this.bodyStatement = bodyStatement;
         this.doWhileAtFirst = doWhileAtFirst;

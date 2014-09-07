@@ -4,7 +4,7 @@ package webit.script;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.core.VariantIndexer;
-import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.LoopInfo;
 import webit.script.exceptions.NotFunctionException;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
@@ -37,9 +37,9 @@ public final class Context implements KeyValueAccepter {
     public boolean isByteStream;
     public String encoding;
 
-    private Object returned = null;
-    private int label = LoopInfo.NO_LABEL;
-    private int loopType = LoopInfo.NO_LOOP;
+    private Object returned;
+    private int label;
+    private int loopType;
 
     public Context(final Template template, final Out out, final KeyValues rootParams) {
         this.template = template;
@@ -57,7 +57,7 @@ public final class Context implements KeyValueAccepter {
     }
 
     public boolean matchLabel(int label) {
-        return this.label == LoopInfo.NO_LABEL || this.label == label;
+        return this.label == 0 || this.label == label;
     }
 
     public void breakLoop(int label) {
@@ -72,27 +72,25 @@ public final class Context implements KeyValueAccepter {
 
     public void returnLoop(Object value) {
         this.returned = value;
-        this.label = LoopInfo.NO_LABEL;
+        this.label = 0;
         this.loopType = LoopInfo.RETURN;
     }
 
     public void resetLoop() {
         this.returned = null;
-        this.label = LoopInfo.NO_LABEL;
-        this.loopType = LoopInfo.NO_LOOP;
+        this.label = 0;
+        this.loopType = 0;
     }
 
     public void resetBreakLoopIfMatch(int label) {
-        if (this.loopType == LoopInfo.BREAK && (this.label == LoopInfo.NO_LABEL || this.label == label)) {
+        if (this.loopType == LoopInfo.BREAK && (this.label == 0 || this.label == label)) {
             this.resetLoop();
         }
     }
 
     public Object resetReturnLoop() {
-        Object result = this.loopType == LoopInfo.RETURN ? this.returned : Context.VOID;
-        this.returned = null;
-        this.label = LoopInfo.NO_LABEL;
-        this.loopType = LoopInfo.NO_LOOP;
+        Object result = this.loopType == LoopInfo.RETURN ? this.returned : VOID;
+        resetLoop();
         return result;
     }
 
@@ -101,11 +99,11 @@ public final class Context implements KeyValueAccepter {
     }
 
     public boolean noLoop() {
-        return this.loopType == LoopInfo.NO_LOOP;
+        return this.loopType == 0;
     }
 
     public boolean hasLoop() {
-        return this.loopType != LoopInfo.NO_LOOP;
+        return this.loopType != 0;
     }
 
     public void set(String key, Object value) {

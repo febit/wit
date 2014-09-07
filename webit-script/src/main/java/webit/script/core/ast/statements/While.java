@@ -7,8 +7,8 @@ import java.util.List;
 import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
-import webit.script.core.ast.loop.LoopInfo;
-import webit.script.core.ast.loop.Loopable;
+import webit.script.core.LoopInfo;
+import webit.script.core.ast.Loopable;
 import webit.script.util.ALU;
 import webit.script.util.StatementUtil;
 

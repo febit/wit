@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import webit.script.Template;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Position;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.exceptions.ParseException;
 
@@ -13,8 +12,10 @@ import webit.script.exceptions.ParseException;
  *
  * @author Zqq
  */
-public class ImportPart extends Position {
+public class ImportPart {
 
+    protected final int line;
+    protected final int column;
     private Expression expr;
     private Expression paramsExpr;
     private List<String> exportNameList;
@@ -25,7 +26,8 @@ public class ImportPart extends Position {
     }
 
     public ImportPart(Expression expr, Expression paramsExpr, int line, int column) {
-        super(line, column);
+        this.line = line;
+        this.column = column;
         this.expr = expr;
         this.paramsExpr = paramsExpr;
         this.exportNameList = new ArrayList<String>();
@@ -50,6 +52,6 @@ public class ImportPart extends Position {
                 : new Import(expr, paramsExpr,
                         exportNameList.toArray(new String[len]),
                         toResetableValueList.toArray(new ResetableValueExpression[len]),
-                        template,line, column);
+                        template, line, column);
     }
 }

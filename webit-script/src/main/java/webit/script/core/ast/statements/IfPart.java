@@ -2,7 +2,6 @@
 package webit.script.core.ast.statements;
 
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
 import webit.script.util.StatementUtil;
 
@@ -10,13 +9,16 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class IfPart extends Position {
+public final class IfPart {
 
+    protected final int line;
+    protected final int column;
     private Expression ifExpr;
     private Statement thenStatement;
 
     public IfPart(Expression ifExpr, Statement thenStatement, int line, int column) {
-        super(line, column);
+        this.line = line;
+        this.column = column;
         this.ifExpr = ifExpr;
         this.thenStatement = StatementUtil.optimize(thenStatement);
     }

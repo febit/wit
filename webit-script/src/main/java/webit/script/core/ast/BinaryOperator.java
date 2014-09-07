@@ -10,9 +10,9 @@ public abstract class BinaryOperator extends Expression {
     public final Expression leftExpr;
     public final Expression rightExpr;
 
-    public BinaryOperator(Expression leftExp, Expression rightExp, int line, int column) {
+    public BinaryOperator(Expression leftExpr, Expression rightExpr, int line, int column) {
         super(line, column);
-        this.leftExpr = leftExp;
-        this.rightExpr = rightExp;
+        this.leftExpr = leftExpr;
+        this.rightExpr = rightExpr;
     }
 }

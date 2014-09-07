@@ -9,7 +9,7 @@ import webit.script.Context;
  */
 public abstract class ResetableValueExpression extends Expression {
 
-    public ResetableValueExpression(int line, int column) {
+    protected ResetableValueExpression(int line, int column) {
         super(line, column);
     }
 

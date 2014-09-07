@@ -12,8 +12,6 @@ import webit.script.core.ast.Expression;
  */
 public final class MapValue extends Expression {
 
-    private static final float DEFAULT_MAP_FACTOR = 0.75f;
-    private static final int MIN_MAP_CAPACITY = 4;
     private final Object[] keys;
     private final Expression[] valueExprs;
     private final int initialCapacity;
@@ -23,7 +21,7 @@ public final class MapValue extends Expression {
         this.keys = keys;
         this.valueExprs = valueExprs;
         int cap = (keys.length + 1) * 4 / 3;
-        this.initialCapacity = cap > MIN_MAP_CAPACITY ? cap : MIN_MAP_CAPACITY;
+        this.initialCapacity = cap > 4 ? cap : 4;
     }
 
     @SuppressWarnings("unchecked")
@@ -31,7 +29,7 @@ public final class MapValue extends Expression {
         final Object[] mapKeys = this.keys;
         final Expression[] exprs = this.valueExprs;
         final int len = exprs.length;
-        final Map value = new HashMap(initialCapacity, DEFAULT_MAP_FACTOR);
+        final Map value = new HashMap(initialCapacity, 0.75f);
         for (int i = 0; i < len; i++) {
             value.put(mapKeys[i], exprs[i].execute(context));
         }

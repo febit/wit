@@ -8,10 +8,9 @@ import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Identifer;
 import webit.script.core.ast.IdentiferList;
-import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.StatementList;
-import webit.script.core.ast.loop.LoopInfo;
+import webit.script.core.LoopInfo;
 import webit.script.core.ast.operators.Assign;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;
@@ -21,8 +20,10 @@ import webit.script.util.StringUtil;
  *
  * @author Zqq
  */
-public class FunctionDeclarePart extends Position {
+public class FunctionDeclarePart {
 
+    protected final int line;
+    protected final int column;
     private int argsCount = 0;
     private final int assignToIndex;
     private final int start;
@@ -38,7 +39,8 @@ public class FunctionDeclarePart extends Position {
     }
 
     public FunctionDeclarePart(int assignToIndex, VariantManager varmgr, int line, int column) {
-        super(line, column);
+        this.line = line;
+        this.column = column;
         this.varmgr = varmgr;
         this.assignToIndex = assignToIndex;
         this.args = new ArrayList<String>();
@@ -48,7 +50,7 @@ public class FunctionDeclarePart extends Position {
 
     public FunctionDeclarePart appendArgs(IdentiferList identiferList) {
         for (Identifer identifer : identiferList) {
-            appendArg(identifer.getName(), identifer.getLine(), identifer.getColumn());
+            appendArg(identifer.name, identifer.line, identifer.column);
         }
         return this;
     }
@@ -73,9 +75,8 @@ public class FunctionDeclarePart extends Position {
         final Expression expr = popFunctionDeclare(list);
         if (this.assignToIndex >= 0) {
             return new Assign(new ContextValue(this.assignToIndex, line, column), expr, line, column);
-        } else {
-            return expr;
         }
+        return expr;
     }
 
     public FunctionDeclare popFunctionDeclare(StatementList list) {

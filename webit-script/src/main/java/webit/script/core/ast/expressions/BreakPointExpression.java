@@ -1,5 +1,4 @@
 // Copyright (c) 2013, Webit Team. All Rights Reserved.
-
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
@@ -10,7 +9,7 @@ import webit.script.debug.BreakPointListener;
  *
  * @author zqq
  */
-public class BreakPointExpression  extends Expression {
+public class BreakPointExpression extends Expression {
 
     private final BreakPointListener listener;
     private final String label;
@@ -22,7 +21,7 @@ public class BreakPointExpression  extends Expression {
         this.label = label;
         this.expression = expression;
     }
-    
+
     public Object execute(Context context) {
         Object result = expression.execute(context);
         listener.onBreak(label, context, this, result);

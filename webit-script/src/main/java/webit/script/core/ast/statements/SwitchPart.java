@@ -4,7 +4,6 @@ package webit.script.core.ast.statements;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Position;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.statements.Switch.CaseEntry;
 import webit.script.exceptions.ParseException;
@@ -14,8 +13,10 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public final class SwitchPart extends Position {
+public final class SwitchPart {
 
+    protected int line;
+    protected int column;
     private Expression switchExpr;
     private CaseEntry defaultStatement;
     private final Map<Object, CaseEntry> caseMap;
