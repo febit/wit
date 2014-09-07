@@ -7,35 +7,29 @@ public final class ClassMap<V> {
 
     private Entry<V>[] table;
     private int threshold;
-    private int count;
+    private int size;
 
-    private final Object lock = new Object();
-
+    @SuppressWarnings("unchecked")
     public ClassMap(int initialCapacity) {
         int initlen;
         if (initialCapacity > MAXIMUM_CAPACITY) {
             initlen = MAXIMUM_CAPACITY;
         } else {
-            initlen = 4;
+            initlen = 16;
             while (initlen < initialCapacity) {
                 initlen <<= 1;
             }
         }
-        init(initlen);
-    }
-
-    public ClassMap() {
-        init(64);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void init(int initlen) {
         this.table = new Entry[initlen];
         this.threshold = (int) (initlen * 0.75f);
     }
 
+    public ClassMap() {
+        this(64);
+    }
+
     public int size() {
-        return count;
+        return size;
     }
 
     public V unsafeGet(final Class key) {
@@ -52,15 +46,15 @@ public final class ClassMap<V> {
     }
 
     public V get(Class key) {
-        synchronized (lock) {
+        synchronized (this) {
             return unsafeGet(key);
         }
     }
 
     @SuppressWarnings("unchecked")
     private void resize() {
-        synchronized (lock) {
-            if (count < threshold) {
+        synchronized (this) {
+            if (size < threshold) {
                 return;
             }
             final Entry<V>[] oldTable = table;
@@ -96,33 +90,29 @@ public final class ClassMap<V> {
     }
 
     @SuppressWarnings("unchecked")
-    private V unsafePutIfAbsent(Class key, V value) {
-        final int id;
-        int index;
-
-        Entry<V>[] tab;
-        Entry<V> e = (tab = table)[index = (id = key.hashCode()) & (tab.length - 1)];
-        for (; e != null; e = e.next) {
-            if (key == e.key) {
-                return e.value;
-            }
-        }
-
-        if (count >= threshold) {
-            resize();
-            tab = table;
-            index = id & (tab.length - 1);
-        }
-
-        // creates the new entry.
-        tab[index] = new Entry(id, key, value, tab[index]);
-        count++;
-        return value;
-    }
-
     public V putIfAbsent(Class key, V value) {
-        synchronized (lock) {
-            return unsafePutIfAbsent(key, value);
+        synchronized (this) {
+            final int id;
+            int index;
+
+            Entry<V>[] tab;
+            Entry<V> e = (tab = table)[index = (id = key.hashCode()) & (tab.length - 1)];
+            for (; e != null; e = e.next) {
+                if (key == e.key) {
+                    return e.value;
+                }
+            }
+
+            if (size >= threshold) {
+                resize();
+                tab = table;
+                index = id & (tab.length - 1);
+            }
+
+            // creates the new entry.
+            tab[index] = new Entry(id, key, value, tab[index]);
+            size++;
+            return value;
         }
     }
 
