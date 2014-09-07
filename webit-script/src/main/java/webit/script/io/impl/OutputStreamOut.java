@@ -19,10 +19,14 @@ public final class OutputStreamOut implements Out {
     private final String encoding;
     private final Encoder encoder;
 
-    public OutputStreamOut(OutputStream outputStream, String encoding, Encoder encoder) {
+    private OutputStreamOut(OutputStream outputStream, String encoding, Encoder encoder) {
         this.outputStream = outputStream;
         this.encoding = encoding;
         this.encoder = encoder;
+    }
+
+    private OutputStreamOut(OutputStream outputStream, String encoding, CoderFactory coderFactory) {
+        this(outputStream, encoding, coderFactory.newEncoder(encoding));
     }
 
     public OutputStreamOut(OutputStream outputStream, OutputStreamOut out) {
@@ -32,13 +36,9 @@ public final class OutputStreamOut implements Out {
     public OutputStreamOut(OutputStream outputStream, Engine engine) {
         this(outputStream, engine.getEncoding(), engine.getCoderFactory());
     }
-    
-    public OutputStreamOut(OutputStream outputStream, String encoding, Engine engine) {
-        this(outputStream, encoding, engine.getCoderFactory());
-    }
 
-    public OutputStreamOut(OutputStream outputStream, String encoding, CoderFactory coderFactory) {
-        this(outputStream, encoding, coderFactory.newEncoder(encoding));
+    public OutputStreamOut(OutputStream outputStream, String encoding, Engine engine) {
+        this(outputStream, encoding != null ? Engine.internEncoding(encoding) : engine.getEncoding(), engine.getCoderFactory());
     }
 
     public void write(final byte[] bytes, final int offset, final int length) {
