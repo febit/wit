@@ -128,8 +128,8 @@ public class AssertGlobalRegister implements GlobalRegister {
     }
 
     private static void plusAssertCount(Context context) {
-        Integer count = (Integer) context.getLocalVar(ASSERT_COUNT_KEY);
-        context.setLocalVar(ASSERT_COUNT_KEY, count != null ? count + 1 : 1);
+        Integer count = (Integer) context.getLocal(ASSERT_COUNT_KEY);
+        context.setLocal(ASSERT_COUNT_KEY, count != null ? count + 1 : 1);
     }
 
     private static void assertObjectTrue(Object condition) {

@@ -23,7 +23,7 @@ public final class IndexOperator extends ResetableValueExpression {
 
     public Object execute(final Context context) {
         try {
-            return context.resolverManager.get(leftExpr.execute(context), rightExpr.execute(context));
+            return context.getBean(leftExpr.execute(context), rightExpr.execute(context));
         } catch (Exception e) {
             throw StatementUtil.castToScriptRuntimeException(e, this);
         }
@@ -31,7 +31,7 @@ public final class IndexOperator extends ResetableValueExpression {
 
     public Object setValue(final Context context, final Object value) {
         try {
-            context.resolverManager.set(
+            context.setBean(
                     leftExpr.execute(context),
                     rightExpr.execute(context),
                     value);

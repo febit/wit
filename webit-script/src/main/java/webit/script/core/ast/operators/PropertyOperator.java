@@ -23,7 +23,7 @@ public final class PropertyOperator extends ResetableValueExpression {
 
     public Object execute(final Context context) {
         try {
-            return context.resolverManager.get(
+            return context.getBean(
                     expr.execute(context),
                     property);
         } catch (Exception e) {
@@ -33,7 +33,7 @@ public final class PropertyOperator extends ResetableValueExpression {
 
     public Object setValue(final Context context, final Object value) {
         try {
-            context.resolverManager.set(
+            context.setBean(
                     expr.execute(context),
                     property, value);
             return value;

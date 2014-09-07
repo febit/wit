@@ -32,11 +32,11 @@ public class ContextLocalRegister implements GlobalRegister {
         public Object invoke(Context context, Object[] args) {
             final int i;
             if ((i = args.length - 1) > 0) {
-                context.setLocalVar(args[0], args[1]);
+                context.setLocal(args[0], args[1]);
                 return args[1];
             }
             if (i == 0) {
-                return context.getLocalVar(args[0]);
+                return context.getLocal(args[0]);
             }
             throw new ScriptRuntimeException("This function need at least 1 arg: ");
         }

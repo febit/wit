@@ -33,7 +33,6 @@ import webit.script.util.StringUtil;
  */
 public final class Engine {
 
-    public static final String DEFAULT_SUFFIX = ".wit";
     public static final String UTF_8 = "UTF-8";
 
     //settings
@@ -49,7 +48,7 @@ public final class Engine {
     private boolean shareRootData = true;
     private boolean trimCodeBlockBlankLine = true;
     private boolean appendLostSuffix;
-    private String suffix = DEFAULT_SUFFIX;
+    private String suffix =  ".wit";
     private String encoding = UTF_8;
     private String inits;
     private String[] vars;

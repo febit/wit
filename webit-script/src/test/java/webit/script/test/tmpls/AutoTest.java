@@ -98,7 +98,7 @@ public class AutoTest {
         Template template = EngineManager.getEngine().getTemplate(templatePath);
         try {
             Context context = template.merge(out);
-            System.out.println("\tassert count: " + context.getLocalVar(AssertGlobalRegister.ASSERT_COUNT_KEY));
+            System.out.println("\tassert count: " + context.getLocal(AssertGlobalRegister.ASSERT_COUNT_KEY));
         } catch (ScriptRuntimeException e) {
             throw e;
         }

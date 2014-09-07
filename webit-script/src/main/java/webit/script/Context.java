@@ -12,8 +12,10 @@ import webit.script.lang.KeyValueAccepter;
 import webit.script.lang.KeyValues;
 import webit.script.lang.MethodDeclare;
 import webit.script.lang.Void;
+import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.ResolverManager;
+import webit.script.resolvers.SetResolver;
 import webit.script.util.ClassMap;
 
 /**
@@ -24,15 +26,13 @@ public final class Context implements KeyValueAccepter {
 
     public static final Void VOID = new Void();
 
-    private Map<Object, Object> locals;
-    public final ResolverManager resolverManager;
-    public final ClassMap<OutResolver> outterMap;
-
     public Template template;
     public KeyValues rootParams;
+
     public Object[] vars;
     public VariantIndexer[] indexers;
     public int indexer;
+
     public Out out;
     public boolean isByteStream;
     public String encoding;
@@ -41,15 +41,26 @@ public final class Context implements KeyValueAccepter {
     private int label;
     private int loopType;
 
+    private Map<Object, Object> locals;
+
+    private final ResolverManager resolverManager;
+    private final ClassMap<OutResolver> outters;
+    private final ClassMap<GetResolver> getters;
+    private final ClassMap<SetResolver> setters;
+
     public Context(final Template template, final Out out, final KeyValues rootParams) {
         this.template = template;
         this.out = out;
         this.rootParams = rootParams;
+
         this.encoding = out.getEncoding();
         this.isByteStream = out.isByteStream();
+
         ResolverManager resolverMgr = template.engine.getResolverManager();
         this.resolverManager = resolverMgr;
-        this.outterMap = resolverMgr.outterMap;
+        this.outters = resolverMgr.outters;
+        this.getters = resolverMgr.getters;
+        this.setters = resolverMgr.setters;
     }
 
     public void pushRootParams() {
@@ -121,28 +132,49 @@ public final class Context implements KeyValueAccepter {
         this.out.write(chars);
     }
 
-    public void out(final Object object) {
-        if (object != null) {
+    public final Object getBean(Object bean, Object property) {
+        if (bean != null) {
+            final GetResolver resolver;
+            if ((resolver = this.getters.unsafeGet(bean.getClass())) != null) {
+                return resolver.get(bean, property);
+            }
+        }
+        return this.resolverManager.get(bean, property);
+    }
+
+    public final void setBean(Object bean, Object property, Object value) {
+        if (bean != null) {
+            final SetResolver resolver;
+            if ((resolver = this.setters.unsafeGet(bean.getClass())) != null) {
+                resolver.set(bean, property, value);
+                return;
+            }
+        }
+        this.resolverManager.set(bean, property, value);
+    }
+
+    public void out(final Object obj) {
+        if (obj != null) {
             final Class type;
-            if ((type = object.getClass()) == String.class) {
-                this.out.write((String) object);
+            if ((type = obj.getClass()) == String.class) {
+                this.out.write((String) obj);
                 return;
             }
             final OutResolver resolver;
-            if ((resolver = this.outterMap.unsafeGet(type)) != null) {
-                resolver.render(this.out, object);
+            if ((resolver = this.outters.unsafeGet(type)) != null) {
+                resolver.render(this.out, obj);
                 return;
             }
-            this.resolverManager.resolveOutResolver(type).render(this.out, object);
+            this.resolverManager.resolveOutResolver(type).render(this.out, obj);
         }
     }
 
-    public Object getLocalVar(final Object key) {
+    public Object getLocal(final Object key) {
         final Map<Object, Object> map;
         return (map = this.locals) != null ? map.get(key) : null;
     }
 
-    public void setLocalVar(final Object key, final Object value) {
+    public void setLocal(final Object key, final Object value) {
         final Map<Object, Object> map;
         if ((map = this.locals) != null) {
             map.put(key, value);
