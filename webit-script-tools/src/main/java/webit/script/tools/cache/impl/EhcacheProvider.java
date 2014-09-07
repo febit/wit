@@ -15,7 +15,6 @@ import webit.script.tools.cache.CacheProvider;
 public class EhcacheProvider implements CacheProvider, Initable {
 
     protected String cacheName;
-    //
     protected Ehcache ehcache;
 
     public void init(Engine engine) {

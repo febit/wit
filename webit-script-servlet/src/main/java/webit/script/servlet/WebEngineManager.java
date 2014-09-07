@@ -16,6 +16,7 @@ import webit.script.lang.KeyValues;
 public class WebEngineManager {
 
     private String configPath = "/WEB-INF/webpage.wim";
+
     private final ServletContextProvider servletContextProvider;
     private Map<String, Object> extraProperties;
     private Engine engine;
@@ -25,7 +26,7 @@ public class WebEngineManager {
     }
 
     public WebEngineManager(ServletContext servletContext) {
-        this.servletContextProvider = new DirectServletContextProvider(servletContext);
+        this(new DirectServletContextProvider(servletContext));
     }
 
     private void checkExtraProperties() {

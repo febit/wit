@@ -106,6 +106,6 @@ public class AutoTest {
         System.out.println("AUTO RUN: " + templatePath);
         Template template = EngineManager.getEngine().getTemplate(templatePath);
         Context context = template.merge(out);
-        System.out.println("\tassert count: " + context.getLocalVar(webit.script.tools.testunit.AssertGlobalRegister.ASSERT_COUNT_KEY));
+        System.out.println("\tassert count: " + context.getLocal(webit.script.tools.testunit.AssertGlobalRegister.ASSERT_COUNT_KEY));
     }
 }

@@ -15,18 +15,16 @@ public class WebitScriptServletUtil {
         String path;
         if ((path = (String) request.getAttribute(PATH_ATTRIBUTE_KEY)) != null) {
             return path;
-        } else {
-            return getRequestPath(request);
         }
+        return getRequestPath(request);
     }
 
     public static String getRequestPath(final HttpServletRequest request) {
         final String pathInfo;
         if ((pathInfo = request.getPathInfo()) == null || pathInfo.length() == 0) {
             return request.getServletPath();
-        } else {
-            return request.getServletPath().concat(pathInfo);
         }
+        return request.getServletPath().concat(pathInfo);
     }
 
     public static void setTemplatePath(HttpServletRequest request, String path) {

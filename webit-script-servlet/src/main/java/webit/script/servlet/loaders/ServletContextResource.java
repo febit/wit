@@ -33,9 +33,8 @@ public class ServletContextResource implements Resource {
         final InputStream in = servletContext.getResourceAsStream(path);
         if (in != null) {
             return new InputStreamReader(in, encoding);
-        } else {
-            throw new ResourceNotFoundException("Resource Not Found: ".concat(path));
         }
+        throw new ResourceNotFoundException("Resource Not Found: ".concat(path));
     }
 
     /**

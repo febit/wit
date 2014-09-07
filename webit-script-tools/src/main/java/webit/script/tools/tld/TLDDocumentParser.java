@@ -13,11 +13,11 @@ import webit.script.util.StringUtil;
  */
 public class TLDDocumentParser {
 
-    public static TLDFunction[] parse(InputStream inputStream) throws Exception {
+    public static TLDFunction[] parse(InputStream input) throws Exception {
 
         final NodeList functionNodeList = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder()
-                .parse(inputStream)
+                .parse(input)
                 .getDocumentElement()
                 .getElementsByTagName("function");
 
@@ -64,8 +64,7 @@ public class TLDDocumentParser {
         NodeList list = parent.getElementsByTagName(name);
         if (list == null || list.getLength() == 0) {
             throw new RuntimeException("Not found child element named: " + name);
-        } else {
-            return list.item(0).getFirstChild().getNodeValue();
         }
+        return list.item(0).getFirstChild().getNodeValue();
     }
 }

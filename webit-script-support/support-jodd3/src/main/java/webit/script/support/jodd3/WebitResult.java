@@ -48,12 +48,13 @@ public class WebitResult extends BaseActionResult<Object> implements WebEngineMa
 
     @In(scope = ScopeType.CONTEXT)
     protected ResultMapper resultMapper;
+
     @In(scope = ScopeType.CONTEXT)
     protected MadvocController madvocController;
-    protected String contentType;
-    //
-    protected final WebEngineManager engineManager;
 
+    protected String contentType;
+
+    protected final WebEngineManager engineManager;
     protected HashMap<String, String> targetCache;
 
     @Override

@@ -171,18 +171,18 @@ public class CacheGlobalRegister implements GlobalRegister, Initable {
             }
             return result;
         }
+    }
 
-        protected static final class CachingEntry implements Serializable {
+    protected static final class CachingEntry implements Serializable {
 
-            private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-            public final Object returned;
-            public final Object outted;
+        public final Object returned;
+        public final Object outted;
 
-            public CachingEntry(Object returned, Object outted) {
-                this.returned = returned;
-                this.outted = outted;
-            }
+        public CachingEntry(Object returned, Object outted) {
+            this.returned = returned;
+            this.outted = outted;
         }
     }
 }

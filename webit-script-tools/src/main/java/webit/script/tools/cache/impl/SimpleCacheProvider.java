@@ -15,12 +15,12 @@ public class SimpleCacheProvider implements CacheProvider {
     protected int timeToLive = 100 * 60 * 1000;
     protected int multiOfMissCount = 3;
 
+    protected final ConcurrentMap<Object, CachingEntry> cacheMap;
+    protected int missCountN = 0;  // missCount x multiOfMissCount
+
     public SimpleCacheProvider() {
         this.cacheMap = new ConcurrentHashMap<Object, CachingEntry>();
     }
-
-    protected final ConcurrentMap<Object, CachingEntry> cacheMap;
-    protected int missCountN = 0;  // missCount x multiOfMissCount
 
     public Object get(final Object key) {
         final CachingEntry cachingEntry;

@@ -16,106 +16,6 @@ public class AssertGlobalRegister implements GlobalRegister {
 
     public static final String ASSERT_COUNT_KEY = "$$LIB_ASSERT_COUNT";
 
-    protected static class AssertTrue implements MethodDeclare {
-
-        AssertTrue() {
-        }
-
-        public Object invoke(Context context, Object[] args) {
-            plusAssertCount(context);
-            assertObjectTrue(ArrayUtil.get(args, 0, null));
-            return null;
-        }
-    };
-
-    protected static class AssertFalse implements MethodDeclare {
-
-        AssertFalse() {
-        }
-
-        public Object invoke(Context context, Object[] args) {
-            plusAssertCount(context);
-            assertObjectFalse(ArrayUtil.get(args, 0, null));
-            return null;
-        }
-    };
-
-    protected static class AssertNotNull implements MethodDeclare {
-
-        AssertNotNull() {
-        }
-
-        public Object invoke(Context context, Object[] args) {
-            plusAssertCount(context);
-            assertNotNull(ArrayUtil.get(args, 0, null));
-            return null;
-        }
-    };
-
-    protected static class AssertNull implements MethodDeclare {
-
-        AssertNull() {
-        }
-
-        public Object invoke(Context context, Object[] args) {
-            plusAssertCount(context);
-            assertNull(ArrayUtil.get(args, 0, null));
-            return null;
-        }
-    };
-
-    protected static class AssertEquals implements MethodDeclare {
-
-        AssertEquals() {
-        }
-
-        public Object invoke(Context context, Object[] args) {
-            plusAssertCount(context);
-            args = ArrayUtil.ensureMinSize(args, 2);
-            assertEquals(args[0], args[1]);
-            return null;
-        }
-    };
-
-    protected static class AssertSame implements MethodDeclare {
-
-        AssertSame() {
-        }
-
-        public Object invoke(Context context, Object[] args) {
-            plusAssertCount(context);
-            args = ArrayUtil.ensureMinSize(args, 2);
-            assertSame(args[0], args[1]);
-            return null;
-        }
-    };
-
-    protected static class AssertNotSame implements MethodDeclare {
-
-        AssertNotSame() {
-        }
-
-        public Object invoke(Context context, Object[] args) {
-            plusAssertCount(context);
-            args = ArrayUtil.ensureMinSize(args, 2);
-            assertNotSame(args[0], args[1]);
-            return null;
-        }
-    };
-
-    protected static class AssertArrayEquals implements MethodDeclare {
-
-        AssertArrayEquals() {
-        }
-
-        public Object invoke(Context context, Object[] args) {
-            plusAssertCount(context);
-            args = ArrayUtil.ensureMinSize(args, 2);
-            assertArrayEquals(args[0], args[1]);
-            return null;
-        }
-    };
-
     public void regist(final GlobalManager manager) {
         manager.setConst("assertTrue", new AssertTrue());
         manager.setConst("assertFalse", new AssertFalse());
@@ -128,8 +28,8 @@ public class AssertGlobalRegister implements GlobalRegister {
     }
 
     private static void plusAssertCount(Context context) {
-        Integer count = (Integer) context.getLocalVar(ASSERT_COUNT_KEY);
-        context.setLocalVar(ASSERT_COUNT_KEY, count != null ? count + 1 : 1);
+        Integer count = (Integer) context.getLocal(ASSERT_COUNT_KEY);
+        context.setLocal(ASSERT_COUNT_KEY, count != null ? count + 1 : 1);
     }
 
     private static void assertObjectTrue(Object condition) {
@@ -244,4 +144,104 @@ public class AssertGlobalRegister implements GlobalRegister {
     private static String formatClassAndValue(Object value, String valueString) {
         return (value == null ? "null" : value.getClass().getName()) + "<" + valueString + ">";
     }
+
+    protected static class AssertTrue implements MethodDeclare {
+
+        AssertTrue() {
+        }
+
+        public Object invoke(Context context, Object[] args) {
+            plusAssertCount(context);
+            assertObjectTrue(ArrayUtil.get(args, 0, null));
+            return null;
+        }
+    };
+
+    protected static class AssertFalse implements MethodDeclare {
+
+        AssertFalse() {
+        }
+
+        public Object invoke(Context context, Object[] args) {
+            plusAssertCount(context);
+            assertObjectFalse(ArrayUtil.get(args, 0, null));
+            return null;
+        }
+    };
+
+    protected static class AssertNotNull implements MethodDeclare {
+
+        AssertNotNull() {
+        }
+
+        public Object invoke(Context context, Object[] args) {
+            plusAssertCount(context);
+            assertNotNull(ArrayUtil.get(args, 0, null));
+            return null;
+        }
+    };
+
+    protected static class AssertNull implements MethodDeclare {
+
+        AssertNull() {
+        }
+
+        public Object invoke(Context context, Object[] args) {
+            plusAssertCount(context);
+            assertNull(ArrayUtil.get(args, 0, null));
+            return null;
+        }
+    };
+
+    protected static class AssertEquals implements MethodDeclare {
+
+        AssertEquals() {
+        }
+
+        public Object invoke(Context context, Object[] args) {
+            plusAssertCount(context);
+            args = ArrayUtil.ensureMinSize(args, 2);
+            assertEquals(args[0], args[1]);
+            return null;
+        }
+    };
+
+    protected static class AssertSame implements MethodDeclare {
+
+        AssertSame() {
+        }
+
+        public Object invoke(Context context, Object[] args) {
+            plusAssertCount(context);
+            args = ArrayUtil.ensureMinSize(args, 2);
+            assertSame(args[0], args[1]);
+            return null;
+        }
+    };
+
+    protected static class AssertNotSame implements MethodDeclare {
+
+        AssertNotSame() {
+        }
+
+        public Object invoke(Context context, Object[] args) {
+            plusAssertCount(context);
+            args = ArrayUtil.ensureMinSize(args, 2);
+            assertNotSame(args[0], args[1]);
+            return null;
+        }
+    };
+
+    protected static class AssertArrayEquals implements MethodDeclare {
+
+        AssertArrayEquals() {
+        }
+
+        public Object invoke(Context context, Object[] args) {
+            plusAssertCount(context);
+            args = ArrayUtil.ensureMinSize(args, 2);
+            assertArrayEquals(args[0], args[1]);
+            return null;
+        }
+    };
 }
