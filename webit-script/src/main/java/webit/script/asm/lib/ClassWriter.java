@@ -173,182 +173,182 @@ public final class ClassWriter {
      */
     Item key3;
 
-    /**
-     * The type of instructions without any label.
-     */
-    static final int NOARG_INSN = 0;
-
-    /**
-     * The type of instructions with an signed byte label.
-     */
-    static final int SBYTE_INSN = 1;
-
-    /**
-     * The type of instructions with an signed short label.
-     */
-    static final int SHORT_INSN = 2;
-
-    /**
-     * The type of instructions with a local variable index label.
-     */
-    static final int VAR_INSN = 3;
-
-    /**
-     * The type of instructions with an implicit local variable index label.
-     */
-    static final int IMPLVAR_INSN = 4;
-
-    /**
-     * The type of instructions with a type descriptor argument.
-     */
-    static final int TYPE_INSN = 5;
-
-    /**
-     * The type of field and method invocations instructions.
-     */
-    static final int FIELDORMETH_INSN = 6;
-
-    /**
-     * The type of the INVOKEINTERFACE instruction.
-     */
-    static final int ITFMETH_INSN = 7;
-
-    /**
-     * The type of instructions with a 2 bytes bytecode offset label.
-     */
-    static final int LABEL_INSN = 8;
-
-    /**
-     * The type of instructions with a 4 bytes bytecode offset label.
-     */
-    static final int LABELW_INSN = 9;
-
-    /**
-     * The type of the LDC instruction.
-     */
-    static final int LDC_INSN = 10;
-
-    /**
-     * The type of the LDC_W and LDC2_W instructions.
-     */
-    static final int LDCW_INSN = 11;
-
-    /**
-     * The type of the IINC instruction.
-     */
-    static final int IINC_INSN = 12;
-
-    /**
-     * The type of the TABLESWITCH instruction.
-     */
-    static final int TABL_INSN = 13;
-
-    /**
-     * The type of the LOOKUPSWITCH instruction.
-     */
-    static final int LOOK_INSN = 14;
-
 //    /**
-//     * The type of the MULTIANEWARRAY instruction.
+//     * The type of instructions without any label.
 //     */
-//    static final int MANA_INSN = 15;
-
-    /**
-     * The type of the WIDE instruction.
-     */
-    static final int WIDE_INSN = 16;
-
-    /**
-     * The instruction types of all JVM opcodes.
-     */
-    static final byte[] TYPE;
-
-    // --------------------------------------------------------------------------
-    // Static initializer
-    // --------------------------------------------------------------------------
-    /**
-     * Computes the instruction types of JVM opcodes.
-     */
-    static {
-        int i, len;
-        byte[] b = new byte[220];
-        String s
-                = "AAAAAAAAAAAAAAAABCKLLDDDDDEEEEEEEEEEEEEEEEEEEEAAAAAAAADDDDDEEEEEEEEE"
-                + "EEEEEEEEEEEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAA"
-                + "AAAAAAAAAAAAAAAAAIIIIIIIIIIIIIIIIDNOAAAAAAGGGGGGGHAFBFAAFFAAQPIIJJII"
-                + "IIIIIIIIIIIIIIII";
-        for (i = 0, len = b.length; i < len; ++i) {
-            b[i] = (byte) (s.charAt(i) - 'A');
-        }
-        TYPE = b;
-
-        /* code to generate the above string
-
-         // SBYTE_INSN instructions
-         b[Constants.NEWARRAY] = SBYTE_INSN;
-         b[Constants.BIPUSH] = SBYTE_INSN;
-
-         // SHORT_INSN instructions
-         b[Constants.SIPUSH] = SHORT_INSN;
-
-         // (IMPL)VAR_INSN instructions
-         b[Constants.RET] = VAR_INSN;
-         for (i = Constants.ILOAD; i <= Constants.ALOAD; ++i) {
-         b[i] = VAR_INSN;
-         }
-         for (i = Constants.ISTORE; i <= Constants.ASTORE; ++i) {
-         b[i] = VAR_INSN;
-         }
-         for (i = 26; i <= 45; ++i) { // ILOAD_0 to ALOAD_3
-         b[i] = IMPLVAR_INSN;
-         }
-         for (i = 59; i <= 78; ++i) { // ISTORE_0 to ASTORE_3
-         b[i] = IMPLVAR_INSN;
-         }
-
-         // TYPE_INSN instructions
-         b[Constants.NEW] = TYPE_INSN;
-         b[Constants.ANEWARRAY] = TYPE_INSN;
-         b[Constants.CHECKCAST] = TYPE_INSN;
-         b[Constants.INSTANCEOF] = TYPE_INSN;
-
-         // (Set)FIELDORMETH_INSN instructions
-         for (i = Constants.GETSTATIC; i <= Constants.INVOKESTATIC; ++i) {
-         b[i] = FIELDORMETH_INSN;
-         }
-         b[Constants.INVOKEINTERFACE] = ITFMETH_INSN;
-
-         // LABEL(W)_INSN instructions
-         for (i = Constants.IFEQ; i <= Constants.JSR; ++i) {
-         b[i] = LABEL_INSN;
-         }
-         b[Constants.IFNULL] = LABEL_INSN;
-         b[Constants.IFNONNULL] = LABEL_INSN;
-         b[200] = LABELW_INSN; // GOTO_W
-         b[201] = LABELW_INSN; // JSR_W
-         // temporary opcodes used internally by ASM - see Label and MethodWriter
-         for (i = 202; i < 220; ++i) {
-         b[i] = LABEL_INSN;
-         }
-
-         // LDC(_W) instructions
-         b[Constants.LDC] = LDC_INSN;
-         b[19] = LDCW_INSN; // LDC_W
-         b[20] = LDCW_INSN; // LDC2_W
-
-         // special instructions
-         b[Constants.IINC] = IINC_INSN;
-         b[Constants.TABLESWITCH] = TABL_INSN;
-         b[Constants.LOOKUPSWITCH] = LOOK_INSN;
-         b[Constants.MULTIANEWARRAY] = MANA_INSN;
-         b[196] = WIDE_INSN; // WIDE
-
-         for (i = 0; i < b.length; ++i) {
-         System.err.print((char)('A' + b[i]));
-         }
-         System.err.println();
-         */
-    }
+//    static final int NOARG_INSN = 0;
+//
+//    /**
+//     * The type of instructions with an signed byte label.
+//     */
+//    static final int SBYTE_INSN = 1;
+//
+//    /**
+//     * The type of instructions with an signed short label.
+//     */
+//    static final int SHORT_INSN = 2;
+//
+//    /**
+//     * The type of instructions with a local variable index label.
+//     */
+//    static final int VAR_INSN = 3;
+//
+//    /**
+//     * The type of instructions with an implicit local variable index label.
+//     */
+//    static final int IMPLVAR_INSN = 4;
+//
+//    /**
+//     * The type of instructions with a type descriptor argument.
+//     */
+//    static final int TYPE_INSN = 5;
+//
+//    /**
+//     * The type of field and method invocations instructions.
+//     */
+//    static final int FIELDORMETH_INSN = 6;
+//
+//    /**
+//     * The type of the INVOKEINTERFACE instruction.
+//     */
+//    static final int ITFMETH_INSN = 7;
+//
+//    /**
+//     * The type of instructions with a 2 bytes bytecode offset label.
+//     */
+//    static final int LABEL_INSN = 8;
+//
+//    /**
+//     * The type of instructions with a 4 bytes bytecode offset label.
+//     */
+//    static final int LABELW_INSN = 9;
+//
+//    /**
+//     * The type of the LDC instruction.
+//     */
+//    static final int LDC_INSN = 10;
+//
+//    /**
+//     * The type of the LDC_W and LDC2_W instructions.
+//     */
+//    static final int LDCW_INSN = 11;
+//
+//    /**
+//     * The type of the IINC instruction.
+//     */
+//    static final int IINC_INSN = 12;
+//
+//    /**
+//     * The type of the TABLESWITCH instruction.
+//     */
+//    static final int TABL_INSN = 13;
+//
+//    /**
+//     * The type of the LOOKUPSWITCH instruction.
+//     */
+//    static final int LOOK_INSN = 14;
+//
+////    /**
+////     * The type of the MULTIANEWARRAY instruction.
+////     */
+////    static final int MANA_INSN = 15;
+//
+//    /**
+//     * The type of the WIDE instruction.
+//     */
+//    static final int WIDE_INSN = 16;
+//
+//    /**
+//     * The instruction types of all JVM opcodes.
+//     */
+//    static final byte[] TYPE;
+//
+//    // --------------------------------------------------------------------------
+//    // Static initializer
+//    // --------------------------------------------------------------------------
+//    /**
+//     * Computes the instruction types of JVM opcodes.
+//     */
+//    static {
+//        int i, len;
+//        byte[] b = new byte[220];
+//        String s
+//                = "AAAAAAAAAAAAAAAABCKLLDDDDDEEEEEEEEEEEEEEEEEEEEAAAAAAAADDDDDEEEEEEEEE"
+//                + "EEEEEEEEEEEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAA"
+//                + "AAAAAAAAAAAAAAAAAIIIIIIIIIIIIIIIIDNOAAAAAAGGGGGGGHAFBFAAFFAAQPIIJJII"
+//                + "IIIIIIIIIIIIIIII";
+//        for (i = 0, len = b.length; i < len; ++i) {
+//            b[i] = (byte) (s.charAt(i) - 'A');
+//        }
+//        TYPE = b;
+//
+//        /* code to generate the above string
+//
+//         // SBYTE_INSN instructions
+//         b[Constants.NEWARRAY] = SBYTE_INSN;
+//         b[Constants.BIPUSH] = SBYTE_INSN;
+//
+//         // SHORT_INSN instructions
+//         b[Constants.SIPUSH] = SHORT_INSN;
+//
+//         // (IMPL)VAR_INSN instructions
+//         b[Constants.RET] = VAR_INSN;
+//         for (i = Constants.ILOAD; i <= Constants.ALOAD; ++i) {
+//         b[i] = VAR_INSN;
+//         }
+//         for (i = Constants.ISTORE; i <= Constants.ASTORE; ++i) {
+//         b[i] = VAR_INSN;
+//         }
+//         for (i = 26; i <= 45; ++i) { // ILOAD_0 to ALOAD_3
+//         b[i] = IMPLVAR_INSN;
+//         }
+//         for (i = 59; i <= 78; ++i) { // ISTORE_0 to ASTORE_3
+//         b[i] = IMPLVAR_INSN;
+//         }
+//
+//         // TYPE_INSN instructions
+//         b[Constants.NEW] = TYPE_INSN;
+//         b[Constants.ANEWARRAY] = TYPE_INSN;
+//         b[Constants.CHECKCAST] = TYPE_INSN;
+//         b[Constants.INSTANCEOF] = TYPE_INSN;
+//
+//         // (Set)FIELDORMETH_INSN instructions
+//         for (i = Constants.GETSTATIC; i <= Constants.INVOKESTATIC; ++i) {
+//         b[i] = FIELDORMETH_INSN;
+//         }
+//         b[Constants.INVOKEINTERFACE] = ITFMETH_INSN;
+//
+//         // LABEL(W)_INSN instructions
+//         for (i = Constants.IFEQ; i <= Constants.JSR; ++i) {
+//         b[i] = LABEL_INSN;
+//         }
+//         b[Constants.IFNULL] = LABEL_INSN;
+//         b[Constants.IFNONNULL] = LABEL_INSN;
+//         b[200] = LABELW_INSN; // GOTO_W
+//         b[201] = LABELW_INSN; // JSR_W
+//         // temporary opcodes used internally by ASM - see Label and MethodWriter
+//         for (i = 202; i < 220; ++i) {
+//         b[i] = LABEL_INSN;
+//         }
+//
+//         // LDC(_W) instructions
+//         b[Constants.LDC] = LDC_INSN;
+//         b[19] = LDCW_INSN; // LDC_W
+//         b[20] = LDCW_INSN; // LDC2_W
+//
+//         // special instructions
+//         b[Constants.IINC] = IINC_INSN;
+//         b[Constants.TABLESWITCH] = TABL_INSN;
+//         b[Constants.LOOKUPSWITCH] = LOOK_INSN;
+//         b[Constants.MULTIANEWARRAY] = MANA_INSN;
+//         b[196] = WIDE_INSN; // WIDE
+//
+//         for (i = 0; i < b.length; ++i) {
+//         System.err.print((char)('A' + b[i]));
+//         }
+//         System.err.println();
+//         */
+//    }
 
     public ClassWriter(
             final int version,
@@ -377,12 +377,12 @@ public final class ClassWriter {
         } else {
             this.interfaces = EMPATY_INTS;
         }
-        if ((access & Constants.ACC_DEPRECATED) != 0) {
-            newUTF8("Deprecated");
-        }
-        if ((access & Constants.ACC_SYNTHETIC) != 0) {
-            newUTF8("Synthetic");
-        }
+//        if ((access & Constants.ACC_DEPRECATED) != 0) {
+//            newUTF8("Deprecated");
+//        }
+//        if ((access & Constants.ACC_SYNTHETIC) != 0) {
+//            newUTF8("Synthetic");
+//        }
     }
 
 //    public void visitField(
@@ -444,14 +444,14 @@ public final class ClassWriter {
             size += cb.getSize();
         }
         int attributeCount = 0;
-        if ((access & Constants.ACC_DEPRECATED) != 0) {
-            ++attributeCount;
-            size += 6;
-        }
-        if ((access & Constants.ACC_SYNTHETIC) != 0) {
-            ++attributeCount;
-            size += 6;
-        }
+//        if ((access & Constants.ACC_DEPRECATED) != 0) {
+//            ++attributeCount;
+//            size += 6;
+//        }
+//        if ((access & Constants.ACC_SYNTHETIC) != 0) {
+//            ++attributeCount;
+//            size += 6;
+//        }
         size += pool.length;
         // allocates a byte vector of this size, in order to avoid unnecessary
         // arraycopy operations in the ByteBuffer.enlarge() method
@@ -472,12 +472,12 @@ public final class ClassWriter {
             cb.renderTo(out);
         }
         out.putShort(attributeCount);
-        if ((access & Constants.ACC_DEPRECATED) != 0) {
-            out.putShort(newUTF8("Deprecated")).putInt(0);
-        }
-        if ((access & Constants.ACC_SYNTHETIC) != 0) {
-            out.putShort(newUTF8("Synthetic")).putInt(0);
-        }
+//        if ((access & Constants.ACC_DEPRECATED) != 0) {
+//            out.putShort(newUTF8("Deprecated")).putInt(0);
+//        }
+//        if ((access & Constants.ACC_SYNTHETIC) != 0) {
+//            out.putShort(newUTF8("Synthetic")).putInt(0);
+//        }
         return out.data;
     }
 

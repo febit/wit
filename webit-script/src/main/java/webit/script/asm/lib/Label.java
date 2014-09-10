@@ -216,12 +216,12 @@ public final class Label {
      * @throws IllegalArgumentException if this label has already been resolved,
      * or if it has not been created by the given code writer.
      */
-    boolean resolve(
+    void resolve(
             final MethodWriter owner,
             final int position,
             final byte[] data) {
 
-        boolean needUpdate = false;
+        //boolean needUpdate = false;
         this.resolved = true;
         this.position = position;
         int i = 0;
@@ -232,21 +232,22 @@ public final class Label {
             if (source >= 0) {
                 offset = position - source;
                 if (offset < Short.MIN_VALUE || offset > Short.MAX_VALUE) {
-          // changes the opcode of the jump instruction, in order to be able to
-                    // find it later (see resizeInstructions in MethodWriter). These
-                    // temporary opcodes are similar to jump instruction opcodes, except
-                    // that the 2 bytes offset is unsigned (and can therefore represent
-                    // values from 0 to 65535, which is sufficient since the size of a
-                    // method is limited to 65535 bytes).
-                    int opcode = data[reference - 1] & 0xFF;
-                    if (opcode <= Constants.JSR) {
-                        // changes IFEQ ... JSR to opcodes 202 to 217 (inclusive)
-                        data[reference - 1] = (byte) (opcode + 49);
-                    } else {
-                        // changes IFNULL and IFNONNULL to opcodes 218 and 219 (inclusive)
-                        data[reference - 1] = (byte) (opcode + 20);
-                    }
-                    needUpdate = true;
+//          // changes the opcode of the jump instruction, in order to be able to
+//                    // find it later (see resizeInstructions in MethodWriter). These
+//                    // temporary opcodes are similar to jump instruction opcodes, except
+//                    // that the 2 bytes offset is unsigned (and can therefore represent
+//                    // values from 0 to 65535, which is sufficient since the size of a
+//                    // method is limited to 65535 bytes).
+//                    int opcode = data[reference - 1] & 0xFF;
+//                    if (opcode <= Constants.JSR) {
+//                        // changes IFEQ ... JSR to opcodes 202 to 217 (inclusive)
+//                        data[reference - 1] = (byte) (opcode + 49);
+//                    } else {
+//                        // changes IFNULL and IFNONNULL to opcodes 218 and 219 (inclusive)
+//                        data[reference - 1] = (byte) (opcode + 20);
+//                    }
+//                    needUpdate = true;
+                    throw new RuntimeException("label offset is more than 2 bytes:" + offset);
                 }
                 data[reference++] = (byte) (offset >>> 8);
                 data[reference] = (byte) offset;
@@ -258,6 +259,6 @@ public final class Label {
                 data[reference] = (byte) offset;
             }
         }
-        return needUpdate;
+        //return needUpdate;
     }
 }
