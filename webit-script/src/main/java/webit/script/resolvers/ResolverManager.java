@@ -55,20 +55,22 @@ public class ResolverManager implements Initable {
     @SuppressWarnings("unchecked")
     protected GetResolver resolveGetResolverIfAbsent(final Class type) {
         GetResolver resolver = getters.get(type);
-        if (resolver == null) {
-            ArrayList<Class> types = getResolverTypes;
-            for (int i = 0, len = types.size(); i < len; i++) {
-                if (types.get(i).isAssignableFrom(type)) {
-                    resolver = getResolvers.get(i);
-                    break;
-                }
-            }
-            if (resolver == null) {
-                resolver = resolveGetResolver(type);
-            }
-            resolver = getters.putIfAbsent(type, resolver);
+        if (resolver != null) {
+            return resolver;
         }
-        return resolver;
+        final ArrayList<Class> types = getResolverTypes;
+        int i = types.size();
+        while (i > 0) {
+            --i;
+            if (types.get(i).isAssignableFrom(type)) {
+                resolver = getResolvers.get(i);
+                break;
+            }
+        }
+        if (resolver == null) {
+            resolver = resolveGetResolver(type);
+        }
+        return getters.putIfAbsent(type, resolver);
     }
 
     protected GetResolver resolveGetResolver(final Class type) {
@@ -79,20 +81,22 @@ public class ResolverManager implements Initable {
     protected SetResolver resolveSetResolverIfAbsent(final Class type) {
         SetResolver resolver;
         resolver = setters.get(type);
-        if (resolver == null) {
-            ArrayList<Class> types = setResolverTypes;
-            for (int i = 0, len = types.size(); i < len; i++) {
-                if (types.get(i).isAssignableFrom(type)) {
-                    resolver = setResolvers.get(i);
-                    break;
-                }
-            }
-            if (resolver == null) {
-                resolver = resolveSetResolver(type);
-            }
-            resolver = setters.putIfAbsent(type, resolver);
+        if (resolver != null) {
+            return resolver;
         }
-        return resolver;
+        final ArrayList<Class> types = setResolverTypes;
+        int i = types.size();
+        while (i > 0) {
+            --i;
+            if (types.get(i).isAssignableFrom(type)) {
+                resolver = setResolvers.get(i);
+                break;
+            }
+        }
+        if (resolver == null) {
+            resolver = resolveSetResolver(type);
+        }
+        return setters.putIfAbsent(type, resolver);
     }
 
     protected SetResolver resolveSetResolver(final Class type) {
@@ -103,21 +107,23 @@ public class ResolverManager implements Initable {
     public OutResolver resolveOutResolver(final Class type) {
         OutResolver resolver;
         resolver = outters.get(type);
-        if (resolver == null) {
-            ArrayList<Class> types = outResolverTypes;
-            for (int i = 0, len = types.size(); i < len; i++) {
-                if (types.get(i).isAssignableFrom(type)) {
-                    resolver = outResolvers.get(i);
-                    break;
-                }
-            }
-
-            if (resolver == null) {
-                resolver = commonResolver;
-            }
-            resolver = outters.putIfAbsent(type, resolver);
+        if (resolver != null) {
+            return resolver;
         }
-        return resolver;
+        final ArrayList<Class> types = outResolverTypes;
+        int i = types.size();
+        while (i > 0) {
+            --i;
+            if (types.get(i).isAssignableFrom(type)) {
+                resolver = outResolvers.get(i);
+                break;
+            }
+        }
+
+        if (resolver == null) {
+            resolver = commonResolver;
+        }
+        return outters.putIfAbsent(type, resolver);
     }
 
     public void init(Engine engine) {

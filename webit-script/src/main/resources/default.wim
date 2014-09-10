@@ -25,19 +25,19 @@ assistantSuffixs+=.wit
 [resolverManager]
 # ignoreNullPointer=true
 resolvers='''
-    webit.script.resolvers.impl.MapResolver
-    webit.script.resolvers.impl.BagResolver
-    webit.script.resolvers.impl.ListResolver
-    webit.script.resolvers.impl.ArrayResolver
-    webit.script.resolvers.impl.IterGetResolver
     webit.script.resolvers.impl.LongOutResolver
     webit.script.resolvers.impl.IntegerOutResolver
     webit.script.resolvers.impl.ScriptVoidResolver
-    webit.script.resolvers.impl.ObjectArrayResolver
     webit.script.resolvers.impl.CharSequenceResolver
     webit.script.resolvers.impl.ByteArrayOutResolver
     webit.script.resolvers.impl.CharArrayOutResolver
+    webit.script.resolvers.impl.ArrayResolver
+    webit.script.resolvers.impl.BagResolver
     webit.script.resolvers.impl.ScriptUnsetableBagResolver
+    webit.script.resolvers.impl.IterGetResolver
+    webit.script.resolvers.impl.ObjectArrayResolver
+    webit.script.resolvers.impl.ListResolver
+    webit.script.resolvers.impl.MapResolver
 '''
 
 

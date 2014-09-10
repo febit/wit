@@ -117,7 +117,7 @@ public final class Context implements KeyValueAccepter {
         return this.loopType != 0;
     }
 
-    public void set(String key, Object value) {
+    public void set(final String key, final Object value) {
         int index = indexers[this.indexer].getIndex(key);
         if (index >= 0) {
             this.vars[index] = value;
@@ -132,7 +132,7 @@ public final class Context implements KeyValueAccepter {
         this.out.write(chars);
     }
 
-    public final Object getBean(Object bean, Object property) {
+    public Object getBean(final Object bean, final Object property) {
         if (bean != null) {
             final GetResolver resolver;
             if ((resolver = this.getters.unsafeGet(bean.getClass())) != null) {
@@ -142,7 +142,7 @@ public final class Context implements KeyValueAccepter {
         return this.resolverManager.get(bean, property);
     }
 
-    public final void setBean(Object bean, Object property, Object value) {
+    public void setBean(final Object bean, final Object property, final Object value) {
         if (bean != null) {
             final SetResolver resolver;
             if ((resolver = this.setters.unsafeGet(bean.getClass())) != null) {
@@ -171,7 +171,10 @@ public final class Context implements KeyValueAccepter {
 
     public Object getLocal(final Object key) {
         final Map<Object, Object> map;
-        return (map = this.locals) != null ? map.get(key) : null;
+        if ((map = this.locals) != null) {
+            return map.get(key);
+        }
+        return null;
     }
 
     public void setLocal(final Object key, final Object value) {
@@ -193,11 +196,11 @@ public final class Context implements KeyValueAccepter {
         return results;
     }
 
-    public Object get(String key) {
+    public Object get(final String key) {
         return get(key, true);
     }
 
-    public Object get(String key, boolean force) {
+    public Object get(final String key, boolean force) {
         int index = indexers[this.indexer].getIndex(key);
         if (index >= 0) {
             return this.vars[index];
