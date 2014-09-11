@@ -104,21 +104,6 @@ public final class ClassWriter {
     private final int version;
 
     /**
-     * Index of the next item to be added in the constant pool.
-     */
-    private short index;
-
-    /**
-     * The constant pool of this class.
-     */
-    private final ByteBuffer pool;
-
-    /**
-     * The constant pool's hash table data.
-     */
-    private final HashMap<Item, Item> items;
-
-    /**
      * The access flags of this class.
      */
     private final int access;
@@ -150,28 +135,34 @@ public final class ClassWriter {
 //     * The fields of this class.
 //     */
 //    private ByteBuffer fields;
-
     /**
      * The methods of this class. These methods are stored in a linked list of
      * {@link MethodWriter MethodWriter} objects, linked to each other by their {@link
      * CodeWriter#next} field. This field stores the first element of this list.
      */
-    final ArrayList<MethodWriter> methods;
+    private final ArrayList<MethodWriter> methods;
+
+    /**
+     * The constant pool of this class.
+     */
+    private final ByteBuffer pool;
+
+    /**
+     * The constant pool's hash table data.
+     */
+    private final HashMap<Item, Item> items;
+
+    /**
+     * Index of the next item to be added in the constant pool.
+     */
+    private short poolIndex;
 
     /**
      * A reusable key used to look for items in the hash {@link #items items}.
      */
-    Item key;
-
-    /**
-     * A reusable key used to look for items in the hash {@link #items items}.
-     */
-    Item key2;
-
-    /**
-     * A reusable key used to look for items in the hash {@link #items items}.
-     */
-    Item key3;
+    private final Item key;
+    private final Item key2;
+    private final Item key3;
 
 //    /**
 //     * The type of instructions without any label.
@@ -349,14 +340,13 @@ public final class ClassWriter {
 //         System.err.println();
 //         */
 //    }
-
     public ClassWriter(
             final int version,
             final int access,
             final String name,
             final String superName,
             final String[] interfaces) {
-        index = 1;
+        poolIndex = 1;
         pool = new ByteBuffer();
         items = new HashMap<Item, Item>(64);
         methods = new ArrayList<MethodWriter>();
@@ -368,7 +358,7 @@ public final class ClassWriter {
         this.access = access;
         this.name = newClass(name);
         this.superName = superName == null ? 0 : newClass(superName);
-        if (interfaces != null && interfaces.length > 0) {
+        if (interfaces != null) {
             int interfaceCount = interfaces.length;
             this.interfaces = new int[interfaceCount];
             for (int i = 0; i < interfaceCount; ++i) {
@@ -417,7 +407,6 @@ public final class ClassWriter {
 //            fields.putShort(newUTF8("Deprecated")).putInt(0);
 //        }
 //    }
-
     public MethodWriter visitMethod(
             final int access,
             final String name,
@@ -435,7 +424,7 @@ public final class ClassWriter {
      */
     public byte[] toByteArray() {
         // computes the real size of the bytecode of this class
-        int interfaceCount = interfaces.length;
+        final int interfaceCount = interfaces.length;
         int size = 24 + 2 * interfaceCount;
 //        if (fields != null) {
 //            size += fields.length;
@@ -443,7 +432,7 @@ public final class ClassWriter {
         for (MethodWriter cb : this.methods) {
             size += cb.getSize();
         }
-        int attributeCount = 0;
+//        int attributeCount = 0;
 //        if ((access & Constants.ACC_DEPRECATED) != 0) {
 //            ++attributeCount;
 //            size += 6;
@@ -455,9 +444,9 @@ public final class ClassWriter {
         size += pool.length;
         // allocates a byte vector of this size, in order to avoid unnecessary
         // arraycopy operations in the ByteBuffer.enlarge() method
-        ByteBuffer out = new ByteBuffer(size);
+        final ByteBuffer out = new ByteBuffer(size);
         out.putInt(0xCAFEBABE).putInt(version);
-        out.putShort(index).put(pool);
+        out.putShort(poolIndex).put(pool);
         out.putShort(access).putShort(name).putShort(superName);
         out.putShort(interfaceCount);
         for (int i = 0; i < interfaceCount; ++i) {
@@ -471,7 +460,7 @@ public final class ClassWriter {
         for (MethodWriter cb : this.methods) {
             cb.renderTo(out);
         }
-        out.putShort(attributeCount);
+        out.putShort(0 /* attributeCount */);
 //        if ((access & Constants.ACC_DEPRECATED) != 0) {
 //            out.putShort(newUTF8("Deprecated")).putInt(0);
 //        }
@@ -533,7 +522,7 @@ public final class ClassWriter {
         Item result = get(key.set(UTF8, value, null, null));
         if (result == null) {
             pool.putByte(UTF8).putUTF8(value);
-            result = new Item(index++, key);
+            result = new Item(poolIndex++, key);
             put(result);
         }
         return result.index;
@@ -565,7 +554,7 @@ public final class ClassWriter {
         Item result = get(key2.set(CLASS, value, null, null));
         if (result == null) {
             pool.putBS(CLASS, newUTF8(value));
-            result = new Item(index++, key2);
+            result = new Item(poolIndex++, key2);
             put(result);
         }
         return result;
@@ -589,7 +578,7 @@ public final class ClassWriter {
         Item result = get(key3.set(FIELD, owner, name, desc));
         if (result == null) {
             put122(FIELD, newClass(owner), newNameType(name, desc));
-            result = new Item(index++, key3);
+            result = new Item(poolIndex++, key3);
             put(result);
         }
         return result.index;
@@ -613,7 +602,7 @@ public final class ClassWriter {
         Item result = get(key3.set(itf ? IMETH : METH, owner, name, desc));
         if (result == null) {
             put122(itf ? IMETH : METH, newClass(owner), newNameType(name, desc));
-            result = new Item(index++, key3);
+            result = new Item(poolIndex++, key3);
             put(result);
         }
         return result;
@@ -630,7 +619,7 @@ public final class ClassWriter {
         Item result = get(key.set(INT, value));
         if (result == null) {
             pool.putByte(INT).putInt(value);
-            result = new Item(index++, key);
+            result = new Item(poolIndex++, key);
             put(result);
         }
         return result;
@@ -647,7 +636,7 @@ public final class ClassWriter {
         Item result = get(key.set(FLOAT, value));
         if (result == null) {
             pool.putByte(FLOAT).putInt(Float.floatToIntBits(value));
-            result = new Item(index++, key);
+            result = new Item(poolIndex++, key);
             put(result);
         }
         return result;
@@ -664,9 +653,9 @@ public final class ClassWriter {
         Item result = get(key.set(LONG, value));
         if (result == null) {
             pool.putByte(LONG).putLong(value);
-            result = new Item(index, key);
+            result = new Item(poolIndex, key);
             put(result);
-            index += 2;
+            poolIndex += 2;
         }
         return result;
     }
@@ -682,9 +671,9 @@ public final class ClassWriter {
         Item result = get(key.set(DOUBLE, value));
         if (result == null) {
             pool.putByte(DOUBLE).putLong(Double.doubleToLongBits(value));
-            result = new Item(index, key);
+            result = new Item(poolIndex, key);
             put(result);
-            index += 2;
+            poolIndex += 2;
         }
         return result;
     }
@@ -700,7 +689,7 @@ public final class ClassWriter {
         Item result = get(key2.set(STR, value, null, null));
         if (result == null) {
             pool.putBS(STR, newUTF8(value));
-            result = new Item(index++, key2);
+            result = new Item(poolIndex++, key2);
             put(result);
         }
         return result;
@@ -720,7 +709,7 @@ public final class ClassWriter {
         Item result = get(key2.set(NAME_TYPE, name, desc, null));
         if (result == null) {
             put122(NAME_TYPE, newUTF8(name), newUTF8(desc));
-            result = new Item(index++, key2);
+            result = new Item(poolIndex++, key2);
             put(result);
         }
         return result.index;

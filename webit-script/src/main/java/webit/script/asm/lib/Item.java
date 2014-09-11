@@ -50,7 +50,7 @@ final class Item {
     int type;
 
     /**
-     * Value of this item, for a {@link ClassWriter#INT INT} item.
+     * Value of this item.
      */
     Number number;
 
@@ -188,7 +188,7 @@ final class Item {
             case ClassWriter.NAME_TYPE:
                 return other.strVal1.equals(strVal1)
                         && other.strVal2.equals(strVal2);
-                    //case ClassWriter.FIELD:
+            //case ClassWriter.FIELD:
             //case ClassWriter.METH:
             //case ClassWriter.IMETH:
             default:

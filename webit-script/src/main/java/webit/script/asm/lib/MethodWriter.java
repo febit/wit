@@ -447,9 +447,9 @@ public final class MethodWriter {
         }
     }
 
-    public void pushClass(String name) {
-        visitLdcInsn(cw.newClassItem(name));
-    }
+//    public void pushClass(String name) {
+//        visitLdcInsn(cw.newClassItem(name));
+//    }
 
     public void push(int value) {
         if (value > 0 && value <= 5) {

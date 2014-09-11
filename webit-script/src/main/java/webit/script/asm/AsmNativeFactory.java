@@ -18,7 +18,7 @@ import webit.script.util.ClassUtil;
  */
 public class AsmNativeFactory extends NativeFactory {
 
-    private static final String[] ASM_METHOD_ACCESSOR = new String[]{"webit/script/lang/MethodDeclare"};
+    private static final String[] METHOD_DECLARE = new String[]{"webit/script/lang/MethodDeclare"};
 
     @Override
     public MethodDeclare createNativeConstructorDeclare(Class type, Constructor constructor, int line, int column) {
@@ -52,8 +52,8 @@ public class AsmNativeFactory extends NativeFactory {
     }
 
     static MethodDeclare createAccessor(Member obj) throws InstantiationException, IllegalAccessException {
-        final String className = "webit.script.asm.Accessor_".concat(ASMUtil.getSn());
-        final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", ASM_METHOD_ACCESSOR);
+        final String className = "webit.script.asm.Accessor".concat(ASMUtil.getSn());
+        final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", METHOD_DECLARE);
 
         ASMUtil.visitConstructor(classWriter);
 

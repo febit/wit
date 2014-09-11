@@ -90,7 +90,7 @@ public interface Constants {
   // opcodes                  // visit method (- = idem)
 
 //  int NOP = 0;                // visitInsn
-//  int ACONST_NULL = 1;        // -
+  int ACONST_NULL = 1;        // -
 //  int ICONST_M1 = 2;          // -
   int ICONST_0 = 3;           // -
 //  int ICONST_1 = 4;           // -

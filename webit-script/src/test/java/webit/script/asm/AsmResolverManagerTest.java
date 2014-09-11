@@ -78,7 +78,7 @@ public class AsmResolverManagerTest {
 
         AsmResolver resolver = (AsmResolver) AsmResolverManager.createResolverClass(Foo.class).newInstance();
 
-        assertEquals(resolver.getMatchClass(), Foo.class);
+        assertEquals(null, resolver.getMatchClass());
 
         int i = 0;
         assertEquals(resolver.get(foo, "f" + (i + 1)), "foo:f1");

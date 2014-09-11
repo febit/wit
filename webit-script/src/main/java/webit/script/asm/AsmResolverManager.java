@@ -67,18 +67,10 @@ public class AsmResolverManager extends ResolverManager {
     static Class createResolverClass(Class beanClass) throws Exception {
         //XXX: rewrite
         if (ClassUtil.isPublic(beanClass)) {
-            final String className = "webit.script.asm.Resolver_".concat(ASMUtil.getSn());
+            final String className = "webit.script.asm.Resolver".concat(ASMUtil.getSn());
 
             final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", ASM_RESOLVER);
             ASMUtil.visitConstructor(classWriter);
-
-            final String beanName = ASMUtil.getBoxedInternalName(beanClass);
-
-            //getMatchClass
-            final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "getMatchClass", "()Ljava/lang/Class;", null);
-            m.pushClass(beanName);
-            m.visitInsn(Constants.ARETURN);
-            m.visitMaxs();
 
             final FieldInfo[] all = FieldInfoResolver.resolve(beanClass);
             Arrays.sort(all);
@@ -111,10 +103,17 @@ public class AsmResolverManager extends ResolverManager {
             visitXetMethod(true, classWriter, beanClass, all, hashs, indexer);
             visitXetMethod(false, classWriter, beanClass, all, hashs, indexer);
 
+            //getMatchClass
+            final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "getMatchClass", "()Ljava/lang/Class;", null);
+            m.visitInsn(Constants.ACONST_NULL);
+            m.visitInsn(Constants.ARETURN);
+            m.visitMaxs();
+
             return ASMUtil.loadClass(className, classWriter);
         } else {
             throw new Exception(StringUtil.format("Class [{}] is not public", beanClass));
         }
+
     }
 
     private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class beanClass, final FieldInfo[] all, final int[] hashs, final int[] indexer) {
