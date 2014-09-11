@@ -21,32 +21,42 @@ public class AsmNativeFactory extends NativeFactory {
     private static final String[] METHOD_DECLARE = new String[]{"webit/script/lang/MethodDeclare"};
 
     @Override
-    public MethodDeclare createNativeConstructorDeclare(Class type, Constructor constructor, int line, int column) {
-        MethodDeclare accessor = createMethodDeclare(type, constructor);
+    protected MethodDeclare createNativeConstructorDeclare(Constructor constructor) {
+        MethodDeclare accessor = createMethodDeclare(constructor);
         if (accessor != null) {
             return accessor;
         }
-        return super.createNativeConstructorDeclare(type, constructor, line, column);
+        return super.createNativeConstructorDeclare(constructor);
     }
 
     @Override
-    public MethodDeclare createNativeMethodDeclare(Class type, Method method, int line, int column) {
-        MethodDeclare accessor = createMethodDeclare(type, method);
+    protected MethodDeclare createNativeMethodDeclare(Method method) {
+        MethodDeclare accessor = createMethodDeclare(method);
         if (accessor != null) {
             return accessor;
         }
-        return super.createNativeMethodDeclare(type, method, line, column);
+        return super.getNativeMethodDeclare(method);
     }
 
-    protected MethodDeclare createMethodDeclare(Class type, Member member) {
-        if (ClassUtil.isPublic(type) && ClassUtil.isPublic(member)) {
-            try {
-                return createAccessor(member);
-            } catch (Exception e) {
-                logger.error("Failed to create ASMMethodDeclare for '{}'.", member, e);
-            } catch (Error e) {
-                logger.error("Failed to create ASMMethodDeclare for '{}'.", member, e);
+    protected MethodDeclare createMethodDeclare(Member member) {
+        if (ClassUtil.isPublic(member.getDeclaringClass()) && ClassUtil.isPublic(member)) {
+            MethodDeclare declare = CACHE.get(member);
+            if (declare == null) {
+                synchronized (CACHE) {
+                    try {
+                        declare = CACHE.get(member);
+                        if (declare == null) {
+                            declare = createAccessor(member);
+                            CACHE.put(member, declare);
+                        }
+                    } catch (Exception e) {
+                        logger.error("Failed to create ASMMethodDeclare for '{}'.", member, e);
+                    } catch (Error e) {
+                        logger.error("Failed to create ASMMethodDeclare for '{}'.", member, e);
+                    }
+                }
             }
+            return declare;
         }
         return null;
     }

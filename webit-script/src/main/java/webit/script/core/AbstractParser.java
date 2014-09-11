@@ -272,15 +272,15 @@ abstract class AbstractParser {
     }
 
     Expression createNativeNewArrayDeclareExpression(Class componentType, int line, int column) {
-        return new DirectValue(this.nativeFactory.createNativeNewArrayMethodDeclare(componentType, line, column), line, column);
+        return new DirectValue(this.nativeFactory.getNativeNewArrayMethodDeclare(componentType, line, column), line, column);
     }
 
     Expression createNativeMethodDeclareExpression(Class clazz, String methodName, List<Class> list, int line, int column) {
-        return new DirectValue(this.nativeFactory.createNativeMethodDeclare(clazz, methodName, list.toArray(new Class[list.size()]), line, column), line, column);
+        return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName, list.toArray(new Class[list.size()]), line, column), line, column);
     }
 
     Expression createNativeConstructorDeclareExpression(Class clazz, List<Class> list, int line, int column) {
-        return new DirectValue(this.nativeFactory.createNativeConstructorDeclare(clazz, list.toArray(new Class[list.size()]), line, column), line, column);
+        return new DirectValue(this.nativeFactory.getNativeConstructorDeclare(clazz, list.toArray(new Class[list.size()]), line, column), line, column);
     }
 
     Statement declearVar(String ident, int line, int column) {
@@ -292,9 +292,8 @@ abstract class AbstractParser {
     static ResetableValueExpression castToResetableValueExpression(Expression expr) {
         if (expr instanceof ResetableValueExpression) {
             return (ResetableValueExpression) expr;
-        } else {
-            throw new ParseException("Invalid expression to redirect out stream to, must be rewriteable", expr);
         }
+        throw new ParseException("Invalid expression to redirect out stream to, must be rewriteable", expr);
     }
 
     static Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column) {

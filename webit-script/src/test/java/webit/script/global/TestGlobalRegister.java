@@ -26,10 +26,10 @@ public class TestGlobalRegister implements GlobalRegister, Initable {
         manager.setConst("MY_CONST_2", "MY_CONST_2");
 
         //Native
-        manager.setConst("new_list", this.nativeFactory.createNativeConstructorDeclare(ArrayList.class, null));
-        manager.setConst("list_size", this.nativeFactory.createNativeMethodDeclare(List.class, "size", null));
-        manager.setConst("list_add", this.nativeFactory.createNativeMethodDeclare(List.class, "add", new Class[]{Object.class}));
-        manager.setConst("substring", this.nativeFactory.createNativeMethodDeclare(String.class, "substring", new Class[]{int.class, int.class}));
+        manager.setConst("new_list", this.nativeFactory.getNativeConstructorDeclare(ArrayList.class, null));
+        manager.setConst("list_size", this.nativeFactory.getNativeMethodDeclare(List.class, "size", null));
+        manager.setConst("list_add", this.nativeFactory.getNativeMethodDeclare(List.class, "add", new Class[]{Object.class}));
+        manager.setConst("substring", this.nativeFactory.getNativeMethodDeclare(String.class, "substring", new Class[]{int.class, int.class}));
     }
 
     public void init(Engine engine) {

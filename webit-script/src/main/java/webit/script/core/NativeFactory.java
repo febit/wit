@@ -3,6 +3,8 @@ package webit.script.core;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import webit.script.Engine;
 import webit.script.Initable;
 import webit.script.exceptions.ParseException;
@@ -20,6 +22,7 @@ import webit.script.util.StringUtil;
  */
 public class NativeFactory implements Initable {
 
+    protected final ConcurrentMap<Object, MethodDeclare> CACHE = new ConcurrentHashMap<Object, MethodDeclare>();
     protected Logger logger;
     protected NativeSecurityManager nativeSecurityManager;
 
@@ -28,15 +31,11 @@ public class NativeFactory implements Initable {
         this.nativeSecurityManager = engine.getNativeSecurityManager();
     }
 
-    public MethodDeclare createNativeNewArrayMethodDeclare(Class componentType) {
-        return createNativeNewArrayMethodDeclare(componentType, -1, -1);
+    public MethodDeclare getNativeNewArrayMethodDeclare(Class componentType) {
+        return createNativeNewArrayMethodDeclare(componentType, -1, -1, true);
     }
 
-    public MethodDeclare createNativeNewArrayMethodDeclare(Class componentType, boolean checkAccess) {
-        return createNativeNewArrayMethodDeclare(componentType, -1, -1, checkAccess);
-    }
-
-    public MethodDeclare createNativeNewArrayMethodDeclare(Class componentType, int line, int column) {
+    public MethodDeclare getNativeNewArrayMethodDeclare(Class componentType, int line, int column) {
         return createNativeNewArrayMethodDeclare(componentType, line, column, true);
     }
 
@@ -50,75 +49,95 @@ public class NativeFactory implements Initable {
             throw new ParseException("ComponentType must not Void.class", line, column);
         }
 
-        final String path = classForCheck.getName().concat(".[]");
-        if (checkAccess && !this.nativeSecurityManager.access(path)) {
-            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+        if (checkAccess) {
+            final String path = classForCheck.getName().concat(".[]");
+            if (!this.nativeSecurityManager.access(path)) {
+                throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+            }
         }
 
         return new NativeNewArrayDeclare(componentType);
     }
 
-    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes) {
-        return createNativeMethodDeclare(clazz, methodName, paramTypes, -1, -1);
+    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes) {
+        return getNativeMethodDeclare(clazz, methodName, paramTypes, true);
     }
 
-    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, boolean checkAccess) {
-        return createNativeMethodDeclare(clazz, methodName, paramTypes, -1, -1, checkAccess);
+    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, boolean checkAccess) {
+        return getNativeMethodDeclare(clazz, methodName, paramTypes, -1, -1, checkAccess);
     }
 
-    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, int line, int column) {
-        return createNativeMethodDeclare(clazz, methodName, paramTypes, line, column, true);
+    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, int line, int column) {
+        return getNativeMethodDeclare(clazz, methodName, paramTypes, line, column, true);
     }
 
     @SuppressWarnings("unchecked")
-    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, int line, int column, boolean checkAccess) {
-        final String path = StringUtil.concat(clazz.getName(), ".", methodName);
-        if (checkAccess && !this.nativeSecurityManager.access(path)) {
-            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, int line, int column, boolean checkAccess) {
+        if (checkAccess) {
+            final String path = StringUtil.concat(clazz.getName(), ".", methodName);
+            if (!this.nativeSecurityManager.access(path)) {
+                throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+            }
         }
         try {
-            Method method = clazz.getMethod(methodName, paramTypes);
-            return createNativeMethodDeclare(clazz, method, line, column);
-        } catch (NoSuchMethodException ex) {
-            throw new ParseException(ex.getMessage(), line, column);
-        } catch (SecurityException ex) {
+            return getNativeMethodDeclare(clazz.getMethod(methodName, paramTypes));
+        } catch (Exception ex) {
             throw new ParseException(ex.getMessage(), line, column);
         }
     }
 
-    public MethodDeclare createNativeMethodDeclare(Class clazz, Method method, int line, int column) {
+    public MethodDeclare getNativeConstructorDeclare(Class clazz, Class[] paramTypes) {
+        return getNativeConstructorDeclare(clazz, paramTypes, -1, -1, true);
+    }
+
+    public MethodDeclare getNativeConstructorDeclare(Class clazz, Class[] paramTypes, int line, int column) {
+        return getNativeConstructorDeclare(clazz, paramTypes, line, column, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public MethodDeclare getNativeConstructorDeclare(Class clazz, Class[] paramTypes, int line, int column, boolean checkAccess) {
+        if (checkAccess) {
+            final String path = clazz.getName().concat(".<init>");
+            if (!this.nativeSecurityManager.access(path)) {
+                throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+            }
+        }
+        try {
+            return getNativeConstructorDeclare(clazz.getConstructor(paramTypes));
+        } catch (Exception ex) {
+            throw new ParseException(ex.getMessage(), line, column);
+        }
+    }
+
+    public MethodDeclare getNativeMethodDeclare(Method method) {
+        MethodDeclare declare = CACHE.get(method);
+        if (declare == null) {
+            declare = createNativeMethodDeclare(method);
+            MethodDeclare old = CACHE.putIfAbsent(method, declare);
+            if (old != null) {
+                return old;
+            }
+        }
+        return declare;
+    }
+
+    public MethodDeclare getNativeConstructorDeclare(Constructor constructor) {
+        MethodDeclare declare = CACHE.get(constructor);
+        if (declare == null) {
+            declare = createNativeConstructorDeclare(constructor);
+            MethodDeclare old = CACHE.putIfAbsent(constructor, declare);
+            if (old != null) {
+                return old;
+            }
+        }
+        return declare;
+    }
+
+    protected MethodDeclare createNativeMethodDeclare(Method method) {
         return new NativeMethodDeclare(method);
     }
 
-    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramTypes) {
-        return createNativeConstructorDeclare(clazz, paramTypes, -1, -1);
-    }
-
-    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramTypes, boolean checkAccess) {
-        return createNativeConstructorDeclare(clazz, paramTypes, -1, -1, checkAccess);
-    }
-
-    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramTypes, int line, int column) {
-        return createNativeConstructorDeclare(clazz, paramTypes, line, column, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    public MethodDeclare createNativeConstructorDeclare(Class clazz, Class[] paramTypes, int line, int column, boolean checkAccess) {
-        final String path = clazz.getName().concat(".<init>");
-        if (checkAccess && !this.nativeSecurityManager.access(path)) {
-            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
-        }
-        try {
-            Constructor constructor = clazz.getConstructor(paramTypes);
-            return createNativeConstructorDeclare(clazz, constructor, line, column);
-        } catch (NoSuchMethodException ex) {
-            throw new ParseException(ex.getMessage(), line, column);
-        } catch (SecurityException ex) {
-            throw new ParseException(ex.getMessage(), line, column);
-        }
-    }
-
-    public MethodDeclare createNativeConstructorDeclare(Class clazz, Constructor constructor, int line, int column) {
+    protected MethodDeclare createNativeConstructorDeclare(Constructor constructor) {
         return new NativeConstructorDeclare(constructor);
     }
 }

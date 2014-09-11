@@ -34,7 +34,7 @@ public class TLDGlobalRegister implements GlobalRegister, Initable {
         }
         Logger logger = this.engine.getLogger();
         if (logger.isInfoEnabled()) {
-            logger.info("Load TLD file: "+ tld);
+            logger.info("Load TLD file: " + tld);
         }
 
         try {
@@ -45,7 +45,7 @@ public class TLDGlobalRegister implements GlobalRegister, Initable {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally{
+        } finally {
             try {
                 input.close();
             } catch (IOException ignore) {
@@ -66,7 +66,7 @@ public class TLDGlobalRegister implements GlobalRegister, Initable {
                 parameterTypes[j] = ClassUtil.getClass(parameterTypeNames[j]);
             }
         }
-        return this.nativeFactory.createNativeMethodDeclare(
+        return this.nativeFactory.getNativeMethodDeclare(
                 ClassUtil.getClass(func.declaredClass),
                 func.methodName,
                 parameterTypes,
