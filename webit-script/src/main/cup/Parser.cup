@@ -64,7 +64,7 @@ terminal Integer    CONST;
 
 /* non terminal */
 non terminal ClassNameBand classPureName, className;
-non terminal IdentiferList identiferList;
+non terminal List<Identifer> identiferList;
 
 /* TemplateAST */
 non terminal TemplateAST templateAST;
@@ -99,9 +99,9 @@ non terminal FunctionDeclarePart funcHead, funcStatementHead;
 
 /* Lambda */
 non terminal Expression lambdaExpr;
-non terminal LambdaPart lambdaExprHead;
+non terminal FunctionDeclarePart lambdaExprHead;
 
-non terminal LambdaPart lambdaForHead1, lambdaForMapHead1;
+non terminal FunctionDeclarePart lambdaForHead1, lambdaForMapHead1;
 
 /* precedence */
 precedence left     SEMICOLON; // ;
@@ -152,9 +152,9 @@ className           ::= classPureName:part
 
 
 identiferList       ::= IDENTIFIER:ident
-                        {: return new IdentiferList().add(%ident%, %ident.line%, %ident.column%); :}
+                        {: List<Identifer> list = new ArrayList<Identifer>(); list.add(new Identifer(%ident%, %ident.line%, %ident.column%)); return list; :}
                         |identiferList:list COMMA IDENTIFIER:ident
-                        {: return (%list%).add(%ident%, %ident.line%, %ident.column%); :}
+                        {: (%list%).add(new Identifer(%ident%, %ident.line%, %ident.column%)); return %list%; :}
                         ;
 
 /* statements  */
@@ -334,12 +334,12 @@ forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
 
 
 lambdaForHead1   ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
-                    {: return new LambdaPart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%); :}
+                    {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%); :}
                     ;
 
 
 lambdaForMapHead1   ::= FOR LPAREN IDENTIFIER:key COMMA IDENTIFIER:value MINUSGT:sym
-                    {: return new LambdaPart(this.varmgr, %sym.line%, %sym.column%).appendArg(%key%, %key.line%, %key.column%).appendArg(%value%, %value.line%, %value.column%); :}
+                    {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%key%, %key.line%, %key.column%).appendArg(%value%, %value.line%, %value.column%); :}
                     ;
 
 
@@ -687,9 +687,9 @@ classNameList       ::=
 
 /* lambda */
 lambdaExprHead           ::= IDENTIFIER:ident MINUSGT:sym
-                            {: return new LambdaPart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%); :}
+                            {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%); :}
                             |LPAREN IDENTIFIER:ident COMMA identiferList:list RPAREN MINUSGT:sym
-                            {: return new LambdaPart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%).appendArgs(%list%); :}
+                            {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%).appendArgs(%list%); :}
                             ;
 
 

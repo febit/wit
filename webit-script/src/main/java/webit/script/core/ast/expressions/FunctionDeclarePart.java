@@ -4,14 +4,14 @@ package webit.script.core.ast.expressions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import webit.script.core.LoopInfo;
 import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Identifer;
-import webit.script.core.ast.IdentiferList;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.StatementList;
-import webit.script.core.LoopInfo;
 import webit.script.core.ast.operators.Assign;
+import webit.script.core.ast.statements.Return;
 import webit.script.exceptions.ParseException;
 import webit.script.util.StatementUtil;
 import webit.script.util.StringUtil;
@@ -38,7 +38,7 @@ public class FunctionDeclarePart {
         this(-1, varmgr, line, column);
     }
 
-    public FunctionDeclarePart(int assignToIndex, VariantManager varmgr, int line, int column) {
+    protected FunctionDeclarePart(int assignToIndex, VariantManager varmgr, int line, int column) {
         this.line = line;
         this.column = column;
         this.varmgr = varmgr;
@@ -48,7 +48,7 @@ public class FunctionDeclarePart {
         start = varmgr.assignVariant("arguments", line, column);
     }
 
-    public FunctionDeclarePart appendArgs(IdentiferList identiferList) {
+    public FunctionDeclarePart appendArgs(List<Identifer> identiferList) {
         for (Identifer identifer : identiferList) {
             appendArg(identifer.name, identifer.line, identifer.column);
         }
@@ -63,12 +63,22 @@ public class FunctionDeclarePart {
         return this;
     }
 
-    public List<String> getArgs() {
-        return args;
-    }
-
     public String getArg(int index) {
         return args.get(index);
+    }
+
+    public Expression pop(Expression expr) {
+        return pop(toStatementList(expr));
+    }
+
+    public FunctionDeclare popFunctionDeclare(Expression expr) {
+        return popFunctionDeclare(toStatementList(expr));
+    }
+
+    private static StatementList toStatementList(Expression expr) {
+        StatementList statementList = new StatementList();
+        statementList.add(new Return(expr, expr.line, expr.column));
+        return statementList;
     }
 
     public Expression pop(StatementList list) {

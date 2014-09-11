@@ -9,7 +9,7 @@ import webit.script.util.StatementUtil;
  *
  * @author Zqq
  */
-public class TemplateAST {
+public final class TemplateAST {
 
     private final Statement[] statements;
     private final VariantIndexer[] indexers;

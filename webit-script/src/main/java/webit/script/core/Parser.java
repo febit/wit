@@ -19,7 +19,7 @@ import webit.script.util.StatementUtil;
 
 /**
  * 
- * @version Tue Sep 02 12:00:47 CST 2014
+ * @version Thu Sep 11 20:52:35 CST 2014
  */
 public class Parser extends AbstractParser {
 
@@ -44,10 +44,10 @@ public class Parser extends AbstractParser {
                 Symbol funcExprSymbol = myStack.peek(3);
                 return new MethodExecute((Expression) funcExprSymbol.value, ((ExpressionList) myStack.peek(1).value).toArray(), funcExprSymbol.line, funcExprSymbol.column);
             }
-            case 9: // identiferList ::= identiferList COMMA IDENTIFIER 
+            case 8: // identiferList ::= IDENTIFIER 
             {
                 Symbol identSymbol = myStack.peek(0);
-                return ((IdentiferList) myStack.peek(2).value).add((String) identSymbol.value, identSymbol.line, identSymbol.column);
+                List<Identifer> list = new ArrayList<Identifer>(); list.add(new Identifer((String) identSymbol.value, identSymbol.line, identSymbol.column)); return list;
             }
             case 51: // importPart2 ::= importPart1 IDENTIFIER 
             {
@@ -94,11 +94,6 @@ public class Parser extends AbstractParser {
                 Symbol identSymbol = myStack.peek(0);
                 return createContextValueAtUpstair(0, (String) identSymbol.value, identSymbol.line, identSymbol.column);
             }
-            case 8: // identiferList ::= IDENTIFIER 
-            {
-                Symbol identSymbol = myStack.peek(0);
-                return new IdentiferList().add((String) identSymbol.value, identSymbol.line, identSymbol.column);
-            }
             case 44: // varPart ::= VAR IDENTIFIER 
             {
                 Symbol identSymbol = myStack.peek(0);
@@ -109,7 +104,7 @@ public class Parser extends AbstractParser {
             {
                 Symbol identSymbol = myStack.peek(1);
                 Symbol symSymbol = myStack.peek(0);
-                return new LambdaPart(this.varmgr, symSymbol.line, symSymbol.column).appendArg((String) identSymbol.value, identSymbol.line, identSymbol.column);
+                return new FunctionDeclarePart(this.varmgr, symSymbol.line, symSymbol.column).appendArg((String) identSymbol.value, identSymbol.line, identSymbol.column);
             }
             case 42: // varAssign ::= IDENTIFIER EQ expression 
             case 43: // varAssign ::= IDENTIFIER EQ varAssign 
@@ -131,20 +126,26 @@ public class Parser extends AbstractParser {
             case 158: // funcStatementHead ::= FUNCTION IDENTIFIER LPAREN identiferList RPAREN 
             {
                 Symbol identSymbol = myStack.peek(3);
-                return new FunctionDeclarePart((String) identSymbol.value, this.varmgr, identSymbol.line, identSymbol.column).appendArgs((IdentiferList) myStack.peek(1).value);
+                return new FunctionDeclarePart((String) identSymbol.value, this.varmgr, identSymbol.line, identSymbol.column).appendArgs((List<Identifer>) myStack.peek(1).value);
             }
             case 169: // lambdaExprHead ::= LPAREN IDENTIFIER COMMA identiferList RPAREN MINUSGT 
             {
                 Symbol identSymbol = myStack.peek(4);
                 Symbol symSymbol = myStack.peek(0);
-                return new LambdaPart(this.varmgr, symSymbol.line, symSymbol.column).appendArg((String) identSymbol.value, identSymbol.line, identSymbol.column).appendArgs((IdentiferList) myStack.peek(2).value);
+                return new FunctionDeclarePart(this.varmgr, symSymbol.line, symSymbol.column).appendArg((String) identSymbol.value, identSymbol.line, identSymbol.column).appendArgs((List<Identifer>) myStack.peek(2).value);
             }
             case 66: // lambdaForMapHead1 ::= FOR LPAREN IDENTIFIER COMMA IDENTIFIER MINUSGT 
             {
                 Symbol keySymbol = myStack.peek(3);
                 Symbol valueSymbol = myStack.peek(1);
                 Symbol symSymbol = myStack.peek(0);
-                return new LambdaPart(this.varmgr, symSymbol.line, symSymbol.column).appendArg((String) keySymbol.value, keySymbol.line, keySymbol.column).appendArg((String) valueSymbol.value, valueSymbol.line, valueSymbol.column);
+                return new FunctionDeclarePart(this.varmgr, symSymbol.line, symSymbol.column).appendArg((String) keySymbol.value, keySymbol.line, keySymbol.column).appendArg((String) valueSymbol.value, valueSymbol.line, valueSymbol.column);
+            }
+            case 9: // identiferList ::= identiferList COMMA IDENTIFIER 
+            {
+                Symbol listSymbol = myStack.peek(2);
+                Symbol identSymbol = myStack.peek(0);
+                ((List<Identifer>) listSymbol.value).add(new Identifer((String) identSymbol.value, identSymbol.line, identSymbol.column)); return (List<Identifer>) listSymbol.value;
             }
             case 165: // classNameList1 ::= classNameList1 COMMA className 
             {
@@ -170,22 +171,22 @@ public class Parser extends AbstractParser {
             case 67: // lambdaForHead2 ::= lambdaForHead1 expression COLON 
             {
                 Symbol partSymbol = myStack.peek(2);
-                return new ForInPart(((LambdaPart) partSymbol.value).getArg(0), ((LambdaPart) partSymbol.value).popFunctionDeclare((Expression) myStack.peek(1).value), this.varmgr, partSymbol.line, partSymbol.column);
+                return new ForInPart(((FunctionDeclarePart) partSymbol.value).getArg(0), ((FunctionDeclarePart) partSymbol.value).popFunctionDeclare((Expression) myStack.peek(1).value), this.varmgr, partSymbol.line, partSymbol.column);
             }
             case 69: // lambdaForHead2 ::= lambdaForMapHead1 expression COLON 
             {
                 Symbol partSymbol = myStack.peek(2);
-                return new ForMapPart(((LambdaPart) partSymbol.value).getArg(0), ((LambdaPart) partSymbol.value).getArg(1), ((LambdaPart) partSymbol.value).popFunctionDeclare((Expression) myStack.peek(1).value), this.varmgr, partSymbol.line, partSymbol.column);
+                return new ForMapPart(((FunctionDeclarePart) partSymbol.value).getArg(0), ((FunctionDeclarePart) partSymbol.value).getArg(1), ((FunctionDeclarePart) partSymbol.value).popFunctionDeclare((Expression) myStack.peek(1).value), this.varmgr, partSymbol.line, partSymbol.column);
             }
             case 68: // lambdaForHead2 ::= lambdaForHead1 LBRACE statementList RBRACE COLON 
             {
                 Symbol partSymbol = myStack.peek(4);
-                return new ForInPart(((LambdaPart) partSymbol.value).getArg(0), ((LambdaPart) partSymbol.value).popFunctionDeclare((StatementList) myStack.peek(2).value), this.varmgr, partSymbol.line, partSymbol.column);
+                return new ForInPart(((FunctionDeclarePart) partSymbol.value).getArg(0), ((FunctionDeclarePart) partSymbol.value).popFunctionDeclare((StatementList) myStack.peek(2).value), this.varmgr, partSymbol.line, partSymbol.column);
             }
             case 70: // lambdaForHead2 ::= lambdaForMapHead1 LBRACE statementList RBRACE COLON 
             {
                 Symbol partSymbol = myStack.peek(4);
-                return new ForMapPart(((LambdaPart) partSymbol.value).getArg(0), ((LambdaPart) partSymbol.value).getArg(1), ((LambdaPart) partSymbol.value).popFunctionDeclare((StatementList) myStack.peek(2).value), this.varmgr, partSymbol.line, partSymbol.column);
+                return new ForMapPart(((FunctionDeclarePart) partSymbol.value).getArg(0), ((FunctionDeclarePart) partSymbol.value).getArg(1), ((FunctionDeclarePart) partSymbol.value).popFunctionDeclare((StatementList) myStack.peek(2).value), this.varmgr, partSymbol.line, partSymbol.column);
             }
             case 81: // caseBlockStat ::= blockPrepare 
             {
@@ -422,7 +423,7 @@ public class Parser extends AbstractParser {
             case 161: // funcHead ::= FUNCTION LPAREN identiferList RPAREN 
             {
                 Symbol symSymbol = myStack.peek(3);
-                return new FunctionDeclarePart(this.varmgr, symSymbol.line, symSymbol.column).appendArgs((IdentiferList) myStack.peek(1).value);
+                return new FunctionDeclarePart(this.varmgr, symSymbol.line, symSymbol.column).appendArgs((List<Identifer>) myStack.peek(1).value);
             }
             case 125: // expression ::= expression QUESTION expression COLON expression 
             {
@@ -526,11 +527,14 @@ public class Parser extends AbstractParser {
                 return ((ClassNameBand) myStack.peek(2).value).plusArrayDepth();
             case 148: // expressionList1 ::= expressionList1 COMMA expression 
                 return ((ExpressionList) myStack.peek(2).value).add((Expression) myStack.peek(0).value);
+            case 170: // lambdaExpr ::= lambdaExprHead expression 
+                return ((FunctionDeclarePart) myStack.peek(1).value).pop((Expression) myStack.peek(0).value);
             case 41: // statement ::= funcStatementHead LBRACE RBRACE 
             case 129: // expression ::= funcHead LBRACE RBRACE 
                 return ((FunctionDeclarePart) myStack.peek(2).value).pop(new StatementList());
             case 40: // statement ::= funcStatementHead LBRACE statementList RBRACE 
             case 128: // expression ::= funcHead LBRACE statementList RBRACE 
+            case 171: // lambdaExpr ::= lambdaExprHead LBRACE statementList RBRACE 
                 return ((FunctionDeclarePart) myStack.peek(3).value).pop((StatementList) myStack.peek(1).value);
             case 60: // ifStat ::= ifPart 
                 return ((IfPart) myStack.peek(0).value).pop();
@@ -545,10 +549,6 @@ public class Parser extends AbstractParser {
                 return ((ImportPart) myStack.peek(3).value).append((String) myStack.peek(0).value, (Expression) myStack.peek(2).value);
             case 54: // importPart2 ::= importPart2 COMMA contextValueExpr EQ IDENTIFIER 
                 return ((ImportPart) myStack.peek(4).value).append((String) myStack.peek(0).value, (Expression) myStack.peek(2).value);
-            case 170: // lambdaExpr ::= lambdaExprHead expression 
-                return ((LambdaPart) myStack.peek(1).value).pop((Expression) myStack.peek(0).value);
-            case 171: // lambdaExpr ::= lambdaExprHead LBRACE statementList RBRACE 
-                return ((LambdaPart) myStack.peek(3).value).pop((StatementList) myStack.peek(1).value);
             case 153: // mapValuePart ::= mapValuePart COMMA DIRECT_VALUE COLON expression 
                 return ((MapValuePart) myStack.peek(4).value).add((Object) myStack.peek(2).value, (Expression) myStack.peek(0).value);
             case 154: // mapValuePart ::= mapValuePart COMMA MINUS DIRECT_VALUE COLON expression 

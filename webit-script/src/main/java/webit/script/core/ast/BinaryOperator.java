@@ -7,10 +7,10 @@ package webit.script.core.ast;
  */
 public abstract class BinaryOperator extends Expression {
 
-    public final Expression leftExpr;
-    public final Expression rightExpr;
+    protected final Expression leftExpr;
+    protected final Expression rightExpr;
 
-    public BinaryOperator(Expression leftExpr, Expression rightExpr, int line, int column) {
+    protected BinaryOperator(Expression leftExpr, Expression rightExpr, int line, int column) {
         super(line, column);
         this.leftExpr = leftExpr;
         this.rightExpr = rightExpr;

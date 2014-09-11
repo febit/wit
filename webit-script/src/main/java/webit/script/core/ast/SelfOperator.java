@@ -19,7 +19,7 @@ public abstract class SelfOperator extends Expression {
         this.rightExpr = rightExp;
     }
 
-    public Object execute(final Context context) {
+    public final Object execute(final Context context) {
         try {
             ResetableValueExpression left;
             return (left = this.leftExpr).setValue(context, doOperate(rightExpr.execute(context),

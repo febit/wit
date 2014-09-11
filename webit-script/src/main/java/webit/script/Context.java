@@ -3,8 +3,8 @@ package webit.script;
 
 import java.util.HashMap;
 import java.util.Map;
-import webit.script.core.VariantIndexer;
 import webit.script.core.LoopInfo;
+import webit.script.core.VariantIndexer;
 import webit.script.exceptions.NotFunctionException;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;

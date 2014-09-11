@@ -1,9 +1,9 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
+import webit.script.core.LoopInfo;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
-import webit.script.core.LoopInfo;
 import webit.script.util.StatementUtil;
 
 /**

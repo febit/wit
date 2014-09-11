@@ -5,7 +5,6 @@ import webit.script.Context;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.MethodDeclare;
-import webit.script.util.StatementUtil;
 
 /**
  *

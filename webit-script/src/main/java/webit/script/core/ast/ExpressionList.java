@@ -7,7 +7,7 @@ import java.util.LinkedList;
  *
  * @author Zqq
  */
-public class ExpressionList {
+public final class ExpressionList {
 
     private final LinkedList<Expression> expressionList;
 
