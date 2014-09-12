@@ -10,20 +10,20 @@
 
     <artifactId>webit-script-servlet</artifactId>
     <packaging>jar</packaging>
-    <version>1.5</version>
+    <version>1.5.1</version>
 
     <name>Webit Script Servlet</name>
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>webit-script</artifactId>
+            <version>1.5.1</version>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>webit-script</artifactId>
-            <version>1.5</version>
         </dependency>
     </dependencies>
 </project>

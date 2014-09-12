@@ -10,7 +10,7 @@
 
     <artifactId>webit-script-jfinal</artifactId>
     <packaging>jar</packaging>
-    <version>1.5</version>
+    <version>1.5.1</version>
 
     <properties>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -19,6 +19,11 @@
 
     <name>Webit Script :: JFinal</name>
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>webit-script-servlet</artifactId>
+            <version>1.5.1</version>
+        </dependency>
         <dependency>
             <groupId>com.jfinal</groupId>
             <artifactId>jfinal</artifactId>
@@ -30,11 +35,6 @@
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>webit-script-servlet</artifactId>
-            <version>1.5</version>
         </dependency>
     </dependencies>
 </project>

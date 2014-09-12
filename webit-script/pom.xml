@@ -10,8 +10,8 @@
 
     <artifactId>webit-script</artifactId>
     <packaging>jar</packaging>
-    <version>1.5</version>
-    
+    <version>1.5.1</version>
+
     <name>Webit Script</name>
 
     <dependencies>

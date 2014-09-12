@@ -11,22 +11,22 @@
     <packaging>jar</packaging>
     <artifactId>webit-script-tools</artifactId>
     <name>Webit Script Tools</name>
-    <version>1.5</version>
+    <version>1.5.1</version>
 
     <description>Tools for webit-script-1.5+.</description>
 
     <dependencies>
         <!-- provided -->
         <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-core</artifactId>
-            <version>2.6.6</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>webit-script</artifactId>
+            <version>1.5.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>webit-script</artifactId>
-            <version>1.5</version>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+            <version>2.6.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
