@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import webit.script.CFG;
-import webit.script.Engine;
 import webit.script.servlet.ServletUtil;
 import webit.script.servlet.WebEngineManager;
 
@@ -27,7 +26,7 @@ public class WebitRenderFactory implements IMainRenderFactory {
     protected final String suffix;
 
     public WebitRenderFactory() {
-        this(Engine.DEFAULT_SUFFIX);
+        this(".wit");
     }
 
     public WebitRenderFactory(String suffix) {
