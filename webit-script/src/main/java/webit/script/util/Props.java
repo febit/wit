@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * A mini version of 'Jodd-props', refer to the <a href="https://github.com/oblac/jodd">Jodd</a> project.
+ * 
  * @author zqq90
  */
 public final class Props {
