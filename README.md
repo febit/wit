@@ -12,21 +12,20 @@ This is a template engine, all writen in Java, **support Java 5+**.
 <dependency>
   <groupId>com.github.zqq90.webit-script</groupId>
   <artifactId>webit-script</artifactId>
-  <version>1.5.1</version>
+  <version>1.5.2</version>
 </dependency>
 ~~~~~
 
 ## Yeah, only one jar
 
-> `webit-script-1.5.1.jar` *<300KB*
+> `webit-script-1.5.2.jar` *<290KB*
 
 ## How to use
 
 ~~~~~java
-Engine engine = Engine.create("/webit-script-config.props", extraSettings);
-Template template = engine.getTemplate("/your/template/path/filename.ext");
-template.merge(parametersMap, outputStream); 
-//template.merge(parametersMap, writer);
+Engine engine = Engine.create();
+Template template = engine.getTemplate("/template.wit");
+template.merge(params, out);
 ~~~~~
 
 ## Hello Webit Script
@@ -43,12 +42,10 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
     }
 }
 {
-    //this is a function
     var func = function(a, b){
         return a + b + arguments[3];
     };
     echo func("a", "b", "c");
-    echo '\n';
 }
 {
     var map = {
@@ -75,23 +72,14 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
 
 > [Demo][mvc-demo]
 
-## Performance(性能)
-
-~~~~~
-// Waiting update
-~~~~~
-
 
 ## License
  
 **Webit Script** is released under the BSD License. See the bundled [LICENSE file][license] for
 details.
 
-> **Webit Script** 依据 BSD许可证发布。详细请看 [LICENSE][license] 文件。
-
 ## Third-party Licenses
 
-+ **Jodd-props**  under the BSD License. [License file][jodd_license]
 + **ASM**  under the BSD License.[License file][asm_license]
 
 ## Bug report
