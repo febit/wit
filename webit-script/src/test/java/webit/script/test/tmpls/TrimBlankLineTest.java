@@ -28,7 +28,7 @@ public class TrimBlankLineTest {
         Map<String, Object> param = new HashMap<String, Object>(4);
         param.put("trimBlankLine", true);
         template.merge(KeyValuesUtil.wrap(param), out);
-
+        
         engine.setTrimCodeBlockBlankLine(false);
         template.reset();
 
