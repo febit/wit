@@ -273,7 +273,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
 
   [^]                                  { pullToString(); }
 
-  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(Tokens.TEXT_STATEMENT,  stringLine,stringColumn, popAsCharArray());}
+  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(Tokens.TEXT_STATEMENT, stringLine, stringColumn, (!trimCodeBlockBlankLine || this.leftInterpolationFlag) ? popAsCharArray() : popAsCharArraySkipIfLeftNewLine());}
 }
 
 

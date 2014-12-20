@@ -2,6 +2,9 @@
 
 cd $(dirname $0)
 
+export JFLEX_HOME=/www/jflex-1.6.0
+export JAVA_HOME=/www/jdk
+
 
 $JAVA_HOME/bin/java -Dfile.encoding=UTF-8 -jar $JFLEX_HOME/lib/jflex.jar -d ../java/webit/script/core Lexer.jflex
 

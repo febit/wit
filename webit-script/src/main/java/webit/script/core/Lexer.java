@@ -1985,7 +1985,7 @@ class Lexer {
             zzAtEOF = true;
             switch (zzLexicalState) {
             case YYINITIAL: {
-              yybegin(END_OF_FILE); return symbol(Tokens.TEXT_STATEMENT,  stringLine,stringColumn, popAsCharArray());
+              yybegin(END_OF_FILE); return symbol(Tokens.TEXT_STATEMENT, stringLine, stringColumn, (!trimCodeBlockBlankLine || this.leftInterpolationFlag) ? popAsCharArray() : popAsCharArraySkipIfLeftNewLine());
             }
             case 403: break;
             case END_OF_FILE: {
