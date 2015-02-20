@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.github.zqq90.webit-script</groupId>
         <artifactId>support</artifactId>
-        <version>1.5</version>
+        <version>2</version>
     </parent>
 
     <artifactId>webit-script-jfinal</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.1</version>
+    <version>2.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>webit-script-servlet</artifactId>
-            <version>1.5.1</version>
+            <version>2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.jfinal</groupId>
