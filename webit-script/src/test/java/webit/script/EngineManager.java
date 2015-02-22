@@ -12,7 +12,7 @@ public class EngineManager {
     private static final Engine engine;
 
     static {
-        engine = Engine.create("/webit-script-test.props", null);
+        engine = Engine.create("/webit-script-test.wim", null);
     }
 
     public static Engine getEngine() {

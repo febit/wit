@@ -15,6 +15,7 @@ public class HelloTest {
 
     @Test
     public void test() throws ResourceNotFoundException {
+
         Template template = EngineManager.getTemplate("/helloTest.wit");
         template.merge(new DiscardOut());
     }

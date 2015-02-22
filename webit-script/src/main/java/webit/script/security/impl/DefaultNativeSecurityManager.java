@@ -3,8 +3,7 @@ package webit.script.security.impl;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import webit.script.Engine;
-import webit.script.Initable;
+import webit.script.Init;
 import webit.script.security.NativeSecurityManager;
 import webit.script.util.StringUtil;
 
@@ -12,13 +11,13 @@ import webit.script.util.StringUtil;
  *
  * @author Zqq
  */
-public class DefaultNativeSecurityManager implements NativeSecurityManager, Initable {
+public class DefaultNativeSecurityManager implements NativeSecurityManager {
 
     private static final String ROOT_NODE_NAME = "*";
 
     private final ConcurrentMap<String, Node> NODES;
-    //settings
-    private String list;
+
+    protected String list;
 
     public DefaultNativeSecurityManager() {
         this.NODES = new ConcurrentHashMap<String, Node>();
@@ -27,11 +26,8 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         NODES.put(ROOT_NODE_NAME, rootNode);
     }
 
-    public boolean access(String path) {
-        return getNode(path).isAccess();
-    }
-
-    public void init(Engine engine) {
+    @Init
+    public void init() {
 
         for (String rule : StringUtil.toArray(list)) {
             char firstChar = rule.charAt(0);
@@ -45,6 +41,14 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
         }
     }
 
+    public boolean access(String path) {
+        return getNode(path).isAccess();
+    }
+
+    public void setList(String list) {
+        this.list = list;
+    }
+
     protected final Node getNode(final String name) {
         Node node;
         if ((node = NODES.get(name)) == null) {
@@ -56,10 +60,6 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager, Init
             }
         }
         return node;
-    }
-
-    public void setList(String list) {
-        this.list = list;
     }
 
     protected static class Node {

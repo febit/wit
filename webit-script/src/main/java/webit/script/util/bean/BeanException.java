@@ -5,9 +5,9 @@ package webit.script.util.bean;
  *
  * @author Zqq
  */
-public class BeanUtilException extends RuntimeException {
+public class BeanException extends RuntimeException {
 
-    public BeanUtilException(String message) {
+    public BeanException(String message) {
         super(message);
     }
 

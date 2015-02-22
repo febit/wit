@@ -29,8 +29,4 @@ public class StringLoader implements Loader {
     public boolean isEnableCache(String name) {
         return enableCache;
     }
-
-    public void setEnableCache(boolean enableCache) {
-        this.enableCache = enableCache;
-    }
 }

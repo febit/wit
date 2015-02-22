@@ -20,7 +20,6 @@ import webit.script.io.impl.OutputStreamOut;
 import webit.script.tools.EngineManager;
 import webit.script.util.ClassUtil;
 import webit.script.util.ByteArrayOutputStream;
-import webit.script.util.ByteArrayOutputStream;
 import static org.junit.Assert.*;
 
 /**

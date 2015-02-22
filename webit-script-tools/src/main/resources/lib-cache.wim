@@ -3,9 +3,13 @@
 registers+= webit.script.tools.cache.CacheGlobalRegister
 
 
+[noCacheProvider :webit.script.tools.cache.impl.NoCacheProvider]
+[simpleCacheProvider :webit.script.tools.cache.impl.SimpleCacheProvider]
+[ehcacheProvider :webit.script.tools.cache.impl.EhcacheProvider]
+
 ## CacheGlobalRegister
 # [webit.script.tools.cache.CacheGlobalRegister]
 # name=cache
 # registCacheClear=false
 # registCacheRemove=true
-# cacheProvider=webit.script.tools.cache.impl.SimpleCacheProvider
+# cacheProvider=simpleCacheProvider

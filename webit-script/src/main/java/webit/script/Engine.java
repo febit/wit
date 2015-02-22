@@ -1,9 +1,15 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import webit.script.core.NativeFactory;
@@ -19,10 +25,9 @@ import webit.script.loaders.Loader;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
-import webit.script.util.ClassEntry;
+import webit.script.util.ArrayUtil;
 import webit.script.util.ClassUtil;
 import webit.script.util.KeyValuesUtil;
-import webit.script.util.Petite;
 import webit.script.util.Props;
 import webit.script.util.PropsUtil;
 import webit.script.util.StringUtil;
@@ -35,27 +40,21 @@ public final class Engine {
 
     public static final String UTF_8 = internEncoding("UTF-8");
 
-    //settings
-    private ClassEntry resourceLoaderType;
-    private ClassEntry textStatementFactoryType;
-    private ClassEntry nativeSecurityManagerType;
-    private ClassEntry coderFactoryType;
-    private ClassEntry globalManagerType;
-    private ClassEntry loggerType;
-    private ClassEntry resolverManagerType;
-    private ClassEntry nativeFactoryType;
+    private final ConcurrentMap<String, Template> templateCache = new ConcurrentHashMap<String, Template>();
+    private final Map<Class, Object> components = new HashMap<Class, Object>();
+    private final Map<String, Object> beans = new HashMap<String, Object>();
+    private final Map<String, Object> datas = new HashMap<String, Object>();
+    private final Map<String, Entry> configEntrys = new HashMap<String, Entry>();
+
     private boolean looseVar;
     private boolean shareRootData = true;
     private boolean trimCodeBlockBlankLine = true;
-    private boolean appendLostSuffix;
-    private String suffix = ".wit";
     private String encoding = UTF_8;
     private String inits;
     private String[] vars;
-    private String[] assistantSuffixs;
 
     private Logger logger;
-    private Loader resourceLoader;
+    private Loader loader;
     private GlobalManager globalManager;
     private TextStatementFactory textStatementFactory;
     private NativeSecurityManager nativeSecurityManager;
@@ -63,42 +62,12 @@ public final class Engine {
     private NativeFactory nativeFactory;
     private ResolverManager resolverManager;
 
-    private final ConcurrentMap<String, Template> templateCache;
-    private final Map<String, Object> componentContainer;
-    private final Petite petite;
-
-    private Engine(final Petite petite) {
-        this.petite = petite;
-        this.templateCache = new ConcurrentHashMap<String, Template>();
-        this.componentContainer = new HashMap<String, Object>();
+    @Init
+    public void init() {
+        this.encoding = internEncoding(encoding);
     }
 
-    @SuppressWarnings("unchecked")
-    private void init() {
-        this.logger = (Logger) newComponentInstance(this.loggerType, webit.script.loggers.impl.NOPLogger.class);
-        this.nativeFactory = (NativeFactory) newComponentInstance(this.nativeFactoryType, webit.script.asm.AsmNativeFactory.class);
-        this.resolverManager = (ResolverManager) newComponentInstance(this.resolverManagerType, webit.script.asm.AsmResolverManager.class);
-        this.coderFactory = (CoderFactory) newComponentInstance(this.coderFactoryType, webit.script.io.charset.impl.DefaultCoderFactory.class);
-        this.nativeSecurityManager = (NativeSecurityManager) newComponentInstance(this.nativeSecurityManagerType, webit.script.security.impl.NoneNativeSecurityManager.class);
-        this.textStatementFactory = (TextStatementFactory) newComponentInstance(this.textStatementFactoryType, webit.script.core.text.impl.SimpleTextStatementFactory.class);
-        this.resourceLoader = (Loader) newComponentInstance(this.resourceLoaderType, webit.script.loaders.impl.ClasspathLoader.class);
-        this.globalManager = (GlobalManager) newComponentInstance(this.globalManagerType, webit.script.global.GlobalManager.class);
-
-        resolveComponent(this.logger, this.loggerType);
-        this.petite.setLogger(this.logger);
-
-        resolveComponent(this.nativeFactory, this.nativeFactoryType);
-        resolveComponent(this.resolverManager, this.resolverManagerType);
-        resolveComponent(this.coderFactory, this.coderFactoryType);
-        resolveComponent(this.nativeSecurityManager, this.nativeSecurityManagerType);
-        resolveComponent(this.textStatementFactory, this.textStatementFactoryType);
-        resolveComponent(this.resourceLoader, this.resourceLoaderType);
-        resolveComponent(this.globalManager, this.globalManagerType);
-
-        this.globalManager.commit();
-    }
-
-    private void executeInitTemplates() throws ResourceNotFoundException {
+    private void executeInits() {
         if (this.inits != null) {
             final Out out = new DiscardOut();
             final GlobalManager myGlobalManager = this.globalManager;
@@ -112,63 +81,15 @@ public final class Engine {
                 if (this.logger.isInfoEnabled()) {
                     this.logger.info("Merge init template: {}", templateName);
                 }
-                this.getTemplate(templateName)
-                        .merge(params, out);
+                try {
+                    this.getTemplate(templateName).merge(params, out);
+                } catch (ResourceNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
                 //Commit Global
                 myGlobalManager.commit();
             }
         }
-    }
-
-    /**
-     * get config by key form engine
-     *
-     * @since 1.4.0
-     * @param key
-     * @return config value
-     */
-    public Object getConfig(String key) {
-        return this.petite.get(key);
-    }
-
-    /**
-     *
-     * @since 1.4.0
-     */
-    private void resolveComponent(final Object bean, final ClassEntry type) {
-        String beanName = type != null
-                ? type.profile
-                : Petite.resolveBeanName(bean);
-        this.petite.wireBean(beanName, bean);
-        if (bean instanceof Initable) {
-            ((Initable) bean).init(this);
-        }
-        this.componentContainer.put(beanName, bean);
-    }
-
-    /**
-     *
-     * @param type
-     * @return Component
-     * @since 1.4.0
-     */
-    public Object getComponent(final Class type) {
-        return getComponent(ClassEntry.wrap(type));
-    }
-
-    /**
-     *
-     * @param type
-     * @return Component
-     * @since 1.4.0
-     */
-    public synchronized Object getComponent(final ClassEntry type) {
-        Object bean = this.componentContainer.get(type.profile);
-        if (bean == null) {
-            bean = ClassUtil.newInstance(type.value);
-            resolveComponent(bean, type);
-        }
-        return bean;
     }
 
     /**
@@ -180,7 +101,7 @@ public final class Engine {
      * @throws ResourceNotFoundException
      */
     public Template getTemplate(final String parentName, final String name) throws ResourceNotFoundException {
-        return getTemplate(this.resourceLoader.concat(parentName, name));
+        return getTemplate(this.loader.concat(parentName, name));
     }
 
     /**
@@ -208,27 +129,27 @@ public final class Engine {
      */
     public boolean exists(final String resourceName) {
         final String normalizedName;
-        final Loader loader;
-        if ((normalizedName = (loader = this.resourceLoader).normalize(resourceName)) != null) {
-            return loader.get(normalizedName).exists();
+        final Loader myLoader;
+        if ((normalizedName = (myLoader = this.loader).normalize(resourceName)) != null) {
+            return myLoader.get(normalizedName).exists();
         }
         return false;
     }
 
     private Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
         Template template;
-        final Loader loader = this.resourceLoader;
-        final String normalizedName = loader.normalize(name);
+        final Loader myLoader = this.loader;
+        final String normalizedName = myLoader.normalize(name);
         if (normalizedName == null) {
             //if normalized-name is null means not found resource.
             throw new ResourceNotFoundException("Illegal template path: ".concat(name));
         }
         template = this.templateCache.get(normalizedName);
         if (template == null) {
-            //then create Template
+            //then newInstance Template
             template = new Template(this, normalizedName,
-                    loader.get(normalizedName));
-            if (loader.isEnableCache(normalizedName)) {
+                    myLoader.get(normalizedName));
+            if (myLoader.isEnableCache(normalizedName)) {
                 Template oldTemplate;
                 oldTemplate = this.templateCache.putIfAbsent(normalizedName, template);
                 //if old Template exist, use the old one
@@ -247,164 +168,360 @@ public final class Engine {
         return template;
     }
 
+    /**
+     * Get component or bean by type
+     *
+     * @param <T>
+     * @param type
+     * @return Component
+     * @since 2.0
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T get(final Class<T> type) {
+        T bean = (T) components.get(type);
+        if (bean != null) {
+            return bean;
+        }
+        return (T) get(type.getName());
+    }
+
+    /**
+     * Get bean by name
+     *
+     * @param name
+     * @return bean
+     * @since 2.0
+     */
+    public Object get(final String name) {
+        Object bean = this.beans.get(name);
+        if (bean != null) {
+            return bean;
+        }
+        return createBeanIfAbsent(name);
+    }
+
+    public void config(Props props, Map<String, Object> parameters) {
+        if (props == null) {
+            props = new Props();
+        }
+        final Map<String, Object> extras;
+        if (parameters != null) {
+            extras = new HashMap<String, Object>();
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                String key = entry.getKey();
+                if (key == null) {
+                    continue;
+                }
+                key = key.trim();
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    int len = key.length();
+                    if (len > 0) {
+                        if (key.charAt(len - 1) == '+') {
+                            props.append(key.substring(0, len - 1).trim(), (String) value);
+                        } else {
+                            props.set(key, (String) value);
+                        }
+                    }
+                } else {
+                    extras.put(key, value);
+                }
+            }
+        } else {
+            extras = null;
+        }
+
+        for (String key : props.keySet()) {
+            putProp(key, props.get(key));
+        }
+
+        if (extras != null) {
+            for (Map.Entry<String, Object> entrySet : extras.entrySet()) {
+                putProp(entrySet.getKey(), entrySet.getValue());
+            }
+        }
+    }
+
+    public Object getConfig(String key) {
+        return this.datas.get(key);
+    }
+
+    private void putProp(String key, Object value) {
+        this.datas.put(key, value);
+        int index = key.lastIndexOf('.');
+        int index2;
+        if (index > 0
+                && (index2 = index + 1) < key.length()
+                && key.charAt(index2) != '@') {
+            String beanName = key.substring(0, index);
+            this.configEntrys.put(beanName,
+                    new Entry(key.substring(index2), value, this.configEntrys.get(beanName)));
+        }
+    }
+
+    public void addComponent(Object bean) {
+        //regist all impls
+        for (Class cls : ClassUtil.impls(bean.getClass())) {
+            this.components.put(cls, bean);
+        }
+    }
+
+    public void initComponents() {
+        addComponent(this);
+        Object globalRaw = datas.get("@global");
+        if (globalRaw != null) {
+            final String[] beanNames = StringUtil.toArray(globalRaw.toString());
+            final int size = beanNames.length;
+            if (size != 0) {
+                final Object[] globalBeans = new Object[size];
+                for (int i = 0; i < size; i++) {
+                    String name = beanNames[i];
+                    Object bean = newInstance(name);
+                    globalBeans[i] = bean;
+                    this.beans.put(name, bean);
+                    addComponent(bean);
+                }
+                inject("engine", this);
+                for (int i = 0; i < size; i++) {
+                    inject(beanNames[i], globalBeans[i]);
+                }
+            }
+        }
+        this.logger = get(Logger.class);
+    }
+
+    private Object newInstance(String key) {
+        String type;
+        do {
+            type = key;
+            key = (String) this.datas.get(key + ".@class");
+        } while (key != null);
+        return ClassUtil.newInstance(type);
+    }
+
+    private synchronized Object createBeanIfAbsent(String key) {
+        Object bean = this.beans.get(key);
+        if (bean != null) {
+            return bean;
+        }
+        bean = newInstance(key);
+        inject(key, bean);
+        this.beans.put(key, bean);
+        return bean;
+    }
+
+    public void inject(String key, final Object bean) {
+        LinkedList<String> keyList = new LinkedList<String>();
+        do {
+            keyList.addFirst(key);
+            key = (String) this.datas.get(key + ".@class");
+        } while (key != null);
+
+        String[] keys = keyList.toArray(new String[keyList.size()]);
+
+        Map<String, Field> fields = ClassUtil.getSetableMemberFields(bean.getClass());
+        //global
+        for (Field field : fields.values()) {
+            Object comp = this.components.get(field.getType());
+            if (comp != null) {
+                try {
+                    field.set(bean, comp);
+                } catch (Exception ex) {
+                    //shouldn't be
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
+        Set<String> injected = new HashSet<String>();
+        for (String profile : keys) {
+            inject(profile, bean, injected, fields);
+        }
+
+        //Init
+        for (Method method : bean.getClass().getMethods()) {
+            if (method.getAnnotation(Init.class) != null) {
+                final Class[] argTypes = method.getParameterTypes();
+                final Object[] args;
+                if (argTypes.length == 0) {
+                    args = ArrayUtil.EMPTY_OBJECTS;
+                } else {
+                    args = new Object[argTypes.length];
+                    for (int i = 0; i < argTypes.length; i++) {
+                        args[i] = this.components.get(argTypes[i]);
+                    }
+                }
+                try {
+                    method.invoke(bean, args);
+                } catch (Exception ex) {
+                    //shouldn't be
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+    }
+
+    private void inject(final String beanName, final Object bean, final Set<String> injected, final Map<String, Field> fields) {
+
+        if (injected.contains(beanName)) {
+            return;
+        }
+        injected.add(beanName);
+        //inject @extends first
+        Object extendProfiles = datas.get(beanName.concat(".@extends"));
+        if (extendProfiles != null) {
+            for (String profile : StringUtil.toArray(String.valueOf(extendProfiles))) {
+                inject(profile, bean, injected, fields);
+            }
+        }
+
+        Entry entry = configEntrys.get(beanName);
+        while (entry != null) {
+            try {
+                Field field = fields.get(entry.name);
+                if (field == null) {
+                    if (logger != null) {
+                        logger.warn("Not found field {}#{} ", bean.getClass(), entry.name);
+                    }
+                } else {
+                    Object value = entry.value;
+                    if (value instanceof String) {
+                        value = convert((String) value, field.getType());
+                    }
+                    field.set(bean, value);
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            entry = entry.next;
+        }
+    }
+
+    private Object convert(String string, Class cls) {
+        if (cls == String.class) {
+            return string;
+        }
+        if (cls == int.class) {
+            if (string == null || string.length() == 0) {
+                return 0;
+            }
+            return Integer.valueOf(string);
+        }
+        if (cls == boolean.class) {
+            return StringUtil.toBoolean(string);
+        }
+        if (string == null) {
+            return null;
+        }
+        if (cls.isArray()) {
+            final String[] strings = StringUtil.toArray(string);
+            final int len = strings.length;
+            if (cls == String[].class) {
+                return strings;
+            }
+            if (cls == Class[].class) {
+                final Class[] entrys = new Class[len];
+                for (int i = 0; i < len; i++) {
+                    entrys[i] = ClassUtil.getClass(strings[i]);
+                }
+                return entrys;
+            }
+            if (cls == int[].class) {
+                final int[] entrys = new int[len];
+                for (int i = 0; i < len; i++) {
+                    entrys[i] = Integer.valueOf(strings[i]);
+                }
+                return entrys;
+            }
+            if (cls == Integer[].class) {
+                final Integer[] entrys = new Integer[len];
+                for (int i = 0; i < len; i++) {
+                    entrys[i] = Integer.valueOf(strings[i]);
+                }
+                return entrys;
+            }
+            if (cls == boolean[].class) {
+                final boolean[] entrys = new boolean[len];
+                for (int i = 0; i < len; i++) {
+                    entrys[i] = StringUtil.toBoolean(strings[i]);
+                }
+                return entrys;
+            }
+            if (cls == Boolean[].class) {
+                final Boolean[] entrys = new Boolean[len];
+                for (int i = 0; i < len; i++) {
+                    entrys[i] = StringUtil.toBoolean(strings[i]);
+                }
+                return entrys;
+            }
+            Object[] array = (Object[]) Array.newInstance(cls.getComponentType(), len);
+            for (int i = 0; i < len; i++) {
+                array[i] = get(strings[i]);
+            }
+            return array;
+        } else {
+            if (cls == Boolean.class) {
+                return StringUtil.toBoolean(string);
+            }
+            if (string.length() == 0) {
+                return null;
+            }
+            if (cls == Class.class) {
+                return ClassUtil.getClass(string);
+            }
+            if (cls == Integer.class) {
+                return Integer.valueOf(string);
+            }
+            return get(string);
+        }
+    }
+
     public boolean checkNativeAccess(String path) {
         return this.nativeSecurityManager.access(path);
-    }
-
-    /**
-     * @since 1.5.0
-     */
-    public void setNativeFactory(ClassEntry nativeFactory) {
-        this.nativeFactoryType = nativeFactory;
-    }
-
-    /**
-     * @since 1.5.0
-     */
-    public void setResolverManager(ClassEntry resolverManager) {
-        this.resolverManagerType = resolverManager;
-    }
-
-    public void setNativeSecurityManager(ClassEntry nativeSecurityManager) {
-        this.nativeSecurityManagerType = nativeSecurityManager;
-    }
-
-    public void setCoderFactory(ClassEntry coderFactory) {
-        this.coderFactoryType = coderFactory;
-    }
-
-    public void setResourceLoader(ClassEntry resourceLoader) {
-        this.resourceLoaderType = resourceLoader;
-    }
-
-    public void setTextStatementFactory(ClassEntry textStatementFactory) {
-        this.textStatementFactoryType = textStatementFactory;
-    }
-
-    public void setGlobalManager(ClassEntry globalManager) {
-        this.globalManagerType = globalManager;
-    }
-
-    public void setLogger(ClassEntry logger) {
-        this.loggerType = logger;
-    }
-
-    /**
-     *
-     * @since 1.4.0
-     * @return Loader
-     */
-    public Loader getResourceLoader() {
-        return resourceLoader;
-    }
-
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        if (encoding != null) {
-            this.encoding = internEncoding(encoding);
-        }
-        //else ignore
-    }
-
-    public NativeFactory getNativeFactory() {
-        return nativeFactory;
-    }
-
-    public boolean isLooseVar() {
-        return looseVar;
-    }
-
-    public void setLooseVar(boolean looseVar) {
-        this.looseVar = looseVar;
-    }
-
-    public boolean isShareRootData() {
-        return shareRootData;
-    }
-
-    public void setShareRootData(boolean shareRootData) {
-        this.shareRootData = shareRootData;
-    }
-
-    public boolean isTrimCodeBlockBlankLine() {
-        return trimCodeBlockBlankLine;
-    }
-
-    public void setTrimCodeBlockBlankLine(boolean trimCodeBlockBlankLine) {
-        this.trimCodeBlockBlankLine = trimCodeBlockBlankLine;
-    }
-
-    public NativeSecurityManager getNativeSecurityManager() {
-        return nativeSecurityManager;
-    }
-
-    public ResolverManager getResolverManager() {
-        return resolverManager;
-    }
-
-    public TextStatementFactory getTextStatementFactory() {
-        return textStatementFactory;
     }
 
     public CoderFactory getCoderFactory() {
         return coderFactory;
     }
 
-    public GlobalManager getGlobalManager() {
-        return globalManager;
+    public boolean isLooseVar() {
+        return looseVar;
+    }
+
+    public boolean isTrimCodeBlockBlankLine() {
+        return trimCodeBlockBlankLine;
     }
 
     public Logger getLogger() {
         return logger;
     }
 
-    public boolean isAppendLostSuffix() {
-        return appendLostSuffix;
+    public GlobalManager getGlobalManager() {
+        return globalManager;
     }
 
-    public void setAppendLostSuffix(boolean appendLostSuffix) {
-        this.appendLostSuffix = appendLostSuffix;
+    public TextStatementFactory getTextStatementFactory() {
+        return textStatementFactory;
     }
 
-    public String getSuffix() {
-        return suffix;
+    public NativeFactory getNativeFactory() {
+        return nativeFactory;
     }
 
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
+    public boolean isShareRootData() {
+        return shareRootData;
+    }
+
+    public ResolverManager getResolverManager() {
+        return resolverManager;
+    }
+
+    public String getEncoding() {
+        return encoding;
     }
 
     public String[] getVars() {
         return vars;
-    }
-
-    public void setVars(String vars) {
-        this.vars = StringUtil.toArray(vars);
-    }
-
-    public String[] getAssistantSuffixs() {
-        return assistantSuffixs;
-    }
-
-    public void setAssistantSuffixs(String assistantSuffixs) {
-        this.assistantSuffixs = StringUtil.toArray(assistantSuffixs);
-    }
-
-    public void setInits(String inits) {
-        this.inits = inits;
-    }
-
-    /**
-     * @since 1.5.0
-     */
-    private static Object newComponentInstance(ClassEntry classEntry, Class defaultType) {
-        if (classEntry == null) {
-            return ClassUtil.newInstance(defaultType);
-        }
-        return ClassUtil.newInstance(classEntry.value);
     }
 
     public static Props createConfigProps(final String configPath) {
@@ -454,47 +571,15 @@ public final class Engine {
      */
     public static Engine create(final Props props, final Map<String, Object> parameters) {
 
-        final Petite petite = new Petite();
-        petite.set(props, parameters);
+        final Engine engine = new Engine();
+        engine.config(props, parameters);
+        engine.initComponents();
 
-        final Engine engine = new Engine(petite);
-        petite.wireBean(engine);
-
-        engine.init();
         if (engine.getLogger().isInfoEnabled()) {
-            engine.getLogger().info("Loaded props: {}", petite.get(CFG.WIM_FILE_LIST));
+            engine.getLogger().info("Loaded props: {}", props.get(CFG.WIM_FILE_LIST));
         }
-        try {
-            engine.executeInitTemplates();
-        } catch (ResourceNotFoundException ex) {
-            throw new RuntimeException(ex);
-        }
+        engine.executeInits();
         return engine;
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public static Engine createEngine(final String configPath) {
-        return create(configPath, null);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public static Engine createEngine(final String configPath, final Map<String, Object> parameters) {
-        return create(configPath, parameters);
-    }
-
-    /**
-     *
-     * @deprecated
-     */
-    @Deprecated
-    public static Engine createEngine(final Props props, final Map<String, Object> parameters) {
-        return create(props, parameters);
     }
 
     /**
@@ -509,6 +594,19 @@ public final class Engine {
             return Charset.forName(encoding).name();
         } catch (Exception e) {
             return encoding.intern();
+        }
+    }
+
+    private static final class Entry {
+
+        final String name;
+        final Object value;
+        final Entry next;
+
+        Entry(String name, Object value, Entry next) {
+            this.name = name;
+            this.value = value;
+            this.next = next;
         }
     }
 }

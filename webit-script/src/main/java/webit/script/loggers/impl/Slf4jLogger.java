@@ -1,19 +1,19 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
-import webit.script.Engine;
-import webit.script.Initable;
+import webit.script.Init;
 import webit.script.loggers.AbstractLogger;
 
 /**
  *
  * @author zqq90
  */
-public class Slf4jLogger extends AbstractLogger implements Initable {
+public class Slf4jLogger extends AbstractLogger {
 
     private org.slf4j.Logger log;
 
-    public void init(Engine engine) {
+    @Init
+    public void init() {
         log = org.slf4j.LoggerFactory.getLogger(name);
     }
 

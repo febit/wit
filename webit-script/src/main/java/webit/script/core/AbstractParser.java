@@ -150,7 +150,7 @@ abstract class AbstractParser {
                 if (cls == null) {
                     try {
                         cls = ClassUtil.getClass("java.lang.".concat(simpleName));
-                    } catch (ClassNotFoundException ex) {
+                    } catch (Exception ex) {
                     }
                 }
                 if (cls != null) {
@@ -242,7 +242,7 @@ abstract class AbstractParser {
         final String fieldName = classNameBand.pop();
         final Class clazz = toClass(classNameBand, line, column);
         final String path = StringUtil.concat(clazz.getName(), ".", fieldName);
-        if (!this.engine.getNativeSecurityManager().access(path)) {
+        if (!this.engine.checkNativeAccess(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
         final Field field;

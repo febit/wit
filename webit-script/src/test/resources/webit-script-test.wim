@@ -1,0 +1,62 @@
+
+@modules='''
+  lib-assert.wim
+  webit-script-moduleTest-a.props
+  webit-script-moduleTest-b.props
+  webit-script-moduleTest-a-2.props
+'''
+
+
+[logger :simpleLogger]
+
+
+[pathLoader]
+assistantSuffixs+=.whtml, .wit2
+appendLostSuffix=true
+
+[engine]
+vars+=request,request2,session,session
+inits+='''
+    /auto/etc/initTest.init.wit
+    /auto/etc/initTest.init2.wit
+    /auto/etc/localTest.init.wit
+'''
+
+[classpathLoader]
+root=webit/script/test/tmpls
+
+
+[routeLoader]
+defaultLoader=lazyLoader
+loaders +='''
+  lib-test: lazyLoader
+  lib: classpathLoader-lib
+  lib:sub: classpathLoader-lib-sub
+'''
+
+
+[lazyLoader :webit.script.loaders.impl.LazyLoader]
+loader=classpathLoader
+
+
+[loader-error]
+root=this/is/a/error/path
+
+
+[classpathLoader-lib :classpathLoader]
+root=webit/script/test/lib
+
+
+[classpathLoader-lib-sub :classpathLoader]
+root=webit/script/test/lib-sub
+
+
+[defaultNativeSecurity]
+list +='''
+  java.lang.System.currentTimeMillis
+  webit.script.test
+'''
+
+
+[global]
+registers+=webit.script.global.TestGlobalRegister

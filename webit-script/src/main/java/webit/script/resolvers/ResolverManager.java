@@ -3,21 +3,22 @@ package webit.script.resolvers;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import webit.script.Engine;
-import webit.script.Initable;
+import webit.script.Init;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.impl.CommonResolver;
-import webit.script.util.ClassEntry;
 import webit.script.util.ClassMap;
 
 /**
  *
  * @author Zqq
  */
-public class ResolverManager implements Initable {
+public class ResolverManager {
 
     protected Logger logger;
+    
+    protected boolean ignoreNullPointer;
+    protected Resolver[] resolvers;
 
     public final ClassMap<GetResolver> getters;
     public final ClassMap<SetResolver> setters;
@@ -29,11 +30,7 @@ public class ResolverManager implements Initable {
     protected final ArrayList<Class> getResolverTypes;
     protected final ArrayList<Class> setResolverTypes;
     protected final ArrayList<Class> outResolverTypes;
-
     protected final CommonResolver commonResolver;
-    //settings
-    protected boolean ignoreNullPointer;
-    protected ClassEntry[] resolvers;
 
     public ResolverManager() {
         this.ignoreNullPointer = true;
@@ -126,11 +123,10 @@ public class ResolverManager implements Initable {
         return outters.putIfAbsent(type, resolver);
     }
 
-    public void init(Engine engine) {
-        this.logger = engine.getLogger();
+    @Init
+    public void init() {
         if (resolvers != null) {
-            for (ClassEntry item : resolvers) {
-                Resolver resolver = (Resolver) engine.getComponent(item);
+            for (Resolver resolver : resolvers) {
                 registResolver(resolver.getMatchClass(), resolver);
                 if (resolver instanceof RegistModeResolver) {
                     ((RegistModeResolver) resolver).regist(this);
@@ -203,13 +199,5 @@ public class ResolverManager implements Initable {
             return null;
         }
         throw new ScriptRuntimeException("Null pointer.");
-    }
-
-    public void setIgnoreNullPointer(boolean ignoreNullPointer) {
-        this.ignoreNullPointer = ignoreNullPointer;
-    }
-
-    public void setResolvers(ClassEntry[] resolvers) {
-        this.resolvers = resolvers;
     }
 }

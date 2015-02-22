@@ -74,7 +74,7 @@ public class PropsUtil {
                     modulePropsCache.put(module, moduleProps);
                     resolveModules(moduleProps);
                     if (loadedModules.contains(module)) {
-                        //XXX: show warning: self depended!
+                        // self depended!
                         continue;
                     }
                 }

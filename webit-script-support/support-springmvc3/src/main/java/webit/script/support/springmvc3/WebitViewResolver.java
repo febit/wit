@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
 import webit.script.servlet.WebEngineManager;
 import webit.script.servlet.WebEngineManager.ServletContextProvider;
@@ -15,19 +14,13 @@ import webit.script.servlet.WebEngineManager.ServletContextProvider;
  *
  * @author Zqq
  */
-public class WebitViewResolver extends AbstractTemplateViewResolver implements InitializingBean {
+public class WebitViewResolver extends AbstractTemplateViewResolver {
 
     protected final WebEngineManager engineManager;
 
     @Override
     protected Class<?> requiredViewClass() {
         return WebitView.class;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        if (getSuffix() == null || getSuffix().length() == 0) {
-            super.setSuffix(this.engineManager.getEngine().getSuffix());
-        }
     }
 
     public WebitViewResolver() {

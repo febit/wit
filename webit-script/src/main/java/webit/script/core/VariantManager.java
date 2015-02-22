@@ -8,8 +8,8 @@ import java.util.Map;
 import webit.script.Engine;
 import webit.script.exceptions.ParseException;
 import webit.script.global.GlobalManager;
+import webit.script.util.ArrayUtil;
 import webit.script.util.Stack;
-import webit.script.util.StringUtil;
 
 /**
  *
@@ -118,7 +118,7 @@ public class VariantManager {
             if (parent != null) {
                 return parent;
             }
-            return new VariantIndexer(id, null, StringUtil.EMPTY_ARRAY, null);
+            return new VariantIndexer(id, null, ArrayUtil.EMPTY_STRINGS, null);
         }
         final int size = map.size();
         final String[] names = new String[size];

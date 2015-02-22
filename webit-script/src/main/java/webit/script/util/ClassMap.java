@@ -120,7 +120,7 @@ public final class ClassMap<V> {
 
         final int id;
         final Class key;
-        final V value;
+        V value;
         Entry<V> next;
 
         Entry(int id, Class key, V value, Entry<V> next) {

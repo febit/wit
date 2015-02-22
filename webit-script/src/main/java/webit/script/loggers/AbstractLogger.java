@@ -9,13 +9,7 @@ import webit.script.util.StringUtil;
  */
 public abstract class AbstractLogger implements Logger {
 
-    public static final String DEFAULT_NAME = "WebitScript";
-
-    protected String name = DEFAULT_NAME;
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    protected String name = "wit";
 
     public void log(int level, String format, Object... args) {
         if (isEnabled(level)) {

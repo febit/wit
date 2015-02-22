@@ -14,12 +14,7 @@ public class EngineManager {
     private static final Engine engine;
 
     static {
-        try {
-            engine = Engine.create("/webit-script-lib-test.props", null);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw e;
-        }
+        engine = Engine.create("/webit-script-lib-test.wim", null);
     }
 
     public static Engine getEngine() {

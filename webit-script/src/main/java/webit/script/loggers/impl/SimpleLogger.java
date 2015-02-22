@@ -1,8 +1,7 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.loggers.impl;
 
-import webit.script.Engine;
-import webit.script.Initable;
+import webit.script.Init;
 import webit.script.loggers.AbstractLogger;
 import webit.script.util.StringUtil;
 
@@ -10,23 +9,24 @@ import webit.script.util.StringUtil;
  *
  * @author zqq90
  */
-public final class SimpleLogger extends AbstractLogger implements Initable {
+public final class SimpleLogger extends AbstractLogger {
 
     //settings
-    private String level = "info";
+    protected String level = "info";
 
     private String prefix;
     private int levelNum;
 
-    public void init(Engine engine) {
+    @Init
+    public void init() {
         prefix = StringUtil.concat("[", name, "] ");
 
         String levelString = level.trim().toLowerCase();
         levelNum = "error".equals(levelString) ? LEVEL_ERROR
                 : "warn".equals(levelString) ? LEVEL_WARN
-                : "info".equals(levelString) ? LEVEL_INFO
-                : "debug".equals(levelString) ? LEVEL_DEBUG
-                : Integer.MAX_VALUE;
+                        : "info".equals(levelString) ? LEVEL_INFO
+                                : "debug".equals(levelString) ? LEVEL_DEBUG
+                                        : Integer.MAX_VALUE;
     }
 
     public boolean isEnabled(int level) {
@@ -48,9 +48,5 @@ public final class SimpleLogger extends AbstractLogger implements Initable {
                 throwable.printStackTrace(System.out);
             }
         }
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
     }
 }

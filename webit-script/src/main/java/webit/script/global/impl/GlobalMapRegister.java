@@ -12,7 +12,7 @@ import webit.script.global.GlobalRegister;
  */
 public class GlobalMapRegister implements GlobalRegister {
 
-    private String name;
+    protected String name;
 
     private final Map vars;
 
@@ -27,9 +27,5 @@ public class GlobalMapRegister implements GlobalRegister {
 
     public Map getVars() {
         return vars;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

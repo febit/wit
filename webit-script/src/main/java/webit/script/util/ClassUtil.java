@@ -2,9 +2,16 @@
 package webit.script.util;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -13,6 +20,44 @@ import java.util.Arrays;
 public class ClassUtil {
 
     private ClassUtil() {
+    }
+
+    public static List<Class> classes(Class cls) {
+        List<Class> classes = new ArrayList<Class>();
+        while (cls != null && cls != Object.class) {
+            classes.add(cls);
+            cls = cls.getSuperclass();
+        }
+        return classes;
+    }
+
+    public static List<Class> impls(Class cls) {
+        List<Class> classes = new ArrayList<Class>();
+        Set<Class> interfaces = new HashSet<Class>();
+        while (cls != null && cls != Object.class) {
+            classes.add(cls);
+            interfaces.addAll(Arrays.asList(cls.getInterfaces()));
+            cls = cls.getSuperclass();
+        }
+        classes.addAll(interfaces);
+        return classes;
+    }
+
+    public static Map<String, Field> getSetableMemberFields(Class type) {
+        final Map<String, Field> fields = new HashMap<String, Field>();
+        for (Class cls : classes(type)) {
+            for (Field field : cls.getDeclaredFields()) {
+                int modifiers = field.getModifiers();
+                if (!Modifier.isStatic(modifiers) && !Modifier.isFinal(modifiers)
+                        && (field.getDeclaringClass() == type
+                        || Modifier.isPublic(modifiers)
+                        || Modifier.isProtected(modifiers))) {
+                    setAccessible(field);
+                    fields.put(field.getName(), field);
+                }
+            }
+        }
+        return fields;
     }
 
     public static ClassLoader getDefaultClassLoader() {
@@ -108,9 +153,13 @@ public class ClassUtil {
         return null;
     }
 
-    public static Class getClass(final String name) throws ClassNotFoundException {
-        Class cls;
-        return (cls = getPrimitiveClass(name)) != null ? cls : getClassByInternalName(name);
+    public static Class getClass(final String name) {
+        try {
+            Class cls;
+            return (cls = getPrimitiveClass(name)) != null ? cls : getClassByInternalName(name);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private static Class getClassByInternalName(String name) throws ClassNotFoundException {
@@ -140,6 +189,10 @@ public class ClassUtil {
             } catch (SecurityException ignore) {
             }
         }
+    }
+
+    public static Object newInstance(final String type) {
+        return newInstance(getClass(type));
     }
 
     public static Object newInstance(final Class type) {

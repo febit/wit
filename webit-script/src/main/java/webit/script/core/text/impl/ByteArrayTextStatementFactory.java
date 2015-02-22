@@ -3,7 +3,7 @@ package webit.script.core.text.impl;
 
 import java.io.IOException;
 import webit.script.Engine;
-import webit.script.Initable;
+import webit.script.Init;
 import webit.script.Template;
 import webit.script.core.ast.Statement;
 import webit.script.core.text.TextStatementFactory;
@@ -16,16 +16,16 @@ import webit.script.util.ByteArrayOutputStream;
  *
  * @author zqq90
  */
-public class ByteArrayTextStatementFactory implements TextStatementFactory, Initable {
+public class ByteArrayTextStatementFactory implements TextStatementFactory {
 
     protected String encoding;
     protected CoderFactory coderFactory;
     protected final ThreadLocal<Encoder> encoders = new ThreadLocal<Encoder>();
     protected final ThreadLocal<ByteArrayOutputStream> outputs = new ThreadLocal<ByteArrayOutputStream>();
 
+    @Init
     public void init(Engine engine) {
         encoding = engine.getEncoding();
-        coderFactory = engine.getCoderFactory();
     }
 
     public void startTemplateParser(Template template) {

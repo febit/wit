@@ -7,6 +7,9 @@ package webit.script.util;
  */
 public class ArrayUtil {
 
+    public static final Object[] EMPTY_OBJECTS = new Object[0];
+    public static final String[] EMPTY_STRINGS = new String[0];
+
     public static int getSize(final Object object) {
         if (object instanceof Object[]) {
             return ((Object[]) object).length;

@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A mini version of 'Jodd-props', refer to the <a href="https://github.com/oblac/jodd">Jodd</a> project.
- * 
+ * A mini version of 'Jodd-props', refer to the
+ * <a href="https://github.com/oblac/jodd">Jodd</a> project.
+ *
  * @author zqq90
  */
 public final class Props {
@@ -62,7 +63,11 @@ public final class Props {
         }
     }
 
-    private void put(final String key, String value, boolean append) {
+    public Iterable<String> keySet() {
+        return this.data.keySet();
+    }
+
+    private void put(String key, String value, boolean append) {
         if (value == null) {
             if (!append) {
                 data.remove(key);
@@ -248,6 +253,18 @@ public final class Props {
                             currentSection = sb.toString().trim();
                             if (currentSection.length() == 0) {
                                 currentSection = null;
+                            } else {
+                                int split = currentSection.indexOf(':');
+                                if (split == 0) {
+                                    throw new IllegalArgumentException("Invalid section, should not start with ':' : " + currentSection);
+                                }
+                                if (split > 0) {
+                                    String type = currentSection.substring(split + 1).trim();
+                                    currentSection = currentSection.substring(0, split).trim();
+                                    if (type.length() != 0) {
+                                        put(currentSection + ".@class", type, false);
+                                    }
+                                }
                             }
                             sb.setLength(0);
                             insideSection = false;

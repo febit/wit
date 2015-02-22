@@ -66,29 +66,15 @@ public class BeanUtilTest {
         BeanUtil.set(foo, "public0", newStringValue);
         //BeanUtil.set(foo, "public1", "new public"); Exception
         BeanUtil.set(foo, "private0", newStringValue);
-        
+
         assertEquals(newStringValue, foo.public0);
         assertEquals(newStringValue, foo.getPrivate0());
-        
-        BeanUtil.set(foo, "private1", Integer.class.getName(), true);
-        assertEquals(Integer.class, foo.getPrivate1());
 
-        
         assertEquals(foo.isBool(), BeanUtil.get(foo, "bool"));
-        
+
         foo.setBool(false);
         BeanUtil.set(foo, "bool", true);
         assertEquals(true, foo.isBool());
-        
-        
-        foo.setBool(false);
-        BeanUtil.set(foo, "bool", "true", true);
-        assertEquals(true, foo.isBool());
-        
-        
-        foo.setBool(true);
-        BeanUtil.set(foo, "bool", "false", true);
-        assertEquals(false, foo.isBool());
-        
+
     }
 }

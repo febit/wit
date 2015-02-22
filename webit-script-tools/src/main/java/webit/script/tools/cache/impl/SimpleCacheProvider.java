@@ -60,14 +60,6 @@ public class SimpleCacheProvider implements CacheProvider {
         this.cacheMap.clear();
     }
 
-    public void setTimeToLive(int timeToLive) {
-        this.timeToLive = timeToLive;
-    }
-
-    public void setMultiOfMissCount(int multiOfMissCount) {
-        this.multiOfMissCount = multiOfMissCount;
-    }
-
     static class CachingEntry {
 
         //final Object key;

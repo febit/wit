@@ -5,8 +5,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import webit.script.Engine;
-import webit.script.Initable;
 import webit.script.exceptions.ParseException;
 import webit.script.lang.MethodDeclare;
 import webit.script.lang.method.NativeConstructorDeclare;
@@ -20,16 +18,12 @@ import webit.script.util.StringUtil;
  *
  * @author zqq90
  */
-public class NativeFactory implements Initable {
+public class NativeFactory {
 
     protected final ConcurrentMap<Object, MethodDeclare> CACHE = new ConcurrentHashMap<Object, MethodDeclare>();
+
     protected Logger logger;
     protected NativeSecurityManager nativeSecurityManager;
-
-    public void init(Engine engine) {
-        this.logger = engine.getLogger();
-        this.nativeSecurityManager = engine.getNativeSecurityManager();
-    }
 
     public MethodDeclare getNativeNewArrayMethodDeclare(Class componentType) {
         return createNativeNewArrayMethodDeclare(componentType, -1, -1, true);

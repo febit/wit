@@ -12,7 +12,7 @@ import webit.script.loaders.impl.resources.FileResource;
  */
 public class ServletLoader extends AbstractLoader {
 
-    private ServletContext servletContext;
+    protected ServletContext servletContext;
 
     public Resource get(String path) {
         path = getRealPath(path);
@@ -21,9 +21,5 @@ public class ServletLoader extends AbstractLoader {
             return new FileResource(filepath, encoding);
         }
         return new ServletContextResource(path, encoding, servletContext);
-    }
-
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
     }
 }

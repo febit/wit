@@ -1,25 +1,102 @@
 
 # @modules=
 
+@global='''
+    logger
+    loader
+    resolverManager
+    textStatement
+    coderFactory
+    nativeFactory
+    nativeSecurity
+    global
+'''
+
 DEFAULT_ENCODING=UTF-8
 
 [engine]
 encoding=${DEFAULT_ENCODING}
-resourceLoader=webit.script.loaders.impl.RouteLoader-main
-assistantSuffixs+=.wit
-# nativeFactory=webit.script.asm.AsmNativeFactory
-# resolverManager=webit.script.asm.AsmResolverManager
-# textStatementFactory=webit.script.core.text.impl.SimpleTextStatementFactory
-# nativeSecurityManager=webit.script.security.impl.NoneNativeSecurityManager
-# logger=webit.script.loggers.impl.NOPLogger
-
 # looseVar=false
 # trimCodeBlockBlankLine=true
-# appendLostSuffix=false
-# suffix=.wit
 # vars=
 # inits=
 # shareRootData=true
+
+[loader :routeLoader]
+[logger :noneLogger]
+[textStatement :simpleTextStatement]
+[coderFactory :defaultCoderFactory]
+[nativeFactory :asmNativeFactory]
+[nativeSecurity :noneNativeSecurity]
+[resolverManager :asmResolverManager]
+
+
+[defaultResolverManager :webit.script.resolvers.ResolverManager]
+[asmResolverManager :webit.script.asm.AsmResolverManager]
+
+[defaultCoderFactory :webit.script.io.charset.impl.DefaultCoderFactory]
+
+[defaultNativeFactory :webit.script.core.NativeFactory]
+[asmNativeFactory :webit.script.asm.AsmNativeFactory]
+
+[noneNativeSecurity :webit.script.security.impl.NoneNativeSecurityManager]
+[defaultNativeSecurity :webit.script.security.impl.DefaultNativeSecurityManager]
+
+[simpleTextStatement :webit.script.core.text.impl.SimpleTextStatementFactory]
+[byteArrayTextStatement :webit.script.core.text.impl.ByteArrayTextStatementFactory]
+[charArrayTextStatement :webit.script.core.text.impl.CharArrayTextStatementFactory]
+
+[noneLogger :webit.script.loggers.impl.NoneLogger]
+[simpleLogger :webit.script.loggers.impl.SimpleLogger]
+[slf4jLogger :webit.script.loggers.impl.Slf4jLogger]
+[commonLogger :webit.script.loggers.impl.CommonLogger]
+[jdk14Logger :webit.script.loggers.impl.Jdk14Logger]
+[multiLogger :webit.script.loggers.impl.MultiLogger]
+
+[pathLoader]
+encoding=${DEFAULT_ENCODING}
+assistantSuffixs+=.wit
+suffix=.wit
+# appendLostSuffix=false
+# root=your/template/path
+
+[stringLoader :webit.script.loaders.impl.StringLoader]
+
+[classpathLoader :webit.script.loaders.impl.ClasspathLoader]
+@extends=pathLoader
+
+[fileLoader :webit.script.loaders.impl.FileLoader]
+@extends=pathLoader
+
+[lazyLoader :webit.script.loaders.impl.LazyLoader]
+loader=classpathLoader
+timeout=10000
+
+[routeLoader :webit.script.loaders.impl.RouteLoader]
+defaultLoader=classpathLoader
+loaders +='''
+  classpath:  classpathLoader
+  string:     stringLoader
+'''
+
+[securityLoader :webit.script.loaders.impl.SecurityLoader]
+loader=classpathLoader
+list +='''
+'''
+
+
+[global :webit.script.global.GlobalManager]
+registers ='''
+    webit.script.global.impl.GlobalMapRegister
+    webit.script.global.impl.ContextLocalRegister
+'''
+
+# [webit.script.global.impl.GlobalMapRegister]
+# name=$GLOBAL
+
+
+# [webit.script.global.impl.ContextLocalRegister]
+# name=LOCAL
 
 
 [resolverManager]
@@ -41,74 +118,7 @@ resolvers='''
 '''
 
 
-[routeLoader-main]
-default=webit.script.loaders.impl.ClasspathLoader
-loaders +='''
-  classpath:  webit.script.loaders.impl.SimpleSecurityLoader-classpath-root
-  string:     webit.script.loaders.impl.StringLoader-main
-'''
-
-[loader]
-encoding=${DEFAULT_ENCODING}
-# root=your/template/path
-
-[loader-classpath-root]
-loader=webit.script.loaders.impl.ClasspathLoader-root
-list +='''
-'''
-
-
-[webit.script.Engine]
-@extends=engine
-
-[webit.script.resolvers.ResolverManager]
-@extends=resolverManager
-
-[webit.script.asm.AsmResolverManager]
-@extends=resolverManager
-
-[webit.script.global.GlobalManager]
-@extends=global
-
-[webit.script.security.impl.DefaultNativeSecurityManager]
-@extends=nativeSecurity
-
-[webit.script.loaders.impl.SimpleSecurityLoader-classpath-root]
-@extends=loader-classpath-root
-
-[webit.script.loaders.impl.ClasspathLoader-root]
-encoding=UTF-8
-root=
-
-[webit.script.loaders.impl.RouteLoader-main]
-@extends=routeLoader-main
-
-[webit.script.loaders.impl.ClasspathLoader]
-@extends=loader
-
-[webit.script.loaders.impl.FileLoader]
-@extends=loader
-
-
-# [webit.script.filters.impl.MutiFilter]
-# filters=
-
-
-# [webit.script.global.impl.GlobalMapRegister]
-# name=$GLOBAL
-
-
-# [webit.script.global.impl.ContextLocalRegister]
-# name=LOCAL
-
-
-[global]
-registers ='''
-    webit.script.global.impl.GlobalMapRegister
-    webit.script.global.impl.ContextLocalRegister
-'''
-
-[nativeSecurity]
+[defaultNativeSecurity]
 list='''
 
   boolean

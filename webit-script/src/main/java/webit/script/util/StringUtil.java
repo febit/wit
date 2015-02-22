@@ -10,8 +10,6 @@ import java.util.List;
  */
 public class StringUtil {
 
-    public static final String[] EMPTY_ARRAY = new String[0];
-
     public static String concat(String s1, String s2, String s3) {
         return new StringBuilder(s1.length() + s2.length() + s3.length())
                 .append(s1)
@@ -67,7 +65,7 @@ public class StringUtil {
 
     public static String[] toArray(String src) {
         if (src == null || src.length() == 0) {
-            return EMPTY_ARRAY;
+            return ArrayUtil.EMPTY_STRINGS;
         }
 
         final char[] srcc = src.toCharArray();
@@ -123,7 +121,7 @@ public class StringUtil {
             list.add(new String(srcc, start, end - start));
         }
         if (list.isEmpty()) {
-            return EMPTY_ARRAY;
+            return ArrayUtil.EMPTY_STRINGS;
         }
         return list.toArray(new String[list.size()]);
     }
@@ -180,5 +178,9 @@ public class StringUtil {
             i = ndxEnd + 1;
         }
         return result.toString();
+    }
+
+    public static boolean toBoolean(String string) {
+        return string != null && string.equalsIgnoreCase("true");
     }
 }

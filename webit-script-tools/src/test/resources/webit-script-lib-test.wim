@@ -1,11 +1,11 @@
 
 
 @modules +='''
-lib-assert.wim
-lib-std.wim
-lib-type.wim
-lib-cache.wim
-lib-tld.wim
+    lib-assert.wim
+    lib-std.wim
+    lib-type.wim
+    lib-cache.wim
+    lib-tld.wim
 '''
 
 [engine]
@@ -22,7 +22,7 @@ list +='''
 timeToLive =6000000 
 
 
-[loader]
+[classpathLoader]
 root=webit/script/tools/test/tmpls
 
 
@@ -33,9 +33,9 @@ cacheProvider=webit.script.tools.cache.impl.SimpleCacheProvider
 
 
 [global]
-registers+= webit.script.tools.tld.TLDGlobalRegister-test
+registers+= tld-test
 
 
-[webit.script.tools.tld.TLDGlobalRegister-test]
+[tld-test: webit.script.tools.tld.TLDGlobalRegister]
 tld=tld-test.tld
 prefix=tld_

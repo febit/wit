@@ -1,13 +1,11 @@
 
-
-[routeLoader-main]
-default=webit.script.servlet.loaders.ServletLoader
-
+[textStatement :byteArrayTextStatement]
 
 [engine]
-textStatementFactory=webit.script.core.text.impl.ByteArrayTextStatementFactory
-vars=request,response
+vars+=request,response
 
+[global]
+registers+=webit.script.servlet.global.GlobalServletRegister
 
 [resolverManager]
 resolvers +='''
@@ -23,13 +21,11 @@ resolvers +='''
 ## servletContext will be setted by ServletEngineUtil
 ## servletContext=
 
-[servletLoader]
-@extends=servlet,loader
-root=/WEB-INF/templates
+[routeLoader]
+defaultLoader=servletLoader
 
-[webit.script.servlet.loaders.ServletLoader]
-@extends=loader,servletLoader
+[servletLoader :webit.script.servlet.loaders.ServletLoader] 
+@extends=servlet,pathLoader
 
-
-[global]
-registers+=webit.script.servlet.global.GlobalServletRegister
+[webit.script.servlet.global.GlobalServletRegister]
+@extends=servlet

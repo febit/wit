@@ -3,17 +3,15 @@ package webit.script.global;
 
 import java.util.ArrayList;
 import java.util.List;
-import webit.script.Engine;
-import webit.script.Initable;
 import webit.script.core.NativeFactory;
 
 /**
  *
  * @author zqq90
  */
-public class TestGlobalRegister implements GlobalRegister, Initable {
+public class TestGlobalRegister implements GlobalRegister{
 
-    private NativeFactory nativeFactory;
+    protected NativeFactory nativeFactory;
 
     public void regist(final GlobalManager manager) {
 
@@ -31,9 +29,4 @@ public class TestGlobalRegister implements GlobalRegister, Initable {
         manager.setConst("list_add", this.nativeFactory.getNativeMethodDeclare(List.class, "add", new Class[]{Object.class}));
         manager.setConst("substring", this.nativeFactory.getNativeMethodDeclare(String.class, "substring", new Class[]{int.class, int.class}));
     }
-
-    public void init(Engine engine) {
-        this.nativeFactory = engine.getNativeFactory();
-    }
-
 }

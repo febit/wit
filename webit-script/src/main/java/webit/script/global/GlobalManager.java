@@ -4,15 +4,14 @@ package webit.script.global;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.Engine;
-import webit.script.Initable;
+import webit.script.Init;
 import webit.script.lang.Bag;
-import webit.script.util.ClassEntry;
 
 /**
  *
  * @author zqq90
  */
-public class GlobalManager implements Initable {
+public class GlobalManager{
 
     private final Map<String, Object> constMap;
     private final Map<String, Object> driftedGlobalMap;
@@ -20,7 +19,7 @@ public class GlobalManager implements Initable {
     private Object[] globalContext;
 
     //settings
-    private ClassEntry[] registers;
+    private GlobalRegister[] registers;
 
     public GlobalManager() {
         this.constMap = new HashMap<String, Object>();
@@ -28,17 +27,19 @@ public class GlobalManager implements Initable {
         this.globalIndexer = new HashMap<String, Integer>();
     }
 
+    @Init
     public void init(Engine engine) {
         if (registers != null) {
             try {
-                for (ClassEntry entry : registers) {
-                    ((GlobalRegister) engine.getComponent(entry)).regist(this);
+                for (GlobalRegister register : registers) {
+                    register.regist(this);
                     this.commit();
                 }
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
         }
+        commit();
     }
 
     public void commit() {
@@ -107,10 +108,6 @@ public class GlobalManager implements Initable {
 
     public Object getConst(String name) {
         return this.constMap.get(name);
-    }
-
-    public void setRegisters(ClassEntry[] registers) {
-        this.registers = registers;
     }
 
     public Bag getConstBag() {

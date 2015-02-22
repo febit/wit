@@ -1,41 +1,27 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.loaders;
 
-import webit.script.Engine;
-import webit.script.Initable;
+import webit.script.Init;
 import webit.script.util.FileNameUtil;
-import webit.script.util.StringUtil;
 
 /**
  *
  * @author Zqq
  */
-public abstract class AbstractLoader implements Loader, Initable {
+public abstract class AbstractLoader implements Loader {
 
     protected String encoding;
-    protected String root = null;
+    protected String root;
     protected boolean appendLostSuffix;
     protected String suffix;
     protected String[] assistantSuffixs;
     protected boolean enableCache = true;
 
-    protected boolean appendLostSuffixSettedFlag;
-
-    public void init(Engine engine) {
-        if (this.encoding == null) {
-            this.encoding = engine.getEncoding();
-        }
-        if (!this.appendLostSuffixSettedFlag) {
-            this.appendLostSuffix = engine.isAppendLostSuffix();
-        }
-        if (this.suffix == null) {
-            this.suffix = engine.getSuffix();
-        }
-        if (this.assistantSuffixs == null) {
-            this.assistantSuffixs = engine.getAssistantSuffixs();
-            if (this.assistantSuffixs == null) {
-                this.assistantSuffixs = StringUtil.EMPTY_ARRAY;
-            }
+    @Init
+    public void init() {
+        root = FileNameUtil.normalize(root);
+        if (root != null && root.length() == 0) {
+            root = null;
         }
     }
 
@@ -112,36 +98,7 @@ public abstract class AbstractLoader implements Loader, Initable {
         }
     }
 
-    public void setRoot(String root) {
-        root = FileNameUtil.normalize(root);
-        if (root != null && root.length() == 0) {
-            root = null;
-        }
-        this.root = root;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
-    public void setAppendLostSuffix(boolean appendLostSuffix) {
-        this.appendLostSuffix = appendLostSuffix;
-        this.appendLostSuffixSettedFlag = true;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-
-    public void setAssistantSuffixs(String assistantSuffixs) {
-        this.assistantSuffixs = StringUtil.toArray(assistantSuffixs);
-    }
-
     public boolean isEnableCache(String name) {
         return enableCache;
-    }
-
-    public void setEnableCache(boolean enableCache) {
-        this.enableCache = enableCache;
     }
 }

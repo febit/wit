@@ -14,14 +14,10 @@ import webit.script.lang.MethodDeclare;
  */
 public class ContextLocalRegister implements GlobalRegister {
 
-    private String name = "LOCAL";
+    protected String name = "LOCAL";
 
     public void regist(GlobalManager manager) {
         manager.setConst(this.name, new LocalMethodDeclare());
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     private static class LocalMethodDeclare implements MethodDeclare {

@@ -1,35 +1,19 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.loaders.impl;
 
-import webit.script.Engine;
-import webit.script.Initable;
 import webit.script.loaders.Loader;
 import webit.script.loaders.Resource;
 import webit.script.loaders.impl.resources.LazyResource;
-import webit.script.util.ClassEntry;
 
 /**
  *
  * @since 1.4.0
  * @author zqq90
  */
-public class LazyLoader implements Loader, Initable {
+public class LazyLoader implements Loader {
 
     protected int timeout;
-    protected ClassEntry loaderType;
     protected Loader loader;
-
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
-
-    public void setLoader(ClassEntry loaderType) {
-        this.loaderType = loaderType;
-    }
-
-    public void init(Engine engine) {
-        this.loader = (Loader) engine.getComponent(loaderType);
-    }
 
     public Resource get(String name) {
         if (this.timeout > 0) {

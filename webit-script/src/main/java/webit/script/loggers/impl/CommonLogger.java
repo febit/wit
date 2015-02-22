@@ -3,19 +3,19 @@ package webit.script.loggers.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import webit.script.Engine;
-import webit.script.Initable;
+import webit.script.Init;
 import webit.script.loggers.AbstractLogger;
 
 /**
  *
  * @author zqq90
  */
-public final class JCLLogger extends AbstractLogger implements Initable {
+public final class CommonLogger extends AbstractLogger{
 
     private Log log;
 
-    public void init(Engine engine) {
+    @Init
+    public void init() {
         log = LogFactory.getLog(name);
     }
 

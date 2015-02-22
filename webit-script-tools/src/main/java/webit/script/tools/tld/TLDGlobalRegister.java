@@ -4,7 +4,6 @@ package webit.script.tools.tld;
 import java.io.IOException;
 import java.io.InputStream;
 import webit.script.Engine;
-import webit.script.Initable;
 import webit.script.core.NativeFactory;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
@@ -17,7 +16,7 @@ import webit.script.util.FileNameUtil;
  *
  * @author zqq90
  */
-public class TLDGlobalRegister implements GlobalRegister, Initable {
+public class TLDGlobalRegister implements GlobalRegister{
 
     protected String prefix = "";
     protected String tld;
@@ -71,25 +70,5 @@ public class TLDGlobalRegister implements GlobalRegister, Initable {
                 func.methodName,
                 parameterTypes,
                 checkAccess);
-    }
-
-    public void init(Engine engine) {
-        this.engine = engine;
-        this.nativeFactory = engine.getNativeFactory();
-        if (tld == null) {
-            throw new RuntimeException("TLDGlobalRegister.tld need be setted.");
-        }
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public void setTld(String tld) {
-        this.tld = tld;
-    }
-
-    public void setCheckAccess(boolean checkAccess) {
-        this.checkAccess = checkAccess;
     }
 }

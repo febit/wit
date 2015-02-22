@@ -3,8 +3,6 @@ package webit.script.tools.cache;
 
 import java.io.Serializable;
 import webit.script.Context;
-import webit.script.Engine;
-import webit.script.Initable;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
@@ -12,9 +10,7 @@ import webit.script.io.Out;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.lang.MethodDeclare;
-import webit.script.tools.cache.impl.SimpleCacheProvider;
 import webit.script.util.ArrayUtil;
-import webit.script.util.ClassEntry;
 import webit.script.util.ByteArrayOutputStream;
 import webit.script.util.CharArrayWriter;
 
@@ -22,42 +18,24 @@ import webit.script.util.CharArrayWriter;
  *
  * @author zqq90
  */
-public class CacheGlobalRegister implements GlobalRegister, Initable {
+public class CacheGlobalRegister implements GlobalRegister {
 
     protected final static String DEFAULT_NAME = "cache";
 
     protected String name = DEFAULT_NAME;
-    protected ClassEntry cacheProvider;
     protected boolean registCacheClear = false;
     protected boolean registCacheRemove = true;
-    //
-    protected CacheProvider _cacheProvider;
+
+    protected CacheProvider cacheProvider;
 
     public void regist(GlobalManager manager) {
-        manager.setConst(name, new CacheMethodDeclare(_cacheProvider));
+        manager.setConst(name, new CacheMethodDeclare(cacheProvider));
         if (registCacheRemove) {
-            manager.setConst(name + "_remove", new CacheRemoveMethodDeclare(_cacheProvider));
+            manager.setConst(name + "_remove", new CacheRemoveMethodDeclare(cacheProvider));
         }
         if (registCacheClear) {
-            manager.setConst(name + "_clear", new CacheClearMethodDeclare(_cacheProvider));
+            manager.setConst(name + "_clear", new CacheClearMethodDeclare(cacheProvider));
         }
-    }
-
-    public void init(Engine engine) {
-        this._cacheProvider
-                = (CacheProvider) engine.getComponent(this.cacheProvider != null ? this.cacheProvider : ClassEntry.wrap(SimpleCacheProvider.class));
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setRegistCacheClear(boolean registCacheClear) {
-        this.registCacheClear = registCacheClear;
-    }
-
-    public void setCacheProvider(ClassEntry cacheProvider) {
-        this.cacheProvider = cacheProvider;
     }
 
     protected static class CacheClearMethodDeclare implements MethodDeclare {

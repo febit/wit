@@ -7,7 +7,7 @@ import webit.script.loggers.Logger;
  *
  * @author zqq90
  */
-public final class NOPLogger implements Logger {
+public final class NoneLogger implements Logger {
 
     public boolean isEnabled(int level) {
         return false;

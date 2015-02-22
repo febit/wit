@@ -5,11 +5,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import webit.script.Engine;
-import webit.script.Initable;
+import webit.script.Init;
 import webit.script.loaders.Loader;
 import webit.script.loaders.Resource;
 import webit.script.util.ArrayUtil;
-import webit.script.util.ClassEntry;
 import webit.script.util.StringUtil;
 
 /**
@@ -17,15 +16,15 @@ import webit.script.util.StringUtil;
  * @since 1.4.0
  * @author zqq90
  */
-public class RouteLoader implements Loader, Initable {
+public class RouteLoader implements Loader {
 
     protected String loaders;
-    protected ClassEntry defaultLoaderType;
-
     protected Loader defaultLoader;
+    
     protected LoaderEntry[] entrys;
     protected String[] rules;
 
+    @Init
     public void init(final Engine engine) {
         try {
             //init Route rules
@@ -41,7 +40,7 @@ public class RouteLoader implements Loader, Initable {
                 }
                 final String rule = prefixes[i] = raw.substring(0, index);
                 loaderMap.put(rule, new LoaderEntry(rule,
-                        (Loader) engine.getComponent(ClassEntry.wrap(raw.substring(index + 1).trim()))));
+                        (Loader) engine.get(raw.substring(index + 1).trim())));
             }
             Arrays.sort(prefixes);
             ArrayUtil.invert(prefixes);
@@ -52,7 +51,6 @@ public class RouteLoader implements Loader, Initable {
             this.rules = prefixes;
             this.entrys = loaderEntrys;
             //default Loader
-            defaultLoader = (Loader) engine.getComponent(defaultLoaderType != null ? defaultLoaderType : ClassEntry.wrap(ClasspathLoader.class));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -94,14 +92,6 @@ public class RouteLoader implements Loader, Initable {
             return entry.normalize(name);
         }
         return this.defaultLoader.normalize(name);
-    }
-
-    public void setLoaders(String loaders) {
-        this.loaders = loaders;
-    }
-
-    public void setDefault(ClassEntry defaultLoader) {
-        this.defaultLoaderType = defaultLoader;
     }
 
     public boolean isEnableCache(String name) {

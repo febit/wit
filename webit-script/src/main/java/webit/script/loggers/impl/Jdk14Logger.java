@@ -2,19 +2,19 @@
 package webit.script.loggers.impl;
 
 import java.util.logging.Level;
-import webit.script.Engine;
-import webit.script.Initable;
+import webit.script.Init;
 import webit.script.loggers.AbstractLogger;
 
 /**
  *
  * @author zqq90
  */
-public final class JDK14Logger extends AbstractLogger implements Initable {
+public final class Jdk14Logger extends AbstractLogger {
 
     private java.util.logging.Logger log;
 
-    public void init(Engine engine) {
+    @Init
+    public void init() {
         this.log = java.util.logging.Logger.getLogger(name);
     }
 
