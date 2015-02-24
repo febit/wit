@@ -667,13 +667,18 @@ abstract class AbstractParser {
         ")", //RPAREN = 64
         "[", //LBRACK = 65
         "]", //RBRACK = 66
-        "=>", //EQGT = 67
-        "@", //AT = 68
-        "..", //DOTDOT = 69
-        "=", //EQ = 70
-        "IDENTIFIER", //IDENTIFIER = 71
-        "TEXT", //TEXT_STATEMENT = 72
-        "DIRECT_VALUE", //DIRECT_VALUE = 73
+        "[?", //LDEBUG = 67
+        "?]", //RDEBUG = 68
+        "[?]", //LRDEBUG = 69
+        "=>", //EQGT = 70
+        "->", //MINUSGT = 71
+        "@", //AT = 72
+        "..", //DOTDOT = 73
+        "=", //EQ = 74
+        "IDENTIFIER", //IDENTIFIER = 75
+        "TEXT", //TEXT_STATEMENT = 76
+        "DIRECT_VALUE", // DIRECT_VALUE= 77
+        "const", //CONST = 78
         "UNKNOWN"
     };
 
