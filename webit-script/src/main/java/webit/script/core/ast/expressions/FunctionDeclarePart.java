@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import webit.script.core.LoopInfo;
+import webit.script.core.Parser;
 import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
-import webit.script.core.ast.Identifer;
 import webit.script.core.ast.Statement;
-import webit.script.core.ast.StatementList;
 import webit.script.core.ast.operators.Assign;
 import webit.script.core.ast.statements.Return;
 import webit.script.exceptions.ParseException;
@@ -48,14 +47,16 @@ public class FunctionDeclarePart {
         start = varmgr.assignVariant("arguments", line, column);
     }
 
-    public FunctionDeclarePart appendArgs(List<Identifer> identiferList) {
-        for (Identifer identifer : identiferList) {
-            appendArg(identifer.name, identifer.line, identifer.column);
+    public FunctionDeclarePart appendArgs(List<String> names) {
+        if (names != null) {
+            for (String name : names) {
+                appendArg(name);
+            }
         }
         return this;
     }
 
-    public FunctionDeclarePart appendArg(String name, int line, int column) {
+    public FunctionDeclarePart appendArg(String name) {
         if (varmgr.assignVariant(name, line, column) != (start + (++this.argsCount))) {
             throw new ParseException("Failed to assign vars!");
         }
@@ -75,13 +76,13 @@ public class FunctionDeclarePart {
         return popFunctionDeclare(toStatementList(expr));
     }
 
-    private static StatementList toStatementList(Expression expr) {
-        StatementList statementList = new StatementList();
-        statementList.add(new Return(expr, expr.line, expr.column));
-        return statementList;
+    private static List<Statement> toStatementList(Expression expr) {
+        List<Statement> list = new ArrayList<Statement>(1);
+        list.add(new Return(expr, expr.line, expr.column));
+        return list;
     }
 
-    public Expression pop(StatementList list) {
+    public Expression pop(List<Statement> list) {
         final Expression expr = popFunctionDeclare(list);
         if (this.assignToIndex >= 0) {
             return new Assign(new ContextValue(this.assignToIndex, line, column), expr, line, column);
@@ -89,11 +90,14 @@ public class FunctionDeclarePart {
         return expr;
     }
 
-    public FunctionDeclare popFunctionDeclare(StatementList list) {
-        final Statement[] statements = list.toInvertArray();
+    public FunctionDeclare popFunctionDeclare(List<Statement> list) {
+        return popFunctionDeclare(Parser.toStatementInvertArray(list));
+    }
+
+    protected FunctionDeclare popFunctionDeclare(Statement[] invertedStatements) {
         int varIndexer = varmgr.pop();
         boolean hasReturnLoops = false;
-        List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(statements);
+        List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(invertedStatements);
         if (loopInfos != null) {
             for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
                 LoopInfo loopInfo = it.next();
@@ -109,7 +113,7 @@ public class FunctionDeclarePart {
 
         return new FunctionDeclare(argsCount,
                 varIndexer,
-                statements,
+                invertedStatements,
                 start,
                 hasReturnLoops,
                 line, column);

@@ -52,10 +52,6 @@ public final class SwitchPart {
         return this;
     }
 
-    public Statement pop() {
-        return pop(0);  //default label is zero
-    }
-
     public Statement pop(int label) {
 
         Map<Object, CaseEntry> newCaseMap = new HashMap<Object, CaseEntry>((caseMap.size() + 1) * 4 / 3, 0.75f);

@@ -38,8 +38,4 @@ public final class WhilePart {
                     : new DoWhileNoLoops(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), line, column);
         }
     }
-
-    public Statement pop() {
-        return pop(0);  //default label is zero
-    }
 }

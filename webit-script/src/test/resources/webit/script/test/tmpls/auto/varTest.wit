@@ -9,7 +9,7 @@
         assertEquals(a, "a");
         {
             assertSame(a, super.a);
-            assertSame(a, super.super.this.a);
+            assertSame(a, super.super.a);
             assertNotSame(super.b, super.super.b);
             assertEquals(a, "a");
         }

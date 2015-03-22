@@ -17,7 +17,7 @@ import webit.script.util.StatementUtil;
 /* Terminals */
 terminal Integer    VAR,
                     IF, ELSE,
-                    FOR, /* IN, */
+                    FOR,
                     THIS, SUPER,
                     SWITCH, CASE, DEFAULT,
                     DO, WHILE,
@@ -62,46 +62,41 @@ terminal Integer    CONST;
 
 
 
-/* non terminal */
-non terminal ClassNameBand classPureName, className;
-non terminal List<Identifer> identiferList;
+/* nonterminal */
+nonterminal ClassNameBand classPureName, className;
 
 /* TemplateAST */
-non terminal TemplateAST templateAST;
+nonterminal TemplateAST templateAST;
 
 /* Statement */
-non terminal StatementList statementList;
 
-non terminal Statement statement, ifStat;
-non terminal IBlock block, caseBlockStat;
-non terminal StatementList varPart;
-non terminal Expression varAssign;
-non terminal ImportPart importPart1, importPart2;
-non terminal Object blockPrepare, blockPrepare2;
-non terminal SwitchPart switchPart, switchPart0;
-non terminal AbstractForInPart forInHead, forInBody, forInPart, lambdaForHead, lambdaForHead2;
-non terminal WhilePart whilePart;
-non terminal IfPart ifPart;
+nonterminal Statement statement, ifStat, varPart;
+nonterminal IBlock block, caseBlockStat;
+nonterminal Expression varAssign;
+nonterminal ImportPart importPart1, importPart2;
+nonterminal SwitchPart switchPart, switchPart0;
+nonterminal AbstractForInPart forInHead, forInPart, lambdaForHead, lambdaForHead2;
+nonterminal WhilePart whilePart;
 
 /* Expression */
-non terminal Expression expression, expression_statementable;
-non terminal ExpressionList expressionList, expressionList1;
-non terminal MapValuePart mapValuePart;
-non terminal MapValue mapValue;
+nonterminal Expression expression, expression_statementable;
+nonterminal ExpressionList expressionList;
+nonterminal MapValuePart mapValuePart;
+nonterminal MapValue mapValue;
 
-non terminal Integer superCount;
-non terminal Expression contextValueExpr;
-non terminal List<Class> classNameList, classNameList1;
+nonterminal Integer superCount;
+nonterminal Expression contextValueExpr;
+nonterminal List<Class> classNameList, classNameList1;
 
 /* function */
-non terminal Expression funcExecuteExpr;
-non terminal FunctionDeclarePart funcHead, funcStatementHead;
+nonterminal Expression funcExecuteExpr;
+nonterminal FunctionDeclarePart funcHead, funcStatementHead;
 
 /* Lambda */
-non terminal Expression lambdaExpr;
-non terminal FunctionDeclarePart lambdaExprHead;
+nonterminal Expression lambdaExpr;
+nonterminal FunctionDeclarePart lambdaExprHead;
 
-non terminal FunctionDeclarePart lambdaForHead1, lambdaForMapHead1;
+nonterminal FunctionDeclarePart lambdaForHead1, lambdaForMapHead1;
 
 /* precedence */
 precedence left     SEMICOLON; // ;
@@ -127,204 +122,149 @@ precedence left     DOT, LBRACK, LPAREN, LBRACE, AT; // . [ ( { @
 
 /* templateAST */
 
-templateAST            ::= statementList:list
-                        {: return (%list%).popTemplateAST(varmgr); :}
-                        ;
-
-statementList           ::= statement:stat
-                        {: return new StatementList().add(%stat%); :}
-                        |statementList:list statement:stat
-                        {: return (%list%).add(%stat%); :}
-                        ;
+templateAST     ::= statement[]:list
+                    {: return createTemplateAST(%list%); :}
+                    ;
 
 
-classPureName       ::= IDENTIFIER:ident
-                        {: return new ClassNameBand(%ident%); :}
-                        |classPureName:part DOT IDENTIFIER:ident
-                        {: return (%part%).append(%ident%); :}
-                        ;
+classPureName   ::= IDENTIFIER:ident
+                    {: return new ClassNameBand(%ident%); :}
+                    |classPureName:part DOT IDENTIFIER:ident
+                    {: return (%part%).append(%ident%); :}
+                    ;
 
-className           ::= classPureName:part
-                        {: return %part%; :}
-                        |className:part LBRACK RBRACK
-                        {: return (%part%).plusArrayDepth(); :}
-                        ;
+className       ::= classPureName:part
+                    {: return %part%; :}
+                    |className:part LBRACK RBRACK
+                    {: return (%part%).plusArrayDepth(); :}
+                    ;
 
-
-identiferList       ::= IDENTIFIER:ident
-                        {: List<Identifer> list = new ArrayList<Identifer>(); list.add(new Identifer(%ident%, %ident.line%, %ident.column%)); return list; :}
-                        |identiferList:list COMMA IDENTIFIER:ident
-                        {: (%list%).add(new Identifer(%ident%, %ident.line%, %ident.column%)); return %list%; :}
-                        ;
 
 /* statements  */
-statement            ::= expression_statementable:expr SEMICOLON
-                        {: return %expr%; :}
+statement       ::= expression_statementable:$ SEMICOLON
+                    |SEMICOLON
+                    {: return NoneStatement.INSTANCE; :}
 
-                        |SEMICOLON
-                        {: return NoneStatement.INSTANCE; :}
+                    |LRDEBUG:sym
+                    {: return createBreakPointStatement(null, null, %sym.line%, %sym.column%); :}
+                    |LDEBUG:sym IDENTIFIER:label COLON RDEBUG
+                    {: return createBreakPointStatement(%label%, null, %sym.line%, %sym.column%); :}
 
-                        |LRDEBUG:sym
-                        {: return createBreakPointStatement(null, null, %sym.line%, %sym.column%); :}
+                    |expression:expr INTERPOLATION_END
+                    {: return createInterpolation(%expr%); :}
 
-                        |LDEBUG:sym IDENTIFIER:label COLON RDEBUG
-                        {: return createBreakPointStatement(%label%, null, %sym.line%, %sym.column%); :}
+                    |block:$
 
-                        |expression:expr INTERPOLATION_END
-                        {: return createInterpolation(%expr%); :}
+                    |ifStat:stat$
 
-                        |block:stat
-                        {: return %stat%; :}
+                    //switch
+                    |switchPart:part
+                    {: return (%part%).pop(0); :}
+                    |IDENTIFIER:label COLON switchPart:part
+                    {: return (%part%).pop(getLabelIndex(%label%)); :}
 
-                        |ifStat:stat
-                        {: return %stat%; :}
+                    //while
+                    |whilePart:part
+                    {: return (%part%).pop(0); :}
+                    |IDENTIFIER:label COLON whilePart:part
+                    {: return (%part%).pop(getLabelIndex(%label%)); :}
 
-                        //switch
-                        |switchPart:part
-                        {: return (%part%).pop(); :}
-                        |IDENTIFIER:label COLON switchPart:part
-                        {: return (%part%).pop(getLabelIndex(%label%)); :}
-                        
-                        //while
-                        |whilePart:part
-                        {: return (%part%).pop(); :}
-                        |IDENTIFIER:label COLON whilePart:part
-                        {: return (%part%).pop(getLabelIndex(%label%)); :}
+                    //forIn
+                    |forInPart:part
+                    {: return (%part%).pop(0); :}
+                    |IDENTIFIER:label COLON forInPart:part
+                    {: return (%part%).pop(getLabelIndex(%label%)); :}
 
-                        //forIn
-                        |forInPart:part
-                        {: return (%part%).pop(); :}
-                        |IDENTIFIER:label COLON forInPart:part
-                        {: return (%part%).pop(getLabelIndex(%label%)); :}
+                    //RedirectOut
+                    |block:stat EQGT:sym expression:expr SEMICOLON
+                    {: return new RedirectOut(%stat%, castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
 
-                        //RedirectOut
-                        |block:stat EQGT:sym expression:expr SEMICOLON
-                        {: return new RedirectOut(%stat%, castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
+                    //textStat
+                    |TEXT_STATEMENT:sym
+                    {: return createTextStatement(%sym%, %sym.line%, %sym.column%); :}
 
-                        //textStat
-                        |TEXT_STATEMENT:sym
-                        {: return createTextStatement(%sym%, %sym.line%, %sym.column%); :}
+                    //
+                    |CONST IDENTIFIER:ident EQ expression:expr SEMICOLON
+                    {: assignConst(%ident%, %expr%, %ident.line%, %ident.column%); return NoneStatement.INSTANCE; :}
 
-                        //
-                        |CONST IDENTIFIER:ident EQ expression:expr SEMICOLON
-                        {: assignConst(%ident%, %expr%, %ident.line%, %ident.column%); return NoneStatement.INSTANCE; :}
-                        
-                        //var
-                        |varPart:part SEMICOLON
-                        {: return (%part%).popStatementGroup(%part.line%, %part.column%); :}
+                    //var
+                    |VAR varPart[COMMA]:parts SEMICOLON
+                    {: return createStatementGroup(%parts%, %parts.line%, %parts.column%); :}
 
-                        //echoStat
-                        |ECHO:sym expression:expr SEMICOLON
-                        {: return new Echo(%expr%, %sym.line%, %sym.column%); :}
+                    //echoStat
+                    |ECHO:sym expression:expr SEMICOLON
+                    {: return new Echo(%expr%, %sym.line%, %sym.column%); :}
 
-                        //@import
-                        |NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
-                        {: registClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatement.INSTANCE; :}
-                        
-                        //BREAK
-                        |BREAK:sym SEMICOLON
-                        {: return new Break(0, %sym.line%, %sym.column%); :}
-                        |BREAK:sym IDENTIFIER:label SEMICOLON
-                        {: return new Break(getLabelIndex(%label%), %sym.line%, %sym.column%); :}
-                        
-                        //CONTINUE
-                        |CONTINUE:sym SEMICOLON
-                        {: return new Continue(0, %sym.line%, %sym.column%); :}
-                        |CONTINUE:sym IDENTIFIER:label SEMICOLON
-                        {: return new Continue(getLabelIndex(%label%), %sym.line%, %sym.column%); :}
-                        
-                        //RETURN
-                        |RETURN:sym SEMICOLON
-                        {: return new Return(null, %sym.line%, %sym.column%); :}
-                        |RETURN:sym expression:expr SEMICOLON
-                        {: return new Return(%expr%, %sym.line%, %sym.column%); :}
+                    //@import
+                    |NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
+                    {: registClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatement.INSTANCE; :}
 
-                        //importStat
-                        |importPart1:part SEMICOLON
-                        {: return (%part%).pop(this.template); :}
-                        |importPart2:part SEMICOLON
-                        {: return (%part%).pop(this.template); :}
+                    //BREAK
+                    |BREAK:sym IDENTIFIER:label? SEMICOLON
+                    {: return new Break(getLabelIndex(%label%), %sym.line%, %sym.column%); :}
 
-                        //includeStat
-                        |INCLUDE:sym expression:expr SEMICOLON
-                        {: return new Include(%expr%, null, this.template, %sym.line%, %sym.column%); :}
-                        |INCLUDE:sym expression:expr mapValue:paramsExpr SEMICOLON
-                        {: return new Include(%expr%, %paramsExpr%, this.template, %sym.line%, %sym.column%); :}
-                        |INCLUDE:sym expression:expr LBRACE expression:paramsExpr RBRACE SEMICOLON
-                        {: return new Include(%expr%, %paramsExpr%, this.template, %sym.line%, %sym.column%); :}
+                    //CONTINUE
+                    |CONTINUE:sym IDENTIFIER:label? SEMICOLON
+                    {: return new Continue(getLabelIndex(%label%), %sym.line%, %sym.column%); :}
 
-                        //funcStatement
-                        |funcStatementHead:part LBRACE statementList:list RBRACE
-                        {: return (%part%).pop(%list%); :}
-                        |funcStatementHead:part LBRACE RBRACE
-                        {: return (%part%).pop(new StatementList()); :}
-                        ;
+                    //RETURN
+                    |RETURN:sym expression:expr? SEMICOLON
+                    {: return new Return(%expr%, %sym.line%, %sym.column%); :}
+
+                    //importStat
+                    |importPart1:part SEMICOLON
+                    {: return (%part%).pop(this.template); :}
+                    |importPart2:part SEMICOLON
+                    {: return (%part%).pop(this.template); :}
+
+                    //includeStat
+                    |INCLUDE:sym expression:expr (mapValue:$ | LBRACE expression:$ RBRACE):paramsExpr? SEMICOLON
+                    {: return new Include(%expr%, (Expression) (%paramsExpr%), this.template, %sym.line%, %sym.column%); :}
+
+                    //funcStatement
+                    |funcStatementHead:part LBRACE statement[]:list? RBRACE
+                    {: return (%part%).pop(%list%); :}
+                    ;
 
 
-varAssign       ::= IDENTIFIER:ident EQ:sym expression:expr
-                    {: return new Assign(createContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
-                    | IDENTIFIER:ident EQ:sym varAssign:expr
+varAssign       ::= IDENTIFIER:ident EQ:sym (expression:$ | varAssign:$):expr
                     {: return new Assign(createContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
                     ;
 
-varPart         ::= VAR IDENTIFIER:ident
-                    {: return new StatementList().add(declearVar(%ident%,%ident.line%,%ident.column%));:}
-                    | VAR varAssign:expr
-                    {: return new StatementList().add(%expr%); :}
-                    | varPart:part COMMA IDENTIFIER:ident
-                    {: return (%part%).add(declearVar(%ident%,%ident.line%,%ident.column%)); :}
-                    | varPart:part COMMA varAssign:expr
-                    {: return (%part%).add(%expr%); :}
+varPart         ::= IDENTIFIER:ident
+                    {: return declearVar(%ident%, %ident.line%, %ident.column%); :}
+                    | varAssign:$
                     ;
 
 
 importPart1     ::= IMPORT:sym expression:expr
-                        {: return new ImportPart(%expr%, %sym.line%, %sym.column%); :}
-                        |IMPORT:sym expression:expr mapValue:paramsExpr
-                        {: return new ImportPart(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
-                        |IMPORT:sym expression:expr LBRACE expression:paramsExpr RBRACE
-                        {: return new ImportPart(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
-                        ;
-
-
-importPart2     ::= importPart1:part IDENTIFIER:ident
-                        {: return (%part%).append(%ident%, createContextValue(0, %ident%, %ident.line%, %ident.column%)); :}
-                        |importPart1:part contextValueExpr:valueExpr EQ IDENTIFIER:ident
-                        {: return (%part%).append(%ident%, %valueExpr%); :}
-                        |importPart2:part COMMA IDENTIFIER:ident
-                        {: return (%part%).append(%ident%, createContextValue(0, %ident%, %ident.line%, %ident.column%)); :}
-                        |importPart2:part COMMA contextValueExpr:valueExpr EQ IDENTIFIER:ident
-                        {: return (%part%).append(%ident%, %valueExpr%); :}
-                        ;
-
-
-blockPrepare    ::= 
-                        {: varmgr.push(); return null; :}
-                        ;
-blockPrepare2   ::= LBRACE
-                        {: varmgr.push(); return null; :}
-                        ;
-
-
-block           ::= blockPrepare2:prepare statementList:list RBRACE
-                    {: return (%list%).popIBlock(varmgr.pop(), %prepare.line%, %prepare.column%); :}
-                    |blockPrepare2:prepare RBRACE
-                    {: return new StatementList().popIBlock(varmgr.pop(), %prepare.line%, %prepare.column%); :}
+                    {: return new ImportPart(%expr%, %sym.line%, %sym.column%); :}
+                    |IMPORT:sym expression:expr mapValue:paramsExpr
+                    {: return new ImportPart(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
+                    |IMPORT:sym expression:expr LBRACE expression:paramsExpr RBRACE
+                    {: return new ImportPart(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
                     ;
 
 
-ifPart      ::= IF:sym LPAREN expression:expr RPAREN block:body
-                        {: return new IfPart(%expr%, %body%, %sym.line%, %sym.column%); :}
-                        ;
+importPart2     ::= importPart1:part IDENTIFIER:ident
+                    {: return (%part%).append(%ident%, createContextValue(0, %ident%, %ident.line%, %ident.column%)); :}
+                    |importPart1:part contextValueExpr:valueExpr EQ IDENTIFIER:ident
+                    {: return (%part%).append(%ident%, %valueExpr%); :}
+                    |importPart2:part COMMA IDENTIFIER:ident
+                    {: return (%part%).append(%ident%, createContextValue(0, %ident%, %ident.line%, %ident.column%)); :}
+                    |importPart2:part COMMA contextValueExpr:valueExpr EQ IDENTIFIER:ident
+                    {: return (%part%).append(%ident%, %valueExpr%); :}
+                    ;
 
 
-ifStat          ::= ifPart:part
-                        {: return (%part%).pop(); :}
-                        |ifPart:part ELSE block:elseBody
-                        {: return (%part%).pop(%elseBody%); :}
-                        |ifPart:part ELSE ifStat:elseBody
-                        {: return (%part%).pop(%elseBody%); :}
-                        ;
+block           ::= (LBRACE {: varmgr.push(); return null; :}) statement[]:list? RBRACE
+                    {: return createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%); :}
+                    ;
+
+
+ifStat          ::= IF:sym LPAREN expression:expr RPAREN block:body (ELSE block:$ | ELSE ifStat:$):elseBody?
+                    {: return createIfStatement(%expr%, %body%, (Statement) (%elseBody%), %sym.line%, %sym.column%); :}
+                    ;
 
 forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
                     {: return new ForInPart(%item%, %items%, this.varmgr, %sym.line%, %sym.column%); :}
@@ -333,23 +273,23 @@ forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
                     ;
 
 
-lambdaForHead1   ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
-                    {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%); :}
+lambdaForHead1  ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
+                    {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
                     ;
 
 
 lambdaForMapHead1   ::= FOR LPAREN IDENTIFIER:key COMMA IDENTIFIER:value MINUSGT:sym
-                    {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%key%, %key.line%, %key.column%).appendArg(%value%, %value.line%, %value.column%); :}
+                    {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%key%).appendArg(%value%); :}
                     ;
 
 
 lambdaForHead2  ::= lambdaForHead1:part expression:expr COLON
                     {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.line%, %part.column%); :}
-                    |lambdaForHead1:part LBRACE statementList:list RBRACE COLON
+                    |lambdaForHead1:part LBRACE statement[]:list RBRACE COLON
                     {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.line%, %part.column%); :}
                     |lambdaForMapHead1:part expression:expr COLON
                     {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.line%, %part.column%); :}
-                    |lambdaForMapHead1:part LBRACE statementList:list RBRACE COLON
+                    |lambdaForMapHead1:part LBRACE statement[]:list RBRACE COLON
                     {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.line%, %part.column%); :}
                     ;
 
@@ -359,21 +299,8 @@ lambdaForHead   ::= lambdaForHead2:part expression:items RPAREN
                     ;
 
 
-forInBody       ::= forInHead:part LBRACE statementList:list RBRACE
-                    {: return (%part%).setStatementList(%list%); :}
-                    |forInHead:part LBRACE RBRACE
-                    {: return (%part%).setStatementList(new StatementList()); :}
-                    |lambdaForHead:part LBRACE statementList:list RBRACE
-                    {: return (%part%).setStatementList(%list%); :}
-                    |lambdaForHead:part LBRACE RBRACE
-                    {: return (%part%).setStatementList(new StatementList()); :}
-                    ;
-
-
-forInPart       ::= forInBody:part
-                    {: return %part%; :}
-                    |forInBody:part ELSE block:elseBody
-                    {: return (%part%).setElse(%elseBody%); :}
+forInPart       ::= (forInHead:$ | lambdaForHead:$):part LBRACE statement[]:list? RBRACE (ELSE block:$):elseBody?
+                    {: return (%part%).setBodys(createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%), %elseBody%); :}
                     ;
 
 
@@ -384,29 +311,25 @@ whilePart       ::= WHILE:sym LPAREN expression:whileExpr RPAREN block:body
                     ;
 
 
-caseBlockStat       ::= blockPrepare:prepare statementList:list
-                        {: return (%list%).popIBlock(varmgr.pop(), %prepare.line%, %prepare.column%); :}
-                        |blockPrepare:prepare
-                        {: return new StatementList().popIBlock(varmgr.pop(), %prepare.line%, %prepare.column%); :}
-                        ;
+caseBlockStat   ::= {: varmgr.push(); return null; :} statement[]:list?
+                    {: return createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%); :}
+                    ;
 
 
-switchPart0         ::= 
-                        {: return new SwitchPart(); :}
-                        | CASE:sym DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:part
-                        {: return (%part%).appendCase(%key%, %body%, %sym.line%, %sym.column%); :}
-                        | CASE:sym MINUS:sym DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:part
-                        {: return (%part%).appendCase(ALU.negative(%key%), %body%, %sym.line%, %sym.column%); :}
-                        | DEFAULT:sym COLON caseBlockStat:body switchPart0:part
-                        {: return (%part%).appendCase(null, %body%, %sym.line%, %sym.column%); :}
-                        ;
+switchPart0     ::= 
+                    {: return new SwitchPart(); :}
+                    | CASE:sym DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:part
+                    {: return (%part%).appendCase(%key%, %body%, %sym.line%, %sym.column%); :}
+                    | CASE:sym MINUS:sym DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:part
+                    {: return (%part%).appendCase(ALU.negative(%key%), %body%, %sym.line%, %sym.column%); :}
+                    | DEFAULT:sym COLON caseBlockStat:body switchPart0:part
+                    {: return (%part%).appendCase(null, %body%, %sym.line%, %sym.column%); :}
+                    ;
 
 
-switchPart          ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE switchPart0:part RBRACE
-                        {: return (%part%).setSwitchExpr(%switchExpr%, %sym.line%, %sym.column%); :}
-                        |SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE TEXT_STATEMENT:ignore switchPart0:part RBRACE
-                        {: return (%part%).setSwitchExpr(%switchExpr%, %sym.line%, %sym.column%); :}
-                        ;
+switchPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE TEXT_STATEMENT ? switchPart0:part RBRACE
+                    {: return (%part%).setSwitchExpr(%switchExpr%, %sym.line%, %sym.column%); :}
+                    ;
 
 
 
@@ -438,12 +361,11 @@ expression_statementable ::=
                     {: return new RedirectOutExpression(%srcExpr%, castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
 
                     //
-                    |funcExecuteExpr:expr    {: return %expr%; :}
+                    |funcExecuteExpr:$
                     ;
 
 
-expression      ::= expression_statementable:expr
-                    {: return %expr%; :}
+expression      ::= expression_statementable:$
 
                     |LDEBUG:sym expression:expr RDEBUG
                     {: return createBreakPointExpression(null, %expr%, %sym.line%, %sym.column%); :}
@@ -456,9 +378,8 @@ expression      ::= expression_statementable:expr
                     {: return StatementUtil.optimize(new BitNot(%expr%, %sym.line%, %sym.column%)); :}
                     
                     //negativeOper  -
-                    |MINUS:sym expression:expr
+                    |MINUS:sym expression:expr %prec UMINUS
                     {: return StatementUtil.optimize(new Negative(%expr%, %sym.line%, %sym.column%)); :}
-                    %prec UMINUS
                     
                     //notOper !
                     |NOT:sym expression:expr
@@ -544,32 +465,27 @@ expression      ::= expression_statementable:expr
                     //
                     |DIRECT_VALUE:sym
                     {: return new DirectValue(%sym%, %sym.line%, %sym.column%); :}
-                    
+
                     // ()
-                    |LPAREN expression:expr RPAREN
-                    {: return %expr%; :}
+                    |LPAREN expression:$ RPAREN
 
                     //funcDeclareExpr
-                    |funcHead:part LBRACE statementList:list RBRACE
+                    |funcHead:part LBRACE statement[]:list? RBRACE
                     {: return (%part%).pop(%list%); :}
-                    |funcHead:part LBRACE RBRACE
-                    {: return (%part%).pop(new StatementList()); :}
-
 
                     //arrayValue
                     |LBRACK:sym expressionList:list RBRACK
                     {: return new ArrayValue((%list%).toArray(), %sym.line%, %sym.column%); :}
 
-
                     //NativeNewArrayDeclareExpression 
                     |NATIVE:sym LBRACK RBRACK className:nameBand
-                    {: return this.createNativeNewArrayDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
+                    {: return createNativeNewArrayDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
                     |NATIVE:sym LBRACK className:nameBand RBRACK
-                    {: return this.createNativeNewArrayDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
+                    {: return createNativeNewArrayDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
 
                     //nativeMethodExpr
                     |NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN classNameList:list RPAREN
-                    {: return this.createNativeMethodDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %ident%, %list%, %sym.line%, %sym.column%); :}
+                    {: return createNativeMethodDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %ident%, %list%, %sym.line%, %sym.column%); :}
 
                     //native static field
                     |NATIVE classPureName:nameBand
@@ -577,37 +493,30 @@ expression      ::= expression_statementable:expr
 
                     //nativeConstructorExpr
                     |NATIVE:sym NEW classPureName:nameBand LPAREN classNameList:list RPAREN
-                    {: return this.createNativeConstructorDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %list%, %sym.line%, %sym.column%); :}
+                    {: return createNativeConstructorDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %list%, %sym.line%, %sym.column%); :}
 
-                    |contextValueExpr:expr
-                    {: return %expr%; :}
-                    |mapValue:expr
-                    {: return %expr%; :}
+                    |contextValueExpr:$
+                    |mapValue:$
 
                     //Lambda
-                    |lambdaExpr:expr
-                    {: return %expr%; :}
+                    |lambdaExpr:$
                     ;
 
 
 // super
-superCount          ::= SUPER DOT
-                        {: return 1; :}
-                        |superCount:count SUPER DOT
-                        {: return %count% + 1; :}
-                        ;
+superCount      ::= SUPER DOT
+                    {: return 1; :}
+                    |superCount:count SUPER DOT
+                    {: return %count% + 1; :}
+                    ;
 
 
 // ident  super...ident  this.ident
 
 contextValueExpr    ::= IDENTIFIER:ident
                         {: return createContextValue(0, %ident%, %ident.line%, %ident.column%); :}
-                        |THIS DOT IDENTIFIER:ident
-                        {: return createContextValueAtUpstair(0, %ident%, %ident.line%, %ident.column%); :}
                         |superCount:count IDENTIFIER:ident
                         {: return createContextValue(%count%, %ident%, %ident.line%, %ident.column%); :}
-                        |superCount:count THIS DOT IDENTIFIER:ident
-                        {: return createContextValueAtUpstair(%count%, %ident%, %ident.line%, %ident.column%); :}
 
                         |FOR DOT IDENTIFIER:ident
                         {: return createContextValue(0, ("for." + %ident%), %ident.line%, %ident.column%); :}
@@ -615,23 +524,18 @@ contextValueExpr    ::= IDENTIFIER:ident
                         {: return createContextValue(%count%, ("for." + %ident%), %ident.line%, %ident.column%); :}
                         ;
 
-
-expressionList1     ::= expression:expr
-                        {: return new ExpressionList().add(%expr%); :}
-                        |expressionList1:list COMMA expression:expr
-                        {: return (%list%).add(%expr%); :}
-                        ;
-
 expressionList      ::=
                         {: return new ExpressionList(); :}
-                        |expressionList1:list
-                        {: return %list%; :}
+                        |expression:expr
+                        {: return new ExpressionList().add(%expr%); :}
+                        |expressionList:list COMMA expression:expr
+                        {: return (%list%).add(%expr%); :}
                         ;
 
 
 // map {key:expr, ...}
 
-mapValuePart         ::= DIRECT_VALUE:key COLON expression:expr
+mapValuePart        ::= DIRECT_VALUE:key COLON expression:expr
                         {: return new MapValuePart().add(%key%, %expr%); :}
                         |MINUS:sym DIRECT_VALUE:key COLON expression:expr
                         {: return new MapValuePart().add(ALU.negative(%key%), %expr%); :}
@@ -650,18 +554,14 @@ mapValue            ::= LBRACE:sym mapValuePart:part RBRACE
 
 /* function  */
 
-funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN RPAREN 
-                        {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%); :}
-                        |FUNCTION:sym IDENTIFIER:ident LPAREN identiferList:identList RPAREN 
+funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN IDENTIFIER[COMMA]:identList? RPAREN 
                         {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%).appendArgs(%identList%); :}
                         ;
 
 
 funcHead            ::= FUNCTION:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
-                        |FUNCTION:sym LPAREN RPAREN
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
-                        |FUNCTION:sym LPAREN identiferList:list RPAREN
+                        |FUNCTION:sym LPAREN IDENTIFIER[COMMA]:list? RPAREN
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
                         ;
 
@@ -680,21 +580,21 @@ classNameList1      ::= className:nameBand
 
 classNameList       ::= 
                         {: return new ArrayList<Class>(); :}
-                        |classNameList1:list
-                        {: return %list%; :}
+                        |classNameList1:$
                         ;
 
 
 /* lambda */
-lambdaExprHead           ::= IDENTIFIER:ident MINUSGT:sym
-                            {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%); :}
-                            |LPAREN IDENTIFIER:ident COMMA identiferList:list RPAREN MINUSGT:sym
-                            {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%, %ident.line%, %ident.column%).appendArgs(%list%); :}
-                            ;
+lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
+                        |LPAREN IDENTIFIER:ident COMMA IDENTIFIER[COMMA]:list RPAREN MINUSGT:sym
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%).appendArgs(%list%); :}
+                        ;
 
 
-lambdaExpr               ::= lambdaExprHead:part expression:expr
-                            {: return (%part%).pop(%expr%); :}
-                            |lambdaExprHead:part LBRACE statementList:list RBRACE
-                            {: return (%part%).pop(%list%); :}
-                            ;
+lambdaExpr          ::= lambdaExprHead:part expression:expr
+                        {: return (%part%).pop(%expr%); :}
+                        |lambdaExprHead:part LBRACE statement[]:list RBRACE
+                        {: return (%part%).pop(%list%); :}
+                        ;
+

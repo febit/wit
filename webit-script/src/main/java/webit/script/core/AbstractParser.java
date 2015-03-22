@@ -4,6 +4,8 @@ package webit.script.core;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,14 +16,22 @@ import webit.script.core.ast.*;
 import webit.script.core.ast.TemplateAST;
 import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.operators.*;
+import webit.script.core.ast.statements.Block;
+import webit.script.core.ast.statements.BlockNoLoops;
 import webit.script.core.ast.statements.BreakPointStatement;
+import webit.script.core.ast.statements.IBlock;
+import webit.script.core.ast.statements.If;
+import webit.script.core.ast.statements.IfElse;
+import webit.script.core.ast.statements.IfNot;
 import webit.script.core.ast.statements.Interpolation;
 import webit.script.core.ast.statements.NoneStatement;
+import webit.script.core.ast.statements.StatementGroup;
 import webit.script.core.text.TextStatementFactory;
 import webit.script.debug.BreakPointListener;
 import webit.script.exceptions.ParseException;
 import webit.script.loaders.Resource;
 import webit.script.loaders.ResourceOffset;
+import webit.script.util.ArrayUtil;
 import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
 import webit.script.util.Stack;
@@ -46,6 +56,7 @@ abstract class AbstractParser {
     static final int OP_ANDEQ = 8;
     static final int OP_XOREQ = 9;
     static final int OP_OREQ = 10;
+    private static final Statement[] EMPTY_STATEMENTS = new Statement[0];
 
     private static final short[][] PRODUCTION_TABLE = loadData("Production");
     private static final short[][] ACTION_TABLE = loadData("Action");
@@ -289,6 +300,67 @@ abstract class AbstractParser {
         return NoneStatement.INSTANCE;
     }
 
+    Statement createIfStatement(Expression ifExpr, Statement thenStatement, Statement elseStatement, int line, int column) {
+        thenStatement = StatementUtil.optimize(thenStatement);
+        elseStatement = StatementUtil.optimize(elseStatement);
+        if (thenStatement != null) {
+            if (elseStatement != null) {
+                return new IfElse(ifExpr, thenStatement, elseStatement, line, column);
+            } else {
+                return new If(ifExpr, thenStatement, line, column);
+            }
+        } else if (elseStatement != null) {
+            return new IfNot(ifExpr, elseStatement, line, column);
+        } else {
+            return NoneStatement.INSTANCE;
+        }
+    }
+
+    static Statement createStatementGroup(List<Statement> list, int line, int column) {
+        return new StatementGroup(toStatementArray(list), line, column);
+    }
+
+    TemplateAST createTemplateAST(List<Statement> list) {
+        Statement[] statements = toStatementInvertArray(list);
+        List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(statements);
+        if (loopInfos != null) {
+            throw new ParseException("loop overflow: ".concat(StringUtil.join(loopInfos, ',')));
+        }
+        return new TemplateAST(varmgr.getIndexers(), statements, varmgr.getVarCount());
+    }
+
+    public static IBlock createIBlock(List<Statement> list, int varIndexer, int line, int column) {
+        Statement[] statements = toStatementInvertArray(list);
+        List<LoopInfo> loopInfoList = StatementUtil.collectPossibleLoopsInfo(statements);
+        return loopInfoList != null
+                ? new Block(varIndexer, statements, loopInfoList.toArray(new LoopInfo[loopInfoList.size()]), line, column)
+                : new BlockNoLoops(varIndexer, statements, line, column);
+    }
+
+    static Statement[] toStatementArray(List<Statement> list) {
+        if (list == null || list.isEmpty()) {
+            return EMPTY_STATEMENTS;
+        }
+        List<Statement> temp = new ArrayList<Statement>(list.size());
+        for (Statement stat : list) {
+            if (stat instanceof StatementGroup) {
+                temp.addAll(Arrays.asList(((StatementGroup) stat).getList()));
+                continue;
+            }
+            stat = StatementUtil.optimize(stat);
+            if (stat != null) {
+                temp.add(stat);
+            }
+        }
+        return temp.toArray(new Statement[temp.size()]);
+    }
+
+    public static Statement[] toStatementInvertArray(List<Statement> list) {
+        Statement[] array = toStatementArray(list);
+        ArrayUtil.invert(array);
+        return array;
+    }
+
     static ResetableValueExpression castToResetableValueExpression(Expression expr) {
         if (expr instanceof ResetableValueExpression) {
             return (ResetableValueExpression) expr;
@@ -462,13 +534,6 @@ abstract class AbstractParser {
         return -1;
     }
 
-    /**
-     * This method provides the main parsing routine. It returns only when
-     * finishParsing() has been called (typically because the parser has
-     * accepted, or a fatal error has been reported). See the header
-     * documentation for the class regarding how shift/reduce parsers operate
-     * and how the various tables are used.
-     */
     private Symbol parse(final Lexer lexer) throws Exception {
 
         int act;
@@ -488,7 +553,6 @@ abstract class AbstractParser {
 
         currentToken = lexer.nextToken();
 
-        /* continue until we are told to stop */
         goonParse = true;
         do {
 
