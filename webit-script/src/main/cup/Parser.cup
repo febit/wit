@@ -155,7 +155,7 @@ statement       ::= expression_statementable:$ SEMICOLON
 
                     |block:$
 
-                    |ifStat:stat$
+                    |ifStat:$
 
                     //switch
                     |switchPart:part
