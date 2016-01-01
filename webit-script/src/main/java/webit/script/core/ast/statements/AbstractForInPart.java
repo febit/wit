@@ -1,8 +1,6 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
-import java.util.List;
-import webit.script.core.Parser;
 import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;

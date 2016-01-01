@@ -1,5 +1,20 @@
 <%
 
+var xxx;
+var xxxFlag = 0;
+xxx =function(val){
+xxxFlag ++;
+if(true){
+echo "aaaa";
+return;
+}
+    echo val != "inner";
+    echo "\n";
+    return null;
+};
+
+xxx("outter");
+
 {
 @import java.util.Map;
 @import java.lang.System;

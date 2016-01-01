@@ -2,6 +2,7 @@
 package webit.script.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,8 @@ import webit.script.util.Stack;
 public class VariantManager {
 
     private int varCount;
+    private int scopeLevelCount;
+    private final Stack<Integer> varCountStack;
     private final Stack<VarStair> stairStack;
     private final List<VarStair> stairs;
     private final VarStair root;
@@ -27,6 +30,7 @@ public class VariantManager {
         this.globalManager = engine.getGlobalManager();
         this.stairs = new ArrayList<VarStair>();
         this.stairStack = new Stack<VarStair>();
+        this.varCountStack = new Stack<Integer>();
         this.root = push(-1);
         this.root.assignVarsIfAbsent(engine.getVars());
     }
@@ -42,6 +46,19 @@ public class VariantManager {
         push(stairStack.peek().id);
     }
 
+    public void pushScope() {
+        scopeLevelCount++;
+        varCountStack.push(varCount);
+        varCount = 0;
+        push();
+    }
+
+    public void popScope() {
+        scopeLevelCount--;
+        varCount = varCountStack.pop();
+        pop();
+    }
+
     public int getVarCount() {
         return varCount;
     }
@@ -54,7 +71,16 @@ public class VariantManager {
         final List<VarStair> varStairs = this.stairs;
         final int size = varStairs.size();
         final VariantIndexer[] result = new VariantIndexer[size];
-        for (int i = 0; i < size; i++) {
+        int i = 0;
+
+        for (; i < size; i++) {
+            VarStair stair = varStairs.get(i);
+            if (stair.scopeLevel == this.scopeLevelCount) {
+                break;
+            }
+        }
+        final int start = i;
+        for (; i < size; i++) {
             VarStair stair = varStairs.get(i);
             //assert i == stair.id
             //remove consts
@@ -66,7 +92,7 @@ public class VariantManager {
             }
             result[i] = getVariantIndexer(i, stair.parentId >= 0 ? result[stair.parentId] : null, indexerMap);
         }
-        return result;
+        return Arrays.copyOfRange(result, start, size);
     }
 
     public int assignVariant(String name, int line, int column) {
@@ -110,7 +136,7 @@ public class VariantManager {
             throw new ParseException("Can't locate vars: ".concat(name), line, column);
         }
         //assign at root
-        return context(root.assignVar(name, line, column));
+        return context(root.scopeLevel, root.assignVar(name, line, column));
     }
 
     private static VariantIndexer getVariantIndexer(final int id, final VariantIndexer parent, final Map<String, Integer> map) {
@@ -132,8 +158,12 @@ public class VariantManager {
         return new VariantIndexer(id, parent, names, indexs);
     }
 
-    static VarAddress context(int index) {
-        return new VarAddress(VarAddress.CONTEXT, index, null);
+    VarAddress context(int scope, int index) {
+        if (scope == this.scopeLevelCount) {
+            return new VarAddress(VarAddress.CONTEXT, index, null);
+        } else {
+            return new VarAddress(VarAddress.SCOPE, this.scopeLevelCount - scope - 1, index, null);
+        }
     }
 
     static VarAddress global(int index) {
@@ -146,6 +176,7 @@ public class VariantManager {
 
     private class VarStair {
 
+        final int scopeLevel;
         final int id;
         final int parentId;
         final Map<String, Integer> values;
@@ -155,6 +186,7 @@ public class VariantManager {
             this.id = id;
             this.parentId = parentId;
             this.values = new HashMap<String, Integer>();
+            this.scopeLevel = VariantManager.this.scopeLevelCount;
         }
 
         VarAddress locate(String name) {
@@ -165,7 +197,7 @@ public class VariantManager {
             if (index < 0) {
                 return constValue(this.constMap.get(name));
             }
-            return context(index);
+            return context(this.scopeLevel, index);
         }
 
         void checkDuplicate(final String name, int line, int column) {
@@ -208,15 +240,22 @@ public class VariantManager {
         public static final int CONTEXT = 0;
         public static final int GLOBAL = 1;
         public static final int CONST = 2;
+        public static final int SCOPE = 4;
 
         public final int type;
         public final int index;
+        public final int scopeOffset;
         public final Object constValue;
 
-        VarAddress(int type, int index, Object constValue) {
+        VarAddress(int type, int offset, int index, Object constValue) {
             this.type = type;
+            this.scopeOffset = offset;
             this.index = index;
             this.constValue = constValue;
+        }
+
+        VarAddress(int type, int index, Object constValue) {
+            this(type, 0, index, constValue);
         }
     }
 }

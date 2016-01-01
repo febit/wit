@@ -6,7 +6,6 @@ import java.util.Map;
 import webit.script.Context;
 import webit.script.Engine;
 import webit.script.Template;
-import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.exceptions.ScriptRuntimeException;
@@ -48,30 +47,19 @@ public abstract class AbstractInclude extends Statement {
             } else {
                 params = KeyValuesUtil.EMPTY_KEY_VALUES;
             }
-            final Template preTemplate = context.template;
-            final KeyValues preRootParams = context.rootParams;
-            final Object[] preVars = context.vars;
-            final VariantIndexer[] preIndexers = context.indexers;
-            final int preIndexer = context.indexer;
             try {
                 Template template = engine.getTemplate(myTemplateName, String.valueOf(templateName));
-                context.template = template;
-                context.rootParams = engine.isShareRootData() ? KeyValuesUtil.wrap(preRootParams, params) : params;
-                template.merge(context, params);
+                KeyValues rootParams = engine.isShareRootData() ? KeyValuesUtil.wrap(context.rootParams, params) : params;
+                Context newContext = template.mergeToContext(context , rootParams);
+
                 if (export) {
                     Map<String, Object> result = new HashMap<String, Object>();
-                    context.exportTo(result);
+                    newContext.exportTo(result);
                     return result;
                 }
                 return null;
             } catch (Exception e) {
                 throw new ScriptRuntimeException(e, this);
-            } finally {
-                context.template = preTemplate;
-                context.rootParams = preRootParams;
-                context.vars = preVars;
-                context.indexers = preIndexers;
-                context.indexer = preIndexer;
             }
         } else {
             throw new ScriptRuntimeException("Template name should not be null.", templateNameExpr);

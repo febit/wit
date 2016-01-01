@@ -119,7 +119,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> root, final OutputStream out, final String encoding) throws ScriptRuntimeException, ParseException {
-        return merge(KeyValuesUtil.wrap(root), new OutputStreamOut(out,  encoding, engine));
+        return merge(KeyValuesUtil.wrap(root), new OutputStreamOut(out, encoding, engine));
     }
 
     /**
@@ -203,29 +203,19 @@ public final class Template {
             return (((myAst = this.ast) == null || this.resource.isModified())
                     ? parse(false)
                     : myAst)
-                    .execute(new Context(this, out, root));
+                    .execute(this, out, root);
         } catch (Exception e) {
             throw completeException(e);
         }
     }
 
-    /**
-     * Merge this template as a child Template, used by include/import.
-     *
-     * @since 1.5.0
-     * @param context
-     * @param params
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final Context context, KeyValues params) throws ScriptRuntimeException, ParseException {
+    public Context mergeToContext(final Context context, final KeyValues root) throws ScriptRuntimeException, ParseException {
         try {
             final TemplateAST myAst;
             return (((myAst = this.ast) == null || this.resource.isModified())
                     ? parse(false)
                     : myAst)
-                    .execute(context);
+                    .execute(this, context, root);
         } catch (Exception e) {
             throw completeException(e);
         }
@@ -234,7 +224,7 @@ public final class Template {
     public Context debug(final KeyValues root, final Out out, final BreakPointListener listener) throws ScriptRuntimeException, ParseException {
         try {
             return new Parser().parse(this, listener)
-                    .execute(new Context(this, out, root));
+                    .execute(this, out, root);
         } catch (Exception e) {
             throw completeException(e);
         }

@@ -2,7 +2,6 @@
 package webit.script.lang.method;
 
 import webit.script.Context;
-import webit.script.Template;
 import webit.script.core.VariantIndexer;
 import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.exceptions.ScriptRuntimeException;
@@ -16,38 +15,27 @@ import webit.script.util.StatementUtil;
 public final class FunctionMethodDeclare implements MethodDeclare {
 
     private final FunctionDeclare function;
-    private final Template template;
-    private final Object[] vars;
+    private final Context scopeContext;
     private final VariantIndexer[] indexers;
+    private final int varSize;
 
-    public FunctionMethodDeclare(FunctionDeclare function, Template template, Object[] vars, VariantIndexer[] indexers) {
+    public FunctionMethodDeclare(FunctionDeclare function, Context scopeContext, VariantIndexer[] indexers, int varSize) {
         this.function = function;
-        this.template = template;
-        this.vars = vars;
+        this.scopeContext = scopeContext;
         this.indexers = indexers;
+        this.varSize = varSize;
     }
 
+    @Override
     public Object invoke(final Context context, final Object[] args) {
-        if (context.vars == this.vars) {
-            try {
-                return function.invoke(context, args);
-            } catch (Exception e) {
-                throw StatementUtil.castToScriptRuntimeException(e, function);
+        try {
+            return function.invoke(this.scopeContext.createSubContext(this.indexers, context, this.varSize), args);
+        } catch (Exception e) {
+            ScriptRuntimeException runtimeException = StatementUtil.castToScriptRuntimeException(e, function);
+            if (context != this.scopeContext) {
+                runtimeException.setTemplate(this.scopeContext.template);
             }
-        } else {
-            try {
-                final Object[] bakVars = context.vars;
-                final VariantIndexer[] bakIndexers = context.indexers;
-                final Object result;
-                context.vars = this.vars;
-                context.indexers = this.indexers;
-                result = function.invoke(context, args);
-                context.vars = bakVars;
-                context.indexers = bakIndexers;
-                return result;
-            } catch (Exception e) {
-                throw new ScriptRuntimeException(StatementUtil.castToScriptRuntimeException(e, function).setTemplate(template));
-            }
+            throw runtimeException;
         }
     }
 }

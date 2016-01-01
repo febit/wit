@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import webit.script.core.LoopInfo;
 import webit.script.core.Parser;
+import webit.script.core.VariantIndexer;
 import webit.script.core.VariantManager;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
@@ -43,7 +44,7 @@ public class FunctionDeclarePart {
         this.varmgr = varmgr;
         this.assignToIndex = assignToIndex;
         this.args = new ArrayList<String>();
-        varmgr.push();
+        varmgr.pushScope();
         start = varmgr.assignVariant("arguments", line, column);
     }
 
@@ -95,7 +96,10 @@ public class FunctionDeclarePart {
     }
 
     protected FunctionDeclare popFunctionDeclare(Statement[] invertedStatements) {
-        int varIndexer = varmgr.pop();
+
+        VariantIndexer[] indexers = varmgr.getIndexers();
+        int varSize = varmgr.getVarCount();
+        varmgr.popScope();
         boolean hasReturnLoops = false;
         List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(invertedStatements);
         if (loopInfos != null) {
@@ -112,7 +116,8 @@ public class FunctionDeclarePart {
         }
 
         return new FunctionDeclare(argsCount,
-                varIndexer,
+                varSize,
+                indexers,
                 invertedStatements,
                 start,
                 hasReturnLoops,

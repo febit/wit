@@ -2,6 +2,7 @@
 package webit.script.core.ast.expressions;
 
 import webit.script.Context;
+import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.lang.method.FunctionMethodDeclare;
@@ -14,32 +15,33 @@ import webit.script.util.StatementUtil;
 public final class FunctionDeclare extends Expression {
 
     private final int argsCount;
-    private final int indexer;
+    private final VariantIndexer[] indexers;
     private final Statement[] statements;
     private final boolean hasReturnLoops;
     private final int start;
+    private final int varSize;
 
-    public FunctionDeclare(int argsCount, int indexer, Statement[] statements, int start, boolean hasReturnLoops, int line, int column) {
+    public FunctionDeclare(int argsCount, int varSize, VariantIndexer[] indexers, Statement[] statements, int start, boolean hasReturnLoops, int line, int column) {
         super(line, column);
         this.argsCount = argsCount;
-        this.indexer = indexer;
+        this.indexers = indexers;
         this.statements = statements;
         this.hasReturnLoops = hasReturnLoops;
         this.start = start;
+        this.varSize = varSize;
     }
 
+    @Override
     public FunctionMethodDeclare execute(final Context context) {
-        return new FunctionMethodDeclare(this, context.template, context.vars, context.indexers);
+        return new FunctionMethodDeclare(this, context, indexers, this.varSize);
     }
 
     public Object invoke(final Context context, final Object[] args) {
-        final int preIndex = context.indexer;
-        context.indexer = indexer;
         final int argsTotalCount = this.argsCount;
         final Object[] vars = context.vars;
         int argsStart = this.start;
+        final int len = args != null ? args.length : 0;
         vars[argsStart++] = args;
-        int len = args != null ? args.length : 0;
         if (argsTotalCount != 0) {
             int nextEnd = argsTotalCount > len ? len : argsTotalCount;
             int i;
@@ -55,11 +57,9 @@ public final class FunctionDeclare extends Expression {
         }
         if (hasReturnLoops) {
             StatementUtil.executeInvertedAndCheckLoops(statements, context);
-            context.indexer = preIndex;
             return context.resetReturnLoop();
         } else {
             StatementUtil.executeInverted(statements, context);
-            context.indexer = preIndex;
             return Context.VOID;
         }
     }

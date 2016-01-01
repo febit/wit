@@ -1,11 +1,15 @@
 // Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.core;
 
+import webit.script.util.ArrayUtil;
+
 /**
  *
  * @author Zqq
  */
 public final class VariantIndexer {
+
+    public static VariantIndexer EMPTY = new VariantIndexer(0, null, ArrayUtil.EMPTY_STRINGS, null);
 
     public final int id;
     public final VariantIndexer parent;

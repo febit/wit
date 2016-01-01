@@ -13,7 +13,6 @@ import webit.script.Engine;
 import webit.script.Template;
 import webit.script.core.VariantManager.VarAddress;
 import webit.script.core.ast.*;
-import webit.script.core.ast.TemplateAST;
 import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.operators.*;
 import webit.script.core.ast.statements.Block;
@@ -222,7 +221,9 @@ abstract class AbstractParser {
             case VarAddress.GLOBAL:
                 return new GlobalValue(this.engine.getGlobalManager(), addr.index, line, column);
             case VarAddress.CONST:
-                return new DirectValue(addr.constValue, line, column);
+                return new DirectValue(addr.constValue, line, column);  
+            case VarAddress.SCOPE:
+                return new ContextScopeValue(addr.scopeOffset, addr.index, line, column);
             default:
                 //VarAddress.CONTEXT
                 return new ContextValue(addr.index, line, column);

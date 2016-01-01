@@ -3,6 +3,7 @@ package webit.script;
 
 import java.io.OutputStream;
 import java.io.Writer;
+import webit.script.core.VariantIndexer;
 import webit.script.io.Out;
 import webit.script.io.impl.DiscardOut;
 import webit.script.io.impl.OutputStreamOut;
@@ -12,13 +13,14 @@ import webit.script.util.KeyValuesUtil;
 
 /**
  * Exported function.
- * 
- * @since 1.5.0
+ *
  * @author zqq
  */
 public class Function {
 
-    protected final Template container;
+    protected static final VariantIndexer[] EMPTY_INDEXERS = new VariantIndexer[]{VariantIndexer.EMPTY};
+
+    protected final Template template;
     protected final MethodDeclare methodDeclare;
     protected final Out defaultOut;
 
@@ -30,14 +32,14 @@ public class Function {
         this(container, methodDeclare, new DiscardOut(encoding, isByteStream));
     }
 
-    public Function(Template container, MethodDeclare methodDeclare, Out defaultOut) {
+    public Function(Template template, MethodDeclare methodDeclare, Out defaultOut) {
         this.methodDeclare = methodDeclare;
-        this.container = container;
+        this.template = template;
         this.defaultOut = defaultOut;
     }
 
     protected Context createContext(Out out) {
-        return new Context(this.container, out, KeyValuesUtil.EMPTY_KEY_VALUES);
+        return new Context(template, out, KeyValuesUtil.EMPTY_KEY_VALUES, EMPTY_INDEXERS, 0, null);
     }
 
     protected Context createContext() {
@@ -57,14 +59,14 @@ public class Function {
     }
 
     public Object invokeWithOut(Writer writer, Object... args) {
-        return invokeWithOut(new WriterOut(writer, container.engine), args);
+        return invokeWithOut(new WriterOut(writer, template.engine), args);
     }
 
     public Object invokeWithOut(final OutputStream outputStream, Object... args) {
-        return invokeWithOut(new OutputStreamOut(outputStream, container.engine), args);
+        return invokeWithOut(new OutputStreamOut(outputStream, template.engine), args);
     }
 
     public Object invokeWithOut(final String encoding, final OutputStream outputStream, Object... args) {
-        return invokeWithOut(new OutputStreamOut(outputStream, encoding, container.engine), args);
+        return invokeWithOut(new OutputStreamOut(outputStream, encoding, template.engine), args);
     }
 }

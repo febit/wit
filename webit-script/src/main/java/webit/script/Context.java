@@ -17,6 +17,7 @@ import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.resolvers.SetResolver;
 import webit.script.util.ClassMap;
+import webit.script.util.KeyValuesUtil;
 
 /**
  *
@@ -26,11 +27,13 @@ public final class Context implements KeyValueAccepter {
 
     public static final Void VOID = new Void();
 
-    public Template template;
-    public KeyValues rootParams;
+    public final Template template;
+    public final KeyValues rootParams;
 
-    public Object[] vars;
-    public VariantIndexer[] indexers;
+    public final Object[] vars;
+    public final Object[][] parentScopes;
+
+    public final VariantIndexer[] indexers;
     public int indexer;
 
     public Out out;
@@ -42,13 +45,14 @@ public final class Context implements KeyValueAccepter {
     private int loopType;
 
     private Map<Object, Object> locals;
+    private Context localContext;
 
     private final ResolverManager resolverManager;
     private final ClassMap<OutResolver> outters;
     private final ClassMap<GetResolver> getters;
     private final ClassMap<SetResolver> setters;
 
-    public Context(final Template template, final Out out, final KeyValues rootParams) {
+    public Context(final Template template, final Out out, final KeyValues rootParams, final VariantIndexer[] indexers, final int varSize, final Object[][] parentScopes) {
         this.template = template;
         this.out = out;
         this.rootParams = rootParams;
@@ -61,10 +65,34 @@ public final class Context implements KeyValueAccepter {
         this.outters = resolverMgr.outters;
         this.getters = resolverMgr.getters;
         this.setters = resolverMgr.setters;
+
+        this.indexers = indexers;
+        this.indexer = 0;
+        this.vars = new Object[varSize];
+        this.parentScopes = parentScopes;
+        rootParams.exportTo(this);
     }
 
-    public void pushRootParams() {
-        rootParams.exportTo(this);
+    public Context createSubContext(VariantIndexer[] indexers, Context localContext, int varSize) {
+        Object[][] scopes;
+        Object[][] myParentScopes = this.parentScopes;
+        if (myParentScopes == null) {
+            scopes = new Object[][]{this.vars};
+        } else {
+            scopes = new Object[myParentScopes.length + 1][];
+            scopes[0] = this.vars;
+            System.arraycopy(myParentScopes, 0, scopes, 1, myParentScopes.length);
+        }
+        Context newContext = new Context(template, localContext.out, KeyValuesUtil.EMPTY_KEY_VALUES, indexers, varSize, scopes);
+        newContext.localContext = localContext;
+        return newContext;
+    }
+
+    public Context createPeerContext(Template template, VariantIndexer[] indexers, int varSize) {
+
+        Context newContext = new Context(template, this.out, KeyValuesUtil.EMPTY_KEY_VALUES, indexers, varSize, null);
+        newContext.localContext = this;
+        return newContext;
     }
 
     public boolean matchLabel(int label) {
@@ -170,6 +198,9 @@ public final class Context implements KeyValueAccepter {
     }
 
     public Object getLocal(final Object key) {
+        if (localContext != null) {
+            return localContext.getLocal(key);
+        }
         final Map<Object, Object> map;
         if ((map = this.locals) != null) {
             return map.get(key);
@@ -178,6 +209,10 @@ public final class Context implements KeyValueAccepter {
     }
 
     public void setLocal(final Object key, final Object value) {
+        if (localContext != null) {
+            localContext.setLocal(key, value);
+            return;
+        }
         final Map<Object, Object> map;
         if ((map = this.locals) != null) {
             map.put(key, value);
