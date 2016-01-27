@@ -72,7 +72,7 @@ public final class Engine {
             final Out out = new DiscardOut();
             final GlobalManager myGlobalManager = this.globalManager;
             final Bag globalBag = myGlobalManager.getGlobalBag();
-            final Bag constBag = myGlobalManager.getGlobalBag();
+            final Bag constBag = myGlobalManager.getConstBag();
             final KeyValues params = KeyValuesUtil.wrap(
                     new String[]{"GLOBAL", "CONST"},
                     new Object[]{globalBag, constBag}
