@@ -16,16 +16,7 @@ import webit.script.core.ast.*;
 import webit.script.core.ast.TemplateAST;
 import webit.script.core.ast.expressions.*;
 import webit.script.core.ast.operators.*;
-import webit.script.core.ast.statements.Block;
-import webit.script.core.ast.statements.BlockNoLoops;
-import webit.script.core.ast.statements.BreakPointStatement;
-import webit.script.core.ast.statements.IBlock;
-import webit.script.core.ast.statements.If;
-import webit.script.core.ast.statements.IfElse;
-import webit.script.core.ast.statements.IfNot;
-import webit.script.core.ast.statements.Interpolation;
-import webit.script.core.ast.statements.NoneStatement;
-import webit.script.core.ast.statements.StatementGroup;
+import webit.script.core.ast.statements.*;
 import webit.script.core.text.TextStatementFactory;
 import webit.script.debug.BreakPointListener;
 import webit.script.exceptions.ParseException;
@@ -335,6 +326,10 @@ abstract class AbstractParser {
         return loopInfoList != null
                 ? new Block(varIndexer, statements, loopInfoList.toArray(new LoopInfo[loopInfoList.size()]), line, column)
                 : new BlockNoLoops(varIndexer, statements, line, column);
+    }
+
+    public static TryPart createTryPart(List<Statement> list, int varIndexer, int line, int column) {
+        return new TryPart(createIBlock(list, varIndexer, line, column), line, column);
     }
 
     static Statement[] toStatementArray(List<Statement> list) {

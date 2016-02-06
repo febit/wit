@@ -77,6 +77,7 @@ nonterminal ImportPart importPart1, importPart2;
 nonterminal SwitchPart switchPart, switchPart0;
 nonterminal AbstractForInPart forInHead, forInPart, lambdaForHead, lambdaForHead2;
 nonterminal WhilePart whilePart;
+nonterminal TryPart tryPart, catchPart, finallyPart;
 
 /* Expression */
 nonterminal Expression expression, expression_statementable;
@@ -95,7 +96,6 @@ nonterminal FunctionDeclarePart funcHead, funcStatementHead;
 /* Lambda */
 nonterminal Expression lambdaExpr;
 nonterminal FunctionDeclarePart lambdaExprHead;
-
 nonterminal FunctionDeclarePart lambdaForHead1, lambdaForMapHead1;
 
 /* precedence */
@@ -224,6 +224,14 @@ statement       ::= expression_statementable:$ SEMICOLON
                     //funcStatement
                     |funcStatementHead:part LBRACE statement[]:list? RBRACE
                     {: return (%part%).pop(%list%); :}
+
+                    //
+                    |(catchPart:$ | finallyPart:$):part
+                    {: return (%part%).pop(); :}
+
+                    //
+                    | THROW:sym expression:expr SEMICOLON
+                    {: return new Throw(%expr%, %sym.line%, %sym.column%); :}
                     ;
 
 
@@ -259,6 +267,19 @@ importPart2     ::= importPart1:part IDENTIFIER:ident
 
 block           ::= (LBRACE {: varmgr.push(); return null; :}) statement[]:list? RBRACE
                     {: return createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%); :}
+                    ;
+
+
+tryPart         ::= (TRY LBRACE {: varmgr.push(); return null; :}) statement[]:list? RBRACE 
+                    {: return createTryPart(%list%, varmgr.pop(), %list.line%, %list.column%); :}
+                    ;
+
+catchPart       ::= tryPart:part (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: varmgr.push(); return varmgr.assignVariant(%ident%, %ident.line%, %ident.column%); :}):varIndex statement[]:list? RBRACE
+                    {: return (%part%).setCatchStat((Integer)(%varIndex%), createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%)); :}
+                    ;
+
+finallyPart     ::= (tryPart:$ | catchPart:$):part (FINALLY LBRACE {: varmgr.push(); return null; :}) statement[]:list? RBRACE 
+                    {: return (%part%).setFinalStat(createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%)); :}
                     ;
 
 
