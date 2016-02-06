@@ -1,14 +1,17 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * A mini version of 'Jodd-props', refer to the
  * <a href="https://github.com/oblac/jodd">Jodd</a> project.
  *
- * @author zqq90
+ * @author zhuqingqing_iwm
  */
 public final class Props {
 
@@ -20,8 +23,22 @@ public final class Props {
 
     private final Map<String, Entry> data;
 
+    private List<String> modules;
+
     public Props() {
-        this.data = new HashMap<String, Entry>();
+        this.data = new HashMap<>();
+    }
+
+    /**
+     * Loads props from the string.
+     *
+     * @param str
+     */
+    public Props load(final String str) {
+        if (str != null) {
+            parse(str.toCharArray());
+        }
+        return this;
     }
 
     /**
@@ -29,8 +46,47 @@ public final class Props {
      *
      * @param chars
      */
-    public void load(final char[] chars) {
-        parse(chars);
+    public Props load(final char[] chars) {
+        if (chars != null) {
+            parse(chars);
+        }
+        return this;
+    }
+
+    public void addModule(String module) {
+        if (module == null) {
+            return;
+        }
+        initModules();
+        this.modules.add(module);
+    }
+
+    protected void initModules() {
+        if (this.modules == null) {
+            this.modules = new ArrayList<>();
+        }
+    }
+
+    public List<String> getModules() {
+        if (this.modules == null) {
+            return Collections.EMPTY_LIST;
+        }
+        return Collections.unmodifiableList(modules);
+    }
+
+    public String getModulesString() {
+        if (this.modules == null) {
+            return "";
+        }
+        return StringUtil.join(this.modules, ',');
+    }
+
+    public void addModules(Collection<String> module) {
+        if (module == null) {
+            return;
+        }
+        initModules();
+        this.modules.addAll(module);
     }
 
     public void merge(final Props props) {
@@ -38,6 +94,7 @@ public final class Props {
             Entry propsEntry = entry.getValue();
             put(entry.getKey(), propsEntry.value, propsEntry.append);
         }
+        addModules(props.modules);
     }
 
     public String remove(final String name) {
@@ -54,6 +111,11 @@ public final class Props {
 
     public void append(final String name, final String value) {
         put(name, value, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void export(final Map target) {
+        this.extractTo(target);
     }
 
     @SuppressWarnings("unchecked")
@@ -112,62 +174,54 @@ public final class Props {
         return resolveValue(entry.value, 0);
     }
 
-    private String resolveValue(String template, int deep) {
-        if (deep > 100) {
-            //Note: MAX_MACROS_DEEP
-            return template;
-        }
-        ++deep;
-        if (!template.contains("${")) {
+    private String resolveValue(String template, int macrosTimes) {
+        if (macrosTimes > 100) {
+            //Note: MAX_MACROS
             return template;
         }
 
-        final int len = template.length();
-        final StringBuilder result = new StringBuilder(len);
+        int ndx = template.indexOf("${");
+        if (ndx < 0) {
+            return template;
+        }
 
-        int i = 0;
-        while (i < len) {
-            int ndx = template.indexOf("${", i);
-            if (ndx < 0) {
-                result.append(i == 0 ? template : template.substring(i));
-                break;
-            }
+        // check escaped
+        int i = ndx - 1;
+        boolean escape = false;
+        int count = 0;
 
-            // check escaped
-            int j = ndx - 1;
-            boolean escape = false;
-            int count = 0;
-
-            while ((j >= 0) && (template.charAt(j) == '\\')) {
-                escape = !escape;
-                if (escape) {
-                    count++;
-                }
-                j--;
-            }
-            result.append(template.substring(i, ndx - count));
-
+        while ((i >= 0) && (template.charAt(i) == '\\')) {
+            escape = !escape;
             if (escape) {
-                result.append("${");
-                i = ndx + 2;
-                continue;
+                count++;
             }
-
-            // find macros end
-            ndx += 2;
-            int end = template.indexOf('}', ndx);
-            if (end < 0) {
-                throw new IllegalArgumentException("Invalid string template, unclosed macro at: " + (ndx - 2));
-            }
-
-            // find value and append
-            Entry entry = data.get(template.substring(ndx, end));
-            if (entry != null) {
-                result.append(resolveValue(entry.value, deep));
-            }
-            i = end + 1;
+            i--;
         }
-        return result.toString();
+        final String partStart = template.substring(0, ndx - count);
+
+        // Anyway, resolve ending first
+        final String resolvedEnding = resolveValue(template.substring(ndx + 2), ++macrosTimes);
+
+        // If ${ is escaped
+        if (escape) {
+            return StringUtil.concat(partStart, "${", resolvedEnding);
+        }
+
+        //
+        int end = resolvedEnding.indexOf('}');
+
+        if (end < 0) {
+            //TODO lost index
+            throw new IllegalArgumentException("Invalid string template, unclosed macro ");
+        }
+        final String partEnd = resolvedEnding.substring(end + 1);
+        // find value and append
+        Entry entry = data.get(resolvedEnding.substring(0, end));
+        if (entry != null && entry.value != null) {
+            return StringUtil.concat(partStart, resolveValue(entry.value, ++macrosTimes), partEnd);
+        } else {
+            return StringUtil.concat(partStart, partEnd);
+        }
     }
 
     private void parse(final char[] in) {

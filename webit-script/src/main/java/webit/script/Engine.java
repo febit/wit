@@ -576,7 +576,7 @@ public final class Engine {
         engine.initComponents();
 
         if (engine.getLogger().isInfoEnabled()) {
-            engine.getLogger().info("Loaded props: {}", props.get(CFG.WIM_FILE_LIST));
+            engine.getLogger().info("Loaded props: {}", props.getModulesString());
         }
         engine.executeInits();
         return engine;
