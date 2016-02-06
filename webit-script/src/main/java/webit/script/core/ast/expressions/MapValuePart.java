@@ -4,6 +4,7 @@ package webit.script.core.ast.expressions;
 import java.util.ArrayList;
 import java.util.List;
 import webit.script.core.ast.Expression;
+import webit.script.util.StatementUtil;
 
 /**
  *
@@ -22,7 +23,7 @@ public final class MapValuePart {
     @SuppressWarnings("unchecked")
     public MapValuePart add(Object key, Expression expr) {
         this.keys.add(key);
-        this.valueExprs.add(expr);
+        this.valueExprs.add(StatementUtil.optimize(expr));
         return this;
     }
 

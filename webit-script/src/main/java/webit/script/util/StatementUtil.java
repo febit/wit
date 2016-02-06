@@ -54,6 +54,12 @@ public class StatementUtil {
         }
     }
 
+    public static void optimize(Expression[] expression) {
+        for (int i = 0; i < expression.length; i++) {
+            expression[i] = optimize(expression[i]);
+        }
+    }
+
     public static Statement optimize(Statement statement) {
         try {
             return statement instanceof Optimizable
