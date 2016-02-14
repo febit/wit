@@ -33,16 +33,6 @@ public final class IfElse extends Statement implements Loopable {
     }
 
     public List<LoopInfo> collectPossibleLoopsInfo() {
-
-        List<LoopInfo> list = StatementUtil.collectPossibleLoopsInfo(thenStatement);
-        List<LoopInfo> list2 = StatementUtil.collectPossibleLoopsInfo(elseStatement);
-
-        if (list == null) {
-            return list2;
-        }
-        if (list2 != null) {
-            list.addAll(list2);
-        }
-        return list;
+        return StatementUtil.collectPossibleLoopsInfo(thenStatement, elseStatement);
     }
 }

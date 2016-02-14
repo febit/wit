@@ -1,4 +1,3 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
 package webit.script.util;
 
 import java.io.IOException;
@@ -9,11 +8,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import webit.script.CFG;
 
 /**
  *
- * @author zqq90
+ * @author zhuqingqing_iwm
  */
 public class PropsUtil {
 
@@ -47,7 +45,7 @@ public class PropsUtil {
 
         private void mergeProps(Props src, String name) {
             this.props.merge(src);
-            this.props.append(CFG.WIM_FILE_LIST, name);
+            this.props.addModule(name);
         }
 
         private void resolveModules(Props src) {
@@ -59,10 +57,10 @@ public class PropsUtil {
                 return;
             }
             if (this.loadedModules == null) {
-                this.loadedModules = new HashSet<String>();
+                this.loadedModules = new HashSet<>();
             }
             if (this.modulePropsCache == null) {
-                this.modulePropsCache = new HashMap<String, Props>();
+                this.modulePropsCache = new HashMap<>();
             }
             for (String module : StringUtil.toArray(modules)) {
                 if (loadedModules.contains(module)) {
@@ -137,6 +135,8 @@ public class PropsUtil {
         InputStream openInputStream(String path);
 
         String getViewPath(String path);
+
+        String fixModuleName(String path);
     }
 
     public static class ClasspathInputResolver implements InputResolver {
@@ -144,16 +144,23 @@ public class PropsUtil {
         ClasspathInputResolver() {
         }
 
+        @Override
         public InputStream openInputStream(String path) {
             return ClassUtil.getDefaultClassLoader().getResourceAsStream(path.charAt(0) == '/'
                     ? path.substring(1)
                     : path);
         }
 
+        @Override
         public String getViewPath(String path) {
-            return "%CLASS_PATH%/".concat(path.charAt(0) == '/'
+            return "classpath:".concat(fixModuleName(path));
+        }
+
+        @Override
+        public String fixModuleName(String path) {
+            return path.charAt(0) == '/'
                     ? path.substring(1)
-                    : path);
+                    : path;
         }
     }
 }

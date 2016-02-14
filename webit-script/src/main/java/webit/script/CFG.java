@@ -8,7 +8,6 @@ package webit.script;
 public interface CFG {
 
     String DEFAULT_WIM = "/default.wim";
-    String WIM_FILE_LIST = "$$WIMS";
     String DEFAULT_ENCODING = "DEFAULT_ENCODING";
 
     String OUT_ENCODING = "engine.encoding";

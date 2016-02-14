@@ -54,6 +54,12 @@ public class StatementUtil {
         }
     }
 
+    public static void optimize(Expression[] expression) {
+        for (int i = 0; i < expression.length; i++) {
+            expression[i] = optimize(expression[i]);
+        }
+    }
+
     public static Statement optimize(Statement statement) {
         try {
             return statement instanceof Optimizable
@@ -71,7 +77,21 @@ public class StatementUtil {
         return null;
     }
 
-    public static List<LoopInfo> collectPossibleLoopsInfo(Statement[] statements) {
+    public static List<LoopInfo> collectPossibleLoopsInfo(Statement stat1, Statement stat2) {
+
+        List<LoopInfo> list = StatementUtil.collectPossibleLoopsInfo(stat1);
+        List<LoopInfo> list2 = StatementUtil.collectPossibleLoopsInfo(stat2);
+
+        if (list == null) {
+            return list2;
+        }
+        if (list2 != null) {
+            list.addAll(list2);
+        }
+        return list;
+    }
+
+    public static List<LoopInfo> collectPossibleLoopsInfo(Statement... statements) {
         int i;
         if (statements == null || (i = statements.length) == 0) {
             return null;

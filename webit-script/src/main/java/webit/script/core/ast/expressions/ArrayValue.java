@@ -3,12 +3,15 @@ package webit.script.core.ast.expressions;
 
 import webit.script.Context;
 import webit.script.core.ast.Expression;
+import webit.script.core.ast.Optimizable;
+import webit.script.core.ast.Statement;
+import webit.script.util.StatementUtil;
 
 /**
  *
  * @author Zqq
  */
-public final class ArrayValue extends Expression {
+public final class ArrayValue extends Expression implements Optimizable {
 
     private final Expression[] valueExprs;
 
@@ -21,9 +24,26 @@ public final class ArrayValue extends Expression {
         final Expression[] exprs;
         final int len;
         final Object[] value = new Object[len = (exprs = this.valueExprs).length];
-        for (int i = 0;i < len; i++) {
+        for (int i = 0; i < len; i++) {
             value[i] = exprs[i].execute(context);
         }
         return value;
+    }
+
+    @Override
+    public Statement optimize() throws Exception {
+        final Expression[] exprs = this.valueExprs;
+        StatementUtil.optimize(exprs);
+        final int len = exprs.length;
+        for (int i = 0; i < len; i++) {
+            if (!(exprs[i] instanceof DirectValue)) {
+                return this;
+            }
+        }
+        final Object[] value = new Object[len];
+        for (int i = 0; i < len; i++) {
+            value[i] = ((DirectValue) exprs[i]).value;
+        }
+        return new DirectValue(value, line, column);
     }
 }

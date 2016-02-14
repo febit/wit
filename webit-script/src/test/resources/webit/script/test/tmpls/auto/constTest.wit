@@ -16,5 +16,26 @@ assertEquals(3, f);
     assertEquals(2, a);
     assertEquals("bbbaaa", b);
 }
+{
+
+    const arr = ["xx", a, b,c];
+
+    assertEquals(arr[0], "xx");
+    assertEquals(arr[1], a);
+    assertEquals(arr[2], b);
+    assertEquals(arr[3], c);
+
+}
+{
+
+    const map = {
+        "1": a,
+        "2": b
+    };
+
+    assertEquals(map["1"], a);
+    assertEquals(map["2"], b);
+
+}
 
 %>
