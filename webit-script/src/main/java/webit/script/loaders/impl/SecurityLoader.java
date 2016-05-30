@@ -15,6 +15,7 @@ public class SecurityLoader implements Loader {
     protected String[] list = ArrayUtil.EMPTY_STRINGS;
     protected Loader loader;
 
+    @Override
     public Resource get(String name) {
         for (String item : this.list) {
             if (name.startsWith(item)) {
@@ -24,14 +25,17 @@ public class SecurityLoader implements Loader {
         return new NotFoundResource(name, "Security Unaccessable: " + name);
     }
 
+    @Override
     public String concat(String parent, String name) {
         return this.loader.concat(parent, name);
     }
 
+    @Override
     public String normalize(String name) {
         return this.loader.normalize(name);
     }
 
+    @Override
     public boolean isEnableCache(String name) {
         return this.loader.isEnableCache(name);
     }

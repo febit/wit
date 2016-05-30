@@ -21,6 +21,7 @@ public final class SimpleTextStatement extends Statement {
         this.textBytes = bytes;
     }
 
+    @Override
     public Object execute(final Context context) {
         if (context.isByteStream && encoding == context.encoding) {
             context.outNotNull(textBytes);

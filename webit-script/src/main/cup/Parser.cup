@@ -122,7 +122,7 @@ precedence left     DOT, LBRACK, LPAREN, LBRACE, AT; // . [ ( { @
 
 /* templateAST */
 
-templateAST     ::= statement[]:list
+templateAST     ::= statement[]:list ?
                     {: return createTemplateAST(%list%); :}
                     ;
 
@@ -147,7 +147,7 @@ statement       ::= expression_statementable:$ SEMICOLON
 
                     |LRDEBUG:sym
                     {: return createBreakPointStatement(null, null, %sym.line%, %sym.column%); :}
-                    |LDEBUG:sym IDENTIFIER:label COLON RDEBUG
+                    |LDEBUG:sym expression:label COLON RDEBUG
                     {: return createBreakPointStatement(%label%, null, %sym.line%, %sym.column%); :}
 
                     |expression:expr INTERPOLATION_END
@@ -391,7 +391,7 @@ expression      ::= expression_statementable:$
                     |LDEBUG:sym expression:expr RDEBUG
                     {: return createBreakPointExpression(null, %expr%, %sym.line%, %sym.column%); :}
 
-                    |LDEBUG:sym IDENTIFIER:label COLON expression:expr RDEBUG
+                    |LDEBUG:sym expression:label COLON expression:expr RDEBUG
                     {: return createBreakPointExpression(%label%, %expr%, %sym.line%, %sym.column%); :}
 
                     //bitNotOper ~
@@ -587,9 +587,9 @@ funcHead            ::= FUNCTION:sym
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list RPAREN
-                        {: return new MethodExecute(%funcExpr%, (%list%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
+                        {: return createMethodExecute(%funcExpr%, (%list%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
                         |expression:param0 AT contextValueExpr:funcExpr LPAREN expressionList:list RPAREN
-                        {: return new MethodExecute(%funcExpr%, (%list%).addFirst(%param0%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
+                        {: return createMethodExecute(%funcExpr%, (%list%).addFirst(%param0%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
                         ;
 
 

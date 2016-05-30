@@ -31,7 +31,7 @@ public class WebEngineManager {
 
     private void checkExtraProperties() {
         if (this.extraProperties == null) {
-            this.extraProperties = new HashMap<String, Object>();
+            this.extraProperties = new HashMap<>();
         }
     }
 
@@ -110,6 +110,7 @@ public class WebEngineManager {
             this.servletContext = servletContext;
         }
 
+        @Override
         public ServletContext getServletContext() {
             return this.servletContext;
         }

@@ -22,10 +22,12 @@ public class StringResource implements Resource, ResourceOffset {
         this.text = text;
     }
 
+    @Override
     public boolean isModified() {
         return false;
     }
 
+    @Override
     public Reader openReader() throws IOException {
         return new StringReader(this.text);
     }
@@ -33,6 +35,7 @@ public class StringResource implements Resource, ResourceOffset {
     /**
      * @since 1.4.1
      */
+    @Override
     public boolean exists() {
         return this.text != null;
     }
@@ -49,6 +52,7 @@ public class StringResource implements Resource, ResourceOffset {
     /**
      * @since 1.5.0
      */
+    @Override
     public int getOffsetLine() {
         return offsetLine;
     }
@@ -56,6 +60,7 @@ public class StringResource implements Resource, ResourceOffset {
     /**
      * @since 1.5.0
      */
+    @Override
     public int getOffsetColumnOfFirstLine() {
         return offsetColumnOfFirstLine;
     }

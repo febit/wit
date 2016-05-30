@@ -68,9 +68,9 @@ abstract class AbstractParser {
     VariantManager varmgr;
 
     AbstractParser() {
-        this.symbolStack = new Stack<Symbol>(24);
-        this.importedClasses = new HashMap<String, String>();
-        this.labelsIndexMap = new HashMap<String, Integer>();
+        this.symbolStack = new Stack<>(24);
+        this.importedClasses = new HashMap<>();
+        this.labelsIndexMap = new HashMap<>();
     }
 
     public TemplateAST parse(final Template template, BreakPointListener breakPointListener) throws ParseException {
@@ -259,7 +259,7 @@ abstract class AbstractParser {
             if (ClassUtil.isFinal(field)) {
                 try {
                     return new DirectValue(field.get(null), line, column);
-                } catch (Exception ex) {
+                } catch (IllegalArgumentException | IllegalAccessException ex) {
                     throw new ParseException("Failed to get static field value: ".concat(path), ex, line, column);
                 }
             } else {
@@ -337,7 +337,7 @@ abstract class AbstractParser {
         if (list == null || list.isEmpty()) {
             return EMPTY_STATEMENTS;
         }
-        List<Statement> temp = new ArrayList<Statement>(list.size());
+        List<Statement> temp = new ArrayList<>(list.size());
         for (Statement stat : list) {
             if (stat instanceof StatementGroup) {
                 temp.addAll(Arrays.asList(((StatementGroup) stat).getList()));
@@ -600,7 +600,7 @@ abstract class AbstractParser {
             in = new ObjectInputStream(ClassUtil.getDefaultClassLoader()
                     .getResourceAsStream(StringUtil.concat("webit/script/core/Parser$", name, ".data")));
             return (short[][]) in.readObject();
-        } catch (Exception e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new Error(e);
         } finally {
             if (in != null) {

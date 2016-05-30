@@ -18,7 +18,7 @@ public final class FieldInfoResolver {
 
     private FieldInfoResolver(Class beanClass) {
         this.beanType = beanClass;
-        this.fieldInfos = new HashMap<String, FieldInfo>();
+        this.fieldInfos = new HashMap<>();
     }
 
     public static FieldInfo[] resolve(Class beanClass) {

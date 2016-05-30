@@ -42,6 +42,7 @@ public final class WriterOut implements Out {
         this.decoder = coderFactory.newDecoder(encoding, this.buffers = Buffers.getMiniPeers());
     }
 
+    @Override
     public void write(final byte[] bytes, final int offset, final int length) {
         try {
             this.decoder.write(bytes, offset, length, this.writer);
@@ -50,6 +51,7 @@ public final class WriterOut implements Out {
         }
     }
 
+    @Override
     public void write(final byte[] bytes) {
         try {
             this.decoder.write(bytes, 0, bytes.length, this.writer);
@@ -58,6 +60,7 @@ public final class WriterOut implements Out {
         }
     }
 
+    @Override
     public void write(final char[] chars, final int offset, final int length) {
         try {
             this.writer.write(chars, offset, length);
@@ -66,6 +69,7 @@ public final class WriterOut implements Out {
         }
     }
 
+    @Override
     public void write(final char[] chars) {
         try {
             this.writer.write(chars);
@@ -74,6 +78,7 @@ public final class WriterOut implements Out {
         }
     }
 
+    @Override
     public void write(final String string, final int offset, final int length) {
         try {
             final char[] chars;
@@ -86,14 +91,17 @@ public final class WriterOut implements Out {
         }
     }
 
+    @Override
     public void write(final String string) {
         write(string, 0, string.length());
     }
 
+    @Override
     public String getEncoding() {
         return this.encoding;
     }
 
+    @Override
     public boolean isByteStream() {
         return false;
     }

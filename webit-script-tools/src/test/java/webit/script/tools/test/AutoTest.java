@@ -32,7 +32,7 @@ public class AutoTest {
     private final static String AUTO_TEST_PATH = "webit/script/tools/test/tmpls/auto/";
 
     private Map<String, String> collectAutoTestTemplates() {
-        final Map<String, String> templates = new TreeMap<String, String>();
+        final Map<String, String> templates = new TreeMap<>();
 
         ClassLoader classLoader = ClassUtil.getDefaultClassLoader();
         try {
@@ -88,10 +88,7 @@ public class AutoTest {
                     mergeTemplate(templatePath, new DiscardOut());
                 }
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
-            throw e;
-        } catch (ScriptRuntimeException e) {
+        } catch (ParseException | ScriptRuntimeException e) {
             e.printStackTrace();
             throw e;
         }

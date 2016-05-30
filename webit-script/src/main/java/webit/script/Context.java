@@ -145,6 +145,7 @@ public final class Context implements KeyValueAccepter {
         return this.loopType != 0;
     }
 
+    @Override
     public void set(final String key, final Object value) {
         int index = indexers[this.indexer].getIndex(key);
         if (index >= 0) {
@@ -218,7 +219,7 @@ public final class Context implements KeyValueAccepter {
             map.put(key, value);
             return;
         }
-        (this.locals = new HashMap<Object, Object>()).put(key, value);
+        (this.locals = new HashMap<>()).put(key, value);
     }
 
     public Object[] get(final String[] keys) {

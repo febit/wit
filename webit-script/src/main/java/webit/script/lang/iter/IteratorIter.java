@@ -20,6 +20,7 @@ public final class IteratorIter<E> extends AbstractIter {
         return iterator.next();
     }
 
+    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }

@@ -20,10 +20,12 @@ public final class GlobalValue extends ResetableValueExpression {
         this.manager = manager;
     }
 
+    @Override
     public Object execute(final Context context) {
         return this.manager.getGlobal(index);
     }
 
+    @Override
     public Object setValue(final Context context, final Object value) {
         this.manager.setGlobal(index, value);
         return value;

@@ -47,6 +47,7 @@ public final class ForMap extends Statement implements Loopable {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Object execute(final Context context) {
         KeyIter iter = CollectionUtil.toKeyIter(mapExpr.execute(context), this);
         if (iter != null && functionDeclareExpr != null) {
@@ -95,7 +96,8 @@ public final class ForMap extends Statement implements Loopable {
         return null;
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        return possibleLoopsInfo != null ? new LinkedList<LoopInfo>(Arrays.asList(possibleLoopsInfo)) : null;
+        return possibleLoopsInfo != null ? new LinkedList<>(Arrays.asList(possibleLoopsInfo)) : null;
     }
 }

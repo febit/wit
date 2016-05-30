@@ -18,6 +18,7 @@ public final class Or extends BinaryOperator implements Optimizable {
         super(leftExpr, rightExpr, line, column);
     }
 
+    @Override
     public Object execute(final Context context) {
         Object left;
         return ALU.isTrue(left = leftExpr.execute(context))
@@ -25,6 +26,7 @@ public final class Or extends BinaryOperator implements Optimizable {
                 : rightExpr.execute(context);
     }
 
+    @Override
     public Expression optimize() {
         return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
                 ? new DirectValue(ALU.or(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)

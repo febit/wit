@@ -17,15 +17,18 @@ public abstract class AbstractIter implements Iter {
 
     protected abstract Object _next();
 
+    @Override
     public final Object next() {
         ++_index;
         return _next();
     }
 
+    @Override
     public final boolean isFirst() {
         return _index == 0;
     }
 
+    @Override
     public final int index() {
         return _index;
     }

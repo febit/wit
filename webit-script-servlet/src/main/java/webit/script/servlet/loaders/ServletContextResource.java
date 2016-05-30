@@ -25,10 +25,12 @@ public class ServletContextResource implements Resource {
         this.servletContext = servletContext;
     }
 
+    @Override
     public boolean isModified() {
         return false;
     }
 
+    @Override
     public Reader openReader() throws IOException {
         final InputStream in = servletContext.getResourceAsStream(path);
         if (in != null) {
@@ -40,6 +42,7 @@ public class ServletContextResource implements Resource {
     /**
      * @since 1.4.1
      */
+    @Override
     public boolean exists() {
         try {
             if (servletContext.getResource(path) != null) {

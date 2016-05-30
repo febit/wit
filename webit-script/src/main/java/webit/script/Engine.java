@@ -3,6 +3,7 @@ package webit.script;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -40,11 +41,11 @@ public final class Engine {
 
     public static final String UTF_8 = internEncoding("UTF-8");
 
-    private final ConcurrentMap<String, Template> templateCache = new ConcurrentHashMap<String, Template>();
-    private final Map<Class, Object> components = new HashMap<Class, Object>();
-    private final Map<String, Object> beans = new HashMap<String, Object>();
-    private final Map<String, Object> datas = new HashMap<String, Object>();
-    private final Map<String, Entry> configEntrys = new HashMap<String, Entry>();
+    private final ConcurrentMap<String, Template> templateCache = new ConcurrentHashMap<>();
+    private final Map<Class, Object> components = new HashMap<>();
+    private final Map<String, Object> beans = new HashMap<>();
+    private final Map<String, Object> datas = new HashMap<>();
+    private final Map<String, Entry> configEntrys = new HashMap<>();
 
     private boolean looseVar;
     private boolean shareRootData = true;
@@ -206,7 +207,7 @@ public final class Engine {
         }
         final Map<String, Object> extras;
         if (parameters != null) {
-            extras = new HashMap<String, Object>();
+            extras = new HashMap<>();
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
                 String key = entry.getKey();
                 if (key == null) {
@@ -311,7 +312,7 @@ public final class Engine {
     }
 
     public void inject(String key, final Object bean) {
-        LinkedList<String> keyList = new LinkedList<String>();
+        LinkedList<String> keyList = new LinkedList<>();
         do {
             keyList.addFirst(key);
             key = (String) this.datas.get(key + ".@class");
@@ -326,14 +327,14 @@ public final class Engine {
             if (comp != null) {
                 try {
                     field.set(bean, comp);
-                } catch (Exception ex) {
+                } catch (IllegalArgumentException | IllegalAccessException ex) {
                     //shouldn't be
                     throw new RuntimeException(ex);
                 }
             }
         }
 
-        Set<String> injected = new HashSet<String>();
+        Set<String> injected = new HashSet<>();
         for (String profile : keys) {
             inject(profile, bean, injected, fields);
         }
@@ -353,7 +354,7 @@ public final class Engine {
                 }
                 try {
                     method.invoke(bean, args);
-                } catch (Exception ex) {
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                     //shouldn't be
                     throw new RuntimeException(ex);
                 }
@@ -390,7 +391,7 @@ public final class Engine {
                     }
                     field.set(bean, value);
                 }
-            } catch (Exception ex) {
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
                 throw new RuntimeException(ex);
             }
             entry = entry.next;

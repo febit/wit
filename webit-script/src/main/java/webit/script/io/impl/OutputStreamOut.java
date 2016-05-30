@@ -41,6 +41,7 @@ public final class OutputStreamOut implements Out {
         this(outputStream, encoding != null ? Engine.internEncoding(encoding) : engine.getEncoding(), engine.getCoderFactory());
     }
 
+    @Override
     public void write(final byte[] bytes, final int offset, final int length) {
         try {
             this.outputStream.write(bytes, offset, length);
@@ -49,6 +50,7 @@ public final class OutputStreamOut implements Out {
         }
     }
 
+    @Override
     public void write(final byte[] bytes) {
         try {
             this.outputStream.write(bytes);
@@ -57,6 +59,7 @@ public final class OutputStreamOut implements Out {
         }
     }
 
+    @Override
     public void write(final char[] chars, final int offset, final int length) {
         try {
             this.encoder.write(chars, offset, length, this.outputStream);
@@ -65,10 +68,12 @@ public final class OutputStreamOut implements Out {
         }
     }
 
+    @Override
     public void write(final char[] chars) {
         write(chars, 0, chars.length);
     }
 
+    @Override
     public void write(final String string, final int offset, final int length) {
         try {
             this.encoder.write(string, offset, length, this.outputStream);
@@ -77,6 +82,7 @@ public final class OutputStreamOut implements Out {
         }
     }
 
+    @Override
     public void write(final String string) {
         try {
             this.encoder.write(string, 0, string.length(), this.outputStream);
@@ -85,10 +91,12 @@ public final class OutputStreamOut implements Out {
         }
     }
 
+    @Override
     public String getEncoding() {
         return this.encoding;
     }
 
+    @Override
     public boolean isByteStream() {
         return true;
     }

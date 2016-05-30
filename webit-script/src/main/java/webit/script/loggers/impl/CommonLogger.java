@@ -19,6 +19,7 @@ public final class CommonLogger extends AbstractLogger{
         log = LogFactory.getLog(name);
     }
 
+    @Override
     public boolean isEnabled(int level) {
         switch (level) {
             case LEVEL_DEBUG:
@@ -33,6 +34,7 @@ public final class CommonLogger extends AbstractLogger{
         return false;
     }
 
+    @Override
     public void log(int level, String msg) {
         switch (level) {
             case LEVEL_DEBUG:
@@ -50,6 +52,7 @@ public final class CommonLogger extends AbstractLogger{
         }
     }
 
+    @Override
     public void log(int level, String msg, Throwable throwable) {
         switch (level) {
             case LEVEL_DEBUG:

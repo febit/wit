@@ -21,14 +21,16 @@ public final class Break extends Statement implements Loopable {
         this.label = label;
     }
 
+    @Override
     public Object execute(final Context context) {
         context.breakLoop(label);
         return null;
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
         LinkedList<LoopInfo> list;
-        (list = new LinkedList<LoopInfo>()).add(new LoopInfo(LoopInfo.BREAK, label, line, column));
+        (list = new LinkedList<>()).add(new LoopInfo(LoopInfo.BREAK, label, line, column));
         return list;
     }
 }

@@ -44,6 +44,7 @@ public class ForIn extends Statement implements Loopable {
         this.itemIndex = itemIndex;
     }
 
+    @Override
     public Object execute(final Context context) {
         Iter iter = CollectionUtil.toIter(collectionExpr.execute(context), this);
         if (iter != null && functionDeclareExpr != null) {
@@ -90,7 +91,8 @@ public class ForIn extends Statement implements Loopable {
         return null;
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        return possibleLoopsInfo != null ? new LinkedList<LoopInfo>(Arrays.asList(possibleLoopsInfo)) : null;
+        return possibleLoopsInfo != null ? new LinkedList<>(Arrays.asList(possibleLoopsInfo)) : null;
     }
 }

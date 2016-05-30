@@ -72,7 +72,7 @@ public class StringUtil {
         final int len = srcc.length;
 
         // list max size = (size + 1) / 2
-        List<String> list = new ArrayList<String>(
+        List<String> list = new ArrayList<>(
                 len > 1024 ? 128
                 : len > 64 ? 32
                 : (len + 1) >> 1);

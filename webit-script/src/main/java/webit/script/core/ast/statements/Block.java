@@ -27,6 +27,7 @@ public final class Block extends IBlock implements Loopable {
         this.possibleLoopsInfo = possibleLoopsInfo;
     }
 
+    @Override
     public Object execute(final Context context) {
         final int preIndex = context.indexer;
         context.indexer = indexer;
@@ -35,18 +36,22 @@ public final class Block extends IBlock implements Loopable {
         return null;
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        return new LinkedList<LoopInfo>(Arrays.asList(possibleLoopsInfo));
+        return new LinkedList<>(Arrays.asList(possibleLoopsInfo));
     }
 
+    @Override
     public boolean hasLoops() {
         return true;
     }
 
+    @Override
     public int getVarIndexer() {
         return indexer;
     }
 
+    @Override
     public Statement[] getStatements() {
         return statements;
     }

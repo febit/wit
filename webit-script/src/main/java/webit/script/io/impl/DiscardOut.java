@@ -22,28 +22,36 @@ public class DiscardOut implements Out {
         this.isByteStream = isByteStream;
     }
 
+    @Override
     public void write(byte[] bytes, int offset, int length) {
     }
 
+    @Override
     public void write(byte[] bytes) {
     }
 
+    @Override
     public void write(char[] chars, int offset, int length) {
     }
 
+    @Override
     public void write(char[] chars) {
     }
 
+    @Override
     public void write(String string, int offset, int length) {
     }
 
+    @Override
     public void write(String string) {
     }
 
+    @Override
     public String getEncoding() {
         return encoding;
     }
 
+    @Override
     public boolean isByteStream() {
         return isByteStream;
     }

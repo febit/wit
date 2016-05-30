@@ -18,14 +18,17 @@ public final class Jdk14Logger extends AbstractLogger {
         this.log = java.util.logging.Logger.getLogger(name);
     }
 
+    @Override
     public boolean isEnabled(int level) {
         return log.isLoggable(getLevel(level));
     }
 
+    @Override
     public void log(int level, String msg) {
         log.log(getLevel(level), msg);
     }
 
+    @Override
     public void log(int level, String msg, Throwable throwable) {
         log.log(getLevel(level), msg, throwable);
     }

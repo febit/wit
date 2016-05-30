@@ -10,7 +10,7 @@ import webit.script.util.Stack;
  */
 public class ScriptRuntimeException extends TemplateException {
 
-    protected final Stack<Statement> statementStack = new Stack<Statement>(8);
+    protected final Stack<Statement> statementStack = new Stack<>(8);
 
     public ScriptRuntimeException(String message) {
         super(message);

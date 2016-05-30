@@ -11,6 +11,7 @@ import webit.script.loaders.impl.resources.ClasspathResource;
  */
 public class ClasspathLoader extends AbstractLoader {
 
+    @Override
     public Resource get(String name) {
         return new ClasspathResource(getRealPath(name), encoding);
     }

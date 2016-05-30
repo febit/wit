@@ -11,6 +11,7 @@ import webit.script.loaders.impl.resources.FileResource;
  */
 public class FileLoader extends AbstractLoader {
 
+    @Override
     public Resource get(String name) {
         return new FileResource(getRealPath(name), encoding);
     }

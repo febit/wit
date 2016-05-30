@@ -21,10 +21,12 @@ public final class NoneStatement extends Statement implements Optimizable {
         super(line, column);
     }
 
+    @Override
     public Object execute(final Context context) {
         return null;
     }
 
+    @Override
     public Statement optimize() {
         return null;
     }

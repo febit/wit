@@ -21,6 +21,7 @@ public class NativeConstructorDeclare implements MethodDeclare {
         this.argsCount = constructor.getParameterTypes().length;
     }
 
+    @Override
     public Object invoke(final Context context, final Object[] args) {
 
         final Object[] methodArgs;

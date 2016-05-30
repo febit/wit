@@ -20,10 +20,12 @@ public final class Not extends Expression implements Optimizable {
         this.expr = expr;
     }
 
+    @Override
     public Object execute(final Context context) {
         return !ALU.isTrue(expr.execute(context));
     }
 
+    @Override
     public Expression optimize() {
         return expr instanceof DirectValue
                 ? new DirectValue(ALU.not(((DirectValue) expr).value), line, column)

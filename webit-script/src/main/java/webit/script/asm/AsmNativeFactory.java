@@ -49,9 +49,7 @@ public class AsmNativeFactory extends NativeFactory {
                             declare = createAccessor(member);
                             CACHE.put(member, declare);
                         }
-                    } catch (Exception e) {
-                        logger.error("Failed to create ASMMethodDeclare for '{}'.", member, e);
-                    } catch (Error e) {
+                    } catch (Exception | Error e) {
                         logger.error("Failed to create ASMMethodDeclare for '{}'.", member, e);
                     }
                 }

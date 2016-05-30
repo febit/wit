@@ -12,7 +12,7 @@ public final class ExpressionList {
     private final LinkedList<Expression> expressionList;
 
     public ExpressionList() {
-        this.expressionList = new LinkedList<Expression>();
+        this.expressionList = new LinkedList<>();
     }
 
     public ExpressionList add(Expression expr) {

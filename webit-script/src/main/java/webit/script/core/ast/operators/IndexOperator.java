@@ -21,6 +21,7 @@ public final class IndexOperator extends ResetableValueExpression {
         this.rightExpr = rightExp;
     }
 
+    @Override
     public Object execute(final Context context) {
         try {
             return context.getBean(leftExpr.execute(context), rightExpr.execute(context));
@@ -29,6 +30,7 @@ public final class IndexOperator extends ResetableValueExpression {
         }
     }
 
+    @Override
     public Object setValue(final Context context, final Object value) {
         try {
             context.setBean(

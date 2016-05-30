@@ -31,6 +31,7 @@ public final class Switch extends Statement implements Loopable {
         this.label = label;
     }
 
+    @Override
     public Object execute(final Context context) {
         CaseEntry caseStatement;
         if ((caseStatement = caseMap.get(switchExpr.execute(context))) == null) {
@@ -43,9 +44,10 @@ public final class Switch extends Statement implements Loopable {
         return null;
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
 
-        LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
+        LinkedList<LoopInfo> loopInfos = new LinkedList<>();
         List<LoopInfo> list;
         //XXX: May have duplicated LoopInfo caused by duplicated CaseEntry
         for (Map.Entry<Object, CaseEntry> entry : caseMap.entrySet()) {

@@ -348,8 +348,8 @@ public final class ClassWriter {
             final String[] interfaces) {
         poolIndex = 1;
         pool = new ByteBuffer();
-        items = new HashMap<Item, Item>(64);
-        methods = new ArrayList<MethodWriter>();
+        items = new HashMap<>(64);
+        methods = new ArrayList<>();
         key = new Item();
         key2 = new Item();
         key3 = new Item();

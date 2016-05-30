@@ -21,14 +21,16 @@ public final class Continue extends Statement implements Loopable {
         this.label = label;
     }
 
+    @Override
     public Object execute(final Context context) {
         context.continueLoop(label);
         return null;
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
         LinkedList<LoopInfo> list;
-        (list = new LinkedList<LoopInfo>()).add(new LoopInfo(LoopInfo.CONTINUE, label, line, column));
+        (list = new LinkedList<>()).add(new LoopInfo(LoopInfo.CONTINUE, label, line, column));
         return list;
     }
 }

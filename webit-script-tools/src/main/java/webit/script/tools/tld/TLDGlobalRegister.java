@@ -25,6 +25,7 @@ public class TLDGlobalRegister implements GlobalRegister{
     protected Engine engine;
     protected NativeFactory nativeFactory;
 
+    @Override
     public void regist(GlobalManager manager) {
         final InputStream input = ClassUtil.getDefaultClassLoader()
                 .getResourceAsStream(FileNameUtil.concat("META-INF/", tld));

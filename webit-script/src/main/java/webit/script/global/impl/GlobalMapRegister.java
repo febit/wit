@@ -21,6 +21,7 @@ public class GlobalMapRegister implements GlobalRegister {
         this.vars = new ConcurrentHashMap();
     }
 
+    @Override
     public void regist(GlobalManager manager) {
         manager.setConst(this.name, this.vars);
     }

@@ -17,6 +17,7 @@ public final class CharArrayTextStatement extends Statement {
         this.chars = chars;
     }
 
+    @Override
     public Object execute(final Context context) {
         context.outNotNull(chars);
         return null;

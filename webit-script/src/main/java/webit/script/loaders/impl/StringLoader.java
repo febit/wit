@@ -13,19 +13,23 @@ public class StringLoader implements Loader {
 
     protected boolean enableCache;
 
+    @Override
     public Resource get(String name) {
         return new StringResource(name);
     }
 
+    @Override
     public String concat(String parent, String name) {
         //ignore parent
         return name;
     }
 
+    @Override
     public String normalize(String name) {
         return name;
     }
 
+    @Override
     public boolean isEnableCache(String name) {
         return enableCache;
     }

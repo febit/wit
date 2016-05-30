@@ -17,14 +17,17 @@ public abstract class AbstractArrayIter implements Iter {
         this.max = max;
     }
 
+    @Override
     public final boolean isFirst() {
         return _index == 0;
     }
 
+    @Override
     public final boolean hasNext() {
         return _index < max;
     }
 
+    @Override
     public final int index() {
         return _index;
     }

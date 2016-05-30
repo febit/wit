@@ -20,14 +20,17 @@ public class NotFoundResource implements Resource {
         this.message = message;
     }
 
+    @Override
     public boolean isModified() {
         return false;
     }
 
+    @Override
     public boolean exists() {
         return false;
     }
 
+    @Override
     public Reader openReader() throws IOException {
         throw new ResourceNotFoundException(message);
     }

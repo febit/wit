@@ -20,7 +20,7 @@ import webit.script.util.StringUtil;
  */
 public class NativeFactory {
 
-    protected final ConcurrentMap<Object, MethodDeclare> CACHE = new ConcurrentHashMap<Object, MethodDeclare>();
+    protected final ConcurrentMap<Object, MethodDeclare> CACHE = new ConcurrentHashMap<>();
 
     protected Logger logger;
     protected NativeSecurityManager nativeSecurityManager;
@@ -75,7 +75,7 @@ public class NativeFactory {
         }
         try {
             return getNativeMethodDeclare(clazz.getMethod(methodName, paramTypes));
-        } catch (Exception ex) {
+        } catch (NoSuchMethodException | SecurityException ex) {
             throw new ParseException(ex.getMessage(), line, column);
         }
     }
@@ -98,7 +98,7 @@ public class NativeFactory {
         }
         try {
             return getNativeConstructorDeclare(clazz.getConstructor(paramTypes));
-        } catch (Exception ex) {
+        } catch (NoSuchMethodException | SecurityException ex) {
             throw new ParseException(ex.getMessage(), line, column);
         }
     }

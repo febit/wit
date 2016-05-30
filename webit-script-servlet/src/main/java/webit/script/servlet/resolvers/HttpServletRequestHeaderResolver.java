@@ -10,10 +10,12 @@ import webit.script.servlet.HttpServletRequestHeader;
  */
 public class HttpServletRequestHeaderResolver implements GetResolver{
 
+    @Override
     public Object get(Object bean, Object property) {
         return ((HttpServletRequestHeader) bean).get(property.toString());
     }
 
+    @Override
     public Class<?> getMatchClass() {
         return HttpServletRequestHeader.class;
     }

@@ -25,6 +25,7 @@ public final class IfNot extends Statement implements Loopable {
         this.elseStatement = elseStatement;
     }
 
+    @Override
     public Object execute(final Context context) {
         if (!ALU.isTrue(ifExpr.execute(context))) {
             return elseStatement.execute(context);
@@ -32,6 +33,7 @@ public final class IfNot extends Statement implements Loopable {
         return null;
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
         return StatementUtil.collectPossibleLoopsInfo(elseStatement);
     }

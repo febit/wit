@@ -28,6 +28,7 @@ public final class KeyIterMethodFilter extends IterFilter implements KeyIter {
         return ALU.isTrue(method.invoke(context, new Object[]{key, keyIter.value()}));
     }
 
+    @Override
     public Object value() {
         return keyIter.value();
     }

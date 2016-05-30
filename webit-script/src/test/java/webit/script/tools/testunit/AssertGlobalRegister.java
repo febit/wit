@@ -21,6 +21,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         AssertTrue() {
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
             assertObjectTrue(ArrayUtil.get(args, 0, null));
@@ -33,6 +34,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         AssertFalse() {
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
             assertObjectFalse(ArrayUtil.get(args, 0, null));
@@ -45,6 +47,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         AssertNotNull() {
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
             assertNotNull(ArrayUtil.get(args, 0, null));
@@ -57,6 +60,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         AssertNull() {
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
             assertNull(ArrayUtil.get(args, 0, null));
@@ -69,6 +73,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         AssertEquals() {
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
             args = ArrayUtil.ensureMinSize(args, 2);
@@ -82,6 +87,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         AssertSame() {
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
             args = ArrayUtil.ensureMinSize(args, 2);
@@ -95,6 +101,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         AssertNotSame() {
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
             args = ArrayUtil.ensureMinSize(args, 2);
@@ -108,6 +115,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         AssertArrayEquals() {
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             plusAssertCount(context);
             args = ArrayUtil.ensureMinSize(args, 2);
@@ -116,6 +124,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
     };
 
+    @Override
     public void regist(final GlobalManager manager) {
         manager.setConst("assertTrue", new AssertTrue());
         manager.setConst("assertFalse", new AssertFalse());

@@ -16,6 +16,7 @@ import webit.script.util.StringUtil;
  */
 public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolver {
 
+    @Override
     public Object get(Object object, Object property) {
         if (property instanceof Number) {
             int index = ((Number) property).intValue();
@@ -58,6 +59,7 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
         throw new ScriptRuntimeException(StringUtil.concat("Invalid property: array#", property));
     }
 
+    @Override
     public void set(Object o1, Object property, Object value) {
         if (property instanceof Number) {
             int index = ((Number) property).intValue();
@@ -104,10 +106,12 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
         throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: array#", property));
     }
 
+    @Override
     public Class getMatchClass() {
         return null;
     }
 
+    @Override
     public void regist(ResolverManager resolverManager) {
         resolverManager.registResolver(int[].class, this);
         resolverManager.registResolver(boolean[].class, this);

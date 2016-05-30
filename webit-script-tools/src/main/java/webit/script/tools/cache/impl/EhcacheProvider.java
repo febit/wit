@@ -24,6 +24,7 @@ public class EhcacheProvider implements CacheProvider {
         }
     }
 
+    @Override
     public Object get(Object key) {
         final Element element;
         if ((element = this.ehcache.get(key)) != null) {
@@ -32,14 +33,17 @@ public class EhcacheProvider implements CacheProvider {
         return null;
     }
 
+    @Override
     public void put(Object key, Object value) {
         this.ehcache.putIfAbsent(new Element(key, value));
     }
 
+    @Override
     public void remove(Object key) {
         this.ehcache.remove(key);
     }
 
+    @Override
     public void clear() {
         this.ehcache.removeAll();
     }

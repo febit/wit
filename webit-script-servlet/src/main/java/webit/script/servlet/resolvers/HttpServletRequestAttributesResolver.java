@@ -11,14 +11,17 @@ import webit.script.servlet.HttpServletRequestAttributes;
  */
 public class HttpServletRequestAttributesResolver implements GetResolver, SetResolver {
 
+    @Override
     public Object get(Object bean, Object property) {
         return ((HttpServletRequestAttributes) bean).get(property.toString());
     }
 
+    @Override
     public void set(Object bean, Object property, Object value) {
         ((HttpServletRequestAttributes) bean).set(property.toString(), value);
     }
 
+    @Override
     public Class<?> getMatchClass() {
         return HttpServletRequestAttributes.class;
     }

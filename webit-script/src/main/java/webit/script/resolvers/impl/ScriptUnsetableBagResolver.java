@@ -14,14 +14,17 @@ import webit.script.resolvers.SetResolver;
 public class ScriptUnsetableBagResolver implements GetResolver, SetResolver {
 
     @SuppressWarnings("unchecked")
+    @Override
     public Object get(Object object, Object property) {
         return ((SimpleUnsetableBag) object).get(property);
     }
 
+    @Override
     public void set(Object object, Object property, Object value) {
         throw new ScriptRuntimeException("This is an unsetable Object.s");
     }
 
+    @Override
     public Class getMatchClass() {
         return SimpleUnsetableBag.class;
     }

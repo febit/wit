@@ -26,6 +26,7 @@ public class DefaultDecoder implements Decoder {
         this.buffers = buffers;
     }
 
+    @Override
     public void write(final byte[] bytes, final int offset, final int length, final Writer writer) throws IOException {
         if (bytes != null && length != 0) {
             final char[] chars;

@@ -21,6 +21,7 @@ public final class PropertyOperator extends ResetableValueExpression {
         this.property = property;
     }
 
+    @Override
     public Object execute(final Context context) {
         try {
             return context.getBean(
@@ -31,6 +32,7 @@ public final class PropertyOperator extends ResetableValueExpression {
         }
     }
 
+    @Override
     public Object setValue(final Context context, final Object value) {
         try {
             context.setBean(

@@ -22,6 +22,7 @@ public class LazyResource implements Resource {
         this.expire = 0;
     }
 
+    @Override
     public boolean isModified() {
         if (this.expire >= System.currentTimeMillis()) {
             return false;
@@ -31,6 +32,7 @@ public class LazyResource implements Resource {
         }
     }
 
+    @Override
     public Reader openReader() throws IOException {
         recalculateExpire();
         return this.resource.openReader();
@@ -43,6 +45,7 @@ public class LazyResource implements Resource {
     /**
      * @since 1.4.1
      */
+    @Override
     public boolean exists() {
         return this.resource.exists();
     }

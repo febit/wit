@@ -24,7 +24,7 @@ public final class SwitchPart {
 
     public SwitchPart() {
         this.currentCaseStatement = null;
-        this.caseMap = new HashMap<Object, CaseEntry>();
+        this.caseMap = new HashMap<>();
     }
 
     public SwitchPart setSwitchExpr(Expression switchExpr, int line, int column) {
@@ -54,7 +54,7 @@ public final class SwitchPart {
 
     public Statement pop(int label) {
 
-        Map<Object, CaseEntry> newCaseMap = new HashMap<Object, CaseEntry>((caseMap.size() + 1) * 4 / 3, 0.75f);
+        Map<Object, CaseEntry> newCaseMap = new HashMap<>((caseMap.size() + 1) * 4 / 3, 0.75f);
 
         newCaseMap.putAll(caseMap);
 

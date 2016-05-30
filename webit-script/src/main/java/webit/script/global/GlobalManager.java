@@ -22,9 +22,9 @@ public class GlobalManager{
     private GlobalRegister[] registers;
 
     public GlobalManager() {
-        this.constMap = new HashMap<String, Object>();
-        this.driftedGlobalMap = new HashMap<String, Object>();
-        this.globalIndexer = new HashMap<String, Integer>();
+        this.constMap = new HashMap<>();
+        this.driftedGlobalMap = new HashMap<>();
+        this.globalIndexer = new HashMap<>();
     }
 
     @Init
@@ -126,10 +126,12 @@ public class GlobalManager{
             this.manager = manager;
         }
 
+        @Override
         public Object get(Object key) {
             return this.manager.getConst(String.valueOf(key));
         }
 
+        @Override
         public void set(Object key, Object value) {
             this.manager.setConst(String.valueOf(key), value);
         }
@@ -143,10 +145,12 @@ public class GlobalManager{
             this.manager = manager;
         }
 
+        @Override
         public Object get(Object key) {
             return this.manager.getGlobal(String.valueOf(key));
         }
 
+        @Override
         public void set(Object key, Object value) {
             this.manager.setGlobal(String.valueOf(key), value);
         }

@@ -19,6 +19,7 @@ public class NativeNewArrayDeclare implements MethodDeclare {
         this.componentType = componentType;
     }
 
+    @Override
     public Object invoke(final Context context, final Object[] args) {
         final int len;
         if (args != null && args.length > 0) {

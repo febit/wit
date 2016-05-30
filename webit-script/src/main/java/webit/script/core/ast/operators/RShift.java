@@ -18,10 +18,12 @@ public final class RShift extends BinaryOperator implements Optimizable {
         super(leftExpr, rightExpr, line, column);
     }
 
+    @Override
     public Object execute(final Context context) {
         return ALU.rshift(leftExpr.execute(context), rightExpr.execute(context));
     }
 
+    @Override
     public Expression optimize() {
         return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
                 ? new DirectValue(ALU.rshift(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)

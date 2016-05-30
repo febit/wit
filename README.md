@@ -4,7 +4,7 @@ Webit Script
 <a target="_blank" href="https://bitdeli.com/free"><img border="0" src="https://d2weczhvl823v0.cloudfront.net/zqq90/webit-script/trend.png" alt="Bitdeli Badge" title="Bitdeli Badge"></a>
 <a target="_blank" href="https://travis-ci.org/zqq90/webit-script"><img border="0" src="https://api.travis-ci.org/zqq90/webit-script.png" alt="Build Status" title="Build Status"></a>
 
-This is a template engine, all writen in Java, **support Java 5+**.
+This is a template engine, all writen in Java, **support Java 7+**.
 
 ## Maven
 

@@ -29,14 +29,17 @@ public final class SimpleLogger extends AbstractLogger {
                                         : Integer.MAX_VALUE;
     }
 
+    @Override
     public boolean isEnabled(int level) {
         return level >= this.levelNum;
     }
 
+    @Override
     public void log(int level, String msg) {
         printLog(level, msg, null);
     }
 
+    @Override
     public void log(int level, String msg, Throwable throwable) {
         printLog(level, msg, throwable);
     }

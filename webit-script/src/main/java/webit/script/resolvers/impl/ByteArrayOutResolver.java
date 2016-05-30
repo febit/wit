@@ -10,10 +10,12 @@ import webit.script.resolvers.OutResolver;
  */
 public class ByteArrayOutResolver implements OutResolver {
 
+    @Override
     public void render(Out out, Object bean) {
         out.write((byte[]) bean);
     }
 
+    @Override
     public Class getMatchClass() {
         return byte[].class;
     }

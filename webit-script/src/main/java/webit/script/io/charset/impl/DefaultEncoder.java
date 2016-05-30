@@ -26,6 +26,7 @@ public class DefaultEncoder implements Encoder {
         this.buffers = buffers;
     }
 
+    @Override
     public void write(final String string, final int offset, final int length, final OutputStream out) throws IOException {
         char[] chars;
         string.getChars(offset, offset + length,
@@ -34,6 +35,7 @@ public class DefaultEncoder implements Encoder {
         write(chars, 0, length, out);
     }
 
+    @Override
     public void write(final char[] chars, final int offset, final int length, final OutputStream out) throws IOException {
         if (chars != null && length != 0) {
             final byte[] bytes;

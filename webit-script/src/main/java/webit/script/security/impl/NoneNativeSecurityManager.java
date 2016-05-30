@@ -10,6 +10,7 @@ import webit.script.security.NativeSecurityManager;
  */
 public final class NoneNativeSecurityManager implements NativeSecurityManager {
 
+    @Override
     public boolean access(String path) {
         return true;
     }

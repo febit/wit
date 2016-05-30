@@ -19,6 +19,7 @@ public final class UTF8Encoder implements Encoder {
         this.buffers = buffers;
     }
 
+    @Override
     public void write(final char[] chars, final int off, final int len, final OutputStream out) throws IOException {
         if (chars != null && len != 0) {
             final byte[] bytes;
@@ -28,6 +29,7 @@ public final class UTF8Encoder implements Encoder {
         }
     }
 
+    @Override
     public void write(final String string, final int off, final int len, final OutputStream out) throws IOException {
         if (string != null) {
             final char[] chars;

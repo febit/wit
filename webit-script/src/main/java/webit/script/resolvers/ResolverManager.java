@@ -35,16 +35,16 @@ public class ResolverManager {
     public ResolverManager() {
         this.ignoreNullPointer = true;
 
-        getters = new ClassMap<GetResolver>();
-        setters = new ClassMap<SetResolver>();
-        outters = new ClassMap<OutResolver>();
+        getters = new ClassMap<>();
+        setters = new ClassMap<>();
+        outters = new ClassMap<>();
 
-        getResolvers = new ArrayList<GetResolver>();
-        setResolvers = new ArrayList<SetResolver>();
-        outResolvers = new ArrayList<OutResolver>();
-        getResolverTypes = new ArrayList<Class>();
-        setResolverTypes = new ArrayList<Class>();
-        outResolverTypes = new ArrayList<Class>();
+        getResolvers = new ArrayList<>();
+        setResolvers = new ArrayList<>();
+        outResolvers = new ArrayList<>();
+        getResolverTypes = new ArrayList<>();
+        setResolverTypes = new ArrayList<>();
+        outResolverTypes = new ArrayList<>();
 
         commonResolver = new CommonResolver();
     }

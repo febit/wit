@@ -22,6 +22,7 @@ public class WebitResultSupport extends StrutsResultSupport {
     static {
         engineManager = new WebEngineManager(new WebEngineManager.ServletContextProvider() {
 
+            @Override
             public ServletContext getServletContext() {
                 return ServletActionContext.getServletContext();
             }

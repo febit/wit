@@ -23,7 +23,7 @@ public class ClassUtil {
     }
 
     public static List<Class> classes(Class cls) {
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         while (cls != null && cls != Object.class) {
             classes.add(cls);
             cls = cls.getSuperclass();
@@ -32,8 +32,8 @@ public class ClassUtil {
     }
 
     public static List<Class> impls(Class cls) {
-        List<Class> classes = new ArrayList<Class>();
-        Set<Class> interfaces = new HashSet<Class>();
+        List<Class> classes = new ArrayList<>();
+        Set<Class> interfaces = new HashSet<>();
         while (cls != null && cls != Object.class) {
             classes.add(cls);
             interfaces.addAll(Arrays.asList(cls.getInterfaces()));
@@ -44,7 +44,7 @@ public class ClassUtil {
     }
 
     public static Map<String, Field> getSetableMemberFields(Class type) {
-        final Map<String, Field> fields = new HashMap<String, Field>();
+        final Map<String, Field> fields = new HashMap<>();
         for (Class cls : classes(type)) {
             for (Field field : cls.getDeclaredFields()) {
                 int modifiers = field.getModifiers();
@@ -198,9 +198,7 @@ public class ClassUtil {
     public static Object newInstance(final Class type) {
         try {
             return type.newInstance();
-        } catch (InstantiationException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             throw new RuntimeException(ex);
         }
     }

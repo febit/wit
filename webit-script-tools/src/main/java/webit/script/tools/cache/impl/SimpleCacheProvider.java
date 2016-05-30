@@ -19,9 +19,10 @@ public class SimpleCacheProvider implements CacheProvider {
     protected int missCountN = 0;  // missCount x multiOfMissCount
 
     public SimpleCacheProvider() {
-        this.cacheMap = new ConcurrentHashMap<Object, CachingEntry>();
+        this.cacheMap = new ConcurrentHashMap<>();
     }
 
+    @Override
     public Object get(final Object key) {
         final CachingEntry cachingEntry;
         if ((cachingEntry = this.cacheMap.get(key)) != null) {
@@ -34,6 +35,7 @@ public class SimpleCacheProvider implements CacheProvider {
         return null;
     }
 
+    @Override
     public void put(final Object key, final Object value) {
         if (missCountN > this.cacheMap.size()) {
             missCountN = 0;
@@ -52,10 +54,12 @@ public class SimpleCacheProvider implements CacheProvider {
         }
     }
 
+    @Override
     public void remove(final Object key) {
         this.cacheMap.remove(key);
     }
 
+    @Override
     public void clear() {
         this.cacheMap.clear();
     }

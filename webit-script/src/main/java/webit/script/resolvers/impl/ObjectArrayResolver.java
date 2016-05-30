@@ -12,6 +12,7 @@ import webit.script.util.StringUtil;
  */
 public class ObjectArrayResolver implements GetResolver, SetResolver {
 
+    @Override
     public Object get(Object object, Object property) {
         if (property instanceof Number) {
             return ((Object[]) object)[((Number) property).intValue()];
@@ -25,6 +26,7 @@ public class ObjectArrayResolver implements GetResolver, SetResolver {
         throw new ScriptRuntimeException(StringUtil.concat("Invalid property: array#", property));
     }
 
+    @Override
     public void set(Object object, Object property, Object value) {
         if (property instanceof Number) {
             try {
@@ -37,6 +39,7 @@ public class ObjectArrayResolver implements GetResolver, SetResolver {
         throw new ScriptRuntimeException(StringUtil.concat("Invalid property: array#", property));
     }
 
+    @Override
     public Class getMatchClass() {
         return Object[].class;
     }

@@ -14,18 +14,22 @@ import webit.script.resolvers.SetResolver;
  */
 public class ScriptVoidResolver implements GetResolver, SetResolver, OutResolver {
 
+    @Override
     public Object get(Object object, Object property) {
         throw new ScriptRuntimeException("'Void' type has no property.");
     }
 
+    @Override
     public Class getMatchClass() {
         return Void.class;
     }
 
+    @Override
     public void set(Object object, Object property, Object value) {
         throw new ScriptRuntimeException("'Void' type has no property.");
     }
 
+    @Override
     public void render(Out out, Object bean) {
         //render nothing
     }

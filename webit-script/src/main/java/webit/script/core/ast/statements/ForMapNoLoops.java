@@ -38,6 +38,7 @@ public final class ForMapNoLoops extends Statement {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Object execute(final Context context) {
         KeyIter iter = CollectionUtil.toKeyIter(mapExpr.execute(context), this);
         if (iter != null && functionDeclareExpr != null) {

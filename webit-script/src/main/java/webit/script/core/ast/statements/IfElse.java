@@ -27,11 +27,13 @@ public final class IfElse extends Statement implements Loopable {
         this.elseStatement = elseStatement;
     }
 
+    @Override
     public Object execute(final Context context) {
         return (ALU.isTrue(ifExpr.execute(context))
                 ? thenStatement : elseStatement).execute(context);
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
         return StatementUtil.collectPossibleLoopsInfo(thenStatement, elseStatement);
     }

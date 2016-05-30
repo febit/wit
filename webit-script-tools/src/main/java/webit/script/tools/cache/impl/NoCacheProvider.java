@@ -9,16 +9,20 @@ import webit.script.tools.cache.CacheProvider;
  */
 public class NoCacheProvider implements CacheProvider {
 
+    @Override
     public void put(Object key, Object value) {
     }
 
+    @Override
     public Object get(Object key) {
         return null;
     }
 
+    @Override
     public void remove(Object key) {
     }
 
+    @Override
     public void clear() {
     }
 }

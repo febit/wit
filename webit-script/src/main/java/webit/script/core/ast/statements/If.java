@@ -25,6 +25,7 @@ public final class If extends Statement implements Loopable {
         this.thenStatement = thenStatement;
     }
 
+    @Override
     public Object execute(final Context context) {
         if (ALU.isTrue(ifExpr.execute(context))) {
             return thenStatement.execute(context);
@@ -32,6 +33,7 @@ public final class If extends Statement implements Loopable {
         return null;
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
         return StatementUtil.collectPossibleLoopsInfo(thenStatement);
     }

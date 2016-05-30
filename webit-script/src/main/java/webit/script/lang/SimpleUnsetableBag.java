@@ -17,13 +17,15 @@ public class SimpleUnsetableBag<K, V> implements UnsetableBag<K, V> {
     private final Map<K, V> values;
 
     public SimpleUnsetableBag() {
-        this.values = new HashMap<K, V>();
+        this.values = new HashMap<>();
     }
 
+    @Override
     public V get(K key) {
         return this.values.get(key);
     }
 
+    @Override
     public void set(K key, V value) {
         this.values.put(key, value);
     }

@@ -28,9 +28,9 @@ public class VariantManager {
 
     VariantManager(Engine engine) {
         this.globalManager = engine.getGlobalManager();
-        this.stairs = new ArrayList<VarStair>();
-        this.stairStack = new Stack<VarStair>();
-        this.varCountStack = new Stack<Integer>();
+        this.stairs = new ArrayList<>();
+        this.stairStack = new Stack<>();
+        this.varCountStack = new Stack<>();
         this.root = push(-1);
         this.root.assignVarsIfAbsent(engine.getVars());
     }
@@ -185,7 +185,7 @@ public class VariantManager {
         VarStair(int id, int parentId) {
             this.id = id;
             this.parentId = parentId;
-            this.values = new HashMap<String, Integer>();
+            this.values = new HashMap<>();
             this.scopeLevel = VariantManager.this.scopeLevelCount;
         }
 
@@ -217,7 +217,7 @@ public class VariantManager {
         void assignConst(final String name, final Object value, int line, int column) {
             checkDuplicate(name, line, column);
             if (this.constMap == null) {
-                this.constMap = new HashMap<String, Object>();
+                this.constMap = new HashMap<>();
             }
             this.values.put(name, -1);
             this.constMap.put(name, value);

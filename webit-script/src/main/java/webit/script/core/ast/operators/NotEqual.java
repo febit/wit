@@ -18,10 +18,12 @@ public final class NotEqual extends BinaryOperator implements Optimizable {
         super(leftExpr, rightExpr, line, column);
     }
 
+    @Override
     public Object execute(final Context context) {
         return ALU.notEqual(leftExpr.execute(context), rightExpr.execute(context));
     }
 
+    @Override
     public Expression optimize() {
         return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
                 ? new DirectValue(ALU.notEqual(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)

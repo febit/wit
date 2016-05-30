@@ -24,7 +24,7 @@ import webit.script.util.bean.FieldInfoResolver;
 public class AsmResolverManager extends ResolverManager {
 
     private static final String[] ASM_RESOLVER = new String[]{"webit/script/asm/AsmResolver"};
-    private static final ClassMap<AsmResolver> CACHE = new ClassMap<AsmResolver>();
+    private static final ClassMap<AsmResolver> CACHE = new ClassMap<>();
 
     @Override
     protected SetResolver resolveSetResolver(Class type) {
@@ -53,9 +53,7 @@ public class AsmResolverManager extends ResolverManager {
                     try {
                         resolver = (AsmResolver) createResolverClass(type).newInstance();
                         resolver = CACHE.putIfAbsent(type, resolver);
-                    } catch (Exception e) {
-                        logger.error("Failed to create resolver for:".concat(type.getName()), e);
-                    } catch (Error e) {
+                    } catch (Exception | Error e) {
                         logger.error("Failed to create resolver for:".concat(type.getName()), e);
                     }
                 }

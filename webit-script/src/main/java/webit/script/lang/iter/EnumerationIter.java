@@ -20,6 +20,7 @@ public final class EnumerationIter extends AbstractIter {
         return enumeration.nextElement();
     }
 
+    @Override
     public boolean hasNext() {
         return enumeration.hasMoreElements();
     }

@@ -25,10 +25,12 @@ public final class IntAscIter implements Iter {
         current = from - 1;
     }
 
+    @Override
     public boolean hasNext() {
         return current < to;
     }
 
+    @Override
     public Integer next() {
         if (current < to) {
             return ++current;
@@ -37,10 +39,12 @@ public final class IntAscIter implements Iter {
         }
     }
 
+    @Override
     public boolean isFirst() {
         return current == from;
     }
 
+    @Override
     public int index() {
         return current - from;
     }

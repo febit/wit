@@ -16,6 +16,7 @@ public class ContextLocalRegister implements GlobalRegister {
 
     protected String name = "LOCAL";
 
+    @Override
     public void regist(GlobalManager manager) {
         manager.setConst(this.name, new LocalMethodDeclare());
     }
@@ -25,6 +26,7 @@ public class ContextLocalRegister implements GlobalRegister {
         LocalMethodDeclare() {
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             final int i;
             if ((i = args.length - 1) > 0) {

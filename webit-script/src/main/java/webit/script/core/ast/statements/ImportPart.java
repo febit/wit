@@ -30,8 +30,8 @@ public class ImportPart {
         this.column = column;
         this.expr = expr;
         this.paramsExpr = paramsExpr;
-        this.exportNameList = new ArrayList<String>();
-        this.toResetableValueList = new ArrayList<ResetableValueExpression>();
+        this.exportNameList = new ArrayList<>();
+        this.toResetableValueList = new ArrayList<>();
     }
 
     public ImportPart append(String name, Expression to) {

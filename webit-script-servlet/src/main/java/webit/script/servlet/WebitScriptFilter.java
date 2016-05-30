@@ -22,6 +22,7 @@ public class WebitScriptFilter implements Filter {
     private String contentType;
 
     @SuppressWarnings("unchecked")
+    @Override
     public void init(FilterConfig config) throws ServletException {
         engineManager = new WebEngineManager(config.getServletContext());
         String configPath = config.getInitParameter("configPath");
@@ -46,6 +47,7 @@ public class WebitScriptFilter implements Filter {
         }
     }
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
     }
@@ -58,6 +60,7 @@ public class WebitScriptFilter implements Filter {
         this.engineManager.renderTemplate(WebitScriptServletUtil.getTemplatePath(request), ServletUtil.wrapToKeyValues(request, response), response);
     }
 
+    @Override
     public void destroy() {
     }
 }

@@ -99,7 +99,7 @@ public class FieldInfoResolverTest {
 
         FieldInfo[] infos = FieldInfoResolver.resolve(Foo.class);
 
-        Map<String, FieldInfo> infoMap = new HashMap<String, FieldInfo>();
+        Map<String, FieldInfo> infoMap = new HashMap<>();
         for (FieldInfo fieldInfo : infos) {
             infoMap.put(fieldInfo.name, fieldInfo);
         }

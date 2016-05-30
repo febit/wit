@@ -26,14 +26,17 @@ public class ClasspathResource implements Resource {
     /**
      * @since 1.4.1
      */
+    @Override
     public boolean exists() {
         return ClassUtil.getDefaultClassLoader().getResource(path) != null;
     }
 
+    @Override
     public boolean isModified() {
         return false;
     }
 
+    @Override
     public Reader openReader() throws IOException {
         final InputStream in = ClassUtil.getDefaultClassLoader()
                 .getResourceAsStream(path);

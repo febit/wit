@@ -28,6 +28,7 @@ public class CacheGlobalRegister implements GlobalRegister {
 
     protected CacheProvider cacheProvider;
 
+    @Override
     public void regist(GlobalManager manager) {
         manager.setConst(name, new CacheMethodDeclare(cacheProvider));
         if (registCacheRemove) {
@@ -46,6 +47,7 @@ public class CacheGlobalRegister implements GlobalRegister {
             this.cacheProvider = cacheProvider;
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             this.cacheProvider.clear();
             return Context.VOID;
@@ -60,6 +62,7 @@ public class CacheGlobalRegister implements GlobalRegister {
             this.cacheProvider = cacheProvider;
         }
 
+        @Override
         public Object invoke(Context context, Object[] args) {
             this.cacheProvider.remove(ArrayUtil.get(args, 0, null));
             return Context.VOID;
@@ -75,6 +78,7 @@ public class CacheGlobalRegister implements GlobalRegister {
             this.cacheProvider = cacheProvider;
         }
 
+        @Override
         public Object invoke(final Context context, final Object[] args) {
             final int len;
             if (args == null || (len = args.length) == 0) {

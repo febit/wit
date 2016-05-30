@@ -30,7 +30,7 @@ public class TrimBlankLineTest {
         field.set(engine, true);
         Template template = engine.getTemplate("/trimBlankLine.wit");
 
-        Map<String, Object> param = new HashMap<String, Object>(4);
+        Map<String, Object> param = new HashMap<>(4);
         param.put("trimBlankLine", true);
         template.merge(KeyValuesUtil.wrap(param), out);
 

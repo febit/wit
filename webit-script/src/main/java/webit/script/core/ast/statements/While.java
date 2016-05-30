@@ -33,6 +33,7 @@ public final class While extends Statement implements Loopable {
         this.label = label;
     }
 
+    @Override
     public Object execute(final Context context) {
         final Statement[] stats = this.statements;
         final int preIndex = context.indexer;
@@ -64,7 +65,8 @@ public final class While extends Statement implements Loopable {
         return null;
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        return possibleLoopsInfo != null ? new LinkedList<LoopInfo>(Arrays.asList(possibleLoopsInfo)) : null;
+        return possibleLoopsInfo != null ? new LinkedList<>(Arrays.asList(possibleLoopsInfo)) : null;
     }
 }

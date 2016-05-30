@@ -28,7 +28,7 @@ public class WebitResult extends BaseActionResult<Object> implements WebEngineMa
 
     public WebitResult() {
         super(NAME);
-        this.targetCache = new HashMap<String, String>();
+        this.targetCache = new HashMap<>();
         this.engineManager
                 = new WebEngineManager(this)
                 .setProperties(CFG.APPEND_LOST_SUFFIX, Boolean.TRUE);
@@ -147,6 +147,7 @@ public class WebitResult extends BaseActionResult<Object> implements WebEngineMa
         return this.engineManager.getEngine().exists(path);
     }
 
+    @Override
     public ServletContext getServletContext() {
         return this.madvocController.getApplicationContext();
     }

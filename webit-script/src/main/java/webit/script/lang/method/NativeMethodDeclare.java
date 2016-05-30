@@ -27,6 +27,7 @@ public final class NativeMethodDeclare implements MethodDeclare {
         this.noVoid = ((returnType = method.getReturnType()) != void.class) && (returnType != Void.class);
     }
 
+    @Override
     public Object invoke(final Context context, final Object[] args) {
         final Object obj;
         final Object[] methodArgs;

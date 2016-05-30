@@ -43,7 +43,7 @@ public class FunctionDeclarePart {
         this.column = column;
         this.varmgr = varmgr;
         this.assignToIndex = assignToIndex;
-        this.args = new ArrayList<String>();
+        this.args = new ArrayList<>();
         varmgr.pushScope();
         start = varmgr.assignVariant("arguments", line, column);
     }
@@ -78,7 +78,7 @@ public class FunctionDeclarePart {
     }
 
     private static List<Statement> toStatementList(Expression expr) {
-        List<Statement> list = new ArrayList<Statement>(1);
+        List<Statement> list = new ArrayList<>(1);
         list.add(new Return(expr, expr.line, expr.column));
         return list;
     }

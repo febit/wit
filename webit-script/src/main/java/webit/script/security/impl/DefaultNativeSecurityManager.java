@@ -20,7 +20,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
     protected String list;
 
     public DefaultNativeSecurityManager() {
-        this.NODES = new ConcurrentHashMap<String, Node>();
+        this.NODES = new ConcurrentHashMap<>();
         Node rootNode = new Node(null, ROOT_NODE_NAME);
         rootNode.setAccess(false);
         NODES.put(ROOT_NODE_NAME, rootNode);
@@ -41,6 +41,7 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
         }
     }
 
+    @Override
     public boolean access(String path) {
         return getNode(path).isAccess();
     }

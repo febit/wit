@@ -40,6 +40,7 @@ public abstract class AbstractLoader implements Loader {
      * @param name relative name
      * @return child template's name
      */
+    @Override
     public String concat(final String parent, final String name) {
         return parent != null ? FileNameUtil.concat(FileNameUtil.getPath(parent), name) : name;
     }
@@ -70,6 +71,7 @@ public abstract class AbstractLoader implements Loader {
      * @param name template's name
      * @return normalized name
      */
+    @Override
     public String normalize(String name) {
         if (name == null) {
             return null;
@@ -98,6 +100,7 @@ public abstract class AbstractLoader implements Loader {
         }
     }
 
+    @Override
     public boolean isEnableCache(String name) {
         return enableCache;
     }

@@ -14,6 +14,7 @@ import webit.script.servlet.HttpServletRequestParameters;
  */
 public class HttpServletRequestResolver implements GetResolver {
 
+    @Override
     public Object get(Object bean, Object property) {
 
         switch (property.hashCode()) {
@@ -243,6 +244,7 @@ public class HttpServletRequestResolver implements GetResolver {
         return null;
     }
 
+    @Override
     public Class<?> getMatchClass() {
         return HttpServletRequest.class;
     }

@@ -94,16 +94,19 @@ public abstract class TemplateException extends RuntimeException {
             this.out = out;
         }
 
+        @Override
         public PrintStreamOrWriter println(Object o) {
             out.println(o);
             return this;
         }
 
+        @Override
         public PrintStreamOrWriter print(Object o) {
             out.print(o);
             return this;
         }
 
+        @Override
         public void printTrace(Throwable cause) {
             cause.printStackTrace(out);
         }
@@ -117,16 +120,19 @@ public abstract class TemplateException extends RuntimeException {
             this.out = out;
         }
 
+        @Override
         public PrintStreamOrWriter println(Object o) {
             out.println(o);
             return this;
         }
 
+        @Override
         public PrintStreamOrWriter print(Object o) {
             out.print(o);
             return this;
         }
 
+        @Override
         public void printTrace(Throwable cause) {
             cause.printStackTrace(out);
         }

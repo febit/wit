@@ -19,6 +19,7 @@ public final class Mod extends BinaryOperator implements Optimizable {
         super(leftExpr, rightExpr, line, column);
     }
 
+    @Override
     public Object execute(final Context context) {
         try {
             return ALU.mod(leftExpr.execute(context), rightExpr.execute(context));
@@ -27,6 +28,7 @@ public final class Mod extends BinaryOperator implements Optimizable {
         }
     }
 
+    @Override
     public Expression optimize() {
         return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
                 ? new DirectValue(ALU.mod(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)

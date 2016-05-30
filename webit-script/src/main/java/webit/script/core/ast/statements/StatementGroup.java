@@ -23,11 +23,13 @@ public class StatementGroup extends Statement implements Optimizable {
         return list;
     }
 
+    @Override
     public Object execute(Context context) {
         StatementUtil.execute(this.list, context);
         return null;
     }
 
+    @Override
     public Statement optimize() throws Exception {
         if (this.list.length == 0) {
             return NoneStatement.INSTANCE;

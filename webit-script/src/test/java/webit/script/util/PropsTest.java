@@ -32,7 +32,7 @@ public class PropsTest {
                 + "list2='''\nitem7,item9''\n'\n\n"
                 + "").toCharArray());
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
 
         props.extractTo(map);
 

@@ -11,14 +11,17 @@ import webit.script.resolvers.SetResolver;
  */
 public class BagResolver implements GetResolver, SetResolver {
 
+    @Override
     public Object get(Object object, Object property) {
         return ((Bag) object).get(property);
     }
 
+    @Override
     public void set(Object object, Object property, Object value) {
         ((Bag) object).set(property, value);
     }
 
+    @Override
     public Class getMatchClass() {
         return Bag.class;
     }

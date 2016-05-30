@@ -17,6 +17,7 @@ public class Slf4jLogger extends AbstractLogger {
         log = org.slf4j.LoggerFactory.getLogger(name);
     }
 
+    @Override
     public boolean isEnabled(int level) {
         switch (level) {
             case LEVEL_DEBUG:
@@ -31,6 +32,7 @@ public class Slf4jLogger extends AbstractLogger {
         return false;
     }
 
+    @Override
     public void log(int level, String msg) {
         switch (level) {
             case LEVEL_DEBUG:
@@ -48,6 +50,7 @@ public class Slf4jLogger extends AbstractLogger {
         }
     }
 
+    @Override
     public void log(int level, String msg, Throwable throwable) {
         switch (level) {
             case LEVEL_DEBUG:

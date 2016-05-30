@@ -11,6 +11,7 @@ import webit.script.util.StringUtil;
  */
 public class CharSequenceResolver implements GetResolver {
 
+    @Override
     public Object get(final Object object, final Object property) {
         if (property instanceof Number) {
             try {
@@ -28,6 +29,7 @@ public class CharSequenceResolver implements GetResolver {
         throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: java.lang.CharSequence#", property));
     }
 
+    @Override
     public Class getMatchClass() {
         return CharSequence.class;
     }

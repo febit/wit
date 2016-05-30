@@ -12,10 +12,12 @@ import webit.script.util.StringUtil;
  */
 public class IterGetResolver implements GetResolver {
 
+    @Override
     public Class getMatchClass() {
         return Iter.class;
     }
 
+    @Override
     public Object get(final Object object, final Object property) {
 
         switch (property.hashCode()) {

@@ -23,10 +23,12 @@ public class FileResource implements Resource {
         this.file = new File(path);
     }
 
+    @Override
     public boolean isModified() {
         return lastModified != file.lastModified();
     }
 
+    @Override
     public Reader openReader() throws IOException {
         lastModified = file.lastModified();
         return new InputStreamReader(
@@ -37,6 +39,7 @@ public class FileResource implements Resource {
     /**
      * @since 1.4.1
      */
+    @Override
     public boolean exists() {
         return file.exists();
     }

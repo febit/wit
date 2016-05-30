@@ -17,6 +17,7 @@ public final class ByteArrayTextStatement extends Statement {
         this.bytes = bytes;
     }
 
+    @Override
     public Object execute(final Context context) {
         context.outNotNull(bytes);
         return null;

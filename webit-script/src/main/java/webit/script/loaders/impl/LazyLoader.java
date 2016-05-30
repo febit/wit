@@ -15,6 +15,7 @@ public class LazyLoader implements Loader {
     protected int timeout;
     protected Loader loader;
 
+    @Override
     public Resource get(String name) {
         if (this.timeout > 0) {
             return new LazyResource(this.loader.get(name), this.timeout);
@@ -23,14 +24,17 @@ public class LazyLoader implements Loader {
         }
     }
 
+    @Override
     public String concat(String parent, String name) {
         return this.loader.concat(parent, name);
     }
 
+    @Override
     public String normalize(String name) {
         return this.loader.normalize(name);
     }
 
+    @Override
     public boolean isEnableCache(String name) {
         return this.loader.isEnableCache(name);
     }

@@ -19,6 +19,7 @@ public final class MapKeyIter extends AbstractIter implements KeyIter {
         this.iterator = map.entrySet().iterator();
     }
 
+    @Override
     public Object value() {
         return this.current.getValue();
     }
@@ -28,6 +29,7 @@ public final class MapKeyIter extends AbstractIter implements KeyIter {
         return (this.current = iterator.next()).getKey();
     }
 
+    @Override
     public boolean hasNext() {
         return this.iterator.hasNext();
     }

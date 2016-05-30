@@ -13,6 +13,7 @@ public class TestGlobalRegister implements GlobalRegister{
 
     protected NativeFactory nativeFactory;
 
+    @Override
     public void regist(final GlobalManager manager) {
 
         //Globals

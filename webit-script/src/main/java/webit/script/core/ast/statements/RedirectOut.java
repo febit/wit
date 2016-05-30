@@ -25,6 +25,7 @@ public class RedirectOut extends Statement {
         this.toExpr = toExpr;
     }
 
+    @Override
     public Object execute(final Context context) {
         final Out current = context.out;
         if (current.isByteStream()) {

@@ -22,6 +22,7 @@ public final class Return extends Statement implements Loopable {
         this.expr = expr;
     }
 
+    @Override
     public Object execute(final Context context) {
         context.returnLoop(
                 expr != null
@@ -30,9 +31,10 @@ public final class Return extends Statement implements Loopable {
         return null;
     }
 
+    @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
         LinkedList<LoopInfo> list;
-        (list = new LinkedList<LoopInfo>()).add(new LoopInfo(LoopInfo.RETURN, 0, line, column));
+        (list = new LinkedList<>()).add(new LoopInfo(LoopInfo.RETURN, 0, line, column));
         return list;
     }
 }

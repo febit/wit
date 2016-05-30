@@ -11,10 +11,12 @@ import webit.script.util.NumberUtil;
  */
 public class LongOutResolver implements OutResolver {
 
+    @Override
     public void render(final Out out, Object number) {
         NumberUtil.print((Long) number, out);
     }
 
+    @Override
     public Class getMatchClass() {
         return Long.class;
     }

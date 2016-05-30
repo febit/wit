@@ -20,19 +20,21 @@ public class ByteArrayTextStatementFactory implements TextStatementFactory {
 
     protected String encoding;
     protected CoderFactory coderFactory;
-    protected final ThreadLocal<Encoder> encoders = new ThreadLocal<Encoder>();
-    protected final ThreadLocal<ByteArrayOutputStream> outputs = new ThreadLocal<ByteArrayOutputStream>();
+    protected final ThreadLocal<Encoder> encoders = new ThreadLocal<>();
+    protected final ThreadLocal<ByteArrayOutputStream> outputs = new ThreadLocal<>();
 
     @Init
     public void init(Engine engine) {
         encoding = engine.getEncoding();
     }
 
+    @Override
     public void startTemplateParser(Template template) {
         encoders.set(coderFactory.newEncoder(encoding));
         outputs.set(new ByteArrayOutputStream(512));
     }
 
+    @Override
     public void finishTemplateParser(Template template) {
         encoders.remove();
         outputs.remove();
@@ -50,6 +52,7 @@ public class ByteArrayTextStatementFactory implements TextStatementFactory {
         }
     }
 
+    @Override
     public Statement getTextStatement(Template template, char[] text, int line, int column) {
         return new ByteArrayTextStatement(getBytes(text), line, column);
     }

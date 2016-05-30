@@ -14,10 +14,12 @@ import webit.script.util.StringUtil;
  */
 public class ListResolver implements GetResolver, SetResolver {
 
+    @Override
     public Class getMatchClass() {
         return Collection.class;
     }
 
+    @Override
     public Object get(Object object, Object property) {
         if (property instanceof Number) {
             try {
@@ -36,6 +38,7 @@ public class ListResolver implements GetResolver, SetResolver {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public void set(Object object, Object property, Object value) {
         if (property instanceof Number) {
             final int index;

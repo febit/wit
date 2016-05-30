@@ -14,6 +14,7 @@ import webit.script.util.bean.BeanUtil;
  */
 public class CommonResolver implements GetResolver, SetResolver, OutResolver {
 
+    @Override
     public Object get(final Object object, final Object property) {
         try {
             return BeanUtil.get(object, String.valueOf(property));
@@ -22,6 +23,7 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver {
         }
     }
 
+    @Override
     public void set(final Object object, final Object property, final Object value) {
         try {
             BeanUtil.set(object, String.valueOf(property), value);
@@ -30,10 +32,12 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver {
         }
     }
 
+    @Override
     public void render(final Out out, final Object bean) {
         out.write(bean.toString());
     }
 
+    @Override
     public Class getMatchClass() {
         return Object.class;
     }

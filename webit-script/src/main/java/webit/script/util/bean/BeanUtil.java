@@ -2,6 +2,7 @@
 package webit.script.util.bean;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,7 @@ import webit.script.util.StringUtil;
  */
 public class BeanUtil {
 
-    private static final ClassMap<Map<String, Accessor>> CACHE = new ClassMap<Map<String, Accessor>>();
+    private static final ClassMap<Map<String, Accessor>> CACHE = new ClassMap<>();
 
     public static Object get(final Object bean, final String name) throws BeanException {
         Getter getter;
@@ -50,7 +51,7 @@ public class BeanUtil {
 
     private static Map<String, Accessor> resolveAccessors(Class cls) {
         final FieldInfo[] fieldInfos = FieldInfoResolver.resolve(cls);
-        final Map<String, Accessor> map = new HashMap<String, Accessor>(fieldInfos.length * 4 / 3 + 1, 0.75f);
+        final Map<String, Accessor> map = new HashMap<>(fieldInfos.length * 4 / 3 + 1, 0.75f);
         for (FieldInfo fieldInfo : fieldInfos) {
 
             map.put(fieldInfo.name, new Accessor(
@@ -106,7 +107,7 @@ public class BeanUtil {
         public Object get(Object bean) throws BeanException {
             try {
                 return this.method.invoke(bean, (Object[]) null);
-            } catch (Exception ex) {
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 throw new BeanException(ex.toString());
             }
         }
@@ -132,7 +133,7 @@ public class BeanUtil {
         public void set(Object bean, Object value) throws BeanException {
             try {
                 this.method.invoke(bean, new Object[]{value});
-            } catch (Exception ex) {
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 throw new BeanException(ex.toString());
             }
         }
@@ -151,7 +152,7 @@ public class BeanUtil {
         public Object get(Object bean) throws BeanException {
             try {
                 return this.field.get(bean);
-            } catch (Exception ex) {
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
                 throw new BeanException(ex.toString());
             }
         }
@@ -170,7 +171,7 @@ public class BeanUtil {
         public void set(Object bean, Object value) throws BeanException {
             try {
                 this.field.set(bean, value);
-            } catch (Exception ex) {
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
                 throw new BeanException(ex.toString());
             }
         }

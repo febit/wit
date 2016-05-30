@@ -17,6 +17,7 @@ public final class DirectValue extends Expression {
         this.value = value;
     }
 
+    @Override
     public Object execute(final Context context) {
         return value;
     }

@@ -21,6 +21,7 @@ public final class Negative extends Expression implements Optimizable {
         this.expr = expr;
     }
 
+    @Override
     public Object execute(final Context context) {
         try {
             return ALU.negative(expr.execute(context));
@@ -29,6 +30,7 @@ public final class Negative extends Expression implements Optimizable {
         }
     }
 
+    @Override
     public Expression optimize() {
         return expr instanceof DirectValue
                 ? new DirectValue(ALU.negative(((DirectValue) expr).value), line, column)

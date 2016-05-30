@@ -13,14 +13,17 @@ import webit.script.io.charset.Encoder;
  */
 public class DefaultCoderFactory implements CoderFactory {
 
+    @Override
     public Encoder newEncoder(final String encoding) {
         return this.newEncoder(encoding, Buffers.getNormalPeers());
     }
 
+    @Override
     public Decoder newDecoder(final String encoding) {
         return this.newDecoder(encoding, Buffers.getMiniPeers());
     }
 
+    @Override
     public Encoder newEncoder(String encoding, Buffers buffers) {
         if (encoding == Engine.UTF_8) {
             return new UTF8Encoder(buffers);
@@ -29,6 +32,7 @@ public class DefaultCoderFactory implements CoderFactory {
         }
     }
 
+    @Override
     public Decoder newDecoder(String encoding, Buffers buffers) {
         if (encoding == Engine.UTF_8) {
             return new UTF8Decoder(buffers);

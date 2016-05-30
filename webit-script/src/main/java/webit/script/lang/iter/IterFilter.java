@@ -22,6 +22,7 @@ public abstract class IterFilter implements Iter {
 
     protected abstract boolean valid(Object item);
 
+    @Override
     public final Object next() {
         ++ this._index;
         if (hasNext()) {
@@ -31,6 +32,7 @@ public abstract class IterFilter implements Iter {
         throw new NoSuchElementException("no more next");
     }
 
+    @Override
     public final boolean hasNext() {
         if (this.gotNext) {
             return true;
@@ -47,10 +49,12 @@ public abstract class IterFilter implements Iter {
         return false;
     }
 
+    @Override
     public final boolean isFirst() {
         return this._index == 0;
     }
 
+    @Override
     public final int index() {
         return this._index;
     }

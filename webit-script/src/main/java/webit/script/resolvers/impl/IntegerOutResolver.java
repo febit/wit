@@ -13,14 +13,17 @@ import webit.script.util.NumberUtil;
  */
 public class IntegerOutResolver implements OutResolver, RegistModeResolver {
 
+    @Override
     public void render(final Out out, final Object number) {
         NumberUtil.print(((Number) number).intValue(), out);
     }
 
+    @Override
     public Class getMatchClass() {
         return null;
     }
 
+    @Override
     public void regist(ResolverManager resolverManager) {
         resolverManager.registResolver(Integer.class, this);
         resolverManager.registResolver(Short.class, this);

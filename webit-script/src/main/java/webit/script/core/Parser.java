@@ -24,6 +24,7 @@ import webit.script.util.StatementUtil;
 public class Parser extends AbstractParser {
 
     @SuppressWarnings("unchecked")
+    @Override
     final Object doAction(int actionId) throws ParseException {
         final Stack<Symbol> myStack = this.symbolStack;
 
@@ -133,7 +134,7 @@ return ((AbstractForInPart) myStack.peek(4).value).setBodys(createIBlock((java.u
             case 177: // classNameList1 ::= className 
             {
 Symbol nameBandSymbol = myStack.peek(0);
-List<Class> list = new ArrayList<Class>(); list.add(toClass((ClassNameBand) nameBandSymbol.value, nameBandSymbol.line, nameBandSymbol.column)); return list;
+List<Class> list = new ArrayList<>(); list.add(toClass((ClassNameBand) nameBandSymbol.value, nameBandSymbol.line, nameBandSymbol.column)); return list;
             }
             case 148: // expression ::= NATIVE classPureName 
             {
@@ -550,7 +551,7 @@ return myStack.peek(0).value;
             case 142: // expression ::= LPAREN expression RPAREN 
 return myStack.peek(1).value;
             case 179: // classNameList ::= 
-return new ArrayList<Class>();
+return new ArrayList<>();
             case 4: // classPureName ::= IDENTIFIER 
 return new ClassNameBand((String) myStack.peek(0).value);
             case 160: // expressionList ::= expression 

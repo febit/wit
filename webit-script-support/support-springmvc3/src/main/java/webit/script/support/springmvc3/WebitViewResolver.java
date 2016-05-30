@@ -28,6 +28,7 @@ public class WebitViewResolver extends AbstractTemplateViewResolver {
 
         this.engineManager = new WebEngineManager(new ServletContextProvider() {
 
+            @Override
             public ServletContext getServletContext() {
                 return WebitViewResolver.this.getServletContext();
             }

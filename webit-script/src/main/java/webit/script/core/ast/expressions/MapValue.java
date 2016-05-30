@@ -28,6 +28,7 @@ public final class MapValue extends Expression implements Optimizable {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Object execute(final Context context) {
         final Object[] mapKeys = this.keys;
         final Expression[] exprs = this.valueExprs;

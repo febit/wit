@@ -96,7 +96,7 @@ public class StatementUtil {
         if (statements == null || (i = statements.length) == 0) {
             return null;
         }
-        final LinkedList<LoopInfo> loopInfos = new LinkedList<LoopInfo>();
+        final LinkedList<LoopInfo> loopInfos = new LinkedList<>();
         do {
             List<LoopInfo> list = collectPossibleLoopsInfo(statements[--i]);
             if (list != null) {

@@ -9,7 +9,7 @@ import java.lang.ref.WeakReference;
  */
 public final class Buffers {
 
-    private static final ThreadLocal<WeakReference<Buffers>> CACHE = new ThreadLocal<WeakReference<Buffers>>();
+    private static final ThreadLocal<WeakReference<Buffers>> CACHE = new ThreadLocal<>();
 
     private char[] chars;
     private byte[] bytes;
@@ -66,7 +66,7 @@ public final class Buffers {
             if (ref != null) {
                 ref.clear();
             }
-            CACHE.set(new WeakReference<Buffers>(peers = new Buffers(length)));
+            CACHE.set(new WeakReference<>(peers = new Buffers(length)));
         }
         return peers;
     }

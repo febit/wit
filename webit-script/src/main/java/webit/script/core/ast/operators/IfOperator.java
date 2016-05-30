@@ -22,6 +22,7 @@ public final class IfOperator extends Expression {
         this.rightValueExpr = rightValueExpr;
     }
 
+    @Override
     public Object execute(final Context context) {
         return (ALU.isTrue(ifExpr.execute(context)) ? leftValueExpr : rightValueExpr).execute(context);
     }

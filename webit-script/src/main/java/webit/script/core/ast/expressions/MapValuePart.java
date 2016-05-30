@@ -17,7 +17,7 @@ public final class MapValuePart {
 
     public MapValuePart() {
         this.keys = new ArrayList();
-        this.valueExprs = new ArrayList<Expression>();
+        this.valueExprs = new ArrayList<>();
     }
 
     @SuppressWarnings("unchecked")

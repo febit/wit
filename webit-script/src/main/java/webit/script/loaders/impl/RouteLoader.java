@@ -31,7 +31,7 @@ public class RouteLoader implements Loader {
             final String[] raws = StringUtil.toArray(this.loaders);
             final int size = raws.length;
             final String[] prefixes = new String[size];
-            final Map<String, LoaderEntry> loaderMap = new HashMap<String, LoaderEntry>();
+            final Map<String, LoaderEntry> loaderMap = new HashMap<>();
             for (int i = 0; i < size; i++) {
                 final String raw = raws[i];
                 final int index = raw.indexOf(' ');
@@ -66,6 +66,7 @@ public class RouteLoader implements Loader {
         return null;
     }
 
+    @Override
     public Resource get(String name) {
         final LoaderEntry entry;
         if ((entry = getLoaderEntry(name)) != null) {
@@ -74,6 +75,7 @@ public class RouteLoader implements Loader {
         return this.defaultLoader.get(name);
     }
 
+    @Override
     public String concat(String parent, String name) {
         final LoaderEntry entry;
         final LoaderEntry parentEntry;
@@ -86,6 +88,7 @@ public class RouteLoader implements Loader {
         return this.defaultLoader.concat(parent, name);
     }
 
+    @Override
     public String normalize(String name) {
         final LoaderEntry entry;
         if ((entry = getLoaderEntry(name)) != null) {
@@ -94,6 +97,7 @@ public class RouteLoader implements Loader {
         return this.defaultLoader.normalize(name);
     }
 
+    @Override
     public boolean isEnableCache(String name) {
         final LoaderEntry entry;
         if ((entry = getLoaderEntry(name)) != null) {

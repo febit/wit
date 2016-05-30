@@ -19,19 +19,21 @@ public class NativeStaticValue extends ResetableValueExpression {
         this.field = field;
     }
 
+    @Override
     public Object execute(Context context) {
         try {
             return field.get(null);
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
             return new ScriptRuntimeException("Failed to get static field value: ".concat(field.toString()), ex, this);
         }
     }
 
+    @Override
     public Object setValue(Context context, Object value) {
         try {
             field.set(null, value);
             return value;
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
             return new ScriptRuntimeException("Failed to set static field value: ".concat(field.toString()), ex, this);
         }
     }
