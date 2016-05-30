@@ -29,7 +29,7 @@ public class ServletEngineUtil {
         final Map<String, Object> settings;
         final Props props;
         props = loadProps(Engine.createConfigProps(DEFAULT_WEB_PROPERTIES), servletContext, configFiles);
-        settings = new HashMap<String, Object>();
+        settings = new HashMap<>();
         settings.put(CFG.SERVLET_CONTEXT, servletContext);
         if (extraSettings != null) {
             settings.putAll(extraSettings);
@@ -49,10 +49,8 @@ public class ServletEngineUtil {
             this.servletContext = servletContext;
         }
 
+        @Override
         public InputStream openInputStream(String path) {
-            if (path.charAt(0) == '/') {
-                path = path.substring(1);
-            }
             final InputStream in;
             if ((in = servletContext.getResourceAsStream(path)) != null) {
                 return in;
@@ -65,10 +63,16 @@ public class ServletEngineUtil {
             return null;
         }
 
+        @Override
         public String getViewPath(String path) {
-            return "%WEB_ROOT%/".concat(path.charAt(0) == '/'
+            return "servlet-path:".concat(fixModuleName(path));
+        }
+
+        @Override
+        public String fixModuleName(String path) {
+            return path.charAt(0) == '/'
                     ? path.substring(1)
-                    : path);
+                    : path;
         }
     }
 
