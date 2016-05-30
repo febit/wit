@@ -68,6 +68,13 @@ public final class Props {
         }
     }
 
+    public boolean containsModule(String name) {
+        if (this.modules == null) {
+            return false;
+        }
+        return modules.contains(name);
+    }
+
     public List<String> getModules() {
         if (this.modules == null) {
             return Collections.EMPTY_LIST;

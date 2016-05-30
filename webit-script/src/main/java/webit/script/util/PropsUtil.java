@@ -45,6 +45,9 @@ public class PropsUtil {
         }
 
         private void mergeProps(Props src, String name) {
+            if (this.props.containsModule(name)) {
+                return;
+            }
             this.props.merge(src);
             this.props.addModule(name);
         }
