@@ -446,14 +446,15 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   {StringCharacter}+             { pullToString(); }
   
   /* escape sequences */
-  "\\b"                          { appendToString( '\b' ); }
-  "\\t"                          { appendToString( '\t' ); }
-  "\\n"                          { appendToString( '\n' ); }
-  "\\f"                          { appendToString( '\f' ); }
-  "\\r"                          { appendToString( '\r' ); }
-  "\\\""                         { appendToString( '\"' ); }
-  "\\'"                          { appendToString( '\'' ); }
-  "\\\\"                         { appendToString( '\\' ); }
+  "\\b"                          { appendToString('\b'); }
+  "\\t"                          { appendToString('\t'); }
+  "\\n"                          { appendToString('\n'); }
+  "\\f"                          { appendToString('\f'); }
+  "\\r"                          { appendToString('\r'); }
+  "\\\""                         { appendToString('\"'); }
+  "\\'"                          { appendToString('\''); }
+  "\\/"                          { appendToString('/'); }
+  "\\\\"                         { appendToString('\\'); }
   \\[0-3]?{OctDigit}?{OctDigit}  { char val = (char) Integer.parseInt(yytext(1,0),8); appendToString(val); }
 
   \\{LineTerminator}             { /* escape new line */ }
@@ -473,6 +474,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   "\\r"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\r');}
   "\\\""\'                       { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\"');}
   "\\'"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\'');}
+  "\\/"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '/');}
   "\\\\"\'                       { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\\');}
   \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, (char) yyInt(1, -1 ,8));}
   
