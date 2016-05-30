@@ -11,7 +11,7 @@ import webit.script.Template;
  */
 public abstract class TemplateException extends RuntimeException {
 
-    protected boolean isCause;
+    protected boolean isCaused;
     protected Template template;
 
     public TemplateException(String message) {
@@ -25,7 +25,7 @@ public abstract class TemplateException extends RuntimeException {
     public TemplateException(String message, Throwable cause) {
         super(message, cause);
         if (cause instanceof TemplateException) {
-            ((TemplateException) cause).isCause = true;
+            ((TemplateException) cause).isCaused = true;
         }
     }
 
@@ -53,7 +53,7 @@ public abstract class TemplateException extends RuntimeException {
     }
 
     protected void printStackTrace(PrintStreamOrWriter out) {
-        String prefix = isCause ? "\t" : "";
+        String prefix = isCaused ? "\t" : "";
 
         out.print(prefix).println(this);
         if (this.template != null) {

@@ -3,12 +3,14 @@
 const a = 1;
 const b = "bbb";
 const c = 0xABCDEF;
-const d = native String.toString();
 const e = 1+1;
 const f = e+1;
+const toString = native Object.toString();
+const oneString = toString(1);
 
 assertEquals(2, e);
 assertEquals(3, f);
+assertEquals("1", oneString);
 
 {
     const a = 2;

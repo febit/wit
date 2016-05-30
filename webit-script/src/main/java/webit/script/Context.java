@@ -146,8 +146,8 @@ public final class Context implements KeyValueAccepter {
     }
 
     @Override
-    public void set(final String key, final Object value) {
-        int index = indexers[this.indexer].getIndex(key);
+    public void set(final String name, final Object value) {
+        int index = indexers[this.indexer].getIndex(name);
         if (index >= 0) {
             this.vars[index] = value;
         }
@@ -161,7 +161,7 @@ public final class Context implements KeyValueAccepter {
         this.out.write(chars);
     }
 
-    public Object getBean(final Object bean, final Object property) {
+    public Object getBeanProperty(final Object bean, final Object property) {
         if (bean != null) {
             final GetResolver resolver;
             if ((resolver = this.getters.unsafeGet(bean.getClass())) != null) {
@@ -171,7 +171,7 @@ public final class Context implements KeyValueAccepter {
         return this.resolverManager.get(bean, property);
     }
 
-    public void setBean(final Object bean, final Object property, final Object value) {
+    public void setBeanProperty(final Object bean, final Object property, final Object value) {
         if (bean != null) {
             final SetResolver resolver;
             if ((resolver = this.setters.unsafeGet(bean.getClass())) != null) {
@@ -198,51 +198,51 @@ public final class Context implements KeyValueAccepter {
         }
     }
 
-    public Object getLocal(final Object key) {
+    public Object getLocal(final Object name) {
         if (localContext != null) {
-            return localContext.getLocal(key);
+            return localContext.getLocal(name);
         }
         final Map<Object, Object> map;
         if ((map = this.locals) != null) {
-            return map.get(key);
+            return map.get(name);
         }
         return null;
     }
 
-    public void setLocal(final Object key, final Object value) {
+    public void setLocal(final Object name, final Object value) {
         if (localContext != null) {
-            localContext.setLocal(key, value);
+            localContext.setLocal(name, value);
             return;
         }
         final Map<Object, Object> map;
         if ((map = this.locals) != null) {
-            map.put(key, value);
+            map.put(name, value);
             return;
         }
-        (this.locals = new HashMap<>()).put(key, value);
+        (this.locals = new HashMap<>()).put(name, value);
     }
 
-    public Object[] get(final String[] keys) {
+    public Object[] get(final String[] names) {
         int i;
-        final Object[] results = new Object[i = keys.length];
+        final Object[] results = new Object[i = names.length];
         while (i != 0) {
             --i;
-            results[i] = get(keys[i], true);
+            results[i] = get(names[i], true);
         }
         return results;
     }
 
-    public Object get(final String key) {
-        return get(key, true);
+    public Object get(final String name) {
+        return get(name, true);
     }
 
-    public Object get(final String key, boolean force) {
-        int index = indexers[this.indexer].getIndex(key);
+    public Object get(final String name, boolean force) {
+        int index = indexers[this.indexer].getIndex(name);
         if (index >= 0) {
             return this.vars[index];
         }
         if (force) {
-            throw new ScriptRuntimeException("Not found variant named:".concat(key));
+            throw new ScriptRuntimeException("Not found variant named:".concat(name));
         }
         return null;
     }

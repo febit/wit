@@ -21,7 +21,7 @@ public final class FunctionDeclare extends Expression {
     private final int start;
     private final int varSize;
 
-    public FunctionDeclare(int argsCount, int varSize, VariantIndexer[] indexers, Statement[] statements, int start, boolean hasReturnLoops, int line, int column) {
+    public FunctionDeclare(int argsCount,int varSize, VariantIndexer[] indexers, Statement[] statements, int start, boolean hasReturnLoops, int line, int column) {
         super(line, column);
         this.argsCount = argsCount;
         this.indexers = indexers;

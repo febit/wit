@@ -75,6 +75,7 @@ public final class Props {
         return modules.contains(name);
     }
 
+    @SuppressWarnings("unchecked")
     public List<String> getModules() {
         if (this.modules == null) {
             return Collections.EMPTY_LIST;

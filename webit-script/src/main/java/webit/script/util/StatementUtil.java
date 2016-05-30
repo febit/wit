@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import webit.script.Context;
 import webit.script.core.LoopInfo;
+import webit.script.core.ast.Constable;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Loopable;
 import webit.script.core.ast.Optimizable;
@@ -19,7 +20,27 @@ import webit.script.exceptions.ScriptRuntimeException;
  */
 public class StatementUtil {
 
-    private StatementUtil() {
+    public static Object calcConst(Expression expr, boolean force) {
+        expr = StatementUtil.optimize(expr);
+        if (expr instanceof Constable) {
+            Object result = ((Constable) expr).getConstValue();
+            if (result != Context.VOID) {
+                return result;
+            }
+        }
+        if (force) {
+            throw new ParseException("Can't get a const value from this expression.", expr.line, expr.column);
+        }
+        return Context.VOID;
+    }
+
+    public static Object[] calcConstArrayForce(Expression[] expr) {
+        final int len = expr.length;
+        final Object[] results = new Object[len];
+        for (int i = 0; i < len; i++) {
+            results[i] = StatementUtil.calcConst(expr[i], true);
+        }
+        return results;
     }
 
     public static void execute(final Statement[] statements, final Context context) {

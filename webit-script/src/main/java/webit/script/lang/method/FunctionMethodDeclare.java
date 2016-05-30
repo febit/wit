@@ -6,13 +6,14 @@ import webit.script.core.VariantIndexer;
 import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.MethodDeclare;
+import webit.script.lang.UnConstableMethodDeclare;
 import webit.script.util.StatementUtil;
 
 /**
  *
  * @author zqq90
  */
-public final class FunctionMethodDeclare implements MethodDeclare {
+public final class FunctionMethodDeclare implements MethodDeclare, UnConstableMethodDeclare {
 
     private final FunctionDeclare function;
     private final Context scopeContext;

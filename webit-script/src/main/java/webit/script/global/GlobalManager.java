@@ -6,12 +6,13 @@ import java.util.Map;
 import webit.script.Engine;
 import webit.script.Init;
 import webit.script.lang.Bag;
+import java.util.Arrays;
 
 /**
  *
  * @author zqq90
  */
-public class GlobalManager{
+public class GlobalManager {
 
     private final Map<String, Object> constMap;
     private final Map<String, Object> driftedGlobalMap;
@@ -19,7 +20,7 @@ public class GlobalManager{
     private Object[] globalContext;
 
     //settings
-    private GlobalRegister[] registers;
+    private transient GlobalRegister[] registers;
 
     public GlobalManager() {
         this.constMap = new HashMap<>();
@@ -28,7 +29,7 @@ public class GlobalManager{
     }
 
     @Init
-    public void init(Engine engine) {
+    public void init() {
         if (registers != null) {
             try {
                 for (GlobalRegister register : registers) {
@@ -40,6 +41,17 @@ public class GlobalManager{
             }
         }
         commit();
+    }
+
+    public void clear() {
+        this.driftedGlobalMap.clear();
+        this.globalIndexer.clear();
+        this.constMap.clear();
+        Object[] myGlobalContext = this.globalContext;
+        if (myGlobalContext != null) {
+            Arrays.fill(myGlobalContext, null);
+        }
+        init();
     }
 
     public void commit() {

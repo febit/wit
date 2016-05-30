@@ -24,7 +24,7 @@ public final class PropertyOperator extends ResetableValueExpression {
     @Override
     public Object execute(final Context context) {
         try {
-            return context.getBean(
+            return context.getBeanProperty(
                     expr.execute(context),
                     property);
         } catch (Exception e) {
@@ -35,7 +35,7 @@ public final class PropertyOperator extends ResetableValueExpression {
     @Override
     public Object setValue(final Context context, final Object value) {
         try {
-            context.setBean(
+            context.setBeanProperty(
                     expr.execute(context),
                     property, value);
             return value;
