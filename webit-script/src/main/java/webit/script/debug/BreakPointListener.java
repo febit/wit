@@ -10,5 +10,5 @@ import webit.script.core.ast.Statement;
  */
 public interface BreakPointListener {
     
-    void onBreak(String label, Context context, Statement statement, Object result);
+    void onBreak(Object label, Context context, Statement statement, Object result);
 }

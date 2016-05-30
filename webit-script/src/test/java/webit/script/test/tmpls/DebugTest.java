@@ -21,7 +21,7 @@ import webit.script.util.KeyValuesUtil;
  */
 public class DebugTest {
     
-    private final Set<String> labelCache = new HashSet<>();
+    private final Set<Object> labelCache = new HashSet<>();
     private int pointCount = 0;
     
     @Test
@@ -35,13 +35,13 @@ public class DebugTest {
         template.debug(KeyValuesUtil.EMPTY_KEY_VALUES, new DiscardOut(), new BreakPointListener() {
 
             @Override
-            public void onBreak(String label, Context context, Statement statement, Object result) {
+            public void onBreak(Object label, Context context, Statement statement, Object result) {
                 labelCache.add(label);
                 pointCount ++;
             }
         });
         
-        assertEquals(8, pointCount);
+        assertEquals(18, pointCount);
         assertTrue(labelCache.contains(null));
         assertTrue(labelCache.contains("p1"));
         assertTrue(labelCache.contains("p2"));

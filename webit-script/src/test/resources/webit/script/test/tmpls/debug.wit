@@ -6,14 +6,28 @@ for(i : 1..2){
     [?] //2 3
 }
 
-[?p1:?] //4
+[?"p1":?] //4
 
-var a = [?p2:1?]; //5
+var a = [?"p2":1?]; //5
 var b = 2;
 
 var c = [? a ?] + b; //6
-var d = [?p3: a ?] + b; //7
-var e = [?p4: a -b ?]; //8
+var d = [?"p3": a ?] + b; //7
+var e = [?"p4": a -b ?]; //8
+
+
+var count = 0;
+var check = function(lambda){
+    for(i : 1..10){
+        count++;
+[?"check":?]  // 9-> 18
+        assertEquals((i > 2 || i < 8), lambda(i));
+    }
+};
+
+check(x -> x > 2 || x < 8);
+
+assertEquals(10, count);
 
 
 %>

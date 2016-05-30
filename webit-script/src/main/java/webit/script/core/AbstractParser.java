@@ -183,14 +183,16 @@ abstract class AbstractParser {
         return index;
     }
 
-    Expression createBreakPointExpression(String label, Expression expr, int line, int column) {
+    Expression createBreakPointExpression(Expression labelExpr, Expression expr, int line, int column) {
+        final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr, true);
         if (breakPointListener == null) {
             return expr;
         }
         return new BreakPointExpression(breakPointListener, label, expr, line, column);
     }
 
-    Statement createBreakPointStatement(String label, Statement statement, int line, int column) {
+    Statement createBreakPointStatement(Expression labelExpr, Statement statement, int line, int column) {
+        final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr, true);
         if (breakPointListener == null) {
             return statement;
         }

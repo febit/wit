@@ -12,10 +12,10 @@ import webit.script.debug.BreakPointListener;
 public class BreakPointStatement extends Statement {
 
     private final BreakPointListener listener;
-    private final String label;
+    private final Object label;
     private final Statement statement;
 
-    public BreakPointStatement(BreakPointListener listener, String label, Statement statement, int line, int column) {
+    public BreakPointStatement(BreakPointListener listener, Object label, Statement statement, int line, int column) {
         super(line, column);
         this.listener = listener;
         this.label = label;

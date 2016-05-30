@@ -12,10 +12,10 @@ import webit.script.debug.BreakPointListener;
 public class BreakPointExpression extends Expression {
 
     private final BreakPointListener listener;
-    private final String label;
+    private final Object label;
     private final Expression expression;
 
-    public BreakPointExpression(BreakPointListener listener, String label, Expression expression, int line, int column) {
+    public BreakPointExpression(BreakPointListener listener, Object label, Expression expression, int line, int column) {
         super(line, column);
         this.listener = listener;
         this.label = label;
