@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script;
 
 import java.lang.annotation.ElementType;
@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  *
- * @author zqq
+ * @author zqq90
  */
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

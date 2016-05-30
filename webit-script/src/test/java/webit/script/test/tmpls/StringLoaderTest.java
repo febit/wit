@@ -13,7 +13,7 @@ import webit.script.exceptions.ResourceNotFoundException;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public class StringLoaderTest {
 

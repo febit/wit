@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.servlet;
 
 import java.io.FileInputStream;
@@ -14,7 +14,7 @@ import webit.script.util.PropsUtil;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public class ServletEngineUtil {
 

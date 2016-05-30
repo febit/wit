@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 
 package webit.script.test.tmpls;
 
@@ -17,7 +17,7 @@ import webit.script.util.KeyValuesUtil;
 
 /**
  *
- * @author zqq
+ * @author zqq90
  */
 public class DebugTest {
     

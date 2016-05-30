@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.loaders.impl.resources;
 
 import java.io.IOException;
@@ -8,7 +8,7 @@ import webit.script.loaders.Resource;
 
 /**
  * @version 1.5.0
- * @author Zqq
+ * @author zqq90
  */
 public class NotFoundResource implements Resource {
 

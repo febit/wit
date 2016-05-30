@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.resolvers.impl;
 
 import webit.script.exceptions.ScriptRuntimeException;
@@ -10,7 +10,7 @@ import webit.script.util.bean.BeanUtil;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public class CommonResolver implements GetResolver, SetResolver, OutResolver {
 

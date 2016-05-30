@@ -1,6 +1,6 @@
 package webit.script.asm;
 
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 import java.lang.reflect.InvocationTargetException;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import webit.script.asm.lib.MethodWriter;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public class AsmTest implements Constants {
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.servlet.resolvers;
 
 import webit.script.resolvers.GetResolver;
@@ -7,7 +7,7 @@ import webit.script.servlet.HttpServletRequestAttributes;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public class HttpServletRequestAttributesResolver implements GetResolver, SetResolver {
 

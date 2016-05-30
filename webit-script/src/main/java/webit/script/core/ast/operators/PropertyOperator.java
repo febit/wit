@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.operators;
 
 import webit.script.Context;
@@ -8,7 +8,7 @@ import webit.script.util.StatementUtil;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public final class PropertyOperator extends ResetableValueExpression {
 

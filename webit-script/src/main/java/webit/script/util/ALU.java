@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.util;
 
 import java.math.BigDecimal;
@@ -8,7 +8,7 @@ import webit.script.exceptions.ScriptRuntimeException;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public class ALU {
 

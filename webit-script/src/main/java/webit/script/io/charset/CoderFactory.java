@@ -1,11 +1,11 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.io.charset;
 
 import webit.script.io.Buffers;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public interface CoderFactory {
 

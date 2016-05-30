@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.loaders.impl;
 
 import webit.script.loaders.Loader;
@@ -7,7 +7,7 @@ import webit.script.loaders.impl.resources.StringResource;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public class StringLoader implements Loader {
 

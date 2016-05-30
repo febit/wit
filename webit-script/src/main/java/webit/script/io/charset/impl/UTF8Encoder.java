@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.io.charset.impl;
 
 import java.io.IOException;
@@ -9,7 +9,7 @@ import webit.script.util.charset.UTF8;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public final class UTF8Encoder implements Encoder {
 

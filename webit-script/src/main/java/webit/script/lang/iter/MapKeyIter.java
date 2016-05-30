@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.lang.iter;
 
 import java.util.Iterator;
@@ -7,7 +7,7 @@ import webit.script.lang.KeyIter;
 
 /**
  *
- * @author zqq
+ * @author zqq90
  */
 public final class MapKeyIter extends AbstractIter implements KeyIter {
 

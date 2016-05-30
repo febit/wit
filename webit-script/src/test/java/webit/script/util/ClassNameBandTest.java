@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.util;
 
 import static org.junit.Assert.assertEquals;
@@ -6,7 +6,7 @@ import org.junit.Test;
 
 /**
  *
- * @author zqq90 <zqq_90@163.com>
+ * @author zqq90
  */
 public class ClassNameBandTest {
     

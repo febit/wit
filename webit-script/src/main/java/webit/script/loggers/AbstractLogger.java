@@ -1,11 +1,11 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.loggers;
 
 import webit.script.util.StringUtil;
 
 /**
  *
- * @author zqq
+ * @author zqq90
  */
 public abstract class AbstractLogger implements Logger {
 

@@ -1,3 +1,4 @@
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
 import webit.script.core.ast.Statement;
@@ -5,7 +6,7 @@ import webit.script.util.StatementUtil;
 
 /**
  *
- * @author zhuqingqing_iwm
+ * @author zqq90
  */
 public class TryPart {
 

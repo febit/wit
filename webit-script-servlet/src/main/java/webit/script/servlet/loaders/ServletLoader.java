@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.servlet.loaders;
 
 import javax.servlet.ServletContext;
@@ -8,7 +8,7 @@ import webit.script.loaders.impl.resources.FileResource;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public class ServletLoader extends AbstractLoader {
 

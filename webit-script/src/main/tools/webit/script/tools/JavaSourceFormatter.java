@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script;
 
 import jodd.io.FileUtil;
@@ -91,7 +91,7 @@ public class JavaSourceFormatter {
     /**
      * Copyright.
      */
-    private static final String COPYRIGHT = "// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.\n";
+    private static final String COPYRIGHT = "// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.\n";
 
     /**
      * Checks if there is a copyright.

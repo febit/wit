@@ -1,11 +1,11 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.resolvers;
 
 import webit.script.io.Out;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public interface OutResolver extends Resolver {
 

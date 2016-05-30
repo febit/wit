@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.io.impl;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import webit.script.io.charset.Encoder;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public final class OutputStreamOut implements Out {
 

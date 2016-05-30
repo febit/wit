@@ -1,11 +1,11 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.lang.iter;
 
 import webit.script.lang.Iter;
 
 /**
  *
- * @author zqq
+ * @author zqq90
  */
 public abstract class AbstractArrayIter implements Iter {
 

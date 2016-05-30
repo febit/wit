@@ -1,3 +1,4 @@
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.util;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 /**
  *
- * @author zhuqingqing_iwm
+ * @author zqq90
  */
 public class PropsUtil {
 

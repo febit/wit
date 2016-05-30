@@ -1,3 +1,4 @@
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
 import webit.script.Context;
@@ -7,7 +8,7 @@ import webit.script.exceptions.ScriptRuntimeException;
 
 /**
  *
- * @author zhuqingqing_iwm
+ * @author zqq90
  */
 public class Throw extends Statement {
 

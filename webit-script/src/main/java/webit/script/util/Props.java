@@ -1,3 +1,4 @@
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.util;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Map;
  * A mini version of 'Jodd-props', refer to the
  * <a href="https://github.com/oblac/jodd">Jodd</a> project.
  *
- * @author zhuqingqing_iwm
+ * @author zqq90
  */
 public final class Props {
 

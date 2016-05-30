@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script;
 
 import java.io.OutputStream;
@@ -14,7 +14,7 @@ import webit.script.util.KeyValuesUtil;
 /**
  * Exported function.
  *
- * @author zqq
+ * @author zqq90
  */
 public class Function {
 

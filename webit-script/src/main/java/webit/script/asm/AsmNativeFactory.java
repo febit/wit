@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.asm;
 
 import java.lang.reflect.Constructor;
@@ -14,7 +14,7 @@ import webit.script.util.ClassUtil;
 
 /**
  *
- * @author zqq
+ * @author zqq90
  */
 public class AsmNativeFactory extends NativeFactory {
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014, Webit Team. All Rights Reserved.
+// Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.util;
 
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  *
- * @author Zqq
+ * @author zqq90
  */
 public class StringUtil {
 
