@@ -9,10 +9,21 @@ import webit.script.util.StringUtil;
  */
 public abstract class AbstractLogger implements Logger {
 
+    protected static final int LEVEL_DEBUG = 1;
+    protected static final int LEVEL_INFO = 2;
+    protected static final int LEVEL_WARN = 3;
+    protected static final int LEVEL_ERROR = 4;
+    protected static final int LEVEL_OFF = 5;
+
     protected String name = "wit";
 
-    @Override
-    public void log(int level, String format, Object... args) {
+    protected abstract boolean isEnabled(int level);
+
+    protected abstract void log(int level, String msg);
+
+    protected abstract void log(int level, String msg, Throwable t);
+
+    protected void log(int level, String format, Object... args) {
         if (isEnabled(level)) {
             log(level, StringUtil.format(format, args));
         }

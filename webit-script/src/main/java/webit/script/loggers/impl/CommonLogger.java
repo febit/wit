@@ -10,7 +10,7 @@ import webit.script.loggers.AbstractLogger;
  *
  * @author zqq90
  */
-public final class CommonLogger extends AbstractLogger{
+public final class CommonLogger extends AbstractLogger {
 
     private Log log;
 
@@ -20,7 +20,7 @@ public final class CommonLogger extends AbstractLogger{
     }
 
     @Override
-    public boolean isEnabled(int level) {
+    protected boolean isEnabled(int level) {
         switch (level) {
             case LEVEL_DEBUG:
                 return log.isDebugEnabled();
@@ -30,12 +30,14 @@ public final class CommonLogger extends AbstractLogger{
                 return log.isWarnEnabled();
             case LEVEL_ERROR:
                 return log.isErrorEnabled();
+            case LEVEL_OFF:
+                return false;
         }
         return false;
     }
 
     @Override
-    public void log(int level, String msg) {
+    protected void log(int level, String msg) {
         switch (level) {
             case LEVEL_DEBUG:
                 log.debug(msg);
@@ -49,11 +51,13 @@ public final class CommonLogger extends AbstractLogger{
             case LEVEL_ERROR:
                 log.error(msg);
                 return;
+            case LEVEL_OFF:
+                return;
         }
     }
 
     @Override
-    public void log(int level, String msg, Throwable throwable) {
+    protected void log(int level, String msg, Throwable throwable) {
         switch (level) {
             case LEVEL_DEBUG:
                 log.debug(msg, throwable);
@@ -66,6 +70,8 @@ public final class CommonLogger extends AbstractLogger{
                 return;
             case LEVEL_ERROR:
                 log.error(msg, throwable);
+                return;
+            case LEVEL_OFF:
                 return;
         }
     }

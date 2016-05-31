@@ -23,7 +23,7 @@ encoding=${DEFAULT_ENCODING}
 # shareRootData=true
 
 [loader :routeLoader]
-[logger :noneLogger]
+[logger :simpleLogger]
 [textStatement :simpleTextStatement]
 [coderFactory :defaultCoderFactory]
 [nativeFactory :asmNativeFactory]
@@ -46,12 +46,9 @@ encoding=${DEFAULT_ENCODING}
 [byteArrayTextStatement :webit.script.core.text.impl.ByteArrayTextStatementFactory]
 [charArrayTextStatement :webit.script.core.text.impl.CharArrayTextStatementFactory]
 
-[noneLogger :webit.script.loggers.impl.NoneLogger]
 [simpleLogger :webit.script.loggers.impl.SimpleLogger]
 [slf4jLogger :webit.script.loggers.impl.Slf4jLogger]
 [commonLogger :webit.script.loggers.impl.CommonLogger]
-[jdk14Logger :webit.script.loggers.impl.Jdk14Logger]
-[multiLogger :webit.script.loggers.impl.MultiLogger]
 
 [pathLoader]
 encoding=${DEFAULT_ENCODING}

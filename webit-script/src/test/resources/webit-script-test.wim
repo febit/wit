@@ -6,10 +6,6 @@
   webit-script-moduleTest-a-2.props
 '''
 
-
-[logger :simpleLogger]
-
-
 [pathLoader]
 assistantSuffixs+=.whtml, .wit2
 appendLostSuffix=true

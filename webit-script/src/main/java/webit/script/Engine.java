@@ -79,9 +79,7 @@ public final class Engine {
                     new Object[]{globalBag, constBag}
             );
             for (String templateName : StringUtil.toArray(this.inits)) {
-                if (this.logger.isInfoEnabled()) {
-                    this.logger.info("Merge init template: {}", templateName);
-                }
+                this.logger.info("Merge init template: {}", templateName);
                 try {
                     this.getTemplate(templateName).merge(params, out);
                 } catch (ResourceNotFoundException ex) {
@@ -576,9 +574,7 @@ public final class Engine {
         engine.config(props, parameters);
         engine.initComponents();
 
-        if (engine.getLogger().isInfoEnabled()) {
-            engine.getLogger().info("Loaded props: {}", props.getModulesString());
-        }
+        engine.getLogger().info("Loaded props: {}", props.getModulesString());
         engine.executeInits();
         return engine;
     }

@@ -50,7 +50,7 @@ public class AsmNativeFactory extends NativeFactory {
                             CACHE.put(member, declare);
                         }
                     } catch (Exception | Error e) {
-                        logger.error("Failed to create ASMMethodDeclare for '{}'.", member, e);
+                        logger.error("Failed to create ASMMethodDeclare for '" + member + "'.", e);
                     }
                 }
             }
@@ -164,7 +164,7 @@ public class AsmNativeFactory extends NativeFactory {
             //Invoke Method
             m.visitMethodInsn(isStatic ? Constants.INVOKESTATIC
                     : isConstructor ? Constants.INVOKESPECIAL : isInterface ? Constants.INVOKEINTERFACE
-                    : Constants.INVOKEVIRTUAL, ownerClass, destName, destDesc);
+                                    : Constants.INVOKEVIRTUAL, ownerClass, destName, destDesc);
             ASMUtil.visitBoxIfNeed(m, returnType);
             m.visitInsn(Constants.ARETURN);
         }

@@ -16,7 +16,7 @@ import webit.script.util.ClassMap;
 public class ResolverManager {
 
     protected Logger logger;
-    
+
     protected boolean ignoreNullPointer;
     protected Resolver[] resolvers;
 
