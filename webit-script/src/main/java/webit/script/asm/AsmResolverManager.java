@@ -53,7 +53,7 @@ public class AsmResolverManager extends ResolverManager {
                     try {
                         resolver = (AsmResolver) createResolverClass(type).newInstance();
                         resolver = CACHE.putIfAbsent(type, resolver);
-                    } catch (Exception | Error e) {
+                    } catch (Exception | LinkageError e) {
                         logger.error("Failed to create resolver for:".concat(type.getName()), e);
                     }
                 }

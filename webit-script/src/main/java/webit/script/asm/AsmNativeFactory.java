@@ -49,7 +49,7 @@ public class AsmNativeFactory extends NativeFactory {
                             declare = createAccessor(member);
                             CACHE.put(member, declare);
                         }
-                    } catch (Exception | Error e) {
+                    } catch (Exception | LinkageError e) {
                         logger.error("Failed to create ASMMethodDeclare for '" + member + "'.", e);
                     }
                 }
