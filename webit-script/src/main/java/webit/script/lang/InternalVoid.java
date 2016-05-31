@@ -5,6 +5,6 @@ package webit.script.lang;
  *
  * @author zqq90
  */
-public final class Void {
+public final class InternalVoid {
 
 }

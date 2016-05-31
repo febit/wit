@@ -3,7 +3,7 @@ package webit.script.resolvers.impl;
 
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
-import webit.script.lang.Void;
+import webit.script.lang.InternalVoid;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.SetResolver;
@@ -12,7 +12,7 @@ import webit.script.resolvers.SetResolver;
  *
  * @author zqq90
  */
-public class ScriptVoidResolver implements GetResolver, SetResolver, OutResolver {
+public class InternalVoidResolver implements GetResolver, SetResolver, OutResolver {
 
     @Override
     public Object get(Object object, Object property) {
@@ -21,7 +21,7 @@ public class ScriptVoidResolver implements GetResolver, SetResolver, OutResolver
 
     @Override
     public Class getMatchClass() {
-        return Void.class;
+        return InternalVoid.class;
     }
 
     @Override

@@ -161,7 +161,7 @@ class ASMUtil {
                 return;
             }
             //void.class
-            m.visitFieldInsn(Constants.GETSTATIC, "webit/script/Context", "VOID", "Lwebit/script/lang/Void;");
+            m.visitFieldInsn(Constants.GETSTATIC, "webit/script/Context", "VOID", "Lwebit/script/lang/InternalVoid;");
         }
     }
 

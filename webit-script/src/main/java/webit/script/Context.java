@@ -11,7 +11,7 @@ import webit.script.io.Out;
 import webit.script.lang.KeyValueAccepter;
 import webit.script.lang.KeyValues;
 import webit.script.lang.MethodDeclare;
-import webit.script.lang.Void;
+import webit.script.lang.InternalVoid;
 import webit.script.resolvers.GetResolver;
 import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.ResolverManager;
@@ -25,7 +25,7 @@ import webit.script.util.KeyValuesUtil;
  */
 public final class Context implements KeyValueAccepter {
 
-    public static final Void VOID = new Void();
+    public static final InternalVoid VOID = new InternalVoid();
 
     public final Template template;
     public final KeyValues rootParams;

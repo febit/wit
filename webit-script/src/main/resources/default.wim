@@ -101,7 +101,7 @@ registers ='''
 resolvers='''
     webit.script.resolvers.impl.LongOutResolver
     webit.script.resolvers.impl.IntegerOutResolver
-    webit.script.resolvers.impl.ScriptVoidResolver
+    webit.script.resolvers.impl.InternalVoidResolver
     webit.script.resolvers.impl.CharSequenceResolver
     webit.script.resolvers.impl.ByteArrayOutResolver
     webit.script.resolvers.impl.CharArrayOutResolver
