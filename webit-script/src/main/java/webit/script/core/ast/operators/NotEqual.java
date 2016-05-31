@@ -20,13 +20,13 @@ public final class NotEqual extends BinaryOperator implements Optimizable {
 
     @Override
     public Object execute(final Context context) {
-        return ALU.notEqual(leftExpr.execute(context), rightExpr.execute(context));
+        return !ALU.isEqual(leftExpr.execute(context), rightExpr.execute(context));
     }
 
     @Override
     public Expression optimize() {
         return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
-                ? new DirectValue(ALU.notEqual(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
+                ? new DirectValue(!ALU.isEqual(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
                 : this;
     }
 }

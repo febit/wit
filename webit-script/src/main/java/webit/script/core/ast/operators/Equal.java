@@ -22,7 +22,7 @@ public final class Equal extends BinaryOperator implements Optimizable {
     @Override
     public Object execute(final Context context) {
         try {
-            return ALU.equal(leftExpr.execute(context), rightExpr.execute(context));
+            return ALU.isEqual(leftExpr.execute(context), rightExpr.execute(context));
         } catch (Exception e) {
             throw StatementUtil.castToScriptRuntimeException(e, this);
         }
@@ -31,7 +31,7 @@ public final class Equal extends BinaryOperator implements Optimizable {
     @Override
     public Expression optimize() {
         return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
-                ? new DirectValue(ALU.equal(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
+                ? new DirectValue(ALU.isEqual(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
                 : this;
     }
 }

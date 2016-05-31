@@ -318,7 +318,7 @@ public class ALU {
     }
 
     // ==
-    public static boolean equal(final Object o1, final Object o2) {
+    public static boolean isEqual(final Object o1, final Object o2) {
         if (o1 == o2) {
             return true;
         }
@@ -347,15 +347,10 @@ public class ALU {
             case BIG_DECIMAL:
                 return toBigDecimal(o1).compareTo(toBigDecimal(o2)) == 0;
             case CHAR:
-                return equal(charToInt(o1), charToInt(o2));
+                return isEqual(charToInt(o1), charToInt(o2));
             default:
         }
         return false;
-    }
-
-    // !=
-    public static boolean notEqual(final Object o1, final Object o2) {
-        return !equal(o1, o2);
     }
 
     // >
@@ -742,7 +737,7 @@ public class ALU {
     private static ScriptRuntimeException valueIsNullException(final Object o1, final Object o2) {
         return new ScriptRuntimeException(
                 o1 == null
-                ? (o2 == null ? "left & right values are null" : "left value is null")
-                : (o2 == null ? "right value is null" : "left & right values are not null"));
+                        ? (o2 == null ? "left & right values are null" : "left value is null")
+                        : (o2 == null ? "right value is null" : "left & right values are not null"));
     }
 }
