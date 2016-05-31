@@ -9,7 +9,7 @@ import webit.script.util.ArrayUtil;
  */
 public final class VariantIndexer {
 
-    public static VariantIndexer EMPTY = new VariantIndexer(0, null, ArrayUtil.EMPTY_STRINGS, null);
+    public static final VariantIndexer EMPTY = new VariantIndexer(0, null, ArrayUtil.EMPTY_STRINGS, null);
 
     public final int id;
     public final VariantIndexer parent;
