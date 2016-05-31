@@ -29,9 +29,9 @@ public class Slf4jLogger extends AbstractLogger {
             case LEVEL_ERROR:
                 return log.isErrorEnabled();
             case LEVEL_OFF:
+            default:
                 return false;
         }
-        return false;
     }
 
     @Override
@@ -50,6 +50,7 @@ public class Slf4jLogger extends AbstractLogger {
                 log.error(msg);
                 return;
             case LEVEL_OFF:
+            default:
                 return;
         }
     }
@@ -70,6 +71,7 @@ public class Slf4jLogger extends AbstractLogger {
                 log.error(msg, throwable);
                 return;
             case LEVEL_OFF:
+            default:
                 return;
         }
     }

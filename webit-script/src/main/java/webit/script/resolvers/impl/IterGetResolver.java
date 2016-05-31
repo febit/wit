@@ -51,6 +51,7 @@ public class IterGetResolver implements GetResolver {
                     return (((Iter) object).index() & 1) == 0; //Note: when index start by 0
                 }
                 break;
+            default:
         }
 
         throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: webit.script.lang.Iter#", property));

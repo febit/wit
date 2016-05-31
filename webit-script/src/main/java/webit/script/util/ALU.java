@@ -83,6 +83,7 @@ public class ALU {
                         return ((BigInteger) num).add(BigInteger.ONE);
                     case BIG_DECIMAL:
                         return ((BigDecimal) num).add(BigDecimal.ONE);
+                    default:
                 }
             } else if (o1 instanceof Character) {
                 return ((Character) o1) + 1;
@@ -112,6 +113,7 @@ public class ALU {
                         return ((BigInteger) num).subtract(BigInteger.ONE);
                     case BIG_DECIMAL:
                         return ((BigDecimal) num).subtract(BigDecimal.ONE);
+                    default:
                 }
             } else if (o1 instanceof Character) {
                 return ((Character) o1) - 1;
