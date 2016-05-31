@@ -680,7 +680,10 @@ public class ALU {
         return new BigDecimal(o1.toString()).toBigInteger();
     }
 
-    private static BigDecimal toBigDecimal(final Object o1) {
+    private static BigDecimal toBigDecimal(final Object o1) throws NumberFormatException {
+        if (o1 == null) {
+            return BigDecimal.ZERO;
+        }
         if (o1 instanceof BigDecimal) {
             return (BigDecimal) o1;
         }
@@ -691,14 +694,16 @@ public class ALU {
                 || type == Byte.class) {
             return BigDecimal.valueOf(((Number) o1).longValue());
         }
-        if (type == Float.class
-                || type == Double.class) {
+        if (type == Float.class) {
+            return new BigDecimal(((Number) o1).toString());
+        }
+        if (type == Double.class) {
             return BigDecimal.valueOf(((Number) o1).doubleValue());
         }
         if (o1 instanceof BigInteger) {
             return new BigDecimal((BigInteger) o1);
         }
-        return toBigDecimal(o1);
+        return new BigDecimal(o1.toString());
     }
 
     public static boolean isTrue(final Object o) {
