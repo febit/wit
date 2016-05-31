@@ -1,7 +1,6 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core;
 
-import webit.script.Context;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
@@ -13,6 +12,10 @@ import java.util.Map;
 import webit.script.Engine;
 import webit.script.Template;
 import webit.script.core.VariantManager.VarAddress;
+import webit.script.core.ast.*;
+import webit.script.core.ast.expressions.*;
+import webit.script.core.ast.operators.*;
+import webit.script.core.ast.statements.*;
 import webit.script.core.text.TextStatementFactory;
 import webit.script.debug.BreakPointListener;
 import webit.script.exceptions.ParseException;
@@ -24,10 +27,6 @@ import webit.script.util.ClassUtil;
 import webit.script.util.Stack;
 import webit.script.util.StatementUtil;
 import webit.script.util.StringUtil;
-import webit.script.core.ast.*;
-import webit.script.core.ast.expressions.*;
-import webit.script.core.ast.operators.*;
-import webit.script.core.ast.statements.*;
 
 /**
  *

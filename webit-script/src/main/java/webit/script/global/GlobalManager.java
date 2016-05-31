@@ -1,12 +1,11 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.global;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import webit.script.Engine;
 import webit.script.Init;
 import webit.script.lang.Bag;
-import java.util.Arrays;
 
 /**
  *

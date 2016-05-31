@@ -7,8 +7,8 @@ import webit.script.core.ast.Constable;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.MethodDeclare;
-import webit.script.util.StatementUtil;
 import webit.script.lang.UnConstableMethodDeclare;
+import webit.script.util.StatementUtil;
 
 /**
  *

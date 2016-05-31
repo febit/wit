@@ -1,7 +1,6 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.util.bean;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.Assert.*;
