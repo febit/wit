@@ -23,9 +23,9 @@ public final class MinusMinusAfter extends Expression {
     @Override
     public Object execute(final Context context) {
         final Object value;
-        final ResetableValueExpression resetable;
+        final ResetableValueExpression resetable = this.expr;
         try {
-            (resetable = this.expr).setValue(context, ALU.minusOne(
+            resetable.setValue(context, ALU.minusOne(
                     value = resetable.execute(context)));
             return value;
         } catch (Exception e) {

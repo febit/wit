@@ -23,8 +23,8 @@ public final class PlusPlusBefore extends Expression {
     @Override
     public Object execute(final Context context) {
         try {
-            final ResetableValueExpression resetable;
-            return (resetable = this.expr).setValue(context, ALU.plusOne(
+            final ResetableValueExpression resetable = this.expr;
+            return resetable.setValue(context, ALU.plusOne(
                     resetable.execute(context)));
         } catch (Exception e) {
             throw StatementUtil.castToScriptRuntimeException(e, this);

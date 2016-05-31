@@ -34,8 +34,8 @@ public final class ClassMap<V> {
 
     public V unsafeGet(final Class key) {
         Entry<V> e;
-        final Entry<V>[] tab;
-        e = (tab = table)[key.hashCode() & (tab.length - 1)];
+        final Entry<V>[] tab = table;
+        e = tab[key.hashCode() & (tab.length - 1)];
         while (e != null) {
             if (key == e.key) {
                 return e.value;
@@ -92,11 +92,11 @@ public final class ClassMap<V> {
     @SuppressWarnings("unchecked")
     public V putIfAbsent(Class key, V value) {
         synchronized (this) {
-            final int id;
-            int index;
+            final int id = key.hashCode();
+            Entry<V>[] tab = table;
+            int index = id & (tab.length - 1);
 
-            Entry<V>[] tab;
-            Entry<V> e = (tab = table)[index = (id = key.hashCode()) & (tab.length - 1)];
+            Entry<V> e = tab[index];
             for (; e != null; e = e.next) {
                 if (key == e.key) {
                     return e.value;
