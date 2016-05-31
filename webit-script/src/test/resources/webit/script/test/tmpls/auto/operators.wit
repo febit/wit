@@ -36,7 +36,22 @@
     assertEquals(97 * 2 , a * 2);
     assertEquals(97 >> 2 , a >> 2);
     assertEquals(97 % 2 , a % 2);
+    
+    //Compare Floating point numbers.
+    assertTrue(0.1f == 0.1f);
+    assertTrue(0.1F == 0.1D);
+    assertTrue((0.0F) == 0);
+    assertTrue(3.146 == 3.146F);
 
+    assertTrue(0.1f >= 0.1D);
+    assertTrue(0.1f <= 0.1D);
+    
+    assertFalse(0.1f > 0.1D);
+    assertFalse(0.1f < 0.1D);
+
+    //FIXME: unpass
+    //assertTrue((0.1F+0D) == 0.1F);
+    
     // ?:
     assertEquals(1, true?1:2);
     assertEquals(1, 1?:2);

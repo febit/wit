@@ -337,15 +337,14 @@ public class ALU {
                 return ((Number) o1).intValue() == ((Number) o2).intValue();
             case LONG:
                 return ((Number) o1).longValue() == ((Number) o2).longValue();
-            case DOUBLE:
-                return ((Number) o1).doubleValue() == ((Number) o2).doubleValue();
-            case FLOAT:
-                return ((Number) o1).floatValue() == ((Number) o2).floatValue();
             case BIG_INTEGER:
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).compareTo(toBigInteger(o2)) == 0;
                 }
             //Note: else upgrade to BigDecimal
+            case DOUBLE:
+            case FLOAT:
+            //Note: Floating point numbers should not be tested for equality.
             case BIG_DECIMAL:
                 return toBigDecimal(o1).compareTo(toBigDecimal(o2)) == 0;
             case CHAR:
@@ -365,15 +364,14 @@ public class ALU {
                     return ((Number) o1).intValue() > ((Number) o2).intValue();
                 case LONG:
                     return ((Number) o1).longValue() > ((Number) o2).longValue();
-                case DOUBLE:
-                    return ((Number) o1).doubleValue() > ((Number) o2).doubleValue();
-                case FLOAT:
-                    return ((Number) o1).floatValue() > ((Number) o2).floatValue();
                 case BIG_INTEGER:
                     if (notDoubleOrFloat(o1, o2)) {
                         return toBigInteger(o1).compareTo(toBigInteger(o2)) > 0;
                     }
                 //Note: else upgrade to BigDecimal
+                case DOUBLE:
+                case FLOAT:
+                //Note: Floating point numbers should not be tested for equality.
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).compareTo(toBigDecimal(o2)) > 0;
                 case CHAR:
@@ -397,15 +395,14 @@ public class ALU {
                     return ((Number) o1).intValue() >= ((Number) o2).intValue();
                 case LONG:
                     return ((Number) o1).longValue() >= ((Number) o2).longValue();
-                case DOUBLE:
-                    return ((Number) o1).doubleValue() >= ((Number) o2).doubleValue();
-                case FLOAT:
-                    return ((Number) o1).floatValue() >= ((Number) o2).floatValue();
                 case BIG_INTEGER:
                     if (notDoubleOrFloat(o1, o2)) {
                         return toBigInteger(o1).compareTo(toBigInteger(o2)) >= 0;
                     }
                 //Note: else upgrade to BigDecimal
+                case DOUBLE:
+                case FLOAT:
+                //Note: Floating point numbers should not be tested for equality.
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).compareTo(toBigDecimal(o2)) >= 0;
                 default:
@@ -427,15 +424,14 @@ public class ALU {
                     return ((Number) o1).intValue() < ((Number) o2).intValue();
                 case LONG:
                     return ((Number) o1).longValue() < ((Number) o2).longValue();
-                case DOUBLE:
-                    return ((Number) o1).doubleValue() < ((Number) o2).doubleValue();
-                case FLOAT:
-                    return ((Number) o1).floatValue() < ((Number) o2).floatValue();
                 case BIG_INTEGER:
                     if (notDoubleOrFloat(o1, o2)) {
                         return toBigInteger(o1).compareTo(toBigInteger(o2)) < 0;
                     }
                 //Note: else upgrade to BigDecimal
+                case DOUBLE:
+                case FLOAT:
+                //Note: Floating point numbers should not be tested for equality.
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).compareTo(toBigDecimal(o2)) < 0;
                 default:
@@ -457,15 +453,14 @@ public class ALU {
                     return ((Number) o1).intValue() <= ((Number) o2).intValue();
                 case LONG:
                     return ((Number) o1).longValue() <= ((Number) o2).longValue();
-                case DOUBLE:
-                    return ((Number) o1).doubleValue() <= ((Number) o2).doubleValue();
-                case FLOAT:
-                    return ((Number) o1).floatValue() <= ((Number) o2).floatValue();
                 case BIG_INTEGER:
                     if (notDoubleOrFloat(o1, o2)) {
                         return toBigInteger(o1).compareTo(toBigInteger(o2)) <= 0;
                     }
                 //Note: else upgrade to BigDecimal
+                case DOUBLE:
+                case FLOAT:
+                //Note: Floating point numbers should not be tested for equality.
                 case BIG_DECIMAL:
                     return toBigDecimal(o1).compareTo(toBigDecimal(o2)) <= 0;
                 default:
