@@ -19,36 +19,7 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
     @Override
     public Object get(Object object, Object property) {
         if (property instanceof Number) {
-            int index = ((Number) property).intValue();
-            final Class cls = object.getClass();
-            try {
-                if (cls == int[].class) {
-                    return ((int[]) object)[index];
-                }
-                if (cls == boolean[].class) {
-                    return ((boolean[]) object)[index];
-                }
-                if (cls == char[].class) {
-                    return ((char[]) object)[index];
-                }
-                if (cls == float[].class) {
-                    return ((float[]) object)[index];
-                }
-                if (cls == double[].class) {
-                    return ((double[]) object)[index];
-                }
-                if (cls == long[].class) {
-                    return ((long[]) object)[index];
-                }
-                if (cls == short[].class) {
-                    return ((short[]) object)[index];
-                }
-                if (cls == byte[].class) {
-                    return ((byte[]) object)[index];
-                }
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException(StringUtil.concat("Array index out of bounds, index=", index));
-            }
+            return ArrayUtil.get(object, ((Number) property).intValue());
         }
         if ("length".equals(property) || "size".equals(property)) {
             return ArrayUtil.getSize(object);

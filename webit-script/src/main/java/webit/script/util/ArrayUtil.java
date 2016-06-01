@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.util;
 
+import webit.script.exceptions.ScriptRuntimeException;
+
 /**
  *
  * @author zqq90
@@ -71,5 +73,41 @@ public class ArrayUtil {
             return array[index];
         }
         return defaultValue;
+    }
+
+    public static Object get(final Object object, int index) {
+        if (object instanceof Object[]) {
+            return get((Object[]) object, index, null);
+        }
+        final Class cls = object.getClass();
+        try {
+            if (cls == int[].class) {
+                return ((int[]) object)[index];
+            }
+            if (cls == boolean[].class) {
+                return ((boolean[]) object)[index];
+            }
+            if (cls == char[].class) {
+                return ((char[]) object)[index];
+            }
+            if (cls == float[].class) {
+                return ((float[]) object)[index];
+            }
+            if (cls == double[].class) {
+                return ((double[]) object)[index];
+            }
+            if (cls == long[].class) {
+                return ((long[]) object)[index];
+            }
+            if (cls == short[].class) {
+                return ((short[]) object)[index];
+            }
+            if (cls == byte[].class) {
+                return ((byte[]) object)[index];
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new ScriptRuntimeException(StringUtil.concat("Array index out of bounds, index=", index));
+        }
+        throw new ScriptRuntimeException("Not an array.");
     }
 }
