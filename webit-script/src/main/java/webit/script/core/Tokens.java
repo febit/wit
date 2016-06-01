@@ -136,19 +136,19 @@ public interface Tokens {
     //int $IPNT_0$$opt = 44;
     //int $IPNT_1 = 45;
     //int $IPNT_2 = 46;
-    //int $IPNT_3 = 47;
-    //int $IPNT_4 = 48;
-    //int $IPNT_5 = 49;
-    //int $IPNT_6 = 50;
-    //int $IPNT_7 = 51;
-    //int $IPNT_8 = 52;
-    //int $IPNT_8$$opt = 53;
-    //int $IPNT_9 = 54;
-    //int $IPNT_10 = 55;
-    //int $IPNT_10$$opt = 56;
-    //int $NT57 = 57;
-    //int TEXT_STATEMENT$$opt = 58;
-    //int IDENTIFIER$$lst$COMMA = 59;
+    //int IDENTIFIER$$lst$COMMA = 47;
+    //int $IPNT_3 = 48;
+    //int $IPNT_4 = 49;
+    //int $IPNT_5 = 50;
+    //int $IPNT_6 = 51;
+    //int $IPNT_7 = 52;
+    //int $IPNT_8 = 53;
+    //int $IPNT_8$$opt = 54;
+    //int $IPNT_9 = 55;
+    //int $IPNT_10 = 56;
+    //int $IPNT_10$$opt = 57;
+    //int $NT58 = 58;
+    //int TEXT_STATEMENT$$opt = 59;
     //int IDENTIFIER$$lst$COMMA$$opt = 60;
 }
 

@@ -1,0 +1,117 @@
+<%
+{
+
+    var [a,b]= ["a", "b"];
+    
+    var [A,B] = [a,b];
+    
+    assertEquals(a, "a");
+    assertEquals(b, "b");
+
+    assertEquals(A, "a");
+    assertEquals(B, "b");
+}
+
+{
+    
+    var [a, b]= ["a", "b"];
+    
+    assertEquals(a, "a");
+    assertEquals(b, "b");
+    
+    [a, b] = [b, a];
+    
+    assertEquals(a, "b");
+    assertEquals(b, "a");
+
+}
+
+{
+    var a,b,c;
+    
+    [a,b,c] = [0,1,2,3,4];
+    
+    assertEquals(a, 0);
+    assertEquals(b, 1);
+    assertEquals(c, 2);
+    
+    
+    [a,b,c] = [5,6,7];
+    
+    assertEquals(a, 5);
+    assertEquals(b, 6);
+    assertEquals(c, 7);
+    
+    [a,b,c] = [10,11];
+    
+    assertEquals(a, 10);
+    assertEquals(b, 11);
+    assertEquals(c, null);
+    
+    
+    [a,b,c] = [15];
+    
+    assertEquals(a, 15);
+    assertEquals(b, null);
+    assertEquals(c, null);
+    
+    
+    [a,b,c] = [];
+    
+    assertEquals(a, null);
+    assertEquals(b, null);
+    assertEquals(c, null);
+    
+    [a] = [];
+    
+    assertEquals(a, null);
+}
+
+{
+    
+    var [a,b,c,d,e,f] = 1..10;
+
+    assertEquals(a, 1);
+    assertEquals(b, 2);
+    assertEquals(c, 3);
+    assertEquals(d, 4);
+    assertEquals(e, 5);
+    assertEquals(f, 6);
+}
+
+{
+
+    var new_int_arr = native [int];
+    
+    var arr = new_int_arr(10);
+
+    [arr[0],arr[1],arr[2],arr[3]] = 1..10;
+    
+    
+    assertEquals(arr[0], 1);
+    assertEquals(arr[1], 2);
+    assertEquals(arr[2], 3);
+    assertEquals(arr[3], 4);
+    assertEquals(arr[4], 0);
+    assertEquals(arr[5], 0);
+    
+    [arr[5],arr[6],arr[7],arr[8],arr[9]] = arr;
+    
+    assertEquals(arr[5], 1);
+    assertEquals(arr[6], 2);
+    assertEquals(arr[7], 3);
+    assertEquals(arr[8], 4);
+    assertEquals(arr[9], 0);
+}
+
+{
+    var a, b;
+    
+    [a, b] = (x -> [1,2])();
+
+    assertEquals(a, 1);
+    assertEquals(b, 2);
+}
+
+
+%>

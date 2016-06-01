@@ -236,12 +236,14 @@ statement       ::= expression_statementable:$ SEMICOLON
 
 
 varAssign       ::= IDENTIFIER:ident EQ:sym (expression:$ | varAssign:$):expr
-                    {: return new Assign(createContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return createAssign(declearVarAndCreateContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
                     ;
 
-varPart         ::= IDENTIFIER:ident
+varPart         ::= varAssign:$
+                    | IDENTIFIER:ident
                     {: return declearVar(%ident%, %ident.line%, %ident.column%); :}
-                    | varAssign:$
+                    | LBRACK IDENTIFIER[COMMA]:idents RBRACK EQ:sym expression:expr
+                    {: return createGroupAssign(declearVarAndCreateContextValues(%idents%, %idents.line%, %idents.column%), %expr%, %sym.line%, %sym.column%); :}
                     ;
 
 
@@ -359,7 +361,10 @@ switchPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE TEXT_S
 expression_statementable ::= 
                     //assignOper = 
                     expression:lexpr EQ:sym expression:expr
-                    {: return new Assign(castToResetableValueExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return createAssign(castToResetableValueExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
+                    
+                    |LBRACK expressionList:list RBRACK EQ:sym expression:expr
+                    {: return createGroupAssign((%list%).toArray(), %expr%, %sym.line%, %sym.column%); :}
 
                     //plusPlusOper ++
                     |PLUSPLUS:sym expression:expr

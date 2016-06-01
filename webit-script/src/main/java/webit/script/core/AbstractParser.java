@@ -182,6 +182,19 @@ abstract class AbstractParser {
         return index;
     }
 
+    Expression createAssign(ResetableValueExpression lexpr, Expression rexpr, int line, int column) {
+        return new Assign(lexpr, rexpr, line, column);
+    }
+
+    Expression createGroupAssign(Expression[] lexpres, Expression rexpr, int line, int column) {
+
+        ResetableValueExpression[] resetableExprs = new ResetableValueExpression[lexpres.length];
+        for (int i = 0; i < lexpres.length; i++) {
+            resetableExprs[i] = castToResetableValueExpression(lexpres[i]);
+        }
+        return new GroupAssign(resetableExprs, rexpr, line, column);
+    }
+
     Expression createBreakPointExpression(Expression labelExpr, Expression expr, int line, int column) {
         final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr, true);
         if (breakPointListener == null) {
@@ -205,8 +218,16 @@ abstract class AbstractParser {
         return this.textStatementFactory.getTextStatement(template, text, line, column);
     }
 
-    ContextValue createContextValue(String name, int line, int column) {
+    ContextValue declearVarAndCreateContextValue(String name, int line, int column) {
         return new ContextValue(varmgr.assignVariant(name, line, column), line, column);
+    }
+
+    ContextValue[] declearVarAndCreateContextValues(List<String> names, int line, int column) {
+        ContextValue[] contextValues = new ContextValue[names.size()];
+        for (int i = 0; i < names.size(); i++) {
+            contextValues[i] = declearVarAndCreateContextValue(names.get(i), line, column);
+        }
+        return contextValues;
     }
 
     Expression createContextValue(VarAddress addr, int line, int column) {
@@ -214,7 +235,7 @@ abstract class AbstractParser {
             case VarAddress.GLOBAL:
                 return new GlobalValue(this.engine.getGlobalManager(), addr.index, line, column);
             case VarAddress.CONST:
-                return new DirectValue(addr.constValue, line, column);  
+                return new DirectValue(addr.constValue, line, column);
             case VarAddress.SCOPE:
                 return new ContextScopeValue(addr.scopeOffset, addr.index, line, column);
             default:
@@ -584,7 +605,7 @@ abstract class AbstractParser {
                 }
 
                 /* look up the state to go to from the one popped back to */
-                /* shift to that state */
+ /* shift to that state */
                 currentSymbol.state = getReduce(reduceTable[stack.peek().state], symId);
                 stack.push(currentSymbol);
 

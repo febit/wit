@@ -74,7 +74,7 @@ public class CollectionUtil {
         } else if (o1 instanceof CharSequence) {
             return new CharSequenceIter((CharSequence) o1);
         }
-        throw new ScriptRuntimeException("Unsupported type: ".concat(o1.getClass().getName()), statement);
+        throw new ScriptRuntimeException("Unsupported type to Iter: ".concat(o1.getClass().getName()), statement);
     }
 
     public static KeyIter toKeyIter(final Object o1, Statement statement) {
@@ -84,7 +84,7 @@ public class CollectionUtil {
         if (o1 instanceof Map) {
             return new MapKeyIter((Map) o1);
         }
-        throw new ScriptRuntimeException("Unsupported type: ".concat(o1.getClass().getName()), statement);
+        throw new ScriptRuntimeException("Unsupported type to KeyIter: ".concat(o1.getClass().getName()), statement);
     }
 
     public static boolean notEmpty(final Object object, final boolean defaultValue) {
