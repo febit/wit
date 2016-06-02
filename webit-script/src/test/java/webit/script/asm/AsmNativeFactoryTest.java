@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.lang.InternalVoid;
 import webit.script.lang.MethodDeclare;
 
 /**
@@ -39,7 +40,7 @@ public class AsmNativeFactoryTest {
         int[] array1 = new int[]{1, 2, 3, 4, 6};
         int[] array2 = new int[array1.length];
 
-        assertEquals(arraycopy.invoke(null, new Object[]{array1, 0, array2, 0, array1.length}), Context.VOID);
+        assertEquals(arraycopy.invoke(null, new Object[]{array1, 0, array2, 0, array1.length}), InternalVoid.VOID);
         assertArrayEquals(array2, array2);
 
         List list = (List) newList.invoke(null, null);
@@ -68,10 +69,10 @@ public class AsmNativeFactoryTest {
         assertEquals(listAdd.invoke(null, new Object[]{list}), true);
         assertNull(list.get(3));
 
-        assertEquals(listAddToIndex.invoke(null, new Object[]{list, 2, "a3"}), Context.VOID);
+        assertEquals(listAddToIndex.invoke(null, new Object[]{list, 2, "a3"}), InternalVoid.VOID);
         assertEquals(list.get(2), "a3");
 
-        assertEquals(listAddToIndex.invoke(null, new Object[]{list, 2}), Context.VOID);
+        assertEquals(listAddToIndex.invoke(null, new Object[]{list, 2}), InternalVoid.VOID);
         assertNull(list.get(2));
 
     }

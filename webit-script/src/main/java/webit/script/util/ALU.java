@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.lang.InternalVoid;
 
 /**
  *
@@ -708,7 +709,7 @@ public class ALU {
         if (o.getClass() == Boolean.class) {
             return (Boolean) o;
         }
-        if (o == Context.VOID) {
+        if (o == InternalVoid.VOID) {
             return false;
         }
         //if Collection empty 

@@ -25,7 +25,7 @@ import webit.script.util.KeyValuesUtil;
  */
 public final class Context implements KeyValueAccepter {
 
-    public static final InternalVoid VOID = new InternalVoid();
+    public static final InternalVoid VOID = InternalVoid.VOID;
 
     public final Template template;
     public final KeyValues rootParams;
@@ -128,7 +128,7 @@ public final class Context implements KeyValueAccepter {
     }
 
     public Object resetReturnLoop() {
-        Object result = this.loopType == LoopInfo.RETURN ? this.returned : VOID;
+        Object result = this.loopType == LoopInfo.RETURN ? this.returned : InternalVoid.VOID;
         resetLoop();
         return result;
     }

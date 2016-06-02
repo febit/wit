@@ -13,6 +13,7 @@ import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.lang.InternalVoid;
 
 /**
  *
@@ -24,14 +25,14 @@ public class StatementUtil {
         expr = StatementUtil.optimize(expr);
         if (expr instanceof Constable) {
             Object result = ((Constable) expr).getConstValue();
-            if (result != Context.VOID) {
+            if (result != InternalVoid.VOID) {
                 return result;
             }
         }
         if (force) {
             throw new ParseException("Can't get a const value from this expression.", expr.line, expr.column);
         }
-        return Context.VOID;
+        return InternalVoid.VOID;
     }
 
     public static Object[] calcConstArrayForce(Expression[] expr) {

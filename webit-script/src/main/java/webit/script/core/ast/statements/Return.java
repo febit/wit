@@ -8,6 +8,7 @@ import webit.script.core.LoopInfo;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Loopable;
 import webit.script.core.ast.Statement;
+import webit.script.lang.InternalVoid;
 
 /**
  *
@@ -24,10 +25,9 @@ public final class Return extends Statement implements Loopable {
 
     @Override
     public Object execute(final Context context) {
-        context.returnLoop(
-                expr != null
+        context.returnLoop(expr != null
                 ? expr.execute(context)
-                : Context.VOID);
+                : InternalVoid.VOID);
         return null;
     }
 

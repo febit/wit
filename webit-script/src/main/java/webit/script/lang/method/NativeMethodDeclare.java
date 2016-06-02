@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.lang.InternalVoid;
 import webit.script.lang.MethodDeclare;
 import webit.script.util.ClassUtil;
 
@@ -57,7 +58,7 @@ public final class NativeMethodDeclare implements MethodDeclare {
         }
         try {
             Object result = method.invoke(obj, methodArgs);
-            return noVoid ? result : Context.VOID;
+            return noVoid ? result : InternalVoid.VOID;
         } catch (IllegalAccessException ex) {
             throw new ScriptRuntimeException("this method is inaccessible: ".concat(ex.getLocalizedMessage()));
         } catch (IllegalArgumentException ex) {

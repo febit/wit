@@ -6,6 +6,7 @@ import webit.script.Context;
 import webit.script.core.ast.Constable;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
+import webit.script.lang.InternalVoid;
 import webit.script.lang.MethodDeclare;
 import webit.script.lang.UnConstableMethodDeclare;
 import webit.script.util.StatementUtil;
@@ -48,7 +49,7 @@ public final class MethodExecute extends Expression implements Constable {
             throw new ScriptRuntimeException("not a function", this);
         }
         if (func instanceof UnConstableMethodDeclare) {
-            return Context.VOID;
+            return InternalVoid.VOID;
         }
 
         final Object[] params = StatementUtil.calcConstArrayForce(paramExprs);

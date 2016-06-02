@@ -5,6 +5,7 @@ import webit.script.Context;
 import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
+import webit.script.lang.InternalVoid;
 import webit.script.lang.method.FunctionMethodDeclare;
 import webit.script.util.StatementUtil;
 
@@ -60,7 +61,7 @@ public final class FunctionDeclare extends Expression {
             return context.resetReturnLoop();
         } else {
             StatementUtil.executeInverted(statements, context);
-            return Context.VOID;
+            return InternalVoid.VOID;
         }
     }
 }
