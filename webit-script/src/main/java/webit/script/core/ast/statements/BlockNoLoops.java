@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
 import webit.script.util.StatementUtil;
@@ -22,7 +22,7 @@ public class BlockNoLoops extends IBlock implements Optimizable {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         final int preIndex = context.indexer;
         context.indexer = indexer;
         StatementUtil.executeInverted(statements, context);

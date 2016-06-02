@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import webit.script.Context;
 import webit.script.Engine;
+import webit.script.InternalContext;
 import webit.script.Template;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
@@ -34,7 +35,7 @@ public abstract class AbstractInclude extends Statement {
     }
 
     @SuppressWarnings("unchecked")
-    protected Map<String, Object> mergeTemplate(final Context context, boolean export) {
+    protected Map<String, Object> mergeTemplate(final InternalContext context, boolean export) {
         final Object templateName;
         if ((templateName = templateNameExpr.execute(context)) != null) {
             final KeyValues params;
@@ -52,7 +53,7 @@ public abstract class AbstractInclude extends Statement {
             try {
                 Template template = engine.getTemplate(myTemplateName, String.valueOf(templateName));
                 KeyValues rootParams = engine.isShareRootData() ? KeyValuesUtil.wrap(context.rootParams, params) : params;
-                Context newContext = template.mergeToContext(context , rootParams);
+                Context newContext = template.mergeToContext(context, rootParams);
 
                 if (export) {
                     Map<String, Object> result = new HashMap<>();

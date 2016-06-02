@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.operators;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.util.ALU;
@@ -21,7 +21,7 @@ public final class PlusPlusBefore extends Expression {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         try {
             final ResetableValueExpression resetable = this.expr;
             return resetable.setValue(context, ALU.plusOne(

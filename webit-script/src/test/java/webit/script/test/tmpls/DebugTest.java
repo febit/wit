@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import webit.script.Context;
 import webit.script.EngineManager;
+import webit.script.InternalContext;
 import webit.script.Template;
 import webit.script.core.ast.Statement;
 import webit.script.debug.BreakPointListener;
@@ -35,7 +35,7 @@ public class DebugTest {
         template.debug(KeyValuesUtil.EMPTY_KEY_VALUES, new DiscardOut(), new BreakPointListener() {
 
             @Override
-            public void onBreak(Object label, Context context, Statement statement, Object result) {
+            public void onBreak(Object label, InternalContext context, Statement statement, Object result) {
                 labelCache.add(label);
                 pointCount ++;
             }

@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Constable;
 import webit.script.core.ast.Expression;
 
@@ -19,7 +19,7 @@ public final class DirectValue extends Expression implements Constable {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         return value;
     }
 

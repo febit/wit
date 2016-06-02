@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 
 /**
  *
@@ -17,5 +17,5 @@ public abstract class Statement {
         this.column = column;
     }
 
-    public abstract Object execute(Context context);
+    public abstract Object execute(InternalContext context);
 }

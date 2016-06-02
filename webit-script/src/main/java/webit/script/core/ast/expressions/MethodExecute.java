@@ -2,7 +2,7 @@
 package webit.script.core.ast.expressions;
 
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Constable;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
@@ -27,7 +27,7 @@ public final class MethodExecute extends Expression implements Constable {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         final Object func = funcExpr.execute(context);
         if (!(func instanceof MethodDeclare)) {
             throw new ScriptRuntimeException("not a function", this);

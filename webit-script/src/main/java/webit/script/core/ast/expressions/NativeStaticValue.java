@@ -2,7 +2,7 @@
 package webit.script.core.ast.expressions;
 
 import java.lang.reflect.Field;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.exceptions.ScriptRuntimeException;
 
@@ -20,7 +20,7 @@ public class NativeStaticValue extends ResetableValueExpression {
     }
 
     @Override
-    public Object execute(Context context) {
+    public Object execute(InternalContext context) {
         try {
             return field.get(null);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
@@ -29,7 +29,7 @@ public class NativeStaticValue extends ResetableValueExpression {
     }
 
     @Override
-    public Object setValue(Context context, Object value) {
+    public Object setValue(InternalContext context, Object value) {
         try {
             field.set(null, value);
             return value;

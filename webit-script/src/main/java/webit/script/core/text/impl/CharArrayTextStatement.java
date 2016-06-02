@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.text.impl;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Statement;
 
 /**
@@ -18,7 +18,7 @@ public final class CharArrayTextStatement extends Statement {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         context.outNotNull(chars);
         return null;
     }

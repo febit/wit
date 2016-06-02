@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.Template;
 import webit.script.core.ast.Expression;
 
@@ -16,7 +16,7 @@ public final class Include extends AbstractInclude {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         mergeTemplate(context, false);
         return null;
     }

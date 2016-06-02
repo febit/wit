@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Statement;
 import webit.script.debug.BreakPointListener;
 
@@ -23,7 +23,7 @@ public class BreakPointStatement extends Statement {
     }
 
     @Override
-    public Object execute(Context context) {
+    public Object execute(InternalContext context) {
         if (statement != null) {
             statement.execute(context);
         }

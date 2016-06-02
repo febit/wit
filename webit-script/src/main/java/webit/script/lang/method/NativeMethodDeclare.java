@@ -3,7 +3,7 @@ package webit.script.lang.method;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.InternalVoid;
 import webit.script.lang.MethodDeclare;
@@ -29,7 +29,7 @@ public final class NativeMethodDeclare implements MethodDeclare {
     }
 
     @Override
-    public Object invoke(final Context context, final Object[] args) {
+    public Object invoke(final InternalContext context, final Object[] args) {
         final Object obj;
         final Object[] methodArgs;
         final int myArgsCount = this.argsCount;

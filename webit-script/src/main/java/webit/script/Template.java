@@ -209,7 +209,7 @@ public final class Template {
         }
     }
 
-    public Context mergeToContext(final Context context, final KeyValues root) throws ScriptRuntimeException, ParseException {
+    public Context mergeToContext(final InternalContext context, final KeyValues root) throws ScriptRuntimeException, ParseException {
         try {
             final TemplateAST myAst;
             return (((myAst = this.ast) == null || this.resource.isModified())

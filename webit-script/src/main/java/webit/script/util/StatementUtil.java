@@ -4,7 +4,7 @@ package webit.script.util;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.LoopInfo;
 import webit.script.core.ast.Constable;
 import webit.script.core.ast.Expression;
@@ -44,7 +44,7 @@ public class StatementUtil {
         return results;
     }
 
-    public static void execute(final Statement[] statements, final Context context) {
+    public static void execute(final Statement[] statements, final InternalContext context) {
         int i = 0;
         final int len = statements.length;
         while (i < len) {
@@ -52,14 +52,14 @@ public class StatementUtil {
         }
     }
 
-    public static void executeInverted(final Statement[] statements, final Context context) {
+    public static void executeInverted(final Statement[] statements, final InternalContext context) {
         int i = statements.length;
         while (i != 0) {
             statements[--i].execute(context);
         }
     }
 
-    public static void executeInvertedAndCheckLoops(final Statement[] statements, final Context context) {
+    public static void executeInvertedAndCheckLoops(final Statement[] statements, final InternalContext context) {
         int i = statements.length;
         do {
             statements[--i].execute(context);

@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.operators;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.util.StatementUtil;
@@ -22,7 +22,7 @@ public final class PropertyOperator extends ResetableValueExpression {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         try {
             return context.getBeanProperty(
                     expr.execute(context),
@@ -33,7 +33,7 @@ public final class PropertyOperator extends ResetableValueExpression {
     }
 
     @Override
-    public Object setValue(final Context context, final Object value) {
+    public Object setValue(final InternalContext context, final Object value) {
         try {
             context.setBeanProperty(
                     expr.execute(context),

@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.Template;
 import webit.script.core.VariantIndexer;
 import webit.script.io.Out;
@@ -24,18 +24,18 @@ public final class TemplateAST {
         this.varSize = varSize;
     }
 
-    public Context execute(Template template, final Out out, KeyValues rootParams) {
+    public InternalContext execute(Template template, final Out out, KeyValues rootParams) {
 
-        final Context context = new Context(template, out, rootParams, indexers, varSize, null);
+        final InternalContext context = new InternalContext(template, out, rootParams, indexers, varSize, null);
         rootParams.exportTo(context);
         StatementUtil.executeInverted(this.statements, context);
         //assert context.indexer = 0
         return context;
     }
     
-    public Context execute(Template template, final Context context, KeyValues rootParams) {
+    public InternalContext execute(Template template, final InternalContext context, KeyValues rootParams) {
 
-        final Context newContext = context.createPeerContext(template, indexers, varSize);
+        final InternalContext newContext = context.createPeerContext(template, indexers, varSize);
         rootParams.exportTo(newContext);
         StatementUtil.executeInverted(this.statements, newContext);
         //assert context.indexer = 0

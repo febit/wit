@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.core.ast.expressions.FunctionDeclare;
@@ -39,7 +39,7 @@ public final class ForMapNoLoops extends Statement {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         KeyIter iter = CollectionUtil.toKeyIter(mapExpr.execute(context), this);
         if (iter != null && functionDeclareExpr != null) {
             iter = new KeyIterMethodFilter(context, functionDeclareExpr.execute(context), iter);

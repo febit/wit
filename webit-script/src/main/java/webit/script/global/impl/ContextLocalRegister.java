@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.global.impl;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
@@ -27,7 +27,7 @@ public class ContextLocalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             final int i;
             if ((i = args.length - 1) > 0) {
                 context.setLocal(args[0], args[1]);

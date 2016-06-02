@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
 import webit.script.exceptions.ScriptRuntimeException;
@@ -20,7 +20,7 @@ public class Throw extends Statement {
     }
 
     @Override
-    public Object execute(Context context) {
+    public Object execute(InternalContext context) {
         Object exception = this.expr.execute(context);
         if (exception instanceof RuntimeException) {
             throw (RuntimeException) exception;

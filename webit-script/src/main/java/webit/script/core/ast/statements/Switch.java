@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.LoopInfo;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Loopable;
@@ -32,7 +32,7 @@ public final class Switch extends Statement implements Loopable {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         CaseEntry caseStatement;
         if ((caseStatement = caseMap.get(switchExpr.execute(context))) == null) {
             caseStatement = defaultStatement; //default
@@ -77,7 +77,7 @@ public final class Switch extends Statement implements Loopable {
             this.next = next;
         }
 
-        Object execute(final Context context) {
+        Object execute(final InternalContext context) {
             body.execute(context);
             if (context.noLoop() && next != null) {
                 return next.execute(context);

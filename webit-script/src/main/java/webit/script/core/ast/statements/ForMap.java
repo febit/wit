@@ -4,7 +4,7 @@ package webit.script.core.ast.statements;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.LoopInfo;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Loopable;
@@ -48,7 +48,7 @@ public final class ForMap extends Statement implements Loopable {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         KeyIter iter = CollectionUtil.toKeyIter(mapExpr.execute(context), this);
         if (iter != null && functionDeclareExpr != null) {
             iter = new KeyIterMethodFilter(context, functionDeclareExpr.execute(context), iter);

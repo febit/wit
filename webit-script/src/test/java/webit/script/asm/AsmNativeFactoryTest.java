@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.InternalVoid;
 import webit.script.lang.MethodDeclare;

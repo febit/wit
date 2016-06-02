@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
 import webit.script.util.StatementUtil;
@@ -24,7 +24,7 @@ public class StatementGroup extends Statement implements Optimizable {
     }
 
     @Override
-    public Object execute(Context context) {
+    public Object execute(InternalContext context) {
         StatementUtil.execute(this.list, context);
         return null;
     }

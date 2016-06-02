@@ -2,7 +2,7 @@
 package webit.script.lang.method;
 
 import java.lang.reflect.Array;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.MethodDeclare;
 import webit.script.util.StringUtil;
@@ -20,7 +20,7 @@ public class NativeNewArrayDeclare implements MethodDeclare {
     }
 
     @Override
-    public Object invoke(final Context context, final Object[] args) {
+    public Object invoke(final InternalContext context, final Object[] args) {
         final int len;
         if (args != null && args.length > 0) {
             Object lenObject;

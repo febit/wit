@@ -3,7 +3,6 @@ package webit.script.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import webit.script.Context;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.InternalVoid;
 

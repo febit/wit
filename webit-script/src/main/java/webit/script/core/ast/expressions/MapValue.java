@@ -3,7 +3,7 @@ package webit.script.core.ast.expressions;
 
 import java.util.HashMap;
 import java.util.Map;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Constable;
 import webit.script.core.ast.Expression;
 import webit.script.util.StatementUtil;
@@ -29,7 +29,7 @@ public final class MapValue extends Expression implements Constable {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         final Object[] mapKeys = this.keys;
         final Expression[] exprs = this.valueExprs;
         final int len = exprs.length;

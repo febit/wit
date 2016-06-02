@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.statements;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.ResetableValueExpression;
 import webit.script.core.ast.Statement;
 import webit.script.io.Out;
@@ -26,7 +26,7 @@ public class RedirectOut extends Statement {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         final Out current = context.out;
         if (current.isByteStream()) {
             ByteArrayOutputStream out = new ByteArrayOutputStream(256);

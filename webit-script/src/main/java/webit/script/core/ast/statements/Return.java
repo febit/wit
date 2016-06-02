@@ -3,7 +3,7 @@ package webit.script.core.ast.statements;
 
 import java.util.LinkedList;
 import java.util.List;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.LoopInfo;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Loopable;
@@ -24,7 +24,7 @@ public final class Return extends Statement implements Loopable {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         context.returnLoop(expr != null
                 ? expr.execute(context)
                 : InternalVoid.VOID);

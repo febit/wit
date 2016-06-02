@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.lang.method;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.VariantIndexer;
 import webit.script.core.ast.expressions.FunctionDeclare;
 import webit.script.exceptions.ScriptRuntimeException;
@@ -16,11 +16,11 @@ import webit.script.util.StatementUtil;
 public final class FunctionMethodDeclare implements MethodDeclare, UnConstableMethodDeclare {
 
     private final FunctionDeclare function;
-    private final Context scopeContext;
+    private final InternalContext scopeContext;
     private final VariantIndexer[] indexers;
     private final int varSize;
 
-    public FunctionMethodDeclare(FunctionDeclare function, Context scopeContext, VariantIndexer[] indexers, int varSize) {
+    public FunctionMethodDeclare(FunctionDeclare function, InternalContext scopeContext, VariantIndexer[] indexers, int varSize) {
         this.function = function;
         this.scopeContext = scopeContext;
         this.indexers = indexers;
@@ -28,7 +28,7 @@ public final class FunctionMethodDeclare implements MethodDeclare, UnConstableMe
     }
 
     @Override
-    public Object invoke(final Context context, final Object[] args) {
+    public Object invoke(final InternalContext context, final Object[] args) {
         try {
             return function.invoke(this.scopeContext.createSubContext(this.indexers, context, this.varSize), args);
         } catch (Exception e) {

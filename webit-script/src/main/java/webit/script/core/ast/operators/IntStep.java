@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.operators;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.BinaryOperator;
 import webit.script.core.ast.Expression;
 import webit.script.exceptions.ScriptRuntimeException;
@@ -20,7 +20,7 @@ public class IntStep extends BinaryOperator {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         Object result;
         final int num1;
         if ((result = leftExpr.execute(context)) instanceof Number) {

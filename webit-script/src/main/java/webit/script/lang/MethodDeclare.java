@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.lang;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 
 /**
  *
@@ -9,5 +9,5 @@ import webit.script.Context;
  */
 public interface MethodDeclare {
 
-    Object invoke(Context context, Object[] args);
+    Object invoke(InternalContext context, Object[] args);
 }

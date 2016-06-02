@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.lang.iter;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.lang.Iter;
 import webit.script.lang.MethodDeclare;
 import webit.script.util.ALU;
@@ -12,10 +12,10 @@ import webit.script.util.ALU;
  */
 public final class IterMethodFilter extends IterFilter {
 
-    protected final Context context;
+    protected final InternalContext context;
     protected final MethodDeclare method;
 
-    public IterMethodFilter(Context context, MethodDeclare method, Iter iter) {
+    public IterMethodFilter(InternalContext context, MethodDeclare method, Iter iter) {
         super(iter);
         this.context = context;
         this.method = method;

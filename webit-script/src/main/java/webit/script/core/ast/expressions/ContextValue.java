@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.ResetableValueExpression;
 
 /**
@@ -18,12 +18,12 @@ public final class ContextValue extends ResetableValueExpression {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         return context.vars[index];
     }
 
     @Override
-    public Object setValue(final Context context, final Object value) {
+    public Object setValue(final InternalContext context, final Object value) {
         return context.vars[index] = value;
     }
 }

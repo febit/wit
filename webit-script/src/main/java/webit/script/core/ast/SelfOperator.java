@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.util.StatementUtil;
 
 /**
@@ -20,7 +20,7 @@ public abstract class SelfOperator extends Expression {
     }
 
     @Override
-    public final Object execute(final Context context) {
+    public final Object execute(final InternalContext context) {
         try {
             ResetableValueExpression left = this.leftExpr;
             return left.setValue(context, doOperate(rightExpr.execute(context),

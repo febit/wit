@@ -2,7 +2,7 @@
 package webit.script.core.ast.statements;
 
 import java.util.List;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.LoopInfo;
 import webit.script.core.ast.Loopable;
 import webit.script.core.ast.Statement;
@@ -28,7 +28,7 @@ public class TryCatchFinally extends Statement implements Loopable {
     }
 
     @Override
-    public Object execute(Context context) {
+    public Object execute(InternalContext context) {
         try {
             tryStat.execute(context);
         } catch (Exception e) {

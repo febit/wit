@@ -2,7 +2,7 @@
 package webit.script.core.ast.statements;
 
 import java.util.Map;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.Template;
 import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
@@ -32,7 +32,7 @@ public final class Import extends AbstractInclude {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         final Map<String, Object> results = mergeTemplate(context, true);
         if (exportAll) {
             final VariantIndexer destIndexer = context.indexers[context.indexer];

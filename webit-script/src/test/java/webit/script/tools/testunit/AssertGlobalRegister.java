@@ -2,7 +2,7 @@
 package webit.script.tools.testunit;
 
 import java.lang.reflect.Array;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
 import webit.script.lang.MethodDeclare;
@@ -22,7 +22,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             plusAssertCount(context);
             assertObjectTrue(ArrayUtil.get(args, 0, null));
             return null;
@@ -35,7 +35,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             plusAssertCount(context);
             assertObjectFalse(ArrayUtil.get(args, 0, null));
             return null;
@@ -48,7 +48,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             plusAssertCount(context);
             assertNotNull(ArrayUtil.get(args, 0, null));
             return null;
@@ -61,7 +61,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             plusAssertCount(context);
             assertNull(ArrayUtil.get(args, 0, null));
             return null;
@@ -74,7 +74,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             plusAssertCount(context);
             args = ArrayUtil.ensureMinSize(args, 2);
             assertEquals(args[0], args[1]);
@@ -88,7 +88,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             plusAssertCount(context);
             args = ArrayUtil.ensureMinSize(args, 2);
             assertSame(args[0], args[1]);
@@ -102,7 +102,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             plusAssertCount(context);
             args = ArrayUtil.ensureMinSize(args, 2);
             assertNotSame(args[0], args[1]);
@@ -116,7 +116,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             plusAssertCount(context);
             args = ArrayUtil.ensureMinSize(args, 2);
             assertArrayEquals(args[0], args[1]);
@@ -136,7 +136,7 @@ public class AssertGlobalRegister implements GlobalRegister {
         manager.setConst("assertArrayEquals", new AssertArrayEquals());
     }
 
-    private static void plusAssertCount(Context context) {
+    private static void plusAssertCount(InternalContext context) {
         Integer count = (Integer) context.getLocal(ASSERT_COUNT_KEY);
         context.setLocal(ASSERT_COUNT_KEY, count != null ? count + 1 : 1);
     }

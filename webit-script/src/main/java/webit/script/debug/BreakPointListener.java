@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.debug;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Statement;
 
 /**
@@ -10,5 +10,5 @@ import webit.script.core.ast.Statement;
  */
 public interface BreakPointListener {
     
-    void onBreak(Object label, Context context, Statement statement, Object result);
+    void onBreak(Object label, InternalContext context, Statement statement, Object result);
 }

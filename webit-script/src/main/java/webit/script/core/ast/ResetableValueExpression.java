@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 
 /**
  *
@@ -13,5 +13,5 @@ public abstract class ResetableValueExpression extends Expression {
         super(line, column);
     }
 
-    public abstract Object setValue(Context context, Object value);
+    public abstract Object setValue(InternalContext context, Object value);
 }

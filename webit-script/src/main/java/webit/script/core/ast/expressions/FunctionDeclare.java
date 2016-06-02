@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.VariantIndexer;
 import webit.script.core.ast.Expression;
 import webit.script.core.ast.Statement;
@@ -33,11 +33,11 @@ public final class FunctionDeclare extends Expression {
     }
 
     @Override
-    public FunctionMethodDeclare execute(final Context context) {
+    public FunctionMethodDeclare execute(final InternalContext context) {
         return new FunctionMethodDeclare(this, context, indexers, this.varSize);
     }
 
-    public Object invoke(final Context context, final Object[] args) {
+    public Object invoke(final InternalContext context, final Object[] args) {
         final int argsTotalCount = this.argsCount;
         final Object[] vars = context.vars;
         int argsStart = this.start;

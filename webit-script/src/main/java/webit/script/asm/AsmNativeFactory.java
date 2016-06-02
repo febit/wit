@@ -97,7 +97,7 @@ public class AsmNativeFactory extends NativeFactory {
         }
 
         final int paramTypesLen = paramTypes.length;
-        final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke", "(Lwebit/script/Context;[Ljava/lang/Object;)Ljava/lang/Object;", null);
+        final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke", "(Lwebit/script/InternalContext;[Ljava/lang/Object;)Ljava/lang/Object;", null);
 
         if (paramTypesLen == 0) {
             if (isStatic) {

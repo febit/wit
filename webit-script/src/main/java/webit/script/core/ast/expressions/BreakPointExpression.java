@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.core.ast.expressions;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.ast.Expression;
 import webit.script.debug.BreakPointListener;
 
@@ -23,7 +23,7 @@ public class BreakPointExpression extends Expression {
     }
 
     @Override
-    public Object execute(Context context) {
+    public Object execute(InternalContext context) {
         Object result = expression.execute(context);
         listener.onBreak(label, context, this, result);
         return result;

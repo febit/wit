@@ -4,7 +4,7 @@ package webit.script.core.ast.statements;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.core.LoopInfo;
 import webit.script.core.ast.Loopable;
 import webit.script.core.ast.Statement;
@@ -28,7 +28,7 @@ public final class Block extends IBlock implements Loopable {
     }
 
     @Override
-    public Object execute(final Context context) {
+    public Object execute(final InternalContext context) {
         final int preIndex = context.indexer;
         context.indexer = indexer;
         StatementUtil.executeInvertedAndCheckLoops(statements, context);

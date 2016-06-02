@@ -38,15 +38,15 @@ public class Function {
         this.defaultOut = defaultOut;
     }
 
-    protected Context createContext(Out out) {
-        return new Context(template, out, KeyValuesUtil.EMPTY_KEY_VALUES, EMPTY_INDEXERS, 0, null);
+    protected InternalContext createContext(Out out) {
+        return new InternalContext(template, out, KeyValuesUtil.EMPTY_KEY_VALUES, EMPTY_INDEXERS, 0, null);
     }
 
-    protected Context createContext() {
+    protected InternalContext createContext() {
         return createContext(defaultOut);
     }
 
-    protected Object _invoke(Context context, Object... args) {
+    protected Object _invoke(InternalContext context, Object... args) {
         return this.methodDeclare.invoke(context, args);
     }
 
