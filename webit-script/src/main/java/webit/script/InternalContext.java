@@ -19,29 +19,70 @@ import webit.script.util.ClassMap;
 import webit.script.util.KeyValuesUtil;
 
 /**
+ * Internal Context.
+ *
+ * store variables and access global components for AST-nodes
  *
  * @author zqq90
  */
 public final class InternalContext implements Context {
 
     public final Template template;
+    /**
+     * params for this context
+     */
     public final KeyValues rootParams;
 
+    /**
+     * Variables in this scope.
+     */
     public final Object[] vars;
+    /**
+     * Parent scopes's variables, if this's a sub-context.
+     */
     public final Object[][] parentScopes;
-
+    /**
+     * Variables indexers.
+     */
     public final VariantIndexer[] indexers;
+    /**
+     * Index of current indexer.
+     */
     public int indexer;
 
+    /**
+     * Output, stream or writer
+     */
     public Out out;
+    /**
+     * If this.out is a bytes stream
+     */
     public boolean isByteStream;
+    /**
+     * Output's charset.
+     */
     public String encoding;
 
+    /**
+     * Used by functions, store value to be returned.
+     */
     private Object returned;
+    /**
+     * Current goto label, if looped.
+     */
     private int label;
+    /**
+     * Current loop type, ==0 if no loop.
+     */
     private int loopType;
 
+    /**
+     * Store local variables, only the root context need this.
+     */
     private Map<Object, Object> locals;
+    /**
+     * context to get locals, may not the root context.
+     */
     private InternalContext localContext;
 
     private final ResolverManager resolverManager;
@@ -51,28 +92,42 @@ public final class InternalContext implements Context {
 
     public InternalContext(final Template template, final Out out, final KeyValues rootParams, final VariantIndexer[] indexers, final int varSize, final Object[][] parentScopes) {
         this.template = template;
-        this.out = out;
         this.rootParams = rootParams;
 
+        //output
+        this.out = out;
         this.encoding = out.getEncoding();
         this.isByteStream = out.isByteStream();
 
+        //resolvers
         ResolverManager resolverMgr = template.engine.getResolverManager();
         this.resolverManager = resolverMgr;
         this.outters = resolverMgr.outters;
         this.getters = resolverMgr.getters;
         this.setters = resolverMgr.setters;
 
+        //variables & indexers
         this.indexers = indexers;
         this.indexer = 0;
         this.vars = new Object[varSize];
         this.parentScopes = parentScopes;
+
+        //import params
         rootParams.exportTo(this);
     }
 
+    /**
+     *
+     * @param indexers
+     * @param localContext
+     * @param varSize
+     * @return
+     */
     public InternalContext createSubContext(VariantIndexer[] indexers, InternalContext localContext, int varSize) {
-        Object[][] scopes;
         Object[][] myParentScopes = this.parentScopes;
+
+        //cal the new-context's parent-scopes
+        Object[][] scopes;
         if (myParentScopes == null) {
             scopes = new Object[][]{this.vars};
         } else {
@@ -80,11 +135,23 @@ public final class InternalContext implements Context {
             scopes[0] = this.vars;
             System.arraycopy(myParentScopes, 0, scopes, 1, myParentScopes.length);
         }
+        //
         InternalContext newContext = new InternalContext(template, localContext.out, KeyValuesUtil.EMPTY_KEY_VALUES, indexers, varSize, scopes);
+        //set the gaven localContext
         newContext.localContext = localContext;
         return newContext;
     }
 
+    /**
+     * Create a peer-context used by include/import.
+     *
+     * Only share locals & out
+     *
+     * @param template
+     * @param indexers
+     * @param varSize
+     * @return
+     */
     public InternalContext createPeerContext(Template template, VariantIndexer[] indexers, int varSize) {
 
         InternalContext newContext = new InternalContext(template, this.out, KeyValuesUtil.EMPTY_KEY_VALUES, indexers, varSize, null);
@@ -92,38 +159,73 @@ public final class InternalContext implements Context {
         return newContext;
     }
 
+    /**
+     * if gaven loop label matched current loop.
+     *
+     * @param label
+     * @return
+     */
     public boolean matchLabel(int label) {
         return this.label == 0 || this.label == label;
     }
 
+    /**
+     * Mark a break-loop.
+     *
+     * @param label
+     */
     public void breakLoop(int label) {
         this.label = label;
         this.loopType = LoopInfo.BREAK;
     }
 
+    /**
+     * Mark a continue-loop.
+     *
+     * @param label
+     */
     public void continueLoop(int label) {
         this.label = label;
         this.loopType = LoopInfo.CONTINUE;
     }
 
+    /**
+     * Mark a return-loop.
+     *
+     * @param value the returned.
+     */
     public void returnLoop(Object value) {
         this.returned = value;
         this.label = 0;
         this.loopType = LoopInfo.RETURN;
     }
 
+    /**
+     * Unmark loops.
+     *
+     */
     public void resetLoop() {
         this.returned = null;
         this.label = 0;
         this.loopType = 0;
     }
 
+    /**
+     * Unmark loops, is a break and match the label.
+     *
+     * @param label
+     */
     public void resetBreakLoopIfMatch(int label) {
         if (this.loopType == LoopInfo.BREAK && (this.label == 0 || this.label == label)) {
             this.resetLoop();
         }
     }
 
+    /**
+     * Unmark loops, at the end of functions.
+     *
+     * @return the returned
+     */
     public Object resetReturnLoop() {
         Object result = this.loopType == LoopInfo.RETURN ? this.returned : InternalVoid.VOID;
         resetLoop();
@@ -142,22 +244,13 @@ public final class InternalContext implements Context {
         return this.loopType != 0;
     }
 
-    @Override
-    public void set(final String name, final Object value) {
-        int index = indexers[this.indexer].getIndex(name);
-        if (index >= 0) {
-            this.vars[index] = value;
-        }
-    }
-
-    public void outNotNull(final byte[] bytes) {
-        this.out.write(bytes);
-    }
-
-    public void outNotNull(final char[] chars) {
-        this.out.write(chars);
-    }
-
+    /**
+     * Get a bean's property.
+     *
+     * @param bean
+     * @param property
+     * @return
+     */
     public Object getBeanProperty(final Object bean, final Object property) {
         if (bean != null) {
             final GetResolver resolver;
@@ -168,6 +261,13 @@ public final class InternalContext implements Context {
         return this.resolverManager.get(bean, property);
     }
 
+    /**
+     * Set a bean's property.
+     *
+     * @param bean
+     * @param property
+     * @param value
+     */
     public void setBeanProperty(final Object bean, final Object property, final Object value) {
         if (bean != null) {
             final SetResolver resolver;
@@ -177,6 +277,14 @@ public final class InternalContext implements Context {
             }
         }
         this.resolverManager.set(bean, property, value);
+    }
+
+    public void outNotNull(final byte[] bytes) {
+        this.out.write(bytes);
+    }
+
+    public void outNotNull(final char[] chars) {
+        this.out.write(chars);
     }
 
     public void out(final Object obj) {
@@ -222,6 +330,14 @@ public final class InternalContext implements Context {
     }
 
     @Override
+    public void set(final String name, final Object value) {
+        int index = indexers[this.indexer].getIndex(name);
+        if (index >= 0) {
+            this.vars[index] = value;
+        }
+    }
+
+    @Override
     public Object get(final String name) throws ScriptRuntimeException {
         return get(name, true);
     }
@@ -239,15 +355,6 @@ public final class InternalContext implements Context {
     }
 
     @Override
-    public Function exportFunction(String name) throws NotFunctionException {
-        Object func = get(name, false);
-        if (func instanceof MethodDeclare) {
-            return new Function(this.template, (MethodDeclare) func, this.encoding, this.isByteStream);
-        }
-        throw new NotFunctionException(func);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public void exportTo(final Map map) {
         final VariantIndexer varIndexer = indexers[this.indexer];
@@ -257,5 +364,14 @@ public final class InternalContext implements Context {
         for (int i = 0, len = names.length; i < len; i++) {
             map.put(names[i], varsPool[indexs[i]]);
         }
+    }
+
+    @Override
+    public Function exportFunction(String name) throws NotFunctionException {
+        Object func = get(name, false);
+        if (func instanceof MethodDeclare) {
+            return new Function(this.template, (MethodDeclare) func, this.encoding, this.isByteStream);
+        }
+        throw new NotFunctionException(func);
     }
 }
