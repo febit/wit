@@ -2,7 +2,7 @@
 package webit.script.tools.cache;
 
 import java.io.Serializable;
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
@@ -48,9 +48,9 @@ public class CacheGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             this.cacheProvider.clear();
-            return Context.VOID;
+            return InternalContext.VOID;
         }
     }
 
@@ -63,9 +63,9 @@ public class CacheGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             this.cacheProvider.remove(ArrayUtil.get(args, 0, null));
-            return Context.VOID;
+            return InternalContext.VOID;
         }
     }
 
@@ -79,7 +79,7 @@ public class CacheGlobalRegister implements GlobalRegister {
         }
 
         @Override
-        public Object invoke(final Context context, final Object[] args) {
+        public Object invoke(final InternalContext context, final Object[] args) {
             final int len;
             if (args == null || (len = args.length) == 0) {
                 throw new ScriptRuntimeException("This method need 1 argument at least.");
@@ -102,7 +102,7 @@ public class CacheGlobalRegister implements GlobalRegister {
             return cachingEntry.returned;
         }
 
-        protected CachingEntry buildIfAbent(final Context context,
+        protected CachingEntry buildIfAbent(final InternalContext context,
                 final Object key,
                 final MethodDeclare methodDeclare,
                 final Object[] args,

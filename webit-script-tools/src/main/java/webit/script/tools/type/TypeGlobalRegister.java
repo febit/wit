@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.tools.type;
 
-import webit.script.Context;
+import webit.script.InternalContext;
 import webit.script.global.GlobalManager;
 import webit.script.global.GlobalRegister;
 import webit.script.lang.MethodDeclare;
@@ -26,7 +26,7 @@ public class TypeGlobalRegister implements GlobalRegister {
     public final static MethodDeclare is_function = new MethodDeclare() {
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             return ArrayUtil.get(args, 0, null) instanceof MethodDeclare;
         }
     };
@@ -34,7 +34,7 @@ public class TypeGlobalRegister implements GlobalRegister {
     public final static MethodDeclare is_number = new MethodDeclare() {
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             return ArrayUtil.get(args, 0, null) instanceof Number;
         }
     };
@@ -42,7 +42,7 @@ public class TypeGlobalRegister implements GlobalRegister {
     public final static MethodDeclare is_bool = new MethodDeclare() {
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             return ArrayUtil.get(args, 0, null) instanceof Boolean;
         }
     };
@@ -50,7 +50,7 @@ public class TypeGlobalRegister implements GlobalRegister {
     public final static MethodDeclare is_null = new MethodDeclare() {
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             return args == null
                     || args.length == 0
                     || args[0] == null;
@@ -60,7 +60,7 @@ public class TypeGlobalRegister implements GlobalRegister {
     public final static MethodDeclare is_array = new MethodDeclare() {
 
         @Override
-        public Object invoke(Context context, Object[] args) {
+        public Object invoke(InternalContext context, Object[] args) {
             final Object item;
             return (item = ArrayUtil.get(args, 0, null)) != null
                     && item.getClass().isArray();
