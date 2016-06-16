@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +13,7 @@ import webit.script.core.ast.Expression;
 import webit.script.core.ast.Loopable;
 import webit.script.core.ast.Optimizable;
 import webit.script.core.ast.Statement;
+import webit.script.core.ast.statements.StatementGroup;
 import webit.script.exceptions.ParseException;
 import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.lang.InternalVoid;
@@ -20,6 +23,8 @@ import webit.script.lang.InternalVoid;
  * @author zqq90
  */
 public class StatementUtil {
+
+    private static final Statement[] EMPTY_STATEMENTS = new Statement[0];
 
     public static Object calcConst(Expression expr, boolean force) {
         expr = StatementUtil.optimize(expr);
@@ -165,5 +170,29 @@ public class StatementUtil {
         } else {
             return new ScriptRuntimeException(exception.toString(), exception, statement);
         }
+    }
+
+    public static Statement[] toStatementInvertArray(List<Statement> list) {
+        Statement[] array = toStatementArray(list);
+        ArrayUtil.invert(array);
+        return array;
+    }
+
+    public static Statement[] toStatementArray(List<Statement> list) {
+        if (list == null || list.isEmpty()) {
+            return EMPTY_STATEMENTS;
+        }
+        List<Statement> temp = new ArrayList<>(list.size());
+        for (Statement stat : list) {
+            if (stat instanceof StatementGroup) {
+                temp.addAll(Arrays.asList(((StatementGroup) stat).getList()));
+                continue;
+            }
+            stat = StatementUtil.optimize(stat);
+            if (stat != null) {
+                temp.add(stat);
+            }
+        }
+        return temp.toArray(new Statement[temp.size()]);
     }
 }

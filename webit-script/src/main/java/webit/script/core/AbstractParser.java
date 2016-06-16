@@ -4,8 +4,6 @@ package webit.script.core;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +19,6 @@ import webit.script.debug.BreakPointListener;
 import webit.script.exceptions.ParseException;
 import webit.script.loaders.Resource;
 import webit.script.loaders.ResourceOffset;
-import webit.script.util.ArrayUtil;
 import webit.script.util.ClassNameBand;
 import webit.script.util.ClassUtil;
 import webit.script.util.Stack;
@@ -33,8 +30,6 @@ import webit.script.util.StringUtil;
  * @author zqq90
  */
 abstract class AbstractParser {
-
-    private static final Statement[] EMPTY_STATEMENTS = new Statement[0];
 
     //Self Operators
     static final int OP_PLUSEQ = 0;
@@ -319,7 +314,7 @@ abstract class AbstractParser {
     }
 
     static Statement createStatementGroup(List<Statement> list, int line, int column) {
-        return new StatementGroup(toStatementArray(list), line, column);
+        return new StatementGroup(StatementUtil.toStatementArray(list), line, column);
     }
 
     static Expression createMethodExecute(Expression funcExpr, Expression[] paramExprs, int line, int column) {
@@ -329,7 +324,7 @@ abstract class AbstractParser {
     }
 
     TemplateAST createTemplateAST(List<Statement> list) {
-        Statement[] statements = toStatementInvertArray(list);
+        Statement[] statements = StatementUtil.toStatementInvertArray(list);
         List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(statements);
         if (loopInfos != null) {
             throw new ParseException("loop overflow: ".concat(StringUtil.join(loopInfos, ',')));
@@ -338,7 +333,7 @@ abstract class AbstractParser {
     }
 
     static IBlock createIBlock(List<Statement> list, int varIndexer, int line, int column) {
-        Statement[] statements = toStatementInvertArray(list);
+        Statement[] statements = StatementUtil.toStatementInvertArray(list);
         List<LoopInfo> loopInfoList = StatementUtil.collectPossibleLoopsInfo(statements);
         return loopInfoList != null
                 ? new Block(varIndexer, statements, loopInfoList.toArray(new LoopInfo[loopInfoList.size()]), line, column)
@@ -347,30 +342,6 @@ abstract class AbstractParser {
 
     static TryPart createTryPart(List<Statement> list, int varIndexer, int line, int column) {
         return new TryPart(createIBlock(list, varIndexer, line, column), line, column);
-    }
-
-    static Statement[] toStatementArray(List<Statement> list) {
-        if (list == null || list.isEmpty()) {
-            return EMPTY_STATEMENTS;
-        }
-        List<Statement> temp = new ArrayList<>(list.size());
-        for (Statement stat : list) {
-            if (stat instanceof StatementGroup) {
-                temp.addAll(Arrays.asList(((StatementGroup) stat).getList()));
-                continue;
-            }
-            stat = StatementUtil.optimize(stat);
-            if (stat != null) {
-                temp.add(stat);
-            }
-        }
-        return temp.toArray(new Statement[temp.size()]);
-    }
-
-    public static Statement[] toStatementInvertArray(List<Statement> list) {
-        Statement[] array = toStatementArray(list);
-        ArrayUtil.invert(array);
-        return array;
     }
 
     static ResetableValueExpression castToResetableValueExpression(Expression expr) {
