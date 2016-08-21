@@ -54,25 +54,25 @@ public final class Engine {
     }
 
     private void executeInits() {
-        if (this.inits != null) {
-            final Out out = new DiscardOut();
-            final GlobalManager myGlobalManager = this.globalManager;
-            final Bag globalBag = myGlobalManager.getGlobalBag();
-            final Bag constBag = myGlobalManager.getConstBag();
-            final KeyValues params = KeyValuesUtil.wrap(
-                    new String[]{"GLOBAL", "CONST"},
-                    new Object[]{globalBag, constBag}
-            );
-            for (String templateName : StringUtil.toArray(this.inits)) {
-                this.logger.info("Merge init template: {}", templateName);
-                try {
-                    this.getTemplate(templateName).merge(params, out);
-                } catch (ResourceNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
-                //Commit Global
-                myGlobalManager.commit();
+        if (this.inits == null) {
+            return;
+        }
+        final Out out = new DiscardOut();
+        final Bag globalBag = this.globalManager.getGlobalBag();
+        final Bag constBag = this.globalManager.getConstBag();
+        final KeyValues params = KeyValuesUtil.wrap(
+                new String[]{"GLOBAL", "CONST"},
+                new Object[]{globalBag, constBag}
+        );
+        for (String templateName : StringUtil.toArray(this.inits)) {
+            this.logger.info("Merge init template: {}", templateName);
+            try {
+                this.getTemplate(templateName).merge(params, out);
+            } catch (ResourceNotFoundException ex) {
+                throw new RuntimeException(ex);
             }
+            //Commit Global
+            this.globalManager.commit();
         }
     }
 
@@ -96,12 +96,11 @@ public final class Engine {
      * @throws ResourceNotFoundException
      */
     public Template getTemplate(final String name) throws ResourceNotFoundException {
-        final Template template;
-        if ((template = this.templateCache.get(name)) != null) {
+        final Template template = this.templateCache.get(name);
+        if (template != null) {
             return template;
-        } else {
-            return createTemplateIfAbsent(name);
         }
+        return createTemplateIfAbsent(name);
     }
 
     /**
@@ -112,12 +111,12 @@ public final class Engine {
      * @since 1.4.1
      */
     public boolean exists(final String resourceName) {
-        final String normalizedName;
-        final Loader myLoader;
-        if ((normalizedName = (myLoader = this.loader).normalize(resourceName)) != null) {
-            return myLoader.get(normalizedName).exists();
+        final Loader myLoader = this.loader;
+        final String normalizedName = myLoader.normalize(resourceName);
+        if (normalizedName == null) {
+            return false;
         }
-        return false;
+        return myLoader.get(normalizedName).exists();
     }
 
     private Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
@@ -129,23 +128,23 @@ public final class Engine {
             throw new ResourceNotFoundException("Illegal template path: ".concat(name));
         }
         template = this.templateCache.get(normalizedName);
-        if (template == null) {
-            //then newInstance Template
-            template = new Template(this, normalizedName,
-                    myLoader.get(normalizedName));
-            if (myLoader.isEnableCache(normalizedName)) {
-                Template oldTemplate;
-                oldTemplate = this.templateCache.putIfAbsent(normalizedName, template);
-                //if old Template exist, use the old one
+        if (template != null) {
+            return template;
+        }
+        //then newInstance Template
+        template = new Template(this, normalizedName, myLoader.get(normalizedName));
+        Template oldTemplate;
+        if (myLoader.isEnableCache(normalizedName)) {
+            oldTemplate = this.templateCache.putIfAbsent(normalizedName, template);
+            //if old Template exist, use the old one
+            if (oldTemplate != null) {
+                template = oldTemplate;
+            }
+            if (!name.equals(normalizedName)) {
+                // cache Template with un-normalized name
+                oldTemplate = this.templateCache.putIfAbsent(name, template);
                 if (oldTemplate != null) {
                     template = oldTemplate;
-                }
-                if (!name.equals(normalizedName)) {
-                    // cache Template with un-normalized name
-                    oldTemplate = this.templateCache.putIfAbsent(name, template);
-                    if (oldTemplate != null) {
-                        template = oldTemplate;
-                    }
                 }
             }
         }
