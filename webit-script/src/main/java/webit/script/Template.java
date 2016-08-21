@@ -15,6 +15,7 @@ import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.lang.KeyValues;
 import webit.script.loaders.Resource;
+import webit.script.util.InternedEncoding;
 import webit.script.util.KeyValuesUtil;
 
 /**
@@ -80,7 +81,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final OutputStream out, final String encoding) throws ScriptRuntimeException, ParseException {
-        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(out, encoding, engine));
+        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
     }
 
     /**
@@ -119,7 +120,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> root, final OutputStream out, final String encoding) throws ScriptRuntimeException, ParseException {
-        return merge(KeyValuesUtil.wrap(root), new OutputStreamOut(out, encoding, engine));
+        return merge(KeyValuesUtil.wrap(root), new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
     }
 
     /**
@@ -159,7 +160,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final KeyValues root, final OutputStream out, final String encoding) throws ScriptRuntimeException, ParseException {
-        return merge(root, new OutputStreamOut(out, encoding, engine));
+        return merge(root, new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
     }
 
     /**

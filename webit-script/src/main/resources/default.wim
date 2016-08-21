@@ -44,7 +44,11 @@ encoding=${DEFAULT_ENCODING}
 [defaultNativeSecurity :webit.script.security.impl.DefaultNativeSecurityManager]
 
 [simpleTextStatement :webit.script.core.text.impl.SimpleTextStatementFactory]
+encoding=${engine.encoding}
+
 [byteArrayTextStatement :webit.script.core.text.impl.ByteArrayTextStatementFactory]
+encoding=${engine.encoding}
+
 [charArrayTextStatement :webit.script.core.text.impl.CharArrayTextStatementFactory]
 
 [simpleLogger :webit.script.loggers.impl.SimpleLogger]

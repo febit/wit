@@ -335,6 +335,9 @@ public class Petite {
             if (cls == Integer.class) {
                 return Integer.valueOf(string);
             }
+            if (cls == InternedEncoding.class) {
+                return InternedEncoding.intern(string);
+            }
             return get(string);
         }
     }

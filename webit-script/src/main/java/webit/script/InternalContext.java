@@ -16,6 +16,7 @@ import webit.script.resolvers.OutResolver;
 import webit.script.resolvers.ResolverManager;
 import webit.script.resolvers.SetResolver;
 import webit.script.util.ClassMap;
+import webit.script.util.InternedEncoding;
 import webit.script.util.KeyValuesUtil;
 
 /**
@@ -61,7 +62,7 @@ public final class InternalContext implements Context {
     /**
      * Output's charset.
      */
-    public String encoding;
+    public InternedEncoding encoding;
 
     /**
      * Used by functions, store value to be returned.

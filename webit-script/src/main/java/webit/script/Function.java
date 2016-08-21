@@ -9,6 +9,7 @@ import webit.script.io.impl.DiscardOut;
 import webit.script.io.impl.OutputStreamOut;
 import webit.script.io.impl.WriterOut;
 import webit.script.lang.MethodDeclare;
+import webit.script.util.InternedEncoding;
 import webit.script.util.KeyValuesUtil;
 
 /**
@@ -28,7 +29,7 @@ public class Function {
         this(container, methodDeclare, container.engine.getEncoding(), false);
     }
 
-    public Function(Template container, MethodDeclare methodDeclare, String encoding, boolean isByteStream) {
+    public Function(Template container, MethodDeclare methodDeclare, InternedEncoding encoding, boolean isByteStream) {
         this(container, methodDeclare, new DiscardOut(encoding, isByteStream));
     }
 
@@ -67,6 +68,10 @@ public class Function {
     }
 
     public Object invokeWithOut(final String encoding, final OutputStream outputStream, Object... args) {
+        return invokeWithOut(InternedEncoding.intern(encoding), outputStream, args);
+    }
+
+    public Object invokeWithOut(final InternedEncoding encoding, final OutputStream outputStream, Object... args) {
         return invokeWithOut(new OutputStreamOut(outputStream, encoding, template.engine), args);
     }
 }

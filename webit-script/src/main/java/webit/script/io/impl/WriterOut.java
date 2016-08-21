@@ -9,6 +9,7 @@ import webit.script.io.Buffers;
 import webit.script.io.Out;
 import webit.script.io.charset.CoderFactory;
 import webit.script.io.charset.Decoder;
+import webit.script.util.InternedEncoding;
 
 /**
  *
@@ -17,11 +18,11 @@ import webit.script.io.charset.Decoder;
 public final class WriterOut implements Out {
 
     private final Writer writer;
-    private final String encoding;
+    private final InternedEncoding encoding;
     private final Decoder decoder;
     private final Buffers buffers;
 
-    public WriterOut(Writer writer, String encoding, Decoder decoder, Buffers buffers) {
+    public WriterOut(Writer writer, InternedEncoding encoding, Decoder decoder, Buffers buffers) {
         this.writer = writer;
         this.encoding = encoding;
         this.decoder = decoder;
@@ -36,10 +37,11 @@ public final class WriterOut implements Out {
         this(writer, engine.getEncoding(), engine.getCoderFactory());
     }
 
-    public WriterOut(Writer writer, String encoding, CoderFactory coderFactory) {
+    public WriterOut(Writer writer, InternedEncoding encoding, CoderFactory coderFactory) {
         this.writer = writer;
         this.encoding = encoding;
-        this.decoder = coderFactory.newDecoder(encoding, this.buffers = Buffers.getMiniPeers());
+        this.buffers = Buffers.getMiniPeers();
+        this.decoder = coderFactory.newDecoder(encoding, this.buffers);
     }
 
     @Override
@@ -97,7 +99,7 @@ public final class WriterOut implements Out {
     }
 
     @Override
-    public String getEncoding() {
+    public InternedEncoding getEncoding() {
         return this.encoding;
     }
 

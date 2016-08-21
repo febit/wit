@@ -1,8 +1,8 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.io.impl;
 
-import webit.script.Engine;
 import webit.script.io.Out;
+import webit.script.util.InternedEncoding;
 
 /**
  *
@@ -10,14 +10,18 @@ import webit.script.io.Out;
  */
 public class DiscardOut implements Out {
 
-    private final String encoding;
+    private final InternedEncoding encoding;
     private final boolean isByteStream;
 
     public DiscardOut() {
-        this(Engine.UTF_8, false);
+        this("UTF-8", false);
     }
 
     public DiscardOut(String encoding, boolean isByteStream) {
+        this(InternedEncoding.intern(encoding), isByteStream);
+    }
+
+    public DiscardOut(InternedEncoding encoding, boolean isByteStream) {
         this.encoding = encoding;
         this.isByteStream = isByteStream;
     }
@@ -47,7 +51,7 @@ public class DiscardOut implements Out {
     }
 
     @Override
-    public String getEncoding() {
+    public InternedEncoding getEncoding() {
         return encoding;
     }
 

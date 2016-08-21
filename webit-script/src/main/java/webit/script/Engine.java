@@ -1,7 +1,6 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script;
 
-import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -18,6 +17,7 @@ import webit.script.loaders.Loader;
 import webit.script.loggers.Logger;
 import webit.script.resolvers.ResolverManager;
 import webit.script.security.NativeSecurityManager;
+import webit.script.util.InternedEncoding;
 import webit.script.util.KeyValuesUtil;
 import webit.script.util.Petite;
 import webit.script.util.Props;
@@ -30,14 +30,12 @@ import webit.script.util.StringUtil;
  */
 public final class Engine {
 
-    public static final String UTF_8 = internEncoding("UTF-8");
-
     private final ConcurrentMap<String, Template> templateCache = new ConcurrentHashMap<>();
 
     private boolean looseVar;
     private boolean shareRootData = true;
     private boolean trimCodeBlockBlankLine = true;
-    private String encoding = UTF_8;
+    private InternedEncoding encoding;
     private String inits;
     private String[] vars;
 
@@ -53,7 +51,6 @@ public final class Engine {
 
     @Init
     public void init() {
-        this.encoding = internEncoding(encoding);
     }
 
     private void executeInits() {
@@ -230,7 +227,7 @@ public final class Engine {
         return resolverManager;
     }
 
-    public String getEncoding() {
+    public InternedEncoding getEncoding() {
         return encoding;
     }
 
@@ -295,18 +292,4 @@ public final class Engine {
         return engine;
     }
 
-    /**
-     * Intern encoding
-     *
-     * @param encoding
-     * @return
-     * @since 1.5.0
-     */
-    public static String internEncoding(final String encoding) {
-        try {
-            return Charset.forName(encoding).name();
-        } catch (Exception e) {
-            return encoding.intern();
-        }
-    }
 }

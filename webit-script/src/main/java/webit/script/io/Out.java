@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2015, Webit Team. All Rights Reserved.
 package webit.script.io;
 
+import webit.script.util.InternedEncoding;
+
 /**
  *
  * @author zqq90
@@ -19,7 +21,7 @@ public interface Out {
 
     void write(String string);
 
-    String getEncoding();
+    InternedEncoding getEncoding();
     
     boolean isByteStream();
 }

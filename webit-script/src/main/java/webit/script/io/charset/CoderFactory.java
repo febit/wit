@@ -2,6 +2,7 @@
 package webit.script.io.charset;
 
 import webit.script.io.Buffers;
+import webit.script.util.InternedEncoding;
 
 /**
  *
@@ -9,9 +10,9 @@ import webit.script.io.Buffers;
  */
 public interface CoderFactory {
 
-    Encoder newEncoder(String encoding);
-    Encoder newEncoder(String encoding, Buffers buffers);
+    Encoder newEncoder(InternedEncoding encoding);
+    Encoder newEncoder(InternedEncoding encoding, Buffers buffers);
 
-    Decoder newDecoder(String encoding);
-    Decoder newDecoder(String encoding, Buffers buffers);
+    Decoder newDecoder(InternedEncoding encoding);
+    Decoder newDecoder(InternedEncoding encoding, Buffers buffers);
 }

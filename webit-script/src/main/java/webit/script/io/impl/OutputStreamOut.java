@@ -8,6 +8,7 @@ import webit.script.exceptions.ScriptRuntimeException;
 import webit.script.io.Out;
 import webit.script.io.charset.CoderFactory;
 import webit.script.io.charset.Encoder;
+import webit.script.util.InternedEncoding;
 
 /**
  *
@@ -16,16 +17,16 @@ import webit.script.io.charset.Encoder;
 public final class OutputStreamOut implements Out {
 
     private final OutputStream outputStream;
-    private final String encoding;
+    private final InternedEncoding encoding;
     private final Encoder encoder;
 
-    private OutputStreamOut(OutputStream outputStream, String encoding, Encoder encoder) {
+    private OutputStreamOut(OutputStream outputStream, InternedEncoding encoding, Encoder encoder) {
         this.outputStream = outputStream;
         this.encoding = encoding;
         this.encoder = encoder;
     }
 
-    private OutputStreamOut(OutputStream outputStream, String encoding, CoderFactory coderFactory) {
+    private OutputStreamOut(OutputStream outputStream, InternedEncoding encoding, CoderFactory coderFactory) {
         this(outputStream, encoding, coderFactory.newEncoder(encoding));
     }
 
@@ -37,8 +38,8 @@ public final class OutputStreamOut implements Out {
         this(outputStream, engine.getEncoding(), engine.getCoderFactory());
     }
 
-    public OutputStreamOut(OutputStream outputStream, String encoding, Engine engine) {
-        this(outputStream, encoding != null ? Engine.internEncoding(encoding) : engine.getEncoding(), engine.getCoderFactory());
+    public OutputStreamOut(OutputStream outputStream, InternedEncoding encoding, Engine engine) {
+        this(outputStream, encoding != null ? encoding : engine.getEncoding(), engine.getCoderFactory());
     }
 
     @Override
@@ -92,7 +93,7 @@ public final class OutputStreamOut implements Out {
     }
 
     @Override
-    public String getEncoding() {
+    public InternedEncoding getEncoding() {
         return this.encoding;
     }
 

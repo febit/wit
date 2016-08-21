@@ -3,6 +3,7 @@ package webit.script.core.text.impl;
 
 import webit.script.InternalContext;
 import webit.script.core.ast.Statement;
+import webit.script.util.InternedEncoding;
 
 /**
  *
@@ -10,11 +11,11 @@ import webit.script.core.ast.Statement;
  */
 public final class SimpleTextStatement extends Statement {
 
-    private final String encoding;
+    private final InternedEncoding encoding;
     private final char[] text;
     private final byte[] textBytes;
 
-    public SimpleTextStatement(char[] chars, byte[] bytes, String encoding, int line, int column) {
+    public SimpleTextStatement(char[] chars, byte[] bytes, InternedEncoding encoding, int line, int column) {
         super(line, column);
         this.text = chars;
         this.encoding = encoding;
