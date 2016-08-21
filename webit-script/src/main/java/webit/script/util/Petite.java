@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import webit.script.Engine;
 import webit.script.Init;
 import webit.script.loggers.Logger;
 
@@ -149,12 +148,7 @@ public class Petite {
             this.beans.put(name, bean);
             addComponent(bean);
         }
-        //FIXME: hard code! init Engine first.
-        inject("engine", get(Engine.class));
         for (int i = 0; i < size; i++) {
-            if ("engine".equals(beanNames[i])) {
-                continue;
-            }
             inject(beanNames[i], globalBeans[i]);
         }
         this.logger = get(Logger.class);
@@ -170,25 +164,24 @@ public class Petite {
     }
 
     public void inject(String key, final Object bean) {
-        LinkedList<String> keyList = new LinkedList<>();
+        LinkedList<String> keys = new LinkedList<>();
         do {
-            keyList.addFirst(key);
+            keys.addFirst(key);
             key = (String) this.datas.get(key + ".@class");
         } while (key != null);
-
-        String[] keys = keyList.toArray(new String[keyList.size()]);
 
         Map<String, Field> fields = ClassUtil.getSetableMemberFields(bean.getClass());
         //global
         for (Field field : fields.values()) {
             Object comp = this.components.get(field.getType());
-            if (comp != null) {
-                try {
-                    field.set(bean, comp);
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
-                    //shouldn't be
-                    throw new RuntimeException(ex);
-                }
+            if (comp == null) {
+                continue;
+            }
+            try {
+                field.set(bean, comp);
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
+                //shouldn't be
+                throw new RuntimeException(ex);
             }
         }
 
