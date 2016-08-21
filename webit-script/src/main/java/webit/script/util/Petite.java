@@ -26,7 +26,7 @@ public class Petite {
     private final Map<String, Object> datas = new HashMap<>();
     private final Map<String, Entry> entrys = new HashMap<>();
 
-    protected Logger logger;
+    private Logger logger;
 
     /**
      * Get component or bean by type.
@@ -82,18 +82,19 @@ public class Petite {
                     continue;
                 }
                 key = key.trim();
+                if (key.isEmpty()) {
+                    continue;
+                }
                 Object value = entry.getValue();
-                if (value instanceof String) {
-                    int len = key.length();
-                    if (len > 0) {
-                        if (key.charAt(len - 1) == '+') {
-                            props.append(key.substring(0, len - 1).trim(), (String) value);
-                        } else {
-                            props.set(key, (String) value);
-                        }
-                    }
-                } else {
+                if (!(value instanceof String)) {
                     extras.put(key, value);
+                    continue;
+                }
+                int len = key.length();
+                if (key.charAt(len - 1) == '+') {
+                    props.append(key.substring(0, len - 1).trim(), (String) value);
+                } else {
+                    props.set(key, (String) value);
                 }
             }
         } else {
@@ -118,9 +119,9 @@ public class Petite {
     private void setProp(String key, Object value) {
         this.datas.put(key, value);
         int index = key.lastIndexOf('.');
-        int index2;
+        int index2 = index + 1;
         if (index > 0
-                && (index2 = index + 1) < key.length()
+                && index2 < key.length()
                 && key.charAt(index2) != '@') {
             String beanName = key.substring(0, index);
             this.entrys.put(beanName,
@@ -223,33 +224,30 @@ public class Petite {
             return;
         }
         injected.add(beanName);
+
         //inject @extends first
-        Object extendProfiles = datas.get(beanName.concat(".@extends"));
-        if (extendProfiles != null) {
-            for (String profile : StringUtil.toArray(String.valueOf(extendProfiles))) {
-                inject(profile, bean, injected, fields);
-            }
+        for (String profile : StringUtil.toArray(
+                (String) datas.get(beanName.concat(".@extends")))) {
+            inject(profile, bean, injected, fields);
         }
 
-        Entry entry = entrys.get(beanName);
-        while (entry != null) {
-            try {
-                Field field = fields.get(entry.name);
-                if (field == null) {
-                    if (logger != null) {
-                        logger.warn("Not found field {}#{} ", bean.getClass(), entry.name);
-                    }
-                } else {
-                    Object value = entry.value;
-                    if (value instanceof String) {
-                        value = convert((String) value, field.getType());
-                    }
-                    field.set(bean, value);
+        for (Entry entry = entrys.get(beanName); entry != null; entry = entry.next) {
+            Field field = fields.get(entry.name);
+            if (field == null) {
+                if (logger != null) {
+                    logger.warn("Not found field {}#{} ", bean.getClass(), entry.name);
                 }
+                continue;
+            }
+            Object value = entry.value;
+            if (value instanceof String) {
+                value = convert((String) value, field.getType());
+            }
+            try {
+                field.set(bean, value);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
                 throw new RuntimeException(ex);
             }
-            entry = entry.next;
         }
     }
 
