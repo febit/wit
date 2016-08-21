@@ -2,6 +2,7 @@
 # @modules=
 
 @global='''
+    engine
     logger
     loader
     resolverManager
@@ -14,7 +15,7 @@
 
 DEFAULT_ENCODING=UTF-8
 
-[engine]
+[engine :webit.script.Engine]
 encoding=${DEFAULT_ENCODING}
 # looseVar=false
 # trimCodeBlockBlankLine=true
