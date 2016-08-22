@@ -64,54 +64,52 @@ public class AsmResolverManager extends ResolverManager {
 
     static Class createResolverClass(Class beanClass) throws Exception {
         //XXX: rewrite
-        if (ClassUtil.isPublic(beanClass)) {
-            final String className = "webit.script.asm.Resolver".concat(ASMUtil.getSn());
-
-            final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", ASM_RESOLVER);
-            ASMUtil.visitConstructor(classWriter);
-
-            final FieldInfo[] all = FieldInfoResolver.resolve(beanClass);
-            Arrays.sort(all);
-            final int size = all.length;
-            int[] hashs;
-            int[] indexer;
-            if (size > 0) {
-                hashs = new int[size];
-                indexer = new int[size];
-                int hashsCount = 0;
-                int hash;
-                hashs[hashsCount++] = hash = all[0].hashCode;
-                int i = 1;
-                while (i < size) {
-                    FieldInfo fieldInfo = all[i];
-                    if (hash != fieldInfo.hashCode) {
-                        indexer[hashsCount - 1] = i;
-                        hashs[hashsCount++] = hash = fieldInfo.hashCode;
-                    }
-                    i++;
-                }
-                indexer[hashsCount - 1] = size;
-                hashs = Arrays.copyOf(hashs, hashsCount);
-                indexer = Arrays.copyOf(indexer, hashsCount);
-            } else {
-                hashs = null;
-                indexer = null;
-            }
-
-            visitXetMethod(true, classWriter, beanClass, all, hashs, indexer);
-            visitXetMethod(false, classWriter, beanClass, all, hashs, indexer);
-
-            //getMatchClass
-            final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "getMatchClass", "()Ljava/lang/Class;", null);
-            m.visitInsn(Constants.ACONST_NULL);
-            m.visitInsn(Constants.ARETURN);
-            m.visitMaxs();
-
-            return ASMUtil.loadClass(className, classWriter);
-        } else {
+        if (!ClassUtil.isPublic(beanClass)) {
             throw new Exception(StringUtil.format("Class [{}] is not public", beanClass));
         }
+        final String className = "webit.script.asm.Resolver".concat(ASMUtil.getSn());
 
+        final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", ASM_RESOLVER);
+        ASMUtil.visitConstructor(classWriter);
+
+        final FieldInfo[] all = FieldInfoResolver.resolve(beanClass);
+        Arrays.sort(all);
+        final int size = all.length;
+        int[] hashs;
+        int[] indexer;
+        if (size > 0) {
+            hashs = new int[size];
+            indexer = new int[size];
+            int hashsCount = 0;
+            int hash;
+            hashs[hashsCount++] = hash = all[0].hashCode;
+            int i = 1;
+            while (i < size) {
+                FieldInfo fieldInfo = all[i];
+                if (hash != fieldInfo.hashCode) {
+                    indexer[hashsCount - 1] = i;
+                    hashs[hashsCount++] = hash = fieldInfo.hashCode;
+                }
+                i++;
+            }
+            indexer[hashsCount - 1] = size;
+            hashs = Arrays.copyOf(hashs, hashsCount);
+            indexer = Arrays.copyOf(indexer, hashsCount);
+        } else {
+            hashs = null;
+            indexer = null;
+        }
+
+        visitXetMethod(true, classWriter, beanClass, all, hashs, indexer);
+        visitXetMethod(false, classWriter, beanClass, all, hashs, indexer);
+
+        //getMatchClass
+        final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "getMatchClass", "()Ljava/lang/Class;", null);
+        m.visitInsn(Constants.ACONST_NULL);
+        m.visitInsn(Constants.ARETURN);
+        m.visitMaxs();
+
+        return ASMUtil.loadClass(className, classWriter);
     }
 
     private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class beanClass, final FieldInfo[] all, final int[] hashs, final int[] indexer) {

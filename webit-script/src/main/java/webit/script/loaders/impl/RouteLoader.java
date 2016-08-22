@@ -20,7 +20,7 @@ public class RouteLoader implements Loader {
 
     protected String loaders;
     protected Loader defaultLoader;
-    
+
     protected LoaderEntry[] entrys;
     protected String[] rules;
 
@@ -68,8 +68,8 @@ public class RouteLoader implements Loader {
 
     @Override
     public Resource get(String name) {
-        final LoaderEntry entry;
-        if ((entry = getLoaderEntry(name)) != null) {
+        final LoaderEntry entry = getLoaderEntry(name);
+        if (entry != null) {
             return entry.get(name);
         }
         return this.defaultLoader.get(name);
@@ -77,12 +77,12 @@ public class RouteLoader implements Loader {
 
     @Override
     public String concat(String parent, String name) {
-        final LoaderEntry entry;
-        final LoaderEntry parentEntry;
-        if ((entry = getLoaderEntry(name)) != null) {
+        final LoaderEntry entry = getLoaderEntry(name);
+        if (entry != null) {
             return entry.normalize(name);
         }
-        if ((parentEntry = getLoaderEntry(parent)) != null) {
+        final LoaderEntry parentEntry = getLoaderEntry(parent);
+        if (parentEntry != null) {
             return parentEntry.concat(parent, name);
         }
         return this.defaultLoader.concat(parent, name);
@@ -90,8 +90,8 @@ public class RouteLoader implements Loader {
 
     @Override
     public String normalize(String name) {
-        final LoaderEntry entry;
-        if ((entry = getLoaderEntry(name)) != null) {
+        final LoaderEntry entry = getLoaderEntry(name);
+        if (entry != null) {
             return entry.normalize(name);
         }
         return this.defaultLoader.normalize(name);
@@ -99,8 +99,8 @@ public class RouteLoader implements Loader {
 
     @Override
     public boolean isEnableCache(String name) {
-        final LoaderEntry entry;
-        if ((entry = getLoaderEntry(name)) != null) {
+        final LoaderEntry entry = getLoaderEntry(name);
+        if (entry != null) {
             return entry.isEnableCache(name);
         }
         return this.defaultLoader.isEnableCache(name);

@@ -83,8 +83,8 @@ public class GlobalManager {
     }
 
     public void setGlobal(String key, Object value) {
-        int index;
-        if ((index = this.getGlobalIndex(key)) >= 0) {
+        int index = this.getGlobalIndex(key);
+        if (index >= 0) {
             this.setGlobal(index, value);
         } else {
             this.driftedGlobalMap.put(key, value);
@@ -92,13 +92,13 @@ public class GlobalManager {
     }
 
     public int getGlobalIndex(String name) {
-        Integer index;
-        return (index = globalIndexer.get(name)) != null ? index : -1;
+        Integer index = globalIndexer.get(name);
+        return index != null ? index : -1;
     }
 
     public Object getGlobal(String key) {
-        int index;
-        if ((index = this.getGlobalIndex(key)) >= 0) {
+        int index = this.getGlobalIndex(key);
+        if (index >= 0) {
             return this.getGlobal(index);
         } else {
             return this.driftedGlobalMap.get(key);

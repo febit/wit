@@ -150,9 +150,7 @@ public class PropsUtil {
 
         @Override
         public InputStream openInputStream(String path) {
-            return ClassUtil.getDefaultClassLoader().getResourceAsStream(path.charAt(0) == '/'
-                    ? path.substring(1)
-                    : path);
+            return ClassUtil.getDefaultClassLoader().getResourceAsStream(fixModuleName(path));
         }
 
         @Override

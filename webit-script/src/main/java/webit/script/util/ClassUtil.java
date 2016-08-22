@@ -155,8 +155,8 @@ public class ClassUtil {
 
     public static Class getClass(final String name) {
         try {
-            Class cls;
-            return (cls = getPrimitiveClass(name)) != null ? cls : getClassByInternalName(name);
+            Class cls = getPrimitiveClass(name);
+            return cls != null ? cls : getClassByInternalName(name);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);
         }
@@ -183,11 +183,12 @@ public class ClassUtil {
     }
 
     public static void setAccessible(AccessibleObject accessible) {
-        if (!accessible.isAccessible()) {
-            try {
-                accessible.setAccessible(true);
-            } catch (SecurityException ignore) {
-            }
+        if (accessible.isAccessible()) {
+            return;
+        }
+        try {
+            accessible.setAccessible(true);
+        } catch (SecurityException ignore) {
         }
     }
 

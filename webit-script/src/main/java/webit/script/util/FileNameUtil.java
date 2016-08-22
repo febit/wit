@@ -18,26 +18,27 @@ public class FileNameUtil {
         if (filename == null) {
             return null;
         }
-        int index;
-        if ((index = filename.lastIndexOf(UNIX_SEPARATOR)) < 0) {
+        int index = filename.lastIndexOf(UNIX_SEPARATOR);
+        if (index < 0) {
             return "";
         }
         return filename.substring(0, index + 1);
     }
 
     public static String concat(String basePath, String fullFilenameToAdd) {
-        if (basePath != null) {
-            int len = basePath.length();
-            int prefix = getPrefixLength(fullFilenameToAdd);
-            if (prefix == 0 && len != 0) {
-                if (isSeparator(basePath.charAt(len - 1))) {
-                    return normalize(basePath.concat(fullFilenameToAdd));
-                }
-                return normalize(StringUtil.concat(basePath, "/", fullFilenameToAdd));
+        if (basePath == null) {
+            return null;
+        }
+        int len = basePath.length();
+        int prefix = getPrefixLength(fullFilenameToAdd);
+        if (prefix == 0 && len != 0) {
+            if (isSeparator(basePath.charAt(len - 1))) {
+                return normalize(basePath.concat(fullFilenameToAdd));
             }
-            if (prefix > 0) {
-                return normalize(fullFilenameToAdd);
-            }
+            return normalize(StringUtil.concat(basePath, "/", fullFilenameToAdd));
+        }
+        if (prefix > 0) {
+            return normalize(fullFilenameToAdd);
         }
         return null;
     }
@@ -131,14 +132,12 @@ public class FileNameUtil {
 
     // ---------------------------------------------------------------- prefix
     /**
-     * Returns the length of the filename prefix, such as <code>C:/</code> or
-     * <code>~/</code>.
+     * Returns the length of the filename prefix, such as <code>C:/</code> or <code>~/</code>.
      * <p>
      * This method will handle a file in either Unix or Windows format.
      * <p>
-     * The prefix length includes the first slash in the full filename if
-     * applicable. Thus, it is possible that the length returned is greater than
-     * the length of the input string.
+     * The prefix length includes the first slash in the full filename if applicable. Thus, it is
+     * possible that the length returned is greater than the length of the input string.
      * <pre>
      * Windows:
      * a\b\c.txt           --> ""          --> relative
@@ -156,8 +155,8 @@ public class FileNameUtil {
      * ~user               --> "~user/"    --> named user (slash added)
      * </pre>
      * <p>
-     * The output will be the same irrespective of the machine that the code is
-     * running on. ie. both Unix and Windows prefixes are matched regardless.
+     * The output will be the same irrespective of the machine that the code is running on. ie. both
+     * Unix and Windows prefixes are matched regardless.
      *
      * @param filename the filename to find the prefix in, null returns -1
      * @return the length of the prefix, -1 if invalid or null
@@ -166,8 +165,8 @@ public class FileNameUtil {
         if (filename == null) {
             return -1;
         }
-        final int len;
-        if ((len = filename.length()) == 0) {
+        final int len = filename.length();
+        if (len == 0) {
             return 0;
         }
         final char ch0 = filename.charAt(0);

@@ -16,8 +16,8 @@ public class ArrayUtil {
         if (object instanceof Object[]) {
             return ((Object[]) object).length;
         }
-        final Class cls;
-        if ((cls = object.getClass()).isArray()) {
+        final Class cls = object.getClass();
+        if (cls.isArray()) {
             if (cls == int[].class) {
                 return ((int[]) object).length;
             }

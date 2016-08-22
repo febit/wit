@@ -62,8 +62,8 @@ public final class Stack<T> {
 
     @SuppressWarnings("unchecked")
     public T pop() {
-        int i;
-        if ((i = --size) < 0) {
+        int i = --size;
+        if (i < 0) {
             size = 0;
             throw new IndexOutOfBoundsException(StringUtil.concat("index=", i));
         }
@@ -74,8 +74,8 @@ public final class Stack<T> {
 
     @SuppressWarnings("unchecked")
     public T peek(int offset) {
-        final int realIndex;
-        if (offset >= 0 && (realIndex = size - offset - 1) >= 0) {
+        final int realIndex = size - offset - 1;
+        if (offset >= 0 && realIndex >= 0) {
             return (T) elements[realIndex];
         }
         throw new IndexOutOfBoundsException(StringUtil.concat("offset=", offset));

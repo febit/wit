@@ -30,8 +30,8 @@ public final class ClassNameBand {
     }
 
     public String pop() {
-        final String last;
-        length -= (last = array[--index]).length();
+        final String last = array[--index];
+        length -= last.length();
         return last;
     }
 
@@ -80,7 +80,8 @@ public final class ClassNameBand {
             if (i != 0) {
                 destination[start++] = '.';
             }
-            len = (s = array[i]).length();
+            s = array[i];
+            len = s.length();
             s.getChars(0, len, destination, start);
             start += len;
         }

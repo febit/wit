@@ -51,8 +51,8 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
     }
 
     protected final Node getNode(final String name) {
-        Node node;
-        if ((node = NODES.get(name)) == null) {
+        Node node = NODES.get(name);
+        if (node == null) {
             int index = name.lastIndexOf('.');
             node = new Node(getNode(index > 0 ? name.substring(0, index) : ROOT_NODE_NAME), name);
             Node old = NODES.putIfAbsent(name, node);

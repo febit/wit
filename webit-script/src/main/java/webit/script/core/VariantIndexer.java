@@ -24,9 +24,8 @@ public final class VariantIndexer {
     }
 
     public int getCurrentIndex(final String name) {
-        int i;
-        final String[] myNames;
-        i = (myNames = this.names).length;
+        final String[] myNames = this.names;
+        int i = myNames.length;
         while (i != 0) {
             --i;
             if (myNames[i].equals(name)) {
@@ -44,9 +43,8 @@ public final class VariantIndexer {
     }
 
     public int getIndex(final String name) {
-        int i;
-        final String[] myNames;
-        i = (myNames = this.names).length;
+        final String[] myNames = this.names;
+        int i = myNames.length;
         while (i != 0) {
             --i;
             if (myNames[i].equals(name)) {

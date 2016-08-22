@@ -39,24 +39,24 @@ public class AsmNativeFactory extends NativeFactory {
     }
 
     protected MethodDeclare createMethodDeclare(Member member) {
-        if (ClassUtil.isPublic(member.getDeclaringClass()) && ClassUtil.isPublic(member)) {
-            MethodDeclare declare = CACHE.get(member);
-            if (declare == null) {
-                synchronized (CACHE) {
-                    try {
-                        declare = CACHE.get(member);
-                        if (declare == null) {
-                            declare = createAccessor(member);
-                            CACHE.put(member, declare);
-                        }
-                    } catch (Exception | LinkageError e) {
-                        logger.error("Failed to create ASMMethodDeclare for '" + member + "'.", e);
+        if (!ClassUtil.isPublic(member.getDeclaringClass()) || !ClassUtil.isPublic(member)) {
+            return null;
+        }
+        MethodDeclare declare = CACHE.get(member);
+        if (declare == null) {
+            synchronized (CACHE) {
+                try {
+                    declare = CACHE.get(member);
+                    if (declare == null) {
+                        declare = createAccessor(member);
+                        CACHE.put(member, declare);
                     }
+                } catch (Exception | LinkageError e) {
+                    logger.error("Failed to create ASMMethodDeclare for '" + member + "'.", e);
                 }
             }
-            return declare;
         }
-        return null;
+        return declare;
     }
 
     static MethodDeclare createAccessor(Member obj) throws InstantiationException, IllegalAccessException {
