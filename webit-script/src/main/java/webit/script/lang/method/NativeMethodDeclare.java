@@ -36,8 +36,8 @@ public final class NativeMethodDeclare implements MethodDeclare {
         if (isStatic) {
             obj = null;
             if (args != null) {
-                int argsLen;
-                if ((argsLen = args.length) == myArgsCount) {
+                int argsLen = args.length;
+                if (argsLen == myArgsCount) {
                     methodArgs = args;
                 } else {
                     //Note: Warning 参数个数不一致

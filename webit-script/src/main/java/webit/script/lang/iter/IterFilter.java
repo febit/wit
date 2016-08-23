@@ -11,8 +11,8 @@ import webit.script.lang.Iter;
 public abstract class IterFilter implements Iter {
 
     protected final Iter iter;
-    protected boolean gotNext;
-    protected Object nextItem;
+    protected boolean gotPending;
+    protected Object pending;
     protected int _index;
 
     protected IterFilter(Iter iter) {
@@ -24,25 +24,25 @@ public abstract class IterFilter implements Iter {
 
     @Override
     public final Object next() {
-        ++ this._index;
-        if (hasNext()) {
-            this.gotNext = false;
-            return this.nextItem;
+        if (!hasNext()) {
+            throw new NoSuchElementException("no more next");
         }
-        throw new NoSuchElementException("no more next");
+        ++this._index;
+        this.gotPending = false;
+        return this.pending;
     }
 
     @Override
     public final boolean hasNext() {
-        if (this.gotNext) {
+        if (this.gotPending) {
             return true;
         }
-        Iter it;
-        while ((it = this.iter).hasNext()) {
-            Object item;
-            if (valid(item = it.next())) {
-                this.gotNext = true;
-                this.nextItem = item;
+        Iter it = this.iter;
+        while (it.hasNext()) {
+            Object item = it.next();
+            if (valid(item)) {
+                this.gotPending = true;
+                this.pending = item;
                 return true;
             }
         }

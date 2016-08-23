@@ -135,9 +135,9 @@ public class StatementUtil {
 
     public static LoopInfo[] collectPossibleLoopsInfoForWhile(Statement bodyStatement, Statement elseStatement, int label) {
 
-        List<LoopInfo> list;
-        LoopInfo loopInfo;
-        if ((list = StatementUtil.collectPossibleLoopsInfo(bodyStatement)) != null) {
+        List<LoopInfo> list = StatementUtil.collectPossibleLoopsInfo(bodyStatement);
+        if (list != null) {
+            LoopInfo loopInfo;
             for (Iterator<LoopInfo> it = list.iterator(); it.hasNext();) {
                 loopInfo = it.next();
                 if (loopInfo.matchLabel(label)
@@ -193,6 +193,8 @@ public class StatementUtil {
                 temp.add(stat);
             }
         }
-        return temp.toArray(new Statement[temp.size()]);
+        return list.isEmpty()
+                ? EMPTY_STATEMENTS
+                : temp.toArray(new Statement[temp.size()]);
     }
 }
