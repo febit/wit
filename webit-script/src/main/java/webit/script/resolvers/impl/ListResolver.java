@@ -21,7 +21,7 @@ public class ListResolver implements GetResolver, SetResolver {
 
     @Override
     public Object get(Object object, Object property) {
-        if (property instanceof Number) {
+        if (property instanceof Number && object instanceof List) {
             try {
                 return ((List) object).get(((Number) property).intValue());
             } catch (IndexOutOfBoundsException e) {
@@ -29,33 +29,32 @@ public class ListResolver implements GetResolver, SetResolver {
             }
         }
         if ("size".equals(property)) {
-            return ((List) object).size();
+            return ((Collection) object).size();
         }
         if ("isEmpty".equals(property)) {
-            return ((List) object).isEmpty();
+            return ((Collection) object).isEmpty();
         }
-        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.util.List#{}", property));
+        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.util.Collection#{}", property));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void set(Object object, Object property, Object value) {
         if (property instanceof Number) {
-            final int index;
-            final int size;
-            final List list;
-            if ((index = ((Number) property).intValue())
-                    >= (size = (list = (List) object).size())) {
+            final Collection collection = (Collection) object;
+            final int index = ((Number) property).intValue();
+            final int size = collection.size();
+            if (index >= size) {
                 for (int i = index - size; i != 0; i--) {
-                    list.add(null);
+                    collection.add(null);
                 }
-                list.add(value);
+                collection.add(value);
                 return;
-            } else {
-                list.set(index, value);
+            } else if (object instanceof List) {
+                ((List) collection).set(index, value);
                 return;
             }
         }
-        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't write: java.util.List#{}", property));
+        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't write: java.util.Collection#{}", property));
     }
 }
