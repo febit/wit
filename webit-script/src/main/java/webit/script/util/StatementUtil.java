@@ -119,11 +119,11 @@ public class StatementUtil {
     }
 
     public static List<LoopInfo> collectPossibleLoopsInfo(Statement... statements) {
-        int i;
-        if (statements == null || (i = statements.length) == 0) {
+        if (statements == null || statements.length == 0) {
             return null;
         }
         final LinkedList<LoopInfo> loopInfos = new LinkedList<>();
+        int i = statements.length;
         do {
             List<LoopInfo> list = collectPossibleLoopsInfo(statements[--i]);
             if (list != null) {

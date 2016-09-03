@@ -2,8 +2,8 @@
 package webit.script.util;
 
 /**
- *
- * @author zqq90
+ * refer to the
+ * <a href="https://github.com/oblac/jodd">Jodd</a> project.
  */
 public class FileNameUtil {
 

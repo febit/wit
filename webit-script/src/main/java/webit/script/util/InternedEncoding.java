@@ -18,7 +18,7 @@ public class InternedEncoding {
         if (encoding == null) {
             return null;
         }
-        encoding = internEncodingName(encoding);
+        encoding = resolveInternEncodingName(encoding);
         InternedEncoding interned = INTERNED.get(encoding);
         if (interned != null) {
             return interned;
@@ -26,7 +26,7 @@ public class InternedEncoding {
         return _intern(encoding);
     }
 
-    private static String internEncodingName(final String encoding) {
+    private static String resolveInternEncodingName(final String encoding) {
         try {
             return Charset.forName(encoding).name();
         } catch (Exception e) {
@@ -35,7 +35,6 @@ public class InternedEncoding {
     }
 
     private static synchronized InternedEncoding _intern(String encoding) {
-
         InternedEncoding interned = INTERNED.get(encoding);
         if (interned != null) {
             return interned;

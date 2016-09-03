@@ -220,7 +220,7 @@ public final class Props {
         int end = resolvedEnding.indexOf('}');
 
         if (end < 0) {
-            //TODO lost index
+            //XXX lost index
             throw new IllegalArgumentException("Invalid string template, unclosed macro ");
         }
         final String partEnd = resolvedEnding.substring(end + 1);

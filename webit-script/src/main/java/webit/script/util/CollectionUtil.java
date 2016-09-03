@@ -38,14 +38,14 @@ public class CollectionUtil {
 
     @SuppressWarnings("unchecked")
     public static Iter toIter(final Object o1, Statement statement) {
-        final Class clazz;
         if (o1 == null) {
             return null;
         }
         if (o1 instanceof Iterable) {
             return new IteratorIter(((Iterable) o1).iterator());
         }
-        if ((clazz = o1.getClass()).isArray()) {
+        final Class clazz = o1.getClass();
+        if (clazz.isArray()) {
             if (o1 instanceof Object[]) {
                 return new ArrayIter((Object[]) o1);
             } else if (clazz == int[].class) {
@@ -65,14 +65,19 @@ public class CollectionUtil {
             } else if (clazz == byte[].class) {
                 return new ByteArrayIter((byte[]) o1);
             }
-        } else if (o1 instanceof Iterator) {
-            return new IteratorIter((Iterator) o1);
-        } else if (o1 instanceof Iter) {
-            return (Iter) o1;
-        } else if (o1 instanceof Enumeration) {
-            return new EnumerationIter((Enumeration) o1);
-        } else if (o1 instanceof CharSequence) {
-            return new CharSequenceIter((CharSequence) o1);
+        } else {
+            if (o1 instanceof Iterator) {
+                return new IteratorIter((Iterator) o1);
+            }
+            if (o1 instanceof Iter) {
+                return (Iter) o1;
+            }
+            if (o1 instanceof Enumeration) {
+                return new EnumerationIter((Enumeration) o1);
+            }
+            if (o1 instanceof CharSequence) {
+                return new CharSequenceIter((CharSequence) o1);
+            }
         }
         throw new ScriptRuntimeException("Unsupported type to Iter: ".concat(o1.getClass().getName()), statement);
     }
@@ -88,8 +93,8 @@ public class CollectionUtil {
     }
 
     public static boolean notEmpty(final Object object, final boolean defaultValue) {
-        final int size;
-        if ((size = getSize(object)) == 0) {
+        final int size = getSize(object);
+        if (size == 0) {
             return false;
         }
         if (size > 0) {
@@ -104,7 +109,6 @@ public class CollectionUtil {
         if (object instanceof Enumeration) {
             return ((Enumeration) object).hasMoreElements();
         }
-
         return defaultValue;
     }
 }
