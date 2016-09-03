@@ -25,7 +25,7 @@ public class ListResolver implements GetResolver, SetResolver {
             try {
                 return ((List) object).get(((Number) property).intValue());
             } catch (IndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException(StringUtil.concat("index out of bounds:", property));
+                throw new ScriptRuntimeException(StringUtil.format("index out of bounds:{}", property));
             }
         }
         if ("size".equals(property)) {
@@ -34,7 +34,7 @@ public class ListResolver implements GetResolver, SetResolver {
         if ("isEmpty".equals(property)) {
             return ((List) object).isEmpty();
         }
-        throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: java.util.List#", property));
+        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.util.List#{}", property));
     }
 
     @SuppressWarnings("unchecked")
@@ -56,6 +56,6 @@ public class ListResolver implements GetResolver, SetResolver {
                 return;
             }
         }
-        throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: java.util.List#", property));
+        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't write: java.util.List#{}", property));
     }
 }

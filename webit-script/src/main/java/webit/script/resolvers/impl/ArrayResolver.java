@@ -27,7 +27,7 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
         if ("isEmpty".equals(property)) {
             return ArrayUtil.getSize(object) == 0;
         }
-        throw new ScriptRuntimeException(StringUtil.concat("Invalid property: array#", property));
+        throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));
     }
 
     @Override
@@ -69,12 +69,12 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
                     return;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException(StringUtil.concat("Array index out of bounds, index=", index));
+                throw new ScriptRuntimeException(StringUtil.format("Array index out of bounds, index={}", index));
             } catch (ClassCastException e) {
                 throw new ScriptRuntimeException(e.getMessage());
             }
         }
-        throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't write: array#", property));
+        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't write: array#{}", property));
     }
 
     @Override

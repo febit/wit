@@ -17,7 +17,7 @@ public class CharSequenceResolver implements GetResolver {
             try {
                 return ((CharSequence) object).charAt(((Number) property).intValue());
             } catch (IndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException(StringUtil.concat("index out of bounds:", property));
+                throw new ScriptRuntimeException(StringUtil.format("index out of bounds:{}", property));
             }
         }
         if ("length".equals(property) || "size".equals(property)) {
@@ -26,7 +26,7 @@ public class CharSequenceResolver implements GetResolver {
         if ("isEmpty".equals(property)) {
             return ((CharSequence) object).length() == 0;
         }
-        throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: java.lang.CharSequence#", property));
+        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.lang.CharSequence#{}", property));
     }
 
     @Override

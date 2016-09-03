@@ -40,7 +40,7 @@ public final class Stack<T> {
     public void pops(int len) {
         int i;
         if ((i = this.size) < len) {
-            throw new IndexOutOfBoundsException(StringUtil.concat("size < ", len));
+            throw new IndexOutOfBoundsException(StringUtil.format("size < {}", len));
         }
         final Object[] myElements = this.elements;
         this.size = i - len;
@@ -65,7 +65,7 @@ public final class Stack<T> {
         int i = --size;
         if (i < 0) {
             size = 0;
-            throw new IndexOutOfBoundsException(StringUtil.concat("index=", i));
+            throw new IndexOutOfBoundsException(StringUtil.format("index={}", i));
         }
         final T element = (T) elements[i];
         elements[i] = null;
@@ -78,7 +78,7 @@ public final class Stack<T> {
         if (offset >= 0 && realIndex >= 0) {
             return (T) elements[realIndex];
         }
-        throw new IndexOutOfBoundsException(StringUtil.concat("offset=", offset));
+        throw new IndexOutOfBoundsException(StringUtil.format("offset={}", offset));
     }
 
     @SuppressWarnings("unchecked")

@@ -209,7 +209,7 @@ public class AsmResolverManager extends ResolverManager {
             m.visitInsn(Constants.ARETURN);
         } else {
             //Unreadable Exception
-            ASMUtil.visitScriptRuntimeException(m, StringUtil.concat("Unreadable property ", fieldInfo.owner.getName(), "#", fieldInfo.name));
+            ASMUtil.visitScriptRuntimeException(m, StringUtil.format("Unreadable property {}#{}", fieldInfo.owner.getName(), fieldInfo.name));
         }
     }
 
@@ -233,7 +233,7 @@ public class AsmResolverManager extends ResolverManager {
             m.visitInsn(Constants.RETURN);
         } else {
             //UnwriteableException
-            ASMUtil.visitScriptRuntimeException(m, StringUtil.concat("Unwriteable property ", fieldInfo.owner.getName(), "#", fieldInfo.name));
+            ASMUtil.visitScriptRuntimeException(m, StringUtil.format("Unwriteable property {}#{}", fieldInfo.owner.getName(), fieldInfo.name));
         }
     }
 }

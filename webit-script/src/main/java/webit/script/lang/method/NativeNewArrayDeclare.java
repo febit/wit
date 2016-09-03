@@ -29,7 +29,7 @@ public class NativeNewArrayDeclare implements MethodDeclare {
             }
             len = ((Number) lenObject).intValue();
             if (len < 0) {
-                throw new ScriptRuntimeException(StringUtil.concat("must given a nonnegative number as array's length: ", len));
+                throw new ScriptRuntimeException(StringUtil.format("must given a nonnegative number as array's length: {}", len));
             }
         } else {
             len = 0;

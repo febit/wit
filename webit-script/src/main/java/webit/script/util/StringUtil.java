@@ -18,25 +18,8 @@ public class StringUtil {
                 .toString();
     }
 
-    public static String concat(String s1, String s2, String s3, String s4) {
-        return new StringBuilder(s1.length() + s2.length() + s3.length() + s4.length())
-                .append(s1)
-                .append(s2)
-                .append(s3)
-                .append(s4)
-                .toString();
-    }
-
-    public static String concat(String string, int number) {
-        return string.concat(Integer.toString(number));
-    }
-
     public static String concatObjectClass(String string, Object object) {
         return string.concat(object != null ? object.getClass().getName() : "[null]");
-    }
-
-    public static String concat(String string, Object object) {
-        return string.concat(object != null ? object.toString() : "null");
     }
 
     public static String join(List list, char separator) {
@@ -162,7 +145,7 @@ public class StringUtil {
             ndx += 1;
             int ndxEnd = template.indexOf('}', ndx);
             if (ndxEnd == -1) {
-                throw new IllegalArgumentException(StringUtil.concat("Invalid message, unclosed macro at: ", ndx - 1));
+                throw new IllegalArgumentException(StringUtil.format("Invalid message, unclosed macro at: {}", ndx - 1));
             }
             if (ndx == ndxEnd) {
                 index = currentIndex++;

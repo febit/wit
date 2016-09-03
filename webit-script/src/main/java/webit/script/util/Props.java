@@ -229,7 +229,7 @@ public final class Props {
         if (entry != null && entry.value != null) {
             return StringUtil.concat(partStart, resolveValue(entry.value, ++macrosTimes), partEnd);
         } else {
-            return StringUtil.concat(partStart, partEnd);
+            return partStart.concat(partEnd);
         }
     }
 

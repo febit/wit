@@ -23,7 +23,7 @@ public class ObjectArrayResolver implements GetResolver, SetResolver {
         if ("isEmpty".equals(property)) {
             return ((Object[]) object).length == 0;
         }
-        throw new ScriptRuntimeException(StringUtil.concat("Invalid property: array#", property));
+        throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));
     }
 
     @Override
@@ -33,10 +33,10 @@ public class ObjectArrayResolver implements GetResolver, SetResolver {
                 ((Object[]) object)[((Number) property).intValue()] = value;
                 return;
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException(StringUtil.concat("Array index out of bounds, index=", (Number) property));
+                throw new ScriptRuntimeException(StringUtil.format("Array index out of bounds, index={}", property));
             }
         }
-        throw new ScriptRuntimeException(StringUtil.concat("Invalid property: array#", property));
+        throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));
     }
 
     @Override

@@ -54,6 +54,6 @@ public class IterGetResolver implements GetResolver {
             default:
         }
 
-        throw new ScriptRuntimeException(StringUtil.concat("Invalid property or can't read: webit.script.lang.Iter#", property));
+        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: webit.script.lang.Iter#{}", property));
     }
 }
