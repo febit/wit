@@ -28,32 +28,32 @@ import webit.script.util.StringUtil;
  *
  * @author zqq90
  */
-public final class Engine {
+public class Engine {
 
-    private final ConcurrentMap<String, Template> cachedTemplates = new ConcurrentHashMap<>();
+    protected final ConcurrentMap<String, Template> cachedTemplates = new ConcurrentHashMap<>();
 
-    private boolean looseVar;
-    private boolean shareRootData = true;
-    private boolean trimCodeBlockBlankLine = true;
-    private InternedEncoding encoding;
-    private String inits;
-    private String[] vars;
+    protected boolean looseVar;
+    protected boolean shareRootData = true;
+    protected boolean trimCodeBlockBlankLine = true;
+    protected InternedEncoding encoding;
+    protected String inits;
+    protected String[] vars;
 
-    private Petite petite;
-    private Logger logger;
-    private Loader loader;
-    private GlobalManager globalManager;
-    private TextStatementFactory textStatementFactory;
-    private NativeSecurityManager nativeSecurityManager;
-    private CoderFactory coderFactory;
-    private NativeFactory nativeFactory;
-    private ResolverManager resolverManager;
+    protected Petite petite;
+    protected Logger logger;
+    protected Loader loader;
+    protected GlobalManager globalManager;
+    protected TextStatementFactory textStatementFactory;
+    protected NativeSecurityManager nativeSecurityManager;
+    protected CoderFactory coderFactory;
+    protected NativeFactory nativeFactory;
+    protected ResolverManager resolverManager;
 
     @Init
     public void init() {
     }
 
-    private void executeInits() {
+    protected void executeInits() {
         if (this.inits == null) {
             return;
         }
@@ -119,7 +119,7 @@ public final class Engine {
         return myLoader.get(normalizedName).exists();
     }
 
-    private Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
+    protected Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
         Template template;
         final Loader myLoader = this.loader;
         final String normalizedName = myLoader.normalize(name);
@@ -280,7 +280,6 @@ public final class Engine {
      * @since 1.5.0
      */
     public static Engine create(final Props props, final Map<String, Object> parameters) {
-
         final Petite petite = new Petite();
         petite.config(props, parameters);
         petite.initComponents();
