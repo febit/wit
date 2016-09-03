@@ -262,7 +262,7 @@ public class Petite {
             return Integer.valueOf(string);
         }
         if (cls == boolean.class) {
-            return StringUtil.toBoolean(string);
+            return Boolean.valueOf(string);
         }
         if (string == null) {
             return null;
@@ -297,14 +297,14 @@ public class Petite {
             if (cls == boolean[].class) {
                 final boolean[] entrys = new boolean[len];
                 for (int i = 0; i < len; i++) {
-                    entrys[i] = StringUtil.toBoolean(strings[i]);
+                    entrys[i] = Boolean.valueOf(strings[i]);
                 }
                 return entrys;
             }
             if (cls == Boolean[].class) {
                 final Boolean[] entrys = new Boolean[len];
                 for (int i = 0; i < len; i++) {
-                    entrys[i] = StringUtil.toBoolean(strings[i]);
+                    entrys[i] = Boolean.valueOf(strings[i]);
                 }
                 return entrys;
             }
@@ -315,7 +315,7 @@ public class Petite {
             return array;
         } else {
             if (cls == Boolean.class) {
-                return StringUtil.toBoolean(string);
+                return Boolean.valueOf(string);
             }
             if (string.length() == 0) {
                 return null;

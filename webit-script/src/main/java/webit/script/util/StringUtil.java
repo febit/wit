@@ -162,8 +162,4 @@ public class StringUtil {
         }
         return result.toString();
     }
-
-    public static boolean toBoolean(String string) {
-        return string != null && string.equalsIgnoreCase("true");
-    }
 }
