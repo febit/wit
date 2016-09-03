@@ -30,7 +30,7 @@ import webit.script.util.StringUtil;
  */
 public final class Engine {
 
-    private final ConcurrentMap<String, Template> templateCache = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Template> cachedTemplates = new ConcurrentHashMap<>();
 
     private boolean looseVar;
     private boolean shareRootData = true;
@@ -96,7 +96,7 @@ public final class Engine {
      * @throws ResourceNotFoundException
      */
     public Template getTemplate(final String name) throws ResourceNotFoundException {
-        final Template template = this.templateCache.get(name);
+        final Template template = this.cachedTemplates.get(name);
         if (template != null) {
             return template;
         }
@@ -127,7 +127,7 @@ public final class Engine {
             //if normalized-name is null means not found resource.
             throw new ResourceNotFoundException("Illegal template path: ".concat(name));
         }
-        template = this.templateCache.get(normalizedName);
+        template = this.cachedTemplates.get(normalizedName);
         if (template != null) {
             return template;
         }
@@ -135,14 +135,14 @@ public final class Engine {
         template = new Template(this, normalizedName, myLoader.get(normalizedName));
         Template oldTemplate;
         if (myLoader.isEnableCache(normalizedName)) {
-            oldTemplate = this.templateCache.putIfAbsent(normalizedName, template);
+            oldTemplate = this.cachedTemplates.putIfAbsent(normalizedName, template);
             //if old Template exist, use the old one
             if (oldTemplate != null) {
                 template = oldTemplate;
             }
             if (!name.equals(normalizedName)) {
                 // cache Template with un-normalized name
-                oldTemplate = this.templateCache.putIfAbsent(name, template);
+                oldTemplate = this.cachedTemplates.putIfAbsent(name, template);
                 if (oldTemplate != null) {
                     template = oldTemplate;
                 }
