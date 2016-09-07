@@ -6,19 +6,7 @@ Webit Script
 
 This is a template engine, all writen in Java, **support Java 7+**.
 
-## Maven
-
-~~~~~xml
-<dependency>
-  <groupId>com.github.zqq90.webit-script</groupId>
-  <artifactId>webit-script</artifactId>
-  <version>1.5.2</version>
-</dependency>
-~~~~~
-
-## Yeah, only one jar
-
-> `webit-script-1.5.2.jar` *<290KB*
+**Old versions are not recommended now.**
 
 ## How to use
 
