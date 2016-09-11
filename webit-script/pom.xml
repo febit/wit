@@ -28,7 +28,7 @@
             <version>1.1</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>
@@ -51,12 +51,81 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>de.jflex</groupId>
+                <artifactId>jflex-maven-plugin</artifactId>
+                <version>1.6.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-sources/lexer</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-parser</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>src/main/cup/java_cup_webit-20150308.jar</additionalClasspathElement>
+                            </additionalClasspathElements>
+                            <includeProjectDependencies>false</includeProjectDependencies>
+                            <mainClass>java_cup.Main</mainClass>
+                            <arguments>
+                                <argument>-exception</argument>
+                                <argument>ParseException</argument>
+                                <argument>-destdir</argument>
+                                <argument>${project.build.directory}/generated-sources/parser/webit/script/core</argument>
+                                <argument>-destresdir</argument>
+                                <argument>${project.build.directory}/generated-resources/parser/webit/script/core</argument>
+                                <argument>${basedir}/src/main/cup/Parser.cup</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.12</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/parser</source>
+                            </sources>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/generated-resources/parser</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <compilerArgument> -Xlint:unchecked </compilerArgument>
                     <showWarnings>true</showWarnings>
-                    <debug>true</debug>
+                    <debug>false</debug>
                     <optimize>true</optimize>
                 </configuration>
             </plugin>

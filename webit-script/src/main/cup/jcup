@@ -1,9 +1,0 @@
-#!/bin/bash
-cd $(dirname $0)
-
-
-$JAVA_HOME/bin/java -Dfile.encoding=UTF-8 -jar java_cup_webit-20150308.jar -exception ParseException -destdir ../java/webit/script/core -destresdir ../resources/webit/script/core Parser.cup
-
-echo 'Press any to exit...'
-read -n 1
-
