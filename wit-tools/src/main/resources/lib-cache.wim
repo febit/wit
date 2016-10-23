@@ -1,0 +1,15 @@
+
+[global]
+registers+= org.febit.wit.tools.cache.CacheGlobalRegister
+
+
+[noCacheProvider :org.febit.wit.tools.cache.impl.NoCacheProvider]
+[simpleCacheProvider :org.febit.wit.tools.cache.impl.SimpleCacheProvider]
+[ehcacheProvider :org.febit.wit.tools.cache.impl.EhcacheProvider]
+
+## CacheGlobalRegister
+# [org.febit.wit.tools.cache.CacheGlobalRegister]
+# name=cache
+# registCacheClear=false
+# registCacheRemove=true
+# cacheProvider=simpleCacheProvider

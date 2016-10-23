@@ -1,0 +1,149 @@
+
+# @modules=
+
+@global='''
+    engine
+    logger
+    loader
+    resolverManager
+    textStatement
+    coderFactory
+    nativeFactory
+    nativeSecurity
+    global
+'''
+
+DEFAULT_ENCODING=UTF-8
+
+[engine :org.febit.wit.Engine]
+encoding=${DEFAULT_ENCODING}
+# looseVar=false
+# trimCodeBlockBlankLine=true
+# vars=
+# inits=
+# shareRootData=true
+
+[loader :routeLoader]
+[logger :simpleLogger]
+[textStatement :simpleTextStatement]
+[coderFactory :defaultCoderFactory]
+[nativeFactory :asmNativeFactory]
+[nativeSecurity :noneNativeSecurity]
+[resolverManager :asmResolverManager]
+
+
+[defaultResolverManager :org.febit.wit.resolvers.ResolverManager]
+[asmResolverManager :org.febit.wit.asm.AsmResolverManager]
+
+[defaultCoderFactory :org.febit.wit.io.charset.impl.DefaultCoderFactory]
+
+[defaultNativeFactory :org.febit.wit.core.NativeFactory]
+[asmNativeFactory :org.febit.wit.asm.AsmNativeFactory]
+
+[noneNativeSecurity :org.febit.wit.security.impl.NoneNativeSecurityManager]
+[defaultNativeSecurity :org.febit.wit.security.impl.DefaultNativeSecurityManager]
+
+[simpleTextStatement :org.febit.wit.core.text.impl.SimpleTextStatementFactory]
+encoding=${engine.encoding}
+
+[byteArrayTextStatement :org.febit.wit.core.text.impl.ByteArrayTextStatementFactory]
+encoding=${engine.encoding}
+
+[charArrayTextStatement :org.febit.wit.core.text.impl.CharArrayTextStatementFactory]
+
+[simpleLogger :org.febit.wit.loggers.impl.SimpleLogger]
+[slf4jLogger :org.febit.wit.loggers.impl.Slf4jLogger]
+[commonLogger :org.febit.wit.loggers.impl.CommonLogger]
+
+[pathLoader]
+encoding=${DEFAULT_ENCODING}
+assistantSuffixs+=.wit
+suffix=.wit
+# appendLostSuffix=false
+# root=your/template/path
+
+[stringLoader :org.febit.wit.loaders.impl.StringLoader]
+
+[classpathLoader :org.febit.wit.loaders.impl.ClasspathLoader]
+@extends=pathLoader
+
+[fileLoader :org.febit.wit.loaders.impl.FileLoader]
+@extends=pathLoader
+
+[lazyLoader :org.febit.wit.loaders.impl.LazyLoader]
+loader=classpathLoader
+timeout=10000
+
+[routeLoader :org.febit.wit.loaders.impl.RouteLoader]
+defaultLoader=classpathLoader
+loaders +='''
+  classpath:  classpathLoader
+  string:     stringLoader
+'''
+
+[securityLoader :org.febit.wit.loaders.impl.SecurityLoader]
+loader=classpathLoader
+list +='''
+'''
+
+
+[global :org.febit.wit.global.GlobalManager]
+registers ='''
+    org.febit.wit.global.impl.GlobalMapRegister
+    org.febit.wit.global.impl.ContextLocalRegister
+'''
+
+# [org.febit.wit.global.impl.GlobalMapRegister]
+# name=$GLOBAL
+
+
+# [org.febit.wit.global.impl.ContextLocalRegister]
+# name=LOCAL
+
+
+[resolverManager]
+# ignoreNullPointer=true
+resolvers='''
+    org.febit.wit.resolvers.impl.LongOutResolver
+    org.febit.wit.resolvers.impl.IntegerOutResolver
+    org.febit.wit.resolvers.impl.InternalVoidResolver
+    org.febit.wit.resolvers.impl.CharSequenceResolver
+    org.febit.wit.resolvers.impl.ByteArrayOutResolver
+    org.febit.wit.resolvers.impl.CharArrayOutResolver
+    org.febit.wit.resolvers.impl.ArrayResolver
+    org.febit.wit.resolvers.impl.BagResolver
+    org.febit.wit.resolvers.impl.ScriptUnsetableBagResolver
+    org.febit.wit.resolvers.impl.IterGetResolver
+    org.febit.wit.resolvers.impl.ObjectArrayResolver
+    org.febit.wit.resolvers.impl.ListResolver
+    org.febit.wit.resolvers.impl.MapResolver
+'''
+
+
+[defaultNativeSecurity]
+list='''
+
+  boolean
+  byte
+  char
+  short
+  int
+  long
+  float
+  double
+
+  java.lang.Object
+  java.lang.Boolean
+  java.lang.Character
+  java.lang.Byte
+  java.lang.Short
+  java.lang.Integer
+  java.lang.Long
+  java.lang.Float
+  java.lang.Double
+  java.lang.String
+  java.lang.Number
+
+'''
+
+

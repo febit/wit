@@ -1,3 +1,0 @@
-
-[global]
-registers+= webit.script.tools.testunit.AssertGlobalRegister

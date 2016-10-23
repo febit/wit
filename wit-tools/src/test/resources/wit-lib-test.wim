@@ -1,0 +1,41 @@
+
+
+@modules +='''
+    lib-assert.wim
+    lib-std.wim
+    lib-type.wim
+    lib-cache.wim
+    lib-tld.wim
+'''
+
+[engine]
+logger=org.febit.wit.loggers.impl.Slf4jLogger
+inits+='''
+'''
+
+[nativeSecurity]
+list +='''
+'''
+
+[org.febit.wit.tools.cache.impl.SimpleCacheProvider]
+#100 * 60 * 1000
+timeToLive =6000000 
+
+
+[classpathLoader]
+root=org/febit/wit/tools/test/tmpls
+
+
+## Cache
+[org.febit.wit.tools.cache.CacheGlobalRegister]
+registCacheClear=true
+cacheProvider=org.febit.wit.tools.cache.impl.SimpleCacheProvider
+
+
+[global]
+registers+= tld-test
+
+
+[tld-test: org.febit.wit.tools.tld.TLDGlobalRegister]
+tld=tld-test.tld
+prefix=tld_

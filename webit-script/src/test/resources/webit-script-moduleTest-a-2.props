@@ -1,7 +1,0 @@
-
-@modules='''
-webit-script-moduleTest-a-1.props
-'''
-
-[engine]
-inits+= /inits/moduleTest-a-2.init.wit

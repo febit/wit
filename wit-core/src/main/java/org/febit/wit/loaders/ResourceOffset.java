@@ -1,0 +1,13 @@
+// Copyright (c) 2013-2016, febit.org. All Rights Reserved.
+package org.febit.wit.loaders;
+
+/**
+ *
+ * @author zqq90
+ */
+public interface ResourceOffset {
+
+    int getOffsetLine();
+
+    int getOffsetColumnOfFirstLine();
+}

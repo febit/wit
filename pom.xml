@@ -6,30 +6,27 @@
         <artifactId>oss-parent</artifactId>
         <version>9</version>
     </parent>
-    <groupId>com.github.zqq90.webit-script</groupId>
+    <groupId>org.febit.wit</groupId>
     <artifactId>parent</artifactId>
     <version>2</version>
     <packaging>pom</packaging>
     
-    <name>Webit Script Parent</name>
+    <name>Wit Parent</name>
     <description>A template-like script and engine, all writen with Java.</description>
-    
     <url>https://zqq90.github.com/webit-script</url>
-    
     <modules>
-        <module>webit-script</module>
-        <module>webit-script-tools</module>
-        <module>webit-script-servlet</module>
-        <module>webit-script-support</module>
+        <module>wit-core</module>
+        <module>wit-tools</module>
+        <module>wit-servlet</module>
+        <module>wit-support</module>
     </modules>
-    
     <scm>
         <url>https://zqq90.github.com/webit-script</url>
         <connection>scm:git:https://github.com/zqq90/webit-script.git</connection>
         <developerConnection>scm:git:git@github.com:zqq90/webit-script.git</developerConnection>
     </scm>
     <organization>
-        <name>Webit</name>
+        <name>Febit</name>
         <url>https://github.com/zqq90</url>
     </organization>
     <licenses>

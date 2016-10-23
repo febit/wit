@@ -1,4 +1,4 @@
-Webit Script  
+Febit Wit
 ====
 
  [![BSD License](http://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/zqq90/webit-script/blob/master/LICENSE)
@@ -17,10 +17,10 @@ Template template = engine.getTemplate("/template.wit");
 template.merge(params, out);
 ~~~~~
 
-## Hello Webit Script
+## Hello Wit
 
 ~~~~~javascript
-Hello Webit Script!
+Hello Wit!
 <%
 var books;
 {
@@ -64,7 +64,7 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
 
 ## License
  
-**Webit Script** is released under the BSD License. See the bundled [LICENSE file][license] for
+**Febit Wit** is released under the BSD License. See the bundled [LICENSE file][license] for
 details.
 
 ## Third-party Licenses

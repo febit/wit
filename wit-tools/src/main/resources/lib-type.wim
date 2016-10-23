@@ -1,0 +1,4 @@
+
+
+[global]
+registers+= org.febit.wit.tools.type.TypeGlobalRegister

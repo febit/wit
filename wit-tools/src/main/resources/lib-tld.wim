@@ -1,0 +1,9 @@
+
+# [global]
+# registers+= org.febit.wit.tools.tld.TLDGlobalRegister-profile
+
+
+# [org.febit.wit.tools.tld.TLDGlobalRegister-profile]
+# checkAccess=false
+# tld=
+# prefix=

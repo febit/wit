@@ -1,0 +1,9 @@
+
+
+@modules='''
+febit-wit-moduleTest-a-1.props
+febit-wit-moduleTest-a-2.props
+'''
+
+[engine]
+inits+= /inits/moduleTest-a.init.wit

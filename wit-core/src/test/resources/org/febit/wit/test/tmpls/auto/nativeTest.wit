@@ -1,0 +1,89 @@
+<%
+
+{
+
+    var new_integer = native new Integer(int);
+    
+    assertEquals(1, new_integer(1));
+    assertEquals(0, new_integer(0));
+
+    assertNotSame(new_integer(0), new_integer(0));
+
+}
+{
+
+    @import java.util.List;
+    @import java.util.ArrayList;
+    
+    var new_arrayList = native new ArrayList();
+    var list_add = native List.add(Object);
+
+    var list = new_arrayList();
+    assertEquals(0, list.size);
+
+    var item = "item";
+    list@list_add(item);
+
+    assertEquals(1, list.size);
+    assertSame(item, list[0]);
+
+}
+{
+    var new_int_arr = native [] int;
+    var new_int_arr_2 = native [int];
+    var new_int_arr_arr = native [] int[];
+    
+    var int_arr = new_int_arr(5);
+    var int_arr_2 = new_int_arr_2(4);
+    assertEquals(5, int_arr.size);
+    assertEquals(4, int_arr_2.size);
+
+    int_arr[3] = 3;
+    assertEquals(3, int_arr[3]);
+
+    int_arr_2[3] = 3;
+    assertEquals(3, int_arr_2[3]);
+    
+    var int_arr_arr = new_int_arr_arr(2);
+    
+    int_arr_arr[1] = int_arr;
+    assertSame(int_arr_arr[1], int_arr);
+
+
+    //
+    var new_string_arr = native [] String;
+    var new_string_arr_arr = native [] String[];
+    
+    var string_arr = new_string_arr(2);
+    string_arr[1] = "A string";
+
+}
+
+{
+    @import org.febit.wit.test.tmpls.auto.etc.StaticFields;
+
+    var f1 = native StaticFields.field1;
+
+    var f2 = native StaticFields.field2;
+
+    assertEquals("field1", f1);
+    assertEquals("field2", f2);
+
+    var new_value = "a new value";
+
+    f2 = new_value;
+    
+    var f2_2 = native StaticFields.field2;
+    
+    assertEquals(new_value, f2);
+
+    assertEquals("field2", f2_2);
+
+    //Test set value to static field
+    native StaticFields.field2 = new_value;
+    f2_2 = native StaticFields.field2;
+    assertEquals(new_value, f2_2);
+
+}
+
+%>

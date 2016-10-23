@@ -1,0 +1,32 @@
+// Copyright (c) 2013-2016, febit.org. All Rights Reserved.
+package org.febit.wit.test.tmpls;
+
+import java.lang.reflect.Field;
+import org.junit.Test;
+import org.febit.wit.Engine;
+import org.febit.wit.EngineManager;
+import org.febit.wit.Template;
+import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.io.impl.DiscardOut;
+import org.febit.wit.util.ClassUtil;
+
+/**
+ *
+ * @author zqq90
+ */
+public class LooseVarTest {
+
+    @Test
+    public void test() throws ResourceNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        Engine engine = EngineManager.getEngine();
+        Field field = Engine.class.getDeclaredField("looseVar");
+        ClassUtil.setAccessible(field);
+        try {
+            field.set(engine, true);
+            Template template = engine.getTemplate("/looseVar.wit");
+            template.merge(new DiscardOut());
+        } finally {
+            field.set(engine, false);
+        }
+    }
+}

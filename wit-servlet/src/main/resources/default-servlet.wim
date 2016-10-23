@@ -1,0 +1,31 @@
+
+[textStatement :byteArrayTextStatement]
+
+[engine]
+vars+=request,response
+
+[global]
+registers+=org.febit.wit.servlet.global.GlobalServletRegister
+
+[resolverManager]
+resolvers +='''
+    org.febit.wit.servlet.resolvers.HttpSessionResolver
+    org.febit.wit.servlet.resolvers.HttpServletRequestResolver
+    org.febit.wit.servlet.resolvers.HttpServletRequestParametersResolver
+    org.febit.wit.servlet.resolvers.HttpServletRequestAttributesResolver
+    org.febit.wit.servlet.resolvers.HttpServletRequestHeaderResolver
+    org.febit.wit.servlet.resolvers.HttpServletRequestHeadersResolver
+'''
+
+# [servlet]
+## servletContext will be setted by ServletEngineUtil
+## servletContext=
+
+[routeLoader]
+defaultLoader=servletLoader
+
+[servletLoader :org.febit.wit.servlet.loaders.ServletLoader] 
+@extends=servlet,pathLoader
+
+[org.febit.wit.servlet.global.GlobalServletRegister]
+@extends=servlet

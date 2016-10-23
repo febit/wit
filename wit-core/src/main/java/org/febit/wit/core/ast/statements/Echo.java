@@ -1,0 +1,31 @@
+// Copyright (c) 2013-2016, febit.org. All Rights Reserved.
+package org.febit.wit.core.ast.statements;
+
+import org.febit.wit.InternalContext;
+import org.febit.wit.core.ast.Expression;
+import org.febit.wit.core.ast.Statement;
+
+/**
+ *
+ * @author zqq90
+ */
+public final class Echo extends Statement {
+
+    private final Expression expr;
+
+    public Echo(Expression expr) {
+        super(expr.line, expr.column);
+        this.expr = expr;
+    }
+
+    public Echo(Expression expr, int line, int column) {
+        super(line, column);
+        this.expr = expr;
+    }
+
+    @Override
+    public Object execute(final InternalContext context) {
+        context.out(expr.execute(context));
+        return null;
+    }
+}

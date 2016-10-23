@@ -1,0 +1,3 @@
+
+[global]
+registers+= org.febit.wit.tools.testunit.AssertGlobalRegister
