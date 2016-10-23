@@ -13,7 +13,7 @@
     
     <name>Wit Parent</name>
     <description>A template-like script and engine, all writen with Java.</description>
-    <url>https://zqq90.github.com/webit-script</url>
+    <url>https://github.com/febit/wit</url>
     <modules>
         <module>wit-core</module>
         <module>wit-tools</module>
@@ -21,18 +21,18 @@
         <module>wit-support</module>
     </modules>
     <scm>
-        <url>https://zqq90.github.com/webit-script</url>
-        <connection>scm:git:https://github.com/zqq90/webit-script.git</connection>
-        <developerConnection>scm:git:git@github.com:zqq90/webit-script.git</developerConnection>
+        <url>https://github.com/febit/wit</url>
+        <connection>scm:git:https://github.com/febit/wit.git</connection>
+        <developerConnection>scm:git:https://github.com/febit/wit.git</developerConnection>
     </scm>
     <organization>
         <name>Febit</name>
-        <url>https://github.com/zqq90</url>
+        <url>https://github.com/febit</url>
     </organization>
     <licenses>
         <license>
             <name>The New BSD License</name>
-            <url>https://github.com/zqq90/webit-script/blob/master/LICENSE</url>
+            <url>https://github.com/febit/wit/blob/master/LICENSE</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -46,7 +46,7 @@
     </developers>
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/zqq90/webit-script/issues</url>
+        <url>https://github.com/febit/wit/issues</url>
     </issueManagement>
     
     <properties>

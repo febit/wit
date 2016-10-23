@@ -1,8 +1,8 @@
 Febit Wit
 ====
 
- [![BSD License](http://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/zqq90/webit-script/blob/master/LICENSE)
- [![Build Status](https://api.travis-ci.org/zqq90/webit-script.png)](https://travis-ci.org/zqq90/webit-script)
+ [![BSD License](http://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/febit/wit/blob/master/LICENSE)
+ [![Build Status](https://api.travis-ci.org/febit/wit.png)](https://travis-ci.org/febit/wit)
  [![QQ Group: 302505483](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=7be9d8a59a8533b7c2837bdc22295b4b47c65384eda323971cf5f3b9943ad9db)
 
 This is a template engine, all writen in Java, **support Java 7+**.
@@ -74,15 +74,13 @@ details.
 ## Bug report
 
 > [github-issue][new_issue_github]
-> [OSC-issue][new_issue_osc]
 
 [mvc-demo]: https://github.com/zqq90/webitscript-mvc-demo
-[tests]: https://github.com/zqq90/webit-script/tree/master/webit-script/src/test/resources/webit/script/test/tmpls
+[tests]: https://github.com/febit/wit/tree/master/wit-core/src/test/resources/org/febit/wit/test/tmpls
 
-[new_issue_github]: https://github.com/zqq90/webit-script/issues/new
-[new_issue_osc]: http://git.oschina.net/zqq90/webit-script/issues/new
+[new_issue_github]: https://github.com/febit/wit/issues/new
 
-[license]: https://github.com/zqq90/webit-script/blob/master/LICENSE
+[license]: https://github.com/febit/wit/blob/master/LICENSE
 [jodd_license]: http://jodd.org/license.html
 [asm_license]: http://asm.ow2.org/license.html
 
