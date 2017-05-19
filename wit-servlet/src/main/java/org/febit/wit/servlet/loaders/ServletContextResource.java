@@ -18,11 +18,20 @@ public class ServletContextResource implements Resource {
     private final String path;
     private final String encoding;
     private final ServletContext servletContext;
+    private final boolean codeFirst;
 
     public ServletContextResource(String path, String encoding, ServletContext servletContext) {
+        this(path, encoding, servletContext, false);
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    public ServletContextResource(String path, String encoding, ServletContext servletContext, boolean codeFirst) {
         this.path = path;
         this.encoding = encoding;
         this.servletContext = servletContext;
+        this.codeFirst = codeFirst;
     }
 
     @Override
@@ -51,5 +60,13 @@ public class ServletContextResource implements Resource {
         } catch (Exception ignore) {
         }
         return false;
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    @Override
+    public boolean isCodeFirst() {
+        return codeFirst;
     }
 }

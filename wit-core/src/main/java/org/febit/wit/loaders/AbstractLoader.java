@@ -16,6 +16,7 @@ public abstract class AbstractLoader implements Loader {
     protected String suffix;
     protected String[] assistantSuffixs;
     protected boolean enableCache = true;
+    protected boolean codeFirst;
 
     @Init
     public void init() {

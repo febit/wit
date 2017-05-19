@@ -21,6 +21,6 @@ public class ServletLoader extends AbstractLoader {
         if (filepath != null) {
             return new FileResource(filepath, encoding);
         }
-        return new ServletContextResource(path, encoding, servletContext);
+        return new ServletContextResource(path, encoding, servletContext, codeFirst);
     }
 }

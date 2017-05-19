@@ -49,4 +49,12 @@ public class LazyResource implements Resource {
     public boolean exists() {
         return this.resource.exists();
     }
+
+    /**
+     * @since 2.0.0
+     */
+    @Override
+    public boolean isCodeFirst() {
+        return this.resource.isCodeFirst();
+    }
 }

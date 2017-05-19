@@ -15,6 +15,14 @@ public interface Resource {
      * @since 1.4.1
      */
     boolean exists();
+    
+    /**
+     * if this resource is begin with code.
+     *
+     * @return boolean
+     * @since 2.0.0
+     */
+    boolean isCodeFirst();
 
     Reader openReader() throws IOException;
 }

@@ -17,10 +17,19 @@ public class ClasspathResource implements Resource {
 
     private final String path;
     private final String encoding;
+    private final boolean codeFirst;
 
     public ClasspathResource(String path, String encoding) {
+        this(path, encoding, false);
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    public ClasspathResource(String path, String encoding, boolean codeFirst) {
         this.path = path;
         this.encoding = encoding;
+        this.codeFirst = codeFirst;
     }
 
     /**
@@ -47,5 +56,13 @@ public class ClasspathResource implements Resource {
         } else {
             throw new ResourceNotFoundException("Resource Not Found: ".concat(path));
         }
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    @Override
+    public boolean isCodeFirst() {
+        return codeFirst;
     }
 }

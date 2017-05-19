@@ -8,7 +8,7 @@ package org.febit.wit.test.tmpls;
 import java.io.StringWriter;
 import org.junit.Assert;
 import org.junit.Test;
-import org.febit.wit.Engine;
+import org.febit.wit.EngineManager;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 
 /**
@@ -22,8 +22,17 @@ public class StringLoaderTest {
 
         final StringWriter writer = new StringWriter();
 
-        Engine.create("")
-                .getTemplate("string:<% echo \"Hello Wit！\"; %>")
+        EngineManager.getTemplate("string:<% echo \"Hello Wit！\"; %>")
+                .merge(writer);
+        Assert.assertEquals("Hello Wit！", writer.toString());
+    }
+
+    @Test
+    public void testCodeFirst() throws ResourceNotFoundException {
+
+        final StringWriter writer = new StringWriter();
+
+        EngineManager.getTemplate("code: echo \"Hello Wit！\";")
                 .merge(writer);
         Assert.assertEquals("Hello Wit！", writer.toString());
     }

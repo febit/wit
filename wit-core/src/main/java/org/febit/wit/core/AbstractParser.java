@@ -90,6 +90,9 @@ abstract class AbstractParser {
             //ISSUE: LexerProvider
             lexer = new Lexer(resource.openReader());
             lexer.setTrimCodeBlockBlankLine(myEngine.isTrimCodeBlockBlankLine());
+            if (resource.isCodeFirst()) {
+                lexer.codeFirst();
+            }
             if (resource instanceof ResourceOffset) {
                 lexer.setOffset((ResourceOffset) resource);
             } else {

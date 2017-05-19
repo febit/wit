@@ -103,6 +103,10 @@ import org.febit.wit.util.CharArrayWriter;
         stringBuffer.append(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
     }
 
+    void codeFirst() {
+        yybegin(YYSTATEMENT);
+    }
+
 //    private void pullToString(int startOffset, int endOffset) {
 //        stringBuffer.append(zzBuffer, zzStartRead + startOffset, zzMarkedPos - zzStartRead + endOffset);
 //    }

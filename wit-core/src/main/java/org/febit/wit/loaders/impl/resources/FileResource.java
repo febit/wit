@@ -16,11 +16,34 @@ public class FileResource implements Resource {
 
     private final File file;
     private final String encoding;
+    private final boolean codeFirst;
     private long lastModified;
 
     public FileResource(String path, String encoding) {
+        this(path, encoding, false);
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    public FileResource(File file, String encoding) {
+        this(file, encoding, false);
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    public FileResource(String path, String encoding, boolean codeFirst) {
+        this(new File(path), encoding, codeFirst);
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    public FileResource(File file, String encoding, boolean codeFirst) {
         this.encoding = encoding;
-        this.file = new File(path);
+        this.file = file;
+        this.codeFirst = codeFirst;
     }
 
     @Override
@@ -42,5 +65,13 @@ public class FileResource implements Resource {
     @Override
     public boolean exists() {
         return file.exists();
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    @Override
+    public boolean isCodeFirst() {
+        return codeFirst;
     }
 }

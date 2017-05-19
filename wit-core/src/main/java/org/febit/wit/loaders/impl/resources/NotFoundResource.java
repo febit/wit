@@ -7,7 +7,7 @@ import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.loaders.Resource;
 
 /**
- * @version 1.5.0
+ *
  * @author zqq90
  */
 public class NotFoundResource implements Resource {
@@ -33,5 +33,13 @@ public class NotFoundResource implements Resource {
     @Override
     public Reader openReader() throws IOException {
         throw new ResourceNotFoundException(message);
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    @Override
+    public boolean isCodeFirst() {
+        return false;
     }
 }

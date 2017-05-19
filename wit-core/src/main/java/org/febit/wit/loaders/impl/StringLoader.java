@@ -12,10 +12,11 @@ import org.febit.wit.loaders.impl.resources.StringResource;
 public class StringLoader implements Loader {
 
     protected boolean enableCache;
+    protected boolean codeFirst;
 
     @Override
     public Resource get(String name) {
-        return new StringResource(name);
+        return new StringResource(name, codeFirst);
     }
 
     @Override

@@ -13,6 +13,6 @@ public class FileLoader extends AbstractLoader {
 
     @Override
     public Resource get(String name) {
-        return new FileResource(getRealPath(name), encoding);
+        return new FileResource(getRealPath(name), encoding, codeFirst);
     }
 }
