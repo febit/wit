@@ -15,9 +15,9 @@ import org.febit.wit.util.ClassUtil;
  */
 public class ClasspathResource implements Resource {
 
-    private final String path;
-    private final String encoding;
-    private final boolean codeFirst;
+    protected final String path;
+    protected final String encoding;
+    protected final boolean codeFirst;
 
     public ClasspathResource(String path, String encoding) {
         this(path, encoding, false);

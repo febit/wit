@@ -14,7 +14,7 @@ public class LazyResource implements Resource {
 
     protected final int timeout;
     protected final Resource resource;
-    private long expire;
+    protected long expire;
 
     public LazyResource(Resource resource, int timeout) {
         this.timeout = timeout;

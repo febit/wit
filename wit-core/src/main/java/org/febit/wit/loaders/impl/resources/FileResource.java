@@ -14,10 +14,10 @@ import org.febit.wit.loaders.Resource;
  */
 public class FileResource implements Resource {
 
-    private final File file;
-    private final String encoding;
-    private final boolean codeFirst;
-    private long lastModified;
+    protected final File file;
+    protected final String encoding;
+    protected final boolean codeFirst;
+    protected long lastModified;
 
     public FileResource(String path, String encoding) {
         this(path, encoding, false);

@@ -15,10 +15,10 @@ import org.febit.wit.loaders.Resource;
  */
 public class ServletContextResource implements Resource {
 
-    private final String path;
-    private final String encoding;
-    private final ServletContext servletContext;
-    private final boolean codeFirst;
+    protected final String path;
+    protected final String encoding;
+    protected final ServletContext servletContext;
+    protected final boolean codeFirst;
 
     public ServletContextResource(String path, String encoding, ServletContext servletContext) {
         this(path, encoding, servletContext, false);

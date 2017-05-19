@@ -13,11 +13,11 @@ import org.febit.wit.loaders.ResourceOffset;
  */
 public class StringResource implements Resource, ResourceOffset {
 
-    private final String text;
-    private final boolean codeFirst;
+    protected final String text;
+    protected final boolean codeFirst;
 
-    private int offsetLine = 0;
-    private int offsetColumnOfFirstLine = 0;
+    protected int offsetLine = 0;
+    protected int offsetColumnOfFirstLine = 0;
 
     public StringResource(String text) {
         this(text, false);
