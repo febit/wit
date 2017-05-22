@@ -479,9 +479,6 @@ expression      ::= expression_statementable:$
                     //-- binary:  ||
                     |expression:lexpr OROR:sym expression:rexpr
                     {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
-                    //-- binary:  ?:
-                    |expression:lexpr QUESTION_COLON:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
 
                     //ifOper ? :
                     |expression:ifexpr QUESTION:sym expression:lexpr COLON expression:rexpr

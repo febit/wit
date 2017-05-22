@@ -455,7 +455,6 @@ abstract class AbstractParser {
                 oper = new NotEqual(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.OROR: // ||
-            case Tokens.QUESTION_COLON: // ?:
                 oper = new Or(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.PLUS: // +

@@ -360,7 +360,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   "~"                            { return symbol(Tokens.COMP); }
   "?"                            { return symbol(Tokens.QUESTION); }
   ":"                            { return symbol(Tokens.COLON); }
-  "?:"                           { return symbol(Tokens.QUESTION_COLON); }
+//  "?:"                           { return symbol(Tokens.QUESTION_COLON); }
   "=="                           { return symbol(Tokens.EQEQ); }
   "<="                           { return symbol(Tokens.LTEQ); }
   ">="                           { return symbol(Tokens.GTEQ); }
