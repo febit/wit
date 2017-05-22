@@ -302,20 +302,16 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   "var"                          { return symbol(Tokens.VAR); }
   /* "in"                           { return symbol(Tokens.IN); } */
   "function"                     { return symbol(Tokens.FUNCTION); }
-  "#"                            { return symbol(Tokens.FUNCTION); }
   "return"                       { return symbol(Tokens.RETURN); }
   "this"                         { return symbol(Tokens.THIS); }
-  
 
   "throw"                        { return symbol(Tokens.THROW); }
   "try"                          { return symbol(Tokens.TRY); }
   "catch"                        { return symbol(Tokens.CATCH); }
   "finally"                      { return symbol(Tokens.FINALLY); }
 
-
   "native"                       { return symbol(Tokens.NATIVE); }
   "static"                       { return symbol(Tokens.STATIC); }
-
 
   "import"                       { return symbol(Tokens.IMPORT); }
   "include"                      { return symbol(Tokens.INCLUDE); }
@@ -323,7 +319,6 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   "echo"                         { return symbol(Tokens.ECHO); }
 
   "@import"                      { return symbol(Tokens.NATIVE_IMPORT); }
-
 
   "const"                        { return symbol(Tokens.CONST); }
   
@@ -333,8 +328,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   
   /* null literal */
   "null"                         { return symbol(Tokens.DIRECT_VALUE, null); }
-  
-  
+
   /* separators */
 
   "[?"                           { return symbol(Tokens.LDEBUG); }

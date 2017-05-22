@@ -14,11 +14,11 @@
                 assertTrue(true);
                 return c;
             };
-            var func4 = #(a,b){
+            var func4 = (a,b)->{
                 assertTrue(true);
                 return c;
             };
-            var func5 = #{
+            var func5 = ()->{
                 assertTrue(true);
                 return c;
             };
