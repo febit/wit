@@ -27,6 +27,12 @@ var check3 = function(lambda){
     assertEquals(10, count);
 };
 
+assertEquals(0, (()->0)());
+assertEquals(0, (()->{ return 0; })());
+
+//XXX: Oops one, return an empty map!
+assertEquals({}, (()->{})());
+
 check(x -> x > 2 || x < 8);
 check(x -> (x > 2 || x < 8));
 check(x -> {return x > 2 || x < 8;});

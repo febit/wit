@@ -609,6 +609,8 @@ classNameList       ::=
 /* lambda */
 lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
+                        |LPAREN RPAREN MINUSGT:sym
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
                         |LPAREN IDENTIFIER:ident COMMA IDENTIFIER[COMMA]:list RPAREN MINUSGT:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%).appendArgs(%list%); :}
                         ;
