@@ -4,27 +4,33 @@ var check = function(lambda){
     var count = 0;
     for(i : 1..10){
         count++;
-        assertEquals((i > 2 || i < 8), lambda(i));
+        if((i > 2 || i < 8) != lambda(i)){
+            return false;
+        }
     }
-    assertEquals(10, count);
+    return count == 10;
 };
 
 var check2 = function(lambda){
     var count = 0;
     for(i : 1..10){
         count++;
-        assertEquals((i > 2 || i < 8), lambda(i, 2));
+        if((i > 2 || i < 8) != lambda(i, 2)){
+            return false;
+        }
     }
-    assertEquals(10, count);
+    return true;
 };
 
 var check3 = function(lambda){
     var count = 0;
     for(i : 1..10){
         count++;
-        assertEquals((i > 2 || i < 8), lambda(i, 2, 8));
+        if((i > 2 || i < 8) != lambda(i, 2, 8)){
+            return false;
+        }
     }
-    assertEquals(10, count);
+    return true;
 };
 
 assertEquals(0, (()->0)());
@@ -33,19 +39,19 @@ assertEquals(0, (()->{ return 0; })());
 //XXX: Oops one, return an empty map!
 assertEquals({}, (()->{})());
 
-check(x -> x > 2 || x < 8);
-check(x -> (x > 2 || x < 8));
-check(x -> {return x > 2 || x < 8;});
-check(x -> {var temp = x > 2; return temp || x < 8;});
+assertTrue(check(x -> x > 2 || x < 8));
+assertTrue(check(x -> (x > 2 || x < 8)));
+assertTrue(check(x -> {return x > 2 || x < 8;}));
+assertTrue(check(x -> {var temp = x > 2; return temp || x < 8;}));
 
-check2((x, y) -> x > y || x < 8);
-check2((x, y) -> (x > y || x < 8));
-check2((x, y) -> {return x > y || x < 8;});
-check2((x, y) -> {var temp = x > y; return temp || x < 8;});
+assertTrue(check2((x, y) -> x > y || x < 8));
+assertTrue(check2((x, y) -> (x > y || x < 8)));
+assertTrue(check2((x, y) -> {return x > y || x < 8;}));
+assertTrue(check2((x, y) -> {var temp = x > y; return temp || x < 8;}));
 
-check3((x, y, z) -> x > y || x < z);
-check3((x, y, z) -> (x > y || x < z));
-check3((x, y, z) -> {return x > y || x < z;});
-check3((x, y, z) -> {var temp = x > y; return temp || x < z;});
+assertTrue(check3((x, y, z) -> x > y || x < z));
+assertTrue(check3((x, y, z) -> (x > y || x < z)));
+assertTrue(check3((x, y, z) -> {return x > y || x < z;}));
+assertTrue(check3((x, y, z) -> {var temp = x > y; return temp || x < z;}));
 
 %>
