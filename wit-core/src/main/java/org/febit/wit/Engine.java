@@ -4,8 +4,10 @@ package org.febit.wit;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Level;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.core.text.TextStatementFactory;
+import org.febit.wit.exceptions.IllegalConfigException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.io.Out;
@@ -53,7 +55,7 @@ public class Engine {
     public void init() {
     }
 
-    protected void executeInits() {
+    protected void executeInits() throws ResourceNotFoundException {
         if (this.inits == null) {
             return;
         }
@@ -66,12 +68,8 @@ public class Engine {
         );
         for (String templateName : StringUtil.toArray(this.inits)) {
             this.logger.info("Merge init template: {}", templateName);
-            try {
-                this.getTemplate(templateName).merge(params, out);
-            } catch (ResourceNotFoundException ex) {
-                throw new RuntimeException(ex);
-            }
-            //Commit Global
+            this.getTemplate(templateName).merge(params, out);
+            // Commit after each init-template
             this.globalManager.commit();
         }
     }
@@ -286,7 +284,11 @@ public class Engine {
 
         final Engine engine = petite.get(Engine.class);
         engine.getLogger().info("Loaded props: {}", props.getModulesString());
-        engine.executeInits();
+        try {
+            engine.executeInits();
+        } catch (ResourceNotFoundException ex) {
+            throw new IllegalConfigException("engine.inits", ex);
+        }
         return engine;
     }
 
