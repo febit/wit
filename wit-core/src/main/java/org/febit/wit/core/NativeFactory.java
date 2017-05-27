@@ -3,15 +3,21 @@ package org.febit.wit.core;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import org.febit.wit.exceptions.AmbiguousMethodException;
 import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.method.MultiNativeMethodDeclare;
 import org.febit.wit.lang.method.NativeConstructorDeclare;
 import org.febit.wit.lang.method.NativeMethodDeclare;
 import org.febit.wit.lang.method.NativeNewArrayDeclare;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.security.NativeSecurityManager;
+import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.StringUtil;
 
 /**
@@ -55,6 +61,32 @@ public class NativeFactory {
 
     public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes) {
         return getNativeMethodDeclare(clazz, methodName, paramTypes, true);
+    }
+
+    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName) {
+        List<Method> methods = new ArrayList<>();
+        boolean isStatic = false;
+        for (Method method : clazz.getMethods()) {
+            if (!ClassUtil.isPublic(clazz)) {
+                continue;
+            }
+            if (!method.getName().equals(methodName)) {
+                continue;
+            }
+            if (methods.isEmpty()) {
+                isStatic = ClassUtil.isStatic(method);
+            } else if (isStatic != ClassUtil.isStatic(method)) {
+                throw new AmbiguousMethodException("MultiNativeMethodDeclare not support static mix with non-static: " + clazz.getName() + '#' + methodName);
+            }
+            methods.add(method);
+        }
+        if (methods.isEmpty()) {
+            throw new ScriptRuntimeException("Method not found： " + clazz.getName() + '#' + methodName);
+        }
+        if (methods.size() == 1) {
+            return getNativeMethodDeclare(methods.get(0));
+        }
+        return createMultiNativeMethodDeclare(methods.toArray(new Method[methods.size()]), isStatic);
     }
 
     public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, boolean checkAccess) {
@@ -127,8 +159,12 @@ public class NativeFactory {
         return declare;
     }
 
-    protected MethodDeclare createNativeMethodDeclare(Method method) {
+    public MethodDeclare createNativeMethodDeclare(Method method) {
         return new NativeMethodDeclare(method);
+    }
+
+    public MethodDeclare createMultiNativeMethodDeclare(Method[] methods, boolean isStatic) {
+        return new MultiNativeMethodDeclare(methods, isStatic);
     }
 
     protected MethodDeclare createNativeConstructorDeclare(Constructor constructor) {

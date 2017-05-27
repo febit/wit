@@ -30,7 +30,7 @@ public class AsmNativeFactory extends NativeFactory {
     }
 
     @Override
-    protected MethodDeclare createNativeMethodDeclare(Method method) {
+    public MethodDeclare createNativeMethodDeclare(Method method) {
         MethodDeclare accessor = createMethodDeclare(method);
         if (accessor != null) {
             return accessor;

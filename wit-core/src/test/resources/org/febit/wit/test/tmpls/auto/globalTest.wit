@@ -21,7 +21,30 @@
     MY_GLOBAL = "a new value";
     assertEquals("a new value", MY_GLOBAL);
 }
+{
+    // definded in ConstMethods
+    assertEquals("CONST_FIELD", CONST_FIELD);
+    assertEquals("CONST_METHOD", CONST_METHOD());
 
+    assertNotNull(constEmpty);
+    assertEquals("constEmpty", constEmpty());
+    assertNotNull(constVoid);
+    assertEquals(CONST_METHOD, constMethod());
+
+    assertEquals(3, constSize("wit"));
+    assertEquals(4, constSize(["hello"," ","wit","!"]));
+    assertEquals(2, constSize({"name":"wit","say":"hi!"}));
+}
+{
+    var me = new_ConstMethods2();
+    assertEquals("const2Foo", const2Foo(me));
+    assertEquals("const2MemberString", const2Member(me,""));
+    assertEquals("const2MemberObject", const2Member(me,1));
+    
+    assertEquals(3, const2Size(me,"wit"));
+    assertEquals(4, const2Size(me,["hello"," ","wit","!"]));
+    assertEquals(2, const2Size(me,{"name":"wit","say":"hi!"}));
+}
 {
     // custom definded in "/init.wit"
 

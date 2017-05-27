@@ -182,6 +182,10 @@ public class ClassUtil {
         return Modifier.isPublic(member.getModifiers());
     }
 
+    public static boolean isVoidType(Class cls) {
+        return cls == void.class || cls == Void.class;
+    }
+
     public static void setAccessible(AccessibleObject accessible) {
         if (accessible.isAccessible()) {
             return;

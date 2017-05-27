@@ -1,0 +1,274 @@
+package org.febit.wit.util;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.febit.wit.InternalContext;
+import org.febit.wit.core.NativeFactory;
+import org.febit.wit.exceptions.AmbiguousMethodException;
+import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.global.GlobalManager;
+import org.febit.wit.lang.InternalVoid;
+
+/**
+ *
+ * @author zqq90
+ */
+public class JavaNativeUtil {
+
+    private static final int COST_NEVER = -1;
+    private static final int COST_EXACT = 0;
+    private static final int COST_ASSIGNABLE = 1;
+    private static final int COST_OBJECT = 100;
+    private static final int COST_CONVERT = 1000;
+    private static final int COST_NULL = 1000000;
+
+    private static final Class<?>[] EMPTY_CLASSES = new Class<?>[0];
+
+    public static int addStaticMethods(GlobalManager manager,
+            NativeFactory nativeFactory,
+            Class type) {
+        return addStaticMethods(manager, nativeFactory, type, false);
+    }
+
+    public static int addStaticMethods(
+            GlobalManager manager,
+            NativeFactory nativeFactory,
+            Class type,
+            boolean skipConflict
+    ) {
+        int count = 0;
+        HashMap<String, List<Method>> methodMap = new HashMap<>();
+        for (Method method : type.getMethods()) {
+            if (!ClassUtil.isStatic(method)) {
+                continue;
+            }
+            String name = method.getName();
+            if (skipConflict && manager.hasConst(name)) {
+                continue;
+            }
+            List<Method> methods = methodMap.get(name);
+            if (methods == null) {
+                methods = new ArrayList<>();
+                methodMap.put(name, methods);
+            }
+            methods.add(method);
+        }
+        for (Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
+            String name = entry.getKey();
+            List<Method> methods = entry.getValue();
+            if (methods.size() == 1) {
+                manager.setConst(name, nativeFactory.getNativeMethodDeclare(methods.get(0)));
+            } else {
+                manager.setConst(name, nativeFactory.createMultiNativeMethodDeclare(
+                        methods.toArray(new Method[methods.size()]), true));
+            }
+        }
+        return count;
+    }
+
+    public static int addConstFields(
+            GlobalManager manager,
+            NativeFactory nativeFactory,
+            Class type
+    ) {
+        return addConstFields(manager, nativeFactory, type, false);
+    }
+
+    public static int addConstFields(
+            GlobalManager manager,
+            NativeFactory nativeFactory,
+            Class type,
+            boolean skipConflict
+    ) {
+        int count = 0;
+        for (Field field : type.getFields()) {
+            if (!ClassUtil.isStatic(field)
+                    || !ClassUtil.isFinal(field)) {
+                continue;
+            }
+            String name = field.getName();
+            if (skipConflict && manager.hasConst(name)) {
+                continue;
+            }
+            Object value;
+            try {
+                value = field.get(null);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            manager.setConst(name, value);
+        }
+        return count;
+    }
+
+    public static Class<?>[] getArgTypes(Object[] args) {
+        if (args == null || args.length == 0) {
+            return EMPTY_CLASSES;
+        }
+        Class<?>[] argTypes = new Class[args.length];
+        for (int i = 0; i < argTypes.length; i++) {
+            argTypes[i] = args[i] != null ? args[i].getClass() : null;
+        }
+        return argTypes;
+    }
+
+    /**
+     *
+     * @param methods
+     * @param args
+     * @return null if not found
+     */
+    public static Method getMatchMethod(Method[] methods, Object[] args) {
+        return getMatchMethod(methods, getArgTypes(args));
+    }
+
+    /**
+     *
+     * @param methods
+     * @param argTypes
+     * @return null if not found
+     */
+    public static Method getMatchMethod(Method[] methods, Class<?>[] argTypes) {
+        if (methods == null
+                || methods.length == 0) {
+            return null;
+        }
+        Method[] candidate = new Method[methods.length];
+        int candidateCount = 0;
+        int leastCost = Integer.MAX_VALUE;
+        for (Method method : methods) {
+            int cost = getAssignCost(argTypes, method.getParameterTypes());
+            if (cost < 0) {
+                continue;
+            }
+            if (cost == leastCost) {
+                candidate[candidateCount++] = method;
+            } else if (cost < leastCost) {
+                leastCost = cost;
+                candidate[0] = method;
+                candidateCount = 1;
+            }
+        }
+        if (candidateCount > 1) {
+            Method method = resolveAmbiguousMethods(argTypes, candidate, candidateCount);
+            if (method != null) {
+                return method;
+            }
+            throw new AmbiguousMethodException(
+                    Arrays.copyOf(candidate, candidateCount),
+                    argTypes);
+        }
+        return candidate[0];
+    }
+
+    /**
+     *
+     * @param argTypes
+     * @param methods length >1
+     * @param count >1
+     * @return null if can't resolve
+     */
+    protected static Method resolveAmbiguousMethods(Class<?>[] argTypes, Method[] methods, int count) {
+        if (argTypes.length == 0) {
+            return null;
+        }
+        Method candidate = methods[0];
+        Class<?>[] candidateArgs = candidate.getParameterTypes();
+        for (int i = 1; i < count; i++) {
+            Method next = methods[i];
+            Class<?>[] nextArgs = next.getParameterTypes();
+            int cost = getAssignCost(nextArgs, candidateArgs);
+            if (cost == 0) {
+                return null;
+            }
+            if (cost > 0) {
+                candidate = next;
+                candidateArgs = nextArgs;
+            } else if (getAssignCost(candidateArgs, nextArgs) <= 0) {
+                // ambiguous
+                return null;
+            }
+        }
+        return candidate;
+    }
+
+    protected static int getAssignCost(Class<?>[] froms, Class<?>[] tos) {
+        if (froms.length > tos.length) {
+            return COST_NEVER;
+        }
+        int totalCost = (tos.length - froms.length) * COST_NULL;
+        for (int i = 0; i < froms.length; i++) {
+            int cost = getAssignCost(froms[i], tos[i]);
+            if (cost < 0) {
+                return -1;
+            }
+            totalCost += cost;
+        }
+        return totalCost;
+    }
+
+    protected static int getAssignCost(Class<?> passedType, Class<?> acceptType) {
+        if (passedType == null) {
+            return COST_NULL;
+        }
+        if (passedType.equals(acceptType)) {
+            return COST_EXACT;
+        }
+        if (acceptType.isAssignableFrom(passedType)) {
+            return acceptType == Object.class ? COST_OBJECT : COST_ASSIGNABLE;
+        }
+        //TODO: support auto convert
+        return COST_NEVER;
+    }
+
+    public static final Object invokeMethod(
+            final Method method,
+            final InternalContext context,
+            final Object[] args,
+            final int acceptArgsCount,
+            final boolean isStatic,
+            final boolean isReturnVoid
+    ) {
+        final Object obj;
+        final Object[] methodArgs;
+        if (isStatic) {
+            obj = null;
+            if (args != null) {
+                int argsLen = args.length;
+                if (argsLen == acceptArgsCount) {
+                    methodArgs = args;
+                } else {
+                    //Note: Warning 参数个数不一致
+                    System.arraycopy(args, 0, methodArgs = new Object[acceptArgsCount], 0, argsLen <= acceptArgsCount ? argsLen : acceptArgsCount);
+                }
+            } else {
+                methodArgs = new Object[acceptArgsCount];
+            }
+        } else {
+            if (args != null && args.length != 0 && args[0] != null) {
+                obj = args[0];
+                int copyLen;
+                //Note: Warning 参数个数不一致
+                System.arraycopy(args, 1, methodArgs = new Object[acceptArgsCount], 0, ((copyLen = args.length - 1) <= acceptArgsCount) ? copyLen : acceptArgsCount);
+            } else {
+                throw new ScriptRuntimeException("this method need one argument at least");
+            }
+        }
+        try {
+            Object result = method.invoke(obj, methodArgs);
+            return isReturnVoid ? InternalVoid.VOID : result;
+        } catch (IllegalAccessException ex) {
+            throw new ScriptRuntimeException("this method is inaccessible: ".concat(ex.getLocalizedMessage()));
+        } catch (IllegalArgumentException ex) {
+            throw new ScriptRuntimeException("illegal argument: ".concat(ex.getLocalizedMessage()));
+        } catch (InvocationTargetException ex) {
+            throw new ScriptRuntimeException("this method throws an exception", ex.getTargetException());
+        }
+    }
+}
