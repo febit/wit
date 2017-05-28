@@ -12,8 +12,8 @@ import java.lang.reflect.Modifier;
 public final class FieldInfo implements Comparable<FieldInfo> {
 
     public final String name;
-    public final int hashCode;
     public final Class owner;
+    public final int hashOfName;
     Field field;
     Method getter;
     Method setter;
@@ -21,7 +21,7 @@ public final class FieldInfo implements Comparable<FieldInfo> {
     public FieldInfo(Class owner, String name) {
         this.owner = owner;
         this.name = name;
-        this.hashCode = name.hashCode();
+        this.hashOfName = name.hashCode();
     }
 
     public Method getGetter() {
@@ -42,12 +42,12 @@ public final class FieldInfo implements Comparable<FieldInfo> {
 
     @Override
     public int compareTo(final FieldInfo o) {
-        return (this.hashCode < o.hashCode) ? -1 : ((this.hashCode == o.hashCode) ? 0 : 1);
+        return (this.hashOfName < o.hashOfName) ? -1 : ((this.hashOfName == o.hashOfName) ? 0 : 1);
     }
 
     @Override
     public int hashCode() {
-        return hashCode;
+        return hashOfName;
     }
 
     @Override

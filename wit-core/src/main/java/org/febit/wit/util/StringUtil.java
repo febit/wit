@@ -50,7 +50,7 @@ public class StringUtil {
     }
 
     public static String[] toArray(String src) {
-        if (src == null || src.length() == 0) {
+        if (src == null || src.isEmpty()) {
             return ArrayUtil.EMPTY_STRINGS;
         }
 

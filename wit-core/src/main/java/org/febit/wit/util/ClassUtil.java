@@ -227,6 +227,7 @@ public class ClassUtil {
         try {
             accessible.setAccessible(true);
         } catch (SecurityException ignore) {
+            // ignore
         }
     }
 

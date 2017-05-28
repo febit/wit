@@ -82,13 +82,13 @@ public class AsmResolverManager extends ResolverManager {
             indexer = new int[size];
             int hashsCount = 0;
             int hash;
-            hashs[hashsCount++] = hash = all[0].hashCode;
+            hashs[hashsCount++] = hash = all[0].hashOfName;
             int i = 1;
             while (i < size) {
                 FieldInfo fieldInfo = all[i];
-                if (hash != fieldInfo.hashCode) {
+                if (hash != fieldInfo.hashOfName) {
                     indexer[hashsCount - 1] = i;
-                    hashs[hashsCount++] = hash = fieldInfo.hashCode;
+                    hashs[hashsCount++] = hash = fieldInfo.hashOfName;
                 }
                 i++;
             }

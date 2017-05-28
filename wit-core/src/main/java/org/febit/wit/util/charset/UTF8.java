@@ -45,14 +45,14 @@ public class UTF8 {
                 index -= 2;
             } else if ((b1 >> 3) == -2 && index + 2 < end) {
                 // 4 bytes, 21 bits: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-                int uc = ((b1 << 18)
+                int uc = (b1 << 18)
                         ^ (sa[index++] << 12)
                         ^ (sa[index++] << 6)
                         ^ (sa[index++]
                         ^ (((byte) 0xF0 << 18)
                         ^ ((byte) 0x80 << 12)
                         ^ ((byte) 0x80 << 6)
-                        ^ ((byte) 0x80))));
+                        ^ ((byte) 0x80)));
                 if (Character.isSupplementaryCodePoint(uc)) {
                     da[count++] = (char) ((uc >>> 10) + (Character.MIN_HIGH_SURROGATE - (Character.MIN_SUPPLEMENTARY_CODE_POINT >>> 10)));
                     da[count++] = (char) ((uc & 0x3ff) + Character.MIN_LOW_SURROGATE);
@@ -85,7 +85,7 @@ public class UTF8 {
             if (c >>> 11 != 0x1B) {
                 //if not SURROGATE: c < Character.MIN_HIGH_SURROGATE || c > Character.MAX_LOW_SURROGATE
                 // 3 bytes, 16 bits
-                da[dp++] = (byte) (0xe0 | ((c >> 12)));
+                da[dp++] = (byte) (0xe0 | (c >> 12));
                 da[dp++] = (byte) (0x80 | ((c >> 6) & 0x3f));
                 da[dp++] = (byte) (0x80 | (c & 0x3f));
                 continue;
@@ -95,7 +95,7 @@ public class UTF8 {
                 if ((d = sa[from++]) >>> 10 == 0x37) {
                     // if is LOW_SURROGATE: Character.MIN_LOW_SURROGATE <= d <= Character.MAX_LOW_SURROGATE
                     uc = Character.toCodePoint(c, d);
-                    da[dp++] = (byte) (0xf0 | ((uc >> 18)));
+                    da[dp++] = (byte) (0xf0 | (uc >> 18));
                     da[dp++] = (byte) (0x80 | ((uc >> 12) & 0x3f));
                     da[dp++] = (byte) (0x80 | ((uc >> 6) & 0x3f));
                     da[dp++] = (byte) (0x80 | (uc & 0x3f));

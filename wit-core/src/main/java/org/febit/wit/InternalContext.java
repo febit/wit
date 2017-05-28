@@ -56,7 +56,7 @@ public final class InternalContext implements Context {
      */
     public Out out;
     /**
-     * If this.out is a bytes stream
+     * If this.write is a bytes stream
      */
     public boolean isByteStream;
     /**
@@ -288,7 +288,7 @@ public final class InternalContext implements Context {
         this.out.write(chars);
     }
 
-    public void out(final Object obj) {
+    public void write(final Object obj) {
         if (obj != null) {
             final Class type;
             if ((type = obj.getClass()) == String.class) {

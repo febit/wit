@@ -25,7 +25,7 @@ public final class Echo extends Statement {
 
     @Override
     public Object execute(final InternalContext context) {
-        context.out(expr.execute(context));
+        context.write(expr.execute(context));
         return null;
     }
 }

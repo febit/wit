@@ -110,6 +110,7 @@ abstract class AbstractParser {
                 try {
                     lexer.yyclose();
                 } catch (IOException ignore) {
+                    // ignore
                 }
             }
         }
@@ -142,6 +143,7 @@ abstract class AbstractParser {
                     try {
                         cls = ClassUtil.getClass("java.lang.".concat(simpleName));
                     } catch (Exception ex) {
+                        // ignore
                     }
                 }
                 if (cls != null) {
@@ -580,7 +582,7 @@ abstract class AbstractParser {
         } else {
             int first, last;
             first = 0;
-            last = ((len - 1) >> 1);
+            last = (len - 1) >> 1;
 
             int probe_2;
             while (first <= last) {
@@ -612,21 +614,13 @@ abstract class AbstractParser {
     }
 
     private static short[][] loadData(String name) {
-        ObjectInputStream in = null;
-        try {
-            in = new ObjectInputStream(ClassUtil.getDefaultClassLoader()
-                    .getResourceAsStream(StringUtil.concat("org/febit/wit/core/Parser$", name, ".data")));
+        try (ObjectInputStream in = new ObjectInputStream(
+                ClassUtil.getDefaultClassLoader().getResourceAsStream(
+                        StringUtil.concat("org/febit/wit/core/Parser$", name, ".data"))
+        )) {
             return (short[][]) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new Error(e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ioex) {
-                    // ignore
-                }
-            }
         }
     }
 

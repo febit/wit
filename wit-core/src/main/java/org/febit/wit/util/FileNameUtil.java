@@ -209,8 +209,8 @@ public class FileNameUtil {
                     if ((posUnix == -1 && posWin == -1) || posUnix == 2 || posWin == 2) {
                         return -1;
                     }
-                    posUnix = (posUnix == -1 ? posWin : posUnix);
-                    posWin = (posWin == -1 ? posUnix : posWin);
+                    posUnix = posUnix == -1 ? posWin : posUnix;
+                    posWin = posWin == -1 ? posUnix : posWin;
                     return Math.min(posUnix, posWin) + 1;
                 }
                 return 1;

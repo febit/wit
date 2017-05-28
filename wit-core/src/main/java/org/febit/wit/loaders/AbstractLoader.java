@@ -21,7 +21,7 @@ public abstract class AbstractLoader implements Loader {
     @Init
     public void init() {
         root = FileNameUtil.normalize(root);
-        if (root != null && root.length() == 0) {
+        if (root != null && root.isEmpty()) {
             root = null;
         }
     }
@@ -43,7 +43,9 @@ public abstract class AbstractLoader implements Loader {
      */
     @Override
     public String concat(final String parent, final String name) {
-        return parent != null ? FileNameUtil.concat(FileNameUtil.getPath(parent), name) : name;
+        return parent != null
+                ? FileNameUtil.concat(FileNameUtil.getPath(parent), name)
+                : name;
     }
 
     /**
@@ -53,7 +55,9 @@ public abstract class AbstractLoader implements Loader {
      * @return
      */
     protected String getRealPath(final String name) {
-        return this.root != null ? (this.root.concat(name)) : name.substring(1, name.length());
+        return this.root != null
+                ? this.root.concat(name)
+                : name.substring(1, name.length());
     }
 
     /**
@@ -77,7 +81,7 @@ public abstract class AbstractLoader implements Loader {
         if (name == null) {
             return null;
         }
-        if (name.length() == 0) {
+        if (name.isEmpty()) {
             return "/";
         }
         if (name.charAt(0) != '/' && name.charAt(0) != '\\') {

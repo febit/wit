@@ -158,20 +158,13 @@ public final class Props {
      * Adds accumulated value to key and current section.
      */
     private void put(String section, String key, String value, boolean append) {
-
         // ignore lines without =
         if (key == null) {
             return;
         }
-
         if (section != null) {
-            if (key.length() != 0) {
-                key = section + '.' + key;
-            } else {
-                key = section;
-            }
+            key = key.isEmpty() ? section : section + '.' + key;
         }
-
         put(key, value, append);
     }
 
@@ -313,7 +306,7 @@ public final class Props {
                     case ']':
                         if (insideSection) {
                             currentSection = sb.toString().trim();
-                            if (currentSection.length() == 0) {
+                            if (currentSection.isEmpty()) {
                                 currentSection = null;
                             } else {
                                 int split = currentSection.indexOf(':');
@@ -323,7 +316,7 @@ public final class Props {
                                 if (split > 0) {
                                     String type = currentSection.substring(split + 1).trim();
                                     currentSection = currentSection.substring(0, split).trim();
-                                    if (type.length() != 0) {
+                                    if (!type.isEmpty()) {
                                         put(currentSection + ".@class", type, false);
                                     }
                                 }
@@ -396,7 +389,7 @@ public final class Props {
 
                     case ' ':
                     case '\t':
-                        if ((state == STATE_ESCAPE_NEWLINE)) {
+                        if (state == STATE_ESCAPE_NEWLINE) {
                             break;
                         }
                     default:

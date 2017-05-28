@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.loggers.impl;
 
+import java.io.PrintStream;
 import org.febit.wit.Init;
 import org.febit.wit.loggers.AbstractLogger;
 import org.febit.wit.util.StringUtil;
@@ -14,14 +15,13 @@ public final class SimpleLogger extends AbstractLogger {
     //settings
     protected String level = "info";
 
+    private PrintStream out = System.out;
     private String prefix;
     private int levelNum;
 
     @Init
     public void init() {
-
         prefix = StringUtil.concat("[", name, "] ");
-
         switch (level.trim().toLowerCase()) {
             case "error":
                 levelNum = LEVEL_ERROR;
@@ -58,9 +58,9 @@ public final class SimpleLogger extends AbstractLogger {
 
     private void printLog(int level, String msg, Throwable throwable) {
         if (isEnabled(level)) {
-            System.out.println(prefix.concat(msg != null ? msg : ""));
+            out.println(prefix.concat(msg != null ? msg : ""));
             if (throwable != null) {
-                throwable.printStackTrace(System.out);
+                throwable.printStackTrace(out);
             }
         }
     }

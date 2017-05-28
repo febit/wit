@@ -108,10 +108,8 @@ public class StatementUtil {
     }
 
     public static List<LoopInfo> collectPossibleLoopsInfo(Statement stat1, Statement stat2) {
-
         List<LoopInfo> list = StatementUtil.collectPossibleLoopsInfo(stat1);
         List<LoopInfo> list2 = StatementUtil.collectPossibleLoopsInfo(stat2);
-
         if (list == null) {
             return list2;
         }

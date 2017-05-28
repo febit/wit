@@ -256,7 +256,7 @@ public class Petite {
             return string;
         }
         if (cls == int.class) {
-            if (string == null || string.length() == 0) {
+            if (string == null || string.isEmpty()) {
                 return 0;
             }
             return Integer.valueOf(string);
@@ -317,7 +317,7 @@ public class Petite {
             if (cls == Boolean.class) {
                 return Boolean.valueOf(string);
             }
-            if (string.length() == 0) {
+            if (string.isEmpty()) {
                 return null;
             }
             if (cls == Class.class) {

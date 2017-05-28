@@ -92,32 +92,22 @@ public class PropsUtil {
             final CharArrayWriter charsBuffer = this._charsBuffer;
             final char[] buffer = this._buffer;
             final InputStream in = inputResolver.openInputStream(path);
-            Reader reader = null;
-            if (in != null) {
-                try {
-                    reader = new InputStreamReader(in, "UTF-8");
-                    charsBuffer.reset();
-                    int read;
-                    while ((read = reader.read(buffer)) >= 0) {
-                        charsBuffer.append(buffer, 0, read);
-                    }
-                    final Props tempProps = new Props();
-                    tempProps.load(charsBuffer.toArray());
-                    charsBuffer.reset();
-                    return tempProps;
-                } catch (IOException ignore) {
-                } finally {
-                    try {
-                        if (reader != null) {
-                            reader.close();
-                        } else {
-                            in.close();
-                        }
-                    } catch (IOException ignore) {
-                    }
-                }
+            if (in == null) {
+                throw new RuntimeException("Not found props: ".concat(inputResolver.getViewPath(path)));
             }
-            throw new RuntimeException("Not found props: ".concat(inputResolver.getViewPath(path)));
+            try (Reader reader = new InputStreamReader(in, "UTF-8")) {
+                charsBuffer.reset();
+                int read;
+                while ((read = reader.read(buffer)) >= 0) {
+                    charsBuffer.append(buffer, 0, read);
+                }
+                final Props tempProps = new Props();
+                tempProps.load(charsBuffer.toArray());
+                charsBuffer.reset();
+                return tempProps;
+            } catch (IOException ex) {
+                throw new RuntimeException("Not found props: ".concat(inputResolver.getViewPath(path)), ex);
+            }
         }
 
         void load(InputResolver inputResolver, final String... paths) {
