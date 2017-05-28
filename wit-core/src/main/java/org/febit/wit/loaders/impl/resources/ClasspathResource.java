@@ -19,11 +19,20 @@ public class ClasspathResource implements Resource {
     protected final String encoding;
     protected final boolean codeFirst;
 
+    /**
+     *
+     * @param path
+     * @param encoding
+     */
     public ClasspathResource(String path, String encoding) {
         this(path, encoding, false);
     }
 
     /**
+     *
+     * @param path
+     * @param encoding
+     * @param codeFirst
      * @since 2.0.0
      */
     public ClasspathResource(String path, String encoding, boolean codeFirst) {

@@ -146,7 +146,7 @@ public final class InternalContext implements Context {
     /**
      * Create a peer-context used by include/import.
      *
-     * Only share locals & out
+     * Only share locals and out
      *
      * @param template
      * @param indexers

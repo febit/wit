@@ -20,11 +20,22 @@ public class ServletContextResource implements Resource {
     protected final ServletContext servletContext;
     protected final boolean codeFirst;
 
+    /**
+     *
+     * @param path
+     * @param encoding
+     * @param servletContext
+     */
     public ServletContextResource(String path, String encoding, ServletContext servletContext) {
         this(path, encoding, servletContext, false);
     }
 
     /**
+     *
+     * @param path
+     * @param encoding
+     * @param servletContext
+     * @param codeFirst
      * @since 2.0.0
      */
     public ServletContextResource(String path, String encoding, ServletContext servletContext, boolean codeFirst) {

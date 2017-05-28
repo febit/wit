@@ -31,10 +31,10 @@ public abstract class AbstractLoader implements Loader {
      *
      * <pre>
      * example:
-     * /path/to/tmpl1.wit , tmpl2.wit => /path/to/tmpl2.wit
-     * /path/to/tmpl1.wit , /tmpl2.wit => /tmpl2.wit
-     * /path/to/tmpl1.wit , ./tmpl2.wit => /path/to/tmpl2.wit
-     * /path/to/tmpl1.wit , ../tmpl2.wit => /path/tmpl2.wit
+     * /path/to/tmpl1.wit , tmpl2.wit =&gt; /path/to/tmpl2.wit
+     * /path/to/tmpl1.wit , /tmpl2.wit =&gt; /tmpl2.wit
+     * /path/to/tmpl1.wit , ./tmpl2.wit =&gt; /path/to/tmpl2.wit
+     * /path/to/tmpl1.wit , ../tmpl2.wit =&gt; /path/tmpl2.wit
      * </pre>
      *
      * @param parent parent template's name
