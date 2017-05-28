@@ -22,7 +22,7 @@
     assertEquals(0, list.size);
 
     var item = "item";
-    list@list_add(item);
+    list_add(list,item);
 
     assertEquals(1, list.size);
     assertSame(item, list[0]);

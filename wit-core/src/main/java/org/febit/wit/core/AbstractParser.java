@@ -486,85 +486,84 @@ abstract class AbstractParser {
     private static final short[][] ACTION_TABLE = loadData("Action");
     private static final short[][] REDUCE_TABLE = loadData("Reduce");
     private static final String[] SYMBOL_STRS = new String[]{
-        "EOF", //EOF = 0
-        "ERROR", //ERROR = 1
-        "var", //VAR = 2
-        "if", //IF = 3
-        "else", //ELSE = 4
-        "for", //FOR = 5
-        "this", //THIS = 6
-        "super", //SUPER = 7
-        "switch", //SWITCH = 8
-        "case", //CASE = 9
-        "default", //DEFAULT = 10
-        "do", //DO = 11
-        "while", //WHILE = 12
-        "throw", //THROW = 13
-        "try", //TRY = 14
-        "catch", //CATCH = 15
-        "finally", //FINALLY = 16
-        "new", //NEW = 17
-        "instanceof", //INSTANCEOF = 18
-        "function", //FUNCTION = 19
-        "echo", //ECHO = 20
-        "static", //STATIC = 21
-        "native", //NATIVE = 22
-        "import", //IMPORT = 23
-        "include", //INCLUDE = 24
-        "@import", //NATIVE_IMPORT = 25
-        "break", //BREAK = 26
-        "continue", //CONTINUE = 27
-        "return", //RETURN = 28
-        "++", //PLUSPLUS = 29
-        "--", //MINUSMINUS = 30
-        "+", //PLUS = 31
-        "-", //MINUS = 32
-        "*", //MULT = 33
-        "/", //DIV = 34
-        "%", //MOD = 35
-        "<<", //LSHIFT = 36
-        ">>", //RSHIFT = 37
-        ">>>", //URSHIFT = 38
-        "<", //LT = 39
-        ">", //GT = 40
-        "<=", //LTEQ = 41
-        ">=", //GTEQ = 42
-        "==", //EQEQ = 43
-        "!=", //NOTEQ = 44
-        "&", //AND = 45
-        "^", //XOR = 46
-        "|", //OR = 47
-        "~", //COMP = 48
-        "&&", //ANDAND = 49
-        "||", //OROR = 50
-        "!", //NOT = 51
-        "?", //QUESTION = 52
-        "?:", //QUESTION_COLON = 53
-        "*=", //SELFEQ = 54
-        "-", //UMINUS = 55
-        ".", //DOT = 56
-        ":", //COLON = 57
-        ",", //COMMA = 58
-        ";", //SEMICOLON = 59
-        "{", //LBRACE = 60
-        "}", //RBRACE = 61
-        "}", //INTERPOLATION_END = 62
-        "(", //LPAREN = 63
-        ")", //RPAREN = 64
-        "[", //LBRACK = 65
-        "]", //RBRACK = 66
-        "[?", //LDEBUG = 67
-        "?]", //RDEBUG = 68
-        "[?]", //LRDEBUG = 69
-        "=>", //EQGT = 70
-        "->", //MINUSGT = 71
-        "@", //AT = 72
-        "..", //DOTDOT = 73
-        "=", //EQ = 74
-        "IDENTIFIER", //IDENTIFIER = 75
-        "TEXT", //TEXT_STATEMENT = 76
-        "DIRECT_VALUE", // DIRECT_VALUE= 77
-        "const", //CONST = 78
+        "EOF", //EOF
+        "ERROR", //ERROR
+        "var", //VAR
+        "if", //IF
+        "else", //ELSE
+        "for", //FOR
+        "this", //THIS
+        "super", //SUPER
+        "switch", //SWITCH
+        "case", //CASE
+        "default", //DEFAULT
+        "do", //DO
+        "while", //WHILE
+        "throw", //THROW
+        "try", //TRY
+        "catch", //CATCH
+        "finally", //FINALLY
+        "new", //NEW
+        "instanceof", //INSTANCEOF
+        "function", //FUNCTION
+        "echo", //ECHO
+        "static", //STATIC
+        "native", //NATIVE
+        "import", //IMPORT
+        "include", //INCLUDE
+        "@import", //NATIVE_IMPORT
+        "break", //BREAK
+        "continue", //CONTINUE
+        "return", //RETURN
+        "++", //PLUSPLUS
+        "--", //MINUSMINUS
+        "+", //PLUS
+        "-", //MINUS
+        "*", //MULT
+        "/", //DIV
+        "%", //MOD
+        "<<", //LSHIFT
+        ">>", //RSHIFT
+        ">>>", //URSHIFT
+        "<", //LT
+        ">", //GT
+        "<=", //LTEQ
+        ">=", //GTEQ
+        "==", //EQEQ
+        "!=", //NOTEQ
+        "&", //AND
+        "^", //XOR
+        "|", //OR
+        "~", //COMP
+        "&&", //ANDAND
+        "||", //OROR
+        "!", //NOT
+        "?", //QUESTION
+        "*=", //SELFEQ
+        "-", //UMINUS
+        ".", //DOT
+        ":", //COLON
+        ",", //COMMA
+        ";", //SEMICOLON
+        "{", //LBRACE
+        "}", //RBRACE
+        "}", //INTERPOLATION_END
+        "(", //LPAREN
+        ")", //RPAREN
+        "[", //LBRACK
+        "]", //RBRACK
+        "[?", //LDEBUG
+        "?]", //RDEBUG
+        "[?]", //LRDEBUG
+        "=>", //EQGT
+        "->", //MINUSGT
+        ".~", //DYNAMIC_DOT
+        "..", //DOTDOT
+        "=", //EQ
+        "IDENTIFIER", //IDENTIFIER
+        "TEXT", //TEXT_STATEMENT
+        "DIRECT_VALUE", // DIRECT_VALUE
+        "const", //CONST
         "UNKNOWN"
     };
 

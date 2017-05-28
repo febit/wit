@@ -2,15 +2,14 @@
 
 {
     var list = new_list();
-    list@list_add("a");
-    list@list_add("b");
-
+    list_add(list,"a");
+    list_add(list,"b");
 
     assertEquals("b",list[1]);
-    assertEquals(2,list@list_size());
+    assertEquals(2,list_size(list));
 }
 {
-    assertEquals("bcd","abcde"@substring(1,4));
+    assertEquals("bcd",substring("abcde",1,4));
 }
 
 %>

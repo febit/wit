@@ -34,7 +34,6 @@ echo '\n';
 } => out;
 
 var map={1:1,2:2};
-map@map_put(3,3);
 map_put(map,3,3);
 
 echo "\n===> map\n";
@@ -46,13 +45,13 @@ for(k,v : map){
 }
 echo "\n===<\n";
 
-map@map_put(4);
-map@map_put(5,"sdasd\
+map.~put(4);
+map.~put(5,"sdasd\
 dsdasd\
 \tasdasdas\n\
 ");
-map@map_put(6,null);
-map@map_put(null,null);
+map.~put(6,null);
+map.~put(null,null);
 %>${map}|${now()}|FUNC:${func("aaaaa")=>out2}|OUT:${out}|OUT2:${out2}<%
 
 }%>
