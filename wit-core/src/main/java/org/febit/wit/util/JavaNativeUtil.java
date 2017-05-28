@@ -235,30 +235,51 @@ public class JavaNativeUtil {
             final boolean isStatic,
             final boolean isReturnVoid
     ) {
-        final Object obj;
-        final Object[] methodArgs;
         if (isStatic) {
-            obj = null;
-            if (args != null) {
-                int argsLen = args.length;
-                if (argsLen == acceptArgsCount) {
-                    methodArgs = args;
-                } else {
-                    //Note: Warning 参数个数不一致
-                    System.arraycopy(args, 0, methodArgs = new Object[acceptArgsCount], 0, argsLen <= acceptArgsCount ? argsLen : acceptArgsCount);
-                }
+            return invokeMethod(method, context, null, args, acceptArgsCount, isReturnVoid);
+        }
+        if ((args == null || args.length == 0) || args[0] == null) {
+            throw new ScriptRuntimeException("this method need one argument at least");
+        }
+        final Object[] methodArgs = new Object[acceptArgsCount];
+        int copyLen;
+        //Note: Warning 参数个数不一致
+        System.arraycopy(args, 1, methodArgs, 0, ((copyLen = args.length - 1) <= acceptArgsCount) ? copyLen : acceptArgsCount);
+        return invokeMethod(method, context, args[0], methodArgs, acceptArgsCount, isReturnVoid);
+    }
+
+    public static final Object invokeMethod(
+            final Method method,
+            final InternalContext context,
+            final Object me,
+            final Object[] args
+    ) {
+        return invokeMethod(method, context, me, args,
+                method.getParameterTypes().length,
+                ClassUtil.isVoidType(method.getReturnType()));
+    }
+
+    public static final Object invokeMethod(
+            final Method method,
+            final InternalContext context,
+            final Object me,
+            final Object[] args,
+            final int acceptArgsCount,
+            final boolean isReturnVoid
+    ) {
+        final Object obj = me;
+        final Object[] methodArgs;
+        if (args != null) {
+            int argsLen = args.length;
+            if (argsLen == acceptArgsCount) {
+                methodArgs = args;
             } else {
+                //Note: Warning 参数个数不一致
                 methodArgs = new Object[acceptArgsCount];
+                System.arraycopy(args, 0, methodArgs, 0, argsLen <= acceptArgsCount ? argsLen : acceptArgsCount);
             }
         } else {
-            if (args != null && args.length != 0 && args[0] != null) {
-                obj = args[0];
-                int copyLen;
-                //Note: Warning 参数个数不一致
-                System.arraycopy(args, 1, methodArgs = new Object[acceptArgsCount], 0, ((copyLen = args.length - 1) <= acceptArgsCount) ? copyLen : acceptArgsCount);
-            } else {
-                throw new ScriptRuntimeException("this method need one argument at least");
-            }
+            methodArgs = new Object[acceptArgsCount];
         }
         try {
             Object result = method.invoke(obj, methodArgs);

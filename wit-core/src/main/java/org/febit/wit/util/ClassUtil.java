@@ -4,6 +4,7 @@ package org.febit.wit.util;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +59,21 @@ public class ClassUtil {
             }
         }
         return fields;
+    }
+
+    public static Method[] getPublicMemberMethods(Class type, String name) {
+        Method[] allMethods = type.getMethods();
+        Method[] result = new Method[allMethods.length];
+        int count = 0;
+        for (Method method : allMethods) {
+            if (!isPublic(method)
+                    || isStatic(method)
+                    || !method.getName().equals(name)) {
+                continue;
+            }
+            result[count++] = method;
+        }
+        return Arrays.copyOf(result, count);
     }
 
     public static ClassLoader getDefaultClassLoader() {

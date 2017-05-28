@@ -326,6 +326,12 @@ abstract class AbstractParser {
         return new MethodExecute(funcExpr, paramExprs, line, column);
     }
 
+    static Expression createDynamicNativeMethodExecute(Expression thisExpr, String func, Expression[] paramExprs, int line, int column) {
+        StatementUtil.optimize(paramExprs);
+        thisExpr = StatementUtil.optimize(thisExpr);
+        return new DynamicNativeMethodExecute(thisExpr, func, paramExprs, line, column);
+    }
+
     TemplateAST createTemplateAST(List<Statement> list) {
         Statement[] statements = StatementUtil.toStatementInvertArray(list);
         List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(statements);

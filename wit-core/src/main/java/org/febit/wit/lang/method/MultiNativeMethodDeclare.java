@@ -41,7 +41,7 @@ public class MultiNativeMethodDeclare implements MethodDeclare {
         return JavaNativeUtil.invokeMethod(method,
                 context,
                 args,
-                method.getParameterCount(),
+                method.getParameterTypes().length,
                 isStatic,
                 ClassUtil.isVoidType(method.getReturnType()));
 

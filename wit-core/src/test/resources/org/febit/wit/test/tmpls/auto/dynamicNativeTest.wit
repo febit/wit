@@ -1,0 +1,27 @@
+<%
+
+const a = 1;
+const b = "bbb";
+{
+    assertEquals("123".~length(), 3);
+    assertEquals("123".~substring(1,2), "2");
+}
+{
+
+    const map = {
+        "1": a,
+        "2": b
+    };
+
+    assertEquals(map["1"], a);
+    assertEquals(map["2"], b);
+
+    map.~put("2", a);
+    map.~put("3", b);
+    assertEquals(map["2"], a);
+    assertEquals(map["3"], b);
+    assertEquals(map.~size(), 3);
+
+}
+
+%>

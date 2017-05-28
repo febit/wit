@@ -48,7 +48,7 @@ terminal Integer    VAR,
                     LDEBUG, RDEBUG, LRDEBUG,  // [? ?] [?]
                     EQGT,  // =>
                     MINUSGT, // ->
-                    AT,  // @
+                    AT, DYNAMIC_DOT, // @ .~
                     DOTDOT,  // ..
                     EQ   // =
                     ;
@@ -115,7 +115,7 @@ precedence left     PLUS, MINUS; // + -
 precedence left     MULT, DIV, MOD; // * / %
 precedence right    PLUSPLUS, MINUSMINUS, UMINUS, NOT, COMP; // ++ -- - ! ~
 precedence left     EQGT;  // => 
-precedence left     DOT, LBRACK, LPAREN, LBRACE, AT; // . [ ( { @
+precedence left     DOT, LBRACK, LPAREN, LBRACE, AT, DYNAMIC_DOT; // . [ ( { @
 
 
 
@@ -591,6 +591,8 @@ funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list RPAREN
                         {: return createMethodExecute(%funcExpr%, (%list%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
                         |expression:param0 AT contextValueExpr:funcExpr LPAREN expressionList:list RPAREN
                         {: return createMethodExecute(%funcExpr%, (%list%).addFirst(%param0%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
+                        |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expressionList:list RPAREN
+                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, (%list%).toArray(), %ident.line%, %ident.column%); :}
                         ;
 
 

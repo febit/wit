@@ -387,6 +387,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   ">>>="                         { return symbol(Tokens.SELFEQ, AbstractParser.OP_URSHIFTEQ); }
 
   "@"                            { return symbol(Tokens.AT); }
+  ".~"                           { return symbol(Tokens.DYNAMIC_DOT); }
   "=>"                           { return symbol(Tokens.EQGT); }
   "->"                           { return symbol(Tokens.MINUSGT); }
 
