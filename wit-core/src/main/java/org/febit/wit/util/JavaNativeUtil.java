@@ -26,10 +26,13 @@ public class JavaNativeUtil {
     private static final int COST_ASSIGNABLE = 1;
     private static final int COST_OBJECT = 100;
     private static final int COST_PRIMITIVE = 10;
-    private static final int COST_CONVERT = 1000;
+    // XXX COST_CONVERT = 1000
     private static final int COST_NULL = 1000000;
 
     private static final Class<?>[] EMPTY_CLASSES = new Class<?>[0];
+
+    private JavaNativeUtil() {
+    }
 
     public static int addStaticMethods(GlobalManager manager,
             NativeFactory nativeFactory,

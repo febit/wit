@@ -4,10 +4,6 @@ package org.febit.wit.asm;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import org.febit.wit_shaded.asm.ClassWriter;
-import org.febit.wit_shaded.asm.Constants;
-import org.febit.wit_shaded.asm.Label;
-import org.febit.wit_shaded.asm.MethodWriter;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.ResolverManager;
 import org.febit.wit.resolvers.SetResolver;
@@ -16,6 +12,10 @@ import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.StringUtil;
 import org.febit.wit.util.bean.FieldInfo;
 import org.febit.wit.util.bean.FieldInfoResolver;
+import org.febit.wit_shaded.asm.ClassWriter;
+import org.febit.wit_shaded.asm.Constants;
+import org.febit.wit_shaded.asm.Label;
+import org.febit.wit_shaded.asm.MethodWriter;
 
 /**
  *

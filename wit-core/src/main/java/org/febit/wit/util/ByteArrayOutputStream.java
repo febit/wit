@@ -76,10 +76,12 @@ public final class ByteArrayOutputStream extends OutputStream {
 
     @Override
     public void close() {
+        // Do nothing
     }
 
     @Override
     public void flush() {
+        // Do nothing
     }
 
     public int size() {

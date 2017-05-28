@@ -28,26 +28,32 @@ public class DiscardOut implements Out {
 
     @Override
     public void write(byte[] bytes, int offset, int length) {
+        // Do nothing
     }
 
     @Override
     public void write(byte[] bytes) {
+        // Do nothing
     }
 
     @Override
     public void write(char[] chars, int offset, int length) {
+        // Do nothing
     }
 
     @Override
     public void write(char[] chars) {
+        // Do nothing
     }
 
     @Override
     public void write(String string, int offset, int length) {
+        // Do nothing
     }
 
     @Override
     public void write(String string) {
+        // Do nothing
     }
 
     @Override

@@ -67,10 +67,8 @@ public class NativeFactory {
         List<Method> methods = new ArrayList<>();
         boolean isStatic = false;
         for (Method method : clazz.getMethods()) {
-            if (!ClassUtil.isPublic(clazz)) {
-                continue;
-            }
-            if (!method.getName().equals(methodName)) {
+            if (!ClassUtil.isPublic(clazz)
+                    || !method.getName().equals(methodName)) {
                 continue;
             }
             if (methods.isEmpty()) {

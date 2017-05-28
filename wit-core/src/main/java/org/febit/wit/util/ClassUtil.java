@@ -113,35 +113,27 @@ public class ClassUtil {
     }
 
     private static char getAliasOfBaseType(final String name) {
-        //fast check if under root package and start with lower(except 'a')
-        if (name.charAt(0) > 'a' && name.indexOf('.', 1) < 0) {
-            if ("int".equals(name)) {
+        switch (name) {
+            case "int":
                 return 'I';
-            }
-            if ("long".equals(name)) {
+            case "long":
                 return 'J';
-            }
-            if ("short".equals(name)) {
+            case "short":
                 return 'S';
-            }
-            if ("boolean".equals(name)) {
+            case "boolean":
                 return 'Z';
-            }
-            if ("char".equals(name)) {
+            case "char":
                 return 'C';
-            }
-            if ("double".equals(name)) {
+            case "double":
                 return 'D';
-            }
-            if ("float".equals(name)) {
+            case "float":
                 return 'F';
-            }
-            if ("byte".equals(name)) {
+            case "byte":
                 return 'B';
-            }
-            if ("void".equals(name)) {
+            case "void":
                 return 'V';
-            }
+            default:
+                break;
         }
         return '\0';
     }
@@ -168,37 +160,31 @@ public class ClassUtil {
     }
 
     public static Class getPrimitiveClass(final String name) {
-        if (name != null && name.length() != 0 && name.charAt(0) > 'a' && name.indexOf('.', 1) < 0) {
-
-            if (name.equals("int")) {
-                return int.class;
-            }
-            if (name.equals("long")) {
-                return long.class;
-            }
-            if (name.equals("short")) {
-                return short.class;
-            }
-            if (name.equals("boolean")) {
-                return boolean.class;
-            }
-            if (name.equals("char")) {
-                return char.class;
-            }
-            if (name.equals("double")) {
-                return double.class;
-            }
-            if (name.equals("float")) {
-                return float.class;
-            }
-            if (name.equals("byte")) {
-                return byte.class;
-            }
-            if (name.equals("void")) {
-                return void.class;
-            }
+        if (name == null) {
+            return null;
         }
-        return null;
+        switch (name) {
+            case "int":
+                return int.class;
+            case "long":
+                return long.class;
+            case "short":
+                return short.class;
+            case "boolean":
+                return boolean.class;
+            case "char":
+                return char.class;
+            case "double":
+                return double.class;
+            case "float":
+                return float.class;
+            case "byte":
+                return byte.class;
+            case "void":
+                return void.class;
+            default:
+                return null;
+        }
     }
 
     public static Class getClass(final String name) {

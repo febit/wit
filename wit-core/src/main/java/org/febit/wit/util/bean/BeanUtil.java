@@ -18,6 +18,9 @@ public class BeanUtil {
 
     private static final ClassMap<Map<String, Accessor>> CACHE = new ClassMap<>();
 
+    private BeanUtil() {
+    }
+
     public static Object get(final Object bean, final String name) throws BeanException {
         Getter getter;
         if ((getter = getAccessor(bean.getClass(), name).getter) != null) {
@@ -56,11 +59,11 @@ public class BeanUtil {
 
             map.put(fieldInfo.name, new Accessor(
                     fieldInfo.getGetter() != null ? new MethodGetter(fieldInfo.getGetter())
-                            : fieldInfo.getField() != null ? new FieldGetter(fieldInfo.getField())
-                                    : null,
+                    : fieldInfo.getField() != null ? new FieldGetter(fieldInfo.getField())
+                    : null,
                     fieldInfo.getSetter() != null ? new MethodSetter(fieldInfo.getSetter())
-                            : fieldInfo.isFieldSettable() ? new FieldSetter(fieldInfo.getField())
-                                    : null));
+                    : fieldInfo.isFieldSettable() ? new FieldSetter(fieldInfo.getField())
+                    : null));
         }
         return map;
     }

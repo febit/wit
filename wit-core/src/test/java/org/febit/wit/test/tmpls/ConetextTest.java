@@ -3,13 +3,13 @@ package org.febit.wit.test.tmpls;
 
 import java.util.HashMap;
 import java.util.Map;
-import static org.junit.Assert.*;
-import org.junit.Test;
 import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.io.impl.DiscardOut;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *

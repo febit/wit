@@ -2,12 +2,12 @@
 package org.febit.wit.test.tmpls;
 
 import java.io.IOException;
-import static org.junit.Assert.*;
-import org.junit.Test;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *

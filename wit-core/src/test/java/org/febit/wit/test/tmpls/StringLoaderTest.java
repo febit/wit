@@ -6,10 +6,10 @@
 package org.febit.wit.test.tmpls;
 
 import java.io.StringWriter;
-import org.junit.Assert;
-import org.junit.Test;
 import org.febit.wit.EngineManager;
 import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *

@@ -3,6 +3,9 @@ package org.febit.wit.util.charset;
 
 public class UTF8 {
 
+    private UTF8() {
+    }
+
     public static final int MAX_BYTES_PER_CHAR = 3;
 
     public static int decode(final byte[] sa, int index, int len, final char[] da) {

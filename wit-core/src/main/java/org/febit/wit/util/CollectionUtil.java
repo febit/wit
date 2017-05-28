@@ -8,14 +8,17 @@ import java.util.Map;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.Iter;
-import org.febit.wit.lang.iter.*;
 import org.febit.wit.lang.KeyIter;
+import org.febit.wit.lang.iter.*;
 
 /**
  *
  * @author zqq90
  */
 public class CollectionUtil {
+
+    private CollectionUtil() {
+    }
 
     public static int getSize(final Object object) {
         if (object == null) {

@@ -26,6 +26,9 @@ public class StatementUtil {
 
     private static final Statement[] EMPTY_STATEMENTS = new Statement[0];
 
+    private StatementUtil() {
+    }
+
     public static Object calcConst(Expression expr, boolean force) {
         expr = StatementUtil.optimize(expr);
         if (expr instanceof Constable) {

@@ -18,6 +18,9 @@ public class PropsUtil {
 
     public static final ClasspathInputResolver CLASSPATH_INPUT_RESOLVER = new ClasspathInputResolver();
 
+    private PropsUtil() {
+    }
+
     public static Props loadFromClasspath(final Props props, final String... pathSets) {
         return load(props, CLASSPATH_INPUT_RESOLVER, pathSets);
     }

@@ -4,13 +4,13 @@ package org.febit.wit.asm;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import org.febit.wit.core.NativeFactory;
+import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.util.ClassUtil;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
 import org.febit.wit_shaded.asm.Label;
 import org.febit.wit_shaded.asm.MethodWriter;
-import org.febit.wit.core.NativeFactory;
-import org.febit.wit.lang.MethodDeclare;
-import org.febit.wit.util.ClassUtil;
 
 /**
  *

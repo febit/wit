@@ -1,11 +1,8 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.lang.method;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.febit.wit.InternalContext;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.InternalVoid;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.JavaNativeUtil;

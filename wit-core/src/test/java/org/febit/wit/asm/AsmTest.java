@@ -2,12 +2,12 @@ package org.febit.wit.asm;
 
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 import java.lang.reflect.InvocationTargetException;
-import static org.junit.Assert.*;
-import org.junit.Test;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
 import org.febit.wit_shaded.asm.Label;
 import org.febit.wit_shaded.asm.MethodWriter;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *

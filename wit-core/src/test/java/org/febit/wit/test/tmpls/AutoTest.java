@@ -8,8 +8,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
-import static org.junit.Assert.*;
-import org.junit.Test;
 import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
@@ -22,6 +20,8 @@ import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.tools.testunit.AssertGlobalRegister;
 import org.febit.wit.util.ByteArrayOutputStream;
 import org.febit.wit.util.ClassUtil;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *

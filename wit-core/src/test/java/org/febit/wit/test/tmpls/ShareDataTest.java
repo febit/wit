@@ -2,7 +2,6 @@
 package org.febit.wit.test.tmpls;
 
 import java.lang.reflect.Field;
-import org.junit.Test;
 import org.febit.wit.Engine;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
@@ -10,6 +9,7 @@ import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.KeyValuesUtil;
+import org.junit.Test;
 
 /**
  *

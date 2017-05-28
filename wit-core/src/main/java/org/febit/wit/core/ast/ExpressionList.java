@@ -9,23 +9,23 @@ import java.util.LinkedList;
  */
 public final class ExpressionList {
 
-    private final LinkedList<Expression> expressionList;
+    private final LinkedList<Expression> exprList;
 
     public ExpressionList() {
-        this.expressionList = new LinkedList<>();
+        this.exprList = new LinkedList<>();
     }
 
     public ExpressionList add(Expression expr) {
-        expressionList.add(expr);
+        exprList.add(expr);
         return this;
     }
 
     public ExpressionList addFirst(Expression expr) {
-        expressionList.addFirst(expr);
+        exprList.addFirst(expr);
         return this;
     }
 
     public Expression[] toArray() {
-        return expressionList.toArray(new Expression[expressionList.size()]);
+        return exprList.toArray(new Expression[exprList.size()]);
     }
 }

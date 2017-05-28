@@ -10,6 +10,9 @@ import java.util.List;
  */
 public class StringUtil {
 
+    private StringUtil() {
+    }
+
     public static String concat(String s1, String s2, String s3) {
         return new StringBuilder(s1.length() + s2.length() + s3.length())
                 .append(s1)
@@ -57,8 +60,8 @@ public class StringUtil {
         // list max size = (size + 1) / 2
         List<String> list = new ArrayList<>(
                 len > 1024 ? 128
-                : len > 64 ? 32
-                : (len + 1) >> 1);
+                        : len > 64 ? 32
+                                : (len + 1) >> 1);
 
         int i = 0;
         while (i < len) {
@@ -135,8 +138,8 @@ public class StringUtil {
             int escapeCharcount = ndx - 1 - j;
             result.append(template.substring(i,
                     escapeCharcount > 0
-                    ? ndx - ((escapeCharcount + 1) >> 1)
-                    : ndx));
+                            ? ndx - ((escapeCharcount + 1) >> 1)
+                            : ndx));
             if ((escapeCharcount & 1) == 1) {
                 result.append('{');
                 i = ndx + 1;

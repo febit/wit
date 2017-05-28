@@ -3,10 +3,10 @@ package org.febit.wit.asm;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import org.febit.wit.util.ClassUtil;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
 import org.febit.wit_shaded.asm.MethodWriter;
-import org.febit.wit.util.ClassUtil;
 
 /**
  *
@@ -16,6 +16,9 @@ class ASMUtil {
 
     private static int sn;
     private static final AsmClassLoader CLASS_LOADER = new AsmClassLoader();
+
+    private ASMUtil() {
+    }
 
     static synchronized String getSn() {
         return Integer.toString(sn++);

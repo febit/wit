@@ -7,6 +7,7 @@ package org.febit.wit.exceptions;
 public class IllegalConfigException extends RuntimeException {
 
     public IllegalConfigException() {
+        // Do nothing
     }
 
     public IllegalConfigException(String message) {

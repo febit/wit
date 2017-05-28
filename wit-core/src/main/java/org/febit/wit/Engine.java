@@ -4,7 +4,6 @@ package org.febit.wit;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Level;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.core.text.TextStatementFactory;
 import org.febit.wit.exceptions.IllegalConfigException;
@@ -53,6 +52,7 @@ public class Engine {
 
     @Init
     public void init() {
+        // Do nothing
     }
 
     protected void executeInits() throws ResourceNotFoundException {

@@ -10,6 +10,9 @@ public class FileNameUtil {
     private static final char UNIX_SEPARATOR = '/';
     private static final char WINDOWS_SEPARATOR = '\\';
 
+    private FileNameUtil() {
+    }
+
     private static boolean isSeparator(char ch) {
         return (ch == UNIX_SEPARATOR) || (ch == WINDOWS_SEPARATOR);
     }
@@ -136,8 +139,8 @@ public class FileNameUtil {
      * <p>
      * This method will handle a file in either Unix or Windows format.
      * <p>
-     * The prefix length includes the first slash in the full filename if applicable. Thus, it is
-     * possible that the length returned is greater than the length of the input string.
+     * The prefix length includes the first slash in the full filename if applicable. Thus, it is possible that the
+     * length returned is greater than the length of the input string.
      * <pre>
      * Windows:
      * a\b\c.txt           --> ""          --> relative
@@ -155,8 +158,8 @@ public class FileNameUtil {
      * ~user               --> "~user/"    --> named user (slash added)
      * </pre>
      * <p>
-     * The output will be the same irrespective of the machine that the code is running on. ie. both
-     * Unix and Windows prefixes are matched regardless.
+     * The output will be the same irrespective of the machine that the code is running on. ie. both Unix and Windows
+     * prefixes are matched regardless.
      *
      * @param filename the filename to find the prefix in, null returns -1
      * @return the length of the prefix, -1 if invalid or null

@@ -13,10 +13,12 @@ public class CharArrayTextStatementFactory implements TextStatementFactory {
 
     @Override
     public void startTemplateParser(Template template) {
+        // Do nothing
     }
 
     @Override
     public void finishTemplateParser(Template template) {
+        // Do nothing
     }
 
     @Override

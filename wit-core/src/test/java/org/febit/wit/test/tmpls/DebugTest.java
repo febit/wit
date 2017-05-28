@@ -4,8 +4,6 @@ package org.febit.wit.test.tmpls;
 
 import java.util.HashSet;
 import java.util.Set;
-import static org.junit.Assert.*;
-import org.junit.Test;
 import org.febit.wit.EngineManager;
 import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
@@ -14,6 +12,8 @@ import org.febit.wit.debug.BreakPointListener;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.util.KeyValuesUtil;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *

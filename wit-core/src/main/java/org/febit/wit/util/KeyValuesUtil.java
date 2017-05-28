@@ -15,8 +15,12 @@ public class KeyValuesUtil {
 
         @Override
         public void exportTo(KeyValueAccepter accepter) {
+            // Do nothing
         }
     };
+
+    private KeyValuesUtil() {
+    }
 
     public static KeyValues wrap(final KeyValues v1, final KeyValues v2) {
         return new TwoKeyValues(v1, v2);

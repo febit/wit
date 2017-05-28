@@ -1,9 +1,9 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.security;
 
+import org.febit.wit.security.impl.DefaultNativeSecurityManager;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.febit.wit.security.impl.DefaultNativeSecurityManager;
 
 /**
  *
