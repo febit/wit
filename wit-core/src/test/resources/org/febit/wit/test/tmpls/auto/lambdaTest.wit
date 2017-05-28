@@ -36,13 +36,15 @@ var check3 = function(lambda){
 assertEquals(0, (()->0)());
 assertEquals(0, (()->{ return 0; })());
 
-//XXX: Oops one, return an empty map!
+//XXX: Oops, return an empty map!
 assertEquals({}, (()->{})());
 
 assertTrue(check(x -> x > 2 || x < 8));
 assertTrue(check(x -> (x > 2 || x < 8)));
 assertTrue(check(x -> {return x > 2 || x < 8;}));
 assertTrue(check(x -> {var temp = x > 2; return temp || x < 8;}));
+
+assertTrue(check((x) -> x > 2 || x < 8));
 
 assertTrue(check2((x, y) -> x > y || x < 8));
 assertTrue(check2((x, y) -> (x > y || x < 8)));

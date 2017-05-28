@@ -100,7 +100,7 @@ nonterminal FunctionDeclarePart lambdaForHead1, lambdaForMapHead1;
 /* precedence */
 precedence left     SEMICOLON; // ;
 precedence left     LDEBUG; // [?
-precedence right    SELFEQ, EQ, MINUSGT; // (+ - * / %)=  (<< >> >>>)=  (& ^ |)=  = ->
+precedence right    SELFEQ, EQ; // (+ - * / %)=  (<< >> >>>)=  (& ^ |)=  =
 precedence left     DOTDOT;  // ..
 precedence right    QUESTION, QUESTION_COLON; // ?:
 precedence left     OROR; // ||
@@ -115,7 +115,8 @@ precedence left     PLUS, MINUS; // + -
 precedence left     MULT, DIV, MOD; // * / %
 precedence right    PLUSPLUS, MINUSMINUS, UMINUS, NOT, COMP; // ++ -- - ! ~
 precedence left     EQGT;  // => 
-precedence left     DOT, LBRACK, LPAREN, LBRACE, AT, DYNAMIC_DOT; // . [ ( { @
+precedence right    MINUSGT; // ->
+precedence left     DOT, LBRACK, LPAREN, RPAREN, LBRACE, AT, DYNAMIC_DOT; // . [ ( ) { @
 
 
 
@@ -613,6 +614,8 @@ lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
                         |LPAREN RPAREN MINUSGT:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
+                        |LPAREN IDENTIFIER:ident RPAREN MINUSGT:sym
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
                         |LPAREN IDENTIFIER:ident COMMA IDENTIFIER[COMMA]:list RPAREN MINUSGT:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%).appendArgs(%list%); :}
                         ;
