@@ -25,6 +25,7 @@ public class JavaNativeUtil {
     private static final int COST_EXACT = 0;
     private static final int COST_ASSIGNABLE = 1;
     private static final int COST_OBJECT = 100;
+    private static final int COST_PRIMITIVE = 10;
     private static final int COST_CONVERT = 1000;
     private static final int COST_NULL = 1000000;
 
@@ -170,8 +171,8 @@ public class JavaNativeUtil {
     /**
      *
      * @param argTypes
-     * @param methods length >1
-     * @param count >1
+     * @param methods
+     * @param count
      * @return null if can't resolve
      */
     protected static Method resolveAmbiguousMethods(Class<?>[] argTypes, Method[] methods, int count) {
@@ -215,10 +216,15 @@ public class JavaNativeUtil {
 
     protected static int getAssignCost(Class<?> passedType, Class<?> acceptType) {
         if (passedType == null) {
-            return COST_NULL;
+            return acceptType.isPrimitive() ? COST_NEVER : COST_NULL;
         }
         if (passedType.equals(acceptType)) {
             return COST_EXACT;
+        }
+        if (acceptType.isPrimitive()) {
+            return passedType == ClassUtil.getBoxedPrimitiveClass(acceptType)
+                    ? COST_PRIMITIVE
+                    : COST_NEVER;
         }
         if (acceptType.isAssignableFrom(passedType)) {
             return acceptType == Object.class ? COST_OBJECT : COST_ASSIGNABLE;

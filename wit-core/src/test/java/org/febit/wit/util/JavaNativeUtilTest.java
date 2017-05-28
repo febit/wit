@@ -43,6 +43,8 @@ public class JavaNativeUtilTest {
         assertEquals(methodPool.get("fooString"),
                 getMatchMethod(String.class));
         assertEquals(methodPool.get("fooObject"),
+                getMatchMethod(StringBuilder.class));
+        assertEquals(methodPool.get("fooInt"),
                 getMatchMethod(Integer.class));
 
         assertEquals(methodPool.get("fooList"),
@@ -97,6 +99,10 @@ public class JavaNativeUtilTest {
         }
 
         public void fooString(String obj) {
+
+        }
+
+        public void fooInt(int i) {
 
         }
 

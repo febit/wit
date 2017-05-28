@@ -80,6 +80,38 @@ public class ClassUtil {
         return Thread.currentThread().getContextClassLoader();
     }
 
+    public static Class getBoxedPrimitiveClass(Class type) {
+        if (!type.isPrimitive()) {
+            return null;
+        }
+        if (type == int.class) {
+            return Integer.class;
+        }
+        if (type == boolean.class) {
+            return Boolean.class;
+        }
+        if (type == long.class) {
+            return Long.class;
+        }
+        if (type == double.class) {
+            return Double.class;
+        }
+        if (type == float.class) {
+            return Float.class;
+        }
+        if (type == short.class) {
+            return Short.class;
+        }
+        if (type == char.class) {
+            return Character.class;
+        }
+        if (type == byte.class) {
+            return Byte.class;
+        }
+        //void.class
+        return Void.class;
+    }
+
     private static char getAliasOfBaseType(final String name) {
         //fast check if under root package and start with lower(except 'a')
         if (name.charAt(0) > 'a' && name.indexOf('.', 1) < 0) {
