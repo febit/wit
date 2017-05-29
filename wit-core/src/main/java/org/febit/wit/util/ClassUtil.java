@@ -20,6 +20,8 @@ import java.util.Set;
  */
 public class ClassUtil {
 
+    public static final ClassMap<Map<String, Method[]>> PUBLIC_MEMBER_METHODS_CACHE = new ClassMap<>();
+
     private ClassUtil() {
     }
 
@@ -62,6 +64,19 @@ public class ClassUtil {
     }
 
     public static Method[] getPublicMemberMethods(Class type, String name) {
+        Map<String, Method[]> map = PUBLIC_MEMBER_METHODS_CACHE.get(type);
+        if (map == null) {
+            map = PUBLIC_MEMBER_METHODS_CACHE.putIfAbsent(type, new HashMap<String, Method[]>());
+        }
+        Method[] result = map.get(name);
+        if (result == null) {
+            result = _getPublicMemberMethods(type, name);
+            map.put(name, result);
+        }
+        return result;
+    }
+
+    protected static Method[] _getPublicMemberMethods(Class type, String name) {
         Method[] allMethods = type.getMethods();
         Method[] result = new Method[allMethods.length];
         int count = 0;
