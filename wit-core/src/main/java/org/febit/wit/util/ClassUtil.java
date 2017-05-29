@@ -78,17 +78,27 @@ public class ClassUtil {
 
     protected static Method[] _getPublicMemberMethods(Class type, String name) {
         Method[] allMethods = type.getMethods();
-        Method[] result = new Method[allMethods.length];
-        int count = 0;
+        Map<String, Method> result = new HashMap<>();
         for (Method method : allMethods) {
             if (!isPublic(method)
                     || isStatic(method)
                     || !method.getName().equals(name)) {
                 continue;
             }
-            result[count++] = method;
+            StringBuilder keyBuf = new StringBuilder();
+            for (Class<?> parameterType : method.getParameterTypes()) {
+                keyBuf.append(parameterType.getName())
+                        .append(',');
+            }
+            String key = keyBuf.toString();
+            Method old = result.get(key);
+            if (old == null
+                    || old.getDeclaringClass()
+                            .isAssignableFrom(method.getDeclaringClass())) {
+                result.put(key, method);
+            }
         }
-        return Arrays.copyOf(result, count);
+        return result.values().toArray(new Method[result.size()]);
     }
 
     public static ClassLoader getDefaultClassLoader() {
