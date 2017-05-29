@@ -98,7 +98,7 @@ public class CacheGlobalRegister implements GlobalRegister {
             } else {
                 throw new ScriptRuntimeException("This method need a function argument.");
             }
-            context.out(cachingEntry.outted);
+            context.write(cachingEntry.outted);
             return cachingEntry.returned;
         }
 
