@@ -7,19 +7,35 @@ Febit Wit
 
 This is a template engine, all writen in Java, **support Java 7+**.
 
-**Old versions are not recommended now.**
-
 ## How to use
 
-~~~~~java
++ Maven: 
+
+```xml
+<dependency>
+    <groupId>org.febit.wit</groupId>
+    <artifactId>wit-core</artifactId>
+    <version>2.0.0-beta</version>
+</dependency>
+```
+
++ or Gradle
+
+```
+compile 'org.febit.wit:wit-core:2.0.0-beta'
+```
+
++ demo:
+
+```java
 Engine engine = Engine.create();
-Template template = engine.getTemplate("/template.wit");
+Template template = engine.getTemplate("/demo.wit");
 template.merge(params, out);
-~~~~~
+```
 
 ## Hello Wit
 
-~~~~~javascript
+```js
 Hello Wit!
 <%
 var books;
@@ -43,16 +59,18 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
         3: 2 + 1
     };
     map[5] = 2 + 3;
+    map.~put("6",2*3);
     for(key, value : map){
         echo key + ":" +value + "\n";
     }
 }
 %>
-~~~~~
+```
 
 > [More examples][tests]
 
 ## Official Support
+
 + Jodd Madvoc
 + JFinal
 + Spring MVC
