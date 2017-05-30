@@ -1,9 +1,9 @@
 
 # [global]
-# registers+= org.febit.wit.tools.tld.TLDGlobalRegister-profile
+# registers += tld-demo
 
 
-# [org.febit.wit.tools.tld.TLDGlobalRegister-profile]
+# [tld-demo: org.febit.wit.tools.tld.TLDGlobalRegister]
 # checkAccess=false
 # tld=
 # prefix=
