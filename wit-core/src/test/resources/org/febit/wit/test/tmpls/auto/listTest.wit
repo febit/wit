@@ -17,6 +17,15 @@ var new_list = native new java.util.ArrayList();
     assertEquals("3", list[3]);
     assertEquals("4", list[4]);
     assertEquals("No.9", list[9]);
+
+    // bad data
+    list.~add("No.10");
+    list.~add(8,"No.8");
+    assertEquals(12, list.size);
+    assertEquals("No.8", list[8]);
+    assertEquals(null, list[9]);
+    assertEquals("No.9", list[10]);
+    assertEquals("No.10", list[11]);
 }
 
 
