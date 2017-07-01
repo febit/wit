@@ -11,6 +11,7 @@ import org.febit.wit.exceptions.AmbiguousMethodException;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.method.MixedMultiNativeMethodDeclare;
 import org.febit.wit.lang.method.MultiNativeMethodDeclare;
 import org.febit.wit.lang.method.NativeConstructorDeclare;
 import org.febit.wit.lang.method.NativeMethodDeclare;
@@ -65,16 +66,10 @@ public class NativeFactory {
 
     public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName) {
         List<Method> methods = new ArrayList<>();
-        boolean isStatic = false;
         for (Method method : clazz.getMethods()) {
             if (!ClassUtil.isPublic(clazz)
                     || !method.getName().equals(methodName)) {
                 continue;
-            }
-            if (methods.isEmpty()) {
-                isStatic = ClassUtil.isStatic(method);
-            } else if (isStatic != ClassUtil.isStatic(method)) {
-                throw new AmbiguousMethodException("MultiNativeMethodDeclare not support static mix with non-static: " + clazz.getName() + '#' + methodName);
             }
             methods.add(method);
         }
@@ -84,7 +79,7 @@ public class NativeFactory {
         if (methods.size() == 1) {
             return getNativeMethodDeclare(methods.get(0));
         }
-        return createMultiNativeMethodDeclare(methods.toArray(new Method[methods.size()]), isStatic);
+        return createMultiNativeMethodDeclare(methods.toArray(new Method[methods.size()]));
     }
 
     public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, boolean checkAccess) {
@@ -161,6 +156,20 @@ public class NativeFactory {
         return new NativeMethodDeclare(method);
     }
 
+    public MethodDeclare createMultiNativeMethodDeclare(Method[] methods) {
+        final boolean isStatic = ClassUtil.isStatic(methods[0]);
+        boolean mix = false;
+        for (int i = 1; i < methods.length; i++) {
+            if (isStatic != ClassUtil.isStatic(methods[0])) {
+                mix = true;
+                break;
+            }
+        }
+        return mix ? new MixedMultiNativeMethodDeclare(methods)
+                : new MultiNativeMethodDeclare(methods, isStatic);
+    }
+
+    @Deprecated
     public MethodDeclare createMultiNativeMethodDeclare(Method[] methods, boolean isStatic) {
         return new MultiNativeMethodDeclare(methods, isStatic);
     }

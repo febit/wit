@@ -70,7 +70,7 @@ public class JavaNativeUtil {
                 manager.setConst(name, nativeFactory.getNativeMethodDeclare(methods.get(0)));
             } else {
                 manager.setConst(name, nativeFactory.createMultiNativeMethodDeclare(
-                        methods.toArray(new Method[methods.size()]), true));
+                        methods.toArray(new Method[methods.size()])));
             }
         }
         return count;
@@ -135,10 +135,32 @@ public class JavaNativeUtil {
     /**
      *
      * @param methods
+     * @param args if mixed, first arg is the host of member methods.
+     * @param mix if mix, static methods with member methods
+     * @return null if not found
+     */
+    public static Method getMatchMethod(Method[] methods, Object[] args, boolean mix) {
+        return getMatchMethod(methods, getArgTypes(args), mix);
+    }
+
+    /**
+     *
+     * @param methods
      * @param argTypes
      * @return null if not found
      */
     public static Method getMatchMethod(Method[] methods, Class<?>[] argTypes) {
+        return getMatchMethod(methods, argTypes, false);
+    }
+
+    /**
+     *
+     * @param methods
+     * @param argTypes if mixed, first arg is the host of member methods.
+     * @param mix if mix static methods with member methods
+     * @return null if not found
+     */
+    public static Method getMatchMethod(Method[] methods, Class<?>[] argTypes, boolean mix) {
         if (methods == null
                 || methods.length == 0) {
             return null;
@@ -146,8 +168,22 @@ public class JavaNativeUtil {
         Method[] candidate = new Method[methods.length];
         int candidateCount = 0;
         int leastCost = Integer.MAX_VALUE;
+        Class<?>[] argTypesForMemberMethods = null;
         for (Method method : methods) {
-            int cost = getAssignCost(argTypes, method.getParameterTypes());
+            int cost;
+            if (mix && !ClassUtil.isStatic(method)) {
+                if (argTypes.length == 0
+                        || argTypes[0] == null
+                        || !method.getDeclaringClass().isAssignableFrom(argTypes[0])) {
+                    continue;
+                }
+                if (argTypesForMemberMethods == null) {
+                    argTypesForMemberMethods = Arrays.copyOfRange(argTypes, 1, argTypes.length);
+                }
+                cost = getAssignCost(argTypesForMemberMethods, method.getParameterTypes());
+            } else {
+                cost = getAssignCost(argTypes, method.getParameterTypes());
+            }
             if (cost < 0) {
                 continue;
             }
@@ -160,7 +196,7 @@ public class JavaNativeUtil {
             }
         }
         if (candidateCount > 1) {
-            Method method = resolveAmbiguousMethods(argTypes, candidate, candidateCount);
+            Method method = resolveAmbiguousMethods(argTypes, candidate, candidateCount, mix);
             if (method != null) {
                 return method;
             }
@@ -176,9 +212,10 @@ public class JavaNativeUtil {
      * @param argTypes
      * @param methods
      * @param count
+     * @param mix
      * @return null if can't resolve
      */
-    protected static Method resolveAmbiguousMethods(Class<?>[] argTypes, Method[] methods, int count) {
+    protected static Method resolveAmbiguousMethods(Class<?>[] argTypes, Method[] methods, int count, boolean mix) {
         if (argTypes.length == 0) {
             return null;
         }
@@ -186,6 +223,10 @@ public class JavaNativeUtil {
         Class<?>[] candidateArgs = candidate.getParameterTypes();
         for (int i = 1; i < count; i++) {
             Method next = methods[i];
+            if (mix && ClassUtil.isStatic(candidate) != ClassUtil.isStatic(next)) {
+                // current not support
+                return null;
+            }
             Class<?>[] nextArgs = next.getParameterTypes();
             int cost = getAssignCost(nextArgs, candidateArgs);
             if (cost == 0) {
@@ -239,6 +280,17 @@ public class JavaNativeUtil {
     public static final Object invokeMethod(
             final Method method,
             final InternalContext context,
+            final Object[] args
+    ) {
+        return invokeMethod(method, context, args,
+                method.getParameterTypes().length,
+                ClassUtil.isStatic(method),
+                ClassUtil.isVoidType(method.getReturnType()));
+    }
+
+    public static final Object invokeMethod(
+            final Method method,
+            final InternalContext context,
             final Object[] args,
             final int acceptArgsCount,
             final boolean isStatic,
@@ -276,7 +328,6 @@ public class JavaNativeUtil {
             final int acceptArgsCount,
             final boolean isReturnVoid
     ) {
-        final Object obj = me;
         final Object[] methodArgs;
         if (args != null) {
             int argsLen = args.length;
@@ -291,7 +342,7 @@ public class JavaNativeUtil {
             methodArgs = new Object[acceptArgsCount];
         }
         try {
-            Object result = method.invoke(obj, methodArgs);
+            Object result = method.invoke(me, methodArgs);
             return isReturnVoid ? InternalVoid.VOID : result;
         } catch (IllegalAccessException ex) {
             throw new ScriptRuntimeException("this method is inaccessible: ".concat(ex.getLocalizedMessage()));

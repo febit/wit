@@ -15,23 +15,27 @@ import org.junit.Test;
  */
 public class JavaNativeUtilTest {
 
-    Method[] methods;
+    Method[] fooMethods;
+    Method[] mixMethods;
     Map<String, Method> methodPool;
 
     {
-        Method[] allMethods = Methods.class.getMethods();
+        List<Method> foos = new ArrayList<>();
+        List<Method> mixes = new ArrayList<>();
+
         methodPool = new HashMap<>();
-        for (Method method : allMethods) {
-            if (!method.getName().startsWith("foo")) {
-                continue;
+        for (Method method : Methods.class.getMethods()) {
+            String methodName = method.getName();
+            if (methodName.startsWith("foo")) {
+                foos.add(method);
+                methodPool.put(methodName, method);
+            } else if (methodName.startsWith("mix")) {
+                mixes.add(method);
+                methodPool.put(methodName, method);
             }
-            methodPool.put(method.getName(), method);
         }
-        methods = new Method[methodPool.size()];
-        int i = 0;
-        for (Method value : methodPool.values()) {
-            methods[i++] = value;
-        }
+        fooMethods = foos.toArray(new Method[foos.size()]);
+        mixMethods = mixes.toArray(new Method[mixes.size()]);
     }
 
     @Test
@@ -39,36 +43,36 @@ public class JavaNativeUtilTest {
 
         //let's go
         assertEquals(methodPool.get("fooEmpty"),
-                getMatchMethod());
+                matchFoo());
         assertEquals(methodPool.get("fooString"),
-                getMatchMethod(String.class));
+                matchFoo(String.class));
         assertEquals(methodPool.get("fooObject"),
-                getMatchMethod(StringBuilder.class));
+                matchFoo(StringBuilder.class));
         assertEquals(methodPool.get("fooInt"),
-                getMatchMethod(Integer.class));
+                matchFoo(Integer.class));
 
         assertEquals(methodPool.get("fooList"),
-                getMatchMethod(List.class));
+                matchFoo(List.class));
         assertEquals(methodPool.get("fooArrayList"),
-                getMatchMethod(ArrayList.class));
+                matchFoo(ArrayList.class));
         assertEquals(methodPool.get("fooList"),
-                getMatchMethod(LinkedList.class));
+                matchFoo(LinkedList.class));
 
         assertEquals(methodPool.get("fooArrayListObject"),
-                getMatchMethod(ArrayList.class, Integer.class));
+                matchFoo(ArrayList.class, Integer.class));
         assertEquals(methodPool.get("fooListObject"),
-                getMatchMethod(List.class, Integer.class));
+                matchFoo(List.class, Integer.class));
 
         assertEquals(methodPool.get("fooObjectListList"),
-                getMatchMethod(ArrayList.class, ArrayList.class, ArrayList.class));
+                matchFoo(ArrayList.class, ArrayList.class, ArrayList.class));
 
         //nullable
         assertEquals(methodPool.get("fooArrayListObject"),
-                getMatchMethod(ArrayList.class, null));
+                matchFoo(ArrayList.class, null));
         assertEquals(methodPool.get("fooArrayListObjectObject"),
-                getMatchMethod(ArrayList.class, null, null));
+                matchFoo(ArrayList.class, null, null));
         assertEquals(methodPool.get("fooArrayListObjectObject"),
-                getMatchMethod(ArrayList.class, null, ArrayList.class));
+                matchFoo(ArrayList.class, null, ArrayList.class));
 
         //overflow
         assertNull(getMatchMethod(
@@ -81,11 +85,46 @@ public class JavaNativeUtilTest {
         );
 
         // AmbiguousMethodException
-        // assertEquals(methodPool.get("fooListString"), getMatchMethod(ArrayList.class, String.class));
+        // assertEquals(methodPool.get("fooListString"), matchFoo(ArrayList.class, String.class));
     }
 
-    protected Method getMatchMethod(Class... classes) {
-        return JavaNativeUtil.getMatchMethod(methods, classes);
+    @Test
+    public void testMix() {
+
+        assertEquals(methodPool.get("mixStaticEmpty"),
+                matchMix());
+        assertEquals(methodPool.get("mixEmpty"),
+                matchMix(Methods.class));
+
+        assertEquals(methodPool.get("mixStaticString"),
+                matchMix(Methods.class, String.class));
+
+        assertEquals(methodPool.get("mixObject"),
+                matchMix(Methods.class, StringBuilder.class));
+        assertEquals(methodPool.get("mixInt"),
+                matchMix(Methods.class, Integer.class));
+
+        assertEquals(methodPool.get("mixStaticList"),
+                matchMix(Methods.class, List.class));
+        assertEquals(methodPool.get("mixArrayList"),
+                matchMix(Methods.class, ArrayList.class));
+        assertEquals(methodPool.get("mixStaticList"),
+                matchMix(Methods.class, LinkedList.class));
+
+        assertEquals(methodPool.get("mixArrayListInteger"),
+                matchMix(Methods.class, ArrayList.class, Integer.class));
+        assertEquals(methodPool.get("mixStaticArrayListString"),
+                matchMix(Methods.class, ArrayList.class, String.class));
+        assertEquals(methodPool.get("mixStaticListInteger"),
+                matchMix(Methods.class, LinkedList.class, Integer.class));
+    }
+
+    protected Method matchFoo(Class... classes) {
+        return JavaNativeUtil.getMatchMethod(fooMethods, classes);
+    }
+
+    protected Method matchMix(Class... classes) {
+        return JavaNativeUtil.getMatchMethod(mixMethods, classes, true);
     }
 
     protected Method getMatchMethod(Method[] methods, Class... classes) {
@@ -93,6 +132,36 @@ public class JavaNativeUtilTest {
     }
 
     public static class Methods {
+
+        public static void mixStaticEmpty() {
+        }
+
+        public static void mixStaticString(Methods methods, String str) {
+        }
+
+        public static void mixStaticList(Methods methods, List list) {
+        }
+
+        public static void mixStaticArrayListString(Methods methods, ArrayList list, String str) {
+        }
+
+        public static void mixStaticListInteger(Methods methods, List list, Integer i) {
+        }
+
+        public void mixEmpty() {
+        }
+
+        public void mixObject(Object obj) {
+        }
+
+        public void mixInt(int obj) {
+        }
+
+        public void mixArrayList(ArrayList list) {
+        }
+
+        public void mixArrayListInteger(ArrayList list, Integer i) {
+        }
 
         public void fooEmpty() {
 
