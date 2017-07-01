@@ -545,6 +545,7 @@ abstract class AbstractParser {
         "-", //UMINUS
         ".", //DOT
         ":", //COLON
+        "::", //COLONCOLON
         ",", //COMMA
         ";", //SEMICOLON
         "{", //LBRACE

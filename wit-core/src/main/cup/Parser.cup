@@ -39,7 +39,7 @@ terminal Integer    VAR,
                     SELFEQ,  // (+ - * / %)= (<< >> >>>)= (& ^ |)=
                     UMINUS,
                     DOT,  // .
-                    COLON,  // :
+                    COLON, COLONCOLON,  // : ::
                     COMMA,  // ,
                     SEMICOLON,  // ;
                     LBRACE, RBRACE, INTERPOLATION_END, // { }

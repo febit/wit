@@ -353,6 +353,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
   "!"                            { return symbol(Tokens.NOT); }
   "~"                            { return symbol(Tokens.COMP); }
   "?"                            { return symbol(Tokens.QUESTION); }
+  "::"                           { return symbol(Tokens.COLONCOLON); }
   ":"                            { return symbol(Tokens.COLON); }
 //  "?:"                           { return symbol(Tokens.QUESTION_COLON); }
   "=="                           { return symbol(Tokens.EQEQ); }
