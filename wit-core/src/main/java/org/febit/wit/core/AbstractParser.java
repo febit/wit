@@ -128,40 +128,51 @@ abstract class AbstractParser {
         return true;
     }
 
-    Class toClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
-        String classPureName;
-        if (classNameBand.isSimpleName()) {
-            //1. find from @imports
-            //2. find as primitive type
-            //3. find as java.lang.*
-            //4. if not array, return
-            String simpleName = classNameBand.getClassSimpleName();
-            classPureName = importedClasses.get(simpleName);
-            if (classPureName == null) {
-                Class cls = ClassUtil.getPrimitiveClass(simpleName);
-                if (cls == null) {
-                    try {
-                        cls = ClassUtil.getClass("java.lang.".concat(simpleName));
-                    } catch (Exception ex) {
-                        // ignore
-                    }
-                }
-                if (cls != null) {
-                    if (!classNameBand.isArray()) {
-                        return cls;
-                    }
-                    classPureName = cls.getName();
-                } else {
-                    classPureName = simpleName;
-                }
-            }
-        } else {
-            classPureName = classNameBand.getClassPureName();
+    Class toClass(String className) {
+        String classFullName = resolveClassFullName(className);
+        return ClassUtil.getClass(classFullName);
+    }
+
+    String resolveClassFullName(String className) {
+
+        // 0. full name
+        if (className.indexOf('.') >= 0) {
+            return className;
         }
+
+        //1. find from @imports
+        String fullName = importedClasses.get(className);
+        if (fullName != null) {
+            return fullName;
+        }
+        Class cls;
+
+        // 2. find as primitive type
+        cls = ClassUtil.getPrimitiveClass(className);
+        if (cls != null) {
+            return className;
+        }
+
+        // 3. find as java.lang.*
         try {
-            return ClassUtil.getClass(classPureName, classNameBand.getArrayDepth());
+            cls = ClassUtil.getClass("java.lang.".concat(className));
+        } catch (Exception ex) {
+            // ignore
+        }
+        if (cls != null) {
+            return cls.getName();
+        }
+
+        // failed, just return
+        return className;
+    }
+
+    Class toClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
+        String classFullName = resolveClassFullName(classNameBand.getClassPureName());
+        try {
+            return ClassUtil.getClass(classFullName, classNameBand.getArrayDepth());
         } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class not found:".concat(classPureName), line, column);
+            throw new ParseException("Class not found:".concat(classFullName), line, column);
         }
     }
 
@@ -290,6 +301,18 @@ abstract class AbstractParser {
 
     Expression createNativeMethodDeclareExpression(Class clazz, String methodName, List<Class> list, int line, int column) {
         return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName, list.toArray(new Class[list.size()]), line, column), line, column);
+    }
+
+    Expression createMethodReference(String ref, int line, int column) {
+        int split = ref.indexOf("::");
+        String cls = ref.substring(0, split).trim();
+        String method = ref.substring(split + 2).trim();
+        if (method.equals("new")) {
+            //TODO: support dynamic constructor
+            throw new ParseException("Dynamic constructor has not yet been supported!");
+        } else {
+            return new DirectValue(this.nativeFactory.getNativeMethodDeclare(toClass(cls), method), line, column);
+        }
     }
 
     Expression createNativeConstructorDeclareExpression(Class clazz, List<Class> list, int line, int column) {

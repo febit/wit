@@ -261,6 +261,7 @@ DelimiterInterpolationStart   = "${"
 DelimiterStatementStartMatch   = [\\]* {DelimiterStatementStart}
 DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
 
+MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* "::" {WhiteSpace}* {Identifier}
 
 %state  YYSTATEMENT, STRING, CHARLITERAL, END_OF_FILE
 
@@ -429,6 +430,8 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
 
   /* identifiers */
   {Identifier}                   { return symbol(Tokens.IDENTIFIER, yytext().intern()); }
+
+  {MethodReference}              { return symbol(Tokens.METHOD_REFERENCE, yytext()); }
 
   /* whitespace */
   {WhiteSpace}                   { /* ignore */ }

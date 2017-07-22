@@ -54,7 +54,7 @@ terminal Integer    VAR,
                     ;
 
 
-terminal String     IDENTIFIER; // Ident
+terminal String     IDENTIFIER, METHOD_REFERENCE; // Ident, MethodReference
 terminal char[]     TEXT_STATEMENT;
 terminal Object     DIRECT_VALUE;
 terminal Integer    CONST;
@@ -517,6 +517,9 @@ expression      ::= expression_statementable:$
                     //nativeConstructorExpr
                     |NATIVE:sym NEW classPureName:nameBand LPAREN classNameList:list RPAREN
                     {: return createNativeConstructorDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %list%, %sym.line%, %sym.column%); :}
+
+                    |METHOD_REFERENCE:ref
+                    {: return createMethodReference(%ref%, %ref.line%, %ref.column%); :}
 
                     |contextValueExpr:$
                     |mapValue:$

@@ -22,6 +22,27 @@ const b = "bbb";
     assertEquals(map["3"], b);
     assertEquals(map.~size(), 3);
 
+    assertEquals(java.util.Map::get(map,"2"), a);
+    assertEquals( java.util.Map :: size (map), 3);
+
+}
+{
+  @import org.febit.wit.util.StringUtil;
+
+  var max = Math::max;
+
+  assertEquals(max(1,2), 2);
+  assertEquals(Math::max(1,2), 2);
+  assertEquals(Math::min(1,2), 1);
+  assertEquals(String::length("1234"), 4);
+  assertEquals(String::valueOf("1234"), "1234");
+  assertEquals(String::valueOf(1234), "1234");
+
+  assertEquals(Integer::parseInt("1234"), 1234);
+  assertEquals(Long::parseLong("1234"), 1234L);
+
+  assertEquals(StringUtil::format("[0]={}, [1]={}, [2]:{}", ["aaaa", "bbb", 2]), "[0]=aaaa, [1]=bbb, [2]:2");
+  
 }
 {
     var new_stringbuilder = native new StringBuilder();
@@ -29,6 +50,7 @@ const b = "bbb";
 
     buf.~append("123").~append(456);
     assertEquals("123456", buf.~toString());
+    assertEquals("123456", StringBuilder::toString(buf));
 }
 
 %>
