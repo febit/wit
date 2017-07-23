@@ -3,15 +3,13 @@ package org.febit.wit.core;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.febit.wit.exceptions.AmbiguousMethodException;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.lang.method.MixedMultiNativeMethodDeclare;
+import org.febit.wit.lang.method.MultiNativeConstructorDeclare;
 import org.febit.wit.lang.method.MultiNativeMethodDeclare;
 import org.febit.wit.lang.method.NativeConstructorDeclare;
 import org.febit.wit.lang.method.NativeMethodDeclare;
@@ -64,22 +62,26 @@ public class NativeFactory {
         return getNativeMethodDeclare(clazz, methodName, paramTypes, true);
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName) {
-        List<Method> methods = new ArrayList<>();
-        for (Method method : clazz.getMethods()) {
-            if (!ClassUtil.isPublic(clazz)
-                    || !method.getName().equals(methodName)) {
-                continue;
-            }
-            methods.add(method);
+    public MethodDeclare getNativeConstructorDeclare(Class clazz) {
+        Constructor[] constructors = clazz.getConstructors();
+        if (constructors == null || constructors.length == 0) {
+            throw new ScriptRuntimeException("Not found public constructor for class： " + clazz.getName());
         }
-        if (methods.isEmpty()) {
+        if (constructors.length == 1) {
+            return new NativeConstructorDeclare(constructors[0]);
+        }
+        return new MultiNativeConstructorDeclare(constructors);
+    }
+
+    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName) {
+        Method[] methods = ClassUtil.getPublicMethods(clazz, methodName);
+        if (methods.length == 0) {
             throw new ScriptRuntimeException("Method not found： " + clazz.getName() + '#' + methodName);
         }
-        if (methods.size() == 1) {
-            return getNativeMethodDeclare(methods.get(0));
+        if (methods.length == 1) {
+            return getNativeMethodDeclare(methods[0]);
         }
-        return createMultiNativeMethodDeclare(methods.toArray(new Method[methods.size()]));
+        return createMultiNativeMethodDeclare(methods);
     }
 
     public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, boolean checkAccess) {

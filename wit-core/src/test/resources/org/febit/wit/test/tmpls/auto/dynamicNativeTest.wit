@@ -52,5 +52,16 @@ const b = "bbb";
     assertEquals("123456", buf.~toString());
     assertEquals("123456", StringBuilder::toString(buf));
 }
+{
+    var buf = StringBuilder::new();
+    StringBuilder::append(StringBuilder::append(buf, "123"), "233");
+    assertEquals("123233", StringBuilder::toString(buf));
+
+    buf = StringBuilder::new("233");
+    assertEquals("233", buf.~toString());
+
+    buf = StringBuilder::new(123);
+    assertEquals(123, buf.~capacity());
+}
 
 %>

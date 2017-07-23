@@ -1,5 +1,6 @@
 package org.febit.wit.util;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.febit.wit.InternalContext;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exceptions.AmbiguousMethodException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
@@ -243,6 +243,79 @@ public class JavaNativeUtil {
         return candidate;
     }
 
+    /**
+     *
+     * @param constructors
+     * @param args
+     * @return null if not found
+     */
+    public static Constructor getMatchConstructor(Constructor[] constructors, Object[] args) {
+        return getMatchConstructor(constructors, getArgTypes(args));
+    }
+
+    /**
+     *
+     * @param constructors
+     * @param argTypes if mixed, first arg is the host of member methods.
+     * @return null if not found
+     */
+    public static Constructor getMatchConstructor(Constructor[] constructors, Class<?>[] argTypes) {
+        if (constructors == null
+                || constructors.length == 0) {
+            return null;
+        }
+        Constructor[] candidate = new Constructor[constructors.length];
+        int candidateCount = 0;
+        int leastCost = Integer.MAX_VALUE;
+        for (Constructor constructor : constructors) {
+            int cost = getAssignCost(argTypes, constructor.getParameterTypes());
+            if (cost < 0) {
+                continue;
+            }
+            if (cost == leastCost) {
+                candidate[candidateCount++] = constructor;
+            } else if (cost < leastCost) {
+                leastCost = cost;
+                candidate[0] = constructor;
+                candidateCount = 1;
+            }
+        }
+        if (candidateCount > 1) {
+            Constructor constructor = resolveAmbiguousConstructors(argTypes, candidate, candidateCount);
+            if (constructor != null) {
+                return constructor;
+            }
+            throw new AmbiguousMethodException(
+                    Arrays.copyOf(candidate, candidateCount),
+                    argTypes);
+        }
+        return candidate[0];
+    }
+
+    protected static Constructor resolveAmbiguousConstructors(Class<?>[] argTypes, Constructor[] constructors, int count) {
+        if (argTypes.length == 0) {
+            return null;
+        }
+        Constructor candidate = constructors[0];
+        Class<?>[] candidateArgs = candidate.getParameterTypes();
+        for (int i = 1; i < count; i++) {
+            Constructor next = constructors[i];
+            Class<?>[] nextArgs = next.getParameterTypes();
+            int cost = getAssignCost(nextArgs, candidateArgs);
+            if (cost == 0) {
+                return null;
+            }
+            if (cost > 0) {
+                candidate = next;
+                candidateArgs = nextArgs;
+            } else if (getAssignCost(candidateArgs, nextArgs) <= 0) {
+                // ambiguous
+                return null;
+            }
+        }
+        return candidate;
+    }
+
     protected static int getAssignCost(Class<?>[] froms, Class<?>[] tos) {
         if (froms.length > tos.length) {
             return COST_NEVER;
@@ -270,6 +343,11 @@ public class JavaNativeUtil {
                     ? COST_PRIMITIVE
                     : COST_NEVER;
         }
+        if (passedType.isPrimitive()) {
+            return acceptType == ClassUtil.getBoxedPrimitiveClass(passedType)
+                    ? COST_PRIMITIVE
+                    : COST_NEVER;
+        }
         if (acceptType.isAssignableFrom(passedType)) {
             return acceptType == Object.class ? COST_OBJECT : COST_ASSIGNABLE;
         }
@@ -279,10 +357,9 @@ public class JavaNativeUtil {
 
     public static final Object invokeMethod(
             final Method method,
-            final InternalContext context,
             final Object[] args
     ) {
-        return invokeMethod(method, context, args,
+        return invokeMethod(method, args,
                 method.getParameterTypes().length,
                 ClassUtil.isStatic(method),
                 ClassUtil.isVoidType(method.getReturnType()));
@@ -290,14 +367,13 @@ public class JavaNativeUtil {
 
     public static final Object invokeMethod(
             final Method method,
-            final InternalContext context,
             final Object[] args,
             final int acceptArgsCount,
             final boolean isStatic,
             final boolean isReturnVoid
     ) {
         if (isStatic) {
-            return invokeMethod(method, context, null, args, acceptArgsCount, isReturnVoid);
+            return invokeMethod(method, null, args, acceptArgsCount, isReturnVoid);
         }
         if ((args == null || args.length == 0) || args[0] == null) {
             throw new ScriptRuntimeException("this method need one argument at least");
@@ -306,23 +382,21 @@ public class JavaNativeUtil {
         int copyLen;
         //Note: Warning 参数个数不一致
         System.arraycopy(args, 1, methodArgs, 0, ((copyLen = args.length - 1) <= acceptArgsCount) ? copyLen : acceptArgsCount);
-        return invokeMethod(method, context, args[0], methodArgs, acceptArgsCount, isReturnVoid);
+        return invokeMethod(method, args[0], methodArgs, acceptArgsCount, isReturnVoid);
     }
 
     public static final Object invokeMethod(
             final Method method,
-            final InternalContext context,
             final Object me,
             final Object[] args
     ) {
-        return invokeMethod(method, context, me, args,
+        return invokeMethod(method, me, args,
                 method.getParameterTypes().length,
                 ClassUtil.isVoidType(method.getReturnType()));
     }
 
     public static final Object invokeMethod(
             final Method method,
-            final InternalContext context,
             final Object me,
             final Object[] args,
             final int acceptArgsCount,
@@ -352,4 +426,42 @@ public class JavaNativeUtil {
             throw new ScriptRuntimeException("this method throws an exception", ex.getTargetException());
         }
     }
+
+    public static final Object invokeConstructor(
+            final Constructor constructor,
+            final Object[] args
+    ) {
+        return invokeConstructor(constructor, args, constructor.getParameterTypes().length);
+    }
+
+    public static final Object invokeConstructor(
+            final Constructor constructor,
+            final Object[] args,
+            final int acceptArgsCount
+    ) {
+        final Object[] methodArgs;
+        final int argsLen;
+        if (args != null && (argsLen = args.length) != 0) {
+            if (argsLen == acceptArgsCount) {
+                methodArgs = args;
+            } else {
+                //Note: Warning 参数个数不一致
+                System.arraycopy(args, 0, methodArgs = new Object[acceptArgsCount], 0, argsLen <= acceptArgsCount ? argsLen : acceptArgsCount);
+            }
+        } else {
+            methodArgs = new Object[acceptArgsCount];
+        }
+        try {
+            return constructor.newInstance(methodArgs);
+        } catch (InstantiationException ex) {
+            throw new ScriptRuntimeException("Can't create new instance: ".concat(ex.getLocalizedMessage()));
+        } catch (IllegalAccessException ex) {
+            throw new ScriptRuntimeException("Unaccessible method: ".concat(ex.getLocalizedMessage()));
+        } catch (IllegalArgumentException ex) {
+            throw new ScriptRuntimeException("Illegal arguments: ".concat(ex.getLocalizedMessage()));
+        } catch (InvocationTargetException ex) {
+            throw new ScriptRuntimeException("this method throws an exception", ex.getTargetException());
+        }
+    }
+
 }

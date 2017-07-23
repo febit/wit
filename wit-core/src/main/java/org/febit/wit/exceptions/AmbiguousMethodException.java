@@ -1,6 +1,6 @@
 package org.febit.wit.exceptions;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Member;
 
 /**
  *
@@ -12,11 +12,11 @@ public class AmbiguousMethodException extends ScriptRuntimeException {
         super(message);
     }
 
-    public AmbiguousMethodException(Method[] methods, Class<?>[] argTypes) {
+    public <T extends Member> AmbiguousMethodException(T[] methods, Class<?>[] argTypes) {
         this(buildMessage(methods, argTypes));
     }
 
-    protected static final String buildMessage(Method[] methods, Class<?>[] argTypes) {
+    protected static <T extends Member> String buildMessage(T[] methods, Class<?>[] argTypes) {
         StringBuilder msg = new StringBuilder();
         msg.append("Ambiguous method for [");
         for (int i = 0; i < argTypes.length; i++) {

@@ -39,7 +39,6 @@ public class MultiNativeMethodDeclare implements MethodDeclare {
             throw new ScriptRuntimeException("not found match native method");
         }
         return JavaNativeUtil.invokeMethod(method,
-                context,
                 args,
                 method.getParameterTypes().length,
                 isStatic,

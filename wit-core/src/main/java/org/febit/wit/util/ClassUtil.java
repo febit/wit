@@ -101,6 +101,37 @@ public class ClassUtil {
         return result.values().toArray(new Method[result.size()]);
     }
 
+    /**
+     * XXX: without cache
+     *
+     * @param type
+     * @param name
+     * @return
+     */
+    public static Method[] getPublicMethods(Class type, String name) {
+        Method[] allMethods = type.getMethods();
+        Map<String, Method> result = new HashMap<>();
+        for (Method method : allMethods) {
+            if (!isPublic(method)
+                    || !method.getName().equals(name)) {
+                continue;
+            }
+            StringBuilder keyBuf = new StringBuilder();
+            for (Class<?> parameterType : method.getParameterTypes()) {
+                keyBuf.append(parameterType.getName())
+                        .append(',');
+            }
+            String key = keyBuf.toString();
+            Method old = result.get(key);
+            if (old == null
+                    || old.getDeclaringClass()
+                            .isAssignableFrom(method.getDeclaringClass())) {
+                result.put(key, method);
+            }
+        }
+        return result.values().toArray(new Method[result.size()]);
+    }
+
     public static ClassLoader getDefaultClassLoader() {
         return Thread.currentThread().getContextClassLoader();
     }

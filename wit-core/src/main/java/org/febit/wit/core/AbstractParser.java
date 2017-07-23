@@ -17,6 +17,7 @@ import org.febit.wit.core.ast.statements.*;
 import org.febit.wit.core.text.TextStatementFactory;
 import org.febit.wit.debug.BreakPointListener;
 import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.ResourceOffset;
 import org.febit.wit.util.ClassNameBand;
@@ -307,12 +308,13 @@ abstract class AbstractParser {
         int split = ref.indexOf("::");
         String cls = ref.substring(0, split).trim();
         String method = ref.substring(split + 2).trim();
+        MethodDeclare methodDeclare;
         if (method.equals("new")) {
-            //TODO: support dynamic constructor
-            throw new ParseException("Dynamic constructor has not yet been supported!");
+            methodDeclare = this.nativeFactory.getNativeConstructorDeclare(toClass(cls));
         } else {
-            return new DirectValue(this.nativeFactory.getNativeMethodDeclare(toClass(cls), method), line, column);
+            methodDeclare = this.nativeFactory.getNativeMethodDeclare(toClass(cls), method);
         }
+        return new DirectValue(methodDeclare, line, column);
     }
 
     Expression createNativeConstructorDeclareExpression(Class clazz, List<Class> list, int line, int column) {

@@ -1,5 +1,6 @@
 package org.febit.wit.util;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,7 +90,7 @@ public class JavaNativeUtilTest {
     }
 
     @Test
-    public void testMix() {
+    public void testMix() throws NoSuchMethodException {
 
         assertEquals(methodPool.get("mixStaticEmpty"),
                 matchMix());
@@ -119,6 +120,30 @@ public class JavaNativeUtilTest {
                 matchMix(Methods.class, LinkedList.class, Integer.class));
     }
 
+    @Test
+    public void testMatchConstructor() throws NoSuchMethodException {
+        assertEquals(Methods.class.getConstructor(), matchConstructor());
+        assertEquals(Methods.class.getConstructor(int.class), matchConstructor(Integer.class));
+        assertEquals(Methods.class.getConstructor(int.class), matchConstructor(int.class));
+        assertEquals(Methods.class.getConstructor(Object.class), matchConstructor(String.class));
+        assertEquals(Methods.class.getConstructor(List.class), matchConstructor(List.class));
+        assertEquals(Methods.class.getConstructor(List.class), matchConstructor(LinkedList.class));
+        assertEquals(Methods.class.getConstructor(ArrayList.class), matchConstructor(ArrayList.class));
+        assertEquals(null, matchConstructor(ArrayList.class, Boolean.class));
+        assertEquals(Methods.class.getConstructor(ArrayList.class, String.class),
+                matchConstructor(ArrayList.class, String.class));
+        assertEquals(Methods.class.getConstructor(ArrayList.class, String.class),
+                matchConstructor(ArrayList.class, String.class));
+        assertEquals(Methods.class.getConstructor(ArrayList.class, Integer.class),
+                matchConstructor(ArrayList.class, Integer.class));
+        assertEquals(Methods.class.getConstructor(ArrayList.class, Integer.class),
+                matchConstructor(ArrayList.class, int.class));
+    }
+
+    protected Constructor matchConstructor(Class... classes) {
+        return JavaNativeUtil.getMatchConstructor(Methods.class.getConstructors(), classes);
+    }
+
     protected Method matchFoo(Class... classes) {
         return JavaNativeUtil.getMatchMethod(fooMethods, classes);
     }
@@ -132,6 +157,27 @@ public class JavaNativeUtilTest {
     }
 
     public static class Methods {
+
+        public Methods() {
+        }
+
+        public Methods(Object obj) {
+        }
+
+        public Methods(int obj) {
+        }
+
+        public Methods(List list) {
+        }
+
+        public Methods(ArrayList list) {
+        }
+
+        public Methods(ArrayList list, Integer i) {
+        }
+
+        public Methods(ArrayList list, String i) {
+        }
 
         public static void mixStaticEmpty() {
         }

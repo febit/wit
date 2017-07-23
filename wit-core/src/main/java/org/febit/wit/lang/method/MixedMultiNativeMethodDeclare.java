@@ -1,3 +1,4 @@
+// Copyright (c) 2013-2017, febit.org. All Rights Reserved.
 package org.febit.wit.lang.method;
 
 import java.lang.reflect.Method;

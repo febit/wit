@@ -33,7 +33,7 @@ public final class DynamicNativeMethodExecute extends Expression {
         }
         Method[] methods = ClassUtil.getPublicMemberMethods(me.getClass(), func);
         if (methods.length == 0) {
-            throw new ScriptRuntimeException("not found match native method: "+ me.getClass() +'#'+ func);
+            throw new ScriptRuntimeException("not found match native method: " + me.getClass() + '#' + func);
         }
         final Expression[] exprs = this.paramExprs;
         final int len = exprs.length;
@@ -43,8 +43,8 @@ public final class DynamicNativeMethodExecute extends Expression {
         }
         Method method = JavaNativeUtil.getMatchMethod(methods, args);
         if (method == null) {
-            throw new ScriptRuntimeException("not found match native method: "+ me.getClass() +'#'+ func);
+            throw new ScriptRuntimeException("not found match native method: " + me.getClass() + '#' + func);
         }
-        return JavaNativeUtil.invokeMethod(method, context, me, args);
+        return JavaNativeUtil.invokeMethod(method, me, args);
     }
 }

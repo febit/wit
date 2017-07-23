@@ -28,7 +28,6 @@ public final class NativeMethodDeclare implements MethodDeclare {
     @Override
     public Object invoke(final InternalContext context, final Object[] args) {
         return JavaNativeUtil.invokeMethod(method,
-                context,
                 args,
                 acceptArgsCount,
                 isStatic,
