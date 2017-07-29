@@ -15,14 +15,14 @@ This is a template engine, all writen in Java, **support Java 7+**.
 <dependency>
     <groupId>org.febit.wit</groupId>
     <artifactId>wit-core</artifactId>
-    <version>2.0.0-beta</version>
+    <version>2.1.0-beta</version>
 </dependency>
 ```
 
 + or Gradle
 
 ```
-compile 'org.febit.wit:wit-core:2.0.0-beta'
+compile 'org.febit.wit:wit-core:2.1.0-beta'
 ```
 
 + demo:
@@ -93,7 +93,7 @@ details.
 
 > [github-issue][new_issue_github]
 
-[mvc-demo]: https://github.com/zqq90/webitscript-mvc-demo
+[mvc-demo]: https://github.com/febit/wit-mvc-demo
 [tests]: https://github.com/febit/wit/tree/master/wit-core/src/test/resources/org/febit/wit/test/tmpls
 
 [new_issue_github]: https://github.com/febit/wit/issues/new
