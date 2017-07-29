@@ -297,11 +297,11 @@ abstract class AbstractParser {
     }
 
     Expression createNativeNewArrayDeclareExpression(Class componentType, int line, int column) {
-        return new DirectValue(this.nativeFactory.getNativeNewArrayMethodDeclare(componentType, line, column), line, column);
+        return new DirectValue(this.nativeFactory.getNativeNewArrayMethodDeclare(componentType, line, column, true), line, column);
     }
 
     Expression createNativeMethodDeclareExpression(Class clazz, String methodName, List<Class> list, int line, int column) {
-        return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName, list.toArray(new Class[list.size()]), line, column), line, column);
+        return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName, list.toArray(new Class[list.size()]), line, column, true), line, column);
     }
 
     Expression createMethodReference(String ref, int line, int column) {
@@ -310,15 +310,15 @@ abstract class AbstractParser {
         String method = ref.substring(split + 2).trim();
         MethodDeclare methodDeclare;
         if (method.equals("new")) {
-            methodDeclare = this.nativeFactory.getNativeConstructorDeclare(toClass(cls));
+            methodDeclare = this.nativeFactory.getNativeConstructorDeclare(toClass(cls), line, column, true);
         } else {
-            methodDeclare = this.nativeFactory.getNativeMethodDeclare(toClass(cls), method);
+            methodDeclare = this.nativeFactory.getNativeMethodDeclare(toClass(cls), method, line, column, true);
         }
         return new DirectValue(methodDeclare, line, column);
     }
 
     Expression createNativeConstructorDeclareExpression(Class clazz, List<Class> list, int line, int column) {
-        return new DirectValue(this.nativeFactory.getNativeConstructorDeclare(clazz, list.toArray(new Class[list.size()]), line, column), line, column);
+        return new DirectValue(this.nativeFactory.getNativeConstructorDeclare(clazz, list.toArray(new Class[list.size()]), line, column, true), line, column);
     }
 
     Statement declearVar(String ident, int line, int column) {

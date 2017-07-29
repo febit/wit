@@ -31,14 +31,14 @@ public class NativeFactory {
     protected NativeSecurityManager nativeSecurityManager;
 
     public MethodDeclare getNativeNewArrayMethodDeclare(Class componentType) {
-        return createNativeNewArrayMethodDeclare(componentType, -1, -1, true);
+        return getNativeNewArrayMethodDeclare(componentType, -1, -1, true);
     }
 
-    public MethodDeclare getNativeNewArrayMethodDeclare(Class componentType, int line, int column) {
-        return createNativeNewArrayMethodDeclare(componentType, line, column, true);
+    public MethodDeclare getNativeNewArrayMethodDeclare(Class componentType, boolean checkAccess) {
+        return getNativeNewArrayMethodDeclare(componentType, -1, -1, checkAccess);
     }
 
-    public MethodDeclare createNativeNewArrayMethodDeclare(Class componentType, int line, int column, boolean checkAccess) {
+    public MethodDeclare getNativeNewArrayMethodDeclare(Class componentType, int line, int column, boolean checkAccess) {
         Class classForCheck = componentType;
         while (classForCheck.isArray()) {
             classForCheck = classForCheck.getComponentType();
@@ -58,38 +58,20 @@ public class NativeFactory {
         return new NativeNewArrayDeclare(componentType);
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes) {
-        return getNativeMethodDeclare(clazz, methodName, paramTypes, true);
-    }
-
-    public MethodDeclare getNativeConstructorDeclare(Class clazz) {
-        Constructor[] constructors = clazz.getConstructors();
-        if (constructors == null || constructors.length == 0) {
-            throw new ScriptRuntimeException("Not found public constructor for class： " + clazz.getName());
-        }
-        if (constructors.length == 1) {
-            return new NativeConstructorDeclare(constructors[0]);
-        }
-        return new MultiNativeConstructorDeclare(constructors);
-    }
-
     public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName) {
-        Method[] methods = ClassUtil.getPublicMethods(clazz, methodName);
-        if (methods.length == 0) {
-            throw new ScriptRuntimeException("Method not found： " + clazz.getName() + '#' + methodName);
-        }
-        if (methods.length == 1) {
-            return getNativeMethodDeclare(methods[0]);
-        }
-        return createMultiNativeMethodDeclare(methods);
+        return getNativeMethodDeclare(clazz, methodName, -1, -1, true);
+    }
+
+    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, boolean checkAccess) {
+        return getNativeMethodDeclare(clazz, methodName, -1, -1, checkAccess);
+    }
+
+    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes) {
+        return getNativeMethodDeclare(clazz, methodName, paramTypes, -1, -1, true);
     }
 
     public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, boolean checkAccess) {
         return getNativeMethodDeclare(clazz, methodName, paramTypes, -1, -1, checkAccess);
-    }
-
-    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, int line, int column) {
-        return getNativeMethodDeclare(clazz, methodName, paramTypes, line, column, true);
     }
 
     @SuppressWarnings("unchecked")
@@ -107,12 +89,30 @@ public class NativeFactory {
         }
     }
 
+    public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, int line, int column, boolean checkAccess) {
+        if (checkAccess) {
+            final String path = StringUtil.concat(clazz.getName(), ".", methodName);
+            if (!this.nativeSecurityManager.access(path)) {
+                throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+            }
+        }
+        return createNativeMethodDeclare(clazz, methodName);
+    }
+
+    public MethodDeclare getNativeConstructorDeclare(Class clazz) {
+        return getNativeConstructorDeclare(clazz, -1, -1, true);
+    }
+
+    public MethodDeclare getNativeConstructorDeclare(Class clazz, boolean checkAccess) {
+        return getNativeConstructorDeclare(clazz, -1, -1, checkAccess);
+    }
+
     public MethodDeclare getNativeConstructorDeclare(Class clazz, Class[] paramTypes) {
         return getNativeConstructorDeclare(clazz, paramTypes, -1, -1, true);
     }
 
-    public MethodDeclare getNativeConstructorDeclare(Class clazz, Class[] paramTypes, int line, int column) {
-        return getNativeConstructorDeclare(clazz, paramTypes, line, column, true);
+    public MethodDeclare getNativeConstructorDeclare(Class clazz, Class[] paramTypes, boolean checkAccess) {
+        return getNativeConstructorDeclare(clazz, paramTypes, -1, -1, checkAccess);
     }
 
     @SuppressWarnings("unchecked")
@@ -128,6 +128,16 @@ public class NativeFactory {
         } catch (NoSuchMethodException | SecurityException ex) {
             throw new ParseException(ex.getMessage(), line, column);
         }
+    }
+
+    public MethodDeclare getNativeConstructorDeclare(Class clazz, int line, int column, boolean checkAccess) {
+        if (checkAccess) {
+            final String path = clazz.getName().concat(".<init>");
+            if (!this.nativeSecurityManager.access(path)) {
+                throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+            }
+        }
+        return createNativeConstructorDeclare(clazz);
     }
 
     public MethodDeclare getNativeMethodDeclare(Method method) {
@@ -152,6 +162,28 @@ public class NativeFactory {
             }
         }
         return declare;
+    }
+
+    public MethodDeclare createNativeConstructorDeclare(Class clazz) {
+        Constructor[] constructors = clazz.getConstructors();
+        if (constructors == null || constructors.length == 0) {
+            throw new ScriptRuntimeException("Not found public constructor for class： " + clazz.getName());
+        }
+        if (constructors.length == 1) {
+            return new NativeConstructorDeclare(constructors[0]);
+        }
+        return new MultiNativeConstructorDeclare(constructors);
+    }
+
+    public MethodDeclare createNativeMethodDeclare(Class clazz, String methodName) {
+        Method[] methods = ClassUtil.getPublicMethods(clazz, methodName);
+        if (methods.length == 0) {
+            throw new ScriptRuntimeException("Method not found： " + clazz.getName() + '#' + methodName);
+        }
+        if (methods.length == 1) {
+            return createNativeMethodDeclare(methods[0]);
+        }
+        return createMultiNativeMethodDeclare(methods);
     }
 
     public MethodDeclare createNativeMethodDeclare(Method method) {

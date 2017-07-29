@@ -67,7 +67,7 @@ public class JavaNativeUtil {
             String name = entry.getKey();
             List<Method> methods = entry.getValue();
             if (methods.size() == 1) {
-                manager.setConst(name, nativeFactory.getNativeMethodDeclare(methods.get(0)));
+                manager.setConst(name, nativeFactory.createNativeMethodDeclare(methods.get(0)));
             } else {
                 manager.setConst(name, nativeFactory.createMultiNativeMethodDeclare(
                         methods.toArray(new Method[methods.size()])));
