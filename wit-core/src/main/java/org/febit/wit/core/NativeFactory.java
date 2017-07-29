@@ -172,6 +172,7 @@ public class NativeFactory {
         if (constructors.length == 1) {
             return new NativeConstructorDeclare(constructors[0]);
         }
+        ClassUtil.setAccessible(constructors);
         return new MultiNativeConstructorDeclare(constructors);
     }
 
@@ -187,6 +188,7 @@ public class NativeFactory {
     }
 
     public MethodDeclare createNativeMethodDeclare(Method method) {
+        ClassUtil.setAccessible(method);
         return new NativeMethodDeclare(method);
     }
 
@@ -204,6 +206,7 @@ public class NativeFactory {
     }
 
     protected MethodDeclare createNativeConstructorDeclare(Constructor constructor) {
+        ClassUtil.setAccessible(constructor);
         return new NativeConstructorDeclare(constructor);
     }
 }

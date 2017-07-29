@@ -61,6 +61,7 @@ public class JavaNativeUtil {
                 methods = new ArrayList<>();
                 methodMap.put(name, methods);
             }
+            ClassUtil.setAccessible(method);
             methods.add(method);
         }
         for (Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
@@ -102,6 +103,7 @@ public class JavaNativeUtil {
             }
             Object value;
             try {
+                ClassUtil.setAccessible(field);
                 value = field.get(null);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 throw new RuntimeException(e);

@@ -98,7 +98,9 @@ public class ClassUtil {
                 result.put(key, method);
             }
         }
-        return result.values().toArray(new Method[result.size()]);
+        Method[] methods = result.values().toArray(new Method[result.size()]);
+        setAccessible(methods);
+        return methods;
     }
 
     /**
@@ -129,7 +131,9 @@ public class ClassUtil {
                 result.put(key, method);
             }
         }
-        return result.values().toArray(new Method[result.size()]);
+        Method[] methods = result.values().toArray(new Method[result.size()]);
+        setAccessible(methods);
+        return methods;
     }
 
     public static ClassLoader getDefaultClassLoader() {
@@ -274,6 +278,12 @@ public class ClassUtil {
 
     public static boolean isVoidType(Class cls) {
         return cls == void.class || cls == Void.class;
+    }
+
+    public static <T extends AccessibleObject> void setAccessible(T[] accessibles) {
+        for (T accessible : accessibles) {
+            setAccessible(accessible);
+        }
     }
 
     public static void setAccessible(AccessibleObject accessible) {

@@ -210,6 +210,7 @@ public class Petite {
                 }
             }
             try {
+                ClassUtil.setAccessible(method);
                 method.invoke(bean, args);
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 //shouldn't be
