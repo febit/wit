@@ -171,11 +171,6 @@ public class NativeFactory {
                 : new MultiNativeMethodDeclare(methods, isStatic);
     }
 
-    @Deprecated
-    public MethodDeclare createMultiNativeMethodDeclare(Method[] methods, boolean isStatic) {
-        return new MultiNativeMethodDeclare(methods, isStatic);
-    }
-
     protected MethodDeclare createNativeConstructorDeclare(Constructor constructor) {
         return new NativeConstructorDeclare(constructor);
     }
