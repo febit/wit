@@ -45,6 +45,8 @@ abstract class AbstractParser {
     static final int OP_XOREQ = 9;
     static final int OP_OREQ = 10;
 
+    final Stack<Symbol> symbolStack = new Stack<>(24);
+
     private final Map<String, String> importedClasses;
     private final Map<String, Integer> labelsIndexMap;
 
@@ -58,6 +60,8 @@ abstract class AbstractParser {
     Template template;
     VariantManager varmgr;
 
+    boolean goonParse;
+
     AbstractParser() {
         this.importedClasses = new HashMap<>();
         this.labelsIndexMap = new HashMap<>();
@@ -66,6 +70,70 @@ abstract class AbstractParser {
     public TemplateAST parse(final Template template, BreakPointListener breakPointListener) throws ParseException {
         this.breakPointListener = breakPointListener;
         return parse(template);
+    }
+
+    abstract Object doAction(int actionId) throws ParseException;
+
+    Symbol parse(final Lexer lexer) throws Exception {
+
+        int act;
+        Symbol currentToken;
+        Symbol currentSymbol;
+        final Stack<Symbol> stack = this.symbolStack;
+        stack.clear();
+
+        //Start Symbol
+        currentSymbol = new Symbol(0, -1, -1, null);
+        currentSymbol.state = 0;
+        stack.push(currentSymbol);
+
+        final short[][] actionTable = ACTION_TABLE;
+        final short[][] reduceTable = REDUCE_TABLE;
+        final short[][] productionTable = PRODUCTION_TABLE;
+
+        currentToken = lexer.nextToken();
+
+        goonParse = true;
+        do {
+
+            // look up action out of the current state with the current input
+            act = getAction(actionTable[currentSymbol.state], currentToken.id);
+
+            // decode the action -- > 0 encodes shift
+            if (act > 0) {
+                // shift to the encoded state by pushing it on the _stack
+                currentToken.state = act - 1;
+                stack.push(currentToken);
+                currentSymbol = currentToken;
+                // advance to the next Symbol
+                currentToken = lexer.nextToken();
+            } else if (act < 0) {
+                // if its less than zero, then it encodes a reduce action
+                act = (-act) - 1;
+                final int symId, handleSize;
+                final Object result = doAction(act);
+                final short[] row = productionTable[act];
+                symId = row[0];
+                handleSize = row[1];
+                if (handleSize == 0) {
+                    currentSymbol = new Symbol(symId, -1, -1, result);
+                } else {
+                    //position based on left
+                    currentSymbol = new Symbol(symId, result, stack.peek(handleSize - 1));
+                    //pop the handle
+                    stack.pops(handleSize);
+                }
+
+                // look up the state to go to from the one popped back to shift to that state 
+                currentSymbol.state = getReduce(reduceTable[stack.peek().state], symId);
+                stack.push(currentSymbol);
+            } else {
+                //act == 0
+                throw new ParseException(StringUtil.format("Syntax error at line {} column {}, Hints: {}", lexer.getLine(), lexer.getColumn(), getSimpleHintMessage(currentSymbol)), lexer.getLine(), lexer.getColumn());
+            }
+        } while (goonParse);
+
+        return stack.peek();
     }
 
     /**
@@ -701,74 +769,5 @@ abstract class AbstractParser {
             return SYMBOL_STRS[sym];
         }
         return "UNKNOWN";
-    }
-
-    final Stack<Symbol> symbolStack = new Stack<>(24);
-    boolean goonParse;
-
-    abstract Object doAction(int actionId) throws ParseException;
-
-    Symbol parse(final Lexer lexer) throws Exception {
-
-        int act;
-        Symbol currentToken;
-        Symbol currentSymbol;
-        final Stack<Symbol> stack = this.symbolStack;
-        stack.clear();
-
-        //Start Symbol
-        currentSymbol = new Symbol(0, -1, -1, null);
-        currentSymbol.state = 0;
-        stack.push(currentSymbol);
-
-        final short[][] actionTable = ACTION_TABLE;
-        final short[][] reduceTable = REDUCE_TABLE;
-        final short[][] productionTable = PRODUCTION_TABLE;
-
-        currentToken = lexer.nextToken();
-
-        goonParse = true;
-        do {
-
-            /* look up action out of the current state with the current input */
-            act = getAction(actionTable[currentSymbol.state], currentToken.id);
-
-            /* decode the action -- > 0 encodes shift */
-            if (act > 0) {
-                /* shift to the encoded state by pushing it on the _stack */
-                currentToken.state = act - 1;
-                stack.push(currentSymbol = currentToken);
-
-                /* advance to the next Symbol */
-                currentToken = lexer.nextToken();
-            } else if (act < 0) {
-                /* if its less than zero, then it encodes a reduce action */
-                act = (-act) - 1;
-                final int symId, handleSize;
-                final Object result = doAction(act);
-                final short[] row;
-                symId = (row = productionTable[act])[0];
-                handleSize = row[1];
-                if (handleSize == 0) {
-                    currentSymbol = new Symbol(symId, -1, -1, result);
-                } else {
-                    //position based on left
-                    currentSymbol = new Symbol(symId, result, stack.peek(handleSize - 1));
-                    //pop the handle
-                    stack.pops(handleSize);
-                }
-
-                /* look up the state to go to from the one popped back to */
- /* shift to that state */
-                currentSymbol.state = getReduce(reduceTable[stack.peek().state], symId);
-                stack.push(currentSymbol);
-
-            } else {
-                //act == 0
-                throw new ParseException(StringUtil.format("Syntax error at line {} column {}, Hints: {}", lexer.getLine(), lexer.getColumn(), getSimpleHintMessage(currentSymbol)), lexer.getLine(), lexer.getColumn());
-            }
-        } while (goonParse);
-
-        return stack.peek();
     }
 }
