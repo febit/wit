@@ -12,6 +12,7 @@ final class Symbol {
      * The parse state.
      */
     int state;
+    boolean isOnEdgeOfNewLine = false;
 
     Symbol(int id, Object value, Symbol sym) {
         this(id, sym.line, sym.column, value);

@@ -1,0 +1,64 @@
+<%
+
+var b,c
+
+var a 
+  = 111
+  + 222
+  + 333
+  /3
+assertEquals(a, 444)
+
+b=0
+a
+++
+b++
+c=1
+
+assertEquals(a, 445)
+assertEquals(b, 1)
+assertEquals(c, 1)
+
+
+//
+b= function(x){return x;}
+
+assertEquals(b(123), 123)
+
+//
+a=0
+a=b
+()
+
+assertEquals(a, null)
+
+//
+a=b
+(1+2)
+
+assertEquals(a, 3)
+
+//
+a=b
+(111,222)
+
+assertEquals(a, 111)
+
+
+// FIXME: Unexpected
+a=1
+var arr = [1,2,3]
+c = arr
+[a] = [2,3,4]
+
+assertEquals(a, 1)
+assertEquals(c, arr[1])
+
+
+// FIXME: break
+c = arr
+;[a, b] = [2,3,4]
+
+assertEquals(c, arr)
+
+assertEquals("def", "def")

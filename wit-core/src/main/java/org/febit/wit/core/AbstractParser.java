@@ -56,6 +56,7 @@ abstract class AbstractParser {
     private NativeFactory nativeFactory;
     private boolean locateVarForce;
     private int currentLabelIndex;
+    private boolean looseSemicolon = true;
 
     Template template;
     VariantManager varmgr;
@@ -77,7 +78,7 @@ abstract class AbstractParser {
     Symbol parse(final Lexer lexer) throws Exception {
 
         int act;
-        Symbol currentToken;
+        Symbol pending;
         Symbol currentSymbol;
         final Stack<Symbol> stack = this.symbolStack;
         stack.clear();
@@ -91,46 +92,71 @@ abstract class AbstractParser {
         final short[][] reduceTable = REDUCE_TABLE;
         final short[][] productionTable = PRODUCTION_TABLE;
 
-        currentToken = lexer.nextToken();
+        Symbol pendingPending = null;
+        pending = lexer.nextToken();
 
         goonParse = true;
         do {
 
             // look up action out of the current state with the current input
-            act = getAction(actionTable[currentSymbol.state], currentToken.id);
+            act = getAction(actionTable[currentSymbol.state], pending.id);
 
             // decode the action -- > 0 encodes shift
             if (act > 0) {
                 // shift to the encoded state by pushing it on the _stack
-                currentToken.state = act - 1;
-                stack.push(currentToken);
-                currentSymbol = currentToken;
+                pending.state = act - 1;
+                stack.push(pending);
+                currentSymbol = pending;
                 // advance to the next Symbol
-                currentToken = lexer.nextToken();
-            } else if (act < 0) {
-                // if its less than zero, then it encodes a reduce action
-                act = (-act) - 1;
-                final int symId, handleSize;
-                final Object result = doAction(act);
-                final short[] row = productionTable[act];
-                symId = row[0];
-                handleSize = row[1];
-                if (handleSize == 0) {
-                    currentSymbol = new Symbol(symId, -1, -1, result);
-                } else {
-                    //position based on left
-                    currentSymbol = new Symbol(symId, result, stack.peek(handleSize - 1));
-                    //pop the handle
-                    stack.pops(handleSize);
-                }
 
-                // look up the state to go to from the one popped back to shift to that state 
-                currentSymbol.state = getReduce(reduceTable[stack.peek().state], symId);
-                stack.push(currentSymbol);
-            } else {
-                //act == 0
+                // next token
+                if (pendingPending != null) {
+                    pending = pendingPending;
+                    pendingPending = null;
+                } else {
+                    pending = lexer.nextToken();
+                }
+                continue;
+            }
+            // act <=0
+            if (act == 0
+                    && currentSymbol.isOnEdgeOfNewLine
+                    && pending.id != Tokens.SEMICOLON
+                    && this.looseSemicolon) {
+                act = getAction(actionTable[currentSymbol.state], Tokens.SEMICOLON);
+                if (act != 0) {
+                    pendingPending = pending;
+                    pending = new Symbol(Tokens.SEMICOLON, pendingPending.line, pendingPending.column, null);
+                    if (act > 0) {
+                        // go back to do  
+                        continue;
+                    }
+                }
+            }
+            if (act == 0) {
                 throw new ParseException(StringUtil.format("Syntax error at line {} column {}, Hints: {}", lexer.getLine(), lexer.getColumn(), getSimpleHintMessage(currentSymbol)), lexer.getLine(), lexer.getColumn());
             }
+            boolean isLastSymbolOnEdgeOfNewLine = currentSymbol.isOnEdgeOfNewLine;
+            // if its less than zero, then it encodes a reduce action
+            act = (-act) - 1;
+            final int symId, handleSize;
+            final Object result = doAction(act);
+            final short[] row = productionTable[act];
+            symId = row[0];
+            handleSize = row[1];
+            if (handleSize == 0) {
+                currentSymbol = new Symbol(symId, -1, -1, result);
+            } else {
+                //position based on left
+                currentSymbol = new Symbol(symId, result, stack.peek(handleSize - 1));
+                //pop the handle
+                stack.pops(handleSize);
+            }
+
+            // look up the state to go to from the one popped back to shift to that state 
+            currentSymbol.state = getReduce(reduceTable[stack.peek().state], symId);
+            currentSymbol.isOnEdgeOfNewLine = isLastSymbolOnEdgeOfNewLine;
+            stack.push(currentSymbol);
         } while (goonParse);
 
         return stack.peek();
@@ -177,7 +203,7 @@ abstract class AbstractParser {
             textStatFactory.finishTemplateParser(template);
             if (lexer != null) {
                 try {
-                    lexer.yyclose();
+                    lexer.close();
                 } catch (IOException ignore) {
                     // ignore
                 }
