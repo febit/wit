@@ -1,6 +1,6 @@
 <%
 
-var b,c
+var b,c,d
 
 var a 
   = 111
@@ -10,12 +10,13 @@ var a
 assertEquals(a, 444)
 
 b=0
-a
+d=a
 ++
-b++
+b
 c=1
 
-assertEquals(a, 445)
+assertEquals(a, 444)
+assertEquals(a, d)
 assertEquals(b, 1)
 assertEquals(c, 1)
 
@@ -28,21 +29,22 @@ assertEquals(b(123), 123)
 //
 a=0
 a=b
-()
+(() -> 0)()
 
-assertEquals(a, null)
-
-//
-a=b
-(1+2)
-
-assertEquals(a, 3)
+assertEquals(a, b)
 
 //
 a=b
-(111,222)
+((c)->{})()
 
-assertEquals(a, 111)
+assertEquals(a, b)
+
+//
+a=b
+((d,e)->{})()
+
+
+assertEquals(a, b)
 
 
 // FIXME: Unexpected
@@ -51,14 +53,15 @@ var arr = [1,2,3]
 c = arr
 [a] = [2,3,4]
 
-assertEquals(a, 1)
-assertEquals(c, arr[1])
+assertEquals(a, 2)
+assertEquals(c, arr)
 
 
-// FIXME: break
 c = arr
-;[a, b] = [2,3,4]
+[a, d] = [3,4]
 
 assertEquals(c, arr)
+assertEquals(a, 3)
+assertEquals(d, 4)
 
 assertEquals("def", "def")

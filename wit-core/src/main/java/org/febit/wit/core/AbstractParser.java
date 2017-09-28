@@ -91,6 +91,8 @@ abstract class AbstractParser {
         final short[][] actionTable = ACTION_TABLE;
         final short[][] reduceTable = REDUCE_TABLE;
         final short[][] productionTable = PRODUCTION_TABLE;
+        final boolean looseSemicolonModel = this.looseSemicolon;
+        int looseSemicolonCounter = 0;
 
         Symbol pendingPending = null;
         pending = lexer.nextToken();
@@ -115,19 +117,35 @@ abstract class AbstractParser {
                     pendingPending = null;
                 } else {
                     pending = lexer.nextToken();
+                    if (looseSemicolonModel
+                            && currentSymbol.isOnEdgeOfNewLine) {
+                        switch (pending.id) {
+                            case Tokens.LBRACE: // {
+                            case Tokens.LBRACK: // [
+                            case Tokens.LPAREN: // (
+                            case Tokens.PLUSPLUS: // ++
+                            case Tokens.MINUSMINUS: // --
+                                pendingPending = pending;
+                                pending = createLooseSemicolonSymbol(pendingPending);
+                                looseSemicolonCounter++;
+                            default:
+                            // Do nothing
+                        }
+                    }
                 }
                 continue;
             }
             // act <=0
             if (act == 0
-                    && this.looseSemicolon
+                    && looseSemicolonModel
                     && pending.id != Tokens.SEMICOLON) {
                 if (currentSymbol.isOnEdgeOfNewLine
                         || pending.id == Tokens.RBRACE) {
                     act = getAction(actionTable[currentSymbol.state], Tokens.SEMICOLON);
                     if (act != 0) {
                         pendingPending = pending;
-                        pending = new Symbol(Tokens.SEMICOLON, pendingPending.line, pendingPending.column, null);
+                        pending = createLooseSemicolonSymbol(pendingPending);
+                        looseSemicolonCounter++;
                         if (act > 0) {
                             // go back to do  
                             continue;
@@ -162,6 +180,10 @@ abstract class AbstractParser {
         } while (goonParse);
 
         return stack.peek();
+    }
+
+    private Symbol createLooseSemicolonSymbol(Symbol beforeSymbol) {
+        return new Symbol(Tokens.SEMICOLON, beforeSymbol.line, beforeSymbol.column, null);
     }
 
     /**
