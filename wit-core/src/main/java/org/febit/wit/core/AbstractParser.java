@@ -120,16 +120,18 @@ abstract class AbstractParser {
             }
             // act <=0
             if (act == 0
-                    && currentSymbol.isOnEdgeOfNewLine
-                    && pending.id != Tokens.SEMICOLON
-                    && this.looseSemicolon) {
-                act = getAction(actionTable[currentSymbol.state], Tokens.SEMICOLON);
-                if (act != 0) {
-                    pendingPending = pending;
-                    pending = new Symbol(Tokens.SEMICOLON, pendingPending.line, pendingPending.column, null);
-                    if (act > 0) {
-                        // go back to do  
-                        continue;
+                    && this.looseSemicolon
+                    && pending.id != Tokens.SEMICOLON) {
+                if (currentSymbol.isOnEdgeOfNewLine
+                        || pending.id == Tokens.RBRACE) {
+                    act = getAction(actionTable[currentSymbol.state], Tokens.SEMICOLON);
+                    if (act != 0) {
+                        pendingPending = pending;
+                        pending = new Symbol(Tokens.SEMICOLON, pendingPending.line, pendingPending.column, null);
+                        if (act > 0) {
+                            // go back to do  
+                            continue;
+                        }
                     }
                 }
             }

@@ -21,7 +21,7 @@ assertEquals(c, 1)
 
 
 //
-b= function(x){return x;}
+b= function(x){return x}
 
 assertEquals(b(123), 123)
 
