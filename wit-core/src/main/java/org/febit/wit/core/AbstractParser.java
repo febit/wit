@@ -133,9 +133,21 @@ abstract class AbstractParser {
                         }
                     }
                 }
+                if (looseSemicolonModel 
+                        && pendingPending == null
+                        && pending.isOnEdgeOfNewLine) {
+                    switch (pending.id) {
+                        case Tokens.RETURN:
+                        case Tokens.BREAK:
+                        case Tokens.CONTINUE:
+                            pendingPending = createLooseSemicolonSymbol(pending);
+                        default:
+                            // Do nothing
+                    }
+                }
                 continue;
             }
-            // act <=0
+            // assert act <=0
             if (act == 0
                     && looseSemicolonModel
                     && pending.id != Tokens.SEMICOLON) {
@@ -182,8 +194,8 @@ abstract class AbstractParser {
         return stack.peek();
     }
 
-    private Symbol createLooseSemicolonSymbol(Symbol beforeSymbol) {
-        return new Symbol(Tokens.SEMICOLON, beforeSymbol.line, beforeSymbol.column, null);
+    private Symbol createLooseSemicolonSymbol(Symbol referSymbol) {
+        return new Symbol(Tokens.SEMICOLON, referSymbol.line, referSymbol.column, null);
     }
 
     /**

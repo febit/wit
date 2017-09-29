@@ -64,4 +64,17 @@ assertEquals(c, arr)
 assertEquals(a, 3)
 assertEquals(d, 4)
 
+// return test
+
+a = 1
+var func = ()->{
+  return
+  a++
+}
+
+var VOID = (()->{return})()
+
+assertEquals(func(), VOID)
+
+
 assertEquals("def", "def")
