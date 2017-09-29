@@ -7,7 +7,8 @@ import org.febit.wit.util.CharArrayWriter;
 
 %%
 %class Lexer
-%function nextToken
+%function _nextToken
+%apiprivate
 %type Symbol
 %line
 %column
@@ -18,6 +19,7 @@ import org.febit.wit.util.CharArrayWriter;
 
     private static final int INTERPOLATION_START_LEN = 2;
     private static final int TEXT_BLOCK_END_LEN = 2;
+    private static final Symbol SYM_NEW_LINE = new Symbol(-1, -1, -1, '\n');
 
     private boolean interpolationFlag = false;
     private boolean leftInterpolationFlag = true;
@@ -29,6 +31,30 @@ import org.febit.wit.util.CharArrayWriter;
     
     private int offsetLine = 0;
     private int offsetColumnOfFirstLine= 0;
+
+    private Symbol pendding = null;
+
+    public Symbol nextToken() throws java.io.IOException {
+        Symbol next = this.pendding;
+        this.pendding = null;
+        while (next == null || next == SYM_NEW_LINE) {
+            next = _nextToken();
+        }
+        if (next.id == Tokens.EOF
+              || next.id == Tokens.SEMICOLON) {
+            return next;
+        }
+        Symbol nextAfter = _nextToken();
+        this.pendding = nextAfter;
+        if (nextAfter == SYM_NEW_LINE || nextAfter.id == Tokens.EOF) {
+            next.isOnEdgeOfNewLine = true;
+        }
+        return next;
+    }
+
+    public void close() throws java.io.IOException {
+        yyclose();
+    }
     
     public void setTrimCodeBlockBlankLine(boolean flag){
         trimCodeBlockBlankLine = flag;
@@ -205,7 +231,8 @@ import org.febit.wit.util.CharArrayWriter;
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 
-WhiteSpace = {LineTerminator} | [ \t\f]
+Blanks = [ \t\f]
+WhiteSpace = {LineTerminator} | {Blanks}
 
 /* comments */
 Comment = {TraditionalComment} | {LineComment} | 
@@ -433,8 +460,8 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* "::" {WhiteSpac
 
   {MethodReference}              { return symbol(Tokens.METHOD_REFERENCE, yytext()); }
 
-  /* whitespace */
-  {WhiteSpace}                   { /* ignore */ }
+  {LineTerminator}               { return SYM_NEW_LINE; }
+  {Blanks}                       { /* ignore */ }
 
 
 }

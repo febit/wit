@@ -19,6 +19,7 @@ DEFAULT_ENCODING=UTF-8
 encoding=${DEFAULT_ENCODING}
 # looseVar=false
 # trimCodeBlockBlankLine=true
+# looseSemicolon=true
 # vars=
 # inits=
 # shareRootData=true
