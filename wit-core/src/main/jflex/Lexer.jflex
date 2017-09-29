@@ -36,11 +36,12 @@ import org.febit.wit.util.CharArrayWriter;
 
     public Symbol nextToken() throws java.io.IOException {
         Symbol next = this.pendding;
+        this.pendding = null;
         while (next == null || next == SYM_NEW_LINE) {
             next = _nextToken();
         }
-        //if(true) return next;
-        if (next.id == Tokens.EOF) {
+        if (next.id == Tokens.EOF
+              || next.id == Tokens.SEMICOLON) {
             return next;
         }
         Symbol nextAfter = _nextToken();
