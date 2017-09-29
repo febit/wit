@@ -46,7 +46,7 @@ public class ClassUtil {
         return classes;
     }
 
-    public static Map<String, Field> getSetableMemberFields(Class type) {
+    public static Map<String, Field> getSettableMemberFields(Class type) {
         final Map<String, Field> fields = new HashMap<>();
         for (Class cls : classes(type)) {
             for (Field field : cls.getDeclaredFields()) {

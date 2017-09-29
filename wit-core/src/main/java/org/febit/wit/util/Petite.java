@@ -171,7 +171,7 @@ public class Petite {
             key = (String) this.datas.get(key + ".@class");
         } while (key != null);
 
-        Map<String, Field> fields = ClassUtil.getSetableMemberFields(bean.getClass());
+        Map<String, Field> fields = ClassUtil.getSettableMemberFields(bean.getClass());
         //global
         for (Field field : fields.values()) {
             Object comp = this.components.get(field.getType());
