@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.febit.wit.Template;
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.ResetableValueExpression;
+import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.exceptions.ParseException;
 
 /**
@@ -19,7 +19,7 @@ public class ImportPart {
     private Expression expr;
     private Expression paramsExpr;
     private List<String> exportNameList;
-    private List<ResetableValueExpression> toResetableValueList;
+    private List<AssignableExpression> toResetableValueList;
 
     public ImportPart(Expression expr, int line, int column) {
         this(expr, null, line, column);
@@ -35,9 +35,9 @@ public class ImportPart {
     }
 
     public ImportPart append(String name, Expression to) {
-        if (to instanceof ResetableValueExpression) {
+        if (to instanceof AssignableExpression) {
             this.exportNameList.add(name);
-            this.toResetableValueList.add((ResetableValueExpression) to);
+            this.toResetableValueList.add((AssignableExpression) to);
             return this;
         } else {
             throw new ParseException("Need a resetable expression.", to);
@@ -51,7 +51,7 @@ public class ImportPart {
                 ? new Import(expr, paramsExpr, null, null, template, line, column)
                 : new Import(expr, paramsExpr,
                         exportNameList.toArray(new String[len]),
-                        toResetableValueList.toArray(new ResetableValueExpression[len]),
+                        toResetableValueList.toArray(new AssignableExpression[len]),
                         template, line, column);
     }
 }

@@ -3,7 +3,7 @@ package org.febit.wit.core.ast.operators;
 
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.ResetableValueExpression;
+import org.febit.wit.core.ast.AssignableExpression;
 
 /**
  *
@@ -12,9 +12,9 @@ import org.febit.wit.core.ast.ResetableValueExpression;
 public final class Assign extends Expression {
 
     private final Expression rexpr;
-    private final ResetableValueExpression lexpr;
+    private final AssignableExpression lexpr;
 
-    public Assign(ResetableValueExpression lexpr, Expression rexpr, int line, int column) {
+    public Assign(AssignableExpression lexpr, Expression rexpr, int line, int column) {
         super(line, column);
         this.lexpr = lexpr;
         this.rexpr = rexpr;

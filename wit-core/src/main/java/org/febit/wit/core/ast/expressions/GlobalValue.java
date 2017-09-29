@@ -2,14 +2,14 @@
 package org.febit.wit.core.ast.expressions;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.ResetableValueExpression;
+import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.global.GlobalManager;
 
 /**
  *
  * @author zqq90
  */
-public final class GlobalValue extends ResetableValueExpression {
+public final class GlobalValue extends AssignableExpression {
 
     private final GlobalManager manager;
     private final int index;

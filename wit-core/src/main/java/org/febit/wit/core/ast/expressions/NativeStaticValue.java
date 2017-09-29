@@ -3,14 +3,14 @@ package org.febit.wit.core.ast.expressions;
 
 import java.lang.reflect.Field;
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.ResetableValueExpression;
+import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 
 /**
  *
  * @author zqq90
  */
-public class NativeStaticValue extends ResetableValueExpression {
+public class NativeStaticValue extends AssignableExpression {
 
     private final Field field;
 

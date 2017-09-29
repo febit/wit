@@ -2,7 +2,7 @@
 package org.febit.wit.core.ast.operators;
 
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.ResetableValueExpression;
+import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.SelfOperator;
 import org.febit.wit.util.ALU;
 
@@ -12,7 +12,7 @@ import org.febit.wit.util.ALU;
  */
 public final class SelfBitOr extends SelfOperator{
 
-    public SelfBitOr(ResetableValueExpression leftExp, Expression rightExp, int line, int column) {
+    public SelfBitOr(AssignableExpression leftExp, Expression rightExp, int line, int column) {
         super(leftExp, rightExp, line, column);
     }
 

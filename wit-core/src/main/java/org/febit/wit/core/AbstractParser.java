@@ -315,15 +315,15 @@ abstract class AbstractParser {
         return index;
     }
 
-    Expression createAssign(ResetableValueExpression lexpr, Expression rexpr, int line, int column) {
+    Expression createAssign(AssignableExpression lexpr, Expression rexpr, int line, int column) {
         return new Assign(lexpr, rexpr, line, column);
     }
 
     Expression createGroupAssign(Expression[] lexpres, Expression rexpr, int line, int column) {
 
-        ResetableValueExpression[] resetableExprs = new ResetableValueExpression[lexpres.length];
+        AssignableExpression[] resetableExprs = new AssignableExpression[lexpres.length];
         for (int i = 0; i < lexpres.length; i++) {
-            resetableExprs[i] = castToResetableValueExpression(lexpres[i]);
+            resetableExprs[i] = castToAssignableExpression(lexpres[i]);
         }
         return new GroupAssign(resetableExprs, rexpr, line, column);
     }
@@ -509,15 +509,15 @@ abstract class AbstractParser {
         return new TryPart(createIBlock(list, varIndexer, line, column), line, column);
     }
 
-    static ResetableValueExpression castToResetableValueExpression(Expression expr) {
-        if (expr instanceof ResetableValueExpression) {
-            return (ResetableValueExpression) expr;
+    static AssignableExpression castToAssignableExpression(Expression expr) {
+        if (expr instanceof AssignableExpression) {
+            return (AssignableExpression) expr;
         }
         throw new ParseException("expression is not assignable", expr);
     }
 
     static Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column) {
-        ResetableValueExpression leftExpr = castToResetableValueExpression(lexpr);
+        AssignableExpression leftExpr = castToAssignableExpression(lexpr);
         SelfOperator oper;
         switch (sym) {
 

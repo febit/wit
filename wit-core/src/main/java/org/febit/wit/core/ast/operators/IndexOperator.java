@@ -3,14 +3,14 @@ package org.febit.wit.core.ast.operators;
 
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.ResetableValueExpression;
+import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.util.StatementUtil;
 
 /**
  *
  * @author zqq90
  */
-public final class IndexOperator extends ResetableValueExpression {
+public final class IndexOperator extends AssignableExpression {
 
     public final Expression leftExpr;
     public final Expression rightExpr;

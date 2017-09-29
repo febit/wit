@@ -10,10 +10,10 @@ import org.febit.wit.util.StatementUtil;
  */
 public abstract class SelfOperator extends Expression {
 
-    protected final ResetableValueExpression leftExpr;
+    protected final AssignableExpression leftExpr;
     protected final Expression rightExpr;
 
-    public SelfOperator(ResetableValueExpression leftExp, Expression rightExp, int line, int column) {
+    public SelfOperator(AssignableExpression leftExp, Expression rightExp, int line, int column) {
         super(line, column);
         this.leftExpr = leftExp;
         this.rightExpr = rightExp;
@@ -22,7 +22,7 @@ public abstract class SelfOperator extends Expression {
     @Override
     public final Object execute(final InternalContext context) {
         try {
-            ResetableValueExpression left = this.leftExpr;
+            AssignableExpression left = this.leftExpr;
             return left.setValue(context, doOperate(rightExpr.execute(context),
                     left.execute(context)));
         } catch (Exception e) {

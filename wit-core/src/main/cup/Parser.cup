@@ -177,7 +177,7 @@ statement       ::= expression_statementable:$ SEMICOLON
 
                     //RedirectOut
                     |block:stat EQGT:sym expression:expr SEMICOLON
-                    {: return new RedirectOut(%stat%, castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new RedirectOut(%stat%, castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
 
                     //textStat
                     |TEXT_STATEMENT:sym
@@ -361,22 +361,22 @@ switchPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE TEXT_S
 expression_statementable ::= 
                     //assignOper = 
                     expression:lexpr EQ:sym expression:expr
-                    {: return createAssign(castToResetableValueExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return createAssign(castToAssignableExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
                     
                     |LBRACK expressionList:list RBRACK EQ:sym expression:expr
                     {: return createGroupAssign((%list%).toArray(), %expr%, %sym.line%, %sym.column%); :}
 
                     //plusPlusOper ++
                     |PLUSPLUS:sym expression:expr
-                    {: return new PlusPlusBefore(castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new PlusPlusBefore(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
                     |expression:expr PLUSPLUS:sym
-                    {: return new PlusPlusAfter(castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new PlusPlusAfter(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
 
                     //minusMinusOper --
                     |MINUSMINUS:sym expression:expr
-                    {: return new MinusMinusBefore(castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new MinusMinusBefore(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
                     |expression:expr MINUSMINUS:sym
-                    {: return new MinusMinusAfter(castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new MinusMinusAfter(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
 
                     //selfOper
                     |expression:lexpr SELFEQ:sym expression:rexpr
@@ -384,7 +384,7 @@ expression_statementable ::=
                     
                     //RedirectOutExpression =>
                     |funcExecuteExpr:srcExpr EQGT:sym expression:expr
-                    {: return new RedirectOutExpression(%srcExpr%, castToResetableValueExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new RedirectOutExpression(%srcExpr%, castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
 
                     //
                     |funcExecuteExpr:$

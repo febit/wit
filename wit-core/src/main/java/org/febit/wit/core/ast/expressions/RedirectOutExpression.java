@@ -3,7 +3,7 @@ package org.febit.wit.core.ast.expressions;
 
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.ResetableValueExpression;
+import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
@@ -17,9 +17,9 @@ import org.febit.wit.util.CharArrayWriter;
 public class RedirectOutExpression extends Expression {
 
     private final Expression srcExpr;
-    private final ResetableValueExpression toExpr;
+    private final AssignableExpression toExpr;
 
-    public RedirectOutExpression(Expression srcExpr, ResetableValueExpression toExpr, int line, int column) {
+    public RedirectOutExpression(Expression srcExpr, AssignableExpression toExpr, int line, int column) {
         super(line, column);
         this.srcExpr = srcExpr;
         this.toExpr = toExpr;

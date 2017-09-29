@@ -7,9 +7,9 @@ import org.febit.wit.InternalContext;
  *
  * @author zqq90
  */
-public abstract class ResetableValueExpression extends Expression {
+public abstract class AssignableExpression extends Expression {
 
-    protected ResetableValueExpression(int line, int column) {
+    protected AssignableExpression(int line, int column) {
         super(line, column);
     }
 

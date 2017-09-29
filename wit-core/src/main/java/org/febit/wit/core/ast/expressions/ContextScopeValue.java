@@ -2,13 +2,13 @@
 package org.febit.wit.core.ast.expressions;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.ResetableValueExpression;
+import org.febit.wit.core.ast.AssignableExpression;
 
 /**
  *
  * @author zqq90
  */
-public final class ContextScopeValue extends ResetableValueExpression {
+public final class ContextScopeValue extends AssignableExpression {
 
     private final int index;
     private final int scope;

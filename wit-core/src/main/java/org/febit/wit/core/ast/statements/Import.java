@@ -6,7 +6,7 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
 import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.ResetableValueExpression;
+import org.febit.wit.core.ast.AssignableExpression;
 
 /**
  *
@@ -15,10 +15,10 @@ import org.febit.wit.core.ast.ResetableValueExpression;
 public final class Import extends AbstractInclude {
 
     private final String[] exportNames;
-    private final ResetableValueExpression[] toResetableValues;
+    private final AssignableExpression[] toResetableValues;
     private final boolean exportAll;
 
-    public Import(Expression templateNameExpr, Expression paramsExpr, String[] exportNames, ResetableValueExpression[] toContextValues, Template template, int line, int column) {
+    public Import(Expression templateNameExpr, Expression paramsExpr, String[] exportNames, AssignableExpression[] toContextValues, Template template, int line, int column) {
         super(templateNameExpr, paramsExpr, template, line, column);
         if (exportNames == null || exportNames.length == 0) {
             this.exportNames = null;
@@ -48,7 +48,7 @@ public final class Import extends AbstractInclude {
         } else {
             final String [] names = this.exportNames;
             final int len = names.length;
-            final ResetableValueExpression[] myToResetableValues = this.toResetableValues;
+            final AssignableExpression[] myToResetableValues = this.toResetableValues;
             for (int i = 0; i < len; i++) {
                 myToResetableValues[i].setValue(context, results.get(names[i]));
             }

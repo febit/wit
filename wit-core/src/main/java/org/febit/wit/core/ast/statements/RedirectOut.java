@@ -2,7 +2,7 @@
 package org.febit.wit.core.ast.statements;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.ResetableValueExpression;
+import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.impl.OutputStreamOut;
@@ -17,9 +17,9 @@ import org.febit.wit.util.CharArrayWriter;
 public class RedirectOut extends Statement {
 
     private final Statement srcStatement;
-    private final ResetableValueExpression toExpr;
+    private final AssignableExpression toExpr;
 
-    public RedirectOut(Statement srcStatement, ResetableValueExpression toExpr, int line, int column) {
+    public RedirectOut(Statement srcStatement, AssignableExpression toExpr, int line, int column) {
         super(line, column);
         this.srcStatement = srcStatement;
         this.toExpr = toExpr;
