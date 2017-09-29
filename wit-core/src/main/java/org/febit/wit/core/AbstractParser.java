@@ -452,7 +452,7 @@ abstract class AbstractParser {
         if (expr instanceof ResetableValueExpression) {
             return (ResetableValueExpression) expr;
         }
-        throw new ParseException("Invalid expression to redirect out stream to, must be rewriteable", expr);
+        throw new ParseException("expression is not assignable", expr);
     }
 
     static Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column) {
