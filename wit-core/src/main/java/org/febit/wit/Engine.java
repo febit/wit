@@ -36,6 +36,7 @@ public class Engine {
     protected boolean looseVar;
     protected boolean shareRootData = true;
     protected boolean trimCodeBlockBlankLine = true;
+    protected boolean looseSemicolon = true;
     protected InternedEncoding encoding;
     protected String inits;
     protected String[] vars;
@@ -198,6 +199,10 @@ public class Engine {
 
     public boolean isTrimCodeBlockBlankLine() {
         return trimCodeBlockBlankLine;
+    }
+
+    public boolean isLooseSemicolon() {
+        return looseSemicolon;
     }
 
     public Logger getLogger() {

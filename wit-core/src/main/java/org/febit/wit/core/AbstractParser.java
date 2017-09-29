@@ -56,7 +56,6 @@ abstract class AbstractParser {
     private NativeFactory nativeFactory;
     private boolean locateVarForce;
     private int currentLabelIndex;
-    private boolean looseSemicolon = true;
 
     Template template;
     VariantManager varmgr;
@@ -91,7 +90,7 @@ abstract class AbstractParser {
         final short[][] actionTable = ACTION_TABLE;
         final short[][] reduceTable = REDUCE_TABLE;
         final short[][] productionTable = PRODUCTION_TABLE;
-        final boolean looseSemicolonModel = this.looseSemicolon;
+        final boolean looseSemicolon = this.engine.isLooseSemicolon();
         int looseSemicolonCounter = 0;
 
         Symbol pendingPending = null;
@@ -117,7 +116,7 @@ abstract class AbstractParser {
                     pendingPending = null;
                 } else {
                     pending = lexer.nextToken();
-                    if (looseSemicolonModel
+                    if (looseSemicolon
                             && currentSymbol.isOnEdgeOfNewLine) {
                         switch (pending.id) {
                             case Tokens.LBRACE: // {
@@ -133,7 +132,7 @@ abstract class AbstractParser {
                         }
                     }
                 }
-                if (looseSemicolonModel 
+                if (looseSemicolon 
                         && pendingPending == null
                         && pending.isOnEdgeOfNewLine) {
                     switch (pending.id) {
@@ -149,7 +148,7 @@ abstract class AbstractParser {
             }
             // assert act <=0
             if (act == 0
-                    && looseSemicolonModel
+                    && looseSemicolon
                     && pending.id != Tokens.SEMICOLON) {
                 if (currentSymbol.isOnEdgeOfNewLine
                         || pending.id == Tokens.RBRACE) {
