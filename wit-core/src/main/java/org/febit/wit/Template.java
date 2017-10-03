@@ -51,7 +51,7 @@ public final class Template {
         TemplateAST myAst = this.ast;
         synchronized (this) {
             if (force || myAst == null || this.resource.isModified()) {
-                myAst = new Parser().parse(this);
+                myAst = Parser.parse(this);
                 this.ast = myAst;
                 this.lastModified = System.currentTimeMillis();
             }
@@ -224,7 +224,7 @@ public final class Template {
 
     public Context debug(final KeyValues root, final Out out, final BreakPointListener listener) throws ScriptRuntimeException, ParseException {
         try {
-            return new Parser().parse(this, listener)
+            return Parser.parse(this, listener)
                     .execute(this, out, root);
         } catch (Exception e) {
             throw completeException(e);

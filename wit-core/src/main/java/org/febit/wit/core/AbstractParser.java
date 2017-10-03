@@ -45,6 +45,14 @@ abstract class AbstractParser {
     static final int OP_XOREQ = 9;
     static final int OP_OREQ = 10;
 
+    public static TemplateAST parse(final Template template, BreakPointListener breakPointListener) throws ParseException {
+        return new Parser()._parse(template, breakPointListener);
+    }
+
+    public static TemplateAST parse(final Template template) throws ParseException {
+        return parse(template, null);
+    }
+
     final Stack<Symbol> symbolStack = new Stack<>(24);
 
     private final Map<String, String> importedClasses;
@@ -65,11 +73,6 @@ abstract class AbstractParser {
     AbstractParser() {
         this.importedClasses = new HashMap<>();
         this.labelsIndexMap = new HashMap<>();
-    }
-
-    public TemplateAST parse(final Template template, BreakPointListener breakPointListener) throws ParseException {
-        this.breakPointListener = breakPointListener;
-        return parse(template);
     }
 
     abstract Object doAction(int actionId) throws ParseException;
@@ -132,7 +135,7 @@ abstract class AbstractParser {
                         }
                     }
                 }
-                if (looseSemicolon 
+                if (looseSemicolon
                         && pendingPending == null
                         && pending.isOnEdgeOfNewLine) {
                     switch (pending.id) {
@@ -141,7 +144,7 @@ abstract class AbstractParser {
                         case Tokens.CONTINUE:
                             pendingPending = createLooseSemicolonSymbol(pending);
                         default:
-                            // Do nothing
+                        // Do nothing
                     }
                 }
                 continue;
@@ -203,11 +206,12 @@ abstract class AbstractParser {
      * @return TemplateAST
      * @throws ParseException
      */
-    public TemplateAST parse(final Template template) throws ParseException {
+    protected TemplateAST _parse(final Template template, final BreakPointListener breakPointListener) throws ParseException {
         Lexer lexer = null;
         final Engine myEngine = template.engine;
         final Resource resource = template.resource;
         final TextStatementFactory textStatFactory = myEngine.getTextStatementFactory();
+        this.breakPointListener = breakPointListener;
         this.template = template;
         this.engine = myEngine;
         this.textStatementFactory = textStatFactory;
