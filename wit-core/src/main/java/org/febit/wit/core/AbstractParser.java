@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.febit.wit.Engine;
 import org.febit.wit.Template;
 import org.febit.wit.core.VariantManager.VarAddress;
@@ -53,31 +54,31 @@ abstract class AbstractParser {
         return parse(template, null);
     }
 
-    final Stack<Symbol> symbolStack = new Stack<>(24);
-
-    private final Map<String, String> importedClasses;
-    private final Map<String, Integer> labelsIndexMap;
+    private final Map<String, String> importedClasses = new HashMap<>();
+    private final Map<String, Integer> labelIndexMap = new HashMap<>();
+    private final AtomicInteger nextLabelIndex = new AtomicInteger();
 
     private TextStatementFactory textStatementFactory;
     private BreakPointListener breakPointListener;
     private Engine engine;
     private NativeFactory nativeFactory;
     private boolean locateVarForce;
-    private int currentLabelIndex;
 
-    Template template;
-    VariantManager varmgr;
+    protected final Stack<Symbol> symbolStack = new Stack<>(24);
+    protected Template template;
+    protected VariantManager varmgr;
 
-    boolean goonParse;
+    /**
+     * flag to stop parser
+     */
+    protected boolean goonParse;
 
     AbstractParser() {
-        this.importedClasses = new HashMap<>();
-        this.labelsIndexMap = new HashMap<>();
     }
 
     abstract Object doAction(int actionId) throws ParseException;
 
-    Symbol parse(final Lexer lexer) throws Exception {
+    private Symbol process(final Lexer lexer) throws Exception {
 
         int act;
         Symbol pending;
@@ -207,7 +208,6 @@ abstract class AbstractParser {
      * @throws ParseException
      */
     protected TemplateAST _parse(final Template template, final BreakPointListener breakPointListener) throws ParseException {
-        Lexer lexer = null;
         final Engine myEngine = template.engine;
         final Resource resource = template.resource;
         final TextStatementFactory textStatFactory = myEngine.getTextStatementFactory();
@@ -218,8 +218,9 @@ abstract class AbstractParser {
         this.locateVarForce = !myEngine.isLooseVar();
         this.nativeFactory = myEngine.getNativeFactory();
         this.varmgr = new VariantManager(myEngine);
-        this.currentLabelIndex = 0;
-        this.labelsIndexMap.put(null, 0);
+        this.labelIndexMap.put(null, 0);
+        this.nextLabelIndex.set(1);
+        Lexer lexer = null;
         try {
             //ISSUE: LexerProvider
             lexer = new Lexer(resource.openReader());
@@ -233,7 +234,7 @@ abstract class AbstractParser {
                 lexer.setOffset(0, 0);
             }
             textStatFactory.startTemplateParser(template);
-            return (TemplateAST) this.parse(lexer).value;
+            return (TemplateAST) this.process(lexer).value;
         } catch (ParseException e) {
             throw e;
         } catch (Exception e) {
@@ -311,10 +312,10 @@ abstract class AbstractParser {
     }
 
     int getLabelIndex(String label) {
-        Integer index = labelsIndexMap.get(label);
+        Integer index = labelIndexMap.get(label);
         if (index == null) {
-            index = ++currentLabelIndex;
-            labelsIndexMap.put(label, index);
+            index = nextLabelIndex.getAndIncrement();
+            labelIndexMap.put(label, index);
         }
         return index;
     }
