@@ -499,6 +499,8 @@ expression      ::= expression_statementable:$
                     //arrayValue
                     |LBRACK:sym expressionList:list RBRACK
                     {: return new ArrayValue((%list%).toArray(), %sym.line%, %sym.column%); :}
+                    |LBRACK:sym expressionList:list COMMA RBRACK
+                    {: return new ArrayValue((%list%).toArray(), %sym.line%, %sym.column%); :}
 
                     //NativeNewArrayDeclareExpression 
                     |NATIVE:sym LBRACK RBRACK className:nameBand
@@ -572,7 +574,7 @@ mapValuePart        ::= DIRECT_VALUE:key COLON expression:expr
                         ;
 
 
-mapValue            ::= LBRACE:sym mapValuePart:part RBRACE
+mapValue            ::= LBRACE:sym mapValuePart:part COMMA ? RBRACE
                         {: return (%part%).pop(%sym.line%, %sym.column%); :}
                         |LBRACE:sym RBRACE
                         {: return new MapValue(new Object[0], new Expression[0], %sym.line%,%sym.column%); :}

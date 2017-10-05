@@ -1,0 +1,27 @@
+<%
+
+var arrayEmpty = [];
+
+assertEquals(arrayEmpty.size, 0);
+assertEquals(arrayEmpty.length, 0);
+
+var arrayLoose = [
+    "a",
+];
+
+assertEquals(arrayLoose.size, 1);
+assertEquals(arrayLoose[0], "a");
+
+var arrayLoose2 = [
+    "a", "b", null
+];
+
+assertEquals(arrayLoose2.size, 3);
+assertEquals(arrayLoose2[0], "a");
+assertEquals(arrayLoose2[1], "b");
+assertEquals(arrayLoose2[2], null);
+
+
+// XXX: TBD: should not support this
+var arrayLooseEmpty = [,];
+assertEquals(arrayLooseEmpty.length, 0);

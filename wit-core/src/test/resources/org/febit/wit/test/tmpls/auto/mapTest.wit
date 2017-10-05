@@ -1,8 +1,8 @@
 <%
 
+var mapEmpty = {};
 
-var map_empty = {};
-
+assertEquals(mapEmpty.~size(), 0);
 
 var map = {
     1 : "a",
@@ -11,9 +11,24 @@ var map = {
     -1 : "d"
 };
 
-
 assertEquals(map[1], "a");
 assertEquals(map["1"], "b");
 assertEquals(map['1'], "c");
 assertEquals(map[-1], "d");
 assertEquals(map[2], null);
+
+var mapLoose = {
+    1 : "a",
+};
+
+var mapLoose2 = {
+    1 : "a",
+    "1": "b",
+};
+
+
+assertEquals(mapLoose.~size(), 1);
+assertEquals(mapLoose[1], "a");
+assertEquals(mapLoose2.~size(), 2);
+assertEquals(mapLoose2[1], "a");
+assertEquals(mapLoose2["1"], "b");
