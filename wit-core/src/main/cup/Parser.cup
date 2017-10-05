@@ -593,9 +593,9 @@ funcHead            ::= FUNCTION:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
                         ;
 
-funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list RPAREN
+funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list COMMA? RPAREN
                         {: return createMethodExecute(%funcExpr%, (%list%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
-                        |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expressionList:list RPAREN
+                        |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expressionList:list COMMA? RPAREN
                         {: return createDynamicNativeMethodExecute(%param0%, %ident%, (%list%).toArray(), %ident.line%, %ident.column%); :}
                         ;
 
