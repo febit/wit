@@ -290,7 +290,7 @@ DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
 
 lambdaArgsClosing = ")" {WhiteSpace}* "->"
 
-MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* "::" {WhiteSpace}* {Identifier}
+MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpace}* "]")* {WhiteSpace}* "::" {WhiteSpace}* {Identifier}
 
 %state  YYSTATEMENT, STRING, CHARLITERAL, END_OF_FILE
 

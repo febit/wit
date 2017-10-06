@@ -264,8 +264,23 @@ abstract class AbstractParser {
     }
 
     Class toClass(String className) {
+        int arrayDept = 0;
+        int flag = className.indexOf('[');
+        if (flag >= 0) {
+            // figure out array dept
+            for (char c : className.substring(flag).toCharArray()) {
+                if (c == '[') {
+                    arrayDept++;
+                }
+            }
+            className = className.substring(0, flag).trim();
+        }
         String classFullName = resolveClassFullName(className);
-        return ClassUtil.getClass(classFullName);
+        try {
+            return ClassUtil.getClass(classFullName, arrayDept);
+        } catch (ClassNotFoundException ex) {
+            throw new ParseException("Class not found:".concat(classFullName));
+        }
     }
 
     String resolveClassFullName(String className) {
@@ -440,13 +455,18 @@ abstract class AbstractParser {
 
     Expression createMethodReference(String ref, int line, int column) {
         int split = ref.indexOf("::");
-        String cls = ref.substring(0, split).trim();
+        String className = ref.substring(0, split).trim();
         String method = ref.substring(split + 2).trim();
         MethodDeclare methodDeclare;
+        Class cls = toClass(className);
         if (method.equals("new")) {
-            methodDeclare = this.nativeFactory.getNativeConstructorDeclare(toClass(cls), line, column, true);
+            if (cls.isArray()) {
+                methodDeclare = this.nativeFactory.getNativeNewArrayMethodDeclare(cls.getComponentType(), line, column, true);
+            } else {
+                methodDeclare = this.nativeFactory.getNativeConstructorDeclare(cls, line, column, true);
+            }
         } else {
-            methodDeclare = this.nativeFactory.getNativeMethodDeclare(toClass(cls), method, line, column, true);
+            methodDeclare = this.nativeFactory.getNativeMethodDeclare(cls, method, line, column, true);
         }
         return new DirectValue(methodDeclare, line, column);
     }

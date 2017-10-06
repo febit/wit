@@ -91,5 +91,23 @@ const b = "bbb";
     buf = StringBuilder::new(123);
     assertEquals(123, buf.~capacity());
 }
+{
 
+    var arr
+
+    arr = int[]::new(2)
+    arr[1] = 100
+    assertEquals(2, arr.length)
+    assertEquals(100, arr[1])
+
+    arr = int[][]::new(100)
+    arr[99] = int[]::new(2)
+    assertEquals(100, arr.length)
+    assertEquals(2, arr[99].length)
+    assertEquals(0, arr[99][0])
+
+    arr = String[][]::new(1)
+    arr = StringBuilder[][][]::new(1)
+    arr = Map[][][][]::new(1)
+}
 %>
