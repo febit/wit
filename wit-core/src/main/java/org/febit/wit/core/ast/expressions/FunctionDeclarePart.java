@@ -21,13 +21,23 @@ import org.febit.wit.util.StringUtil;
  */
 public class FunctionDeclarePart {
 
+    public static class ArgumentInfo {
+
+        public final String name;
+        public final Object defaultValue;
+
+        public ArgumentInfo(String name, Object defaultValue) {
+            this.name = name;
+            this.defaultValue = defaultValue;
+        }
+    }
+
     protected final int line;
     protected final int column;
-    private int argsCount = 0;
     private final int assignToIndex;
-    private final int start;
+    private final int assignVariantStart;
     private final VariantManager varmgr;
-    private final List<String> args;
+    private final List<ArgumentInfo> args;
 
     public FunctionDeclarePart(String assignTo, VariantManager varmgr, int line, int column) {
         this(varmgr.assignVariant(assignTo, line, column), varmgr, line, column);
@@ -44,12 +54,12 @@ public class FunctionDeclarePart {
         this.assignToIndex = assignToIndex;
         this.args = new ArrayList<>();
         varmgr.pushScope();
-        start = varmgr.assignVariant("arguments", line, column);
+        assignVariantStart = varmgr.assignVariant("arguments", line, column);
     }
 
-    public FunctionDeclarePart appendArgs(List<String> names) {
-        if (names != null) {
-            for (String name : names) {
+    public FunctionDeclarePart appendArgs(List<ArgumentInfo> infos) {
+        if (infos != null) {
+            for (ArgumentInfo name : infos) {
                 appendArg(name);
             }
         }
@@ -57,15 +67,23 @@ public class FunctionDeclarePart {
     }
 
     public FunctionDeclarePart appendArg(String name) {
-        if (varmgr.assignVariant(name, line, column) != (start + (++this.argsCount))) {
+        return appendArg(name, null);
+    }
+
+    public FunctionDeclarePart appendArg(String name, Object defaultValue) {
+        return appendArg(new ArgumentInfo(name, defaultValue));
+    }
+
+    public FunctionDeclarePart appendArg(ArgumentInfo info) {
+        if (varmgr.assignVariant(info.name, line, column) != (assignVariantStart + (this.args.size() + 1))) {
             throw new ParseException("Failed to assign vars!");
         }
-        this.args.add(name);
+        this.args.add(info);
         return this;
     }
 
     public String getArg(int index) {
-        return args.get(index);
+        return args.get(index).name;
     }
 
     public Expression pop(Expression expr) {
@@ -113,12 +131,17 @@ public class FunctionDeclarePart {
                 throw new ParseException("Loops overflow in function body: ".concat(StringUtil.join(loopInfos, ',')));
             }
         }
+        
+        Object[] argDefaults = new Object[this.args.size()];
+        for (int i = 0; i < argDefaults.length; i++) {
+            argDefaults[i] = this.args.get(i).defaultValue;
+        }
 
-        return new FunctionDeclare(argsCount,
+        return new FunctionDeclare(argDefaults,
                 varSize,
                 indexers,
                 invertedStatements,
-                start,
+                assignVariantStart,
                 hasReturnLoops,
                 line, column);
     }

@@ -15,16 +15,16 @@ import org.febit.wit.util.StatementUtil;
  */
 public final class FunctionDeclare extends Expression {
 
-    private final int argsCount;
+    private final Object[] argDefaults;
     private final VariantIndexer[] indexers;
     private final Statement[] statements;
     private final boolean hasReturnLoops;
     private final int start;
     private final int varSize;
 
-    public FunctionDeclare(int argsCount,int varSize, VariantIndexer[] indexers, Statement[] statements, int start, boolean hasReturnLoops, int line, int column) {
+    public FunctionDeclare(Object[] argDefaults, int varSize, VariantIndexer[] indexers, Statement[] statements, int start, boolean hasReturnLoops, int line, int column) {
         super(line, column);
-        this.argsCount = argsCount;
+        this.argDefaults = argDefaults;
         this.indexers = indexers;
         this.statements = statements;
         this.hasReturnLoops = hasReturnLoops;
@@ -38,22 +38,21 @@ public final class FunctionDeclare extends Expression {
     }
 
     public Object invoke(final InternalContext context, final Object[] args) {
-        final int argsTotalCount = this.argsCount;
+        final Object[] defaults = this.argDefaults;
+        final int argsTotalCount = defaults.length;
         final Object[] vars = context.vars;
         int argsStart = this.start;
         final int len = args != null ? args.length : 0;
         vars[argsStart++] = args;
         if (argsTotalCount != 0) {
-            int nextEnd = argsTotalCount > len ? len : argsTotalCount;
-            int i;
-            for (i = 0; i < nextEnd; i++) {
-                vars[argsStart++] = args[i];
+            int passedLen = argsTotalCount > len ? len : argsTotalCount;
+            int i = 0;
+            for (; i < passedLen; i++) {
+                Object arg = args[i];
+                vars[argsStart++] = arg != null ? arg : defaults[i];
             }
-            if (argsTotalCount > len) {
-                nextEnd = argsTotalCount - len;
-                for (i = 0; i < nextEnd; i++) {
-                    vars[argsStart++] = null;
-                }
+            for (; i < argsTotalCount; i++) {
+                vars[argsStart++] = defaults[i];
             }
         }
         if (hasReturnLoops) {

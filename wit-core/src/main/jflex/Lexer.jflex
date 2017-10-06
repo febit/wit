@@ -288,6 +288,8 @@ DelimiterInterpolationStart   = "${"
 DelimiterStatementStartMatch   = [\\]* {DelimiterStatementStart}
 DelimiterInterpolationStartMatch   = [\\]* {DelimiterInterpolationStart}
 
+lambdaArgsClosing = ")" {WhiteSpace}* "->"
+
 MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* "::" {WhiteSpace}* {Identifier}
 
 %state  YYSTATEMENT, STRING, CHARLITERAL, END_OF_FILE
@@ -418,6 +420,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* "::" {WhiteSpac
   ".~"                           { return symbol(Tokens.DYNAMIC_DOT); }
   "=>"                           { return symbol(Tokens.EQGT); }
   "->"                           { return symbol(Tokens.MINUSGT); }
+  {lambdaArgsClosing}            { return symbol(Tokens.RPAREN_MINUSGT); }
 
   
   /* string literal */

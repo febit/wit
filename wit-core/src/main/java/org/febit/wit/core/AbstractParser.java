@@ -718,6 +718,7 @@ abstract class AbstractParser {
         "?]", //RDEBUG
         "[?]", //LRDEBUG
         "=>", //EQGT
+        ")->", //RPAREN_MINUSGT
         "->", //MINUSGT
         ".~", //DYNAMIC_DOT
         "..", //DOTDOT

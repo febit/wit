@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.febit.wit.core.ast.*;
 import org.febit.wit.core.ast.expressions.*;
+import static org.febit.wit.core.ast.expressions.FunctionDeclarePart.ArgumentInfo;
 import org.febit.wit.core.ast.operators.*;
 import org.febit.wit.core.ast.statements.*;
 import org.febit.wit.exceptions.ParseException;
@@ -47,7 +48,7 @@ terminal Integer    VAR,
                     LBRACK, RBRACK,  // [ ]
                     LDEBUG, RDEBUG, LRDEBUG,  // [? ?] [?]
                     EQGT,  // =>
-                    MINUSGT, // ->
+                    RPAREN_MINUSGT, MINUSGT, // )-> ->
                     DYNAMIC_DOT, // @ .~
                     DOTDOT,  // ..
                     EQ   // =
@@ -87,6 +88,7 @@ nonterminal MapValue mapValue;
 nonterminal Integer superCount;
 nonterminal Expression contextValueExpr;
 nonterminal List<Class> classNameList, classNameList1;
+nonterminal List<ArgumentInfo> funcArgsList;
 
 /* function */
 nonterminal Expression funcExecuteExpr;
@@ -115,7 +117,7 @@ precedence left     PLUS, MINUS; // + -
 precedence left     MULT, DIV, MOD; // * / %
 precedence right    PLUSPLUS, MINUSMINUS, UMINUS, NOT, COMP; // ++ -- - ! ~
 precedence left     EQGT;  // => 
-precedence right    MINUSGT; // ->
+precedence right    RPAREN_MINUSGT, MINUSGT; // ->
 precedence left     DOT, LBRACK, LPAREN, RPAREN, LBRACE, DYNAMIC_DOT; // . [ ( ) { @
 
 
@@ -581,15 +583,25 @@ mapValue            ::= LBRACE:sym mapValuePart:part COMMA ? RBRACE
                         ;
 
 /* function  */
+funcArgsList        ::= IDENTIFIER:ident
+                        {: List<ArgumentInfo> list = new ArrayList<>(); list.add(new ArgumentInfo(%ident%, null)); return list; :}
+                        | IDENTIFIER:ident EQ expression:expr
+                        {: List<ArgumentInfo> list = new ArrayList<>(); list.add(new ArgumentInfo(%ident%, StatementUtil.calcConst(%expr%, true))); return list; :}
+                        | funcArgsList:list COMMA IDENTIFIER:ident
+                        {: (%list%).add(new ArgumentInfo(%ident%, null)); return %list%; :}
+                        | funcArgsList:list COMMA IDENTIFIER:ident EQ expression:expr
+                        {: (%list%).add(new ArgumentInfo(%ident%, StatementUtil.calcConst(%expr%, true))); return %list%; :}
+                        ;
 
-funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN IDENTIFIER[COMMA]:identList? RPAREN 
+
+funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArgsList:identList? RPAREN 
                         {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%).appendArgs(%identList%); :}
                         ;
 
 
 funcHead            ::= FUNCTION:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
-                        |FUNCTION:sym LPAREN IDENTIFIER[COMMA]:list? RPAREN
+                        |FUNCTION:sym LPAREN funcArgsList:list? RPAREN
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
                         ;
 
@@ -615,12 +627,8 @@ classNameList       ::=
 /* lambda */
 lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
-                        |LPAREN RPAREN MINUSGT:sym
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
-                        |LPAREN IDENTIFIER:ident RPAREN MINUSGT:sym
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
-                        |LPAREN IDENTIFIER:ident COMMA IDENTIFIER[COMMA]:list RPAREN MINUSGT:sym
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%).appendArgs(%list%); :}
+                        |LPAREN funcArgsList:list? RPAREN_MINUSGT:sym
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
                         ;
 
 
