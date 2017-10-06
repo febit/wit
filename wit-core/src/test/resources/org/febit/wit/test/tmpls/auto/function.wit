@@ -94,6 +94,13 @@
     assertArrayEquals([null,1,null,3], func());
     assertArrayEquals([1,1,null,3], func(1));
     assertArrayEquals([1,2,3,4], func(1,2,3,4));
+
+    func = (map={"i":0})-> ++ map.i
+    assertEquals(1, func());
+    assertEquals(2, func());
+    assertEquals(3, func());
+    assertEquals(11, func({"i":10}));
+    assertEquals(4, func());
     
 }
 %>
