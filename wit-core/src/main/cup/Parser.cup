@@ -51,11 +51,11 @@ terminal Integer    VAR,
                     RPAREN_MINUSGT, MINUSGT, // )-> ->
                     DYNAMIC_DOT, // @ .~
                     DOTDOT,  // ..
-                    EQ   // =
-                    ;
+                    EQ,   // =
+                    TEMPLATE_STRING_START, TEMPLATE_STRING_INTERPOLATION_END;
 
 
-terminal String     IDENTIFIER, METHOD_REFERENCE; // Ident, MethodReference
+terminal String     TEMPLATE_STRING_INTERPOLATION_START, TEMPLATE_STRING_END, IDENTIFIER, METHOD_REFERENCE; // Ident, MethodReference
 terminal char[]     TEXT_STATEMENT;
 terminal Object     DIRECT_VALUE;
 terminal Integer    CONST;
@@ -84,6 +84,7 @@ nonterminal Expression expression, expression_statementable;
 nonterminal ExpressionList expressionList;
 nonterminal MapValuePart mapValuePart;
 nonterminal MapValue mapValue;
+nonterminal TemplateStringExpressionPart templateStringExprPart;
 
 nonterminal Integer superCount;
 nonterminal Expression contextValueExpr;
@@ -530,8 +531,11 @@ expression      ::= expression_statementable:$
 
                     //Lambda
                     |lambdaExpr:$
-                    ;
 
+                    // template string 
+                    |templateStringExprPart:part TEMPLATE_STRING_END:end
+                    {: return (%part%).add(new DirectValue(%end%, %end.line%, %end.column%)).pop(); :}
+                    ;
 
 // super
 superCount      ::= SUPER DOT
@@ -581,6 +585,13 @@ mapValue            ::= LBRACE:sym mapValuePart:part COMMA ? RBRACE
                         |LBRACE:sym RBRACE
                         {: return new MapValue(new Object[0], new Expression[0], %sym.line%,%sym.column%); :}
                         ;
+
+
+templateStringExprPart  ::= TEMPLATE_STRING_START:sym
+                            {: return new TemplateStringExpressionPart(%sym.line%, %sym.column%); :}
+                            | templateStringExprPart:part TEMPLATE_STRING_INTERPOLATION_START:start expression:expr TEMPLATE_STRING_INTERPOLATION_END
+                            {: return (%part%).add(new DirectValue(%start%, %start.line%, %start.column%)).add(%expr%); :}
+                            ;
 
 /* function  */
 funcArgsList        ::= IDENTIFIER:ident

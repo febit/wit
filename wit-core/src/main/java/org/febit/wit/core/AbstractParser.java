@@ -743,7 +743,12 @@ abstract class AbstractParser {
         ".~", //DYNAMIC_DOT
         "..", //DOTDOT
         "=", //EQ
+        "`", //TEMPLATE_STRING_START
+        "}", //TEMPLATE_STRING_INTERPOLATION_END
+        "${", //TEMPLATE_STRING_INTERPOLATION_START
+        "`", //TEMPLATE_STRING_END
         "IDENTIFIER", //IDENTIFIER
+        "::", //METHOD_REFERENCE
         "TEXT", //TEXT_STATEMENT
         "DIRECT_VALUE", // DIRECT_VALUE
         "const", //CONST

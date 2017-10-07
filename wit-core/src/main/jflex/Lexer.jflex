@@ -23,6 +23,7 @@ import org.febit.wit.util.CharArrayWriter;
 
     private boolean interpolationFlag = false;
     private boolean leftInterpolationFlag = true;
+    private boolean templateStringFlag = false;
 
     private boolean trimCodeBlockBlankLine = false;
     private final CharArrayWriter stringBuffer = new CharArrayWriter(256);
@@ -292,7 +293,7 @@ lambdaArgsClosing = ")" {WhiteSpace}* "->"
 
 MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpace}* "]" {WhiteSpace}*)* {WhiteSpace}* "::" {WhiteSpace}* {Identifier}
 
-%state  YYSTATEMENT, STRING, CHARLITERAL, END_OF_FILE
+%state  YYSTATEMENT, STRING, TEMPLATE_STRING, CHARLITERAL, END_OF_FILE
 
 %%
 
@@ -368,7 +369,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   "("                            { return symbol(Tokens.LPAREN); }
   ")"                            { return symbol(Tokens.RPAREN); }
   "{"                            { return symbol(Tokens.LBRACE); }
-  "}"                            { if(!interpolationFlag){return symbol(Tokens.RBRACE);}else{yybegin(YYINITIAL); leftInterpolationFlag = true;return symbol(Tokens.INTERPOLATION_END);} }
+  "}"                            { if(templateStringFlag){yybegin(TEMPLATE_STRING);return symbol(Tokens.TEMPLATE_STRING_INTERPOLATION_END);}else if(interpolationFlag){yybegin(YYINITIAL);leftInterpolationFlag = true;return symbol(Tokens.INTERPOLATION_END);}else{return symbol(Tokens.RBRACE);} }
   "["                            { return symbol(Tokens.LBRACK); }
   "]"                            { return symbol(Tokens.RBRACK); }
   ";"                            { return symbol(Tokens.SEMICOLON); }
@@ -429,12 +430,14 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   /* character literal */
   \'                             { yybegin(CHARLITERAL); }
 
+  /* template string literal */
+  "`"                             { yybegin(TEMPLATE_STRING); this.templateStringFlag = true; return symbol(Tokens.TEMPLATE_STRING_START); }
+
   /* numeric literals */
 
   /* Note: This is matched together with the minus, because the number is too big to 
      be represented by a positive integer. */
   "-2147483648"                  { return symbol(Tokens.DIRECT_VALUE, Integer.MIN_VALUE); }
-
 
   {BinIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyBinInteger(2, 0)); }
   {BinLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyBinLong(2, -1)); }  
@@ -465,13 +468,11 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 
   {LineTerminator}               { return SYM_NEW_LINE; }
   {Blanks}                       { /* ignore */ }
-
-
 }
+
 <END_OF_FILE>{
   <<EOF>>                          { return symbol(Tokens.EOF); }
 }
-
 
 <STRING> {
   \"                             { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, stringLine, stringColumn, popAsString()); }
@@ -492,6 +493,30 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 
   \\{LineTerminator}             { /* escape new line */ }
   
+  /* error cases */
+  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getLine(), getColumn()); }
+}
+
+<TEMPLATE_STRING> {
+  "`"                             { yybegin(YYSTATEMENT); this.templateStringFlag = false; return symbol(Tokens.TEMPLATE_STRING_END, stringLine, stringColumn, popAsString()); }
+  
+  "${"                             { yybegin(YYSTATEMENT); return symbol(Tokens.TEMPLATE_STRING_INTERPOLATION_START, stringLine, stringColumn, popAsString()); }
+
+  /* escape sequences */
+  "\\b"                          { appendToString('\b'); }
+  "\\t"                          { appendToString('\t'); }
+  "\\n"                          { appendToString('\n'); }
+  "\\f"                          { appendToString('\f'); }
+  "\\r"                          { appendToString('\r'); }
+  "\\/"                          { appendToString('/'); }
+  "\\\\"                         { appendToString('\\'); }
+  \\[0-3]?{OctDigit}?{OctDigit}  { char val = (char) Integer.parseInt(yytext(1,0),8); appendToString(val); }
+
+  \\{LineTerminator}             { /* escape new line */ }
+  "\\`"                          { appendToString('`'); }
+  "\\${"                         { appendToString('$','{'); }
+  .|\r|\n                       { appendToString(yyTextChar()); }
+
   /* error cases */
   \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getLine(), getColumn()); }
 }

@@ -1,0 +1,18 @@
+<%
+
+var str
+
+str = ``
+assertEquals(str, "")
+
+str = `awesome\t\n template
+
+.`
+assertEquals(str, "awesome\t\n template\n\n.")
+
+var id=9527, name="Mr Tang"
+str = `${1+2}, ${id}, ${name}.`
+assertEquals(str, "3, 9527, Mr Tang.")
+
+
+
