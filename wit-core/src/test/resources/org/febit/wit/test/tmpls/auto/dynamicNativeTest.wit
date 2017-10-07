@@ -108,6 +108,15 @@ const b = "bbb";
 
     arr = String[][]::new(1)
     arr = StringBuilder[][][]::new(1)
-    arr = Map[][][][]::new(1)
+    arr = Map[][][][]
+            ::new(1)
+
+    arr.~toString()
+    arr.~hashCode()
+    Map[][][][]::hashCode(arr)
+    Map [ ] []   [   ] [
+         ] 
+        ::
+        toString(arr)
 }
 %>
