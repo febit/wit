@@ -21,7 +21,3 @@ assertEquals(arrayLoose2[0], "a");
 assertEquals(arrayLoose2[1], "b");
 assertEquals(arrayLoose2[2], null);
 
-
-// XXX: TBD: should not support this
-var arrayLooseEmpty = [,];
-assertEquals(arrayLooseEmpty.length, 0);

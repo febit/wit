@@ -81,7 +81,6 @@ nonterminal TryPart tryPart, catchPart, finallyPart;
 
 /* Expression */
 nonterminal Expression expression, expression_statementable;
-nonterminal ExpressionList expressionList;
 nonterminal MapValuePart mapValuePart;
 nonterminal MapValue mapValue;
 nonterminal TemplateStringExpressionPart templateStringExprPart;
@@ -102,10 +101,13 @@ nonterminal FunctionDeclarePart lambdaForHead1, lambdaForMapHead1;
 
 /* precedence */
 precedence left     SEMICOLON; // ;
+precedence left     COMMA; // ,
 precedence left     LDEBUG; // [?
+precedence left     RBRACK; // ]
+precedence left     COLON;  // :
 precedence right    SELFEQ, EQ; // (+ - * / %)=  (<< >> >>>)=  (& ^ |)=  =
 precedence left     DOTDOT;  // ..
-precedence right    QUESTION; // ?:
+precedence right    QUESTION; // ?
 precedence left     OROR; // ||
 precedence left     ANDAND; // &&
 precedence left     XOR; // ^
@@ -119,9 +121,7 @@ precedence left     MULT, DIV, MOD; // * / %
 precedence right    PLUSPLUS, MINUSMINUS, UMINUS, NOT, COMP; // ++ -- - ! ~
 precedence left     EQGT;  // => 
 precedence right    RPAREN_MINUSGT, MINUSGT; // ->
-precedence left     DOT, LBRACK, LPAREN, RPAREN, LBRACE, DYNAMIC_DOT; // . [ ( ) { @
-
-
+precedence left     DOT, LBRACK, LBRACE, LPAREN, RPAREN, DYNAMIC_DOT; // . [ { ( ) @
 
 /* templateAST */
 
@@ -366,8 +366,8 @@ expression_statementable ::=
                     expression:lexpr EQ:sym expression:expr
                     {: return createAssign(castToAssignableExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
                     
-                    |LBRACK expressionList:list RBRACK EQ:sym expression:expr
-                    {: return createGroupAssign((%list%).toArray(), %expr%, %sym.line%, %sym.column%); :}
+                    |LBRACK expression[COMMA]:list COMMA? RBRACK EQ:sym expression:expr
+                    {: return createGroupAssign(StatementUtil.toExpressionArray(%list%), %expr%, %sym.line%, %sym.column%); :}
 
                     //plusPlusOper ++
                     |PLUSPLUS:sym expression:expr
@@ -500,10 +500,10 @@ expression      ::= expression_statementable:$
                     {: return (%part%).pop(%list%); :}
 
                     //arrayValue
-                    |LBRACK:sym expressionList:list RBRACK
-                    {: return new ArrayValue((%list%).toArray(), %sym.line%, %sym.column%); :}
-                    |LBRACK:sym expressionList:list COMMA RBRACK
-                    {: return new ArrayValue((%list%).toArray(), %sym.line%, %sym.column%); :}
+                    |LBRACK:sym RBRACK
+                    {: return new ArrayValue(StatementUtil.EMPTY_EXPRESSIONS, %sym.line%, %sym.column%); :}
+                    |LBRACK:sym expression[COMMA]:list COMMA? RBRACK
+                    {: return new ArrayValue(StatementUtil.toExpressionArray(%list%), %sym.line%, %sym.column%); :}
 
                     //NativeNewArrayDeclareExpression 
                     |NATIVE:sym LBRACK RBRACK className:nameBand
@@ -558,15 +558,6 @@ contextValueExpr    ::= IDENTIFIER:ident
                         {: return createContextValue(%count%, ("for." + %ident%), %ident.line%, %ident.column%); :}
                         ;
 
-expressionList      ::=
-                        {: return new ExpressionList(); :}
-                        |expression:expr
-                        {: return new ExpressionList().add(%expr%); :}
-                        |expressionList:list COMMA expression:expr
-                        {: return (%list%).add(%expr%); :}
-                        ;
-
-
 // map {key:expr, ...}
 
 mapValuePart        ::= DIRECT_VALUE:key COLON expression:expr
@@ -583,7 +574,7 @@ mapValuePart        ::= DIRECT_VALUE:key COLON expression:expr
 mapValue            ::= LBRACE:sym mapValuePart:part COMMA ? RBRACE
                         {: return (%part%).pop(%sym.line%, %sym.column%); :}
                         |LBRACE:sym RBRACE
-                        {: return new MapValue(new Object[0], new Expression[0], %sym.line%,%sym.column%); :}
+                        {: return new MapValue(new Object[0], StatementUtil.EMPTY_EXPRESSIONS, %sym.line%,%sym.column%); :}
                         ;
 
 
@@ -616,10 +607,14 @@ funcHead            ::= FUNCTION:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
                         ;
 
-funcExecuteExpr     ::= expression:funcExpr LPAREN expressionList:list COMMA? RPAREN
-                        {: return createMethodExecute(%funcExpr%, (%list%).toArray(), %funcExpr.line%, %funcExpr.column%); :}
-                        |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expressionList:list COMMA? RPAREN
-                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, (%list%).toArray(), %ident.line%, %ident.column%); :}
+funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
+                        {: return createMethodExecute(%funcExpr%, StatementUtil.EMPTY_EXPRESSIONS, %funcExpr.line%, %funcExpr.column%); :}
+                        |expression:funcExpr LPAREN expression[COMMA]:list COMMA? RPAREN
+                        {: return createMethodExecute(%funcExpr%, StatementUtil.toExpressionArray(%list%), %funcExpr.line%, %funcExpr.column%); :}
+                        |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN RPAREN
+                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.EMPTY_EXPRESSIONS, %ident.line%, %ident.column%); :}
+                        |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expression[COMMA]:list COMMA? RPAREN
+                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.toExpressionArray(%list%), %ident.line%, %ident.column%); :}
                         ;
 
 

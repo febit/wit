@@ -65,7 +65,6 @@
     // test trailing comma
     assertEquals(1, func(null, 1,));
     assertEquals("b", func(null, "b",));
-    assertEquals(null, func(,));
     assertEquals(null, func(null,));
     assertEquals(null, func("a",));
 }
