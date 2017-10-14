@@ -75,7 +75,7 @@
             </goals>
             <configuration>
               <additionalClasspathElements>
-                <additionalClasspathElement>src/main/cup/java_cup_webit-20150308.jar</additionalClasspathElement>
+                <additionalClasspathElement>src/main/cup/java_cup_wit-20171014.jar</additionalClasspathElement>
               </additionalClasspathElements>
               <includeProjectDependencies>false</includeProjectDependencies>
               <mainClass>java_cup.Main</mainClass>

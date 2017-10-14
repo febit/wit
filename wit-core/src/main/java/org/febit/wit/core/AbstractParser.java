@@ -403,6 +403,10 @@ abstract class AbstractParser {
         return new MapValue(keys, values, line, column);
     }
 
+    DirectValue createDirectValue(Symbol sym) {
+        return new DirectValue(sym.value, sym.line, sym.column);
+    }
+
     Expression createContextValue(VarAddress addr, int line, int column) {
         switch (addr.type) {
             case VarAddress.GLOBAL:
@@ -612,10 +616,11 @@ abstract class AbstractParser {
         return StatementUtil.optimize(oper);
     }
 
-    static Expression createBinaryOperator(Expression leftExpr, int sym, Expression rightExpr, int line, int column) {
-
+    static Expression createBinaryOperator(Expression leftExpr, Symbol symSymbol, Expression rightExpr) {
+        int line = symSymbol.line;
+        int column = symSymbol.column;
         BinaryOperator oper;
-        switch (sym) {
+        switch ((Integer) symSymbol.value) {
             case Tokens.ANDAND: // &&
                 oper = new And(leftExpr, rightExpr, line, column);
                 break;

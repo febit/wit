@@ -425,64 +425,64 @@ expression      ::= expression_statementable:$
                     /***********  binarys *************/
                     //-- binary:  *
                     |expression:lexpr MULT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  /
                     |expression:lexpr DIV:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  %
                     |expression:lexpr MOD:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  +
                     |expression:lexpr PLUS:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  -
                     |expression:lexpr MINUS:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  <<
                     |expression:lexpr LSHIFT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  >>
                     |expression:lexpr RSHIFT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  >>>
                     |expression:lexpr URSHIFT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  <
                     |expression:lexpr LT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  <=
                     |expression:lexpr LTEQ:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  >
                     |expression:lexpr GT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  >=
                     |expression:lexpr GTEQ:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  ==
                     |expression:lexpr EQEQ:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  !=
                     |expression:lexpr NOTEQ:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  &
                     |expression:lexpr AND:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  |
                     |expression:lexpr OR:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  ^
                     |expression:lexpr XOR:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  &&
                     |expression:lexpr ANDAND:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  ..
                     |expression:lexpr DOTDOT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  ||
                     |expression:lexpr OROR:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
 
                     //ifOper ? :
                     |expression:ifexpr QUESTION:sym expression:lexpr COLON expression:rexpr
@@ -490,7 +490,7 @@ expression      ::= expression_statementable:$
 
                     //
                     |DIRECT_VALUE:sym
-                    {: return new DirectValue(%sym%, %sym.line%, %sym.column%); :}
+                    {: return createDirectValue(%sym.symbol%); :}
 
                     // ()
                     |LPAREN expression:$ RPAREN
@@ -534,7 +534,7 @@ expression      ::= expression_statementable:$
 
                     // template string 
                     |templateStringExprPart:part TEMPLATE_STRING_END:end
-                    {: return (%part%).add(new DirectValue(%end%, %end.line%, %end.column%)).pop(); :}
+                    {: return (%part%).add(createDirectValue(%end.symbol%)).pop(); :}
                     ;
 
 // super
@@ -551,7 +551,6 @@ contextValueExpr    ::= IDENTIFIER:ident
                         {: return createContextValue(0, %ident%, %ident.line%, %ident.column%); :}
                         |superCount:count IDENTIFIER:ident
                         {: return createContextValue(%count%, %ident%, %ident.line%, %ident.column%); :}
-
                         |FOR DOT IDENTIFIER:ident
                         {: return createContextValue(0, ("for." + %ident%), %ident.line%, %ident.column%); :}
                         |superCount:count FOR DOT IDENTIFIER:ident
@@ -561,11 +560,11 @@ contextValueExpr    ::= IDENTIFIER:ident
 // map {key:expr, ...}
 
 mapPropertyDef        ::= DIRECT_VALUE:key COLON expression:expr
-                        {: return new Expression[]{new DirectValue(%key%, %key.line%, %key.column%), %expr%}; :}
+                        {: return new Expression[]{createDirectValue(%key.symbol%), %expr%}; :}
                         |MINUS:sym DIRECT_VALUE:key COLON expression:expr
                         {: return new Expression[]{new DirectValue(ALU.negative(%key%), %key.line%, %key.column%), %expr%}; :}
                         |IDENTIFIER:key COLON expression:expr
-                        {: return new Expression[]{new DirectValue(%key%, %key.line%, %key.column%), %expr%}; :}
+                        {: return new Expression[]{createDirectValue(%key.symbol%), %expr%}; :}
                         |LBRACK expression:key RBRACK COLON expression:expr
                         {: return new Expression[]{%key%, %expr%}; :}
                         ;
@@ -581,7 +580,7 @@ mapValue            ::= LBRACE:sym RBRACE
 templateStringExprPart  ::= TEMPLATE_STRING_START:sym
                             {: return new TemplateStringExpressionPart(%sym.line%, %sym.column%); :}
                             | templateStringExprPart:part TEMPLATE_STRING_INTERPOLATION_START:start expression:expr TEMPLATE_STRING_INTERPOLATION_END
-                            {: return (%part%).add(new DirectValue(%start%, %start.line%, %start.column%)).add(%expr%); :}
+                            {: return (%part%).add(createDirectValue(%start.symbol%)).add(%expr%); :}
                             ;
 
 /* function  */
@@ -625,7 +624,7 @@ classNameList1      ::= className:nameBand
                         ;
 
 classNameList       ::= 
-                        {: return new ArrayList<Class>(); :}
+                        {: return new ArrayList<>(); :}
                         |classNameList1:$
                         ;
 
