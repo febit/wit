@@ -81,7 +81,7 @@ nonterminal TryPart tryPart, catchPart, finallyPart;
 
 /* Expression */
 nonterminal Expression expression, expression_statementable;
-nonterminal MapValuePart mapValuePart;
+nonterminal Expression[] mapPropertyDef;
 nonterminal MapValue mapValue;
 nonterminal TemplateStringExpressionPart templateStringExprPart;
 
@@ -560,21 +560,21 @@ contextValueExpr    ::= IDENTIFIER:ident
 
 // map {key:expr, ...}
 
-mapValuePart        ::= DIRECT_VALUE:key COLON expression:expr
-                        {: return new MapValuePart().add(%key%, %expr%); :}
+mapPropertyDef        ::= DIRECT_VALUE:key COLON expression:expr
+                        {: return new Expression[]{new DirectValue(%key%, %key.line%, %key.column%), %expr%}; :}
                         |MINUS:sym DIRECT_VALUE:key COLON expression:expr
-                        {: return new MapValuePart().add(ALU.negative(%key%), %expr%); :}
-                        |mapValuePart:part COMMA DIRECT_VALUE:key COLON expression:expr
-                        {: return (%part%).add(%key%, %expr%); :}
-                        |mapValuePart:part COMMA MINUS:sym DIRECT_VALUE:key COLON expression:expr
-                        {: return (%part%).add(ALU.negative(%key%), %expr%); :}
+                        {: return new Expression[]{new DirectValue(ALU.negative(%key%), %key.line%, %key.column%), %expr%}; :}
+                        |IDENTIFIER:key COLON expression:expr
+                        {: return new Expression[]{new DirectValue(%key%, %key.line%, %key.column%), %expr%}; :}
+                        |LBRACK expression:key RBRACK COLON expression:expr
+                        {: return new Expression[]{%key%, %expr%}; :}
                         ;
 
 
-mapValue            ::= LBRACE:sym mapValuePart:part COMMA ? RBRACE
-                        {: return (%part%).pop(%sym.line%, %sym.column%); :}
-                        |LBRACE:sym RBRACE
-                        {: return new MapValue(new Object[0], StatementUtil.EMPTY_EXPRESSIONS, %sym.line%,%sym.column%); :}
+mapValue            ::= LBRACE:sym RBRACE
+                        {: return createMapValue(null, %sym.line%,%sym.column%); :}
+                        |LBRACE:sym mapPropertyDef[COMMA]:list COMMA? RBRACE
+                        {: return createMapValue(%list%, %sym.line%, %sym.column%); :}
                         ;
 
 

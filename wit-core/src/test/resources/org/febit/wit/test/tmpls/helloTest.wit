@@ -1,5 +1,13 @@
 <%
 
+var map = {
+    id: "9527",
+    "my name": "Wit",
+    [101] : 1,
+    [102] : 2,
+    [111] : 11
+};
+
 var xxx;
 var xxxFlag = 0;
 xxx =function(val){

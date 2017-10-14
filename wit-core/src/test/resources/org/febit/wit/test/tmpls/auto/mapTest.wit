@@ -5,16 +5,22 @@ var mapEmpty = {};
 assertEquals(mapEmpty.~size(), 0);
 
 var map = {
+    id: "9527",
+    name: "wit",
     1 : "a",
     "1": "b",
     '1': "c",
-    -1 : "d"
+    [ -1 ] : "d",
+    [ -1-1 ] : "e"
 };
 
+assertEquals(map["id"], "9527");
+assertEquals(map.name, "wit");
 assertEquals(map[1], "a");
 assertEquals(map["1"], "b");
 assertEquals(map['1'], "c");
 assertEquals(map[-1], "d");
+assertEquals(map[-2], "e");
 assertEquals(map[2], null);
 
 var mapLoose = {

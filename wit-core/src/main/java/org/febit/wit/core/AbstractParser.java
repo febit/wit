@@ -125,6 +125,10 @@ abstract class AbstractParser {
                         switch (pending.id) {
                             case Tokens.LBRACE: // {
                             case Tokens.LBRACK: // [
+                                if (currentSymbol.id == Tokens.COMMA
+                                        || currentSymbol.id == Tokens.LBRACE) {
+                                    break;
+                                }
                             case Tokens.LPAREN: // (
                             case Tokens.PLUSPLUS: // ++
                             case Tokens.MINUSMINUS: // --
@@ -381,6 +385,22 @@ abstract class AbstractParser {
             contextValues[i] = declearVarAndCreateContextValue(names.get(i), line, column);
         }
         return contextValues;
+    }
+
+    MapValue createMapValue(List<Expression[]> propertyDefList, int line, int column) {
+        if (propertyDefList == null || propertyDefList.isEmpty()) {
+            return new MapValue(StatementUtil.EMPTY_EXPRESSIONS, StatementUtil.EMPTY_EXPRESSIONS, line, column);
+        }
+        int size = propertyDefList.size();
+        Expression[] keys = new Expression[size];
+        Expression[] values = new Expression[size];
+        for (int i = 0; i < propertyDefList.size(); i++) {
+            Expression[] def = propertyDefList.get(i);
+            // assert def.length == 2
+            keys[i] = def[0];
+            values[i] = def[1];
+        }
+        return new MapValue(keys, values, line, column);
     }
 
     Expression createContextValue(VarAddress addr, int line, int column) {
