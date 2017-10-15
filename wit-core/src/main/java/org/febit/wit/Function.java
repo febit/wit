@@ -19,7 +19,7 @@ import org.febit.wit.util.KeyValuesUtil;
  */
 public class Function {
 
-    protected static final VariantIndexer[] EMPTY_INDEXERS = new VariantIndexer[]{VariantIndexer.EMPTY};
+    private static final VariantIndexer[] EMPTY_INDEXERS = new VariantIndexer[]{VariantIndexer.EMPTY};
 
     protected final Template template;
     protected final MethodDeclare methodDeclare;

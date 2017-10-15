@@ -105,8 +105,6 @@ registers ='''
 [resolverManager]
 # ignoreNullPointer=true
 resolvers='''
-    org.febit.wit.resolvers.impl.LongOutResolver
-    org.febit.wit.resolvers.impl.IntegerOutResolver
     org.febit.wit.resolvers.impl.InternalVoidResolver
     org.febit.wit.resolvers.impl.CharSequenceResolver
     org.febit.wit.resolvers.impl.ByteArrayOutResolver

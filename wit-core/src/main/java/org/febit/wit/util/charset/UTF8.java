@@ -3,10 +3,10 @@ package org.febit.wit.util.charset;
 
 public class UTF8 {
 
+    public static final int MAX_BYTES_PER_CHAR = 3;
+
     private UTF8() {
     }
-
-    public static final int MAX_BYTES_PER_CHAR = 3;
 
     public static int decode(final byte[] sa, int index, int len, final char[] da) {
         final int end = index + len;
@@ -92,7 +92,8 @@ public class UTF8 {
             }
             if (c <= Character.MAX_HIGH_SURROGATE && from < to) {
                 // if is HIGH_SURROGATE && has next char
-                if ((d = sa[from++]) >>> 10 == 0x37) {
+                d = sa[from++];
+                if (d >>> 10 == 0x37) {
                     // if is LOW_SURROGATE: Character.MIN_LOW_SURROGATE <= d <= Character.MAX_LOW_SURROGATE
                     uc = Character.toCodePoint(c, d);
                     da[dp++] = (byte) (0xf0 | (uc >> 18));

@@ -1,38 +1,31 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author zqq90
  */
 public final class ClassNameBand {
 
-    private String[] array;
-    private int index;
-    private int length;
-    private boolean isArray;
+    private final List<String> segment;
     private int arrayDepth;
 
     public ClassNameBand(String s) {
         this.arrayDepth = 0;
-        this.array = new String[8];
-        this.array[0] = s;
-        this.index = 1;
-        this.length = s.length();
+        this.segment = new ArrayList<>(12);
+        this.segment.add(s);
     }
 
     public ClassNameBand append(String s) {
-        if (index >= array.length) {
-            System.arraycopy(array, 0, array = new String[array.length << 1], 0, index);
-        }
-        length += (array[index++] = s).length();
+        segment.add(s);
         return this;
     }
 
     public String pop() {
-        final String last = array[--index];
-        length -= last.length();
-        return last;
+        return segment.remove(segment.size() - 1);
     }
 
     public int getArrayDepth() {
@@ -40,83 +33,43 @@ public final class ClassNameBand {
     }
 
     public ClassNameBand plusArrayDepth() {
-        this.isArray = true;
-        ++arrayDepth;
+        arrayDepth++;
         return this;
     }
 
     public boolean isArray() {
-        return isArray;
+        return arrayDepth > 0;
     }
 
     public boolean isSimpleName() {
-        return index == 1;
+        return segment.size() == 1;
     }
 
     public int size() {
-        return index;
+        return segment.size();
     }
 
     public String getClassSimpleName() {
-        if (index == 0) {
+        if (segment.isEmpty()) {
             return null;
         }
-        return array[index - 1];
+        return segment.get(segment.size() - 1);
     }
 
     public String getClassPureName() {
-        if (index == 0) {
+        if (segment.isEmpty()) {
             return null;
         }
-        if (index == 1) {
-            return array[0];
-        }
-
-        final char[] destination = new char[length + index - 1];
-        int start = 0;
-        String s;
-        int len;
-        for (int i = 0, size = index; i < size; i++) {
-            if (i != 0) {
-                destination[start++] = '.';
-            }
-            s = array[i];
-            len = s.length();
-            s.getChars(0, len, destination, start);
-            start += len;
-        }
-
-        return new String(destination);
+        return StringUtil.join(segment, '.');
     }
 
     @Override
     public String toString() {
-
-        if (index == 0) {
-            return null;
+        StringBuilder buf = new StringBuilder();
+        buf.append(StringUtil.join(segment, '.'));
+        for (int i = 0; i < arrayDepth; i++) {
+            buf.append('[').append(']');
         }
-        if (index == 1 && !isArray) {
-            return array[0];
-        }
-        // join strings
-        final char[] destination = new char[length + index - 1 + arrayDepth * 2];
-        int start = 0;
-        String s;
-        int len;
-        for (int i = 0, size = index; i < size; i++) {
-            if (i != 0) {
-                destination[start++] = '.';
-            }
-            len = (s = array[i]).length();
-            s.getChars(0, len, destination, start);
-            start += len;
-        }
-        if (isArray) {
-            for (int i = 0; i < arrayDepth; i++) {
-                destination[start++] = '[';
-                destination[start++] = ']';
-            }
-        }
-        return new String(destination);
+        return buf.toString();
     }
 }

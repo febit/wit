@@ -1,8 +1,8 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.operators;
 
-import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.AssignableExpression;
+import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.SelfOperator;
 import org.febit.wit.util.ALU;
 

@@ -3,7 +3,6 @@ package org.febit.wit.core.ast.expressions;
 import java.util.ArrayList;
 import java.util.List;
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.util.StringUtil;
 
 /**
  *

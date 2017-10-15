@@ -46,6 +46,207 @@ abstract class AbstractParser {
     static final int OP_XOREQ = 9;
     static final int OP_OREQ = 10;
 
+    /* Base Parser */
+    private static final short[][] PRODUCTION_TABLE = loadData("Production");
+    private static final short[][] ACTION_TABLE = loadData("Action");
+    private static final short[][] REDUCE_TABLE = loadData("Reduce");
+    private static final String[] SYMBOL_STRS = new String[]{
+        "EOF", //EOF
+        "ERROR", //ERROR
+        "var", //VAR
+        "if", //IF
+        "else", //ELSE
+        "for", //FOR
+        "this", //THIS
+        "super", //SUPER
+        "switch", //SWITCH
+        "case", //CASE
+        "default", //DEFAULT
+        "do", //DO
+        "while", //WHILE
+        "throw", //THROW
+        "try", //TRY
+        "catch", //CATCH
+        "finally", //FINALLY
+        "new", //NEW
+        "instanceof", //INSTANCEOF
+        "function", //FUNCTION
+        "echo", //ECHO
+        "static", //STATIC
+        "native", //NATIVE
+        "import", //IMPORT
+        "include", //INCLUDE
+        "@import", //NATIVE_IMPORT
+        "break", //BREAK
+        "continue", //CONTINUE
+        "return", //RETURN
+        "++", //PLUSPLUS
+        "--", //MINUSMINUS
+        "+", //PLUS
+        "-", //MINUS
+        "*", //MULT
+        "/", //DIV
+        "%", //MOD
+        "<<", //LSHIFT
+        ">>", //RSHIFT
+        ">>>", //URSHIFT
+        "<", //LT
+        ">", //GT
+        "<=", //LTEQ
+        ">=", //GTEQ
+        "==", //EQEQ
+        "!=", //NOTEQ
+        "&", //AND
+        "^", //XOR
+        "|", //OR
+        "~", //COMP
+        "&&", //ANDAND
+        "||", //OROR
+        "!", //NOT
+        "?", //QUESTION
+        "*=", //SELFEQ
+        "-", //UMINUS
+        ".", //DOT
+        ":", //COLON
+        "::", //COLONCOLON
+        ",", //COMMA
+        ";", //SEMICOLON
+        "{", //LBRACE
+        "}", //RBRACE
+        "}", //INTERPOLATION_END
+        "(", //LPAREN
+        ")", //RPAREN
+        "[", //LBRACK
+        "]", //RBRACK
+        "[?", //LDEBUG
+        "?]", //RDEBUG
+        "[?]", //LRDEBUG
+        "=>", //EQGT
+        ")->", //RPAREN_MINUSGT
+        "->", //MINUSGT
+        ".~", //DYNAMIC_DOT
+        "..", //DOTDOT
+        "=", //EQ
+        "`", //TEMPLATE_STRING_START
+        "}", //TEMPLATE_STRING_INTERPOLATION_END
+        "${", //TEMPLATE_STRING_INTERPOLATION_START
+        "`", //TEMPLATE_STRING_END
+        "IDENTIFIER", //IDENTIFIER
+        "::", //METHOD_REFERENCE
+        "TEXT", //TEXT_STATEMENT
+        "DIRECT_VALUE", // DIRECT_VALUE
+        "const", //CONST
+        "UNKNOWN"
+    };
+
+    private static short getAction(final short[] row, final int sym) {
+        final int len;
+        int probe;
+        /* linear search if we are < 10 entries, otherwise binary search */
+        if ((len = row.length) < 20) {
+            for (probe = 0; probe < len; probe++) {
+                if (row[probe++] == sym) {
+                    return row[probe];
+                }
+            }
+        } else {
+            int first, last;
+            first = 0;
+            last = (len - 1) >> 1;
+
+            int probe_2;
+            while (first <= last) {
+                probe = (first + last) >> 1;
+                probe_2 = probe << 1;
+                if (sym == row[probe_2]) {
+                    return row[probe_2 + 1];
+                } else if (sym > row[probe_2]) {
+                    first = probe + 1;
+                } else {
+                    last = probe - 1;
+                }
+            }
+        }
+        //error
+        return 0;
+    }
+
+    private static short getReduce(final short[] row, int sym) {
+        if (row != null) {
+            for (int probe = 0, len = row.length; probe < len; probe++) {
+                if (row[probe++] == sym) {
+                    return row[probe];
+                }
+            }
+        }
+        //error
+        return -1;
+    }
+
+    private static short[][] loadData(String name) {
+        try (ObjectInputStream in = new ObjectInputStream(
+                ClassUtil.getDefaultClassLoader().getResourceAsStream(
+                        StringUtil.concat("org/febit/wit/core/Parser$", name, ".data"))
+        )) {
+            return (short[][]) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new Error(e);
+        }
+    }
+
+    private static String getSimpleHintMessage(Symbol symbol) {
+        final short[] row = ACTION_TABLE[symbol.state];
+        final int len = row.length;
+        if (len == 0) {
+            return "[no hints]";
+        }
+        final boolean highterLevel = len > 8;
+        if (highterLevel && getAction(row, Tokens.SEMICOLON) != 0) {
+            return "forget ';' ?";
+        }
+        final StringBuilder sb = new StringBuilder();
+        boolean notFirst = false;
+        short sym;
+        for (int i = 0; i < len; i += 2) {
+            sym = row[i];
+            if (highterLevel && !isHintLevelOne(sym)) {
+                continue;
+            }
+            if (notFirst) {
+                sb.append(", ");
+            } else {
+                notFirst = true;
+            }
+            sb.append('\'')
+                    .append(symbolToString(sym))
+                    .append('\'');
+        }
+        return sb.toString();
+    }
+
+    private static boolean isHintLevelOne(short sym) {
+        switch (sym) {
+            case Tokens.COLON: //":"
+            case Tokens.SEMICOLON: //";"
+            case Tokens.RBRACE: //"}"
+            case Tokens.INTERPOLATION_END: //"}"
+            case Tokens.RPAREN: //")"
+            case Tokens.RBRACK: //"]"
+            case Tokens.IDENTIFIER: //"IDENTIFIER"
+            case Tokens.DIRECT_VALUE: //"DIRECT_VALUE"
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static String symbolToString(final short sym) {
+        if (sym >= 0 && sym < SYMBOL_STRS.length) {
+            return SYMBOL_STRS[sym];
+        }
+        return "UNKNOWN";
+    }
+
     public static TemplateAST parse(final Template template, BreakPointListener breakPointListener) throws ParseException {
         return new Parser()._parse(template, breakPointListener);
     }
@@ -123,15 +324,15 @@ abstract class AbstractParser {
                     if (looseSemicolon
                             && currentSymbol.isOnEdgeOfNewLine) {
                         switch (pending.id) {
-                            case Tokens.LBRACE: // {
-                            case Tokens.LBRACK: // [
+                            case Tokens.LBRACK:
                                 if (currentSymbol.id == Tokens.COMMA
                                         || currentSymbol.id == Tokens.LBRACE) {
                                     break;
                                 }
-                            case Tokens.LPAREN: // (
-                            case Tokens.PLUSPLUS: // ++
-                            case Tokens.MINUSMINUS: // --
+                            case Tokens.LBRACE:
+                            case Tokens.LPAREN:
+                            case Tokens.PLUSPLUS:
+                            case Tokens.MINUSMINUS:
                                 pendingPending = pending;
                                 pending = createLooseSemicolonSymbol(pendingPending);
                                 looseSemicolonCounter++;
@@ -521,17 +722,17 @@ abstract class AbstractParser {
         }
     }
 
-    static Statement createStatementGroup(List<Statement> list, int line, int column) {
+    Statement createStatementGroup(List<Statement> list, int line, int column) {
         return new StatementGroup(StatementUtil.toStatementArray(list), line, column);
     }
 
-    static Expression createMethodExecute(Expression funcExpr, Expression[] paramExprs, int line, int column) {
+    Expression createMethodExecute(Expression funcExpr, Expression[] paramExprs, int line, int column) {
         StatementUtil.optimize(paramExprs);
         funcExpr = StatementUtil.optimize(funcExpr);
         return new MethodExecute(funcExpr, paramExprs, line, column);
     }
 
-    static Expression createDynamicNativeMethodExecute(Expression thisExpr, String func, Expression[] paramExprs, int line, int column) {
+    Expression createDynamicNativeMethodExecute(Expression thisExpr, String func, Expression[] paramExprs, int line, int column) {
         StatementUtil.optimize(paramExprs);
         thisExpr = StatementUtil.optimize(thisExpr);
         return new DynamicNativeMethodExecute(thisExpr, func, paramExprs, line, column);
@@ -546,7 +747,7 @@ abstract class AbstractParser {
         return new TemplateAST(varmgr.getIndexers(), statements, varmgr.getVarCount());
     }
 
-    static IBlock createIBlock(List<Statement> list, int varIndexer, int line, int column) {
+    IBlock createIBlock(List<Statement> list, int varIndexer, int line, int column) {
         Statement[] statements = StatementUtil.toStatementInvertArray(list);
         List<LoopInfo> loopInfoList = StatementUtil.collectPossibleLoopsInfo(statements);
         return loopInfoList != null
@@ -554,18 +755,18 @@ abstract class AbstractParser {
                 : new BlockNoLoops(varIndexer, statements, line, column);
     }
 
-    static TryPart createTryPart(List<Statement> list, int varIndexer, int line, int column) {
+    TryPart createTryPart(List<Statement> list, int varIndexer, int line, int column) {
         return new TryPart(createIBlock(list, varIndexer, line, column), line, column);
     }
 
-    static AssignableExpression castToAssignableExpression(Expression expr) {
+    AssignableExpression castToAssignableExpression(Expression expr) {
         if (expr instanceof AssignableExpression) {
             return (AssignableExpression) expr;
         }
         throw new ParseException("expression is not assignable", expr);
     }
 
-    static Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column) {
+    Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column) {
         AssignableExpression leftExpr = castToAssignableExpression(lexpr);
         SelfOperator oper;
         switch (sym) {
@@ -616,69 +817,69 @@ abstract class AbstractParser {
         return StatementUtil.optimize(oper);
     }
 
-    static Expression createBinaryOperator(Expression leftExpr, Symbol symSymbol, Expression rightExpr) {
+    Expression createBinaryOperator(Expression leftExpr, Symbol symSymbol, Expression rightExpr) {
         int line = symSymbol.line;
         int column = symSymbol.column;
         BinaryOperator oper;
         switch ((Integer) symSymbol.value) {
-            case Tokens.ANDAND: // &&
+            case Tokens.ANDAND:
                 oper = new And(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.AND: // &
+            case Tokens.AND:
                 oper = new BitAnd(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.OR: // |
+            case Tokens.OR:
                 oper = new BitOr(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.XOR: // ^
+            case Tokens.XOR:
                 oper = new BitXor(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.DIV: // /
+            case Tokens.DIV:
                 oper = new Div(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.EQEQ: // ==
+            case Tokens.EQEQ:
                 oper = new Equal(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.GTEQ: // >=
+            case Tokens.GTEQ:
                 oper = new GreaterEqual(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.GT: // >
+            case Tokens.GT:
                 oper = new Greater(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.LSHIFT: // <<
+            case Tokens.LSHIFT:
                 oper = new LShift(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.LTEQ: // <=
+            case Tokens.LTEQ:
                 oper = new LessEqual(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.LT: // <
+            case Tokens.LT:
                 oper = new Less(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.MINUS: // -
+            case Tokens.MINUS:
                 oper = new Minus(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.MOD: // %
+            case Tokens.MOD:
                 oper = new Mod(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.MULT: // *
+            case Tokens.MULT:
                 oper = new Mult(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.NOTEQ: // !=
+            case Tokens.NOTEQ:
                 oper = new NotEqual(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.OROR: // ||
+            case Tokens.OROR:
                 oper = new Or(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.PLUS: // +
+            case Tokens.PLUS:
                 oper = new Plus(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.RSHIFT: // >>
+            case Tokens.RSHIFT:
                 oper = new RShift(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.URSHIFT: // >>>
+            case Tokens.URSHIFT:
                 oper = new URShift(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.DOTDOT: // ..
+            case Tokens.DOTDOT:
                 oper = new IntStep(leftExpr, rightExpr, line, column);
                 break;
             default:
@@ -687,204 +888,4 @@ abstract class AbstractParser {
         return StatementUtil.optimize(oper);
     }
 
-    /* Base Parser */
-    private static final short[][] PRODUCTION_TABLE = loadData("Production");
-    private static final short[][] ACTION_TABLE = loadData("Action");
-    private static final short[][] REDUCE_TABLE = loadData("Reduce");
-    private static final String[] SYMBOL_STRS = new String[]{
-        "EOF", //EOF
-        "ERROR", //ERROR
-        "var", //VAR
-        "if", //IF
-        "else", //ELSE
-        "for", //FOR
-        "this", //THIS
-        "super", //SUPER
-        "switch", //SWITCH
-        "case", //CASE
-        "default", //DEFAULT
-        "do", //DO
-        "while", //WHILE
-        "throw", //THROW
-        "try", //TRY
-        "catch", //CATCH
-        "finally", //FINALLY
-        "new", //NEW
-        "instanceof", //INSTANCEOF
-        "function", //FUNCTION
-        "echo", //ECHO
-        "static", //STATIC
-        "native", //NATIVE
-        "import", //IMPORT
-        "include", //INCLUDE
-        "@import", //NATIVE_IMPORT
-        "break", //BREAK
-        "continue", //CONTINUE
-        "return", //RETURN
-        "++", //PLUSPLUS
-        "--", //MINUSMINUS
-        "+", //PLUS
-        "-", //MINUS
-        "*", //MULT
-        "/", //DIV
-        "%", //MOD
-        "<<", //LSHIFT
-        ">>", //RSHIFT
-        ">>>", //URSHIFT
-        "<", //LT
-        ">", //GT
-        "<=", //LTEQ
-        ">=", //GTEQ
-        "==", //EQEQ
-        "!=", //NOTEQ
-        "&", //AND
-        "^", //XOR
-        "|", //OR
-        "~", //COMP
-        "&&", //ANDAND
-        "||", //OROR
-        "!", //NOT
-        "?", //QUESTION
-        "*=", //SELFEQ
-        "-", //UMINUS
-        ".", //DOT
-        ":", //COLON
-        "::", //COLONCOLON
-        ",", //COMMA
-        ";", //SEMICOLON
-        "{", //LBRACE
-        "}", //RBRACE
-        "}", //INTERPOLATION_END
-        "(", //LPAREN
-        ")", //RPAREN
-        "[", //LBRACK
-        "]", //RBRACK
-        "[?", //LDEBUG
-        "?]", //RDEBUG
-        "[?]", //LRDEBUG
-        "=>", //EQGT
-        ")->", //RPAREN_MINUSGT
-        "->", //MINUSGT
-        ".~", //DYNAMIC_DOT
-        "..", //DOTDOT
-        "=", //EQ
-        "`", //TEMPLATE_STRING_START
-        "}", //TEMPLATE_STRING_INTERPOLATION_END
-        "${", //TEMPLATE_STRING_INTERPOLATION_START
-        "`", //TEMPLATE_STRING_END
-        "IDENTIFIER", //IDENTIFIER
-        "::", //METHOD_REFERENCE
-        "TEXT", //TEXT_STATEMENT
-        "DIRECT_VALUE", // DIRECT_VALUE
-        "const", //CONST
-        "UNKNOWN"
-    };
-
-    private static short getAction(final short[] row, final int sym) {
-        final int len;
-        int probe;
-        /* linear search if we are < 10 entries, otherwise binary search */
-        if ((len = row.length) < 20) {
-            for (probe = 0; probe < len; probe++) {
-                if (row[probe++] == sym) {
-                    return row[probe];
-                }
-            }
-        } else {
-            int first, last;
-            first = 0;
-            last = (len - 1) >> 1;
-
-            int probe_2;
-            while (first <= last) {
-                probe = (first + last) >> 1;
-                probe_2 = probe << 1;
-                if (sym == row[probe_2]) {
-                    return row[probe_2 + 1];
-                } else if (sym > row[probe_2]) {
-                    first = probe + 1;
-                } else {
-                    last = probe - 1;
-                }
-            }
-        }
-        //error
-        return 0;
-    }
-
-    private static short getReduce(final short[] row, int sym) {
-        if (row != null) {
-            for (int probe = 0, len = row.length; probe < len; probe++) {
-                if (row[probe++] == sym) {
-                    return row[probe];
-                }
-            }
-        }
-        //error
-        return -1;
-    }
-
-    private static short[][] loadData(String name) {
-        try (ObjectInputStream in = new ObjectInputStream(
-                ClassUtil.getDefaultClassLoader().getResourceAsStream(
-                        StringUtil.concat("org/febit/wit/core/Parser$", name, ".data"))
-        )) {
-            return (short[][]) in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new Error(e);
-        }
-    }
-
-    private static String getSimpleHintMessage(Symbol symbol) {
-        final short[] row = ACTION_TABLE[symbol.state];
-        final int len = row.length;
-        if (len == 0) {
-            return "[no hints]";
-        }
-        final boolean highterLevel = len > 8;
-        if (highterLevel && getAction(row, Tokens.SEMICOLON) != 0) {
-            return "forget ';' ?";
-        }
-        final StringBuilder sb = new StringBuilder();
-        boolean notFirst = false;
-        short sym;
-        for (int i = 0; i < len; i += 2) {
-            sym = row[i];
-            if (highterLevel && !isHintLevelOne(sym)) {
-                continue;
-            }
-            if (notFirst) {
-                sb.append(", ");
-            } else {
-                notFirst = true;
-            }
-            sb.append('\'')
-                    .append(symbolToString(sym))
-                    .append('\'');
-        }
-        return sb.toString();
-    }
-
-    private static boolean isHintLevelOne(short sym) {
-        switch (sym) {
-            case Tokens.COLON: //":"
-            case Tokens.SEMICOLON: //";"
-            case Tokens.RBRACE: //"}"
-            case Tokens.INTERPOLATION_END: //"}"
-            case Tokens.RPAREN: //")"
-            case Tokens.RBRACK: //"]"
-            case Tokens.IDENTIFIER: //"IDENTIFIER"
-            case Tokens.DIRECT_VALUE: //"DIRECT_VALUE"
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private static String symbolToString(final short sym) {
-        if (sym >= 0 && sym < SYMBOL_STRS.length) {
-            return SYMBOL_STRS[sym];
-        }
-        return "UNKNOWN";
-    }
 }

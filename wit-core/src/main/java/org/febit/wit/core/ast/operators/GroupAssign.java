@@ -2,8 +2,8 @@
 package org.febit.wit.core.ast.operators;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.AssignableExpression;
+import org.febit.wit.core.ast.Expression;
 import org.febit.wit.lang.Iter;
 import org.febit.wit.util.CollectionUtil;
 

@@ -5,8 +5,8 @@ import java.util.Map;
 import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
 import org.febit.wit.core.VariantIndexer;
-import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.AssignableExpression;
+import org.febit.wit.core.ast.Expression;
 
 /**
  *

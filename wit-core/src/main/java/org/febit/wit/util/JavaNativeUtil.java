@@ -382,7 +382,6 @@ public class JavaNativeUtil {
         }
         final Object[] methodArgs = new Object[acceptArgsCount];
         int copyLen;
-        //Note: Warning 参数个数不一致
         System.arraycopy(args, 1, methodArgs, 0, ((copyLen = args.length - 1) <= acceptArgsCount) ? copyLen : acceptArgsCount);
         return invokeMethod(method, args[0], methodArgs, acceptArgsCount, isReturnVoid);
     }
@@ -410,7 +409,6 @@ public class JavaNativeUtil {
             if (argsLen == acceptArgsCount) {
                 methodArgs = args;
             } else {
-                //Note: Warning 参数个数不一致
                 methodArgs = new Object[acceptArgsCount];
                 System.arraycopy(args, 0, methodArgs, 0, argsLen <= acceptArgsCount ? argsLen : acceptArgsCount);
             }
@@ -447,7 +445,6 @@ public class JavaNativeUtil {
             if (argsLen == acceptArgsCount) {
                 methodArgs = args;
             } else {
-                //Note: Warning 参数个数不一致
                 System.arraycopy(args, 0, methodArgs = new Object[acceptArgsCount], 0, argsLen <= acceptArgsCount ? argsLen : acceptArgsCount);
             }
         } else {

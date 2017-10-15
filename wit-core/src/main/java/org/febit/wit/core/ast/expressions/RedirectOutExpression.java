@@ -2,8 +2,8 @@
 package org.febit.wit.core.ast.expressions;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.AssignableExpression;
+import org.febit.wit.core.ast.Expression;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;

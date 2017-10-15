@@ -4,8 +4,8 @@ package org.febit.wit.core.ast.statements;
 import java.util.ArrayList;
 import java.util.List;
 import org.febit.wit.Template;
-import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.AssignableExpression;
+import org.febit.wit.core.ast.Expression;
 import org.febit.wit.exceptions.ParseException;
 
 /**
