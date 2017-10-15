@@ -24,6 +24,7 @@ import org.febit.wit.util.CharArrayWriter;
     private boolean interpolationFlag = false;
     private boolean leftInterpolationFlag = true;
     private boolean templateStringFlag = false;
+    private int templateStringBraceClosingCounter = 0;
 
     private boolean trimCodeBlockBlankLine = false;
     private final CharArrayWriter stringBuffer = new CharArrayWriter(256);
@@ -368,8 +369,8 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 
   "("                            { return symbol(Tokens.LPAREN); }
   ")"                            { return symbol(Tokens.RPAREN); }
-  "{"                            { return symbol(Tokens.LBRACE); }
-  "}"                            { if(templateStringFlag){yybegin(TEMPLATE_STRING);return symbol(Tokens.TEMPLATE_STRING_INTERPOLATION_END);}else if(interpolationFlag){yybegin(YYINITIAL);leftInterpolationFlag = true;return symbol(Tokens.INTERPOLATION_END);}else{return symbol(Tokens.RBRACE);} }
+  "{"                            { if(templateStringFlag){ templateStringBraceClosingCounter++; } return symbol(Tokens.LBRACE); }
+  "}"                            { if(templateStringFlag && templateStringBraceClosingCounter == 0){yybegin(TEMPLATE_STRING);return symbol(Tokens.TEMPLATE_STRING_INTERPOLATION_END);}else if(interpolationFlag){yybegin(YYINITIAL);leftInterpolationFlag = true;return symbol(Tokens.INTERPOLATION_END);}else{ if(templateStringFlag){templateStringBraceClosingCounter--;} return symbol(Tokens.RBRACE);} }
   "["                            { return symbol(Tokens.LBRACK); }
   "]"                            { return symbol(Tokens.RBRACK); }
   ";"                            { return symbol(Tokens.SEMICOLON); }
@@ -431,7 +432,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   \'                             { yybegin(CHARLITERAL); }
 
   /* template string literal */
-  "`"                             { yybegin(TEMPLATE_STRING); this.templateStringFlag = true; return symbol(Tokens.TEMPLATE_STRING_START); }
+  "`"                             { if(templateStringFlag){ throw new ParseException("Illegal character '`', not support nesting template string.", getLine(), getColumn()); } yybegin(TEMPLATE_STRING); this.templateStringFlag = true; templateStringBraceClosingCounter = 0; return symbol(Tokens.TEMPLATE_STRING_START); }
 
   /* numeric literals */
 

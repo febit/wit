@@ -10,9 +10,16 @@ str = `awesome\t\n template
 .`
 assertEquals(str, "awesome\t\n template\n\n.")
 
-var id=9527, name="Mr Tang"
-str = `${1+2}, ${id}, ${name}.`
-assertEquals(str, "3, 9527, Mr Tang.")
+var id=9527, name="Mr Tang";
+var jobs = {
+  9527: "Master"
+};
+str = `${1+2}, ${id}, ${name}, ${jobs[id]}${(()->".")()}`
+assertEquals(str, "3, 9527, Mr Tang, Master.")
 
+str = `${((name)->{ var map={func:"bala..bala..bala"}; return "nested function: " + name + " - " + map[name]})("func")}`
+assertEquals(str, "nested function: func - bala..bala..bala")
 
-
+// ParseException: Illegal character '`', not support nesting template string
+// str = `${`nested`}.`
+// assertEquals(str, "nested.")
