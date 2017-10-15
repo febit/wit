@@ -7,6 +7,7 @@ import org.febit.wit.Template;
 import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.util.StatementUtil;
 
 /**
  *
@@ -21,27 +22,23 @@ public class ImportPart {
     private List<String> exportNameList;
     private List<AssignableExpression> toResetableValueList;
 
-    public ImportPart(Expression expr, int line, int column) {
-        this(expr, null, line, column);
-    }
-
     public ImportPart(Expression expr, Expression paramsExpr, int line, int column) {
         this.line = line;
         this.column = column;
-        this.expr = expr;
-        this.paramsExpr = paramsExpr;
+        this.expr = StatementUtil.optimize(expr);
+        this.paramsExpr = StatementUtil.optimize(paramsExpr);;
         this.exportNameList = new ArrayList<>();
         this.toResetableValueList = new ArrayList<>();
     }
 
     public ImportPart append(String name, Expression to) {
-        if (to instanceof AssignableExpression) {
-            this.exportNameList.add(name);
-            this.toResetableValueList.add((AssignableExpression) to);
-            return this;
-        } else {
+        to = StatementUtil.optimize(to);
+        if (!(to instanceof AssignableExpression)) {
             throw new ParseException("Need a resetable expression.", to);
         }
+        this.exportNameList.add(name);
+        this.toResetableValueList.add((AssignableExpression) to);
+        return this;
     }
 
     public Import pop(Template template) {

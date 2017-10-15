@@ -4,6 +4,7 @@ package org.febit.wit.core.ast.expressions;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.debug.BreakPointListener;
+import org.febit.wit.util.StatementUtil;
 
 /**
  *
@@ -19,7 +20,7 @@ public class BreakPointExpression extends Expression {
         super(line, column);
         this.listener = listener;
         this.label = label;
-        this.expression = expression;
+        this.expression = StatementUtil.optimize(expression);
     }
 
     @Override

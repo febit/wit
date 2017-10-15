@@ -11,8 +11,8 @@ import org.febit.wit.core.ast.Expression;
  */
 public final class Include extends AbstractInclude {
 
-    public Include(Expression templateNameExpr, Expression paramsExpr, Template template, int line, int column) {
-        super(templateNameExpr, paramsExpr, template, line, column);
+    public Include(Expression pathExpr, Expression paramsExpr, Template template, int line, int column) {
+        super(pathExpr, paramsExpr, template, line, column);
     }
 
     @Override

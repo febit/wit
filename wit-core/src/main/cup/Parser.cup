@@ -217,8 +217,8 @@ statement       ::= expression_statementable:$ SEMICOLON
                     {: return (%part%).pop(this.template); :}
 
                     //includeStat
-                    |INCLUDE:sym expression:expr (mapValue:$ | LBRACE expression:$ RBRACE):paramsExpr? SEMICOLON
-                    {: return new Include(%expr%, (Expression) (%paramsExpr%), this.template, %sym.line%, %sym.column%); :}
+                    |INCLUDE:sym expression:expr mapValue:paramsExpr? SEMICOLON
+                    {: return new Include(%expr%, %paramsExpr%, this.template, %sym.line%, %sym.column%); :}
 
                     //funcStatement
                     |funcStatementHead:part LBRACE statement[]:list? RBRACE
@@ -246,11 +246,7 @@ varPart         ::= varAssign:$
                     ;
 
 
-importPart1     ::= IMPORT:sym expression:expr
-                    {: return new ImportPart(%expr%, %sym.line%, %sym.column%); :}
-                    |IMPORT:sym expression:expr mapValue:paramsExpr
-                    {: return new ImportPart(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
-                    |IMPORT:sym expression:expr LBRACE expression:paramsExpr RBRACE
+importPart1     ::= IMPORT:sym expression:expr mapValue:paramsExpr?
                     {: return new ImportPart(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
                     ;
 

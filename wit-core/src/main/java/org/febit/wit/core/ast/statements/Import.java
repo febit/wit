@@ -18,8 +18,8 @@ public final class Import extends AbstractInclude {
     private final AssignableExpression[] toResetableValues;
     private final boolean exportAll;
 
-    public Import(Expression templateNameExpr, Expression paramsExpr, String[] exportNames, AssignableExpression[] toContextValues, Template template, int line, int column) {
-        super(templateNameExpr, paramsExpr, template, line, column);
+    public Import(Expression pathExpr, Expression paramsExpr, String[] exportNames, AssignableExpression[] toContextValues, Template template, int line, int column) {
+        super(pathExpr, paramsExpr, template, line, column);
         if (exportNames == null || exportNames.length == 0) {
             this.exportNames = null;
             this.toResetableValues = null;

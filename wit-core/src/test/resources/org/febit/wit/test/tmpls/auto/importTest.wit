@@ -42,8 +42,6 @@
         import "etc/importTest.import.wit" {"1":"1","2":"2"} a,b;
         var a;
         var b;
-        var c = {"1":"1","2":"2"};
-        import "etc/importTest.import.wit" {c} a,b;
     }
 
 }
