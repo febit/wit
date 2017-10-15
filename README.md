@@ -15,14 +15,14 @@ This is a template engine, all writen in Java, **support Java 7+**.
 <dependency>
     <groupId>org.febit.wit</groupId>
     <artifactId>wit-core</artifactId>
-    <version>2.2.0-beta</version>
+    <version>2.3.0-beta</version>
 </dependency>
 ```
 
 + or Gradle
 
 ```
-compile 'org.febit.wit:wit-core:2.2.0-beta'
+compile 'org.febit.wit:wit-core:2.3.0-beta'
 ```
 
 + demo:
@@ -38,7 +38,7 @@ template.merge(params, out);
 ```js
 Hello Wit!
 <%
-var books;
+var books
 {
     for(book : books){
 %>
@@ -48,20 +48,21 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
 }
 {
     var func = function(a, b){
-        return a + b + arguments[3];
-    };
-    echo func("a", "b", "c");
+        return a + b + arguments[3]
+    }
+    echo func("a", "b", "c")
 }
 {
     var map = {
+        books,
         1: 1,
         "key2": "value2",
         3: 2 + 1
-    };
-    map[5] = 2 + 3;
-    map.~put("6",2*3);
+    }
+    map[5] = 2 + 3
+    map.~put("6", 2*3)
     for(key, value : map){
-        echo key + ":" +value + "\n";
+        echo key + ":" +value + "\n"
     }
 }
 %>
