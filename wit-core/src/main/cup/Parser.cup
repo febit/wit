@@ -600,9 +600,7 @@ funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArgsList:identL
                         ;
 
 
-funcHead            ::= FUNCTION:sym
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%); :}
-                        |FUNCTION:sym LPAREN funcArgsList:list? RPAREN
+funcHead            ::= FUNCTION:sym LPAREN funcArgsList:list? RPAREN
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
                         ;
 

@@ -10,10 +10,6 @@
                 assertTrue(true);
                 return c;
             };
-            var func3 = function{
-                assertTrue(true);
-                return c;
-            };
             var func4 = (a,b)->{
                 assertTrue(true);
                 return c;
@@ -23,7 +19,6 @@
                 return c;
             };
             func2();
-            func3();
             func4();
             func5();
         }
