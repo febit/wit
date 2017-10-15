@@ -86,7 +86,7 @@ nonterminal Expression contextValueExpr;
 /* function & Lambda */
 nonterminal ArgumentInfo funcArg;
 nonterminal Expression funcExecuteExpr;
-nonterminal FunctionDeclarePart funcHead, funcStatementHead;
+nonterminal FunctionDeclarePart funcHead, funcStatementHead, mapPropertyFuncHead;
 nonterminal Expression lambdaExpr;
 nonterminal FunctionDeclarePart lambdaExprHead;
 nonterminal FunctionDeclarePart lambdaForHead1, lambdaForMapHead1;
@@ -553,8 +553,12 @@ mapPropertyDef        ::= DIRECT_VALUE:key COLON expression:expr
                         {: return new Expression[]{createDirectValue(%key.symbol%), %expr%}; :}
                         |MINUS:sym DIRECT_VALUE:key COLON expression:expr
                         {: return new Expression[]{new DirectValue(ALU.negative(%key%), %key.line%, %key.column%), %expr%}; :}
-                        |IDENTIFIER:key COLON expression:expr
-                        {: return new Expression[]{createDirectValue(%key.symbol%), %expr%}; :}
+                        |IDENTIFIER:ident
+                        {: return new Expression[]{createDirectValue(%ident.symbol%), createContextValue(0, %ident%, %ident.line%, %ident.column%)}; :}
+                        |IDENTIFIER:ident COLON expression:expr
+                        {: return new Expression[]{createDirectValue(%ident.symbol%), %expr%}; :}
+                       // |IDENTIFIER:ident mapPropertyFuncHead:part LBRACE statement[]:list? RBRACE
+                       // {: return new Expression[]{createDirectValue(%ident.symbol%), (%part%).pop(%list%)}; :}
                         |LBRACK expression:key RBRACK COLON expression:expr
                         {: return new Expression[]{%key%, %expr%}; :}
                         ;
@@ -581,13 +585,16 @@ funcArg             ::= IDENTIFIER:ident
                         ;
 
 
-funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:identList? RPAREN 
-                        {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%).appendArgs(%identList%); :}
+funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:args? RPAREN 
+                        {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%).appendArgs(%args%); :}
                         ;
 
+// mapPropertyFuncHead ::= LPAREN:sym funcArg[COMMA]:args? RPAREN 
+//                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%args%); :}
+//                         ;
 
-funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:list? RPAREN
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
+funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%args%); :}
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
@@ -604,8 +611,8 @@ funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
 /* lambda */
 lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
-                        |LPAREN funcArg[COMMA]:list? RPAREN_MINUSGT:sym
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
+                        |LPAREN funcArg[COMMA]:args? RPAREN_MINUSGT:sym
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%args%); :}
                         ;
 
 

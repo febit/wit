@@ -4,7 +4,11 @@ var mapEmpty = {};
 
 assertEquals(mapEmpty.~size(), 0);
 
+var a = "A"
+var b = "B"
+
 var map = {
+    a, b,
     id: "9527",
     name: "wit",
     1 : "a",
@@ -14,6 +18,8 @@ var map = {
     [ -1-1 ] : "e"
 };
 
+assertEquals(map["a"], "A");
+assertEquals(map["b"], "B");
 assertEquals(map["id"], "9527");
 assertEquals(map.name, "wit");
 assertEquals(map[1], "a");
