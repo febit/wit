@@ -675,7 +675,9 @@ abstract class AbstractParser {
     }
 
     Expression createNativeMethodDeclareExpression(Class clazz, String methodName, List<Class> list, int line, int column) {
-        return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName, list.toArray(new Class[list.size()]), line, column, true), line, column);
+        return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName,
+                list == null ? new Class[0] : list.toArray(new Class[list.size()]),
+                line, column, true), line, column);
     }
 
     Expression createMethodReference(String ref, int line, int column) {
@@ -697,7 +699,9 @@ abstract class AbstractParser {
     }
 
     Expression createNativeConstructorDeclareExpression(Class clazz, List<Class> list, int line, int column) {
-        return new DirectValue(this.nativeFactory.getNativeConstructorDeclare(clazz, list.toArray(new Class[list.size()]), line, column, true), line, column);
+        return new DirectValue(this.nativeFactory.getNativeConstructorDeclare(clazz,
+                list == null ? new Class[0] : list.toArray(new Class[list.size()]),
+                line, column, true), line, column);
     }
 
     Statement declearVar(String ident, int line, int column) {

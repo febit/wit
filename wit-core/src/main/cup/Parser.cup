@@ -60,16 +60,12 @@ terminal char[]     TEXT_STATEMENT;
 terminal Object     DIRECT_VALUE;
 terminal Integer    CONST;
 
-
-
 /* nonterminal */
 nonterminal ClassNameBand classPureName, className;
-
-/* TemplateAST */
+nonterminal Class javaClass;
 nonterminal TemplateAST templateAST;
 
 /* Statement */
-
 nonterminal Statement statement, ifStat, varPart;
 nonterminal IBlock block, caseBlockStat;
 nonterminal Expression varAssign;
@@ -84,17 +80,13 @@ nonterminal Expression expression, expression_statementable;
 nonterminal Expression[] mapPropertyDef;
 nonterminal MapValue mapValue;
 nonterminal TemplateStringExpressionPart templateStringExprPart;
-
 nonterminal Integer superCount;
 nonterminal Expression contextValueExpr;
-nonterminal List<Class> classNameList, classNameList1;
-nonterminal List<ArgumentInfo> funcArgsList;
 
-/* function */
+/* function & Lambda */
+nonterminal ArgumentInfo funcArg;
 nonterminal Expression funcExecuteExpr;
 nonterminal FunctionDeclarePart funcHead, funcStatementHead;
-
-/* Lambda */
 nonterminal Expression lambdaExpr;
 nonterminal FunctionDeclarePart lambdaExprHead;
 nonterminal FunctionDeclarePart lambdaForHead1, lambdaForMapHead1;
@@ -123,7 +115,6 @@ precedence left     EQGT;  // =>
 precedence right    RPAREN_MINUSGT, MINUSGT; // ->
 precedence left     DOT, LBRACK, LBRACE, LPAREN, RPAREN, DYNAMIC_DOT; // . [ { ( ) @
 
-/* templateAST */
 
 templateAST     ::= statement[]:list ?
                     {: return createTemplateAST(%list%); :}
@@ -140,6 +131,11 @@ className       ::= classPureName:part
                     {: return %part%; :}
                     |className:part LBRACK RBRACK
                     {: return (%part%).plusArrayDepth(); :}
+                    ;
+
+
+javaClass       ::= className:nameBand
+                    {: return toClass(%nameBand%, %nameBand.line%, %nameBand.column%); :}
                     ;
 
 
@@ -344,10 +340,8 @@ caseBlockStat   ::= {: varmgr.push(); return null; :} statement[]:list?
 
 switchPart0     ::= 
                     {: return new SwitchPart(); :}
-                    | CASE:sym DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:part
-                    {: return (%part%).appendCase(%key%, %body%, %sym.line%, %sym.column%); :}
-                    | CASE:sym MINUS:sym DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:part
-                    {: return (%part%).appendCase(ALU.negative(%key%), %body%, %sym.line%, %sym.column%); :}
+                    | CASE:sym MINUS:negative? DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:part
+                    {: return (%part%).appendCase((%negative% == null)?(%key%):ALU.negative(%key%), %body%, %sym.line%, %sym.column%); :}
                     | DEFAULT:sym COLON caseBlockStat:body switchPart0:part
                     {: return (%part%).appendCase(null, %body%, %sym.line%, %sym.column%); :}
                     ;
@@ -506,13 +500,13 @@ expression      ::= expression_statementable:$
                     {: return new ArrayValue(StatementUtil.toExpressionArray(%list%), %sym.line%, %sym.column%); :}
 
                     //NativeNewArrayDeclareExpression 
-                    |NATIVE:sym LBRACK RBRACK className:nameBand
-                    {: return createNativeNewArrayDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
-                    |NATIVE:sym LBRACK className:nameBand RBRACK
-                    {: return createNativeNewArrayDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %sym.line%, %sym.column%); :}
+                    |NATIVE:sym LBRACK RBRACK javaClass:javaClass
+                    {: return createNativeNewArrayDeclareExpression(%javaClass%, %sym.line%, %sym.column%); :}
+                    |NATIVE:sym LBRACK javaClass:javaClass RBRACK
+                    {: return createNativeNewArrayDeclareExpression(%javaClass%, %sym.line%, %sym.column%); :}
 
                     //nativeMethodExpr
-                    |NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN classNameList:list RPAREN
+                    |NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN javaClass[COMMA]:list? RPAREN
                     {: return createNativeMethodDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %ident%, %list%, %sym.line%, %sym.column%); :}
 
                     //native static field
@@ -520,7 +514,7 @@ expression      ::= expression_statementable:$
                     {: return createNativeStaticValue(%nameBand%, %nameBand.line%, %nameBand.column%); :}
 
                     //nativeConstructorExpr
-                    |NATIVE:sym NEW classPureName:nameBand LPAREN classNameList:list RPAREN
+                    |NATIVE:sym NEW classPureName:nameBand LPAREN javaClass[COMMA]:list? RPAREN
                     {: return createNativeConstructorDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %list%, %sym.line%, %sym.column%); :}
 
                     |METHOD_REFERENCE:ref
@@ -584,23 +578,19 @@ templateStringExprPart  ::= TEMPLATE_STRING_START:sym
                             ;
 
 /* function  */
-funcArgsList        ::= IDENTIFIER:ident
-                        {: List<ArgumentInfo> list = new ArrayList<>(); list.add(new ArgumentInfo(%ident%, null)); return list; :}
+funcArg             ::= IDENTIFIER:ident
+                        {: return new ArgumentInfo(%ident%, null); :}
                         | IDENTIFIER:ident EQ expression:expr
-                        {: List<ArgumentInfo> list = new ArrayList<>(); list.add(new ArgumentInfo(%ident%, StatementUtil.calcConst(%expr%, true))); return list; :}
-                        | funcArgsList:list COMMA IDENTIFIER:ident
-                        {: (%list%).add(new ArgumentInfo(%ident%, null)); return %list%; :}
-                        | funcArgsList:list COMMA IDENTIFIER:ident EQ expression:expr
-                        {: (%list%).add(new ArgumentInfo(%ident%, StatementUtil.calcConst(%expr%, true))); return %list%; :}
+                        {: return new ArgumentInfo(%ident%, StatementUtil.calcConst(%expr%, true)); :}
                         ;
 
 
-funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArgsList:identList? RPAREN 
+funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:identList? RPAREN 
                         {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%).appendArgs(%identList%); :}
                         ;
 
 
-funcHead            ::= FUNCTION:sym LPAREN funcArgsList:list? RPAREN
+funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:list? RPAREN
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
                         ;
 
@@ -615,22 +605,10 @@ funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
                         ;
 
 
-classNameList1      ::= className:nameBand
-                        {: List<Class> list = new ArrayList<Class>(); list.add(toClass(%nameBand%, %nameBand.line%, %nameBand.column%)); return list; :}
-                        |classNameList1:list COMMA className:nameBand
-                        {: (%list%).add(toClass(%nameBand%, %nameBand.line%, %nameBand.column%)); return %list%; :}
-                        ;
-
-classNameList       ::= 
-                        {: return new ArrayList<>(); :}
-                        |classNameList1:$
-                        ;
-
-
 /* lambda */
 lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
-                        |LPAREN funcArgsList:list? RPAREN_MINUSGT:sym
+                        |LPAREN funcArg[COMMA]:list? RPAREN_MINUSGT:sym
                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%list%); :}
                         ;
 
