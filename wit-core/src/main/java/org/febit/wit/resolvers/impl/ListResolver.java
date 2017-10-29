@@ -28,11 +28,12 @@ public class ListResolver implements GetResolver, SetResolver {
                 throw new ScriptRuntimeException(StringUtil.format("index out of bounds:{}", property));
             }
         }
-        if ("size".equals(property)) {
-            return ((Collection) object).size();
-        }
-        if ("isEmpty".equals(property)) {
-            return ((Collection) object).isEmpty();
+        switch (property.toString()) {
+            case "size":
+            case "length":
+                return ((Collection) object).size();
+            case "isEmpty":
+                return ((Collection) object).isEmpty();
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.util.Collection#{}", property));
     }

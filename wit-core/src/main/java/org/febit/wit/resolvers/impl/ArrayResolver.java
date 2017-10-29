@@ -21,11 +21,12 @@ public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolv
         if (property instanceof Number) {
             return ArrayUtil.get(object, ((Number) property).intValue());
         }
-        if ("length".equals(property) || "size".equals(property)) {
-            return ArrayUtil.getSize(object);
-        }
-        if ("isEmpty".equals(property)) {
-            return ArrayUtil.getSize(object) == 0;
+        switch (property.toString()) {
+            case "size":
+            case "length":
+                return ArrayUtil.getSize(object);
+            case "isEmpty":
+                return ArrayUtil.getSize(object) == 0;
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));
     }

@@ -17,11 +17,12 @@ public class ObjectArrayResolver implements GetResolver, SetResolver {
         if (property instanceof Number) {
             return ((Object[]) object)[((Number) property).intValue()];
         }
-        if ("length".equals(property) || "size".equals(property)) {
-            return ((Object[]) object).length;
-        }
-        if ("isEmpty".equals(property)) {
-            return ((Object[]) object).length == 0;
+        switch (property.toString()) {
+            case "size":
+            case "length":
+                return ((Object[]) object).length;
+            case "isEmpty":
+                return ((Object[]) object).length == 0;
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));
     }

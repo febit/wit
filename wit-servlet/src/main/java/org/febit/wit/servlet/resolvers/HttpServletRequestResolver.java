@@ -16,229 +16,101 @@ public class HttpServletRequestResolver implements GetResolver {
 
     @Override
     public Object get(Object bean, Object property) {
-
-        switch (property.hashCode()) {
-            case 405645655:
-                if ("attributes".equals(property)) {
-                    return new HttpServletRequestAttributes((HttpServletRequest) bean);
-                }
-                break;
-            case 458736106:
-                if ("parameters".equals(property)) {
-                    return new HttpServletRequestParameters((HttpServletRequest) bean);
-                }
-                break;
-            case 795307910:
-                if ("headers".equals(property)) {
-                    return new HttpServletRequestHeaders((HttpServletRequest) bean);
-                }
-                break;
-            case -1221270899:
-                if ("header".equals(property)) {
-                    return new HttpServletRequestHeader((HttpServletRequest) bean);
-                }
-                break;
-            case -989163880:
-                if ("protocol".equals(property)) {
-                    return ((HttpServletRequest) bean).getProtocol();
-                }
-                break;
-            case -906273929:
-                if ("secure".equals(property)) {
-                    return ((HttpServletRequest) bean).isSecure();
-                }
-                break;
-//            case -305982486:
-//                if ("inputStream".equals(property)) {
-//                    return ((HttpServletRequest) bean).getInputStream();
-//                }
-//                break;
-            case 37099616:
-                if ("requestURL".equals(property)) {
-                    return ((HttpServletRequest) bean).getRequestURL();
-                }
-                break;
-            case 151959715:
-                if ("userPrincipal".equals(property)) {
-                    return ((HttpServletRequest) bean).getUserPrincipal();
-                }
-                break;
-            case 338410841:
-                if ("locales".equals(property)) {
-                    return ((HttpServletRequest) bean).getLocales();
-                }
-                break;
-            case 805109770:
-                if ("servletPath".equals(property)) {
-                    return ((HttpServletRequest) bean).getServletPath();
-                }
-                break;
-            case 1040961294:
-                if ("remoteHost".equals(property)) {
-                    return ((HttpServletRequest) bean).getRemoteHost();
-                }
-                break;
-            case 1041199591:
-                if ("remotePort".equals(property)) {
-                    return ((HttpServletRequest) bean).getRemotePort();
-                }
-                break;
-            case 1041351985:
-                if ("remoteUser".equals(property)) {
-                    return ((HttpServletRequest) bean).getRemoteUser();
-                }
-                break;
-            case 1234084467:
-                if ("pathInfo".equals(property)) {
-                    return ((HttpServletRequest) bean).getPathInfo();
-                }
-                break;
-            case 1984987798:
-                if ("session".equals(property)) {
-                    return ((HttpServletRequest) bean).getSession();
-                }
-                break;
-            case -2012070511:
-                if ("requestedSessionIdFromCookie".equals(property)) {
-                    return ((HttpServletRequest) bean).isRequestedSessionIdFromCookie();
-                }
-                break;
-            case -1977647604:
-                if ("attributeNames".equals(property)) {
-                    return ((HttpServletRequest) bean).getAttributeNames();
-                }
-                break;
-            case -1826110354:
-                if ("serverName".equals(property)) {
-                    return ((HttpServletRequest) bean).getServerName();
-                }
-                break;
-            case -1826037148:
-                if ("serverPort".equals(property)) {
-                    return ((HttpServletRequest) bean).getServerPort();
-                }
-                break;
-            case -1536267021:
-                if ("parameterMap".equals(property)) {
-                    return ((HttpServletRequest) bean).getParameterMap();
-                }
-                break;
-            case -1205322100:
-                if ("localPort".equals(property)) {
-                    return ((HttpServletRequest) bean).getLocalPort();
-                }
-                break;
-            case -1097462182:
-                if ("locale".equals(property)) {
-                    return ((HttpServletRequest) bean).getLocale();
-                }
-                break;
-            case -947968670:
-                if ("requestedSessionIdFromURL".equals(property)) {
-                    return ((HttpServletRequest) bean).isRequestedSessionIdFromURL();
-                }
-                break;
-            case -907987547:
-                if ("scheme".equals(property)) {
-                    return ((HttpServletRequest) bean).getScheme();
-                }
-                break;
-            case -540713793:
-                if ("contentLength".equals(property)) {
-                    return ((HttpServletRequest) bean).getContentLength();
-                }
-                break;
-            case -102982028:
-                if ("contextPath".equals(property)) {
-                    return ((HttpServletRequest) bean).getContextPath();
-                }
-                break;
-            case 808810297:
-                if ("requestedSessionIdValid".equals(property)) {
-                    return ((HttpServletRequest) bean).isRequestedSessionIdValid();
-                }
-                break;
-            case 952189583:
-                if ("cookies".equals(property)) {
-                    return ((HttpServletRequest) bean).getCookies();
-                }
-                break;
-            case 1040741719:
-                if ("remoteAddr".equals(property)) {
-                    return ((HttpServletRequest) bean).getRemoteAddr();
-                }
-                break;
-            case 1167889595:
-                if ("headerNames".equals(property)) {
-                    return ((HttpServletRequest) bean).getHeaderNames();
-                }
-                break;
-            case -2095562109:
-                if ("requestedSessionId".equals(property)) {
-                    return ((HttpServletRequest) bean).getRequestedSessionId();
-                }
-                break;
-            case -389131437:
-                if ("contentType".equals(property)) {
-                    return ((HttpServletRequest) bean).getContentType();
-                }
-                break;
-            case 977555163:
-                if ("pathTranslated".equals(property)) {
-                    return ((HttpServletRequest) bean).getPathTranslated();
-                }
-                break;
-            case 1117066527:
-                if ("parameterNames".equals(property)) {
-                    return ((HttpServletRequest) bean).getParameterNames();
-                }
-                break;
-            case 1432276226:
-                if ("authType".equals(property)) {
-                    return ((HttpServletRequest) bean).getAuthType();
-                }
-                break;
-            case -1261064455:
-                if ("queryString".equals(property)) {
-                    return ((HttpServletRequest) bean).getQueryString();
-                }
-                break;
-            case -1205779972:
-                if ("localAddr".equals(property)) {
-                    return ((HttpServletRequest) bean).getLocalAddr();
-                }
-                break;
-            case -1205395306:
-                if ("localName".equals(property)) {
-                    return ((HttpServletRequest) bean).getLocalName();
-                }
-                break;
-            case -1077554975:
-                if ("method".equals(property)) {
-                    return ((HttpServletRequest) bean).getMethod();
-                }
-                break;
-            case -947967646:
-                if ("requestedSessionIdFromUrl".equals(property)) {
-                    //return ((HttpServletRequest) bean).isRequestedSessionIdFromUrl();
-                    return ((HttpServletRequest) bean).isRequestedSessionIdFromURL();
-                }
-                break;
-//            case -934979389:
-//                if ("reader".equals(property)) {
-//                    return ((HttpServletRequest) bean).getReader();
-//                }
-//                break;
-            case 37099613:
-                if ("requestURI".equals(property)) {
-                    return ((HttpServletRequest) bean).getRequestURI();
-                }
-                break;
-            case 404755356:
-                if ("characterEncoding".equals(property)) {
-                    return ((HttpServletRequest) bean).getCharacterEncoding();
-                }
-                break;
+        if (property == null) {
+            return null;
+        }
+        switch (property.toString()) {
+            case "attrs":
+            case "attributes":
+                return new HttpServletRequestAttributes((HttpServletRequest) bean);
+            case "parameters":
+            case "params":
+                return new HttpServletRequestParameters((HttpServletRequest) bean);
+            case "headers":
+                return new HttpServletRequestHeaders((HttpServletRequest) bean);
+            case "header":
+                return new HttpServletRequestHeader((HttpServletRequest) bean);
+            case "protocol":
+                return ((HttpServletRequest) bean).getProtocol();
+            case "secure":
+                return ((HttpServletRequest) bean).isSecure();
+//            case "inputStream":
+//                return ((HttpServletRequest) bean).getInputStream();
+            case "url":
+            case "requestURL":
+                return ((HttpServletRequest) bean).getRequestURL();
+            case "userPrincipal":
+                return ((HttpServletRequest) bean).getUserPrincipal();
+            case "locales":
+                return ((HttpServletRequest) bean).getLocales();
+            case "servletPath":
+                return ((HttpServletRequest) bean).getServletPath();
+            case "remoteHost":
+                return ((HttpServletRequest) bean).getRemoteHost();
+            case "remotePort":
+                return ((HttpServletRequest) bean).getRemotePort();
+            case "remoteUser":
+                return ((HttpServletRequest) bean).getRemoteUser();
+            case "pathInfo":
+                return ((HttpServletRequest) bean).getPathInfo();
+            case "session":
+                return ((HttpServletRequest) bean).getSession();
+            case "requestedSessionIdFromCookie":
+                return ((HttpServletRequest) bean).isRequestedSessionIdFromCookie();
+            case "attributeNames":
+                return ((HttpServletRequest) bean).getAttributeNames();
+            case "serverName":
+                return ((HttpServletRequest) bean).getServerName();
+            case "serverPort":
+                return ((HttpServletRequest) bean).getServerPort();
+            case "parameterMap":
+                return ((HttpServletRequest) bean).getParameterMap();
+            case "localPort":
+                return ((HttpServletRequest) bean).getLocalPort();
+            case "locale":
+                return ((HttpServletRequest) bean).getLocale();
+            case "requestedSessionIdFromURL":
+                return ((HttpServletRequest) bean).isRequestedSessionIdFromURL();
+            case "scheme":
+                return ((HttpServletRequest) bean).getScheme();
+            case "contentLength":
+                return ((HttpServletRequest) bean).getContentLength();
+            case "contextPath":
+                return ((HttpServletRequest) bean).getContextPath();
+            case "requestedSessionIdValid":
+                return ((HttpServletRequest) bean).isRequestedSessionIdValid();
+            case "cookies":
+                return ((HttpServletRequest) bean).getCookies();
+            case "remoteAddr":
+                return ((HttpServletRequest) bean).getRemoteAddr();
+            case "headerNames":
+                return ((HttpServletRequest) bean).getHeaderNames();
+            case "requestedSessionId":
+                return ((HttpServletRequest) bean).getRequestedSessionId();
+            case "contentType":
+                return ((HttpServletRequest) bean).getContentType();
+            case "pathTranslated":
+                return ((HttpServletRequest) bean).getPathTranslated();
+            case "parameterNames":
+                return ((HttpServletRequest) bean).getParameterNames();
+            case "authType":
+                return ((HttpServletRequest) bean).getAuthType();
+            case "queryString":
+                return ((HttpServletRequest) bean).getQueryString();
+            case "localAddr":
+                return ((HttpServletRequest) bean).getLocalAddr();
+            case "localName":
+                return ((HttpServletRequest) bean).getLocalName();
+            case "method":
+                return ((HttpServletRequest) bean).getMethod();
+            case "requestedSessionIdFromUrl":
+                return ((HttpServletRequest) bean).isRequestedSessionIdFromURL();
+//            case "reader":
+//                return ((HttpServletRequest) bean).getReader();
+            case "requestURI":
+                return ((HttpServletRequest) bean).getRequestURI();
+            case "characterEncoding":
+                return ((HttpServletRequest) bean).getCharacterEncoding();
             default:
         }
         return null;

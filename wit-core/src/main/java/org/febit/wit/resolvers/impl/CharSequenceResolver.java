@@ -20,11 +20,12 @@ public class CharSequenceResolver implements GetResolver {
                 throw new ScriptRuntimeException(StringUtil.format("index out of bounds:{}", property));
             }
         }
-        if ("length".equals(property) || "size".equals(property)) {
-            return ((CharSequence) object).length();
-        }
-        if ("isEmpty".equals(property)) {
-            return ((CharSequence) object).length() == 0;
+        switch (property.toString()) {
+            case "size":
+            case "length":
+                return ((CharSequence) object).length();
+            case "isEmpty":
+                return ((CharSequence) object).length() == 0;
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.lang.CharSequence#{}", property));
     }
