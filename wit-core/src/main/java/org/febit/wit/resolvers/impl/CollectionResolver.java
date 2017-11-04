@@ -12,7 +12,7 @@ import org.febit.wit.util.StringUtil;
  *
  * @author zqq90
  */
-public class ListResolver implements GetResolver, SetResolver {
+public class CollectionResolver implements GetResolver, SetResolver {
 
     @Override
     public Class getMatchClass() {
@@ -51,7 +51,7 @@ public class ListResolver implements GetResolver, SetResolver {
                 }
                 collection.add(value);
                 return;
-            } else if (object instanceof List) {
+            } else if (collection instanceof List) {
                 ((List) collection).set(index, value);
                 return;
             }

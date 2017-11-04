@@ -114,7 +114,7 @@ resolvers='''
     org.febit.wit.resolvers.impl.ScriptUnsetableBagResolver
     org.febit.wit.resolvers.impl.IterGetResolver
     org.febit.wit.resolvers.impl.ObjectArrayResolver
-    org.febit.wit.resolvers.impl.ListResolver
+    org.febit.wit.resolvers.impl.CollectionResolver
     org.febit.wit.resolvers.impl.MapResolver
 '''
 
