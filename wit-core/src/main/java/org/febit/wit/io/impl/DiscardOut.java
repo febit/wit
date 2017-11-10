@@ -10,6 +10,8 @@ import org.febit.wit.util.InternedEncoding;
  */
 public class DiscardOut implements Out {
 
+    public static final DiscardOut INSTANCE = new DiscardOut();
+
     private final InternedEncoding encoding;
     private final boolean isByteStream;
 

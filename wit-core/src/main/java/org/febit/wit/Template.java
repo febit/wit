@@ -11,6 +11,7 @@ import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.exceptions.TemplateException;
 import org.febit.wit.io.Out;
+import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
 import org.febit.wit.lang.KeyValues;
@@ -190,6 +191,44 @@ public final class Template {
     }
 
     /**
+     * Merge this template, and discard outputs.
+     *
+     * @since 2.4.0
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge() throws ScriptRuntimeException, ParseException {
+        return merge(KeyValuesUtil.EMPTY_KEY_VALUES);
+    }
+
+    /**
+     * Merge this template, and discard outputs.
+     *
+     * @since 2.4.0
+     * @param root
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge(final Map<String, Object> root) throws ScriptRuntimeException, ParseException {
+        return merge(KeyValuesUtil.wrap(root));
+    }
+
+    /**
+     * Merge this template, and discard outputs.
+     *
+     * @since 2.4.0
+     * @param root
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context merge(final KeyValues root) throws ScriptRuntimeException, ParseException {
+        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, DiscardOut.INSTANCE);
+    }
+
+    /**
      * Merge this template.
      *
      * @param root
@@ -229,6 +268,20 @@ public final class Template {
         } catch (Exception e) {
             throw completeException(e);
         }
+    }
+
+    /**
+     * Debug this template, and discard outputs.
+     *
+     * @since 2.4.0
+     * @param root
+     * @param listener
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context debug(final KeyValues root, final BreakPointListener listener) throws ScriptRuntimeException, ParseException {
+        return debug(root, DiscardOut.INSTANCE, listener);
     }
 
     public void reset() {
