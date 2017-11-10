@@ -184,6 +184,18 @@ import org.febit.wit.util.CharArrayWriter;
         return zzBuffer[zzStartRead];
     }
 
+    private long yyDecLong(int startOffset, int endOffset){
+        return parseDecLong(zzBuffer, zzStartRead + startOffset, zzMarkedPos + endOffset);
+    }
+
+    private int yyDecInt(int startOffset, int endOffset){
+        long result = parseDecLong(zzBuffer, zzStartRead + startOffset, zzMarkedPos + endOffset);
+        if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
+            throw new ParseException("Number overflow", getLine(), getColumn());
+        }
+        return (int) result;
+    }
+
     private long yyLong(int startOffset, int endOffset, int radix){
         return parseLong(zzBuffer, zzStartRead + startOffset, zzMarkedPos + endOffset, radix);
     }
@@ -211,12 +223,22 @@ import org.febit.wit.util.CharArrayWriter;
         return result;
     }
 
-    /**
-     * assumes correct representation of a long value for specified radix in
-     * scanner buffer from
-     * <code>start</code> to
-     * <code>end</code>
-     */
+    private long parseDecLong(final char[] buffer, int start, final int end) {
+        long result = 0;
+        while (start < end) {
+            if (result > Long.MAX_VALUE / 10) {
+                throw new ParseException("Number overflow", getLine(), getColumn());
+            }
+            result *= 10;
+            int digit = Character.digit(buffer[start++],10);
+            if (result > (Long.MAX_VALUE - digit)) {
+                throw new ParseException("Number overflow", getLine(), getColumn());
+            }
+            result += digit;
+        }
+        return result;
+    }
+
     private long parseLong(char[] buffer, int start, int end, int radix) {
         long result = 0;
         while (start < end) {
@@ -248,37 +270,31 @@ DocumentationComment = "/*" "*"+ [^/*] ~"*/"
 Identifier = [:jletter:][:jletterdigit:]*
 /* Identifier = {Identifier0} | "for." {Identifier0} */
 
-/* integer literals */
-
+/* number literals */
+IntegerMin = "-" {WhiteSpace}* "2147483648"
+LongMin = "-" {WhiteSpace}* "9223372036854775808" [lL]
 BinIntegerLiteral = 0 [bB] [01] {1,32}
 BinLongLiteral = 0 [bB] [01] {1,64} [lL]
 
 DecIntegerLiteral = 0 | [1-9][0-9]*
 DecLongLiteral    = {DecIntegerLiteral} [lL]
 
-HexIntegerLiteral = 0 [xX] 0* {HexDigit} {1,8}
-HexLongLiteral    = 0 [xX] 0* {HexDigit} {1,16} [lL]
 HexDigit          = [0-9a-fA-F]
+HexIntegerLiteral = 0 [xX] {HexDigit} {1,8}
+HexLongLiteral    = 0 [xX] {HexDigit} {1,16} [lL]
 
-OctIntegerLiteral = 0+ [1-3]? {OctDigit} {1,15}
-OctLongLiteral    = 0+ 1? {OctDigit} {1,21} [lL]
 OctDigit          = [0-7]
+OctIntegerLiteral = 0 [0-3]? {OctDigit} {1,10}
+OctLongLiteral    = 0 [0-1]? {OctDigit} {1,21} [lL]
 
 /* floating point literals */
-DoubleLiteralPart = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
+DoubleLiteralPart = ({DecIntegerLiteral}|{DecIntegerLiteral}? \. [0-9]+) ([eE] [+-]? [0-9]+)?
 FloatLiteral  = {DoubleLiteralPart} [fF]
 DoubleLiteral = {DoubleLiteralPart} [dD]
 
-FLit1    = [0-9]+ \. [0-9]+ 
-FLit2    = \. [0-9]+ 
-FLit3    = [0-9]+ 
-Exponent = [eE] [+-]? [0-9]+
-
 /* string and character literals */
-/* StringCharacter = [^\r\n\"\\] */
 StringCharacter = [^\"\\]
-
-SingleCharacter = [^\r\n\'\\]
+CharCharacter = [^\r\n\'\\]
 
 /* Delimiter */
 
@@ -437,25 +453,26 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   /* numeric literals */
 
   /* Note: This is matched together with the minus, because the number is too big to 
-     be represented by a positive integer. */
-  "-2147483648"                  { return symbol(Tokens.DIRECT_VALUE, Integer.MIN_VALUE); }
+     be represented by a positive integer/long. */
+  {IntegerMin}                   { return symbol(Tokens.DIRECT_VALUE, Integer.MIN_VALUE); }
+  {LongMin}                      { return symbol(Tokens.DIRECT_VALUE, Long.MIN_VALUE); }
 
   {BinIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyBinInteger(2, 0)); }
   {BinLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyBinLong(2, -1)); }  
 
-  {DecIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(0, 0, 10)); }
-  {DecLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(0, -1, 10)); }
-  
+  {DecIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyDecInt(0, 0)); }
+  {DecLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyDecLong(0, -1)); }
+
   {HexIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(2, 0, 16)); }
   {HexLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(2, -1, 16)); }
- 
+
   {OctIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(1, 0, 8)); }  
   {OctLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(1, -1, 8)); }
-  
+
   {FloatLiteral}                 { return symbol(Tokens.DIRECT_VALUE, new Float(yytext(0, -1))); }
   {DoubleLiteralPart}            { return symbol(Tokens.DIRECT_VALUE, new Double(yytext())); }
   {DoubleLiteral}                { return symbol(Tokens.DIRECT_VALUE, new Double(yytext(0, -1))); }
-  
+
   /* comments */
   {Comment}                      { /* ignore */ }
 
@@ -523,7 +540,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 }
 
 <CHARLITERAL> {
-  {SingleCharacter}\'            { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, yyTextChar()); }
+  {CharCharacter}\'            { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, yyTextChar()); }
   
   /* escape sequences */
   "\\b"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\b');}

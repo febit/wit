@@ -1,9 +1,51 @@
 <%
 
 {
+    // int
+    assertEquals((0).~getClass().name, "java.lang.Integer");
+    assertEquals((10).~getClass().name, "java.lang.Integer");
+    assertEquals((0).~toString(), "0");
+    assertEquals((- 1).~toString(), "-1");
+    assertEquals((999999999).~toString(), "999999999");
+    assertEquals((2147483646).~toString(), "2147483646");
+    assertEquals((2147483647).~toString(), "2147483647");
+    assertEquals((- 2147483648).~toString(), "-2147483648");
+    assertEquals((- 2147483647).~toString(), "-2147483647");
+    assertEquals((0xFFFFFFFF).~toString(), "-1");
+    assertEquals((0x80000000).~toString(), "-2147483648");
+    assertEquals((0x80000001).~toString(), "-2147483647");
+    assertEquals((0x7FFFFFFF).~toString(), "2147483647");
+
+    assertEquals((01).~toString(), "1");
+    assertEquals((010).~toString(), "8");
+    assertEquals((-01).~toString(), "-1");
+    assertEquals((-010).~toString(), "-8");
+    assertEquals((017777777777).~toString(), "2147483647");
+    assertEquals((037777777777).~toString(), "-1");
+    assertEquals((-037777777777).~toString(), "1");
+    assertEquals((020000000000).~toString(), "-2147483648");
+
+    // long
+    assertEquals((9223372036854775806L).~toString(), "9223372036854775806");
+    assertEquals((9223372036854775807L).~toString(), "9223372036854775807");
+    assertEquals((-    9223372036854775808L).~toString(), "-9223372036854775808");
+    assertEquals((-9223372036854775807L).~toString(), "-9223372036854775807");
+    assertEquals((0x8000000000000000L).~toString(), "-9223372036854775808");
+    assertEquals((0x8000000000000001L).~toString(), "-9223372036854775807");
+    assertEquals((0x7FFFFFFFFFFFFFFFL).~toString(), "9223372036854775807");
+    assertEquals((0xFFFFFFFFFFFFFFFFL).~toString(), "-1");
+
+    assertEquals((00777777777777777777777L).~toString(), "9223372036854775807");
+    assertEquals((01777777777777777777777L).~toString(), "-1");
+    assertEquals((01000000000000000000000L).~toString(), "-9223372036854775808");
+    assertEquals((01000000000000000000001L).~toString(), "-9223372036854775807");
+}
+{
     assertEquals(10.0f,1e1f);
     assertEquals(12300d,123e2);
     assertEquals(0.123,123e-3);
+    assertEquals(0.123,12.3e-2);
+    assertEquals(.123,123e-3);
 }
 
 
