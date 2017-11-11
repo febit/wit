@@ -7,5 +7,17 @@ package org.febit.wit.lang;
  */
 public interface KeyValues {
 
+    /**
+     * @since 2.4.0
+     */
+    public static final KeyValues EMPTY = new KeyValues() {
+
+        @Override
+        public void exportTo(KeyValueAccepter accepter) {
+            // Do nothing
+        }
+    };
+
     void exportTo(KeyValueAccepter accepter);
+
 }

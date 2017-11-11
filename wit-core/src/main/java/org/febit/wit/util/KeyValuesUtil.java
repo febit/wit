@@ -11,131 +11,79 @@ import org.febit.wit.lang.KeyValues;
  */
 public class KeyValuesUtil {
 
-    public static final KeyValues EMPTY_KEY_VALUES = new KeyValues() {
-
-        @Override
-        public void exportTo(KeyValueAccepter accepter) {
-            // Do nothing
-        }
-    };
+    /**
+     * @deprecated use <code>KeyValues.EMPTY</code> instead.
+     */
+    @Deprecated
+    public static final KeyValues EMPTY_KEY_VALUES = KeyValues.EMPTY;
 
     private KeyValuesUtil() {
     }
 
     public static KeyValues wrap(final KeyValues v1, final KeyValues v2) {
-        return new TwoKeyValues(v1, v2);
+        return new KeyValues() {
+            @Override
+            public void exportTo(KeyValueAccepter accepter) {
+                v1.exportTo(accepter);
+                v2.exportTo(accepter);
+            }
+        };
     }
 
     public static KeyValues wrap(final KeyValues... valueses) {
-        if (valueses != null) {
-            return new ListKeyValues(valueses);
+        if (valueses == null || valueses.length == 0) {
+            return KeyValues.EMPTY;
         }
-        return EMPTY_KEY_VALUES;
+        return new KeyValues() {
+            @Override
+            public void exportTo(KeyValueAccepter accepter) {
+                for (KeyValues item : valueses) {
+                    item.exportTo(accepter);
+                }
+            }
+        };
     }
 
     public static KeyValues wrap(final String key, final Object value) {
-        return new OneKeyValues(key, value);
+        return new KeyValues() {
+            @Override
+            public void exportTo(KeyValueAccepter accepter) {
+                accepter.set(key, value);
+            }
+        };
     }
 
     public static KeyValues wrap(final String[] keys, final Object[] values) {
-        if (keys != null && values != null) {
-            return new ArrayKeyValues(keys, values);
+        if (keys == null || values == null) {
+            return KeyValues.EMPTY;
         }
-        return EMPTY_KEY_VALUES;
+        final int size = Math.min(keys.length, values.length);
+        if (size == 0) {
+            return KeyValues.EMPTY;
+        }
+        return new KeyValues() {
+            @Override
+            public void exportTo(KeyValueAccepter accepter) {
+                final String[] mykeys = keys;
+                final Object[] myValues = values;
+                for (int i = 0; i < size; i++) {
+                    accepter.set(mykeys[i], myValues[i]);
+                }
+            }
+        };
     }
 
     public static KeyValues wrap(final Map<String, Object> map) {
-        if (map != null && !map.isEmpty()) {
-            return new MapKeyValues(map);
+        if (map == null || map.isEmpty()) {
+            return KeyValues.EMPTY;
         }
-        return EMPTY_KEY_VALUES;
-    }
-
-    private static final class OneKeyValues implements KeyValues {
-
-        private final String key;
-        private final Object value;
-
-        OneKeyValues(String key, Object value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        @Override
-        public void exportTo(KeyValueAccepter accepter) {
-            accepter.set(key, value);
-        }
-    }
-
-    private static final class TwoKeyValues implements KeyValues {
-
-        private final KeyValues v1;
-        private final KeyValues v2;
-
-        TwoKeyValues(KeyValues v1, KeyValues v2) {
-            this.v1 = v1;
-            this.v2 = v2;
-        }
-
-        @Override
-        public void exportTo(KeyValueAccepter accepter) {
-            v1.exportTo(accepter);
-            v2.exportTo(accepter);
-        }
-    }
-
-    private static final class ListKeyValues implements KeyValues {
-
-        private final KeyValues[] array;
-
-        ListKeyValues(KeyValues[] array) {
-            this.array = array;
-        }
-
-        @Override
-        public void exportTo(KeyValueAccepter accepter) {
-            for (KeyValues item : this.array) {
-                item.exportTo(accepter);
+        return new KeyValues() {
+            @Override
+            public void exportTo(KeyValueAccepter accepter) {
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    accepter.set(entry.getKey(), entry.getValue());
+                }
             }
-        }
-    }
-
-    private static final class MapKeyValues implements KeyValues {
-
-        private final Map<String, Object> map;
-
-        MapKeyValues(Map<String, Object> map) {
-            this.map = map;
-        }
-
-        @Override
-        public void exportTo(KeyValueAccepter accepter) {
-            for (Map.Entry<String, Object> entry : this.map.entrySet()) {
-                accepter.set(entry.getKey(), entry.getValue());
-            }
-        }
-    }
-
-    private static final class ArrayKeyValues implements KeyValues {
-
-        private final String[] keys;
-        private final Object[] values;
-        private final int size;
-
-        ArrayKeyValues(String[] keys, Object[] values) {
-            this.keys = keys;
-            this.values = values;
-            this.size = Math.min(keys.length, values.length);
-        }
-
-        @Override
-        public void exportTo(KeyValueAccepter accepter) {
-            final int mySize = this.size;
-            final String[] mykeys = this.keys;
-            final Object[] myValues = this.values;
-            for (int i = 0; i < mySize; i++) {
-                accepter.set(mykeys[i], myValues[i]);
-            }
-        }
+        };
     }
 }
