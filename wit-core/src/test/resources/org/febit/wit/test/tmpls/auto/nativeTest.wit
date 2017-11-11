@@ -30,33 +30,24 @@
 }
 {
     var new_int_arr = native [] int;
-    var new_int_arr_2 = native [int];
     var new_int_arr_arr = native [] int[];
     
     var int_arr = new_int_arr(5);
-    var int_arr_2 = new_int_arr_2(4);
     assertEquals(5, int_arr.size);
-    assertEquals(4, int_arr_2.size);
 
     int_arr[3] = 3;
     assertEquals(3, int_arr[3]);
 
-    int_arr_2[3] = 3;
-    assertEquals(3, int_arr_2[3]);
-    
     var int_arr_arr = new_int_arr_arr(2);
     
     int_arr_arr[1] = int_arr;
     assertSame(int_arr_arr[1], int_arr);
 
-
-    //
     var new_string_arr = native [] String;
     var new_string_arr_arr = native [] String[];
     
     var string_arr = new_string_arr(2);
     string_arr[1] = "A string";
-
 }
 
 {

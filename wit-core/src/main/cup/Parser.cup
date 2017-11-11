@@ -498,8 +498,6 @@ expression      ::= expression_statementable:$
                     //NativeNewArrayDeclareExpression 
                     |NATIVE:sym LBRACK RBRACK javaClass:javaClass
                     {: return createNativeNewArrayDeclareExpression(%javaClass%, %sym.line%, %sym.column%); :}
-                    |NATIVE:sym LBRACK javaClass:javaClass RBRACK
-                    {: return createNativeNewArrayDeclareExpression(%javaClass%, %sym.line%, %sym.column%); :}
 
                     //nativeMethodExpr
                     |NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN javaClass[COMMA]:list? RPAREN

@@ -81,7 +81,7 @@
 
 {
 
-    var new_int_arr = native [int];
+    var new_int_arr = native [] int;
     
     var arr = new_int_arr(10);
 
