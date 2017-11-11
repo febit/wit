@@ -60,7 +60,7 @@ public class AsmNativeFactory extends NativeFactory {
     }
 
     static MethodDeclare createAccessor(Member obj) throws InstantiationException, IllegalAccessException {
-        final String className = "org.febit.wit.asm.Accessor".concat(ASMUtil.getSn());
+        final String className = "org.febit.wit.asm.Accessor" + ASMUtil.NEXT_SN.getAndIncrement();
         final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", METHOD_DECLARE);
 
         ASMUtil.visitConstructor(classWriter);

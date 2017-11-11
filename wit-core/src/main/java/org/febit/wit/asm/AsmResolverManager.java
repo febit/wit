@@ -67,7 +67,7 @@ public class AsmResolverManager extends ResolverManager {
         if (!ClassUtil.isPublic(beanClass)) {
             throw new Exception(StringUtil.format("Class [{}] is not public", beanClass));
         }
-        final String className = "org.febit.wit.asm.Resolver".concat(ASMUtil.getSn());
+        final String className = "org.febit.wit.asm.Resolver" + ASMUtil.NEXT_SN.getAndIncrement();
 
         final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", ASM_RESOLVER);
         ASMUtil.visitConstructor(classWriter);

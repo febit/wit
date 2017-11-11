@@ -3,6 +3,7 @@ package org.febit.wit.asm;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
@@ -14,14 +15,10 @@ import org.febit.wit_shaded.asm.MethodWriter;
  */
 class ASMUtil {
 
-    private static int sn;
     private static final AsmClassLoader CLASS_LOADER = new AsmClassLoader();
+    static final AtomicInteger NEXT_SN = new AtomicInteger(1);
 
     private ASMUtil() {
-    }
-
-    static synchronized String getSn() {
-        return Integer.toString(sn++);
     }
 
     static Class loadClass(String name, ClassWriter classWriter) {
