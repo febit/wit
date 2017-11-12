@@ -109,7 +109,7 @@ resolvers='''
   org.febit.wit.resolvers.impl.CharSequenceResolver
   org.febit.wit.resolvers.impl.ByteArrayOutResolver
   org.febit.wit.resolvers.impl.CharArrayOutResolver
-  org.febit.wit.resolvers.impl.ArrayResolver
+  org.febit.wit.resolvers.impl.PrimitiveArrayResolver
   org.febit.wit.resolvers.impl.BagResolver
   org.febit.wit.resolvers.impl.IterGetResolver
   org.febit.wit.resolvers.impl.ObjectArrayResolver

@@ -14,7 +14,7 @@ import org.febit.wit.util.StringUtil;
  *
  * @author zqq90
  */
-public class ArrayResolver implements RegistModeResolver, GetResolver, SetResolver {
+public class PrimitiveArrayResolver implements RegistModeResolver, GetResolver, SetResolver {
 
     @Override
     public Object get(Object object, Object property) {
