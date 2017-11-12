@@ -111,7 +111,6 @@ resolvers='''
   org.febit.wit.resolvers.impl.CharArrayOutResolver
   org.febit.wit.resolvers.impl.ArrayResolver
   org.febit.wit.resolvers.impl.BagResolver
-  org.febit.wit.resolvers.impl.ScriptUnsetableBagResolver
   org.febit.wit.resolvers.impl.IterGetResolver
   org.febit.wit.resolvers.impl.ObjectArrayResolver
   org.febit.wit.resolvers.impl.CollectionResolver
