@@ -34,6 +34,7 @@ public class CollectionResolver implements GetResolver, SetResolver {
                 return ((Collection) object).size();
             case "isEmpty":
                 return ((Collection) object).isEmpty();
+            default:
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.util.Collection#{}", property));
     }

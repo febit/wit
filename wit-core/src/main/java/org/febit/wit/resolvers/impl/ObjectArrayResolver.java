@@ -23,6 +23,7 @@ public class ObjectArrayResolver implements GetResolver, SetResolver {
                 return ((Object[]) object).length;
             case "isEmpty":
                 return ((Object[]) object).length == 0;
+            default:
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));
     }

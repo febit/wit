@@ -276,39 +276,39 @@ public class Petite {
                 return strings;
             }
             if (cls == Class[].class) {
-                final Class[] entrys = new Class[len];
+                final Class[] results = new Class[len];
                 for (int i = 0; i < len; i++) {
-                    entrys[i] = ClassUtil.getClass(strings[i]);
+                    results[i] = ClassUtil.getClass(strings[i]);
                 }
-                return entrys;
+                return results;
             }
             if (cls == int[].class) {
-                final int[] entrys = new int[len];
+                final int[] results = new int[len];
                 for (int i = 0; i < len; i++) {
-                    entrys[i] = Integer.valueOf(strings[i]);
+                    results[i] = Integer.valueOf(strings[i]);
                 }
-                return entrys;
+                return results;
             }
             if (cls == Integer[].class) {
-                final Integer[] entrys = new Integer[len];
+                final Integer[] results = new Integer[len];
                 for (int i = 0; i < len; i++) {
-                    entrys[i] = Integer.valueOf(strings[i]);
+                    results[i] = Integer.valueOf(strings[i]);
                 }
-                return entrys;
+                return results;
             }
             if (cls == boolean[].class) {
-                final boolean[] entrys = new boolean[len];
+                final boolean[] results = new boolean[len];
                 for (int i = 0; i < len; i++) {
-                    entrys[i] = Boolean.valueOf(strings[i]);
+                    results[i] = Boolean.valueOf(strings[i]);
                 }
-                return entrys;
+                return results;
             }
             if (cls == Boolean[].class) {
-                final Boolean[] entrys = new Boolean[len];
+                final Boolean[] results = new Boolean[len];
                 for (int i = 0; i < len; i++) {
-                    entrys[i] = Boolean.valueOf(strings[i]);
+                    results[i] = Boolean.valueOf(strings[i]);
                 }
-                return entrys;
+                return results;
             }
             Object[] array = (Object[]) Array.newInstance(cls.getComponentType(), len);
             for (int i = 0; i < len; i++) {

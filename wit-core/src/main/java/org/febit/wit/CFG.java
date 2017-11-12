@@ -4,6 +4,7 @@ package org.febit.wit;
 /**
  *
  * @author zqq90
+ * @deprecated
  */
 @Deprecated
 public interface CFG {

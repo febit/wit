@@ -17,7 +17,7 @@ public class ResolverManager {
 
     protected Logger logger;
 
-    protected boolean ignoreNullPointer;
+    protected boolean ignoreNullPointer = true;
     protected Resolver[] resolvers;
 
     public final ClassMap<GetResolver> getters;
@@ -33,7 +33,6 @@ public class ResolverManager {
     protected final CommonResolver commonResolver;
 
     public ResolverManager() {
-        this.ignoreNullPointer = true;
 
         getters = new ClassMap<>();
         setters = new ClassMap<>();

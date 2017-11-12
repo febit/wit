@@ -58,12 +58,10 @@ public class ArrayUtil {
     }
 
     public static void invert(Object[] array) {
-        int i, j;
-        Object cell;
-        for (i = 0, j = array.length - 1; i < j; i++, j--) {
-            cell = array[i];
+        for (int i = 0, j = array.length - 1; i < j; i++, j--) {
+            Object next = array[i];
             array[i] = array[j];
-            array[j] = cell;
+            array[j] = next;
         }
     }
 

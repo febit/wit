@@ -151,17 +151,15 @@ abstract class AbstractParser {
                 }
             }
         } else {
-            int first, last;
-            first = 0;
-            last = (len - 1) >> 1;
-
-            int probe_2;
+            int first = 0;
+            int last = (len - 1) >> 1;
+            int probe2;
             while (first <= last) {
                 probe = (first + last) >> 1;
-                probe_2 = probe << 1;
-                if (sym == row[probe_2]) {
-                    return row[probe_2 + 1];
-                } else if (sym > row[probe_2]) {
+                probe2 = probe << 1;
+                if (sym == row[probe2]) {
+                    return row[probe2 + 1];
+                } else if (sym > row[probe2]) {
                     first = probe + 1;
                 } else {
                     last = probe - 1;
@@ -249,7 +247,7 @@ abstract class AbstractParser {
     }
 
     public static TemplateAST parse(final Template template, BreakPointListener breakPointListener) throws ParseException {
-        return new Parser()._parse(template, breakPointListener);
+        return new Parser().doParse(template, breakPointListener);
     }
 
     public static TemplateAST parse(final Template template) throws ParseException {
@@ -297,7 +295,6 @@ abstract class AbstractParser {
         final short[][] reduceTable = REDUCE_TABLE;
         final short[][] productionTable = PRODUCTION_TABLE;
         final boolean looseSemicolon = this.engine.isLooseSemicolon();
-        int looseSemicolonCounter = 0;
 
         Symbol pendingPending = null;
         pending = lexer.nextToken();
@@ -336,7 +333,7 @@ abstract class AbstractParser {
                             case Tokens.MINUSMINUS:
                                 pendingPending = pending;
                                 pending = createLooseSemicolonSymbol(pendingPending);
-                                looseSemicolonCounter++;
+                                break;
                             default:
                             // Do nothing
                         }
@@ -350,6 +347,7 @@ abstract class AbstractParser {
                         case Tokens.BREAK:
                         case Tokens.CONTINUE:
                             pendingPending = createLooseSemicolonSymbol(pending);
+                            break;
                         default:
                         // Do nothing
                     }
@@ -359,18 +357,15 @@ abstract class AbstractParser {
             // assert act <=0
             if (act == 0
                     && looseSemicolon
-                    && pending.id != Tokens.SEMICOLON) {
-                if (currentSymbol.isOnEdgeOfNewLine
-                        || pending.id == Tokens.RBRACE) {
-                    act = getAction(actionTable[currentSymbol.state], Tokens.SEMICOLON);
-                    if (act != 0) {
-                        pendingPending = pending;
-                        pending = createLooseSemicolonSymbol(pendingPending);
-                        looseSemicolonCounter++;
-                        if (act > 0) {
-                            // go back to do  
-                            continue;
-                        }
+                    && pending.id != Tokens.SEMICOLON
+                    && (currentSymbol.isOnEdgeOfNewLine || pending.id == Tokens.RBRACE)) {
+                act = getAction(actionTable[currentSymbol.state], Tokens.SEMICOLON);
+                if (act != 0) {
+                    pendingPending = pending;
+                    pending = createLooseSemicolonSymbol(pendingPending);
+                    if (act > 0) {
+                        // go back to do  
+                        continue;
                     }
                 }
             }
@@ -413,7 +408,7 @@ abstract class AbstractParser {
      * @return TemplateAST
      * @throws ParseException
      */
-    protected TemplateAST _parse(final Template template, final BreakPointListener breakPointListener) throws ParseException {
+    protected TemplateAST doParse(final Template template, final BreakPointListener breakPointListener) throws ParseException {
         final Engine myEngine = template.engine;
         final Resource resource = template.resource;
         final TextStatementFactory textStatFactory = myEngine.getTextStatementFactory();
@@ -687,7 +682,7 @@ abstract class AbstractParser {
         String method = ref.substring(split + 2).trim();
         MethodDeclare methodDeclare;
         Class cls = toClass(className);
-        if (method.equals("new")) {
+        if ("new".equals(method)) {
             if (cls.isArray()) {
                 methodDeclare = this.nativeFactory.getNativeNewArrayMethodDeclare(cls.getComponentType(), line, column, true);
             } else {

@@ -28,7 +28,7 @@ public final class InternalContext implements Context {
 
     public final Template template;
     /**
-     * params for this context
+     * params for this context.
      */
     public final Vars rootParams;
 
@@ -45,22 +45,22 @@ public final class InternalContext implements Context {
      */
     public final VariantIndexer[] indexers;
     /**
+     * If this.write is a bytes stream.
+     */
+    public final boolean isByteStream;
+    /**
+     * Output's charset.
+     */
+    public final InternedEncoding encoding;
+    /**
      * Index of current indexer.
      */
     public int indexer;
 
     /**
-     * Output, stream or writer
+     * Output, stream or writer.
      */
     public Out out;
-    /**
-     * If this.write is a bytes stream
-     */
-    public boolean isByteStream;
-    /**
-     * Output's charset.
-     */
-    public InternedEncoding encoding;
 
     /**
      * Used by functions, store value to be returned.
@@ -134,7 +134,7 @@ public final class InternalContext implements Context {
             scopes[0] = this.vars;
             System.arraycopy(myParentScopes, 0, scopes, 1, myParentScopes.length);
         }
-        //
+
         InternalContext newContext = new InternalContext(template, localContext.out, Vars.EMPTY, indexers, varSize, scopes);
         //set the gaven localContext
         newContext.localContext = localContext;
@@ -152,7 +152,6 @@ public final class InternalContext implements Context {
      * @return
      */
     public InternalContext createPeerContext(Template template, VariantIndexer[] indexers, int varSize) {
-
         InternalContext newContext = new InternalContext(template, this.out, Vars.EMPTY, indexers, varSize, null);
         newContext.localContext = this;
         return newContext;
@@ -252,8 +251,8 @@ public final class InternalContext implements Context {
      */
     public Object getBeanProperty(final Object bean, final Object property) {
         if (bean != null) {
-            final GetResolver resolver;
-            if ((resolver = this.getters.unsafeGet(bean.getClass())) != null) {
+            final GetResolver resolver = this.getters.unsafeGet(bean.getClass());
+            if (resolver != null) {
                 return resolver.get(bean, property);
             }
         }
@@ -269,8 +268,8 @@ public final class InternalContext implements Context {
      */
     public void setBeanProperty(final Object bean, final Object property, final Object value) {
         if (bean != null) {
-            final SetResolver resolver;
-            if ((resolver = this.setters.unsafeGet(bean.getClass())) != null) {
+            final SetResolver resolver = this.setters.unsafeGet(bean.getClass());
+            if (resolver != null) {
                 resolver.set(bean, property, value);
                 return;
             }
@@ -287,19 +286,20 @@ public final class InternalContext implements Context {
     }
 
     public void write(final Object obj) {
-        if (obj != null) {
-            final Class type;
-            if ((type = obj.getClass()) == String.class) {
-                this.out.write((String) obj);
-                return;
-            }
-            final OutResolver resolver;
-            if ((resolver = this.outters.unsafeGet(type)) != null) {
-                resolver.render(this.out, obj);
-                return;
-            }
-            this.resolverManager.resolveOutResolver(type).render(this.out, obj);
+        if (obj == null) {
+            return;
         }
+        final Class type = obj.getClass();
+        if (type == String.class) {
+            this.out.write((String) obj);
+            return;
+        }
+        final OutResolver resolver = this.outters.unsafeGet(type);
+        if (resolver != null) {
+            resolver.render(this.out, obj);
+            return;
+        }
+        this.resolverManager.resolveOutResolver(type).render(this.out, obj);
     }
 
     @Override
@@ -307,30 +307,25 @@ public final class InternalContext implements Context {
         if (localContext != null) {
             return localContext.getLocal(name);
         }
-        final Map<Object, Object> map;
-        if ((map = this.locals) != null) {
-            return map.get(name);
-        }
-        return null;
+        final Map<Object, Object> map = this.locals;
+        return map != null ? map.get(name) : null;
     }
 
     @Override
     public void setLocal(final Object name, final Object value) {
-        if (localContext != null) {
-            localContext.setLocal(name, value);
+        if (this.localContext != null) {
+            this.localContext.setLocal(name, value);
             return;
         }
-        final Map<Object, Object> map;
-        if ((map = this.locals) != null) {
-            map.put(name, value);
-            return;
+        if (this.locals == null) {
+            this.locals = new HashMap<>();
         }
-        (this.locals = new HashMap<>()).put(name, value);
+        this.locals.put(name, value);
     }
 
     @Override
     public void set(final String name, final Object value) {
-        int index = indexers[this.indexer].getIndex(name);
+        int index = this.indexers[this.indexer].getIndex(name);
         if (index >= 0) {
             this.vars[index] = value;
         }
@@ -368,9 +363,9 @@ public final class InternalContext implements Context {
     @Override
     public Function exportFunction(String name) throws NotFunctionException {
         Object func = get(name, false);
-        if (func instanceof MethodDeclare) {
-            return new Function(this.template, (MethodDeclare) func, this.encoding, this.isByteStream);
+        if (!(func instanceof MethodDeclare)) {
+            throw new NotFunctionException(func);
         }
-        throw new NotFunctionException(func);
+        return new Function(this.template, (MethodDeclare) func, this.encoding, this.isByteStream);
     }
 }

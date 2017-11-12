@@ -71,13 +71,13 @@ public class ClassUtil {
         }
         Method[] result = map.get(name);
         if (result == null) {
-            result = _getPublicMemberMethods(type, name);
+            result = resolvePublicMemberMethods(type, name);
             map.put(name, result);
         }
         return result;
     }
 
-    protected static Method[] _getPublicMemberMethods(Class type, String name) {
+    protected static Method[] resolvePublicMemberMethods(Class type, String name) {
         Method[] allMethods = type.getMethods();
         Map<String, Method> result = new HashMap<>();
         for (Method method : allMethods) {

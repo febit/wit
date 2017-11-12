@@ -25,7 +25,7 @@ import org.febit.wit.util.StringUtil;
  */
 public class NativeFactory {
 
-    protected final ConcurrentMap<Object, MethodDeclare> CACHE = new ConcurrentHashMap<>();
+    protected final ConcurrentMap<Object, MethodDeclare> methodCaching = new ConcurrentHashMap<>();
 
     protected Logger logger;
     protected NativeSecurityManager nativeSecurityManager;
@@ -141,10 +141,10 @@ public class NativeFactory {
     }
 
     public MethodDeclare getNativeMethodDeclare(Method method) {
-        MethodDeclare declare = CACHE.get(method);
+        MethodDeclare declare = methodCaching.get(method);
         if (declare == null) {
             declare = createNativeMethodDeclare(method);
-            MethodDeclare old = CACHE.putIfAbsent(method, declare);
+            MethodDeclare old = methodCaching.putIfAbsent(method, declare);
             if (old != null) {
                 return old;
             }
@@ -153,10 +153,10 @@ public class NativeFactory {
     }
 
     public MethodDeclare getNativeConstructorDeclare(Constructor constructor) {
-        MethodDeclare declare = CACHE.get(constructor);
+        MethodDeclare declare = methodCaching.get(constructor);
         if (declare == null) {
             declare = createNativeConstructorDeclare(constructor);
-            MethodDeclare old = CACHE.putIfAbsent(constructor, declare);
+            MethodDeclare old = methodCaching.putIfAbsent(constructor, declare);
             if (old != null) {
                 return old;
             }

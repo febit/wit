@@ -42,7 +42,6 @@ public final class MethodExecute extends Expression implements Constable {
 
     @Override
     public Object getConstValue() {
-
         final Object func = StatementUtil.calcConst(funcExpr, true);
         if (!(func instanceof MethodDeclare)) {
             throw new ScriptRuntimeException("not a function", this);
@@ -50,9 +49,7 @@ public final class MethodExecute extends Expression implements Constable {
         if (func instanceof UnConstableMethodDeclare) {
             return InternalVoid.VOID;
         }
-
         final Object[] params = StatementUtil.calcConstArrayForce(paramExprs);
-
         return ((MethodDeclare) func).invoke(null, params);
     }
 }

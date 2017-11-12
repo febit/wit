@@ -42,14 +42,14 @@ public class AsmNativeFactory extends NativeFactory {
         if (!ClassUtil.isPublic(member.getDeclaringClass()) || !ClassUtil.isPublic(member)) {
             return null;
         }
-        MethodDeclare declare = CACHE.get(member);
+        MethodDeclare declare = methodCaching.get(member);
         if (declare == null) {
-            synchronized (CACHE) {
+            synchronized (methodCaching) {
                 try {
-                    declare = CACHE.get(member);
+                    declare = methodCaching.get(member);
                     if (declare == null) {
                         declare = createAccessor(member);
-                        CACHE.put(member, declare);
+                        methodCaching.put(member, declare);
                     }
                 } catch (Exception | LinkageError e) {
                     logger.error("Failed to create ASMMethodDeclare for '" + member + "'.", e);

@@ -15,15 +15,15 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
 
     private static final String ROOT_NODE_NAME = "*";
 
-    private final ConcurrentMap<String, Node> NODES;
+    private final ConcurrentMap<String, Node> nodes;
 
     protected String list;
 
     public DefaultNativeSecurityManager() {
-        this.NODES = new ConcurrentHashMap<>();
+        this.nodes = new ConcurrentHashMap<>();
         Node rootNode = new Node(null, ROOT_NODE_NAME);
         rootNode.setAccess(false);
-        NODES.put(ROOT_NODE_NAME, rootNode);
+        this.nodes.put(ROOT_NODE_NAME, rootNode);
     }
 
     @Init
@@ -51,11 +51,11 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
     }
 
     protected final Node getNode(final String name) {
-        Node node = NODES.get(name);
+        Node node = this.nodes.get(name);
         if (node == null) {
             int index = name.lastIndexOf('.');
             node = new Node(getNode(index > 0 ? name.substring(0, index) : ROOT_NODE_NAME), name);
-            Node old = NODES.putIfAbsent(name, node);
+            Node old = this.nodes.putIfAbsent(name, node);
             if (old != null) {
                 return old;
             }

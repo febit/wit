@@ -79,7 +79,7 @@ public class BeanUtil {
         }
     }
 
-    private static abstract class Getter {
+    private abstract static class Getter {
 
         Getter() {
         }
@@ -87,7 +87,7 @@ public class BeanUtil {
         public abstract Object get(Object bean);
     }
 
-    private static abstract class Setter {
+    private abstract static class Setter {
 
         Setter() {
         }

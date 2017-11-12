@@ -51,7 +51,8 @@ public final class Switch extends Statement implements Loopable {
         List<LoopInfo> list;
         //XXX: May have duplicated LoopInfo caused by duplicated CaseEntry
         for (Map.Entry<Object, CaseEntry> entry : caseMap.entrySet()) {
-            if ((list = StatementUtil.collectPossibleLoopsInfo(entry.getValue().body)) != null) {
+            list = StatementUtil.collectPossibleLoopsInfo(entry.getValue().body);
+            if (list != null) {
                 loopInfos.addAll(list);
             }
         }
@@ -59,7 +60,8 @@ public final class Switch extends Statement implements Loopable {
         //remove loops for this switch
         LoopInfo loopInfo;
         for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
-            if ((loopInfo = it.next()).matchLabel(this.label)
+            loopInfo = it.next();
+            if (loopInfo.matchLabel(this.label)
                     && loopInfo.type == LoopInfo.BREAK) {
                 it.remove();
             }

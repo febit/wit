@@ -27,6 +27,7 @@ public class PrimitiveArrayResolver implements RegistModeResolver, GetResolver, 
                 return ArrayUtil.getSize(object);
             case "isEmpty":
                 return ArrayUtil.getSize(object) == 0;
+            default:
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));
     }

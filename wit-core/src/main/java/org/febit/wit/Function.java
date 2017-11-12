@@ -46,16 +46,16 @@ public class Function {
         return createContext(defaultOut);
     }
 
-    protected Object _invoke(InternalContext context, Object... args) {
+    protected Object doInvoke(InternalContext context, Object... args) {
         return this.methodDeclare.invoke(context, args);
     }
 
     public Object invoke(Object... args) {
-        return _invoke(createContext(), args);
+        return doInvoke(createContext(), args);
     }
 
     public Object invokeWithOut(Out out, Object... args) {
-        return _invoke(createContext(out), args);
+        return doInvoke(createContext(out), args);
     }
 
     public Object invokeWithOut(Writer writer, Object... args) {

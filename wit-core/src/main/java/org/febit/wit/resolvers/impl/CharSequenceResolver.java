@@ -26,6 +26,7 @@ public class CharSequenceResolver implements GetResolver {
                 return ((CharSequence) object).length();
             case "isEmpty":
                 return ((CharSequence) object).length() == 0;
+            default:
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.lang.CharSequence#{}", property));
     }

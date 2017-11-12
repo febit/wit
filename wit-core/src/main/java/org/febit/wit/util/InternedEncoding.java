@@ -23,10 +23,10 @@ public class InternedEncoding {
         if (interned != null) {
             return interned;
         }
-        return _intern(encoding);
+        return doIntern(encoding);
     }
 
-    private static synchronized InternedEncoding _intern(String encoding) {
+    private static synchronized InternedEncoding doIntern(String encoding) {
         InternedEncoding interned = INTERNED.get(encoding);
         if (interned != null) {
             return interned;
