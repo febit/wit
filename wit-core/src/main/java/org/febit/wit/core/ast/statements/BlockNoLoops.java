@@ -46,7 +46,7 @@ public class BlockNoLoops extends IBlock implements Optimizable {
     }
 
     @Override
-    public Statement optimize(){
+    public Statement optimize() {
         return statements.length == 0 ? null : this;
     }
 }

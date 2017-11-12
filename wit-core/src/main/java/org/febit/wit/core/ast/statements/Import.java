@@ -46,7 +46,7 @@ public final class Import extends AbstractInclude {
                 }
             }
         } else {
-            final String [] names = this.exportNames;
+            final String[] names = this.exportNames;
             final int len = names.length;
             final AssignableExpression[] myToResetableValues = this.toResetableValues;
             for (int i = 0; i < len; i++) {

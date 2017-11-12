@@ -10,7 +10,7 @@ import org.febit.wit.util.ALU;
  *
  * @author zqq90
  */
-public final class SelfBitXor extends SelfOperator{
+public final class SelfBitXor extends SelfOperator {
 
     public SelfBitXor(AssignableExpression leftExp, Expression rightExp, int line, int column) {
         super(leftExp, rightExp, line, column);

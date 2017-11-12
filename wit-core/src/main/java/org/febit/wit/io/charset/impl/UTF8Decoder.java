@@ -12,6 +12,7 @@ import org.febit.wit.util.charset.UTF8;
  * @author zqq90
  */
 public final class UTF8Decoder implements Decoder {
+
     private final Buffers buffers;
 
     public UTF8Decoder(Buffers buffers) {
@@ -24,7 +25,7 @@ public final class UTF8Decoder implements Decoder {
             return;
         }
         final char[] chars;
-        int used = UTF8.decode(bytes, off, len, 
+        int used = UTF8.decode(bytes, off, len,
                 chars = this.buffers.getChars(len));
         writer.write(chars, 0, used);
     }

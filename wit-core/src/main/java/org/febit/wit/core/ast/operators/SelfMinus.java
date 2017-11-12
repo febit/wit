@@ -10,7 +10,7 @@ import org.febit.wit.util.ALU;
  *
  * @author zqq90
  */
-public final class SelfMinus extends SelfOperator{
+public final class SelfMinus extends SelfOperator {
 
     public SelfMinus(AssignableExpression leftExp, Expression rightExp, int line, int column) {
         super(leftExp, rightExp, line, column);

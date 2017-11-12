@@ -13,7 +13,7 @@ public final class ContextScopeValue extends AssignableExpression {
     private final int index;
     private final int scope;
 
-    public ContextScopeValue(int scope, int index,int line, int column) {
+    public ContextScopeValue(int scope, int index, int line, int column) {
         super(line, column);
         this.scope = scope;
         this.index = index;

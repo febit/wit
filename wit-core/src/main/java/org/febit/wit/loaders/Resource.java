@@ -15,7 +15,7 @@ public interface Resource {
      * @since 1.4.1
      */
     boolean exists();
-    
+
     /**
      * if this resource is begin with code.
      *

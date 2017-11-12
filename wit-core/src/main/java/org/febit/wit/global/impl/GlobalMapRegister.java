@@ -12,21 +12,16 @@ import org.febit.wit.global.GlobalRegister;
  */
 public class GlobalMapRegister implements GlobalRegister {
 
-    protected String name;
+    private final Map<Object, Object> vars = new ConcurrentHashMap<>();
 
-    private final Map vars;
-
-    public GlobalMapRegister() {
-        this.name = "$GLOBAL";
-        this.vars = new ConcurrentHashMap();
-    }
+    protected String name = "$GLOBAL";
 
     @Override
     public void regist(GlobalManager manager) {
         manager.setConst(this.name, this.vars);
     }
 
-    public Map getVars() {
+    public Map<Object, Object> getVars() {
         return vars;
     }
 }

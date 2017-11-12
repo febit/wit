@@ -2,15 +2,15 @@
 # @modules=
 
 @global='''
-    engine
-    logger
-    loader
-    resolverManager
-    textStatement
-    coderFactory
-    nativeFactory
-    nativeSecurity
-    global
+  engine
+  logger
+  loader
+  resolverManager
+  textStatement
+  coderFactory
+  nativeFactory
+  nativeSecurity
+  global
 '''
 
 DEFAULT_ENCODING=UTF-8
@@ -90,8 +90,8 @@ list +='''
 
 [global :org.febit.wit.global.GlobalManager]
 registers ='''
-    org.febit.wit.global.impl.GlobalMapRegister
-    org.febit.wit.global.impl.ContextLocalRegister
+  org.febit.wit.global.impl.GlobalMapRegister
+  org.febit.wit.global.impl.ContextLocalRegister
 '''
 
 # [org.febit.wit.global.impl.GlobalMapRegister]
@@ -105,17 +105,17 @@ registers ='''
 [resolverManager]
 # ignoreNullPointer=true
 resolvers='''
-    org.febit.wit.resolvers.impl.InternalVoidResolver
-    org.febit.wit.resolvers.impl.CharSequenceResolver
-    org.febit.wit.resolvers.impl.ByteArrayOutResolver
-    org.febit.wit.resolvers.impl.CharArrayOutResolver
-    org.febit.wit.resolvers.impl.ArrayResolver
-    org.febit.wit.resolvers.impl.BagResolver
-    org.febit.wit.resolvers.impl.ScriptUnsetableBagResolver
-    org.febit.wit.resolvers.impl.IterGetResolver
-    org.febit.wit.resolvers.impl.ObjectArrayResolver
-    org.febit.wit.resolvers.impl.CollectionResolver
-    org.febit.wit.resolvers.impl.MapResolver
+  org.febit.wit.resolvers.impl.InternalVoidResolver
+  org.febit.wit.resolvers.impl.CharSequenceResolver
+  org.febit.wit.resolvers.impl.ByteArrayOutResolver
+  org.febit.wit.resolvers.impl.CharArrayOutResolver
+  org.febit.wit.resolvers.impl.ArrayResolver
+  org.febit.wit.resolvers.impl.BagResolver
+  org.febit.wit.resolvers.impl.ScriptUnsetableBagResolver
+  org.febit.wit.resolvers.impl.IterGetResolver
+  org.febit.wit.resolvers.impl.ObjectArrayResolver
+  org.febit.wit.resolvers.impl.CollectionResolver
+  org.febit.wit.resolvers.impl.MapResolver
 '''
 
 

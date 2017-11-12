@@ -131,7 +131,7 @@ public class FunctionDeclarePart {
                 throw new ParseException("Loops overflow in function body: ".concat(StringUtil.join(loopInfos, ',')));
             }
         }
-        
+
         Object[] argDefaults = new Object[this.args.size()];
         for (int i = 0; i < argDefaults.length; i++) {
             argDefaults[i] = this.args.get(i).defaultValue;

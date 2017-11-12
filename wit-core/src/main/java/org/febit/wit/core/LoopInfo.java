@@ -32,7 +32,7 @@ public class LoopInfo {
         int myType = this.type;
         return (myType == BREAK ? "break"
                 : myType == CONTINUE ? "continue"
-                : myType == RETURN ? "return"
-                : "null") + "{" + "label=" + label + ", line=" + line + ", column=" + column + '}';
+                        : myType == RETURN ? "return"
+                                : "null") + "{" + "label=" + label + ", line=" + line + ", column=" + column + '}';
     }
 }

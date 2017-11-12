@@ -31,11 +31,11 @@ public class DefaultNativeSecurityManagerTest {
         assertFalse(manager.access("a"));
         assertFalse(manager.access("a.aa"));
         assertFalse(manager.access("a.aa.aaa"));
-        
+
         assertFalse(manager.access("b"));
         assertFalse(manager.access("b.b"));
         assertFalse(manager.access("b.c"));
-        
+
         assertTrue(manager.access("c"));
         assertTrue(manager.access("c.cc"));
         assertTrue(manager.access("c.cc.ccc"));

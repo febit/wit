@@ -10,7 +10,7 @@ import org.febit.wit.util.ALU;
  *
  * @author zqq90
  */
-public final class SelfLShift extends SelfOperator{
+public final class SelfLShift extends SelfOperator {
 
     public SelfLShift(AssignableExpression leftExp, Expression rightExp, int line, int column) {
         super(leftExp, rightExp, line, column);

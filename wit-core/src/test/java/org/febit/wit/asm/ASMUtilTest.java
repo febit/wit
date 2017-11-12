@@ -14,7 +14,7 @@ public class ASMUtilTest {
     static String getInternalName(final Class c) {
         return ASMUtil.getInternalName(c.getName());
     }
-    
+
     @Test
     public void getInternalName() {
         assertEquals("java/lang/Integer", getInternalName(Integer.class));

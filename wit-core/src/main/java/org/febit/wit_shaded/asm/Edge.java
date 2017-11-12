@@ -1,4 +1,4 @@
-/***
+/** *
  * ASM: a very small and fast Java bytecode manipulation framework
  * Copyright (c) 2000,2002,2003 INRIA, France Telecom
  * All rights reserved.
@@ -27,42 +27,34 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.febit.wit_shaded.asm;
 
 /**
  * An edge in the control flow graph of a method body. See {@link Label Label}.
- * 
+ *
  * @author Eric Bruneton
  */
-
 final class Edge {
 
-  /**
-   * The (relative) stack size in the basic block from which this edge
-   * originates. This size is equal to the stack size at the "jump" instruction
-   * to which this edge corresponds, relatively to the stack size at the
-   * beginning of the originating basic block.
-   */
+    /**
+     * The (relative) stack size in the basic block from which this edge originates. This size is equal to the stack
+     * size at the "jump" instruction to which this edge corresponds, relatively to the stack size at the beginning of
+     * the originating basic block.
+     */
+    int stackSize;
 
-  int stackSize;
+    /**
+     * The successor block of the basic block from which this edge originates.
+     */
+    Label successor;
 
-  /**
-   * The successor block of the basic block from which this edge originates.
-   */
+    /**
+     * The next edge in the list of successors of the originating basic block. See {@link Label#successors successors}.
+     */
+    Edge next;
 
-  Label successor;
-
-  /**
-   * The next edge in the list of successors of the originating basic block.
-   * See {@link Label#successors successors}.
-   */
-
-  Edge next;
-
-  /**
-   * The next available edge in the pool. See {@link CodeWriter}.
-   */
-
-  Edge poolNext;
+    /**
+     * The next available edge in the pool. See {@link CodeWriter}.
+     */
+    Edge poolNext;
 }

@@ -29,9 +29,8 @@
 package org.febit.wit_shaded.asm;
 
 /**
- * A {@link CodeVisitor CodeVisitor} that generates Java bytecode instructions.
- * Each visit method of this class appends the bytecode corresponding to the
- * visited instruction to a byte vector, in the order these methods are called.
+ * A {@link CodeVisitor CodeVisitor} that generates Java bytecode instructions. Each visit method of this class appends
+ * the bytecode corresponding to the visited instruction to a byte vector, in the order these methods are called.
  *
  * @author Eric Bruneton
  */
@@ -43,8 +42,7 @@ public final class MethodWriter {
     private final int access;
     private final int[] exceptions;
     /**
-     * <tt>true</tt> if the maximum stack size and number of local variables
-     * must be automatically computed.
+     * <tt>true</tt> if the maximum stack size and number of local variables must be automatically computed.
      */
     private static final boolean computeMaxs = true;
 
@@ -87,44 +85,37 @@ public final class MethodWriter {
 //     * Indicates if some jump instructions are too small and need to be resized.
 //     */
 //    private boolean resize;
-
     /**
-     * The (relative) stack size after the last visited instruction. This size
-     * is relative to the beginning of the current basic block, i.e., the true
-     * stack size after the last visited instruction is equal to the {@link
+     * The (relative) stack size after the last visited instruction. This size is relative to the beginning of the
+     * current basic block, i.e., the true stack size after the last visited instruction is equal to the {@link
      * Label#beginStackSize beginStackSize} of the current basic block plus
      * <tt>stackSize</tt>.
      */
     private int stackSize;
 
     /**
-     * The (relative) maximum stack size after the last visited instruction.
-     * This size is relative to the beginning of the current basic block, i.e.,
-     * the true maximum stack size after the last visited instruction is equal
-     * to the {@link Label#beginStackSize beginStackSize} of the current basic
-     * block plus
+     * The (relative) maximum stack size after the last visited instruction. This size is relative to the beginning of
+     * the current basic block, i.e., the true maximum stack size after the last visited instruction is equal to the
+     * {@link Label#beginStackSize beginStackSize} of the current basic block plus
      * <tt>stackSize</tt>.
      */
     private int maxStackSize;
 
     /**
-     * The current basic block. This block is the basic block to which the next
-     * instruction to be visited must be added.
+     * The current basic block. This block is the basic block to which the next instruction to be visited must be added.
      */
     private Label currentBlock;
 
     /**
-     * The basic block stack used by the control flow analysis algorithm. This
-     * stack is represented by a linked list of {@link Label Label} objects,
-     * linked to each other by their {@link Label#next} field. This stack must
-     * not be confused with the JVM stack used to execute the JVM instructions!
+     * The basic block stack used by the control flow analysis algorithm. This stack is represented by a linked list of
+     * {@link Label Label} objects, linked to each other by their {@link Label#next} field. This stack must not be
+     * confused with the JVM stack used to execute the JVM instructions!
      */
     private Label blockStack;
 
     /**
-     * The stack size variation corresponding to each JVM instruction. This
-     * stack variation is equal to the size of the values produced by an
-     * instruction, minus the size of the values consumed by this instruction.
+     * The stack size variation corresponding to each JVM instruction. This stack variation is equal to the size of the
+     * values produced by an instruction, minus the size of the values consumed by this instruction.
      */
     private static final int[] SIZE;
 
@@ -141,24 +132,21 @@ public final class MethodWriter {
     // --------------------------------------------------------------------------
     /**
      * The head of the list of {@link Edge Edge} objects used by this {@link
-     * MethodWriter MethodWriter}. These objects, linked to each other by their
-     * {@link Edge#poolNext} field, are added back to the shared pool at the end
-     * of the control flow analysis algorithm.
+     * MethodWriter MethodWriter}. These objects, linked to each other by their {@link Edge#poolNext} field, are added
+     * back to the shared pool at the end of the control flow analysis algorithm.
      */
     private Edge head;
 
     /**
      * The tail of the list of {@link Edge Edge} objects used by this {@link
-     * MethodWriter MethodWriter}. These objects, linked to each other by their
-     * {@link Edge#poolNext} field, are added back to the shared pool at the end
-     * of the control flow analysis algorithm.
+     * MethodWriter MethodWriter}. These objects, linked to each other by their {@link Edge#poolNext} field, are added
+     * back to the shared pool at the end of the control flow analysis algorithm.
      */
     private Edge tail;
 
     /**
-     * The shared pool of {@link Edge Edge} objects. This pool is a linked list
-     * of Edge objects, linked to each other by their {@link Edge#poolNext}
-     * field.
+     * The shared pool of {@link Edge Edge} objects. This pool is a linked list of Edge objects, linked to each other by
+     * their {@link Edge#poolNext} field.
      */
     private static Edge pool;
 
@@ -402,8 +390,8 @@ public final class MethodWriter {
      * Constructs a CodeWriter.
      *
      * @param cw the class writer in which the method must be added.
-     * @param computeMaxs <tt>true</tt> if the maximum stack size and number of
-     * local variables must be automatically computed.
+     * @param computeMaxs <tt>true</tt> if the maximum stack size and number of local variables must be automatically
+     * computed.
      */
     MethodWriter(final ClassWriter cw,
             final int access,
@@ -450,7 +438,6 @@ public final class MethodWriter {
 //    public void pushClass(String name) {
 //        visitLdcInsn(cw.newClassItem(name));
 //    }
-
     public void push(int value) {
         if (value > 0 && value <= 5) {
             visitInsn(Constants.ICONST_0 + value);
@@ -765,6 +752,8 @@ public final class MethodWriter {
             stackSize = 0;
             maxStackSize = 0;
         }
+
+
         // resolves previous forward references to label, if any
         /* resize |= */ label.resolve(this, code.length, code.data);
     }
@@ -925,10 +914,9 @@ public final class MethodWriter {
      * Computes the size of the arguments and of the return value of a method.
      *
      * @param desc the descriptor of a method.
-     * @return the size of the arguments of the method (plus one for the
-     * implicit this argument), argSize, and the size of its return value,
-     * retSize, packed into a single int i = <tt>(argSize << 2) | retSize</tt>
-     * (argSize is therefore equal to <tt>i >> 2</tt>, and retSize to
+     * @return the size of the arguments of the method (plus one for the implicit this argument), argSize, and the size
+     * of its return value, retSize, packed into a single int i = <tt>(argSize << 2) | retSize</tt> (argSize is
+     * therefore equal to <tt>i >> 2</tt>, and retSize to
      * <tt>i & 0x03</tt>).
      */
     private static int getArgumentsAndReturnSizes(final String desc) {
@@ -1030,8 +1018,7 @@ public final class MethodWriter {
     /**
      * Puts the bytecode of this method in the given byte vector.
      *
-     * @param out the byte vector into which the bytecode of this method must be
-     * copied.
+     * @param out the byte vector into which the bytecode of this method must be copied.
      */
     final void renderTo(final ByteBuffer out) {
         final ByteBuffer code = this.code;

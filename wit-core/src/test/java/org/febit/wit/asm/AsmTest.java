@@ -31,7 +31,7 @@ public class AsmTest implements Constants {
         m.visitJumpInsn(Constants.IFEQ, toExcaption);
         m.visitVarInsn(Constants.ALOAD, 1);
         m.visitInsn(Constants.ICONST_0); //m.visitIntInsn(Constants.SIPUSH, 17);
-        
+
         m.visitInsn(Constants.AALOAD);
         m.visitJumpInsn(Constants.IFNULL, toExcaption);
         m.visitVarInsn(Constants.ALOAD, 1);

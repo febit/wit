@@ -32,11 +32,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * A {@link ClassVisitor ClassVisitor} that generates Java class files. More
- * precisely this visitor generates a byte array conforming to the Java class
- * file format. It can be used alone, to generate a Java class "from scratch",
- * or with one or more {@link ClassReader ClassReader} and adapter class visitor
- * to generate a modified class from one or more existing Java classes.
+ * A {@link ClassVisitor ClassVisitor} that generates Java class files. More precisely this visitor generates a byte
+ * array conforming to the Java class file format. It can be used alone, to generate a Java class "from scratch", or
+ * with one or more {@link ClassReader ClassReader} and adapter class visitor to generate a modified class from one or
+ * more existing Java classes.
  *
  * @author Eric Bruneton
  */
@@ -114,15 +113,13 @@ public final class ClassWriter {
     private final int name;
 
     /**
-     * The constant pool item that contains the internal name of the super class
-     * of this class.
+     * The constant pool item that contains the internal name of the super class of this class.
      */
     private final int superName;
 
     /**
-     * The interfaces implemented or extended by this class or interface. More
-     * precisely, this array contains the indexes of the constant pool items
-     * that contain the internal names of these interfaces.
+     * The interfaces implemented or extended by this class or interface. More precisely, this array contains the
+     * indexes of the constant pool items that contain the internal names of these interfaces.
      */
     private final int[] interfaces;
 
@@ -136,8 +133,8 @@ public final class ClassWriter {
 //     */
 //    private ByteBuffer fields;
     /**
-     * The methods of this class. These methods are stored in a linked list of
-     * {@link MethodWriter MethodWriter} objects, linked to each other by their {@link
+     * The methods of this class. These methods are stored in a linked list of {@link MethodWriter MethodWriter}
+     * objects, linked to each other by their {@link
      * CodeWriter#next} field. This field stores the first element of this list.
      */
     private final ArrayList<MethodWriter> methods;
@@ -474,11 +471,11 @@ public final class ClassWriter {
     // Utility methods: constant pool management
     // --------------------------------------------------------------------------
     /**
-     * Adds a number or string constant to the constant pool of the class being
-     * build. Does nothing if the constant pool already contains a similar item.
+     * Adds a number or string constant to the constant pool of the class being build. Does nothing if the constant pool
+     * already contains a similar item.
      *
-     * @param cst the value of the constant to be added to the constant pool.
-     * This parameter must be an {@link java.lang.Integer Integer}, a {@link
+     * @param cst the value of the constant to be added to the constant pool. This parameter must be an
+     * {@link java.lang.Integer Integer}, a {@link
      *      java.lang.Float Float}, a {@link java.lang.Long Long}, a {@link
      *      java.lang.Double Double}, a {@link String String} or a {@link Type}.
      * @return a new or already existing constant item with the given value.
@@ -510,10 +507,9 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds an UTF8 string to the constant pool of the class being build. Does
-     * nothing if the constant pool already contains a similar item. <i>This
-     * method is intended for {@link Attribute} sub classes, and is normally not
-     * needed by class generators or adapters.</i>
+     * Adds an UTF8 string to the constant pool of the class being build. Does nothing if the constant pool already
+     * contains a similar item. <i>This method is intended for {@link Attribute} sub classes, and is normally not needed
+     * by class generators or adapters.</i>
      *
      * @param value the String value.
      * @return the index of a new or already existing UTF8 item.
@@ -529,10 +525,10 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds a class reference to the constant pool of the class being build.
-     * Does nothing if the constant pool already contains a similar item.
-     * <i>This method is intended for {@link Attribute} sub classes, and is
-     * normally not needed by class generators or adapters.</i>
+     * Adds a class reference to the constant pool of the class being build. Does nothing if the constant pool already
+     * contains a similar item.
+     * <i>This method is intended for {@link Attribute} sub classes, and is normally not needed by class generators or
+     * adapters.</i>
      *
      * @param value the internal name of the class.
      * @return the index of a new or already existing class reference item.
@@ -542,10 +538,10 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds a class reference to the constant pool of the class being build.
-     * Does nothing if the constant pool already contains a similar item.
-     * <i>This method is intended for {@link Attribute} sub classes, and is
-     * normally not needed by class generators or adapters.</i>
+     * Adds a class reference to the constant pool of the class being build. Does nothing if the constant pool already
+     * contains a similar item.
+     * <i>This method is intended for {@link Attribute} sub classes, and is normally not needed by class generators or
+     * adapters.</i>
      *
      * @param value the internal name of the class.
      * @return a new or already existing class reference item.
@@ -561,10 +557,10 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds a field reference to the constant pool of the class being build.
-     * Does nothing if the constant pool already contains a similar item.
-     * <i>This method is intended for {@link Attribute} sub classes, and is
-     * normally not needed by class generators or adapters.</i>
+     * Adds a field reference to the constant pool of the class being build. Does nothing if the constant pool already
+     * contains a similar item.
+     * <i>This method is intended for {@link Attribute} sub classes, and is normally not needed by class generators or
+     * adapters.</i>
      *
      * @param owner the internal name of the field's owner class.
      * @param name the field's name.
@@ -585,8 +581,8 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds a method reference to the constant pool of the class being build.
-     * Does nothing if the constant pool already contains a similar item.
+     * Adds a method reference to the constant pool of the class being build. Does nothing if the constant pool already
+     * contains a similar item.
      *
      * @param owner the internal name of the method's owner class.
      * @param name the method's name.
@@ -609,8 +605,8 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds an integer to the constant pool of the class being build. Does
-     * nothing if the constant pool already contains a similar item.
+     * Adds an integer to the constant pool of the class being build. Does nothing if the constant pool already contains
+     * a similar item.
      *
      * @param value the int value.
      * @return a new or already existing int item.
@@ -626,8 +622,8 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds a float to the constant pool of the class being build. Does nothing
-     * if the constant pool already contains a similar item.
+     * Adds a float to the constant pool of the class being build. Does nothing if the constant pool already contains a
+     * similar item.
      *
      * @param value the float value.
      * @return a new or already existing float item.
@@ -643,8 +639,8 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds a long to the constant pool of the class being build. Does nothing
-     * if the constant pool already contains a similar item.
+     * Adds a long to the constant pool of the class being build. Does nothing if the constant pool already contains a
+     * similar item.
      *
      * @param value the long value.
      * @return a new or already existing long item.
@@ -661,8 +657,8 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds a double to the constant pool of the class being build. Does nothing
-     * if the constant pool already contains a similar item.
+     * Adds a double to the constant pool of the class being build. Does nothing if the constant pool already contains a
+     * similar item.
      *
      * @param value the double value.
      * @return a new or already existing double item.
@@ -679,8 +675,8 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds a string to the constant pool of the class being build. Does nothing
-     * if the constant pool already contains a similar item.
+     * Adds a string to the constant pool of the class being build. Does nothing if the constant pool already contains a
+     * similar item.
      *
      * @param value the String value.
      * @return a new or already existing string item.
@@ -696,10 +692,9 @@ public final class ClassWriter {
     }
 
     /**
-     * Adds a name and type to the constant pool of the class being build. Does
-     * nothing if the constant pool already contains a similar item. <i>This
-     * method is intended for {@link Attribute} sub classes, and is normally not
-     * needed by class generators or adapters.</i>
+     * Adds a name and type to the constant pool of the class being build. Does nothing if the constant pool already
+     * contains a similar item. <i>This method is intended for {@link Attribute} sub classes, and is normally not needed
+     * by class generators or adapters.</i>
      *
      * @param name a name.
      * @param desc a type descriptor.
@@ -716,12 +711,11 @@ public final class ClassWriter {
     }
 
     /**
-     * Returns the constant pool's hash table item which is equal to the given
-     * item.
+     * Returns the constant pool's hash table item which is equal to the given item.
      *
      * @param key a constant pool item.
-     * @return the constant pool's hash table item which is equal to the given
-     * item, or <tt>null</tt> if there is no such item.
+     * @return the constant pool's hash table item which is equal to the given item, or <tt>null</tt> if there is no
+     * such item.
      */
     private Item get(final Item key) {
         return items.get(key);

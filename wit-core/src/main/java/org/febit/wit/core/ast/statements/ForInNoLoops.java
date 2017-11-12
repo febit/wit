@@ -43,8 +43,8 @@ public final class ForInNoLoops extends Statement {
         }
         if (iter != null
                 && iter.hasNext()) {
-        final int preIndex = context.indexer;
-        context.indexer = indexer;
+            final int preIndex = context.indexer;
+            context.indexer = indexer;
             final Statement[] stats = this.statements;
             final int i = this.itemIndex;
             final Object[] vars = context.vars;

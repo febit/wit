@@ -7,10 +7,11 @@ import java.util.Map;
  * @author zqq90
  */
 public class ConstMethods2 {
-    
+
     public String const2Foo(String obj) {
         return "const2Foo";
     }
+
     public String const2Member(String obj) {
         return "const2MemberString";
     }

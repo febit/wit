@@ -11,8 +11,10 @@ import org.febit.wit.util.InternedEncoding;
 public interface CoderFactory {
 
     Encoder newEncoder(InternedEncoding encoding);
+
     Encoder newEncoder(InternedEncoding encoding, Buffers buffers);
 
     Decoder newDecoder(InternedEncoding encoding);
+
     Decoder newDecoder(InternedEncoding encoding, Buffers buffers);
 }

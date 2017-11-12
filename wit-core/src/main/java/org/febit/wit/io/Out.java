@@ -22,6 +22,6 @@ public interface Out {
     void write(String string);
 
     InternedEncoding getEncoding();
-    
+
     boolean isByteStream();
 }

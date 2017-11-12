@@ -22,7 +22,8 @@ public class DefaultDecoder implements Decoder {
     private final Buffers buffers;
 
     public DefaultDecoder(String encoding, Buffers buffers) {
-        this.expansionFactor = (double) (this.charsetDecoder = newDecoder(encoding)).maxCharsPerByte();
+        this.charsetDecoder = newDecoder(encoding);
+        this.expansionFactor = (double) this.charsetDecoder.maxCharsPerByte();
         this.buffers = buffers;
     }
 

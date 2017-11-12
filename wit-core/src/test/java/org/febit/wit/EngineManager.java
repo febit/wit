@@ -12,12 +12,12 @@ public class EngineManager {
     private static final Engine engine;
 
     static {
-      try {
-          engine = Engine.create("/febit-wit-test.wim", null);
-      } catch (Exception e) {
-          e.printStackTrace();
-          throw e;
-      }
+        try {
+            engine = Engine.create("/febit-wit-test.wim", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public static Engine getEngine() {

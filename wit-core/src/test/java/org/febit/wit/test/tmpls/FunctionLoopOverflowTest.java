@@ -49,6 +49,5 @@ public class FunctionLoopOverflowTest {
         }
         assertNotNull(exception);
 
-
     }
 }

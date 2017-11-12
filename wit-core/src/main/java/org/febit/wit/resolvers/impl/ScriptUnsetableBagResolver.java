@@ -21,7 +21,7 @@ public class ScriptUnsetableBagResolver implements GetResolver, SetResolver {
 
     @Override
     public void set(Object object, Object property, Object value) {
-        throw new ScriptRuntimeException("This is an unsetable Object.s");
+        throw new ScriptRuntimeException("This is an unsetable Object.");
     }
 
     @Override

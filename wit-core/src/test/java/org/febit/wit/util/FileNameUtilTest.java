@@ -15,18 +15,17 @@ public class FileNameUtilTest {
         assertEquals("/parent/tmpl.wit", FileNameUtil.concat("/parent/", "tmpl.wit"));
         assertEquals("/parent/tmpl.wit", FileNameUtil.concat("/parent/", "./tmpl.wit"));
         assertEquals("/tmpl.wit", FileNameUtil.concat("/parent/", "../tmpl.wit"));
-        
+
         assertEquals("/parent/tmpl.wit", FileNameUtil.concat("/parent", "tmpl.wit"));
         assertEquals("/parent/tmpl.wit", FileNameUtil.concat("/parent", "./tmpl.wit"));
         assertEquals("/tmpl.wit", FileNameUtil.concat("/parent", "../tmpl.wit"));
-        
-        
+
         assertEquals("/tmpl.wit", FileNameUtil.normalize("/parent/../tmpl.wit"));
-        
+
         assertNull(FileNameUtil.normalize("/../tmpl.wit"));
         assertNull(FileNameUtil.normalize("../tmpl.wit"));
-        assertNull(FileNameUtil.normalize("/parent/../../tmpl.wit"));        
-        
+        assertNull(FileNameUtil.normalize("/parent/../../tmpl.wit"));
+
         assertEquals("/parent/", FileNameUtil.getPath("/parent/tmpl.wit"));
         assertEquals("/", FileNameUtil.getPath("/tmpl.wit"));
     }

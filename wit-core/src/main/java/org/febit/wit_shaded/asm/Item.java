@@ -29,8 +29,7 @@
 package org.febit.wit_shaded.asm;
 
 /**
- * A constant pool item. Constant pool items can be created with the 'newXXX'
- * methods in the {@link ClassWriter} class.
+ * A constant pool item. Constant pool items can be created with the 'newXXX' methods in the {@link ClassWriter} class.
  *
  * @author Eric Bruneton
  */
@@ -42,9 +41,8 @@ final class Item {
     short index;
 
     /**
-     * Type of this constant pool item. A single class is used to represent all
-     * constant pool item types, in order to minimize the bytecode size of this
-     * package. The value of this field is one of the constants defined in the
+     * Type of this constant pool item. A single class is used to represent all constant pool item types, in order to
+     * minimize the bytecode size of this package. The value of this field is one of the constants defined in the
      * {@link ClassWriter ClassWriter} class.
      */
     int type;
@@ -56,20 +54,17 @@ final class Item {
 
     int argSize;
     /**
-     * First part of the value of this item, for items that do not hold a
-     * primitive value.
+     * First part of the value of this item, for items that do not hold a primitive value.
      */
     String strVal1;
 
     /**
-     * Second part of the value of this item, for items that do not hold a
-     * primitive value.
+     * Second part of the value of this item, for items that do not hold a primitive value.
      */
     String strVal2;
 
     /**
-     * Third part of the value of this item, for items that do not hold a
-     * primitive value.
+     * Third part of the value of this item, for items that do not hold a primitive value.
      */
     String strVal3;
 

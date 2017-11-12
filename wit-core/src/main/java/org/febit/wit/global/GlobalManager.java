@@ -122,48 +122,32 @@ public class GlobalManager {
     }
 
     public Bag getConstBag() {
-        return new ConstBag(this);
+        return new Bag() {
+
+            @Override
+            public Object get(Object key) {
+                return GlobalManager.this.getConst(String.valueOf(key));
+            }
+
+            @Override
+            public void set(Object key, Object value) {
+                GlobalManager.this.setConst(String.valueOf(key), value);
+            }
+        };
     }
 
     public Bag getGlobalBag() {
-        return new GlobalBag(this);
-    }
+        return new Bag() {
 
-    private static class ConstBag implements Bag {
+            @Override
+            public Object get(Object key) {
+                return GlobalManager.this.getGlobal(String.valueOf(key));
+            }
 
-        final GlobalManager manager;
-
-        ConstBag(GlobalManager manager) {
-            this.manager = manager;
-        }
-
-        @Override
-        public Object get(Object key) {
-            return this.manager.getConst(String.valueOf(key));
-        }
-
-        @Override
-        public void set(Object key, Object value) {
-            this.manager.setConst(String.valueOf(key), value);
-        }
-    }
-
-    private static class GlobalBag implements Bag {
-
-        final GlobalManager manager;
-
-        GlobalBag(GlobalManager manager) {
-            this.manager = manager;
-        }
-
-        @Override
-        public Object get(Object key) {
-            return this.manager.getGlobal(String.valueOf(key));
-        }
-
-        @Override
-        public void set(Object key, Object value) {
-            this.manager.setGlobal(String.valueOf(key), value);
-        }
+            @Override
+            public void set(Object key, Object value) {
+                GlobalManager.this.setGlobal(String.valueOf(key), value);
+            }
+        };
     }
 }

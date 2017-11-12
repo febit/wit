@@ -32,7 +32,7 @@ public final class TemplateAST {
         //assert context.indexer = 0
         return context;
     }
-    
+
     public InternalContext execute(Template template, final InternalContext context, KeyValues rootParams) {
 
         final InternalContext newContext = context.createPeerContext(template, indexers, varSize);

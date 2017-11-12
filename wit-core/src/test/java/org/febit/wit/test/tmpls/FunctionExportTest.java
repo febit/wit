@@ -67,7 +67,7 @@ public class FunctionExportTest {
         writer = new StringWriter();
         print.invokeWithOut(writer, "");
         assertEquals("", writer.toString());
-        
+
         writer = new StringWriter();
         print.invokeWithOut(writer, "hello function");
         assertEquals("hello function", writer.toString());

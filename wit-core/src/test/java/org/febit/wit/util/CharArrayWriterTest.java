@@ -53,15 +53,14 @@ public class CharArrayWriterTest {
         //
 
         char[] chars;
-        
-        
+
         buffer = new CharArrayWriter(3);
         buffer.append("\r\n\t");
 
         chars = buffer.toArraySkipIfLeftNewLine();
         assertEquals(1, chars.length);
         assertEquals('\t', chars[0]);
-        
+
         buffer = new CharArrayWriter(3);
         buffer.append("\t\n\n")
                 .append("\t\t\t");

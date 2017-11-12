@@ -1,5 +1,4 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
-
 package org.febit.wit.test.tmpls;
 
 import java.util.HashSet;
@@ -20,16 +19,16 @@ import org.junit.Test;
  * @author zqq90
  */
 public class DebugTest {
-    
+
     private final Set<Object> labelCache = new HashSet<>();
     private int pointCount = 0;
-    
+
     @Test
     public void test() throws ResourceNotFoundException {
         Template template = EngineManager.getTemplate("/debug.wit");
-        
+
         template.merge(new DiscardOut());
-        
+
         labelCache.clear();
         pointCount = 0;
         template.debug(KeyValuesUtil.EMPTY_KEY_VALUES, new DiscardOut(), new BreakPointListener() {
@@ -37,17 +36,17 @@ public class DebugTest {
             @Override
             public void onBreak(Object label, InternalContext context, Statement statement, Object result) {
                 labelCache.add(label);
-                pointCount ++;
+                pointCount++;
             }
         });
-        
+
         assertEquals(18, pointCount);
         assertTrue(labelCache.contains(null));
         assertTrue(labelCache.contains("p1"));
         assertTrue(labelCache.contains("p2"));
         assertTrue(labelCache.contains("p3"));
         assertTrue(labelCache.contains("p4"));
-        
+
     }
-    
+
 }
