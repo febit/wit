@@ -10,7 +10,6 @@ import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.InternedEncoding;
-import org.febit.wit.util.KeyValuesUtil;
 
 /**
  * Exported function.
@@ -40,7 +39,7 @@ public class Function {
     }
 
     protected InternalContext createContext(Out out) {
-        return new InternalContext(template, out, KeyValuesUtil.EMPTY_KEY_VALUES, EMPTY_INDEXERS, 0, null);
+        return new InternalContext(template, out, Vars.EMPTY, EMPTY_INDEXERS, 0, null);
     }
 
     protected InternalContext createContext() {

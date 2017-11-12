@@ -6,11 +6,11 @@ import java.util.Set;
 import org.febit.wit.EngineManager;
 import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
+import org.febit.wit.Vars;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.debug.BreakPointListener;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.io.impl.DiscardOut;
-import org.febit.wit.util.KeyValuesUtil;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -31,7 +31,7 @@ public class DebugTest {
 
         labelCache.clear();
         pointCount = 0;
-        template.debug(KeyValuesUtil.EMPTY_KEY_VALUES, new DiscardOut(), new BreakPointListener() {
+        template.debug(Vars.EMPTY, new DiscardOut(), new BreakPointListener() {
 
             @Override
             public void onBreak(Object label, InternalContext context, Statement statement, Object result) {

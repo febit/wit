@@ -68,7 +68,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final OutputStream outputStream) {
-        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(outputStream, engine));
+        return merge(Vars.EMPTY, new OutputStreamOut(outputStream, engine));
     }
 
     /**
@@ -81,7 +81,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final OutputStream out, final String encoding) {
-        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
+        return merge(Vars.EMPTY, new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
     }
 
     /**
@@ -93,7 +93,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Writer writer) {
-        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new WriterOut(writer, engine));
+        return merge(Vars.EMPTY, new WriterOut(writer, engine));
     }
 
     /**
@@ -186,7 +186,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Out out) {
-        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, out);
+        return merge(Vars.EMPTY, out);
     }
 
     /**
@@ -198,7 +198,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge() {
-        return merge(KeyValuesUtil.EMPTY_KEY_VALUES);
+        return merge(Vars.EMPTY);
     }
 
     /**
@@ -224,7 +224,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Vars vars) {
-        return merge(KeyValuesUtil.EMPTY_KEY_VALUES, DiscardOut.INSTANCE);
+        return merge(Vars.EMPTY, DiscardOut.INSTANCE);
     }
 
     /**

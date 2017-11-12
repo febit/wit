@@ -16,7 +16,6 @@ import org.febit.wit.resolvers.ResolverManager;
 import org.febit.wit.resolvers.SetResolver;
 import org.febit.wit.util.ClassMap;
 import org.febit.wit.util.InternedEncoding;
-import org.febit.wit.util.KeyValuesUtil;
 
 /**
  * Internal Context.
@@ -136,7 +135,7 @@ public final class InternalContext implements Context {
             System.arraycopy(myParentScopes, 0, scopes, 1, myParentScopes.length);
         }
         //
-        InternalContext newContext = new InternalContext(template, localContext.out, KeyValuesUtil.EMPTY_KEY_VALUES, indexers, varSize, scopes);
+        InternalContext newContext = new InternalContext(template, localContext.out, Vars.EMPTY, indexers, varSize, scopes);
         //set the gaven localContext
         newContext.localContext = localContext;
         return newContext;
@@ -154,7 +153,7 @@ public final class InternalContext implements Context {
      */
     public InternalContext createPeerContext(Template template, VariantIndexer[] indexers, int varSize) {
 
-        InternalContext newContext = new InternalContext(template, this.out, KeyValuesUtil.EMPTY_KEY_VALUES, indexers, varSize, null);
+        InternalContext newContext = new InternalContext(template, this.out, Vars.EMPTY, indexers, varSize, null);
         newContext.localContext = this;
         return newContext;
     }

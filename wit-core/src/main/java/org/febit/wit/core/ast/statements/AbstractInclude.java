@@ -47,7 +47,7 @@ public abstract class AbstractInclude extends Statement {
         final Vars params;
         final Object paramsObject = paramsExpr.execute(context);
         if (paramsObject == null) {
-            params = KeyValuesUtil.EMPTY_KEY_VALUES;
+            params = Vars.EMPTY;
         } else if (paramsObject instanceof Map) {
             params = KeyValuesUtil.wrap((Map) paramsObject);
         } else {
