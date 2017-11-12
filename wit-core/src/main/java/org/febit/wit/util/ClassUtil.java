@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.febit.wit.exceptions.UncheckedException;
 
 /**
  *
@@ -252,7 +253,7 @@ public class ClassUtil {
             Class cls = getPrimitiveClass(name);
             return cls != null ? cls : getClassByInternalName(name);
         } catch (ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
+            throw new UncheckedException(ex);
         }
     }
 
@@ -292,7 +293,7 @@ public class ClassUtil {
         }
         try {
             accessible.setAccessible(true);
-        } catch (SecurityException ignore) {
+        } catch (SecurityException ex) {
             // ignore
         }
     }
@@ -305,7 +306,7 @@ public class ClassUtil {
         try {
             return type.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            throw new RuntimeException(ex);
+            throw new UncheckedException(ex);
         }
     }
 }

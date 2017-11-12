@@ -34,7 +34,7 @@ public class ObjectArrayResolver implements GetResolver, SetResolver {
                 ((Object[]) object)[((Number) property).intValue()] = value;
                 return;
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException(StringUtil.format("Array index out of bounds, index={}", property));
+                throw new ScriptRuntimeException(StringUtil.format("Array index out of bounds, index={}", property), e);
             }
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));

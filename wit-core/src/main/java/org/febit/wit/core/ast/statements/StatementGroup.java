@@ -30,7 +30,7 @@ public class StatementGroup extends Statement implements Optimizable {
     }
 
     @Override
-    public Statement optimize() throws Exception {
+    public Statement optimize() {
         if (this.list.length == 0) {
             return NoneStatement.INSTANCE;
         }

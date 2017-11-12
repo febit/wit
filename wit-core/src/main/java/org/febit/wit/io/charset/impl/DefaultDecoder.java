@@ -42,7 +42,7 @@ public class DefaultDecoder implements Decoder {
         }
     }
 
-    private static CharsetDecoder newDecoder(String csn) throws UnsupportedCharsetException {
+    private static CharsetDecoder newDecoder(String csn) {
         return Charset.forName(csn).newDecoder();
     }
 }

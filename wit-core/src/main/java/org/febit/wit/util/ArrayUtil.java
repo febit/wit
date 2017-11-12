@@ -117,7 +117,7 @@ public class ArrayUtil {
                 return ((byte[]) object)[index];
             }
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new ScriptRuntimeException(StringUtil.format("Array index out of bounds, index={}", index));
+            throw new ScriptRuntimeException(StringUtil.format("Array index out of bounds, index={}", index), e);
         }
         throw new ScriptRuntimeException("Not an array.");
     }

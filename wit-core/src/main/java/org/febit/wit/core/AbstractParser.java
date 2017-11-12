@@ -18,6 +18,7 @@ import org.febit.wit.core.ast.statements.*;
 import org.febit.wit.core.text.TextStatementFactory;
 import org.febit.wit.debug.BreakPointListener;
 import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.ResourceOffset;
@@ -190,7 +191,7 @@ abstract class AbstractParser {
         )) {
             return (short[][]) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new Error(e);
+            throw new UncheckedException(e);
         }
     }
 
@@ -279,7 +280,7 @@ abstract class AbstractParser {
 
     abstract Object doAction(int actionId) throws ParseException;
 
-    private Symbol process(final Lexer lexer) throws Exception {
+    private Symbol process(final Lexer lexer) throws IOException {
 
         int act;
         Symbol pending;
@@ -449,8 +450,8 @@ abstract class AbstractParser {
             if (lexer != null) {
                 try {
                     lexer.close();
-                } catch (IOException ignore) {
-                    // ignore
+                } catch (IOException ex) {
+                    this.engine.getLogger().warn("Failed to close lexer.", ex);
                 }
             }
         }
@@ -484,7 +485,7 @@ abstract class AbstractParser {
         try {
             return ClassUtil.getClass(classFullName, arrayDept);
         } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class not found:".concat(classFullName));
+            throw new ParseException("Class not found:".concat(classFullName), ex);
         }
     }
 
@@ -527,7 +528,7 @@ abstract class AbstractParser {
         try {
             return ClassUtil.getClass(classFullName, classNameBand.getArrayDepth());
         } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class not found:".concat(classFullName), line, column);
+            throw new ParseException("Class not found:".concat(classFullName), ex, line, column);
         }
     }
 
@@ -648,7 +649,7 @@ abstract class AbstractParser {
         try {
             field = clazz.getField(fieldName);
         } catch (NoSuchFieldException ex) {
-            throw new ParseException("No such field: ".concat(path), line, column);
+            throw new ParseException("No such field: ".concat(path), ex, line, column);
         }
         if (ClassUtil.isStatic(field)) {
             ClassUtil.setAccessible(field);

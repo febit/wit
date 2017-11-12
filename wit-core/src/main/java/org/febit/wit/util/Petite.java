@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import org.febit.wit.Init;
+import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.loggers.Logger;
 
 /**
@@ -182,7 +183,7 @@ public class Petite {
                 field.set(bean, comp);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
                 //shouldn't be
-                throw new RuntimeException(ex);
+                throw new UncheckedException(ex);
             }
         }
 
@@ -214,7 +215,7 @@ public class Petite {
                 method.invoke(bean, args);
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 //shouldn't be
-                throw new RuntimeException(ex);
+                throw new UncheckedException(ex);
             }
         }
     }
@@ -247,7 +248,7 @@ public class Petite {
             try {
                 field.set(bean, value);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new RuntimeException(ex);
+                throw new UncheckedException(ex);
             }
         }
     }

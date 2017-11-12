@@ -43,11 +43,11 @@ public final class Template {
      * @since 1.4.0
      * @throws ParseException
      */
-    public void reload() throws ParseException {
+    public void reload() {
         parse(true);
     }
 
-    private TemplateAST parse(boolean force) throws ParseException {
+    private TemplateAST parse(boolean force) {
         TemplateAST myAst = this.ast;
         synchronized (this) {
             if (force || myAst == null || this.resource.isModified()) {
@@ -67,7 +67,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final OutputStream outputStream) throws ScriptRuntimeException, ParseException {
+    public Context merge(final OutputStream outputStream) {
         return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(outputStream, engine));
     }
 
@@ -80,7 +80,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final OutputStream out, final String encoding) throws ScriptRuntimeException, ParseException {
+    public Context merge(final OutputStream out, final String encoding) {
         return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
     }
 
@@ -92,7 +92,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Writer writer) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Writer writer) {
         return merge(KeyValuesUtil.EMPTY_KEY_VALUES, new WriterOut(writer, engine));
     }
 
@@ -105,7 +105,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Map<String, Object> vars, final OutputStream outputStream) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Map<String, Object> vars, final OutputStream outputStream) {
         return merge(KeyValuesUtil.wrap(vars), new OutputStreamOut(outputStream, engine));
     }
 
@@ -119,7 +119,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Map<String, Object> vars, final OutputStream out, final String encoding) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Map<String, Object> vars, final OutputStream out, final String encoding) {
         return merge(KeyValuesUtil.wrap(vars), new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
     }
 
@@ -132,7 +132,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Map<String, Object> vars, final Writer writer) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Map<String, Object> vars, final Writer writer) {
         return merge(KeyValuesUtil.wrap(vars), new WriterOut(writer, engine));
     }
 
@@ -145,7 +145,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Vars vars, final OutputStream out) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Vars vars, final OutputStream out) {
         return merge(vars, new OutputStreamOut(out, engine));
     }
 
@@ -159,7 +159,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Vars vars, final OutputStream out, final String encoding) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Vars vars, final OutputStream out, final String encoding) {
         return merge(vars, new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
     }
 
@@ -172,7 +172,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Vars vars, final Writer writer) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Vars vars, final Writer writer) {
         return merge(vars, new WriterOut(writer, engine));
     }
 
@@ -185,7 +185,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Out out) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Out out) {
         return merge(KeyValuesUtil.EMPTY_KEY_VALUES, out);
     }
 
@@ -197,7 +197,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge() throws ScriptRuntimeException, ParseException {
+    public Context merge() {
         return merge(KeyValuesUtil.EMPTY_KEY_VALUES);
     }
 
@@ -210,7 +210,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Map<String, Object> vars) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Map<String, Object> vars) {
         return merge(KeyValuesUtil.wrap(vars));
     }
 
@@ -223,7 +223,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Vars vars) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Vars vars) {
         return merge(KeyValuesUtil.EMPTY_KEY_VALUES, DiscardOut.INSTANCE);
     }
 
@@ -236,7 +236,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context merge(final Vars vars, final Out out) throws ScriptRuntimeException, ParseException {
+    public Context merge(final Vars vars, final Out out) {
         try {
             final TemplateAST myAst;
             return (((myAst = this.ast) == null || this.resource.isModified())
@@ -248,7 +248,7 @@ public final class Template {
         }
     }
 
-    public Context mergeToContext(final InternalContext context, final Vars vars) throws ScriptRuntimeException, ParseException {
+    public Context mergeToContext(final InternalContext context, final Vars vars) {
         try {
             final TemplateAST myAst;
             return (((myAst = this.ast) == null || this.resource.isModified())
@@ -260,7 +260,17 @@ public final class Template {
         }
     }
 
-    public Context debug(final Vars vars, final Out out, final BreakPointListener listener) throws ScriptRuntimeException, ParseException {
+    /**
+     * Debug this template.
+     *
+     * @param vars
+     * @param out
+     * @param listener
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context debug(final Vars vars, final Out out, final BreakPointListener listener) {
         try {
             return Parser.parse(this, listener)
                     .execute(this, out, vars);
@@ -279,7 +289,7 @@ public final class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context debug(final Vars vars, final BreakPointListener listener) throws ScriptRuntimeException, ParseException {
+    public Context debug(final Vars vars, final BreakPointListener listener) {
         return debug(vars, DiscardOut.INSTANCE, listener);
     }
 

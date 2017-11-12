@@ -12,6 +12,7 @@ import java.util.Map;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exceptions.AmbiguousMethodException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.lang.InternalVoid;
 
@@ -106,7 +107,7 @@ public class JavaNativeUtil {
                 ClassUtil.setAccessible(field);
                 value = field.get(null);
             } catch (IllegalArgumentException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedException(e);
             }
             manager.setConst(name, value);
         }
@@ -419,11 +420,11 @@ public class JavaNativeUtil {
             Object result = method.invoke(me, methodArgs);
             return isReturnVoid ? InternalVoid.VOID : result;
         } catch (IllegalAccessException ex) {
-            throw new ScriptRuntimeException("this method is inaccessible: ".concat(ex.getLocalizedMessage()));
+            throw new ScriptRuntimeException("this method is inaccessible: ".concat(ex.getLocalizedMessage()), ex);
         } catch (IllegalArgumentException ex) {
-            throw new ScriptRuntimeException("illegal argument: ".concat(ex.getLocalizedMessage()));
+            throw new ScriptRuntimeException("illegal argument: ".concat(ex.getLocalizedMessage()), ex);
         } catch (InvocationTargetException ex) {
-            throw new ScriptRuntimeException("this method throws an exception", ex.getTargetException());
+            throw new ScriptRuntimeException("this method throws an exception", ex);
         }
     }
 
@@ -453,13 +454,13 @@ public class JavaNativeUtil {
         try {
             return constructor.newInstance(methodArgs);
         } catch (InstantiationException ex) {
-            throw new ScriptRuntimeException("Can't create new instance: ".concat(ex.getLocalizedMessage()));
+            throw new ScriptRuntimeException("Can't create new instance: ".concat(ex.getLocalizedMessage()), ex);
         } catch (IllegalAccessException ex) {
-            throw new ScriptRuntimeException("Unaccessible method: ".concat(ex.getLocalizedMessage()));
+            throw new ScriptRuntimeException("Unaccessible method: ".concat(ex.getLocalizedMessage()), ex);
         } catch (IllegalArgumentException ex) {
-            throw new ScriptRuntimeException("Illegal arguments: ".concat(ex.getLocalizedMessage()));
+            throw new ScriptRuntimeException("Illegal arguments: ".concat(ex.getLocalizedMessage()), ex);
         } catch (InvocationTargetException ex) {
-            throw new ScriptRuntimeException("this method throws an exception", ex.getTargetException());
+            throw new ScriptRuntimeException("this method throws an exception", ex);
         }
     }
 

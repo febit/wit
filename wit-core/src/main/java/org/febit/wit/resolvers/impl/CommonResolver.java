@@ -19,7 +19,7 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver {
         try {
             return BeanUtil.get(object, String.valueOf(property));
         } catch (Exception e) {
-            throw new ScriptRuntimeException(e.getMessage());
+            throw new ScriptRuntimeException(e.getMessage(), e);
         }
     }
 
@@ -28,7 +28,7 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver {
         try {
             BeanUtil.set(object, String.valueOf(property), value);
         } catch (Exception e) {
-            throw new ScriptRuntimeException(e.getMessage());
+            throw new ScriptRuntimeException(e.getMessage(), e);
         }
     }
 

@@ -17,7 +17,7 @@ public class CharSequenceResolver implements GetResolver {
             try {
                 return ((CharSequence) object).charAt(((Number) property).intValue());
             } catch (IndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException(StringUtil.format("index out of bounds:{}", property));
+                throw new ScriptRuntimeException(StringUtil.format("index out of bounds:{}", property), e);
             }
         }
         switch (property.toString()) {

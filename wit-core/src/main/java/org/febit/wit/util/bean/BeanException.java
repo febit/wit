@@ -11,8 +11,16 @@ public class BeanException extends RuntimeException {
         super(message);
     }
 
+    public BeanException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public BeanException(Throwable cause) {
+        super(cause);
+    }
+
     @Override
-    public Throwable fillInStackTrace() {
+    public synchronized Throwable fillInStackTrace() {
         return this;
     }
 }

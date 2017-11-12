@@ -21,7 +21,7 @@ public class StringLoader implements Loader {
 
     @Override
     public String concat(String parent, String name) {
-        //ignore parent
+        // ignore parent
         return name;
     }
 

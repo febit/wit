@@ -111,7 +111,7 @@ public class BeanUtil {
             try {
                 return this.method.invoke(bean, (Object[]) null);
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                throw new BeanException(ex.toString());
+                throw new BeanException(ex.toString(), ex);
             }
         }
     }
@@ -137,7 +137,7 @@ public class BeanUtil {
             try {
                 this.method.invoke(bean, new Object[]{value});
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                throw new BeanException(ex.toString());
+                throw new BeanException(ex.toString(), ex);
             }
         }
     }
@@ -156,7 +156,7 @@ public class BeanUtil {
             try {
                 return this.field.get(bean);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new BeanException(ex.toString());
+                throw new BeanException(ex.toString(), ex);
             }
         }
     }
@@ -175,7 +175,7 @@ public class BeanUtil {
             try {
                 this.field.set(bean, value);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new BeanException(ex.toString());
+                throw new BeanException(ex.toString(), ex);
             }
         }
 

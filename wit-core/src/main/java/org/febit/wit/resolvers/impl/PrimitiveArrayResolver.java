@@ -70,9 +70,9 @@ public class PrimitiveArrayResolver implements RegistModeResolver, GetResolver, 
                     return;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException(StringUtil.format("Array index out of bounds, index={}", index));
+                throw new ScriptRuntimeException(StringUtil.format("Array index out of bounds, index={}", index), e);
             } catch (ClassCastException e) {
-                throw new ScriptRuntimeException(e.getMessage());
+                throw new ScriptRuntimeException(e.getMessage(), e);
             }
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't write: array#{}", property));

@@ -85,7 +85,7 @@ public class NativeFactory {
         try {
             return getNativeMethodDeclare(clazz.getMethod(methodName, paramTypes));
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ParseException(ex.getMessage(), line, column);
+            throw new ParseException(ex.getMessage(), ex, line, column);
         }
     }
 
@@ -126,7 +126,7 @@ public class NativeFactory {
         try {
             return getNativeConstructorDeclare(clazz.getConstructor(paramTypes));
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ParseException(ex.getMessage(), line, column);
+            throw new ParseException(ex.getMessage(), ex, line, column);
         }
     }
 

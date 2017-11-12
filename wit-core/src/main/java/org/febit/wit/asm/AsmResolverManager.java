@@ -4,6 +4,7 @@ package org.febit.wit.asm;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.ResolverManager;
 import org.febit.wit.resolvers.SetResolver;
@@ -62,10 +63,10 @@ public class AsmResolverManager extends ResolverManager {
         return resolver;
     }
 
-    static Class createResolverClass(Class beanClass) throws Exception {
+    static Class createResolverClass(Class beanClass) {
         //XXX: rewrite
         if (!ClassUtil.isPublic(beanClass)) {
-            throw new Exception(StringUtil.format("Class [{}] is not public", beanClass));
+            throw new UncheckedException(StringUtil.format("Class [{}] is not public", beanClass));
         }
         final String className = "org.febit.wit.asm.Resolver" + ASMUtil.NEXT_SN.getAndIncrement();
 

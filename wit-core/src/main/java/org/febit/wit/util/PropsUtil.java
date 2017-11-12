@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.febit.wit.exceptions.IllegalConfigException;
 
 /**
  *
@@ -93,7 +94,7 @@ public class PropsUtil {
             final char[] buffer = this._buffer;
             final InputStream in = inputResolver.openInputStream(path);
             if (in == null) {
-                throw new RuntimeException("Not found props: ".concat(inputResolver.getViewPath(path)));
+                throw new IllegalConfigException("Not found props: ".concat(inputResolver.getViewPath(path)));
             }
             try (Reader reader = new InputStreamReader(in, "UTF-8")) {
                 charsBuffer.reset();
@@ -106,7 +107,7 @@ public class PropsUtil {
                 charsBuffer.reset();
                 return tempProps;
             } catch (IOException ex) {
-                throw new RuntimeException("Not found props: ".concat(inputResolver.getViewPath(path)), ex);
+                throw new IllegalConfigException("Not found props: ".concat(inputResolver.getViewPath(path)), ex);
             }
         }
 

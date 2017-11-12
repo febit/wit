@@ -51,7 +51,7 @@ public class DefaultEncoder implements Encoder {
         }
     }
 
-    private static CharsetEncoder newEncoder(String csn) throws UnsupportedCharsetException {
+    private static CharsetEncoder newEncoder(String csn) {
         return Charset.forName(csn).newEncoder();
     }
 }

@@ -675,7 +675,7 @@ public class ALU {
         return new BigDecimal(o1.toString()).toBigInteger();
     }
 
-    private static BigDecimal toBigDecimal(final Object o1) throws NumberFormatException {
+    private static BigDecimal toBigDecimal(final Object o1) {
         if (o1 == null) {
             return BigDecimal.ZERO;
         }

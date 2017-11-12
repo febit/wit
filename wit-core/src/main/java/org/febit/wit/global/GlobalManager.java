@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.febit.wit.Init;
+import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.lang.Bag;
 
 /**
@@ -36,7 +37,7 @@ public class GlobalManager {
                     this.commit();
                 }
             } catch (Exception ex) {
-                throw new RuntimeException(ex);
+                throw new UncheckedException(ex);
             }
         }
         commit();

@@ -13,7 +13,6 @@ import org.febit.wit.io.Out;
 import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.lang.Bag;
-import org.febit.wit.lang.InternalVoid;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.resolvers.ResolverManager;

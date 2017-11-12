@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.febit.wit.Engine;
 import org.febit.wit.Init;
+import org.febit.wit.exceptions.IllegalConfigException;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.util.ArrayUtil;
@@ -26,34 +27,30 @@ public class RouteLoader implements Loader {
 
     @Init
     public void init(final Engine engine) {
-        try {
-            //init Route rules
-            final String[] raws = StringUtil.toArray(this.loaders);
-            final int size = raws.length;
-            final String[] prefixes = new String[size];
-            final Map<String, LoaderEntry> loaderMap = new HashMap<>();
-            for (int i = 0; i < size; i++) {
-                final String raw = raws[i];
-                final int index = raw.indexOf(' ');
-                if (index < 0) {
-                    throw new RuntimeException("Illegal rule: ".concat(raw));
-                }
-                final String rule = prefixes[i] = raw.substring(0, index);
-                loaderMap.put(rule, new LoaderEntry(rule,
-                        (Loader) engine.get(raw.substring(index + 1).trim())));
+        //init Route rules
+        final String[] raws = StringUtil.toArray(this.loaders);
+        final int size = raws.length;
+        final String[] prefixes = new String[size];
+        final Map<String, LoaderEntry> loaderMap = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            final String raw = raws[i];
+            final int index = raw.indexOf(' ');
+            if (index < 0) {
+                throw new IllegalConfigException("Illegal RouteLoader rule: ".concat(raw));
             }
-            Arrays.sort(prefixes);
-            ArrayUtil.invert(prefixes);
-            final LoaderEntry[] loaderEntrys = new LoaderEntry[size];
-            for (int i = 0; i < size; i++) {
-                loaderEntrys[i] = loaderMap.get(prefixes[i]);
-            }
-            this.rules = prefixes;
-            this.entrys = loaderEntrys;
-            //default Loader
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            final String rule = prefixes[i] = raw.substring(0, index);
+            loaderMap.put(rule, new LoaderEntry(rule,
+                    (Loader) engine.get(raw.substring(index + 1).trim())));
         }
+        Arrays.sort(prefixes);
+        ArrayUtil.invert(prefixes);
+        final LoaderEntry[] loaderEntrys = new LoaderEntry[size];
+        for (int i = 0; i < size; i++) {
+            loaderEntrys[i] = loaderMap.get(prefixes[i]);
+        }
+        this.rules = prefixes;
+        this.entrys = loaderEntrys;
+        //default Loader
     }
 
     protected LoaderEntry getLoaderEntry(String resourceName) {

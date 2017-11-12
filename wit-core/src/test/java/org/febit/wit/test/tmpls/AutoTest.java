@@ -32,7 +32,7 @@ public class AutoTest {
     private final static int BUFFER_SIZE = 1024;
     private final static String AUTO_TEST_PATH = "org/febit/wit/test/tmpls/auto/";
 
-    private Map<String, String> collectAutoTestTemplates() {
+    private Map<String, String> collectAutoTestTemplates() throws IOException {
         final Map<String, String> templates = new TreeMap<>();
 
         ClassLoader classLoader = ClassUtil.getDefaultClassLoader();
@@ -47,7 +47,8 @@ public class AutoTest {
                     templates.put("/auto/".concat(path), new File(file, outPath).exists() ? outPath : null);
                 }
             }
-        } catch (Exception ignore) {
+        } catch (Exception ex) {
+            throw new IOException("Failed to load templates", ex);
         }
         return templates;
     }

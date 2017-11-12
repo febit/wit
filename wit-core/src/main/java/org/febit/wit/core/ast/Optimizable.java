@@ -7,5 +7,5 @@ package org.febit.wit.core.ast;
  */
 public interface Optimizable {
 
-    Statement optimize() throws Exception;
+    Statement optimize();
 }
