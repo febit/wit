@@ -9,7 +9,7 @@ import org.febit.wit.util.ArrayUtil;
  */
 public final class VariantIndexer {
 
-    public static final VariantIndexer EMPTY = new VariantIndexer(0, null, ArrayUtil.EMPTY_STRINGS, null);
+    public static final VariantIndexer EMPTY = new VariantIndexer(0, null, ArrayUtil.emptyStrings(), null);
 
     public final int id;
     public final VariantIndexer parent;

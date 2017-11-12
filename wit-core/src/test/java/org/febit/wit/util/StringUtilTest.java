@@ -17,10 +17,10 @@ public class StringUtilTest {
         assertArrayEquals(new String[]{"abc", "def", "g"}, StringUtil.toArray("\t\n abc\n\r \n, def \n,,, g ,,, "));
 
         assertArrayEquals(new String[]{"a", "b", "c"}, StringUtil.toArray("a,b,c"));
-        assertSame(ArrayUtil.EMPTY_STRINGS, StringUtil.toArray("\t\n ,,,  "));
-        assertSame(ArrayUtil.EMPTY_STRINGS, StringUtil.toArray(","));
-        assertSame(ArrayUtil.EMPTY_STRINGS, StringUtil.toArray(",, ,,"));
-        assertSame(ArrayUtil.EMPTY_STRINGS, StringUtil.toArray(null));
+        assertSame(ArrayUtil.emptyStrings(), StringUtil.toArray("\t\n ,,,  "));
+        assertSame(ArrayUtil.emptyStrings(), StringUtil.toArray(","));
+        assertSame(ArrayUtil.emptyStrings(), StringUtil.toArray(",, ,,"));
+        assertSame(ArrayUtil.emptyStrings(), StringUtil.toArray(null));
     }
 
     @Test

@@ -144,7 +144,7 @@ public class VariantManager {
             if (parent != null) {
                 return parent;
             }
-            return new VariantIndexer(id, null, ArrayUtil.EMPTY_STRINGS, null);
+            return new VariantIndexer(id, null, ArrayUtil.emptyStrings(), null);
         }
         final int size = map.size();
         final String[] names = new String[size];

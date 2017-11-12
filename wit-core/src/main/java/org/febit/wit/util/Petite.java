@@ -202,7 +202,7 @@ public class Petite {
             final Class[] argTypes = method.getParameterTypes();
             final Object[] args;
             if (argTypes.length == 0) {
-                args = ArrayUtil.EMPTY_OBJECTS;
+                args = ArrayUtil.emptyObjects();
             } else {
                 args = new Object[argTypes.length];
                 for (int i = 0; i < argTypes.length; i++) {

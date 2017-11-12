@@ -590,7 +590,7 @@ abstract class AbstractParser {
 
     MapValue createMapValue(List<Expression[]> propertyDefList, int line, int column) {
         if (propertyDefList == null || propertyDefList.isEmpty()) {
-            return new MapValue(StatementUtil.EMPTY_EXPRESSIONS, StatementUtil.EMPTY_EXPRESSIONS, line, column);
+            return new MapValue(StatementUtil.emptyExpressions(), StatementUtil.emptyExpressions(), line, column);
         }
         int size = propertyDefList.size();
         Expression[] keys = new Expression[size];

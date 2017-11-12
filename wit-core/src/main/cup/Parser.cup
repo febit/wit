@@ -491,7 +491,7 @@ expression      ::= expression_statementable:$
 
                     //arrayValue
                     |LBRACK:sym RBRACK
-                    {: return new ArrayValue(StatementUtil.EMPTY_EXPRESSIONS, %sym.line%, %sym.column%); :}
+                    {: return new ArrayValue(StatementUtil.emptyExpressions(), %sym.line%, %sym.column%); :}
                     |LBRACK:sym expression[COMMA]:list COMMA? RBRACK
                     {: return new ArrayValue(StatementUtil.toExpressionArray(%list%), %sym.line%, %sym.column%); :}
 
@@ -596,11 +596,11 @@ funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
-                        {: return createMethodExecute(%funcExpr%, StatementUtil.EMPTY_EXPRESSIONS, %funcExpr.line%, %funcExpr.column%); :}
+                        {: return createMethodExecute(%funcExpr%, StatementUtil.emptyExpressions(), %funcExpr.line%, %funcExpr.column%); :}
                         |expression:funcExpr LPAREN expression[COMMA]:list COMMA? RPAREN
                         {: return createMethodExecute(%funcExpr%, StatementUtil.toExpressionArray(%list%), %funcExpr.line%, %funcExpr.column%); :}
                         |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN RPAREN
-                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.EMPTY_EXPRESSIONS, %ident.line%, %ident.column%); :}
+                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.emptyExpressions(), %ident.line%, %ident.column%); :}
                         |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expression[COMMA]:list COMMA? RPAREN
                         {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.toExpressionArray(%list%), %ident.line%, %ident.column%); :}
                         ;

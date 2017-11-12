@@ -12,7 +12,7 @@ import org.febit.wit.util.ArrayUtil;
  */
 public class SecurityLoader implements Loader {
 
-    protected String[] list = ArrayUtil.EMPTY_STRINGS;
+    protected String[] list = ArrayUtil.emptyStrings();
     protected Loader loader;
 
     @Override

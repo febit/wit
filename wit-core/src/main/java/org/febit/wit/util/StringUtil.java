@@ -51,7 +51,7 @@ public class StringUtil {
 
     public static String[] toArray(String src) {
         if (src == null || src.isEmpty()) {
-            return ArrayUtil.EMPTY_STRINGS;
+            return ArrayUtil.emptyStrings();
         }
 
         final char[] srcc = src.toCharArray();
@@ -107,7 +107,7 @@ public class StringUtil {
             list.add(new String(srcc, start, end - start));
         }
         if (list.isEmpty()) {
-            return ArrayUtil.EMPTY_STRINGS;
+            return ArrayUtil.emptyStrings();
         }
         return list.toArray(new String[list.size()]);
     }

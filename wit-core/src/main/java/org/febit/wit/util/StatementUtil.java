@@ -25,7 +25,7 @@ import org.febit.wit.lang.InternalVoid;
 public class StatementUtil {
 
     private static final Statement[] EMPTY_STATEMENTS = new Statement[0];
-    public static final Expression[] EMPTY_EXPRESSIONS = new Expression[0];
+    private static final Expression[] EMPTY_EXPRESSIONS = new Expression[0];
 
     private StatementUtil() {
     }
@@ -178,6 +178,10 @@ public class StatementUtil {
         Statement[] array = toStatementArray(list);
         ArrayUtil.invert(array);
         return array;
+    }
+
+    public static Expression[] emptyExpressions() {
+        return EMPTY_EXPRESSIONS;
     }
 
     public static Expression[] toExpressionArray(List<Expression> list) {

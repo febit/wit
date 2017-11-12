@@ -9,10 +9,18 @@ import org.febit.wit.exceptions.ScriptRuntimeException;
  */
 public class ArrayUtil {
 
-    public static final Object[] EMPTY_OBJECTS = new Object[0];
-    public static final String[] EMPTY_STRINGS = new String[0];
+    private static final Object[] EMPTY_OBJECTS = new Object[0];
+    private static final String[] EMPTY_STRINGS = new String[0];
 
     private ArrayUtil() {
+    }
+
+    public static Object[] emptyObjects() {
+        return EMPTY_OBJECTS;
+    }
+
+    public static String[] emptyStrings() {
+        return EMPTY_STRINGS;
     }
 
     public static int getSize(final Object object) {
