@@ -12,7 +12,7 @@ import org.febit.wit.lang.InternalVoid;
  */
 public interface Context extends Vars.Accepter {
 
-    InternalVoid VOID = InternalVoid.VOID;
+    final Object VOID = InternalVoid.VOID;
 
     /**
      * Get a variable by name.
