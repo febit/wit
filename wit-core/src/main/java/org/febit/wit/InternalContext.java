@@ -9,7 +9,6 @@ import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.Out;
 import org.febit.wit.lang.InternalVoid;
-import org.febit.wit.lang.KeyValues;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.OutResolver;
@@ -32,7 +31,7 @@ public final class InternalContext implements Context {
     /**
      * params for this context
      */
-    public final KeyValues rootParams;
+    public final Vars rootParams;
 
     /**
      * Variables in this scope.
@@ -91,7 +90,7 @@ public final class InternalContext implements Context {
     private final ClassMap<GetResolver> getters;
     private final ClassMap<SetResolver> setters;
 
-    public InternalContext(final Template template, final Out out, final KeyValues rootParams, final VariantIndexer[] indexers, final int varSize, final Object[][] parentScopes) {
+    public InternalContext(final Template template, final Out out, final Vars rootParams, final VariantIndexer[] indexers, final int varSize, final Object[][] parentScopes) {
         this.template = template;
         this.rootParams = rootParams;
 

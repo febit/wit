@@ -13,9 +13,9 @@ import org.febit.wit.core.ast.expressions.DirectValue;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.KeyValues;
 import org.febit.wit.util.KeyValuesUtil;
 import org.febit.wit.util.StatementUtil;
+import org.febit.wit.Vars;
 
 /**
  *
@@ -44,7 +44,7 @@ public abstract class AbstractInclude extends Statement {
         if (templatePath == null) {
             throw new ScriptRuntimeException("Template name should not be null.", pathExpr);
         }
-        final KeyValues params;
+        final Vars params;
         final Object paramsObject = paramsExpr.execute(context);
         if (paramsObject == null) {
             params = KeyValuesUtil.EMPTY_KEY_VALUES;
@@ -55,7 +55,7 @@ public abstract class AbstractInclude extends Statement {
         }
         try {
             Template template = engine.getTemplate(myTemplateName, String.valueOf(templatePath));
-            KeyValues rootParams = engine.isShareRootData() ? KeyValuesUtil.wrap(context.rootParams, params) : params;
+            Vars rootParams = engine.isShareRootData() ? KeyValuesUtil.wrap(context.rootParams, params) : params;
             Context newContext = template.mergeToContext(context, rootParams);
 
             if (export) {

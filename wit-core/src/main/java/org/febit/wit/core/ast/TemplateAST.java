@@ -5,8 +5,8 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
 import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.io.Out;
-import org.febit.wit.lang.KeyValues;
 import org.febit.wit.util.StatementUtil;
+import org.febit.wit.Vars;
 
 /**
  *
@@ -24,7 +24,7 @@ public final class TemplateAST {
         this.varSize = varSize;
     }
 
-    public InternalContext execute(Template template, final Out out, KeyValues rootParams) {
+    public InternalContext execute(Template template, final Out out, Vars rootParams) {
 
         final InternalContext context = new InternalContext(template, out, rootParams, indexers, varSize, null);
         rootParams.exportTo(context);
@@ -33,7 +33,7 @@ public final class TemplateAST {
         return context;
     }
 
-    public InternalContext execute(Template template, final InternalContext context, KeyValues rootParams) {
+    public InternalContext execute(Template template, final InternalContext context, Vars rootParams) {
 
         final InternalContext newContext = context.createPeerContext(template, indexers, varSize);
         rootParams.exportTo(newContext);

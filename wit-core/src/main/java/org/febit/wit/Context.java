@@ -5,13 +5,12 @@ import java.util.Map;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.InternalVoid;
-import org.febit.wit.lang.KeyValueAccepter;
 
 /**
  *
  * @author zqq90
  */
-public interface Context extends KeyValueAccepter {
+public interface Context extends Vars.Accepter {
 
     InternalVoid VOID = InternalVoid.VOID;
 
