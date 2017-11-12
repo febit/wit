@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import org.febit.wit.Engine;
-import org.febit.wit.lang.KeyValues;
+import org.febit.wit.Vars;
 
 /**
  *
@@ -72,8 +72,8 @@ public class WebEngineManager {
     }
 
     public Engine getEngine() {
-        Engine engine;
-        if ((engine = this.engine) != null) {
+        Engine engine = this.engine;
+        if (engine != null) {
             return engine;
         }
         return this.engine = ServletEngineUtil.createEngine(
@@ -87,12 +87,12 @@ public class WebEngineManager {
                 .merge(parameters, response.getOutputStream());
     }
 
-    public void renderTemplate(final String name, final KeyValues parameters, final HttpServletResponse response) throws IOException {
+    public void renderTemplate(final String name, final Vars parameters, final HttpServletResponse response) throws IOException {
         getEngine().getTemplate(name)
                 .merge(parameters, response.getOutputStream());
     }
 
-    public void renderTemplate(final String parent, final String name, final KeyValues parameters, final HttpServletResponse response) throws IOException {
+    public void renderTemplate(final String parent, final String name, final Vars parameters, final HttpServletResponse response) throws IOException {
         getEngine().getTemplate(parent, name)
                 .merge(parameters, response.getOutputStream());
     }

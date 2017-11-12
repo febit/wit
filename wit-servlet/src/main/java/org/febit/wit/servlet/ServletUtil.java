@@ -5,8 +5,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.febit.wit.lang.KeyValueAccepter;
-import org.febit.wit.lang.KeyValues;
+import org.febit.wit.Vars;
 
 /**
  *
@@ -28,26 +27,22 @@ public class ServletUtil {
         map.putAll(request.getParameterMap());
     }
 
-    public static KeyValues wrapToKeyValues(HttpServletRequest request, HttpServletResponse response) {
-        return new ServletKeyValues(request, response);
+    public static Vars wrapToKeyValues(HttpServletRequest request, HttpServletResponse response) {
+        return wrapToKeyValues(request, response, true, false);
     }
 
-    public static KeyValues wrapToKeyValues(HttpServletRequest request, HttpServletResponse response, boolean exportAttributes, boolean exportParameters) {
-        return new ServletKeyValues(request, response, exportAttributes, exportParameters);
+    public static Vars wrapToKeyValues(HttpServletRequest request, HttpServletResponse response, boolean exportAttributes, boolean exportParameters) {
+        return new ServletVars(request, response, exportAttributes, exportParameters);
     }
 
-    private static final class ServletKeyValues implements KeyValues {
+    private static final class ServletVars implements Vars {
 
         private final HttpServletRequest request;
         private final HttpServletResponse response;
         private final boolean exportAttributes;
         private final boolean exportParameters;
 
-        public ServletKeyValues(HttpServletRequest request, HttpServletResponse response) {
-            this(request, response, true, false);
-        }
-
-        public ServletKeyValues(HttpServletRequest request, HttpServletResponse response, boolean exportAttributes, boolean exportParameters) {
+        ServletVars(HttpServletRequest request, HttpServletResponse response, boolean exportAttributes, boolean exportParameters) {
             this.request = request;
             this.response = response;
             this.exportAttributes = exportAttributes;
@@ -56,7 +51,7 @@ public class ServletUtil {
 
         @SuppressWarnings("unchecked")
         @Override
-        public void exportTo(final KeyValueAccepter accepter) {
+        public void exportTo(final Vars.Accepter accepter) {
             final HttpServletRequest myRequest = this.request;
 
             accepter.set("request", myRequest);
