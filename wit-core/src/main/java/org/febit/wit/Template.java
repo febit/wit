@@ -224,7 +224,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Vars vars) {
-        return merge(Vars.EMPTY, DiscardOut.INSTANCE);
+        return merge(vars, DiscardOut.INSTANCE);
     }
 
     /**
