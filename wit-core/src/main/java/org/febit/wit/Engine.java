@@ -13,6 +13,7 @@ import org.febit.wit.io.Out;
 import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.lang.Bag;
+import org.febit.wit.lang.InternalVoid;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.resolvers.ResolverManager;
@@ -29,6 +30,8 @@ import org.febit.wit.util.StringUtil;
  * @author zqq90
  */
 public class Engine {
+
+    public static final String DEFAULT_WIM = "/wit-default.wim";
 
     protected final ConcurrentMap<String, Template> cachedTemplates = new ConcurrentHashMap<>();
 
@@ -237,7 +240,7 @@ public class Engine {
     }
 
     public static Props createConfigProps(final String configPath) {
-        return PropsUtil.loadFromClasspath(new Props(), CFG.DEFAULT_WIM, configPath);
+        return PropsUtil.loadFromClasspath(new Props(), DEFAULT_WIM, configPath);
     }
 
     /**

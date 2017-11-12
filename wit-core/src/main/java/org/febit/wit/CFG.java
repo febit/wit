@@ -5,9 +5,9 @@ package org.febit.wit;
  *
  * @author zqq90
  */
+@Deprecated
 public interface CFG {
 
-    String DEFAULT_WIM = "/wit-default.wim";
     String DEFAULT_ENCODING = "DEFAULT_ENCODING";
 
     String OUT_ENCODING = "engine.encoding";
