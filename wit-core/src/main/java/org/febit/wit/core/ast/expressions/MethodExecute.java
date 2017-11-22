@@ -31,12 +31,7 @@ public final class MethodExecute extends Expression implements Constable {
         if (!(func instanceof MethodDeclare)) {
             throw new ScriptRuntimeException("not a function", this);
         }
-        final Expression[] exprs = this.paramExprs;
-        final int len = exprs.length;
-        final Object[] results = new Object[len];
-        for (int i = 0; i < len; i++) {
-            results[i] = exprs[i].execute(context);
-        }
+        final Object[] results = StatementUtil.execute(this.paramExprs, context);
         return ((MethodDeclare) func).invoke(context, results);
     }
 

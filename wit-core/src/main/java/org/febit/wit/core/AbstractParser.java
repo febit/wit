@@ -739,7 +739,7 @@ abstract class AbstractParser {
     }
 
     TemplateAST createTemplateAST(List<Statement> list) {
-        Statement[] statements = StatementUtil.toStatementInvertArray(list);
+        Statement[] statements = StatementUtil.toStatementArray(list);
         List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(statements);
         if (loopInfos != null) {
             throw new ParseException("loop overflow: ".concat(StringUtil.join(loopInfos, ',')));
@@ -748,7 +748,7 @@ abstract class AbstractParser {
     }
 
     IBlock createIBlock(List<Statement> list, int varIndexer, int line, int column) {
-        Statement[] statements = StatementUtil.toStatementInvertArray(list);
+        Statement[] statements = StatementUtil.toStatementArray(list);
         List<LoopInfo> loopInfoList = StatementUtil.collectPossibleLoopsInfo(statements);
         return loopInfoList != null
                 ? new Block(varIndexer, statements, loopInfoList.toArray(new LoopInfo[loopInfoList.size()]), line, column)

@@ -40,7 +40,7 @@ public final class DoWhile extends Statement implements Loopable {
         context.indexer = indexer;
         label:
         do {
-            StatementUtil.executeInvertedAndCheckLoops(stats, context);
+            StatementUtil.executeWithLoopCheck(stats, context);
             if (context.hasLoop()) {
                 if (context.matchLabel(label)) {
                     switch (context.getLoopType()) {

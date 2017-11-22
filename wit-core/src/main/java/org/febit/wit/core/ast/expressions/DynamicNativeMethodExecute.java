@@ -29,14 +29,9 @@ public final class DynamicNativeMethodExecute extends Expression implements Cons
 
     @Override
     public Object execute(final InternalContext context) {
-        final Object me = thisExpr.execute(context);
-        final Method[] methods = getMethods(me);
-        final Expression[] exprs = this.paramExprs;
-        final int len = exprs.length;
-        final Object[] params = new Object[len];
-        for (int i = 0; i < len; i++) {
-            params[i] = exprs[i].execute(context);
-        }
+        Object me = this.thisExpr.execute(context);
+        Method[] methods = getMethods(me);
+        Object[] params = StatementUtil.execute(this.paramExprs, context);
         return invokeProperMethod(me, methods, params);
     }
 

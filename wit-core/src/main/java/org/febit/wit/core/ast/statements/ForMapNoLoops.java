@@ -55,7 +55,7 @@ public final class ForMapNoLoops extends Statement {
             do {
                 vars[indexOfkey] = iter.next();
                 vars[indexOfValue] = iter.value();
-                StatementUtil.executeInverted(stats, context);
+                StatementUtil.execute(stats, context);
             } while (iter.hasNext());
             context.indexer = preIndex;
             return null;

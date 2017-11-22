@@ -56,10 +56,10 @@ public final class FunctionDeclare extends Expression {
             }
         }
         if (hasReturnLoops) {
-            StatementUtil.executeInvertedAndCheckLoops(statements, context);
+            StatementUtil.executeWithLoopCheck(statements, context);
             return context.resetReturnLoop();
         } else {
-            StatementUtil.executeInverted(statements, context);
+            StatementUtil.execute(statements, context);
             return InternalVoid.VOID;
         }
     }

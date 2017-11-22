@@ -41,11 +41,20 @@ public class StatementUtil {
         return InternalVoid.VOID;
     }
 
-    public static Object[] calcConstArrayForce(Expression[] expr) {
-        final int len = expr.length;
+    public static Object[] calcConstArrayForce(Expression[] expressions) {
+        final int len = expressions.length;
         final Object[] results = new Object[len];
         for (int i = 0; i < len; i++) {
-            results[i] = StatementUtil.calcConst(expr[i], true);
+            results[i] = StatementUtil.calcConst(expressions[i], true);
+        }
+        return results;
+    }
+
+    public static Object[] execute(Expression[] expressions, InternalContext context) {
+        final int len = expressions.length;
+        final Object[] results = new Object[len];
+        for (int i = 0; i < len; i++) {
+            results[i] = expressions[i].execute(context);
         }
         return results;
     }
@@ -58,18 +67,12 @@ public class StatementUtil {
         }
     }
 
-    public static void executeInverted(final Statement[] statements, final InternalContext context) {
-        int i = statements.length;
-        while (i != 0) {
-            statements[--i].execute(context);
+    public static void executeWithLoopCheck(final Statement[] statements, final InternalContext context) {
+        int i = 0;
+        final int len = statements.length;
+        while (i < len && context.noLoop()) {
+            statements[i++].execute(context);
         }
-    }
-
-    public static void executeInvertedAndCheckLoops(final Statement[] statements, final InternalContext context) {
-        int i = statements.length;
-        do {
-            statements[--i].execute(context);
-        } while (i != 0 && context.noLoop());
     }
 
     public static Expression optimize(Expression expression) {
@@ -133,7 +136,6 @@ public class StatementUtil {
     }
 
     public static LoopInfo[] collectPossibleLoopsInfoForWhile(Statement bodyStatement, Statement elseStatement, int label) {
-
         List<LoopInfo> list = StatementUtil.collectPossibleLoopsInfo(bodyStatement);
         if (list != null) {
             LoopInfo loopInfo;
@@ -169,12 +171,6 @@ public class StatementUtil {
         } else {
             return new ScriptRuntimeException(exception.toString(), exception, statement);
         }
-    }
-
-    public static Statement[] toStatementInvertArray(List<Statement> list) {
-        Statement[] array = toStatementArray(list);
-        ArrayUtil.invert(array);
-        return array;
     }
 
     public static Expression[] emptyExpressions() {

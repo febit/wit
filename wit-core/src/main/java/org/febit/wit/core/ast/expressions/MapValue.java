@@ -28,20 +28,18 @@ public final class MapValue extends Expression implements Constable {
         this.initialCapacity = cap > 4 ? cap : 4;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object execute(final InternalContext context) {
         final Expression[] keyExprs = this._keyExprs;
         final Expression[] valueExprs = this._valueExprs;
         final int len = valueExprs.length;
-        final Map value = new HashMap(initialCapacity, 0.75f);
+        final Map<Object, Object> value = new HashMap<>(initialCapacity, 0.75f);
         for (int i = 0; i < len; i++) {
             value.put(keyExprs[i].execute(context), valueExprs[i].execute(context));
         }
         return value;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object getConstValue() {
         final Expression[] keyExprs = this._keyExprs;

@@ -30,7 +30,7 @@ public final class WhileNoLoops extends Statement {
         context.indexer = indexer;
         final Statement[] stats = this.statements;
         while (ALU.isTrue(whileExpr.execute(context))) {
-            StatementUtil.executeInverted(stats, context);
+            StatementUtil.execute(stats, context);
         }
         context.indexer = preIndex;
         return null;

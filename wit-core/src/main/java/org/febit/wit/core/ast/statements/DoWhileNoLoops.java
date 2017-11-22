@@ -30,7 +30,7 @@ public final class DoWhileNoLoops extends Statement {
         final int preIndex = context.indexer;
         context.indexer = indexer;
         do {
-            StatementUtil.executeInverted(stats, context);
+            StatementUtil.execute(stats, context);
         } while (ALU.isTrue(whileExpr.execute(context)));
         context.indexer = preIndex;
         return null;

@@ -31,7 +31,7 @@ public final class Block extends IBlock implements Loopable {
     public Object execute(final InternalContext context) {
         final int preIndex = context.indexer;
         context.indexer = indexer;
-        StatementUtil.executeInvertedAndCheckLoops(statements, context);
+        StatementUtil.executeWithLoopCheck(statements, context);
         context.indexer = preIndex;
         return null;
     }

@@ -109,7 +109,7 @@ public class FunctionDeclarePart {
     }
 
     public FunctionDeclare popFunctionDeclare(List<Statement> list) {
-        return popFunctionDeclare(StatementUtil.toStatementInvertArray(list));
+        return popFunctionDeclare(StatementUtil.toStatementArray(list));
     }
 
     protected FunctionDeclare popFunctionDeclare(Statement[] invertedStatements) {

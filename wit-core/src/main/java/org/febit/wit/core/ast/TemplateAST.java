@@ -28,7 +28,7 @@ public final class TemplateAST {
 
         final InternalContext context = new InternalContext(template, out, rootParams, indexers, varSize, null);
         rootParams.exportTo(context);
-        StatementUtil.executeInverted(this.statements, context);
+        StatementUtil.execute(this.statements, context);
         //assert context.indexer = 0
         return context;
     }
@@ -37,7 +37,7 @@ public final class TemplateAST {
 
         final InternalContext newContext = context.createPeerContext(template, indexers, varSize);
         rootParams.exportTo(newContext);
-        StatementUtil.executeInverted(this.statements, newContext);
+        StatementUtil.execute(this.statements, newContext);
         //assert context.indexer = 0
         return newContext;
     }

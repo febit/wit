@@ -62,7 +62,7 @@ public class ForIn extends Statement implements Loopable {
             label:
             do {
                 vars[index] = iter.next();
-                StatementUtil.executeInvertedAndCheckLoops(stats, context);
+                StatementUtil.executeWithLoopCheck(stats, context);
                 if (context.hasLoop()) {
                     if (context.matchLabel(myLabel)) {
                         switch (context.getLoopType()) {

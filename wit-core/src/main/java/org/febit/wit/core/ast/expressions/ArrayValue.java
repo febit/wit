@@ -22,13 +22,7 @@ public final class ArrayValue extends Expression implements Constable {
 
     @Override
     public Object execute(final InternalContext context) {
-        final Expression[] exprs = this.valueExprs;
-        final int len = exprs.length;
-        final Object[] value = new Object[len];
-        for (int i = 0; i < len; i++) {
-            value[i] = exprs[i].execute(context);
-        }
-        return value;
+        return StatementUtil.execute(this.valueExprs, context);
     }
 
     @Override

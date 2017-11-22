@@ -25,7 +25,7 @@ public class BlockNoLoops extends IBlock implements Optimizable {
     public Object execute(final InternalContext context) {
         final int preIndex = context.indexer;
         context.indexer = indexer;
-        StatementUtil.executeInverted(statements, context);
+        StatementUtil.execute(statements, context);
         context.indexer = preIndex;
         return null;
     }

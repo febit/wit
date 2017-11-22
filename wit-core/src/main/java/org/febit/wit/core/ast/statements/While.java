@@ -40,7 +40,7 @@ public final class While extends Statement implements Loopable {
         context.indexer = indexer;
         label:
         while (ALU.isTrue(whileExpr.execute(context))) {
-            StatementUtil.executeInvertedAndCheckLoops(stats, context);
+            StatementUtil.executeWithLoopCheck(stats, context);
             if (context.hasLoop()) {
                 if (context.matchLabel(label)) {
                     switch (context.getLoopType()) {
