@@ -7,10 +7,15 @@ const e = 1+1;
 const f = e+1;
 const toString = native Object.toString();
 const oneString = toString(1);
+const toString2 = "xxx".~toString()
+const temp = noop(
+  "yyy".~toString()
+)
 
 assertEquals(2, e);
 assertEquals(3, f);
 assertEquals("1", oneString);
+assertEquals("xxx", toString2);
 
 {
     const a = 2;

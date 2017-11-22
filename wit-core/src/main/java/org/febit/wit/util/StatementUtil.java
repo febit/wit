@@ -33,10 +33,7 @@ public class StatementUtil {
     public static Object calcConst(Expression expr, boolean force) {
         expr = StatementUtil.optimize(expr);
         if (expr instanceof Constable) {
-            Object result = ((Constable) expr).getConstValue();
-            if (result != InternalVoid.VOID) {
-                return result;
-            }
+            return ((Constable) expr).getConstValue();
         }
         if (force) {
             throw new ParseException("Can't get a const value from this expression.", expr.line, expr.column);
