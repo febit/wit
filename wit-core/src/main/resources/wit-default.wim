@@ -11,6 +11,8 @@
   nativeFactory
   nativeSecurity
   global
+  pluginCollector
+  spiPluginCollector
 '''
 
 DEFAULT_ENCODING=UTF-8
@@ -32,7 +34,8 @@ encoding=${DEFAULT_ENCODING}
 [nativeSecurity :noneNativeSecurity]
 [resolverManager :asmResolverManager]
 
-
+[pluginCollector :org.febit.wit.plugin.ConfigPluginCollector]
+[spiPluginCollector :org.febit.wit.plugin.SpiPluginCollector]
 [defaultResolverManager :org.febit.wit.resolvers.ResolverManager]
 [asmResolverManager :org.febit.wit.asm.AsmResolverManager]
 
@@ -55,6 +58,13 @@ encoding=${engine.encoding}
 [simpleLogger :org.febit.wit.loggers.impl.SimpleLogger]
 [slf4jLogger :org.febit.wit.loggers.impl.Slf4jLogger]
 [commonLogger :org.febit.wit.loggers.impl.CommonLogger]
+
+[spiPluginCollector]
+enable=false
+
+[pluginCollector]
+plugins +='''
+'''
 
 [pathLoader]
 encoding=${DEFAULT_ENCODING}

@@ -6,17 +6,25 @@
   febit-wit-moduleTest-a-2.props
 '''
 
-[pathLoader]
-assistantSuffixs+=.whtml, .wit2
-appendLostSuffix=true
-
 [engine]
 vars+=request,request2,session,session
 inits+='''
-    /auto/etc/initTest.init.wit
-    /auto/etc/initTest.init2.wit
-    /auto/etc/localTest.init.wit
+  /auto/etc/initTest.init.wit
+  /auto/etc/initTest.init2.wit
+  /auto/etc/localTest.init.wit
 '''
+
+[spiPluginCollector]
+enable=true
+
+[pluginCollector]
+plugins+='''
+  org.febit.wit.test.TestConfigEnginePlugin
+'''
+
+[pathLoader]
+assistantSuffixs+=.whtml, .wit2
+appendLostSuffix=true
 
 [classpathLoader]
 root=org/febit/wit/test/tmpls

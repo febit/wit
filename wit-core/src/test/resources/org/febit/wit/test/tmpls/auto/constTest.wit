@@ -45,4 +45,10 @@ assertEquals("xxx", toString2);
 
 }
 
+{
+    // setted by plugins
+    assertTrue(PLUGIN_CONFIG_FLAG)
+    assertTrue(PLUGIN_SPI_FLAG)
+}
+
 %>
