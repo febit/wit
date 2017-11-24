@@ -21,37 +21,10 @@
       <artifactId>jodd-madvoc</artifactId>
       <version>3.5</version>
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>jodd-upload</artifactId>
-          <groupId>org.jodd</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jodd-servlet</artifactId>
-          <groupId>org.jodd</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jodd-props</artifactId>
-          <groupId>org.jodd</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jodd-petite</artifactId>
-          <groupId>org.jodd</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jodd-core</artifactId>
-          <groupId>org.jodd</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jodd-bean</artifactId>
-          <groupId>org.jodd</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
