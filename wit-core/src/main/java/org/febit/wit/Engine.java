@@ -9,9 +9,7 @@ import org.febit.wit.core.text.TextStatementFactory;
 import org.febit.wit.exceptions.IllegalConfigException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.global.GlobalManager;
-import org.febit.wit.io.Out;
 import org.febit.wit.io.charset.CoderFactory;
-import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.lang.Bag;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loggers.Logger;
@@ -61,7 +59,6 @@ public class Engine {
         if (this.inits == null) {
             return;
         }
-        final Out out = new DiscardOut();
         final Bag globalBag = this.globalManager.getGlobalBag();
         final Bag constBag = this.globalManager.getConstBag();
         final Vars params = KeyValuesUtil.wrap(
@@ -70,7 +67,7 @@ public class Engine {
         );
         for (String templateName : StringUtil.toArray(this.inits)) {
             this.logger.info("Merge init template: {}", templateName);
-            this.getTemplate(templateName).merge(params, out);
+            this.getTemplate(templateName).merge(params);
             // Commit after each init-template
             this.globalManager.commit();
         }

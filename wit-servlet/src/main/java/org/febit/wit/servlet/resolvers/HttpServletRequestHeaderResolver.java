@@ -8,7 +8,7 @@ import org.febit.wit.servlet.HttpServletRequestHeader;
  *
  * @author zqq90
  */
-public class HttpServletRequestHeaderResolver implements GetResolver{
+public class HttpServletRequestHeaderResolver implements GetResolver {
 
     @Override
     public Object get(Object bean, Object property) {

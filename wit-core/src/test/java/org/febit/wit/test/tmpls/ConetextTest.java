@@ -7,7 +7,6 @@ import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.io.impl.DiscardOut;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -22,7 +21,7 @@ public class ConetextTest {
 
         Template template = EngineManager.getTemplate("contextTest.wit");
 
-        Context context = template.merge(new DiscardOut());
+        Context context = template.merge();
 
         Map map = new HashMap();
 

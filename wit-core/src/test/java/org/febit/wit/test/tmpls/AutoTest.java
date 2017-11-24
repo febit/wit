@@ -85,9 +85,13 @@ public class AutoTest {
                 }
                 out.reset();
             } else {
-                mergeTemplate(templatePath, new DiscardOut());
+                mergeTemplate(templatePath);
             }
         }
+    }
+
+    public void mergeTemplate(String templatePath) throws ResourceNotFoundException {
+        mergeTemplate(templatePath, DiscardOut.INSTANCE);
     }
 
     public void mergeTemplate(String templatePath, OutputStream out) throws ResourceNotFoundException {

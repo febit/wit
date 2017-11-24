@@ -7,7 +7,6 @@ import org.febit.wit.EngineManager;
 import org.febit.wit.Function;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.io.impl.DiscardOut;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ public class FunctionExportTest {
     @Test
     public void test() throws ResourceNotFoundException {
 
-        Context context = EngineManager.getTemplate("/functionExportTest.wit").merge(new DiscardOut());
+        Context context = EngineManager.getTemplate("/functionExportTest.wit").merge();
 
         //plus
         Function plus = context.exportFunction("plus");

@@ -3,7 +3,6 @@ package org.febit.wit.test.tmpls;
 
 import org.febit.wit.EngineManager;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.io.impl.DiscardOut;
 import org.junit.Test;
 
 /**
@@ -14,10 +13,7 @@ public class RouteLoaderTest {
 
     @Test
     public void test() throws ResourceNotFoundException {
-
-        DiscardOut out = new DiscardOut();
-
-        EngineManager.getTemplate("lib:/lib.wit").merge(out);
-        EngineManager.getTemplate("lib:sub:/lib-sub.wit").merge(out);
+        EngineManager.getTemplate("lib:/lib.wit").merge();
+        EngineManager.getTemplate("lib:sub:/lib-sub.wit").merge();
     }
 }

@@ -31,7 +31,7 @@ public class WitResult extends BaseActionResult<Object> implements WebEngineMana
         this.targetCache = new HashMap<>();
         this.engineManager
                 = new WebEngineManager(this)
-                .setProperties(CFG.APPEND_LOST_SUFFIX, Boolean.TRUE);
+                        .setProperties(CFG.APPEND_LOST_SUFFIX, Boolean.TRUE);
     }
 
     public static WitData render() {

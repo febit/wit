@@ -4,7 +4,6 @@ package org.febit.wit.test.tmpls;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.io.impl.DiscardOut;
 import org.junit.Test;
 
 /**
@@ -18,7 +17,7 @@ public class HelloTest {
 
         Template template = EngineManager.getTemplate("/helloTest.wit");
         template.reload();
-        template.merge(new DiscardOut());
+        template.merge();
 //        template.merge(System.out);
     }
 }

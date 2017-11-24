@@ -25,7 +25,7 @@ public class Function {
     protected final Out defaultOut;
 
     public Function(Template container, MethodDeclare methodDeclare) {
-        this(container, methodDeclare, container.engine.getEncoding(), false);
+        this(container, methodDeclare, DiscardOut.INSTANCE);
     }
 
     public Function(Template container, MethodDeclare methodDeclare, InternedEncoding encoding, boolean isByteStream) {

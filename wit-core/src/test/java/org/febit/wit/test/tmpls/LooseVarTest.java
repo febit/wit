@@ -6,7 +6,6 @@ import org.febit.wit.Engine;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.util.ClassUtil;
 import org.junit.Test;
 
@@ -24,7 +23,7 @@ public class LooseVarTest {
         try {
             field.set(engine, true);
             Template template = engine.getTemplate("/looseVar.wit");
-            template.merge(new DiscardOut());
+            template.merge();
         } finally {
             field.set(engine, false);
         }

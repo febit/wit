@@ -10,7 +10,6 @@ import org.febit.wit.Vars;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.debug.BreakPointListener;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.io.impl.DiscardOut;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -27,11 +26,11 @@ public class DebugTest {
     public void test() throws ResourceNotFoundException {
         Template template = EngineManager.getTemplate("/debug.wit");
 
-        template.merge(new DiscardOut());
+        template.merge();
 
         labelCache.clear();
         pointCount = 0;
-        template.debug(Vars.EMPTY, new DiscardOut(), new BreakPointListener() {
+        template.debug(Vars.EMPTY, new BreakPointListener() {
 
             @Override
             public void onBreak(Object label, InternalContext context, Statement statement, Object result) {

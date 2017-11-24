@@ -16,7 +16,7 @@ import org.febit.wit.util.FileNameUtil;
  *
  * @author zqq90
  */
-public class TLDGlobalRegister implements GlobalRegister{
+public class TLDGlobalRegister implements GlobalRegister {
 
     protected String prefix = "";
     protected String tld;

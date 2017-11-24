@@ -33,7 +33,7 @@ public class WitRenderFactory implements IMainRenderFactory {
         this.suffix = suffix;
         this.engineManager
                 = new WebEngineManager(JFinal.me().getServletContext())
-                .appendProperties(CFG.RESOLVERS, "org.febit.wit.support.jfinal.ModelResolver, org.febit.wit.support.jfinal.RecordResolver");
+                        .appendProperties(CFG.RESOLVERS, "org.febit.wit.support.jfinal.ModelResolver, org.febit.wit.support.jfinal.RecordResolver");
     }
 
     public void setConfigPath(String configPath) {

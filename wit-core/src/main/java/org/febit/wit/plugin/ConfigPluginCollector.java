@@ -5,7 +5,7 @@ import org.febit.wit.Engine;
 import org.febit.wit.Init;
 
 /**
- * 
+ *
  * @since 2.4.0
  * @author zqq90
  */
