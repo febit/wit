@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.febit.wit.core.ast.Statement;
+import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
 
 /**
  *
@@ -58,7 +59,8 @@ public class ScriptRuntimeException extends TemplateException {
                     .print(":")
                     .print(statement.column)
                     .print(" ")
-                    .println(statement.getClass().getSimpleName());
+                    .print(statement.getClass().getSimpleName())
+                    .print('\n');
         }
     }
 }

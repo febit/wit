@@ -24,6 +24,7 @@ import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.ResourceOffset;
 import org.febit.wit.util.ClassNameBand;
 import org.febit.wit.util.ClassUtil;
+import org.febit.wit.util.ExceptionUtil;
 import org.febit.wit.util.Stack;
 import org.febit.wit.util.StatementUtil;
 import org.febit.wit.util.StringUtil;
@@ -508,7 +509,7 @@ abstract class AbstractParser {
         try {
             cls = ClassUtil.getClass("java.lang.".concat(className));
         } catch (Exception ex) {
-            // ignore
+            ExceptionUtil.ignore(ex);
         }
         if (cls != null) {
             return cls.getName();

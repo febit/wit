@@ -2,6 +2,7 @@
 package org.febit.wit.exceptions;
 
 import org.febit.wit.core.ast.Statement;
+import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
 
 /**
  *

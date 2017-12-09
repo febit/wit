@@ -17,6 +17,7 @@ public final class SimpleLogger extends AbstractLogger {
 
     private String prefix;
     private int levelNum;
+    private final PrintStream out = System.out;
 
     @Init
     public void init() {
@@ -56,11 +57,12 @@ public final class SimpleLogger extends AbstractLogger {
     }
 
     private void printLog(int level, String msg, Throwable throwable) {
-        if (isEnabled(level)) {
-            System.out.println(prefix.concat(msg != null ? msg : ""));
-            if (throwable != null) {
-                throwable.printStackTrace(System.out);
-            }
+        if (!isEnabled(level)) {
+            return;
+        }
+        out.println(prefix.concat(msg != null ? msg : ""));
+        if (throwable != null) {
+            throwable.printStackTrace(out);
         }
     }
 }

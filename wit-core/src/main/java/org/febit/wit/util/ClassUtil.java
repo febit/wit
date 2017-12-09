@@ -294,7 +294,7 @@ public class ClassUtil {
         try {
             accessible.setAccessible(true);
         } catch (SecurityException ex) {
-            // ignore
+            ExceptionUtil.ignore(ex);
         }
     }
 
