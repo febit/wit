@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.tools.cache;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
@@ -11,7 +12,6 @@ import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.ArrayUtil;
-import org.febit.wit.util.ByteArrayOutputStream;
 import org.febit.wit.util.CharArrayWriter;
 
 /**
@@ -134,7 +134,7 @@ public class CacheGlobalRegister implements GlobalRegister {
                     } finally {
                         context.out = preOut;
                     }
-                    outted = out.toArray();
+                    outted = out.toByteArray();
                 } else {
                     final CharArrayWriter writer = new CharArrayWriter(256);
 

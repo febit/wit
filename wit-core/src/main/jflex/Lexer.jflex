@@ -3,7 +3,7 @@ package org.febit.wit.core;
 
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.loaders.ResourceOffset;
-import org.febit.wit.util.CharArrayWriter;
+import org.febit.wit.util.LexerCharArrayWriter;
 
 %%
 %class Lexer
@@ -27,7 +27,7 @@ import org.febit.wit.util.CharArrayWriter;
     private int templateStringBraceClosingCounter = 0;
 
     private boolean trimCodeBlockBlankLine = false;
-    private final CharArrayWriter stringBuffer = new CharArrayWriter(256);
+    private final LexerCharArrayWriter stringBuffer = new LexerCharArrayWriter(256);
     private int stringLine = 0;
     private int stringColumn = 0;
     
@@ -84,13 +84,13 @@ import org.febit.wit.util.CharArrayWriter;
     }
 
     private char[] popAsCharArray() {
-        char[] chars = stringBuffer.toArray();
+        char[] chars = stringBuffer.toCharArray();
         stringBuffer.reset();
         return chars;
     }
 
-    private char[] popAsCharArraySkipIfLeftNewLine() {
-        char[] chars = stringBuffer.toArraySkipIfLeftNewLine();
+    private char[] popAsCharArrayOmitStartingLineSeparator() {
+        char[] chars = stringBuffer.toArrayOmitStartingLineSeparator();
         stringBuffer.reset();
         return chars;
     }
@@ -106,7 +106,7 @@ import org.febit.wit.util.CharArrayWriter;
     }
 
     private void appendToString(char c) {
-        stringBuffer.append(c);
+        stringBuffer.write(c);
     }
 
     private void appendToString(char c, int repeat) {
@@ -119,7 +119,7 @@ import org.febit.wit.util.CharArrayWriter;
             while (repeat != 0) {
                 chars[--repeat] = c;
             }
-            stringBuffer.append(chars);
+            stringBuffer.write(chars);
         }
     }
 
@@ -128,7 +128,7 @@ import org.febit.wit.util.CharArrayWriter;
     }
 
     private void pullToString() {
-        stringBuffer.append(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+        stringBuffer.write(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
     }
 
     void codeFirst() {
@@ -136,7 +136,7 @@ import org.febit.wit.util.CharArrayWriter;
     }
 
 //    private void pullToString(int startOffset, int endOffset) {
-//        stringBuffer.append(zzBuffer, zzStartRead + startOffset, zzMarkedPos - zzStartRead + endOffset);
+//        stringBuffer.write(zzBuffer, zzStartRead + startOffset, zzMarkedPos - zzStartRead + endOffset);
 //    }
 
     private Symbol symbol(int sym) {
@@ -157,11 +157,11 @@ import org.febit.wit.util.CharArrayWriter;
         final char[] chars;
         if(trimCodeBlockBlankLine){
             if(!interpolationFlag){
-                stringBuffer.trimRightBlankToNewLine();
+                stringBuffer.trimRightAfterLastLineSeparator();
             }
             chars = this.leftInterpolationFlag
                     ? popAsCharArray()
-                    : popAsCharArraySkipIfLeftNewLine();
+                    : popAsCharArrayOmitStartingLineSeparator();
         }else{
             chars = popAsCharArray();
         }
@@ -326,7 +326,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 
   [^]                                  { pullToString(); }
 
-  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(Tokens.TEXT_STATEMENT, stringLine, stringColumn, (!trimCodeBlockBlankLine || this.leftInterpolationFlag) ? popAsCharArray() : popAsCharArraySkipIfLeftNewLine());}
+  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(Tokens.TEXT_STATEMENT, stringLine, stringColumn, (!trimCodeBlockBlankLine || this.leftInterpolationFlag) ? popAsCharArray() : popAsCharArrayOmitStartingLineSeparator());}
 }
 
 

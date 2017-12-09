@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.tools.test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +20,6 @@ import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.tools.EngineManager;
 import org.febit.wit.util.ClassUtil;
-import org.febit.wit.util.ByteArrayOutputStream;
 import static org.junit.Assert.*;
 
 /**
@@ -78,7 +78,7 @@ public class AutoTest {
                         while ((read = in.read(buffer, 0, BUFFER_SIZE)) >= 0) {
                             bytesBuffer.write(buffer, 0, read);
                         }
-                        assertArrayEquals(bytesBuffer.toArray(), out.toArray());
+                        assertArrayEquals(bytesBuffer.toByteArray(), out.toByteArray());
                         System.out.println("\tresult match to: " + outPath);
 
                         bytesBuffer.reset();

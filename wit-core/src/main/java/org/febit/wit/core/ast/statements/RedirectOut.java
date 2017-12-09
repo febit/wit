@@ -1,14 +1,14 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
+import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
-import org.febit.wit.util.ByteArrayOutputStream;
-import org.febit.wit.util.CharArrayWriter;
 
 /**
  *
@@ -32,14 +32,14 @@ public class RedirectOut extends Statement {
             ByteArrayOutputStream out = new ByteArrayOutputStream(256);
             context.out = new OutputStreamOut(out, (OutputStreamOut) current);
             srcStatement.execute(context);
-            toExpr.setValue(context, out.toArray());
+            toExpr.setValue(context, out.toByteArray());
         } else {
             CharArrayWriter writer = new CharArrayWriter(256);
             context.out = current instanceof WriterOut
                     ? new WriterOut(writer, (WriterOut) current)
                     : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory());
             srcStatement.execute(context);
-            toExpr.setValue(context, writer.toArray());
+            toExpr.setValue(context, writer.toCharArray());
         }
         context.out = current;
         return null;

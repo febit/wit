@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -100,10 +101,10 @@ public class PropsUtil {
                 charsBuffer.reset();
                 int read;
                 while ((read = reader.read(buffer)) >= 0) {
-                    charsBuffer.append(buffer, 0, read);
+                    charsBuffer.write(buffer, 0, read);
                 }
                 final Props tempProps = new Props();
-                tempProps.load(charsBuffer.toArray());
+                tempProps.load(charsBuffer.toCharArray());
                 charsBuffer.reset();
                 return tempProps;
             } catch (IOException ex) {

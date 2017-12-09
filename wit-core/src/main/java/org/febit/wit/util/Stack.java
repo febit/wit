@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public final class Stack<T> extends ArrayList<T> {
 
     public Stack() {
+        super();
     }
 
     public Stack(int initialCapacity) {
