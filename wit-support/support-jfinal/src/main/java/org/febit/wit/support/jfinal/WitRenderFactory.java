@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.febit.wit.CFG;
 import org.febit.wit.servlet.ServletUtil;
 import org.febit.wit.servlet.WebEngineManager;
 
@@ -19,8 +18,8 @@ import org.febit.wit.servlet.WebEngineManager;
  */
 public class WitRenderFactory implements IMainRenderFactory {
 
-    protected static final String encoding = Render.getEncoding();
-    protected static final String contentType = "text/html; charset=" + encoding;
+    public static final String RESOLVERS = "resolverManager.resolvers";
+    protected static final String CONTENT_TYPE = "text/html; charset=" + Render.getEncoding();
 
     protected final WebEngineManager engineManager;
     protected final String suffix;
@@ -33,7 +32,7 @@ public class WitRenderFactory implements IMainRenderFactory {
         this.suffix = suffix;
         this.engineManager
                 = new WebEngineManager(JFinal.me().getServletContext())
-                        .appendProperties(CFG.RESOLVERS, "org.febit.wit.support.jfinal.ModelResolver, org.febit.wit.support.jfinal.RecordResolver");
+                        .appendProperties(RESOLVERS, "org.febit.wit.support.jfinal.ModelResolver, org.febit.wit.support.jfinal.RecordResolver");
     }
 
     public void setConfigPath(String configPath) {
@@ -80,7 +79,7 @@ public class WitRenderFactory implements IMainRenderFactory {
 
     protected void render(final String realView, final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            response.setContentType(contentType);
+            response.setContentType(CONTENT_TYPE);
             this.engineManager.renderTemplate(realView, ServletUtil.wrapToKeyValues(request, response), response);
         } catch (IOException ex) {
             throw new RenderException(ex);

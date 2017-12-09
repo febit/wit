@@ -12,7 +12,6 @@ import jodd.madvoc.component.MadvocController;
 import jodd.madvoc.component.ResultMapper;
 import jodd.madvoc.meta.In;
 import jodd.madvoc.result.BaseActionResult;
-import org.febit.wit.CFG;
 import org.febit.wit.servlet.ServletUtil;
 import org.febit.wit.servlet.WebEngineManager;
 
@@ -22,6 +21,7 @@ import org.febit.wit.servlet.WebEngineManager;
  */
 public class WitResult extends BaseActionResult<Object> implements WebEngineManager.ServletContextProvider {
 
+    public static final String APPEND_LOST_SUFFIX = "pathLoader.appendLostSuffix";
     public static final WitData DEFAULT_RESULT = new WitData(null, null);
 
     public static final String NAME = "wit";
@@ -31,7 +31,7 @@ public class WitResult extends BaseActionResult<Object> implements WebEngineMana
         this.targetCache = new HashMap<>();
         this.engineManager
                 = new WebEngineManager(this)
-                        .setProperties(CFG.APPEND_LOST_SUFFIX, Boolean.TRUE);
+                        .setProperties(APPEND_LOST_SUFFIX, Boolean.TRUE);
     }
 
     public static WitData render() {

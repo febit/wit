@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletContext;
-import org.febit.wit.CFG;
 import org.febit.wit.Engine;
 import org.febit.wit.util.Props;
 import org.febit.wit.util.PropsUtil;
@@ -18,6 +17,7 @@ import org.febit.wit.util.PropsUtil;
  */
 public class ServletEngineUtil {
 
+    private static final String SERVLET_CONTEXT = "servlet.servletContext";
     private static final String DEFAULT_WEB_PROPERTIES = "/default-servlet.wim";
 
     public static Engine createEngine(final ServletContext servletContext, final String configFiles) {
@@ -30,7 +30,7 @@ public class ServletEngineUtil {
         final Props props;
         props = loadProps(Engine.createConfigProps(DEFAULT_WEB_PROPERTIES), servletContext, configFiles);
         settings = new HashMap<>();
-        settings.put(CFG.SERVLET_CONTEXT, servletContext);
+        settings.put(SERVLET_CONTEXT, servletContext);
         if (extraSettings != null) {
             settings.putAll(extraSettings);
         }

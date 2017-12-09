@@ -2,6 +2,7 @@
 package org.febit.wit.tools.cache;
 
 import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.Serializable;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
@@ -12,7 +13,6 @@ import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.ArrayUtil;
-import org.febit.wit.util.CharArrayWriter;
 
 /**
  *
@@ -144,7 +144,7 @@ public class CacheGlobalRegister implements GlobalRegister {
 
                     try {
                         returned = methodDeclare.invoke(context, methodArgs);
-                        outted = writer.toArray();
+                        outted = writer.toCharArray();
                     } finally {
                         context.out = preOut;
                     }
