@@ -1,8 +1,10 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.exceptions;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.febit.wit.core.ast.Statement;
-import org.febit.wit.util.Stack;
 
 /**
  *
@@ -10,7 +12,7 @@ import org.febit.wit.util.Stack;
  */
 public class ScriptRuntimeException extends TemplateException {
 
-    protected final Stack<Statement> statementStack = new Stack<>(8);
+    protected final List<Statement> statementStack = new ArrayList<>(8);
 
     public ScriptRuntimeException(String message) {
         super(message);
@@ -18,7 +20,7 @@ public class ScriptRuntimeException extends TemplateException {
 
     public ScriptRuntimeException(String message, Statement statement) {
         super(message);
-        registStatement(statement);
+        addStatement(statement);
     }
 
     public ScriptRuntimeException(String message, Throwable cause) {
@@ -27,7 +29,7 @@ public class ScriptRuntimeException extends TemplateException {
 
     public ScriptRuntimeException(String message, Throwable cause, Statement statement) {
         super(message, cause);
-        registStatement(statement);
+        addStatement(statement);
     }
 
     public ScriptRuntimeException(Throwable cause) {
@@ -36,22 +38,20 @@ public class ScriptRuntimeException extends TemplateException {
 
     public ScriptRuntimeException(Throwable cause, Statement statement) {
         super(cause);
-        registStatement(statement);
+        addStatement(statement);
     }
 
-    public final void registStatement(Statement statement) {
-        statementStack.push(statement);
+    public final void addStatement(Statement statement) {
+        statementStack.add(statement);
     }
 
-    public Stack<Statement> getStatementStack() {
-        return statementStack;
+    public List<Statement> getStatementStack() {
+        return Collections.unmodifiableList(statementStack);
     }
 
     @Override
     protected void printBody(PrintStreamOrWriter out, String prefix) {
-        Statement statement;
-        for (int i = statementStack.size() - 1; i >= 0; i--) {
-            statement = statementStack.peek(i);
+        for (Statement statement : statementStack) {
             out.print(prefix)
                     .print("\tat ")
                     .print(statement.line)

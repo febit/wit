@@ -166,7 +166,7 @@ public class StatementUtil {
     public static ScriptRuntimeException castToScriptRuntimeException(final Exception exception, final Statement statement) {
         if (exception instanceof ScriptRuntimeException) {
             ScriptRuntimeException scriptException = (ScriptRuntimeException) exception;
-            scriptException.registStatement(statement);
+            scriptException.addStatement(statement);
             return scriptException;
         } else {
             return new ScriptRuntimeException(exception.toString(), exception, statement);
