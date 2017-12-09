@@ -193,7 +193,7 @@ public class AsmResolverManager extends ResolverManager {
     }
 
     private static void appendGetFieldCode(final MethodWriter m, final FieldInfo fieldInfo, final String beanName) {
-        final Method getter = fieldInfo.getGetter();
+        final Method getter = fieldInfo.getGetterMethod();
         final Field field = fieldInfo.getField();
         if (getter != null || field != null) {
             Class resultType = getter != null ? getter.getReturnType() : field.getType();
@@ -215,7 +215,7 @@ public class AsmResolverManager extends ResolverManager {
     }
 
     private static void appendSetFieldCode(final MethodWriter m, final FieldInfo fieldInfo, final String beanName) {
-        final Method setter = fieldInfo.getSetter();
+        final Method setter = fieldInfo.getSetterMethod();
         if (setter != null || fieldInfo.isFieldSettable()) {
             Class fieldClass = setter != null ? setter.getParameterTypes()[0] : fieldInfo.getField().getType();
             m.visitVarInsn(Constants.ALOAD, 1);

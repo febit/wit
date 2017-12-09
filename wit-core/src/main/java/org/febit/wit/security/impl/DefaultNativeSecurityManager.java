@@ -76,11 +76,11 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
         }
 
         public final boolean isAccess() {
-            if (this.inherited) {
-                return this.access;
+            if (!this.inherited) {
+                this.access = this.parent.isAccess();
+                this.inherited = true;
             }
-            this.inherited = true;
-            return this.access = this.parent.isAccess();
+            return this.access;
         }
 
         /**

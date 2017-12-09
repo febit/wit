@@ -24,6 +24,7 @@ public final class ContextValue extends AssignableExpression {
 
     @Override
     public Object setValue(final InternalContext context, final Object value) {
-        return context.vars[index] = value;
+        context.vars[index] = value;
+        return value;
     }
 }

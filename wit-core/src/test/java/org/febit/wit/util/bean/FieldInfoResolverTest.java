@@ -125,48 +125,48 @@ public class FieldInfoResolverTest {
 
         info = infoMap.get("public0");
         assertNotNull(info.getField());
-        assertNull(info.getGetter());
-        assertNull(info.getSetter());
+        assertNull(info.getGetterMethod());
+        assertNull(info.getSetterMethod());
 
         info = infoMap.get("publicWithGetterSetter0");
         assertNotNull(info.getField());
-        assertNotNull(info.getGetter());
-        assertNotNull(info.getSetter());
+        assertNotNull(info.getGetterMethod());
+        assertNotNull(info.getSetterMethod());
 
         info = infoMap.get("privateWithGetter0");
         assertNull(info.getField());
-        assertNotNull(info.getGetter());
-        assertNull(info.getSetter());
+        assertNotNull(info.getGetterMethod());
+        assertNull(info.getSetterMethod());
 
         info = infoMap.get("privateWithSetter0");
         assertNull(info.getField());
-        assertNull(info.getGetter());
-        assertNotNull(info.getSetter());
+        assertNull(info.getGetterMethod());
+        assertNotNull(info.getSetterMethod());
 
         info = infoMap.get("privateWithGetterSetter0");
         assertNull(info.getField());
-        assertNotNull(info.getGetter());
-        assertNotNull(info.getSetter());
+        assertNotNull(info.getGetterMethod());
+        assertNotNull(info.getSetterMethod());
 
         info = infoMap.get("protected1");
         assertNull(info.getField());
-        assertNotNull(info.getGetter());
-        assertNull(info.getSetter());
+        assertNotNull(info.getGetterMethod());
+        assertNull(info.getSetterMethod());
 
         info = infoMap.get("methodField0");
         assertNull(info.getField());
-        assertNotNull(info.getGetter());
-        assertNull(info.getSetter());
+        assertNotNull(info.getGetterMethod());
+        assertNull(info.getSetterMethod());
 
         info = infoMap.get("methodField3");
         assertNull(info.getField());
-        assertNull(info.getGetter());
-        assertNotNull(info.getSetter());
+        assertNull(info.getGetterMethod());
+        assertNotNull(info.getSetterMethod());
 
         info = infoMap.get("methodField4");
         assertNull(info.getField());
-        assertNotNull(info.getGetter());
-        assertNull(info.getSetter());
+        assertNotNull(info.getGetterMethod());
+        assertNull(info.getSetterMethod());
     }
 
     @Test

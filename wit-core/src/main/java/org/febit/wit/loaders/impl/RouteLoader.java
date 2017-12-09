@@ -38,7 +38,8 @@ public class RouteLoader implements Loader {
             if (index < 0) {
                 throw new IllegalConfigException("Illegal RouteLoader rule: ".concat(raw));
             }
-            final String rule = prefixes[i] = raw.substring(0, index);
+            final String rule = raw.substring(0, index);
+            prefixes[i] = rule;
             loaderMap.put(rule, new LoaderEntry(rule,
                     (Loader) engine.get(raw.substring(index + 1).trim())));
         }

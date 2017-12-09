@@ -62,9 +62,8 @@ public class GlobalManager {
         final Object[] oldGlobalContext = this.globalContext;
         oldSize = oldGlobalContext != null ? oldGlobalContext.length : 0;
 
-        final Object[] newGlobalContext = this.globalContext
-                = new Object[oldSize + this.driftedGlobalMap.size()];
-
+        final Object[] newGlobalContext = new Object[oldSize + this.driftedGlobalMap.size()];
+        this.globalContext = newGlobalContext;
         if (oldSize > 0) {
             //Copy old data
             System.arraycopy(oldGlobalContext, 0, newGlobalContext, 0, oldSize);

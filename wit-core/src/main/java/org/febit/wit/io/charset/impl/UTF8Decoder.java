@@ -24,9 +24,8 @@ public final class UTF8Decoder implements Decoder {
         if (bytes == null || len == 0) {
             return;
         }
-        final char[] chars;
-        int used = UTF8.decode(bytes, off, len,
-                chars = this.buffers.getChars(len));
+        final char[] chars = this.buffers.getChars(len);
+        int used = UTF8.decode(bytes, off, len, chars);
         writer.write(chars, 0, used);
     }
 }

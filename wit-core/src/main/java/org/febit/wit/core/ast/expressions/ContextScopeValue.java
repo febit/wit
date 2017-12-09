@@ -26,6 +26,7 @@ public final class ContextScopeValue extends AssignableExpression {
 
     @Override
     public Object setValue(final InternalContext context, final Object value) {
-        return context.parentScopes[scope][index] = value;
+        context.parentScopes[scope][index] = value;
+        return value;
     }
 }

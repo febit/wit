@@ -76,11 +76,11 @@ public final class FieldInfoResolver {
     }
 
     private void registGetterMethod(String name, Method method) {
-        getOrCreateFieldInfo(name).getter = method;
+        getOrCreateFieldInfo(name).getterMethod = method;
     }
 
     private void registSetterMethod(String name, Method method) {
-        getOrCreateFieldInfo(name).setter = method;
+        getOrCreateFieldInfo(name).setterMethod = method;
     }
 
     static String cutFieldName(final String string, final int from) {

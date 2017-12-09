@@ -54,13 +54,7 @@ public class BeanUtil {
         final FieldInfo[] fieldInfos = FieldInfoResolver.resolve(cls);
         final Map<String, Accessor> map = new HashMap<>(fieldInfos.length * 4 / 3 + 1, 0.75f);
         for (FieldInfo fieldInfo : fieldInfos) {
-            map.put(fieldInfo.name, new Accessor(
-                    fieldInfo.getGetter() != null ? new MethodGetter(fieldInfo.getGetter())
-                    : fieldInfo.getField() != null ? new FieldGetter(fieldInfo.getField())
-                    : null,
-                    fieldInfo.getSetter() != null ? new MethodSetter(fieldInfo.getSetter())
-                    : fieldInfo.isFieldSettable() ? new FieldSetter(fieldInfo.getField())
-                    : null));
+            map.put(fieldInfo.name, new Accessor(fieldInfo.getGetter(), fieldInfo.getSetter()));
         }
         return map;
     }
@@ -76,25 +70,19 @@ public class BeanUtil {
         }
     }
 
-    private abstract static class Getter {
+    public interface Getter {
 
-        Getter() {
-        }
-
-        public abstract Object get(Object bean);
+        Object get(Object bean);
     }
 
-    private abstract static class Setter {
+    public interface Setter {
 
-        Setter() {
-        }
+        Class getType();
 
-        public abstract Class getType();
-
-        public abstract void set(Object bean, Object value);
+        void set(Object bean, Object value);
     }
 
-    private static final class MethodGetter extends Getter {
+    static final class MethodGetter implements Getter {
 
         private final Method method;
 
@@ -113,7 +101,7 @@ public class BeanUtil {
         }
     }
 
-    private static final class MethodSetter extends Setter {
+    static final class MethodSetter implements Setter {
 
         private final Method method;
         private final Class fieldType;
@@ -139,7 +127,7 @@ public class BeanUtil {
         }
     }
 
-    private static final class FieldGetter extends Getter {
+    static final class FieldGetter implements Getter {
 
         private final Field field;
 
@@ -158,7 +146,7 @@ public class BeanUtil {
         }
     }
 
-    private static final class FieldSetter extends Setter {
+    static final class FieldSetter implements Setter {
 
         private final Field field;
 

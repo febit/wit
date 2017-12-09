@@ -22,11 +22,10 @@ public final class PlusPlusAfter extends Expression {
 
     @Override
     public Object execute(final InternalContext context) {
+        final AssignableExpression resetable = this.expr;
         try {
-            final Object value;
-            final AssignableExpression resetable = this.expr;
-            resetable.setValue(context, ALU.plusOne(
-                    value = resetable.execute(context)));
+            final Object value = resetable.execute(context);
+            resetable.setValue(context, ALU.plusOne(value));
             return value;
         } catch (Exception e) {
             throw StatementUtil.castToScriptRuntimeException(e, this);

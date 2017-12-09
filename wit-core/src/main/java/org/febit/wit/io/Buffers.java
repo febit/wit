@@ -43,8 +43,9 @@ public final class Buffers {
             if (value >= length) {
                 return value;
             }
-            if ((value <<= 1) > (1 << 13)) {
-                //MAX_SIZE 8192
+            value <<= 1;
+            if (value > (1 << 13)) {
+                // MAX_SIZE 8192
                 return length;
             }
         }

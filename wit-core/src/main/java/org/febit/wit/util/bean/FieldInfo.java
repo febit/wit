@@ -15,8 +15,8 @@ public final class FieldInfo implements Comparable<FieldInfo> {
     public final Class owner;
     public final int hashOfName;
     Field field;
-    Method getter;
-    Method setter;
+    Method getterMethod;
+    Method setterMethod;
 
     public FieldInfo(Class owner, String name) {
         this.owner = owner;
@@ -24,12 +24,32 @@ public final class FieldInfo implements Comparable<FieldInfo> {
         this.hashOfName = name.hashCode();
     }
 
-    public Method getGetter() {
-        return getter;
+    public Method getGetterMethod() {
+        return getterMethod;
     }
 
-    public Method getSetter() {
-        return setter;
+    public Method getSetterMethod() {
+        return setterMethod;
+    }
+
+    public BeanUtil.Getter getGetter() {
+        if (getterMethod != null) {
+            return new BeanUtil.MethodGetter(getterMethod);
+        }
+        if (field != null) {
+            return new BeanUtil.FieldGetter(field);
+        }
+        return null;
+    }
+
+    public BeanUtil.Setter getSetter() {
+        if (setterMethod != null) {
+            return new BeanUtil.MethodSetter(setterMethod);
+        }
+        if (isFieldSettable()) {
+            return new BeanUtil.FieldSetter(field);
+        }
+        return null;
     }
 
     public Field getField() {

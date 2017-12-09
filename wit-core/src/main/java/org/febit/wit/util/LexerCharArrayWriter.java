@@ -1,7 +1,9 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-public class LexerCharArrayWriter extends java.io.CharArrayWriter {
+import java.io.CharArrayWriter;
+
+public class LexerCharArrayWriter extends CharArrayWriter {
 
     public LexerCharArrayWriter() {
         this(256);

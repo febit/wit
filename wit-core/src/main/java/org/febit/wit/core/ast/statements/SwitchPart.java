@@ -27,7 +27,7 @@ public final class SwitchPart {
         this.caseMap = new HashMap<>();
     }
 
-    public SwitchPart setSwitchExpr(Expression switchExpr, int line, int column) {
+    public SwitchPart setSwitchExpr(Expression switchExpr) {
         this.switchExpr = switchExpr;
         return this;
     }

@@ -83,10 +83,8 @@ public final class WriterOut implements Out {
     @Override
     public void write(final String string, final int offset, final int length) {
         try {
-            final char[] chars;
-            string.getChars(offset, offset + length,
-                    chars = this.buffers.getChars(length),
-                    0);
+            final char[] chars = this.buffers.getChars(length);
+            string.getChars(offset, offset + length, chars, 0);
             this.writer.write(chars, 0, length);
         } catch (IOException ex) {
             throw new ScriptRuntimeException(ex);
