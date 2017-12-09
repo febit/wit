@@ -15,8 +15,10 @@ import org.febit.wit_shaded.asm.MethodWriter;
  */
 class ASMUtil {
 
-    private static final AsmClassLoader CLASS_LOADER = new AsmClassLoader();
+    static final String TYPE_STRING_NAME = "java/lang/String";
+    static final String METHOD_CTOR = "<init>";
     static final AtomicInteger NEXT_SN = new AtomicInteger(1);
+    private static final AsmClassLoader CLASS_LOADER = new AsmClassLoader();
 
     private ASMUtil() {
     }
@@ -53,7 +55,7 @@ class ASMUtil {
         if (type == byte.class) {
             return "java/lang/Byte";
         }
-        //void.class
+        // void.class
         return "java/lang/Void";
     }
 
@@ -122,7 +124,7 @@ class ASMUtil {
         if (c == long.class) {
             return "J";
         }
-        //Void.TYPE
+        // void.class
         return "V";
     }
 
@@ -130,93 +132,37 @@ class ASMUtil {
         if (!type.isPrimitive()) {
             return;
         }
-        if (type == int.class) {
-            m.invokeStatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
+        if (type == void.class) {
+            m.visitFieldInsn(Constants.GETSTATIC, "org/febit/wit/lang/InternalVoid", "VOID", "Lorg/febit/wit/lang/InternalVoid;");
             return;
         }
-        if (type == boolean.class) {
-            m.invokeStatic("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
-            return;
-        }
-        if (type == long.class) {
-            m.invokeStatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
-            return;
-        }
-        if (type == double.class) {
-            m.invokeStatic("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;");
-            return;
-        }
-        if (type == float.class) {
-            m.invokeStatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
-            return;
-        }
-        if (type == short.class) {
-            m.invokeStatic("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;");
-            return;
-        }
-        if (type == char.class) {
-            m.invokeStatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
-            return;
-        }
-        if (type == byte.class) {
-            m.invokeStatic("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
-            return;
-        }
-        //void.class
-        m.visitFieldInsn(Constants.GETSTATIC, "org/febit/wit/lang/InternalVoid", "VOID", "Lorg/febit/wit/lang/InternalVoid;");
+        String boxedType = getBoxedInternalName(type);
+        m.invokeStatic(boxedType, "valueOf", "(" + getDescriptor(type) + ")L" + boxedType + ";");
     }
 
     static void visitUnboxIfNeed(final MethodWriter m, final Class type) {
         if (!type.isPrimitive()) {
             return;
         }
-        if (type == int.class) {
-            m.invokeVirtual("java/lang/Integer", "intValue", "()I");
+        if (type == void.class) {
+            // ignore void.class
             return;
         }
-        if (type == boolean.class) {
-            m.invokeVirtual("java/lang/Boolean", "booleanValue", "()Z");
-            return;
-        }
-        if (type == long.class) {
-            m.invokeVirtual("java/lang/Long", "longValue", "()J");
-            return;
-        }
-        if (type == double.class) {
-            m.invokeVirtual("java/lang/Double", "doubleValue", "()D");
-            return;
-        }
-        if (type == float.class) {
-            m.invokeVirtual("java/lang/Float", "floatValue", "()F");
-            return;
-        }
-        if (type == short.class) {
-            m.invokeVirtual("java/lang/Short", "shortValue", "()S");
-            return;
-        }
-        if (type == char.class) {
-            m.invokeVirtual("java/lang/Character", "charValue", "()C");
-            return;
-        }
-        if (type == byte.class) {
-            m.invokeVirtual("java/lang/Byte", "byteValue", "()B");
-            return;
-        }
-        //ignore void.class
+        m.invokeVirtual(getBoxedInternalName(type), type.getName() + "Value", "()" + getDescriptor(type));
     }
 
     static void visitScriptRuntimeException(final MethodWriter m, final String message) {
         m.visitTypeInsn(Constants.NEW, "org/febit/wit/exceptions/ScriptRuntimeException");
         m.visitInsn(Constants.DUP);
         m.visitLdcInsn(message);
-        m.visitMethodInsn(Constants.INVOKESPECIAL, "org/febit/wit/exceptions/ScriptRuntimeException", "<init>", "(Ljava/lang/String;)V");
+        m.visitMethodInsn(Constants.INVOKESPECIAL, "org/febit/wit/exceptions/ScriptRuntimeException", METHOD_CTOR, "(Ljava/lang/String;)V");
         m.visitInsn(Constants.ATHROW);
     }
 
     static void visitConstructor(ClassWriter classWriter) {
-        MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "<init>", "()V", null);
+        MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, METHOD_CTOR, "()V", null);
         m.visitVarInsn(Constants.ALOAD, 0);
-        m.visitMethodInsn(Constants.INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
+        m.visitMethodInsn(Constants.INVOKESPECIAL, "java/lang/Object", METHOD_CTOR, "()V");
         m.visitInsn(Constants.RETURN);
         m.visitMaxs();
     }

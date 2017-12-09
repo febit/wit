@@ -649,7 +649,7 @@ public class ALU {
 
     private static Object charToInt(final Object o1) {
         if (o1 instanceof Character) {
-            return (int) ((Character) o1);
+            return Integer.valueOf((Character) o1);
         }
         return o1;
     }

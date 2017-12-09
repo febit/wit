@@ -13,11 +13,11 @@ public abstract class IterFilter implements Iter {
     protected final Iter iter;
     protected boolean gotPending;
     protected Object pending;
-    protected int _index;
+    protected int cursor;
 
     protected IterFilter(Iter iter) {
         this.iter = iter;
-        this._index = -1;
+        this.cursor = -1;
     }
 
     protected abstract boolean valid(Object item);
@@ -27,7 +27,7 @@ public abstract class IterFilter implements Iter {
         if (!hasNext()) {
             throw new NoSuchElementException("no more next");
         }
-        ++this._index;
+        ++this.cursor;
         this.gotPending = false;
         return this.pending;
     }
@@ -51,11 +51,11 @@ public abstract class IterFilter implements Iter {
 
     @Override
     public final boolean isFirst() {
-        return this._index == 0;
+        return this.cursor == 0;
     }
 
     @Override
     public final int index() {
-        return this._index;
+        return this.cursor;
     }
 }

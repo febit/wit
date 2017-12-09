@@ -16,6 +16,6 @@ public final class CharSequenceIter extends AbstractArrayIter {
 
     @Override
     public Object next() {
-        return chars.charAt(++_index);
+        return chars.charAt(++cursor);
     }
 }

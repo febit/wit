@@ -141,6 +141,28 @@ abstract class AbstractParser {
         "UNKNOWN"
     };
 
+    private final Map<String, String> importedClasses = new HashMap<>();
+    private final Map<String, Integer> labelIndexMap = new HashMap<>();
+    private final AtomicInteger nextLabelIndex = new AtomicInteger();
+
+    private TextStatementFactory textStatementFactory;
+    private BreakPointListener breakPointListener;
+    private Engine engine;
+    private NativeFactory nativeFactory;
+    private boolean locateVarForce;
+
+    protected final Stack<Symbol> symbolStack = new Stack<>(24);
+    protected Template template;
+    protected VariantManager varmgr;
+
+    /**
+     * flag to stop parser
+     */
+    protected boolean goonParse;
+
+    AbstractParser() {
+    }
+
     private static short getAction(final short[] row, final int sym) {
         final int len = row.length;
         int probe;
@@ -255,28 +277,6 @@ abstract class AbstractParser {
         return parse(template, null);
     }
 
-    private final Map<String, String> importedClasses = new HashMap<>();
-    private final Map<String, Integer> labelIndexMap = new HashMap<>();
-    private final AtomicInteger nextLabelIndex = new AtomicInteger();
-
-    private TextStatementFactory textStatementFactory;
-    private BreakPointListener breakPointListener;
-    private Engine engine;
-    private NativeFactory nativeFactory;
-    private boolean locateVarForce;
-
-    protected final Stack<Symbol> symbolStack = new Stack<>(24);
-    protected Template template;
-    protected VariantManager varmgr;
-
-    /**
-     * flag to stop parser
-     */
-    protected boolean goonParse;
-
-    AbstractParser() {
-    }
-
     abstract Object doAction(int actionId) throws ParseException;
 
     private Symbol process(final Lexer lexer) throws IOException {
@@ -376,11 +376,10 @@ abstract class AbstractParser {
             boolean isLastSymbolOnEdgeOfNewLine = currentSymbol.isOnEdgeOfNewLine;
             // if its less than zero, then it encodes a reduce action
             act = (-act) - 1;
-            final int symId, handleSize;
             final Object result = doAction(act);
             final short[] row = productionTable[act];
-            symId = row[0];
-            handleSize = row[1];
+            final int symId = row[0];
+            final int handleSize = row[1];
             if (handleSize == 0) {
                 currentSymbol = new Symbol(symId, -1, -1, result);
             } else {

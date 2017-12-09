@@ -90,7 +90,7 @@ public class AsmNativeFactory extends NativeFactory {
             isStatic = false;
             isConstructor = true;
             ownerClass = ASMUtil.getInternalName(constructor.getDeclaringClass().getName());
-            destName = "<init>";
+            destName = ASMUtil.METHOD_CTOR;
             destDesc = ASMUtil.getDescriptor(constructor);
             paramTypes = constructor.getParameterTypes();
             returnType = constructor.getDeclaringClass();
@@ -107,7 +107,7 @@ public class AsmNativeFactory extends NativeFactory {
             } else if (isConstructor) {
                 m.visitTypeInsn(Constants.NEW, ownerClass);
                 m.visitInsn(Constants.DUP);
-                m.visitMethodInsn(Constants.INVOKESPECIAL, ownerClass, "<init>", "()V");
+                m.visitMethodInsn(Constants.INVOKESPECIAL, ownerClass, ASMUtil.METHOD_CTOR, "()V");
                 m.visitInsn(Constants.ARETURN);
             } else {
                 Label toExcaption = new Label();

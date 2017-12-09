@@ -13,8 +13,9 @@ public class LexerCharArrayWriter extends CharArrayWriter {
         super(size);
     }
 
-    public void write(char cbuf[]) {
-        write(cbuf, 0, cbuf.length);
+    @Override
+    public void write(char[] source) {
+        write(source, 0, source.length);
     }
 
     public char[] toArrayOmitStartingLineSeparator() {

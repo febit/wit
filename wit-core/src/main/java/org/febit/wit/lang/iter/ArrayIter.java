@@ -16,6 +16,6 @@ public final class ArrayIter extends AbstractArrayIter {
 
     @Override
     public Object next() {
-        return array[++_index];
+        return array[++cursor];
     }
 }

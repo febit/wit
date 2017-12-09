@@ -152,9 +152,9 @@ public class AsmResolverManager extends ResolverManager {
         m.visitInsn(Constants.DUP);
         m.visitLdcInsn(StringUtil.concat("Invalid property ", beanClass.getName(), "#"));
         m.visitVarInsn(Constants.ALOAD, 2);
-        m.invokeStatic("java/lang/String", "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
-        m.invokeVirtual("java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;");
-        m.visitMethodInsn(Constants.INVOKESPECIAL, "org/febit/wit/exceptions/ScriptRuntimeException", "<init>", "(Ljava/lang/String;)V");
+        m.invokeStatic(ASMUtil.TYPE_STRING_NAME, "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
+        m.invokeVirtual(ASMUtil.TYPE_STRING_NAME, "concat", "(Ljava/lang/String;)Ljava/lang/String;");
+        m.visitMethodInsn(Constants.INVOKESPECIAL, "org/febit/wit/exceptions/ScriptRuntimeException", ASMUtil.METHOD_CTOR, "(Ljava/lang/String;)V");
         m.visitInsn(Constants.ATHROW);
         m.visitMaxs();
     }
@@ -174,7 +174,7 @@ public class AsmResolverManager extends ResolverManager {
         for (int i = start; i < end; i++) {
             m.visitLdcInsn(fieldInfos[i].name);
             m.visitVarInsn(Constants.ALOAD, 2);
-            m.invokeVirtual("java/lang/String", "equals", "(Ljava/lang/Object;)Z");
+            m.invokeVirtual(ASMUtil.TYPE_STRING_NAME, "equals", "(Ljava/lang/Object;)Z");
             // if true goto
             m.visitJumpInsn(Constants.IFNE, gotoTable[i - start]);
         }

@@ -11,8 +11,19 @@ import java.util.Map;
  */
 public class InternedEncoding {
 
-    private static final Map<String, InternedEncoding> INTERNED = new HashMap<>();
-    public static final InternedEncoding UTF_8 = intern("UTF-8");
+    public static final InternedEncoding UTF_8;
+    private static final Map<String, InternedEncoding> INTERNED;
+
+    static {
+        INTERNED = new HashMap<>();
+        UTF_8 = intern("UTF-8");
+    }
+
+    public final String value;
+
+    private InternedEncoding(String value) {
+        this.value = value;
+    }
 
     public static InternedEncoding intern(String encoding) {
         if (encoding == null) {
@@ -34,11 +45,5 @@ public class InternedEncoding {
         interned = new InternedEncoding(encoding);
         INTERNED.put(encoding, interned);
         return interned;
-    }
-
-    public final String value;
-
-    private InternedEncoding(String value) {
-        this.value = value;
     }
 }

@@ -37,16 +37,16 @@ public class PropsUtil {
     private static class PropsLoader {
 
         private final Props props;
-        private final char[] _buffer;
-        private final CharArrayWriter _charsBuffer;
+        private final char[] buffer;
+        private final CharArrayWriter charsBuffer;
 
         private Set<String> loadedModules;
         private Map<String, Props> modulePropsCache;
 
         PropsLoader(Props props) {
             this.props = props;
-            this._buffer = new char[3072];
-            this._charsBuffer = new CharArrayWriter();
+            this.buffer = new char[3072];
+            this.charsBuffer = new CharArrayWriter();
         }
 
         private void mergeProps(Props src, String name) {
@@ -91,21 +91,21 @@ public class PropsUtil {
         }
 
         private Props loadProps(InputResolver inputResolver, final String path) {
-            final CharArrayWriter charsBuffer = this._charsBuffer;
-            final char[] buffer = this._buffer;
+            final CharArrayWriter charsBuf = this.charsBuffer;
+            final char[] buf = this.buffer;
             final InputStream in = inputResolver.openInputStream(path);
             if (in == null) {
                 throw new IllegalConfigException("Not found props: ".concat(inputResolver.getViewPath(path)));
             }
             try (Reader reader = new InputStreamReader(in, "UTF-8")) {
-                charsBuffer.reset();
+                charsBuf.reset();
                 int read;
-                while ((read = reader.read(buffer)) >= 0) {
-                    charsBuffer.write(buffer, 0, read);
+                while ((read = reader.read(buf)) >= 0) {
+                    charsBuf.write(buf, 0, read);
                 }
                 final Props tempProps = new Props();
-                tempProps.load(charsBuffer.toCharArray());
-                charsBuffer.reset();
+                tempProps.load(charsBuf.toCharArray());
+                charsBuf.reset();
                 return tempProps;
             } catch (IOException ex) {
                 throw new IllegalConfigException("Not found props: ".concat(inputResolver.getViewPath(path)), ex);

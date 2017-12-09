@@ -12,12 +12,13 @@ import org.febit.wit.util.StringUtil;
  */
 public final class SimpleLogger extends AbstractLogger {
 
+    private static final PrintStream OUT = System.out;
+
     //settings
     protected String level = "info";
 
     private String prefix;
     private int levelNum;
-    private final PrintStream out = System.out;
 
     @Init
     public void init() {
@@ -60,9 +61,9 @@ public final class SimpleLogger extends AbstractLogger {
         if (!isEnabled(level)) {
             return;
         }
-        out.println(prefix.concat(msg != null ? msg : ""));
+        OUT.println(prefix.concat(msg != null ? msg : ""));
         if (throwable != null) {
-            throwable.printStackTrace(out);
+            throwable.printStackTrace(OUT);
         }
     }
 }

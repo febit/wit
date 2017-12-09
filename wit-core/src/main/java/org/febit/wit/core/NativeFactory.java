@@ -51,7 +51,7 @@ public class NativeFactory {
         if (checkAccess) {
             final String path = classForCheck.getName().concat(".[]");
             if (!this.nativeSecurityManager.access(path)) {
-                throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+                throw createNotAccessablePathException(path, line, column);
             }
         }
 
@@ -79,7 +79,7 @@ public class NativeFactory {
         if (checkAccess) {
             final String path = StringUtil.concat(clazz.getName(), ".", methodName);
             if (!this.nativeSecurityManager.access(path)) {
-                throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+                throw createNotAccessablePathException(path, line, column);
             }
         }
         try {
@@ -93,7 +93,7 @@ public class NativeFactory {
         if (checkAccess) {
             final String path = StringUtil.concat(clazz.getName(), ".", methodName);
             if (!this.nativeSecurityManager.access(path)) {
-                throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+                throw createNotAccessablePathException(path, line, column);
             }
         }
         return createNativeMethodDeclare(clazz, methodName);
@@ -120,7 +120,7 @@ public class NativeFactory {
         if (checkAccess) {
             final String path = clazz.getName().concat(".<init>");
             if (!this.nativeSecurityManager.access(path)) {
-                throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+                throw createNotAccessablePathException(path, line, column);
             }
         }
         try {
@@ -134,7 +134,7 @@ public class NativeFactory {
         if (checkAccess) {
             final String path = clazz.getName().concat(".<init>");
             if (!this.nativeSecurityManager.access(path)) {
-                throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+                throw createNotAccessablePathException(path, line, column);
             }
         }
         return createNativeConstructorDeclare(clazz);
@@ -208,5 +208,9 @@ public class NativeFactory {
     protected MethodDeclare createNativeConstructorDeclare(Constructor constructor) {
         ClassUtil.setAccessible(constructor);
         return new NativeConstructorDeclare(constructor);
+    }
+
+    protected static ParseException createNotAccessablePathException(String path, int line, int column) {
+        return new ParseException("Not accessable of native path: ".concat(path), line, column);
     }
 }

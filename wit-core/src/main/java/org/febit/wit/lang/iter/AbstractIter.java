@@ -9,27 +9,27 @@ import org.febit.wit.lang.Iter;
  */
 public abstract class AbstractIter implements Iter {
 
-    protected int _index;
+    protected int cursor;
 
     protected AbstractIter() {
-        this._index = -1;
+        this.cursor = -1;
     }
 
     protected abstract Object _next();
 
     @Override
     public final Object next() {
-        ++_index;
+        ++cursor;
         return _next();
     }
 
     @Override
     public final boolean isFirst() {
-        return _index == 0;
+        return cursor == 0;
     }
 
     @Override
     public final int index() {
-        return _index;
+        return cursor;
     }
 }
