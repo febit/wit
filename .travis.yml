@@ -4,5 +4,6 @@ install:
 script:
   mvn test -B -fae
 jdk:
+  - oraclejdk9
   - oraclejdk8
   - openjdk7
