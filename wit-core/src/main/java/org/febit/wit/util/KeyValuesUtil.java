@@ -11,7 +11,7 @@ import org.febit.wit.Vars;
 public class KeyValuesUtil {
 
     /**
-     * @deprecated use <code>KeyValues.EMPTY</code> instead.
+     * @deprecated use <code>Vars.EMPTY</code> instead.
      */
     @Deprecated
     public static final Vars EMPTY_KEY_VALUES = Vars.EMPTY;
