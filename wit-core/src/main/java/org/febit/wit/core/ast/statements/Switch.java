@@ -33,8 +33,8 @@ public final class Switch extends Statement implements Loopable {
 
     @Override
     public Object execute(final InternalContext context) {
-        CaseEntry caseStatement;
-        if ((caseStatement = caseMap.get(switchExpr.execute(context))) == null) {
+        CaseEntry caseStatement = caseMap.get(switchExpr.execute(context));
+        if (caseStatement == null) {
             caseStatement = defaultStatement; //default
         }
         if (caseStatement != null) {

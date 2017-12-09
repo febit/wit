@@ -71,7 +71,8 @@ public class UTF8 {
         char d;
         int uc;
         while (from < to) {
-            if ((c = sa[from++]) < 0x80) {
+            c = sa[from++];
+            if (c < 0x80) {
                 // Have at most seven bits
                 da[dp++] = (byte) c;
                 continue;

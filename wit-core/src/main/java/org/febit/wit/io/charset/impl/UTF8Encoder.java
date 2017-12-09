@@ -21,25 +21,23 @@ public final class UTF8Encoder implements Encoder {
 
     @Override
     public void write(final char[] chars, final int off, final int len, final OutputStream out) throws IOException {
-        if (chars != null && len != 0) {
-            final byte[] bytes;
-            int used = UTF8.encode(bytes = this.buffers.getBytes(len * UTF8.MAX_BYTES_PER_CHAR),
-                    chars, off, off + len);
-            out.write(bytes, 0, used);
+        if (chars == null || len == 0) {
+            return;
         }
+        final byte[] bytes = this.buffers.getBytes(len * UTF8.MAX_BYTES_PER_CHAR);
+        int used = UTF8.encode(bytes, chars, off, off + len);
+        out.write(bytes, 0, used);
     }
 
     @Override
     public void write(final String string, final int off, final int len, final OutputStream out) throws IOException {
-        if (string != null) {
-            final char[] chars;
-            final byte[] bytes;
-            string.getChars(off, off + len,
-                    chars = this.buffers.getChars(len),
-                    0);
-            int used = UTF8.encode(bytes = this.buffers.getBytes(len * UTF8.MAX_BYTES_PER_CHAR),
-                    chars, off, off + len);
-            out.write(bytes, 0, used);
+        if (string == null) {
+            return;
         }
+        final char[] chars = this.buffers.getChars(len);
+        string.getChars(off, off + len, chars, 0);
+        final byte[] bytes = this.buffers.getBytes(len * UTF8.MAX_BYTES_PER_CHAR);
+        int used = UTF8.encode(bytes, chars, off, off + len);
+        out.write(bytes, 0, used);
     }
 }

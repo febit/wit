@@ -21,18 +21,20 @@ public class IntStep extends BinaryOperator {
 
     @Override
     public Object execute(final InternalContext context) {
-        Object result;
         final int num1;
-        if ((result = leftExpr.execute(context)) instanceof Number) {
-            num1 = ((Number) result).intValue();
+        Object tempResult;
+        tempResult = leftExpr.execute(context);
+        if (tempResult instanceof Number) {
+            num1 = ((Number) tempResult).intValue();
         } else {
-            throw new ScriptRuntimeException(StringUtil.concatObjectClass("left need a int, but found ", result), this);
+            throw new ScriptRuntimeException(StringUtil.concatObjectClass("left need a int, but found ", tempResult), this);
         }
         final int num2;
-        if ((result = rightExpr.execute(context)) instanceof Number) {
-            num2 = ((Number) result).intValue();
+        tempResult = rightExpr.execute(context);
+        if (tempResult instanceof Number) {
+            num2 = ((Number) tempResult).intValue();
         } else {
-            throw new ScriptRuntimeException(StringUtil.concatObjectClass("right need a int, but found ", result), this);
+            throw new ScriptRuntimeException(StringUtil.concatObjectClass("right need a int, but found ", tempResult), this);
         }
         if (num1 < num2) {
             return new IntAscIter(num1, num2);

@@ -33,8 +33,8 @@ public final class Return extends Statement implements Loopable {
 
     @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        LinkedList<LoopInfo> list;
-        (list = new LinkedList<>()).add(new LoopInfo(LoopInfo.RETURN, 0, line, column));
+        LinkedList<LoopInfo> list = new LinkedList<>();
+        list.add(new LoopInfo(LoopInfo.RETURN, 0, line, column));
         return list;
     }
 }

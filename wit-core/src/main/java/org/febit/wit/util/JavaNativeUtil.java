@@ -382,8 +382,7 @@ public class JavaNativeUtil {
             throw new ScriptRuntimeException("this method need one argument at least");
         }
         final Object[] methodArgs = new Object[acceptArgsCount];
-        int copyLen;
-        System.arraycopy(args, 1, methodArgs, 0, ((copyLen = args.length - 1) <= acceptArgsCount) ? copyLen : acceptArgsCount);
+        System.arraycopy(args, 1, methodArgs, 0, Math.min(args.length - 1, acceptArgsCount));
         return invokeMethod(method, args[0], methodArgs, acceptArgsCount, isReturnVoid);
     }
 
@@ -446,7 +445,8 @@ public class JavaNativeUtil {
             if (argsLen == acceptArgsCount) {
                 methodArgs = args;
             } else {
-                System.arraycopy(args, 0, methodArgs = new Object[acceptArgsCount], 0, argsLen <= acceptArgsCount ? argsLen : acceptArgsCount);
+                methodArgs = new Object[acceptArgsCount];
+                System.arraycopy(args, 0, methodArgs, 0, argsLen <= acceptArgsCount ? argsLen : acceptArgsCount);
             }
         } else {
             methodArgs = new Object[acceptArgsCount];

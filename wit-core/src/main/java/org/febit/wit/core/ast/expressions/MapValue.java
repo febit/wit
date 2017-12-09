@@ -24,8 +24,7 @@ public final class MapValue extends Expression implements Constable {
         StatementUtil.optimize(valueExprs);
         this._keyExprs = keyExprs;
         this._valueExprs = valueExprs;
-        int cap = (keyExprs.length + 1) * 4 / 3;
-        this.initialCapacity = cap > 4 ? cap : 4;
+        this.initialCapacity = Math.max((keyExprs.length + 1) * 4 / 3, 4);
     }
 
     @Override

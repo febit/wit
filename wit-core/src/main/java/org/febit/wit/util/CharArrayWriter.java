@@ -145,8 +145,8 @@ public class CharArrayWriter extends Writer {
         if (bufferIndex == 0) {
             System.arraycopy(myBuffers[0], skip, array, 0, offset - skip);
         } else {
-            int pos;
-            System.arraycopy(myBuffers[0], skip, array, 0, pos = myBuffers[0].length - skip);
+            int pos = myBuffers[0].length - skip;
+            System.arraycopy(myBuffers[0], skip, array, 0, pos);
             for (int i = 1; i < bufferIndex; i++) {
                 int len = myBuffers[i].length;
                 System.arraycopy(myBuffers[i], 0, array, pos, len);

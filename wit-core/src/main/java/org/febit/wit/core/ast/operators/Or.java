@@ -20,8 +20,8 @@ public final class Or extends BinaryOperator implements Optimizable {
 
     @Override
     public Object execute(final InternalContext context) {
-        Object left;
-        return ALU.isTrue(left = leftExpr.execute(context))
+        Object left = leftExpr.execute(context);
+        return ALU.isTrue(left)
                 ? left
                 : rightExpr.execute(context);
     }

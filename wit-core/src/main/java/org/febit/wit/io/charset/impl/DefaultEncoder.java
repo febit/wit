@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import java.nio.charset.UnsupportedCharsetException;
 import org.febit.wit.io.Buffers;
 import org.febit.wit.io.charset.Encoder;
 
@@ -38,17 +37,15 @@ public class DefaultEncoder implements Encoder {
 
     @Override
     public void write(final char[] chars, final int offset, final int length, final OutputStream out) throws IOException {
-        if (chars != null && length != 0) {
-            final byte[] bytes;
-            final CharsetEncoder encoder;
-            final ByteBuffer bb;
-            (encoder = this.charsetEncoder).reset().encode(
-                    CharBuffer.wrap(chars, offset, length),
-                    bb = ByteBuffer.wrap(bytes = this.buffers.getBytes((int) (length * this.expansionFactor))),
-                    true);
-            encoder.flush(bb);
-            out.write(bytes, 0, bb.position());
+        if (chars == null || length == 0) {
+            return;
         }
+        final CharsetEncoder encoder = this.charsetEncoder.reset();
+        final byte[] bytes = this.buffers.getBytes((int) (length * this.expansionFactor));
+        final ByteBuffer bb = ByteBuffer.wrap(bytes);
+        encoder.encode(CharBuffer.wrap(chars, offset, length), bb, true);
+        encoder.flush(bb);
+        out.write(bytes, 0, bb.position());
     }
 
     private static CharsetEncoder newEncoder(String csn) {

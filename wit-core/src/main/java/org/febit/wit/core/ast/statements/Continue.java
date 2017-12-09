@@ -29,8 +29,8 @@ public final class Continue extends Statement implements Loopable {
 
     @Override
     public List<LoopInfo> collectPossibleLoopsInfo() {
-        LinkedList<LoopInfo> list;
-        (list = new LinkedList<>()).add(new LoopInfo(LoopInfo.CONTINUE, label, line, column));
+        LinkedList<LoopInfo> list = new LinkedList<>();
+        list.add(new LoopInfo(LoopInfo.CONTINUE, label, line, column));
         return list;
     }
 }

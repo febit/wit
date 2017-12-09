@@ -58,8 +58,8 @@ class ASMUtil {
     }
 
     static String getInternalName(String className) {
-        int i;
-        if ((i = className.indexOf('.')) < 0) {
+        int i = className.indexOf('.');
+        if (i < 0) {
             return className;
         }
         char[] str = className.toCharArray();

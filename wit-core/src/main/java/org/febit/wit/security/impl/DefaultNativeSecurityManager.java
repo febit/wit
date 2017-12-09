@@ -31,8 +31,8 @@ public class DefaultNativeSecurityManager implements NativeSecurityManager {
 
         for (String rule : StringUtil.toArray(list)) {
             char firstChar = rule.charAt(0);
-            boolean access;
-            if ((access = firstChar == '+') || firstChar == '-') {
+            boolean access = firstChar == '+';
+            if (access || firstChar == '-') {
                 rule = rule.substring(1).trim();
             } else {
                 access = true;

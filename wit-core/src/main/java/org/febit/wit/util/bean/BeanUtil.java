@@ -22,16 +22,16 @@ public class BeanUtil {
     }
 
     public static Object get(final Object bean, final String name) throws BeanException {
-        Getter getter;
-        if ((getter = getAccessor(bean.getClass(), name).getter) != null) {
+        Getter getter = getAccessor(bean.getClass(), name).getter;
+        if (getter != null) {
             return getter.get(bean);
         }
         throw new BeanException(StringUtil.format("Unable to get getter for {}#{}", bean.getClass(), name));
     }
 
     public static void set(final Object bean, final String name, Object value) throws BeanException {
-        Setter setter;
-        if ((setter = getAccessor(bean.getClass(), name).setter) != null) {
+        Setter setter = getAccessor(bean.getClass(), name).setter;
+        if (setter != null) {
             setter.set(bean, value);
             return;
         }
@@ -39,14 +39,12 @@ public class BeanUtil {
     }
 
     private static Accessor getAccessor(final Class cls, final String name) throws BeanException {
-
-        Map<String, Accessor> descs;
-        if ((descs = CACHE.unsafeGet(cls)) == null) {
+        Map<String, Accessor> descs = CACHE.unsafeGet(cls);
+        if (descs == null) {
             descs = CACHE.putIfAbsent(cls, resolveAccessors(cls));
         }
-
-        Accessor fieldDescriptor;
-        if ((fieldDescriptor = descs.get(name)) != null) {
+        Accessor fieldDescriptor = descs.get(name);
+        if (fieldDescriptor != null) {
             return fieldDescriptor;
         }
         throw new BeanException(StringUtil.format("Unable to get field: {}#{}", cls.getName(), name));
@@ -56,7 +54,6 @@ public class BeanUtil {
         final FieldInfo[] fieldInfos = FieldInfoResolver.resolve(cls);
         final Map<String, Accessor> map = new HashMap<>(fieldInfos.length * 4 / 3 + 1, 0.75f);
         for (FieldInfo fieldInfo : fieldInfos) {
-
             map.put(fieldInfo.name, new Accessor(
                     fieldInfo.getGetter() != null ? new MethodGetter(fieldInfo.getGetter())
                     : fieldInfo.getField() != null ? new FieldGetter(fieldInfo.getField())

@@ -20,8 +20,8 @@ public final class Buffers {
     }
 
     public char[] getChars(final int len) {
-        char[] buf;
-        return (buf = chars).length >= len ? buf : upgradeChars(len);
+        char[] buf = chars;
+        return buf.length >= len ? buf : upgradeChars(len);
     }
 
     private char[] upgradeChars(final int len) {
@@ -29,8 +29,8 @@ public final class Buffers {
     }
 
     public byte[] getBytes(final int len) {
-        byte[] buf;
-        return (buf = bytes).length >= len ? buf : upgradeBytes(len);
+        byte[] buf = bytes;
+        return buf.length >= len ? buf : upgradeBytes(len);
     }
 
     private byte[] upgradeBytes(final int len) {
@@ -59,14 +59,15 @@ public final class Buffers {
     }
 
     private static Buffers createIfAbsent(final int length) {
-        WeakReference<Buffers> ref;
         Buffers peers;
-        if ((ref = CACHE.get()) == null
+        WeakReference<Buffers> ref = CACHE.get();
+        if (ref == null
                 || (peers = ref.get()) == null) {
             if (ref != null) {
                 ref.clear();
             }
-            CACHE.set(new WeakReference<>(peers = new Buffers(length)));
+            peers = new Buffers(length);
+            CACHE.set(new WeakReference<>(peers));
         }
         return peers;
     }

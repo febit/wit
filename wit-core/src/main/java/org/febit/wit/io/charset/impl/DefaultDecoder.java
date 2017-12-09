@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.UnsupportedCharsetException;
 import org.febit.wit.io.Buffers;
 import org.febit.wit.io.charset.Decoder;
 
@@ -29,17 +28,15 @@ public class DefaultDecoder implements Decoder {
 
     @Override
     public void write(final byte[] bytes, final int offset, final int length, final Writer writer) throws IOException {
-        if (bytes != null && length != 0) {
-            final char[] chars;
-            final CharsetDecoder decoder;
-            final CharBuffer cb;
-            (decoder = this.charsetDecoder).reset().decode(
-                    ByteBuffer.wrap(bytes, offset, length),
-                    cb = CharBuffer.wrap(chars = this.buffers.getChars((int) (length * this.expansionFactor))),
-                    true);
-            decoder.flush(cb);
-            writer.write(chars, 0, cb.position());
+        if (bytes == null || length == 0) {
+            return;
         }
+        final CharsetDecoder decoder = this.charsetDecoder.reset();
+        final char[] chars = this.buffers.getChars((int) (length * this.expansionFactor));
+        final CharBuffer cb = CharBuffer.wrap(chars);
+        decoder.decode(ByteBuffer.wrap(bytes, offset, length), cb, true);
+        decoder.flush(cb);
+        writer.write(chars, 0, cb.position());
     }
 
     private static CharsetDecoder newDecoder(String csn) {

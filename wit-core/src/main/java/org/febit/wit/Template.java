@@ -238,8 +238,8 @@ public final class Template {
      */
     public Context merge(final Vars vars, final Out out) {
         try {
-            final TemplateAST myAst;
-            return (((myAst = this.ast) == null || this.resource.isModified())
+            final TemplateAST myAst = this.ast;
+            return ((myAst == null || this.resource.isModified())
                     ? parse(false)
                     : myAst)
                     .execute(this, out, vars);
@@ -250,8 +250,8 @@ public final class Template {
 
     public Context mergeToContext(final InternalContext context, final Vars vars) {
         try {
-            final TemplateAST myAst;
-            return (((myAst = this.ast) == null || this.resource.isModified())
+            final TemplateAST myAst = this.ast;
+            return ((myAst == null || this.resource.isModified())
                     ? parse(false)
                     : myAst)
                     .execute(this, context, vars);

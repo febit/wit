@@ -38,8 +38,8 @@ public final class Stack<T> {
     }
 
     public void pops(int len) {
-        int i;
-        if ((i = this.size) < len) {
+        int i = this.size;
+        if (i < len) {
             throw new IndexOutOfBoundsException(StringUtil.format("size < {}", len));
         }
         final Object[] myElements = this.elements;
@@ -51,9 +51,9 @@ public final class Stack<T> {
     }
 
     public void push(final T element) {
-        final int i;
-        Object[] _elements;
-        if ((i = size++) >= (_elements = elements).length) {
+        final int i = size++;
+        Object[] _elements = elements;
+        if (i >= _elements.length) {
             System.arraycopy(_elements, 0,
                     _elements = elements = new Object[i << 1], 0, i);
         }

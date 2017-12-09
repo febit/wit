@@ -72,8 +72,8 @@ public class ArrayUtil {
         if (array.length >= len) {
             return array;
         }
-        final Object[] newArray;
-        System.arraycopy(array, 0, newArray = new Object[len], 0, array.length);
+        final Object[] newArray = new Object[len];
+        System.arraycopy(array, 0, newArray, 0, array.length);
         return newArray;
     }
 

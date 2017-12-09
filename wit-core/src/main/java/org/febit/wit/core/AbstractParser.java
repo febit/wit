@@ -141,10 +141,10 @@ abstract class AbstractParser {
     };
 
     private static short getAction(final short[] row, final int sym) {
-        final int len;
+        final int len = row.length;
         int probe;
         /* linear search if we are < 10 entries, otherwise binary search */
-        if ((len = row.length) < 20) {
+        if (len < 20) {
             for (probe = 0; probe < len; probe++) {
                 if (row[probe++] == sym) {
                     return row[probe];
