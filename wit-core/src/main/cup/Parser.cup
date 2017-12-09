@@ -374,10 +374,6 @@ expression_statementable ::=
                     //selfOper
                     |expression:lexpr SELFEQ:sym expression:rexpr
                     {: return createSelfOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
-                    
-                    //RedirectOutExpression =>
-                    |funcExecuteExpr:srcExpr EQGT:sym expression:expr
-                    {: return new RedirectOutExpression(%srcExpr%, castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
 
                     //
                     |funcExecuteExpr:$

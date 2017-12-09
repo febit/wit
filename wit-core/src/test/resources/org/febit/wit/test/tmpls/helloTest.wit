@@ -60,6 +60,6 @@ dsdasd\
 ");
 map.~put(6,null);
 map.~put(null,null);
-%>${map}|${now()}|FUNC:${func("aaaaa")=>out2}|OUT:${out}|OUT2:${out2}<%
+%>${map}|${now()}|OUT:${out}<%
 
 }%>
