@@ -8,15 +8,15 @@ import org.febit.wit.resolvers.OutResolver;
  *
  * @author zqq90
  */
-public class ByteArrayOutResolver implements OutResolver {
+public class ByteArrayOutResolver implements OutResolver<byte[]> {
 
     @Override
-    public void render(Out out, Object bean) {
-        out.write((byte[]) bean);
+    public void render(Out out, byte[] bean) {
+        out.write(bean);
     }
 
     @Override
-    public Class getMatchClass() {
+    public Class<byte[]> getMatchClass() {
         return byte[].class;
     }
 }

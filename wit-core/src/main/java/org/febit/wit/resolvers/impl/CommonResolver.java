@@ -12,7 +12,7 @@ import org.febit.wit.util.bean.BeanUtil;
  *
  * @author zqq90
  */
-public class CommonResolver implements GetResolver, SetResolver, OutResolver {
+public class CommonResolver implements GetResolver<Object>, SetResolver<Object>, OutResolver<Object> {
 
     @Override
     public Object get(final Object object, final Object property) {
@@ -38,7 +38,7 @@ public class CommonResolver implements GetResolver, SetResolver, OutResolver {
     }
 
     @Override
-    public Class getMatchClass() {
+    public Class<Object> getMatchClass() {
         return Object.class;
     }
 }

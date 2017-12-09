@@ -9,21 +9,21 @@ import org.febit.wit.resolvers.SetResolver;
  *
  * @author zqq90
  */
-public class MapResolver implements GetResolver, SetResolver {
+public class MapResolver implements GetResolver<Map>, SetResolver<Map> {
 
     @Override
-    public Class getMatchClass() {
+    public Class<Map> getMatchClass() {
         return Map.class;
     }
 
     @Override
-    public Object get(Object object, Object property) {
-        return ((Map) object).get(property);
+    public Object get(Map map, Object property) {
+        return map.get(property);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void set(Object object, Object property, Object value) {
-        ((Map) object).put(property, value);
+    public void set(Map map, Object property, Object value) {
+        map.put(property, value);
     }
 }

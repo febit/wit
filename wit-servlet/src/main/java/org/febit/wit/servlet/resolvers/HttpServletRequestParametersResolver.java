@@ -8,15 +8,15 @@ import org.febit.wit.servlet.HttpServletRequestParameters;
  *
  * @author zqq90
  */
-public class HttpServletRequestParametersResolver implements GetResolver {
+public class HttpServletRequestParametersResolver implements GetResolver<HttpServletRequestParameters> {
 
     @Override
-    public Object get(Object bean, Object property) {
-        return ((HttpServletRequestParameters) bean).get(property.toString());
+    public Object get(HttpServletRequestParameters bean, Object property) {
+        return bean.get(property.toString());
     }
 
     @Override
-    public Class<?> getMatchClass() {
+    public Class<HttpServletRequestParameters> getMatchClass() {
         return HttpServletRequestParameters.class;
     }
 }

@@ -6,8 +6,9 @@ import org.febit.wit.io.Out;
 /**
  *
  * @author zqq90
+ * @param <T>
  */
-public interface OutResolver extends Resolver {
+public interface OutResolver<T> extends Resolver<T> {
 
-    void render(Out out, Object bean);
+    void render(Out out, T bean);
 }

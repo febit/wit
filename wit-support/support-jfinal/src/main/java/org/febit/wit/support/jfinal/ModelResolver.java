@@ -9,20 +9,20 @@ import org.febit.wit.resolvers.SetResolver;
  *
  * @author zqq90
  */
-public class ModelResolver implements GetResolver, SetResolver {
+public class ModelResolver implements GetResolver<Model>, SetResolver<Model> {
 
     @Override
-    public Object get(Object bean, Object property) {
-        return ((Model) bean).get(property.toString());
+    public Object get(Model bean, Object property) {
+        return bean.get(property.toString());
     }
 
     @Override
-    public void set(Object bean, Object property, Object value) {
-        ((Model) bean).set(property.toString(), value);
+    public void set(Model bean, Object property, Object value) {
+        bean.set(property.toString(), value);
     }
 
     @Override
-    public Class<?> getMatchClass() {
+    public Class<Model> getMatchClass() {
         return Model.class;
     }
 }

@@ -4,8 +4,9 @@ package org.febit.wit.resolvers;
 /**
  *
  * @author zqq90
+ * @param <T>
  */
-public interface Resolver {
+public interface Resolver<T> {
 
-    Class getMatchClass();
+    Class<T> getMatchClass();
 }

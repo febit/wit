@@ -9,20 +9,20 @@ import org.febit.wit.resolvers.SetResolver;
  *
  * @author zqq90
  */
-public class RecordResolver implements GetResolver, SetResolver {
+public class RecordResolver implements GetResolver<Record>, SetResolver<Record> {
 
     @Override
-    public Object get(Object bean, Object property) {
-        return ((Record) bean).get(property.toString());
+    public Object get(Record bean, Object property) {
+        return bean.get(property.toString());
     }
 
     @Override
-    public void set(Object bean, Object property, Object value) {
-        ((Record) bean).set(property.toString(), value);
+    public void set(Record bean, Object property, Object value) {
+        bean.set(property.toString(), value);
     }
 
     @Override
-    public Class<?> getMatchClass() {
+    public Class<Record> getMatchClass() {
         return Record.class;
     }
 }

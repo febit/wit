@@ -4,8 +4,9 @@ package org.febit.wit.resolvers;
 /**
  *
  * @author zqq90
+ * @param <T>
  */
-public interface GetResolver extends Resolver {
+public interface GetResolver<T> extends Resolver<T> {
 
-    Object get(Object object, Object property);
+    Object get(T object, Object property);
 }

@@ -9,20 +9,20 @@ import org.febit.wit.resolvers.SetResolver;
  *
  * @author zqq90
  */
-public class BagResolver implements GetResolver, SetResolver {
+public class BagResolver implements GetResolver<Bag>, SetResolver<Bag> {
 
     @Override
-    public Object get(Object object, Object property) {
-        return ((Bag) object).get(property);
+    public Object get(Bag bag, Object property) {
+        return bag.get(property);
     }
 
     @Override
-    public void set(Object object, Object property, Object value) {
-        ((Bag) object).set(property, value);
+    public void set(Bag bag, Object property, Object value) {
+        bag.set(property, value);
     }
 
     @Override
-    public Class getMatchClass() {
+    public Class<Bag> getMatchClass() {
         return Bag.class;
     }
 }

@@ -12,25 +12,25 @@ import org.febit.wit.resolvers.SetResolver;
  *
  * @author zqq90
  */
-public class InternalVoidResolver implements GetResolver, SetResolver, OutResolver {
+public class InternalVoidResolver implements GetResolver<InternalVoid>, SetResolver<InternalVoid>, OutResolver<InternalVoid> {
 
     @Override
-    public Object get(Object object, Object property) {
+    public Object get(InternalVoid object, Object property) {
         throw new ScriptRuntimeException("'Void' type has no property.");
     }
 
     @Override
-    public Class getMatchClass() {
+    public Class<InternalVoid> getMatchClass() {
         return InternalVoid.class;
     }
 
     @Override
-    public void set(Object object, Object property, Object value) {
+    public void set(InternalVoid object, Object property, Object value) {
         throw new ScriptRuntimeException("'Void' type has no property.");
     }
 
     @Override
-    public void render(Out out, Object bean) {
+    public void render(Out out, InternalVoid bean) {
         //render nothing
     }
 

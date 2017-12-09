@@ -12,112 +12,112 @@ import org.febit.wit.servlet.HttpServletRequestParameters;
  *
  * @author zqq90
  */
-public class HttpServletRequestResolver implements GetResolver {
+public class HttpServletRequestResolver implements GetResolver<HttpServletRequest> {
 
     @Override
-    public Object get(Object bean, Object property) {
+    public Object get(HttpServletRequest bean, Object property) {
         if (property == null) {
             return null;
         }
         switch (property.toString()) {
             case "attrs":
             case "attributes":
-                return new HttpServletRequestAttributes((HttpServletRequest) bean);
+                return new HttpServletRequestAttributes(bean);
             case "parameters":
             case "params":
-                return new HttpServletRequestParameters((HttpServletRequest) bean);
+                return new HttpServletRequestParameters(bean);
             case "headers":
-                return new HttpServletRequestHeaders((HttpServletRequest) bean);
+                return new HttpServletRequestHeaders(bean);
             case "header":
-                return new HttpServletRequestHeader((HttpServletRequest) bean);
+                return new HttpServletRequestHeader(bean);
             case "protocol":
-                return ((HttpServletRequest) bean).getProtocol();
+                return bean.getProtocol();
             case "secure":
-                return ((HttpServletRequest) bean).isSecure();
+                return bean.isSecure();
 //            case "inputStream":
-//                return ((HttpServletRequest) bean).getInputStream();
+//                return bean.getInputStream();
             case "url":
             case "requestURL":
-                return ((HttpServletRequest) bean).getRequestURL();
+                return bean.getRequestURL();
             case "userPrincipal":
-                return ((HttpServletRequest) bean).getUserPrincipal();
+                return bean.getUserPrincipal();
             case "locales":
-                return ((HttpServletRequest) bean).getLocales();
+                return bean.getLocales();
             case "servletPath":
-                return ((HttpServletRequest) bean).getServletPath();
+                return bean.getServletPath();
             case "remoteHost":
-                return ((HttpServletRequest) bean).getRemoteHost();
+                return bean.getRemoteHost();
             case "remotePort":
-                return ((HttpServletRequest) bean).getRemotePort();
+                return bean.getRemotePort();
             case "remoteUser":
-                return ((HttpServletRequest) bean).getRemoteUser();
+                return bean.getRemoteUser();
             case "pathInfo":
-                return ((HttpServletRequest) bean).getPathInfo();
+                return bean.getPathInfo();
             case "session":
-                return ((HttpServletRequest) bean).getSession();
+                return bean.getSession();
             case "requestedSessionIdFromCookie":
-                return ((HttpServletRequest) bean).isRequestedSessionIdFromCookie();
+                return bean.isRequestedSessionIdFromCookie();
             case "attributeNames":
-                return ((HttpServletRequest) bean).getAttributeNames();
+                return bean.getAttributeNames();
             case "serverName":
-                return ((HttpServletRequest) bean).getServerName();
+                return bean.getServerName();
             case "serverPort":
-                return ((HttpServletRequest) bean).getServerPort();
+                return bean.getServerPort();
             case "parameterMap":
-                return ((HttpServletRequest) bean).getParameterMap();
+                return bean.getParameterMap();
             case "localPort":
-                return ((HttpServletRequest) bean).getLocalPort();
+                return bean.getLocalPort();
             case "locale":
-                return ((HttpServletRequest) bean).getLocale();
+                return bean.getLocale();
             case "requestedSessionIdFromURL":
-                return ((HttpServletRequest) bean).isRequestedSessionIdFromURL();
+                return bean.isRequestedSessionIdFromURL();
             case "scheme":
-                return ((HttpServletRequest) bean).getScheme();
+                return bean.getScheme();
             case "contentLength":
-                return ((HttpServletRequest) bean).getContentLength();
+                return bean.getContentLength();
             case "contextPath":
-                return ((HttpServletRequest) bean).getContextPath();
+                return bean.getContextPath();
             case "requestedSessionIdValid":
-                return ((HttpServletRequest) bean).isRequestedSessionIdValid();
+                return bean.isRequestedSessionIdValid();
             case "cookies":
-                return ((HttpServletRequest) bean).getCookies();
+                return bean.getCookies();
             case "remoteAddr":
-                return ((HttpServletRequest) bean).getRemoteAddr();
+                return bean.getRemoteAddr();
             case "headerNames":
-                return ((HttpServletRequest) bean).getHeaderNames();
+                return bean.getHeaderNames();
             case "requestedSessionId":
-                return ((HttpServletRequest) bean).getRequestedSessionId();
+                return bean.getRequestedSessionId();
             case "contentType":
-                return ((HttpServletRequest) bean).getContentType();
+                return bean.getContentType();
             case "pathTranslated":
-                return ((HttpServletRequest) bean).getPathTranslated();
+                return bean.getPathTranslated();
             case "parameterNames":
-                return ((HttpServletRequest) bean).getParameterNames();
+                return bean.getParameterNames();
             case "authType":
-                return ((HttpServletRequest) bean).getAuthType();
+                return bean.getAuthType();
             case "queryString":
-                return ((HttpServletRequest) bean).getQueryString();
+                return bean.getQueryString();
             case "localAddr":
-                return ((HttpServletRequest) bean).getLocalAddr();
+                return bean.getLocalAddr();
             case "localName":
-                return ((HttpServletRequest) bean).getLocalName();
+                return bean.getLocalName();
             case "method":
-                return ((HttpServletRequest) bean).getMethod();
+                return bean.getMethod();
             case "requestedSessionIdFromUrl":
-                return ((HttpServletRequest) bean).isRequestedSessionIdFromURL();
+                return bean.isRequestedSessionIdFromURL();
 //            case "reader":
-//                return ((HttpServletRequest) bean).getReader();
+//                return bean.getReader();
             case "requestURI":
-                return ((HttpServletRequest) bean).getRequestURI();
+                return bean.getRequestURI();
             case "characterEncoding":
-                return ((HttpServletRequest) bean).getCharacterEncoding();
+                return bean.getCharacterEncoding();
             default:
         }
         return null;
     }
 
     @Override
-    public Class<?> getMatchClass() {
+    public Class<HttpServletRequest> getMatchClass() {
         return HttpServletRequest.class;
     }
 }

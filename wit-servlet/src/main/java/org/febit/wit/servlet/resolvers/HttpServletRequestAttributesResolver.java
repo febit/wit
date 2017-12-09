@@ -9,20 +9,20 @@ import org.febit.wit.servlet.HttpServletRequestAttributes;
  *
  * @author zqq90
  */
-public class HttpServletRequestAttributesResolver implements GetResolver, SetResolver {
+public class HttpServletRequestAttributesResolver implements GetResolver<HttpServletRequestAttributes>, SetResolver<HttpServletRequestAttributes> {
 
     @Override
-    public Object get(Object bean, Object property) {
-        return ((HttpServletRequestAttributes) bean).get(property.toString());
+    public Object get(HttpServletRequestAttributes bean, Object property) {
+        return bean.get(property.toString());
     }
 
     @Override
-    public void set(Object bean, Object property, Object value) {
-        ((HttpServletRequestAttributes) bean).set(property.toString(), value);
+    public void set(HttpServletRequestAttributes bean, Object property, Object value) {
+        bean.set(property.toString(), value);
     }
 
     @Override
-    public Class<?> getMatchClass() {
+    public Class<HttpServletRequestAttributes> getMatchClass() {
         return HttpServletRequestAttributes.class;
     }
 }

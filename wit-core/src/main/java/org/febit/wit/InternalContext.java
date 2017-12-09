@@ -249,6 +249,7 @@ public final class InternalContext implements Context {
      * @param property
      * @return
      */
+    @SuppressWarnings("unchecked")
     public Object getBeanProperty(final Object bean, final Object property) {
         if (bean != null) {
             final GetResolver resolver = this.getters.unsafeGet(bean.getClass());
@@ -266,6 +267,7 @@ public final class InternalContext implements Context {
      * @param property
      * @param value
      */
+    @SuppressWarnings("unchecked")
     public void setBeanProperty(final Object bean, final Object property, final Object value) {
         if (bean != null) {
             final SetResolver resolver = this.setters.unsafeGet(bean.getClass());
@@ -285,6 +287,7 @@ public final class InternalContext implements Context {
         this.out.write(chars);
     }
 
+    @SuppressWarnings("unchecked")
     public void write(final Object obj) {
         if (obj == null) {
             return;

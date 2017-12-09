@@ -17,57 +17,57 @@ import org.febit.wit.util.StringUtil;
 public class PrimitiveArrayResolver implements RegistModeResolver, GetResolver, SetResolver {
 
     @Override
-    public Object get(Object object, Object property) {
+    public Object get(Object array, Object property) {
         if (property instanceof Number) {
-            return ArrayUtil.get(object, ((Number) property).intValue());
+            return ArrayUtil.get(array, ((Number) property).intValue());
         }
         switch (property.toString()) {
             case "size":
             case "length":
-                return ArrayUtil.getSize(object);
+                return ArrayUtil.getSize(array);
             case "isEmpty":
-                return ArrayUtil.getSize(object) == 0;
+                return ArrayUtil.getSize(array) == 0;
             default:
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));
     }
 
     @Override
-    public void set(Object o1, Object property, Object value) {
+    public void set(Object array, Object property, Object value) {
         if (property instanceof Number) {
             int index = ((Number) property).intValue();
-            final Class cls = o1.getClass();
+            final Class cls = array.getClass();
             try {
                 if (cls == int[].class) {
-                    ((int[]) o1)[index] = ((Number) value).intValue();
+                    ((int[]) array)[index] = ((Number) value).intValue();
                     return;
                 }
                 if (cls == char[].class) {
-                    ((char[]) o1)[index] = (Character) value;
+                    ((char[]) array)[index] = (Character) value;
                     return;
                 }
                 if (cls == long[].class) {
-                    ((long[]) o1)[index] = ((Number) value).longValue();
+                    ((long[]) array)[index] = ((Number) value).longValue();
                     return;
                 }
                 if (cls == short[].class) {
-                    ((short[]) o1)[index] = ((Number) value).shortValue();
+                    ((short[]) array)[index] = ((Number) value).shortValue();
                     return;
                 }
                 if (cls == double[].class) {
-                    ((double[]) o1)[index] = ((Number) value).doubleValue();
+                    ((double[]) array)[index] = ((Number) value).doubleValue();
                     return;
                 }
                 if (cls == boolean[].class) {
-                    ((boolean[]) o1)[index] = ALU.isTrue(value);
+                    ((boolean[]) array)[index] = ALU.isTrue(value);
                     return;
                 }
                 if (cls == float[].class) {
-                    ((float[]) o1)[index] = ((Number) value).floatValue();
+                    ((float[]) array)[index] = ((Number) value).floatValue();
                     return;
                 }
                 if (cls == byte[].class) {
-                    ((byte[]) o1)[index] = ((Number) value).byteValue();
+                    ((byte[]) array)[index] = ((Number) value).byteValue();
                     return;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {

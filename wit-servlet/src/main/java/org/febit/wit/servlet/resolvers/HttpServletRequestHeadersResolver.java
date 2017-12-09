@@ -8,15 +8,15 @@ import org.febit.wit.servlet.HttpServletRequestHeaders;
  *
  * @author zqq90
  */
-public class HttpServletRequestHeadersResolver implements GetResolver {
+public class HttpServletRequestHeadersResolver implements GetResolver<HttpServletRequestHeaders> {
 
     @Override
-    public Object get(Object bean, Object property) {
-        return ((HttpServletRequestHeaders) bean).get(property.toString());
+    public Object get(HttpServletRequestHeaders bean, Object property) {
+        return bean.get(property.toString());
     }
 
     @Override
-    public Class<?> getMatchClass() {
+    public Class<HttpServletRequestHeaders> getMatchClass() {
         return HttpServletRequestHeaders.class;
     }
 }

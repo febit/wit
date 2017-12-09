@@ -4,8 +4,9 @@ package org.febit.wit.resolvers;
 /**
  *
  * @author zqq90
+ * @param <T>
  */
-public interface SetResolver extends Resolver {
+public interface SetResolver<T> extends Resolver<T> {
 
-    void set(Object object, Object property, Object value);
+    void set(T object, Object property, Object value);
 }

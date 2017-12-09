@@ -72,6 +72,7 @@ public class AsmResolverManagerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void test() throws Exception {
 
         Foo foo = new Foo();

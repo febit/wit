@@ -8,15 +8,15 @@ import org.febit.wit.resolvers.OutResolver;
  *
  * @author zqq90
  */
-public class CharArrayOutResolver implements OutResolver {
+public class CharArrayOutResolver implements OutResolver<char[]> {
 
     @Override
-    public void render(Out out, Object bean) {
-        out.write((char[]) bean);
+    public void render(Out out, char[] bean) {
+        out.write(bean);
     }
 
     @Override
-    public Class getMatchClass() {
+    public Class<char[]> getMatchClass() {
         return char[].class;
     }
 }

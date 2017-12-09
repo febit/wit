@@ -9,20 +9,20 @@ import org.febit.wit.resolvers.SetResolver;
  *
  * @author zqq90
  */
-public class HttpSessionResolver implements GetResolver, SetResolver {
+public class HttpSessionResolver implements GetResolver<HttpSession>, SetResolver<HttpSession> {
 
     @Override
-    public Object get(Object bean, Object property) {
-        return ((HttpSession) bean).getAttribute(property.toString());
+    public Object get(HttpSession bean, Object property) {
+        return bean.getAttribute(property.toString());
     }
 
     @Override
-    public void set(Object bean, Object property, Object value) {
-        ((HttpSession) bean).setAttribute(property.toString(), value);
+    public void set(HttpSession bean, Object property, Object value) {
+        bean.setAttribute(property.toString(), value);
     }
 
     @Override
-    public Class<?> getMatchClass() {
+    public Class<HttpSession> getMatchClass() {
         return HttpSession.class;
     }
 }

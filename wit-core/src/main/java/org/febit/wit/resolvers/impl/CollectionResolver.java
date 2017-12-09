@@ -12,18 +12,18 @@ import org.febit.wit.util.StringUtil;
  *
  * @author zqq90
  */
-public class CollectionResolver implements GetResolver, SetResolver {
+public class CollectionResolver implements GetResolver<Collection>, SetResolver<Collection> {
 
     @Override
-    public Class getMatchClass() {
+    public Class<Collection> getMatchClass() {
         return Collection.class;
     }
 
     @Override
-    public Object get(Object object, Object property) {
-        if (property instanceof Number && object instanceof List) {
+    public Object get(Collection collection, Object property) {
+        if (property instanceof Number && collection instanceof List) {
             try {
-                return ((List) object).get(((Number) property).intValue());
+                return ((List) collection).get(((Number) property).intValue());
             } catch (IndexOutOfBoundsException e) {
                 throw new ScriptRuntimeException(StringUtil.format("index out of bounds:{}", property), e);
             }
@@ -31,9 +31,9 @@ public class CollectionResolver implements GetResolver, SetResolver {
         switch (property.toString()) {
             case "size":
             case "length":
-                return ((Collection) object).size();
+                return collection.size();
             case "isEmpty":
-                return ((Collection) object).isEmpty();
+                return collection.isEmpty();
             default:
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.util.Collection#{}", property));
@@ -41,9 +41,8 @@ public class CollectionResolver implements GetResolver, SetResolver {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void set(Object object, Object property, Object value) {
+    public void set(Collection collection, Object property, Object value) {
         if (property instanceof Number) {
-            final Collection collection = (Collection) object;
             final int index = ((Number) property).intValue();
             final int size = collection.size();
             if (index >= size) {

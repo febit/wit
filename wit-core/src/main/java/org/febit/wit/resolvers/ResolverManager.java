@@ -178,6 +178,7 @@ public class ResolverManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public final Object get(Object bean, Object property) {
         if (bean != null) {
             return resolveGetResolverIfAbsent(bean.getClass()).get(bean, property);
@@ -185,6 +186,7 @@ public class ResolverManager {
         return handleNullPointer();
     }
 
+    @SuppressWarnings("unchecked")
     public final void set(Object bean, Object property, Object value) {
         if (bean != null) {
             resolveSetResolverIfAbsent(bean.getClass()).set(bean, property, value);
