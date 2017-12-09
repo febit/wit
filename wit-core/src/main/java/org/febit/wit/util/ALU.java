@@ -65,243 +65,242 @@ public class ALU {
 
     // +1
     public static Object plusOne(final Object o1) {
-        if (o1 != null) {
-            if (o1 instanceof Number) {
-                final Number num = (Number) o1;
-                switch (getTypeMark(num)) {
-                    case INTEGER:
-                    case SHORT:
-                    case BYTE:
-                        return num.intValue() + 1;
-                    case LONG:
-                        return num.longValue() + 1L;
-                    case DOUBLE:
-                        return num.doubleValue() + 1D;
-                    case FLOAT:
-                        return num.floatValue() + 1F;
-                    case BIG_INTEGER:
-                        return ((BigInteger) num).add(BigInteger.ONE);
-                    case BIG_DECIMAL:
-                        return ((BigDecimal) num).add(BigDecimal.ONE);
-                    default:
-                }
-            } else if (o1 instanceof Character) {
-                return ((Character) o1) + 1;
-            }
-            throw unsupportedTypeException(o1);
+        if (o1 == null) {
+            throw valueIsNullException();
         }
-        throw valueIsNullException();
+        if (o1 instanceof Number) {
+            final Number num = (Number) o1;
+            switch (getTypeMark(num)) {
+                case INTEGER:
+                case SHORT:
+                case BYTE:
+                    return num.intValue() + 1;
+                case LONG:
+                    return num.longValue() + 1L;
+                case DOUBLE:
+                    return num.doubleValue() + 1D;
+                case FLOAT:
+                    return num.floatValue() + 1F;
+                case BIG_INTEGER:
+                    return ((BigInteger) num).add(BigInteger.ONE);
+                case BIG_DECIMAL:
+                    return ((BigDecimal) num).add(BigDecimal.ONE);
+                default:
+            }
+        } else if (o1 instanceof Character) {
+            return ((Character) o1) + 1;
+        }
+        throw unsupportedTypeException(o1);
     }
 
     // -1
     public static Object minusOne(final Object o1) {
-        if (o1 != null) {
-            if (o1 instanceof Number) {
-                final Number num = (Number) o1;
-                switch (getTypeMark(num)) {
-                    case INTEGER:
-                    case SHORT:
-                    case BYTE:
-                        return num.intValue() - 1;
-                    case LONG:
-                        return num.longValue() - 1L;
-                    case DOUBLE:
-                        return num.doubleValue() - 1D;
-                    case FLOAT:
-                        return num.floatValue() - 1F;
-                    case BIG_INTEGER:
-                        return ((BigInteger) num).subtract(BigInteger.ONE);
-                    case BIG_DECIMAL:
-                        return ((BigDecimal) num).subtract(BigDecimal.ONE);
-                    default:
-                }
-            } else if (o1 instanceof Character) {
-                return ((Character) o1) - 1;
-            }
-            throw unsupportedTypeException(o1);
+        if (o1 == null) {
+            throw valueIsNullException();
         }
-        throw valueIsNullException();
+        if (o1 instanceof Number) {
+            final Number num = (Number) o1;
+            switch (getTypeMark(num)) {
+                case INTEGER:
+                case SHORT:
+                case BYTE:
+                    return num.intValue() - 1;
+                case LONG:
+                    return num.longValue() - 1L;
+                case DOUBLE:
+                    return num.doubleValue() - 1D;
+                case FLOAT:
+                    return num.floatValue() - 1F;
+                case BIG_INTEGER:
+                    return ((BigInteger) num).subtract(BigInteger.ONE);
+                case BIG_DECIMAL:
+                    return ((BigDecimal) num).subtract(BigDecimal.ONE);
+                default:
+            }
+        } else if (o1 instanceof Character) {
+            return ((Character) o1) - 1;
+        }
+        throw unsupportedTypeException(o1);
     }
 
     //+
     public static Object plus(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case STRING:
-                case OBJECT:
-                    return o1.toString().concat(o2.toString());
-                case INTEGER:
-                case SHORT:
-                case BYTE:
-                    return ((Number) o1).intValue() + ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() + ((Number) o2).longValue();
-                case DOUBLE:
-                    return ((Number) o1).doubleValue() + ((Number) o2).doubleValue();
-                case FLOAT:
-                    return ((Number) o1).floatValue() + ((Number) o2).floatValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).add(toBigInteger(o2));
-                    }
-                //Note: else upgrade to BigDecimal
-                case BIG_DECIMAL:
-                    return toBigDecimal(o1).add(toBigDecimal(o2));
-                case CHAR:
-                    return plus(charToInt(o1), charToInt(o2));
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
-        } else {
+        if (o1 == null || o2 == null) {
             return o1 != null ? o1 : o2;
         }
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case STRING:
+            case OBJECT:
+                return o1.toString().concat(o2.toString());
+            case INTEGER:
+            case SHORT:
+            case BYTE:
+                return ((Number) o1).intValue() + ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() + ((Number) o2).longValue();
+            case DOUBLE:
+                return ((Number) o1).doubleValue() + ((Number) o2).doubleValue();
+            case FLOAT:
+                return ((Number) o1).floatValue() + ((Number) o2).floatValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).add(toBigInteger(o2));
+                }
+            //Note: else upgrade to BigDecimal
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).add(toBigDecimal(o2));
+            case CHAR:
+                return plus(charToInt(o1), charToInt(o2));
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     //-
     public static Object minus(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case INTEGER:
-                case SHORT:
-                case BYTE:
-                    return ((Number) o1).intValue() - ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() - ((Number) o2).longValue();
-                case DOUBLE:
-                    return ((Number) o1).doubleValue() - ((Number) o2).doubleValue();
-                case FLOAT:
-                    return ((Number) o1).floatValue() - ((Number) o2).floatValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).subtract(toBigInteger(o2));
-                    }
-                //Note: else upgrade to BigDecimal
-                case BIG_DECIMAL:
-                    return toBigDecimal(o1).subtract(toBigDecimal(o2));
-                case CHAR:
-                    return minus(charToInt(o1), charToInt(o2));
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case INTEGER:
+            case SHORT:
+            case BYTE:
+                return ((Number) o1).intValue() - ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() - ((Number) o2).longValue();
+            case DOUBLE:
+                return ((Number) o1).doubleValue() - ((Number) o2).doubleValue();
+            case FLOAT:
+                return ((Number) o1).floatValue() - ((Number) o2).floatValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).subtract(toBigInteger(o2));
+                }
+            //Note: else upgrade to BigDecimal
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).subtract(toBigDecimal(o2));
+            case CHAR:
+                return minus(charToInt(o1), charToInt(o2));
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // negative
     public static Object negative(final Object o1) {
-        if (o1 != null) {
-            switch (getTypeMark(o1)) {
-                case INTEGER:
-                    return -((Integer) o1);
-                case LONG:
-                    return -((Long) o1);
-                case DOUBLE:
-                    return -((Double) o1);
-                case FLOAT:
-                    return -((Float) o1);
-                case SHORT:
-                    return -((Short) o1);
-                case BIG_INTEGER:
-                    return ((BigInteger) o1).negate();
-                case BIG_DECIMAL:
-                    return ((BigDecimal) o1).negate();
-                case CHAR:
-                    return -((Character) o1);
-                default:
-            }
-            throw unsupportedTypeException(o1);
+        if (o1 == null) {
+            throw valueIsNullException();
         }
-        throw valueIsNullException();
+        switch (getTypeMark(o1)) {
+            case INTEGER:
+                return -((Integer) o1);
+            case LONG:
+                return -((Long) o1);
+            case DOUBLE:
+                return -((Double) o1);
+            case FLOAT:
+                return -((Float) o1);
+            case SHORT:
+                return -((Short) o1);
+            case BIG_INTEGER:
+                return ((BigInteger) o1).negate();
+            case BIG_DECIMAL:
+                return ((BigDecimal) o1).negate();
+            case CHAR:
+                return -((Character) o1);
+            default:
+        }
+        throw unsupportedTypeException(o1);
     }
 
     //*
     public static Object mult(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case INTEGER:
-                case SHORT:
-                case BYTE:
-                    return ((Number) o1).intValue() * ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() * ((Number) o2).longValue();
-                case DOUBLE:
-                    return ((Number) o1).doubleValue() * ((Number) o2).doubleValue();
-                case FLOAT:
-                    return ((Number) o1).floatValue() * ((Number) o2).floatValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).multiply(toBigInteger(o2));
-                    }
-                //Note: else upgrade to BigDecimal
-                case BIG_DECIMAL:
-                    return toBigDecimal(o1).multiply(toBigDecimal(o2));
-                case CHAR:
-                    return mult(charToInt(o1), charToInt(o2));
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case INTEGER:
+            case SHORT:
+            case BYTE:
+                return ((Number) o1).intValue() * ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() * ((Number) o2).longValue();
+            case DOUBLE:
+                return ((Number) o1).doubleValue() * ((Number) o2).doubleValue();
+            case FLOAT:
+                return ((Number) o1).floatValue() * ((Number) o2).floatValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).multiply(toBigInteger(o2));
+                }
+            //Note: else upgrade to BigDecimal
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).multiply(toBigDecimal(o2));
+            case CHAR:
+                return mult(charToInt(o1), charToInt(o2));
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // /
     public static Object div(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case INTEGER:
-                case SHORT:
-                case BYTE:
-                    return ((Number) o1).intValue() / ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() / ((Number) o2).longValue();
-                case DOUBLE:
-                    return ((Number) o1).doubleValue() / ((Number) o2).doubleValue();
-                case FLOAT:
-                    return ((Number) o1).floatValue() / ((Number) o2).floatValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).divide(toBigInteger(o2));
-                    }
-                //Note: else upgrade to BigDecimal
-                case BIG_DECIMAL:
-                    return toBigDecimal(o1).divide(toBigDecimal(o2));
-                case CHAR:
-                    return div(charToInt(o1), charToInt(o2));
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case INTEGER:
+            case SHORT:
+            case BYTE:
+                return ((Number) o1).intValue() / ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() / ((Number) o2).longValue();
+            case DOUBLE:
+                return ((Number) o1).doubleValue() / ((Number) o2).doubleValue();
+            case FLOAT:
+                return ((Number) o1).floatValue() / ((Number) o2).floatValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).divide(toBigInteger(o2));
+                }
+            //Note: else upgrade to BigDecimal
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).divide(toBigDecimal(o2));
+            case CHAR:
+                return div(charToInt(o1), charToInt(o2));
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // %
     public static Object mod(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case INTEGER:
-                case SHORT:
-                case BYTE:
-                    return ((Number) o1).intValue() % ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() % ((Number) o2).longValue();
-                case DOUBLE:
-                    return ((Number) o1).doubleValue() % ((Number) o2).doubleValue();
-                case FLOAT:
-                    return ((Number) o1).floatValue() % ((Number) o2).floatValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).remainder(toBigInteger(o2));
-                    }
-                //Note: else upgrade to BigDecimal
-                case BIG_DECIMAL:
-                    return toBigDecimal(o1).remainder(toBigDecimal(o2));
-                case CHAR:
-                    return mod(charToInt(o1), charToInt(o2));
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case INTEGER:
+            case SHORT:
+            case BYTE:
+                return ((Number) o1).intValue() % ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() % ((Number) o2).longValue();
+            case DOUBLE:
+                return ((Number) o1).doubleValue() % ((Number) o2).doubleValue();
+            case FLOAT:
+                return ((Number) o1).floatValue() % ((Number) o2).floatValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).remainder(toBigInteger(o2));
+                }
+            //Note: else upgrade to BigDecimal
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).remainder(toBigDecimal(o2));
+            case CHAR:
+                return mod(charToInt(o1), charToInt(o2));
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // &&
@@ -356,295 +355,295 @@ public class ALU {
 
     // >
     public static boolean greater(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case BYTE:
-                case SHORT:
-                case INTEGER:
-                    return ((Number) o1).intValue() > ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() > ((Number) o2).longValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).compareTo(toBigInteger(o2)) > 0;
-                    }
-                //Note: else upgrade to BigDecimal
-                case DOUBLE:
-                case FLOAT:
-                //Note: Floating point numbers should not be tested for equality.
-                case BIG_DECIMAL:
-                    return toBigDecimal(o1).compareTo(toBigDecimal(o2)) > 0;
-                case CHAR:
-                    return greater(charToInt(o1), charToInt(o2));
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+                return ((Number) o1).intValue() > ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() > ((Number) o2).longValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).compareTo(toBigInteger(o2)) > 0;
+                }
+            //Note: else upgrade to BigDecimal
+            case DOUBLE:
+            case FLOAT:
+            //Note: Floating point numbers should not be tested for equality.
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).compareTo(toBigDecimal(o2)) > 0;
+            case CHAR:
+                return greater(charToInt(o1), charToInt(o2));
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // >=
     public static boolean greaterEqual(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case CHAR:
-                    return greaterEqual(charToInt(o1), charToInt(o2));
-                case BYTE:
-                case SHORT:
-                case INTEGER:
-                    return ((Number) o1).intValue() >= ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() >= ((Number) o2).longValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).compareTo(toBigInteger(o2)) >= 0;
-                    }
-                //Note: else upgrade to BigDecimal
-                case DOUBLE:
-                case FLOAT:
-                //Note: Floating point numbers should not be tested for equality.
-                case BIG_DECIMAL:
-                    return toBigDecimal(o1).compareTo(toBigDecimal(o2)) >= 0;
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case CHAR:
+                return greaterEqual(charToInt(o1), charToInt(o2));
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+                return ((Number) o1).intValue() >= ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() >= ((Number) o2).longValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).compareTo(toBigInteger(o2)) >= 0;
+                }
+            //Note: else upgrade to BigDecimal
+            case DOUBLE:
+            case FLOAT:
+            //Note: Floating point numbers should not be tested for equality.
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).compareTo(toBigDecimal(o2)) >= 0;
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // <
     public static boolean less(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case CHAR:
-                    return less(charToInt(o1), charToInt(o2));
-                case BYTE:
-                case SHORT:
-                case INTEGER:
-                    return ((Number) o1).intValue() < ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() < ((Number) o2).longValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).compareTo(toBigInteger(o2)) < 0;
-                    }
-                //Note: else upgrade to BigDecimal
-                case DOUBLE:
-                case FLOAT:
-                //Note: Floating point numbers should not be tested for equality.
-                case BIG_DECIMAL:
-                    return toBigDecimal(o1).compareTo(toBigDecimal(o2)) < 0;
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case CHAR:
+                return less(charToInt(o1), charToInt(o2));
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+                return ((Number) o1).intValue() < ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() < ((Number) o2).longValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).compareTo(toBigInteger(o2)) < 0;
+                }
+            //Note: else upgrade to BigDecimal
+            case DOUBLE:
+            case FLOAT:
+            //Note: Floating point numbers should not be tested for equality.
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).compareTo(toBigDecimal(o2)) < 0;
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // <=
     public static boolean lessEqual(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case CHAR:
-                    return lessEqual(charToInt(o1), charToInt(o2));
-                case BYTE:
-                case SHORT:
-                case INTEGER:
-                    return ((Number) o1).intValue() <= ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() <= ((Number) o2).longValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).compareTo(toBigInteger(o2)) <= 0;
-                    }
-                //Note: else upgrade to BigDecimal
-                case DOUBLE:
-                case FLOAT:
-                //Note: Floating point numbers should not be tested for equality.
-                case BIG_DECIMAL:
-                    return toBigDecimal(o1).compareTo(toBigDecimal(o2)) <= 0;
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case CHAR:
+                return lessEqual(charToInt(o1), charToInt(o2));
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+                return ((Number) o1).intValue() <= ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() <= ((Number) o2).longValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).compareTo(toBigInteger(o2)) <= 0;
+                }
+            //Note: else upgrade to BigDecimal
+            case DOUBLE:
+            case FLOAT:
+            //Note: Floating point numbers should not be tested for equality.
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).compareTo(toBigDecimal(o2)) <= 0;
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // &
     public static Object bitAnd(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case CHAR:
-                    return bitAnd(charToInt(o1), charToInt(o2));
-                case BYTE:
-                    return ((Number) o1).byteValue() & ((Number) o2).byteValue();
-                case SHORT:
-                    return ((Number) o1).shortValue() & ((Number) o2).shortValue();
-                case INTEGER:
-                    return ((Number) o1).intValue() & ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() & ((Number) o2).longValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).and(toBigInteger(o2));
-                    }
-                //Note: else unsupported
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case CHAR:
+                return bitAnd(charToInt(o1), charToInt(o2));
+            case BYTE:
+                return ((Number) o1).byteValue() & ((Number) o2).byteValue();
+            case SHORT:
+                return ((Number) o1).shortValue() & ((Number) o2).shortValue();
+            case INTEGER:
+                return ((Number) o1).intValue() & ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() & ((Number) o2).longValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).and(toBigInteger(o2));
+                }
+            //Note: else unsupported
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // |
     public static Object bitOr(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case CHAR:
-                    return bitOr(charToInt(o1), charToInt(o2));
-                case BYTE:
-                    return ((Number) o1).byteValue() | ((Number) o2).byteValue();
-                case SHORT:
-                    return ((Number) o1).shortValue() | ((Number) o2).shortValue();
-                case INTEGER:
-                    return ((Number) o1).intValue() | ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() | ((Number) o2).longValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).or(toBigInteger(o2));
-                    }
-                //Note: else unsupported
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case CHAR:
+                return bitOr(charToInt(o1), charToInt(o2));
+            case BYTE:
+                return ((Number) o1).byteValue() | ((Number) o2).byteValue();
+            case SHORT:
+                return ((Number) o1).shortValue() | ((Number) o2).shortValue();
+            case INTEGER:
+                return ((Number) o1).intValue() | ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() | ((Number) o2).longValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).or(toBigInteger(o2));
+                }
+            //Note: else unsupported
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // ^ XOR
     public static Object bitXor(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            switch (getTypeMark(o1) | getTypeMark(o2)) {
-                case CHAR:
-                    return bitXor(charToInt(o1), charToInt(o2));
-                case BYTE:
-                    return ((Number) o1).byteValue() ^ ((Number) o2).byteValue();
-                case SHORT:
-                    return ((Number) o1).shortValue() ^ ((Number) o2).shortValue();
-                case INTEGER:
-                    return ((Number) o1).intValue() ^ ((Number) o2).intValue();
-                case LONG:
-                    return ((Number) o1).longValue() ^ ((Number) o2).longValue();
-                case BIG_INTEGER:
-                    if (notDoubleOrFloat(o1, o2)) {
-                        return toBigInteger(o1).xor(toBigInteger(o2));
-                    }
-                //Note: else unsupported
-                default:
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        switch (getTypeMark(o1) | getTypeMark(o2)) {
+            case CHAR:
+                return bitXor(charToInt(o1), charToInt(o2));
+            case BYTE:
+                return ((Number) o1).byteValue() ^ ((Number) o2).byteValue();
+            case SHORT:
+                return ((Number) o1).shortValue() ^ ((Number) o2).shortValue();
+            case INTEGER:
+                return ((Number) o1).intValue() ^ ((Number) o2).intValue();
+            case LONG:
+                return ((Number) o1).longValue() ^ ((Number) o2).longValue();
+            case BIG_INTEGER:
+                if (notDoubleOrFloat(o1, o2)) {
+                    return toBigInteger(o1).xor(toBigInteger(o2));
+                }
+            //Note: else unsupported
+            default:
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // ~ 
     public static Object bitNot(final Object o1) {
-        if (o1 != null) {
-            switch (getTypeMark(o1)) {
-                case CHAR:
-                    return ~((Character) o1);
-                case BYTE:
-                    return ~((Byte) o1);
-                case SHORT:
-                    return ~((Short) o1);
-                case INTEGER:
-                    return ~((Integer) o1);
-                case LONG:
-                    return ~((Long) o1);
-                case BIG_INTEGER:
-                    return ((BigInteger) o1).not();
-                default:
-            }
-            throw unsupportedTypeException(o1);
+        if (o1 == null) {
+            throw valueIsNullException();
         }
-        throw valueIsNullException();
+        switch (getTypeMark(o1)) {
+            case CHAR:
+                return ~((Character) o1);
+            case BYTE:
+                return ~((Byte) o1);
+            case SHORT:
+                return ~((Short) o1);
+            case INTEGER:
+                return ~((Integer) o1);
+            case LONG:
+                return ~((Long) o1);
+            case BIG_INTEGER:
+                return ((BigInteger) o1).not();
+            default:
+        }
+        throw unsupportedTypeException(o1);
     }
 
-    // <<
+// <<
     public static Object lshift(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            if (o2 instanceof Number) {
-                int right = ((Number) o2).intValue();
-                switch (getTypeMark(o1)) {
-                    case CHAR:
-                        return ((Character) o1) << right;
-                    case BYTE:
-                        return ((Byte) o1) << right;
-                    case SHORT:
-                        return ((Short) o1) << right;
-                    case INTEGER:
-                        return ((Integer) o1) << right;
-                    case LONG:
-                        return ((Long) o1) << right;
-                    case BIG_INTEGER:
-                        return ((BigInteger) o1).shiftLeft(right);
-                    default:
-                }
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        if (o2 instanceof Number) {
+            int right = ((Number) o2).intValue();
+            switch (getTypeMark(o1)) {
+                case CHAR:
+                    return ((Character) o1) << right;
+                case BYTE:
+                    return ((Byte) o1) << right;
+                case SHORT:
+                    return ((Short) o1) << right;
+                case INTEGER:
+                    return ((Integer) o1) << right;
+                case LONG:
+                    return ((Long) o1) << right;
+                case BIG_INTEGER:
+                    return ((BigInteger) o1).shiftLeft(right);
+                default:
+            }
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // >>
     public static Object rshift(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            if (o2 instanceof Number) {
-                int right = ((Number) o2).intValue();
-                switch (getTypeMark(o1)) {
-                    case CHAR:
-                        return ((Character) o1) >> right;
-                    case BYTE:
-                        return ((Byte) o1) >> right;
-                    case SHORT:
-                        return ((Short) o1) >> right;
-                    case INTEGER:
-                        return ((Integer) o1) >> right;
-                    case LONG:
-                        return ((Long) o1) >> right;
-                    case BIG_INTEGER:
-                        return ((BigInteger) o1).shiftRight(right);
-                    default:
-                }
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        if (o2 instanceof Number) {
+            int right = ((Number) o2).intValue();
+            switch (getTypeMark(o1)) {
+                case CHAR:
+                    return ((Character) o1) >> right;
+                case BYTE:
+                    return ((Byte) o1) >> right;
+                case SHORT:
+                    return ((Short) o1) >> right;
+                case INTEGER:
+                    return ((Integer) o1) >> right;
+                case LONG:
+                    return ((Long) o1) >> right;
+                case BIG_INTEGER:
+                    return ((BigInteger) o1).shiftRight(right);
+                default:
+            }
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     // >>>
     public static Object urshift(final Object o1, final Object o2) {
-        if (o1 != null && o2 != null) {
-            if (o2 instanceof Number) {
-                int right = ((Number) o2).intValue();
-                switch (getTypeMark(o1)) {
-                    case CHAR:
-                        return ((Character) o1) >>> right;
-                    case BYTE:
-                        return ((Byte) o1) >>> right;
-                    case SHORT:
-                        return ((Short) o1) >>> right;
-                    case INTEGER:
-                        return ((Integer) o1) >>> right;
-                    case LONG:
-                        return ((Long) o1) >>> right;
-                    default:
-                }
-            }
-            throw unsupportedTypeException(o1, o2);
+        if (o1 == null || o2 == null) {
+            throw valueIsNullException(o1, o2);
         }
-        throw valueIsNullException(o1, o2);
+        if (o2 instanceof Number) {
+            int right = ((Number) o2).intValue();
+            switch (getTypeMark(o1)) {
+                case CHAR:
+                    return ((Character) o1) >>> right;
+                case BYTE:
+                    return ((Byte) o1) >>> right;
+                case SHORT:
+                    return ((Short) o1) >>> right;
+                case INTEGER:
+                    return ((Integer) o1) >>> right;
+                case LONG:
+                    return ((Long) o1) >>> right;
+                default:
+            }
+        }
+        throw unsupportedTypeException(o1, o2);
     }
 
     private static Object charToInt(final Object o1) {
@@ -717,7 +716,8 @@ public class ALU {
 
     private static boolean notDoubleOrFloat(Object o1) {
         Class type = o1.getClass();
-        return type != Float.class && type != Double.class;
+        return type != Float.class
+                && type != Double.class;
     }
 
     private static boolean notDoubleOrFloat(Object o1, Object o2) {

@@ -39,11 +39,7 @@ public abstract class AbstractInclude extends Statement {
     }
 
     @SuppressWarnings("unchecked")
-    protected Map<String, Object> mergeTemplate(final InternalContext context, boolean export) {
-        final Object templatePath = pathExpr.execute(context);
-        if (templatePath == null) {
-            throw new ScriptRuntimeException("Template name should not be null.", pathExpr);
-        }
+    protected Vars prepareParams(final InternalContext context) {
         final Vars params;
         final Object paramsObject = paramsExpr.execute(context);
         if (paramsObject == null) {
@@ -53,11 +49,17 @@ public abstract class AbstractInclude extends Statement {
         } else {
             throw new ScriptRuntimeException("Template param must be a Map.", paramsExpr);
         }
+        return engine.isShareRootData() ? KeyValuesUtil.wrap(context.rootParams, params) : params;
+    }
+
+    protected Map<String, Object> mergeTemplate(final InternalContext context, boolean export) {
+        final Object templatePath = pathExpr.execute(context);
+        if (templatePath == null) {
+            throw new ScriptRuntimeException("Template name should not be null.", pathExpr);
+        }
         try {
             Template template = engine.getTemplate(myTemplateName, String.valueOf(templatePath));
-            Vars rootParams = engine.isShareRootData() ? KeyValuesUtil.wrap(context.rootParams, params) : params;
-            Context newContext = template.mergeToContext(context, rootParams);
-
+            Context newContext = template.mergeToContext(context, prepareParams(context));
             if (export) {
                 Map<String, Object> result = new HashMap<>();
                 newContext.exportTo(result);
