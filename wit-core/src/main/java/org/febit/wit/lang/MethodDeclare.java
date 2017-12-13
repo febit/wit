@@ -7,6 +7,7 @@ import org.febit.wit.InternalContext;
  *
  * @author zqq90
  */
+@FunctionalInterface
 public interface MethodDeclare {
 
     Object invoke(InternalContext context, Object[] args);

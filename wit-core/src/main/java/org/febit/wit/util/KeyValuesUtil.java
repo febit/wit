@@ -20,12 +20,9 @@ public class KeyValuesUtil {
     }
 
     public static Vars wrap(final Vars v1, final Vars v2) {
-        return new Vars() {
-            @Override
-            public void exportTo(Vars.Accepter accepter) {
-                v1.exportTo(accepter);
-                v2.exportTo(accepter);
-            }
+        return (accepter) -> {
+            v1.exportTo(accepter);
+            v2.exportTo(accepter);
         };
     }
 
@@ -33,22 +30,16 @@ public class KeyValuesUtil {
         if (valueses == null || valueses.length == 0) {
             return Vars.EMPTY;
         }
-        return new Vars() {
-            @Override
-            public void exportTo(Vars.Accepter accepter) {
-                for (Vars item : valueses) {
-                    item.exportTo(accepter);
-                }
+        return (accepter) -> {
+            for (Vars item : valueses) {
+                item.exportTo(accepter);
             }
         };
     }
 
     public static Vars wrap(final String key, final Object value) {
-        return new Vars() {
-            @Override
-            public void exportTo(Vars.Accepter accepter) {
-                accepter.set(key, value);
-            }
+        return (accepter) -> {
+            accepter.set(key, value);
         };
     }
 
@@ -60,14 +51,11 @@ public class KeyValuesUtil {
         if (size == 0) {
             return Vars.EMPTY;
         }
-        return new Vars() {
-            @Override
-            public void exportTo(Vars.Accepter accepter) {
-                final String[] mykeys = keys;
-                final Object[] myValues = values;
-                for (int i = 0; i < size; i++) {
-                    accepter.set(mykeys[i], myValues[i]);
-                }
+        return (accepter) -> {
+            final String[] mykeys = keys;
+            final Object[] myValues = values;
+            for (int i = 0; i < size; i++) {
+                accepter.set(mykeys[i], myValues[i]);
             }
         };
     }
@@ -76,13 +64,10 @@ public class KeyValuesUtil {
         if (map == null || map.isEmpty()) {
             return Vars.EMPTY;
         }
-        return new Vars() {
-            @Override
-            public void exportTo(Vars.Accepter accepter) {
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    accepter.set(entry.getKey(), entry.getValue());
-                }
-            }
+        return (accepter) -> {
+            map.entrySet().forEach((entry) -> {
+                accepter.set(entry.getKey(), entry.getValue());
+            });
         };
     }
 }

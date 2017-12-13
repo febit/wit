@@ -8,6 +8,7 @@ import org.febit.wit.Engine;
  * @since 2.4.0
  * @author zqq90
  */
+@FunctionalInterface
 public interface EnginePlugin {
 
     void apply(Engine engine);

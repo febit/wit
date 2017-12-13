@@ -2,7 +2,6 @@ package org.febit.wit.global;
 
 import java.util.Map;
 import org.febit.wit.Context;
-import org.febit.wit.InternalContext;
 import org.febit.wit.lang.MethodDeclare;
 
 /**
@@ -16,19 +15,9 @@ public class ConstMethods {
     /**
      * A empty function, do nothing.
      */
-    public static final MethodDeclare noop = new MethodDeclare() {
-        @Override
-        public Object invoke(InternalContext context, Object[] args) {
-            return Context.VOID;
-        }
-    };
+    public static final MethodDeclare noop = (context, args) -> Context.VOID;
 
-    public static final MethodDeclare CONST_METHOD = new MethodDeclare() {
-        @Override
-        public Object invoke(InternalContext context, Object[] args) {
-            return "CONST_METHOD";
-        }
-    };
+    public static final MethodDeclare CONST_METHOD = (context, args) -> "CONST_METHOD";
 
     public static String constEmpty() {
         return "constEmpty";

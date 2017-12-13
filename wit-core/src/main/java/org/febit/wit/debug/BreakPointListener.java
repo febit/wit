@@ -8,6 +8,7 @@ import org.febit.wit.core.ast.Statement;
  *
  * @author zqq90
  */
+@FunctionalInterface
 public interface BreakPointListener {
 
     void onBreak(Object label, InternalContext context, Statement statement, Object result);

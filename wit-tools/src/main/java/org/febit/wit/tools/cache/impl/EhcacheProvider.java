@@ -4,8 +4,8 @@ package org.febit.wit.tools.cache.impl;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
-import org.febit.wit.tools.cache.CacheProvider;
 import org.febit.wit.Init;
+import org.febit.wit.tools.cache.CacheProvider;
 
 /**
  *

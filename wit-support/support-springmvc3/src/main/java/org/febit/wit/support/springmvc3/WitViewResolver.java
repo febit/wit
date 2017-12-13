@@ -3,12 +3,10 @@ package org.febit.wit.support.springmvc3;
 
 import java.io.IOException;
 import java.util.Map;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
 import org.febit.wit.servlet.WebEngineManager;
-import org.febit.wit.servlet.WebEngineManager.ServletContextProvider;
+import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
 
 /**
  *
@@ -26,13 +24,7 @@ public class WitViewResolver extends AbstractTemplateViewResolver {
     public WitViewResolver() {
         setViewClass(requiredViewClass());
 
-        this.engineManager = new WebEngineManager(new ServletContextProvider() {
-
-            @Override
-            public ServletContext getServletContext() {
-                return WitViewResolver.this.getServletContext();
-            }
-        });
+        this.engineManager = new WebEngineManager(WitViewResolver.this::getServletContext);
     }
 
     public void setConfigPath(String configPath) {

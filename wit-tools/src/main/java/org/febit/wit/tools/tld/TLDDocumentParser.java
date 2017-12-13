@@ -3,9 +3,9 @@ package org.febit.wit.tools.tld;
 
 import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.febit.wit.util.StringUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.febit.wit.util.StringUtil;
 
 /**
  *

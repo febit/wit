@@ -7,6 +7,7 @@ import org.febit.wit.Context;
 import org.febit.wit.Engine;
 import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
+import org.febit.wit.Vars;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.core.ast.expressions.DirectValue;
@@ -15,7 +16,6 @@ import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.util.KeyValuesUtil;
 import org.febit.wit.util.StatementUtil;
-import org.febit.wit.Vars;
 
 /**
  *

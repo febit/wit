@@ -4,11 +4,8 @@ package org.febit.wit.test.tmpls;
 import java.util.HashSet;
 import java.util.Set;
 import org.febit.wit.EngineManager;
-import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
 import org.febit.wit.Vars;
-import org.febit.wit.core.ast.Statement;
-import org.febit.wit.debug.BreakPointListener;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -30,13 +27,9 @@ public class DebugTest {
 
         labelCache.clear();
         pointCount = 0;
-        template.debug(Vars.EMPTY, new BreakPointListener() {
-
-            @Override
-            public void onBreak(Object label, InternalContext context, Statement statement, Object result) {
-                labelCache.add(label);
-                pointCount++;
-            }
+        template.debug(Vars.EMPTY, (label, context, statement, result) -> {
+            labelCache.add(label);
+            pointCount++;
         });
 
         assertEquals(18, pointCount);

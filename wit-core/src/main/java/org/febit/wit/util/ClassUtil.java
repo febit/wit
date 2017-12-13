@@ -67,7 +67,7 @@ public class ClassUtil {
     public static Method[] getPublicMemberMethods(Class type, String name) {
         Map<String, Method[]> map = PUBLIC_MEMBER_METHODS_CACHE.get(type);
         if (map == null) {
-            map = PUBLIC_MEMBER_METHODS_CACHE.putIfAbsent(type, new HashMap<String, Method[]>());
+            map = PUBLIC_MEMBER_METHODS_CACHE.putIfAbsent(type, new HashMap<>());
         }
         Method[] result = map.get(name);
         if (result == null) {

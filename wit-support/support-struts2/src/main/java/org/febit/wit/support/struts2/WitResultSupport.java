@@ -3,7 +3,6 @@ package org.febit.wit.support.struts2;
 
 import com.opensymphony.xwork2.ActionInvocation;
 import java.util.Map;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
@@ -20,13 +19,7 @@ public class WitResultSupport extends StrutsResultSupport {
     private final static WebEngineManager engineManager;
 
     static {
-        engineManager = new WebEngineManager(new WebEngineManager.ServletContextProvider() {
-
-            @Override
-            public ServletContext getServletContext() {
-                return ServletActionContext.getServletContext();
-            }
-        });
+        engineManager = new WebEngineManager(ServletActionContext::getServletContext);
     }
 
     private static String contentType;

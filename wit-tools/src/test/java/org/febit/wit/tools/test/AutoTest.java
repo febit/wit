@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
-import org.junit.Test;
 import org.febit.wit.Context;
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ParseException;
@@ -21,6 +20,7 @@ import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.tools.EngineManager;
 import org.febit.wit.util.ClassUtil;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *
