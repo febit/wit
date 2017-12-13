@@ -5,9 +5,9 @@ import java.lang.reflect.Field;
 import org.febit.wit.Engine;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
+import org.febit.wit.Vars;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.util.ClassUtil;
-import org.febit.wit.util.KeyValuesUtil;
 import org.junit.Test;
 
 /**
@@ -25,7 +25,7 @@ public class ShareDataTest {
             field.set(engine, true);
             Template template = engine.getTemplate("/shareData.wit");
             template.reload();
-            template.merge(KeyValuesUtil.wrap(new String[]{"v1", "v2"}, new Object[]{"V1", "V2"}));
+            template.merge(Vars.of(new String[]{"v1", "v2"}, new Object[]{"V1", "V2"}));
         } finally {
             field.set(engine, true);
         }

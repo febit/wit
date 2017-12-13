@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StrutsResultSupport;
+import org.febit.wit.Vars;
 import org.febit.wit.servlet.WebEngineManager;
-import org.febit.wit.util.KeyValuesUtil;
 
 /**
  *
@@ -48,7 +48,7 @@ public class WitResultSupport extends StrutsResultSupport {
         if (contentType != null) {
             response.setContentType(contentType);
         }
-        engineManager.renderTemplate(view, KeyValuesUtil.wrap(PARAM_KEYS, new Object[]{
+        engineManager.renderTemplate(view, Vars.of(PARAM_KEYS, new Object[]{
             request,
             response,
             context,

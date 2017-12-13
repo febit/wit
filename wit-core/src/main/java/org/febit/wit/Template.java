@@ -16,7 +16,6 @@ import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.util.InternedEncoding;
-import org.febit.wit.util.KeyValuesUtil;
 
 /**
  *
@@ -106,7 +105,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> vars, final OutputStream outputStream) {
-        return merge(KeyValuesUtil.wrap(vars), new OutputStreamOut(outputStream, engine));
+        return merge(Vars.of(vars), new OutputStreamOut(outputStream, engine));
     }
 
     /**
@@ -120,7 +119,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> vars, final OutputStream out, final String encoding) {
-        return merge(KeyValuesUtil.wrap(vars), new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
+        return merge(Vars.of(vars), new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
     }
 
     /**
@@ -133,7 +132,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> vars, final Writer writer) {
-        return merge(KeyValuesUtil.wrap(vars), new WriterOut(writer, engine));
+        return merge(Vars.of(vars), new WriterOut(writer, engine));
     }
 
     /**
@@ -211,7 +210,7 @@ public final class Template {
      * @throws ParseException
      */
     public Context merge(final Map<String, Object> vars) {
-        return merge(KeyValuesUtil.wrap(vars));
+        return merge(Vars.of(vars));
     }
 
     /**

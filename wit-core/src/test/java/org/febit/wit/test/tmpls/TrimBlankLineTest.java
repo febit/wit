@@ -7,9 +7,9 @@ import java.util.Map;
 import org.febit.wit.Engine;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
+import org.febit.wit.Vars;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.util.ClassUtil;
-import org.febit.wit.util.KeyValuesUtil;
 import org.junit.Test;
 
 /**
@@ -30,13 +30,13 @@ public class TrimBlankLineTest {
 
         Map<String, Object> param = new HashMap<>(4);
         param.put("trimBlankLine", true);
-        template.merge(KeyValuesUtil.wrap(param));
+        template.merge(Vars.of(param));
 
         field.set(engine, false);
         template.reset();
 
         param.put("trimBlankLine", false);
-        template.merge(KeyValuesUtil.wrap(param));
+        template.merge(Vars.of(param));
 
     }
 }

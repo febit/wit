@@ -14,7 +14,6 @@ import org.febit.wit.core.ast.expressions.DirectValue;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.util.KeyValuesUtil;
 import org.febit.wit.util.StatementUtil;
 
 /**
@@ -45,11 +44,11 @@ public abstract class AbstractInclude extends Statement {
         if (paramsObject == null) {
             params = Vars.EMPTY;
         } else if (paramsObject instanceof Map) {
-            params = KeyValuesUtil.wrap((Map) paramsObject);
+            params = Vars.of((Map) paramsObject);
         } else {
             throw new ScriptRuntimeException("Template param must be a Map.", paramsExpr);
         }
-        return engine.isShareRootData() ? KeyValuesUtil.wrap(context.rootParams, params) : params;
+        return engine.isShareRootData() ? Vars.of(context.rootParams, params) : params;
     }
 
     protected Map<String, Object> mergeTemplate(final InternalContext context, boolean export) {

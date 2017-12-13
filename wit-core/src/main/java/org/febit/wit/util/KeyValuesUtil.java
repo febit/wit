@@ -7,67 +7,33 @@ import org.febit.wit.Vars;
 /**
  *
  * @author zqq90
+ * @deprecated use <code>Vars.of(..)</code> instead.
  */
+@Deprecated
 public class KeyValuesUtil {
 
-    /**
-     * @deprecated use <code>Vars.EMPTY</code> instead.
-     */
-    @Deprecated
     public static final Vars EMPTY_KEY_VALUES = Vars.EMPTY;
 
     private KeyValuesUtil() {
     }
 
     public static Vars wrap(final Vars v1, final Vars v2) {
-        return (accepter) -> {
-            v1.exportTo(accepter);
-            v2.exportTo(accepter);
-        };
+        return Vars.of(v1, v2);
     }
 
-    public static Vars wrap(final Vars... valueses) {
-        if (valueses == null || valueses.length == 0) {
-            return Vars.EMPTY;
-        }
-        return (accepter) -> {
-            for (Vars item : valueses) {
-                item.exportTo(accepter);
-            }
-        };
+    public static Vars wrap(final Vars... values) {
+        return Vars.of(values);
     }
 
     public static Vars wrap(final String key, final Object value) {
-        return (accepter) -> {
-            accepter.set(key, value);
-        };
+        return Vars.of(key, value);
     }
 
     public static Vars wrap(final String[] keys, final Object[] values) {
-        if (keys == null || values == null) {
-            return Vars.EMPTY;
-        }
-        final int size = Math.min(keys.length, values.length);
-        if (size == 0) {
-            return Vars.EMPTY;
-        }
-        return (accepter) -> {
-            final String[] mykeys = keys;
-            final Object[] myValues = values;
-            for (int i = 0; i < size; i++) {
-                accepter.set(mykeys[i], myValues[i]);
-            }
-        };
+        return Vars.of(keys, values);
     }
 
     public static Vars wrap(final Map<String, Object> map) {
-        if (map == null || map.isEmpty()) {
-            return Vars.EMPTY;
-        }
-        return (accepter) -> {
-            map.entrySet().forEach((entry) -> {
-                accepter.set(entry.getKey(), entry.getValue());
-            });
-        };
+        return Vars.of(map);
     }
 }

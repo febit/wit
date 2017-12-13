@@ -16,7 +16,6 @@ import org.febit.wit.loggers.Logger;
 import org.febit.wit.resolvers.ResolverManager;
 import org.febit.wit.security.NativeSecurityManager;
 import org.febit.wit.util.InternedEncoding;
-import org.febit.wit.util.KeyValuesUtil;
 import org.febit.wit.util.Petite;
 import org.febit.wit.util.Props;
 import org.febit.wit.util.PropsUtil;
@@ -61,7 +60,7 @@ public class Engine {
         }
         final Bag globalBag = this.globalManager.getGlobalBag();
         final Bag constBag = this.globalManager.getConstBag();
-        final Vars params = KeyValuesUtil.wrap(
+        final Vars params = Vars.of(
                 new String[]{"GLOBAL", "CONST"},
                 new Object[]{globalBag, constBag}
         );
