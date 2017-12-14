@@ -23,7 +23,7 @@ public class MultiNativeConstructorDeclare implements MethodDeclare {
     public Object invoke(final InternalContext context, final Object[] args) {
         Constructor constructor = JavaNativeUtil.getMatchConstructor(constructors, args);
         if (constructor == null) {
-            throw new ScriptRuntimeException("not found match native constructor");
+            throw new ScriptRuntimeException("not found matching native constructor");
         }
         return JavaNativeUtil.invokeConstructor(constructor, args);
     }

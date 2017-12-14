@@ -362,28 +362,16 @@ public class JavaNativeUtil {
             final Method method,
             final Object[] args
     ) {
-        return invokeMethod(method, args,
-                method.getParameterTypes().length,
-                ClassUtil.isStatic(method),
-                ClassUtil.isVoidType(method.getReturnType()));
-    }
-
-    public static final Object invokeMethod(
-            final Method method,
-            final Object[] args,
-            final int acceptArgsCount,
-            final boolean isStatic,
-            final boolean isReturnVoid
-    ) {
-        if (isStatic) {
-            return invokeMethod(method, null, args, acceptArgsCount, isReturnVoid);
+        if (ClassUtil.isStatic(method)) {
+            return invokeMethod(method, null, args);
         }
-        if ((args == null || args.length == 0) || args[0] == null) {
+        if (args == null || args.length == 0 || args[0] == null) {
             throw new ScriptRuntimeException("this method need one argument at least");
         }
+        final int acceptArgsCount = method.getParameterCount();
         final Object[] methodArgs = new Object[acceptArgsCount];
         System.arraycopy(args, 1, methodArgs, 0, Math.min(args.length - 1, acceptArgsCount));
-        return invokeMethod(method, args[0], methodArgs, acceptArgsCount, isReturnVoid);
+        return invokeMethod(method, args[0], methodArgs);
     }
 
     public static final Object invokeMethod(
@@ -391,18 +379,7 @@ public class JavaNativeUtil {
             final Object me,
             final Object[] args
     ) {
-        return invokeMethod(method, me, args,
-                method.getParameterTypes().length,
-                ClassUtil.isVoidType(method.getReturnType()));
-    }
-
-    public static final Object invokeMethod(
-            final Method method,
-            final Object me,
-            final Object[] args,
-            final int acceptArgsCount,
-            final boolean isReturnVoid
-    ) {
+        final int acceptArgsCount = method.getParameterCount();
         final Object[] methodArgs;
         if (args != null) {
             int argsLen = args.length;
@@ -417,7 +394,9 @@ public class JavaNativeUtil {
         }
         try {
             Object result = method.invoke(me, methodArgs);
-            return isReturnVoid ? InternalVoid.VOID : result;
+            return ClassUtil.isVoidType(method.getReturnType())
+                    ? InternalVoid.VOID
+                    : result;
         } catch (IllegalAccessException ex) {
             throw new ScriptRuntimeException("this method is inaccessible: ".concat(ex.getLocalizedMessage()), ex);
         } catch (IllegalArgumentException ex) {
@@ -427,18 +406,8 @@ public class JavaNativeUtil {
         }
     }
 
-    public static final Object invokeConstructor(
-            final Constructor constructor,
-            final Object[] args
-    ) {
-        return invokeConstructor(constructor, args, constructor.getParameterTypes().length);
-    }
-
-    public static final Object invokeConstructor(
-            final Constructor constructor,
-            final Object[] args,
-            final int acceptArgsCount
-    ) {
+    public static final Object invokeConstructor(final Constructor constructor, final Object[] args) {
+        final int acceptArgsCount = constructor.getParameterCount();
         final Object[] methodArgs;
         final int argsLen;
         if (args != null && (argsLen = args.length) != 0) {

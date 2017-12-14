@@ -5,7 +5,6 @@ import java.util.Arrays;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.MethodDeclare;
-import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.JavaNativeUtil;
 
 /**
@@ -38,11 +37,6 @@ public class MultiNativeMethodDeclare implements MethodDeclare {
         if (method == null) {
             throw new ScriptRuntimeException("not found match native method");
         }
-        return JavaNativeUtil.invokeMethod(method,
-                args,
-                method.getParameterTypes().length,
-                isStatic,
-                ClassUtil.isVoidType(method.getReturnType()));
-
+        return JavaNativeUtil.invokeMethod(method, args);
     }
 }

@@ -13,15 +13,13 @@ import org.febit.wit.util.JavaNativeUtil;
 public class NativeConstructorDeclare implements MethodDeclare {
 
     private final Constructor constructor;
-    private final int argsCount;
 
     public NativeConstructorDeclare(Constructor constructor) {
         this.constructor = constructor;
-        this.argsCount = constructor.getParameterTypes().length;
     }
 
     @Override
     public Object invoke(final InternalContext context, final Object[] args) {
-        return JavaNativeUtil.invokeConstructor(constructor, args, argsCount);
+        return JavaNativeUtil.invokeConstructor(constructor, args);
     }
 }

@@ -36,7 +36,7 @@ public final class FieldInfoResolver {
         for (Method method : beanType.getMethods()) {
             if (!ClassUtil.isStatic(method)
                     && method.getDeclaringClass() != Object.class) {
-                int argsCount = method.getParameterTypes().length;
+                int argsCount = method.getParameterCount();
                 String methodName = method.getName();
                 int methodNameLength = methodName.length();
                 if (method.getReturnType() == void.class) {
