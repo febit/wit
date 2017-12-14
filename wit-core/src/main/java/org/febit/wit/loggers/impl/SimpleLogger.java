@@ -4,7 +4,6 @@ package org.febit.wit.loggers.impl;
 import java.io.PrintStream;
 import org.febit.wit.Init;
 import org.febit.wit.loggers.AbstractLogger;
-import org.febit.wit.util.StringUtil;
 
 /**
  *
@@ -22,7 +21,7 @@ public final class SimpleLogger extends AbstractLogger {
 
     @Init
     public void init() {
-        prefix = StringUtil.concat("[", name, "] ");
+        prefix = '[' + name + "] ";
         switch (level.trim().toLowerCase()) {
             case "error":
                 levelNum = LEVEL_ERROR;

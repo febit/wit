@@ -17,7 +17,6 @@ import org.febit.wit.lang.method.NativeNewArrayDeclare;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.security.NativeSecurityManager;
 import org.febit.wit.util.ClassUtil;
-import org.febit.wit.util.StringUtil;
 
 /**
  *
@@ -77,7 +76,7 @@ public class NativeFactory {
     @SuppressWarnings("unchecked")
     public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, Class[] paramTypes, int line, int column, boolean checkAccess) {
         if (checkAccess) {
-            final String path = StringUtil.concat(clazz.getName(), ".", methodName);
+            final String path = clazz.getName() + '.' + methodName;
             if (!this.nativeSecurityManager.access(path)) {
                 throw createNotAccessablePathException(path, line, column);
             }
@@ -91,7 +90,7 @@ public class NativeFactory {
 
     public MethodDeclare getNativeMethodDeclare(Class clazz, String methodName, int line, int column, boolean checkAccess) {
         if (checkAccess) {
-            final String path = StringUtil.concat(clazz.getName(), ".", methodName);
+            final String path = clazz.getName() + '.' + methodName;
             if (!this.nativeSecurityManager.access(path)) {
                 throw createNotAccessablePathException(path, line, column);
             }

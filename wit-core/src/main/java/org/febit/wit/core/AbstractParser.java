@@ -207,8 +207,7 @@ abstract class AbstractParser {
 
     private static short[][] loadData(String name) {
         try (ObjectInputStream in = new ObjectInputStream(
-                ClassUtil.getDefaultClassLoader().getResourceAsStream(
-                        StringUtil.concat("org/febit/wit/core/Parser$", name, ".data"))
+                ClassUtil.getDefaultClassLoader().getResourceAsStream("org/febit/wit/core/Parser$" + name + ".data")
         )) {
             return (short[][]) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -636,7 +635,7 @@ abstract class AbstractParser {
         }
         final String fieldName = classNameBand.pop();
         final Class clazz = toClass(classNameBand, line, column);
-        final String path = StringUtil.concat(clazz.getName(), ".", fieldName);
+        final String path = clazz.getName() + '.' + fieldName;
         if (!this.engine.checkNativeAccess(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }

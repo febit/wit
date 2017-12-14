@@ -150,7 +150,7 @@ public class AsmResolverManager extends ResolverManager {
         //Exception
         m.visitTypeInsn(Constants.NEW, "org/febit/wit/exceptions/ScriptRuntimeException");
         m.visitInsn(Constants.DUP);
-        m.visitLdcInsn(StringUtil.concat("Invalid property ", beanClass.getName(), "#"));
+        m.visitLdcInsn("Invalid property " + beanClass.getName() + '#');
         m.visitVarInsn(Constants.ALOAD, 2);
         m.invokeStatic(ASMUtil.TYPE_STRING_NAME, "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
         m.invokeVirtual(ASMUtil.TYPE_STRING_NAME, "concat", "(Ljava/lang/String;)Ljava/lang/String;");

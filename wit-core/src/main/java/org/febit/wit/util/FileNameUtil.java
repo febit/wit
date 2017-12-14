@@ -38,7 +38,7 @@ public class FileNameUtil {
             if (isSeparator(basePath.charAt(len - 1))) {
                 return normalize(basePath.concat(fullFilenameToAdd));
             }
-            return normalize(StringUtil.concat(basePath, "/", fullFilenameToAdd));
+            return normalize(basePath + '/' + fullFilenameToAdd);
         }
         if (prefix > 0) {
             return normalize(fullFilenameToAdd);

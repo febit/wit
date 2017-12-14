@@ -34,28 +34,27 @@ public final class FieldInfoResolver {
         }
 
         for (Method method : beanType.getMethods()) {
-            if (!ClassUtil.isStatic(method)
-                    && method.getDeclaringClass() != Object.class) {
-                int argsCount = method.getParameterCount();
-                String methodName = method.getName();
-                int methodNameLength = methodName.length();
-                if (method.getReturnType() == void.class) {
-                    if (argsCount == 1
-                            && methodNameLength > 3
-                            && methodName.startsWith("set")) {
-                        registSetterMethod(cutFieldName(methodName, 3), method);
-                    }
-                } else {
-                    if (argsCount == 0) {
-                        if (methodNameLength > 3
-                                && methodName.startsWith("get")) {
-                            registGetterMethod(cutFieldName(methodName, 3), method);
-                        } else if (methodNameLength > 2
-                                && methodName.startsWith("is")) {
-                            registGetterMethod(cutFieldName(methodName, 2), method);
-                        }
-                    }
+            if (ClassUtil.isStatic(method)
+                    || method.getDeclaringClass() == Object.class) {
+                continue;
+            }
+            int argsCount = method.getParameterCount();
+            String methodName = method.getName();
+            int methodNameLength = methodName.length();
+            if (argsCount == 0
+                    && method.getReturnType() != void.class) {
+                if (methodNameLength > 3
+                        && methodName.startsWith("get")) {
+                    registGetterMethod(cutFieldName(methodName, 3), method);
+                } else if (methodNameLength > 2
+                        && methodName.startsWith("is")) {
+                    registGetterMethod(cutFieldName(methodName, 2), method);
                 }
+            } else if (argsCount == 1
+                    && methodNameLength > 3
+                    && method.getReturnType() == void.class
+                    && methodName.startsWith("set")) {
+                registSetterMethod(cutFieldName(methodName, 3), method);
             }
         }
 
@@ -86,17 +85,16 @@ public final class FieldInfoResolver {
     static String cutFieldName(final String string, final int from) {
         final int nextIndex = from + 1;
         final int len = string.length();
-        char c;
         if (len > nextIndex) {
-            c = string.charAt(nextIndex);
-            if ((c >= 'A') && (c <= 'Z')) {
+            char c = string.charAt(nextIndex);
+            if (c >= 'A' && c <= 'Z') {
                 return string.substring(from);
             }
         }
         char[] buffer = new char[len - from];
         string.getChars(from, len, buffer, 0);
-        c = buffer[0];
-        if ((c >= 'A') && (c <= 'Z')) {
+        char c = buffer[0];
+        if (c >= 'A' && c <= 'Z') {
             buffer[0] = (char) (c + 0x20);
         }
         return new String(buffer);

@@ -13,14 +13,6 @@ public class StringUtil {
     private StringUtil() {
     }
 
-    public static String concat(String s1, String s2, String s3) {
-        return new StringBuilder(s1.length() + s2.length() + s3.length())
-                .append(s1)
-                .append(s2)
-                .append(s3)
-                .toString();
-    }
-
     public static String concatObjectClass(String string, Object object) {
         return string.concat(object != null ? object.getClass().getName() : "[null]");
     }

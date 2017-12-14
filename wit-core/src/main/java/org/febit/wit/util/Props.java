@@ -205,7 +205,7 @@ public final class Props {
 
         // If ${ is escaped
         if (escape) {
-            return StringUtil.concat(partStart, "${", resolvedEnding);
+            return partStart + "${" + resolvedEnding;
         }
 
         //
@@ -219,7 +219,7 @@ public final class Props {
         // find value and append
         Entry entry = data.get(resolvedEnding.substring(0, end));
         if (entry != null && entry.value != null) {
-            return StringUtil.concat(partStart, resolveValue(entry.value, ++macrosTimes), partEnd);
+            return partStart + resolveValue(entry.value, ++macrosTimes) + partEnd;
         } else {
             return partStart.concat(partEnd);
         }
