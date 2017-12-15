@@ -50,11 +50,6 @@ public abstract class IterFilter implements Iter {
     }
 
     @Override
-    public final boolean isFirst() {
-        return this.cursor == 0;
-    }
-
-    @Override
     public final int index() {
         return this.cursor;
     }

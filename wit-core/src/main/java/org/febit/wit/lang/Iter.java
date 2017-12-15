@@ -11,7 +11,5 @@ public interface Iter {
 
     Object next();
 
-    boolean isFirst();
-
     int index();
 }

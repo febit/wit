@@ -5,8 +5,7 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.BinaryOperator;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.iter.IntAscIter;
-import org.febit.wit.lang.iter.IntDescIter;
+import org.febit.wit.util.CollectionUtil;
 import org.febit.wit.util.StringUtil;
 
 /**
@@ -37,9 +36,9 @@ public class IntStep extends BinaryOperator {
             throw new ScriptRuntimeException(StringUtil.concatObjectClass("right need a int, but found ", tempResult), this);
         }
         if (num1 < num2) {
-            return new IntAscIter(num1, num2);
+            return CollectionUtil.createIntAscIter(num1, num2);
         } else {
-            return new IntDescIter(num1, num2);
+            return CollectionUtil.createIntDescIter(num1, num2);
         }
     }
 }

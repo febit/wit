@@ -18,11 +18,6 @@ public abstract class AbstractArrayIter implements Iter {
     }
 
     @Override
-    public final boolean isFirst() {
-        return cursor == 0;
-    }
-
-    @Override
     public final boolean hasNext() {
         return cursor < max;
     }

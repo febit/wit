@@ -24,11 +24,6 @@ public abstract class AbstractIter implements Iter {
     }
 
     @Override
-    public final boolean isFirst() {
-        return cursor == 0;
-    }
-
-    @Override
     public final int index() {
         return cursor;
     }

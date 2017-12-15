@@ -28,7 +28,7 @@ public class IterGetResolver implements GetResolver<Iter> {
             case "index":
                 return iter.index();
             case "isFirst":
-                return iter.isFirst();
+                return iter.index() == 0;
             case "next":
                 return iter.next();
             case "isEven":
