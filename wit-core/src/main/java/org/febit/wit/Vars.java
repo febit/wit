@@ -11,7 +11,7 @@ import java.util.Map;
 @FunctionalInterface
 public interface Vars {
 
-    public static final Vars EMPTY = (accepter) -> {
+    public static final Vars EMPTY = accepter -> {
         // Do nothing
     };
 
@@ -21,30 +21,44 @@ public interface Vars {
         void set(String key, Object value);
     }
 
+    /**
+     *
+     * @since 2.5.0
+     */
     public static Vars of(final Vars v1, final Vars v2) {
-        return (accepter) -> {
+        return accepter -> {
             v1.exportTo(accepter);
             v2.exportTo(accepter);
         };
     }
 
+    /**
+     *
+     * @since 2.5.0
+     */
     public static Vars of(final Vars... values) {
         if (values == null || values.length == 0) {
             return Vars.EMPTY;
         }
-        return (accepter) -> {
+        return accepter -> {
             for (Vars item : values) {
                 item.exportTo(accepter);
             }
         };
     }
 
+    /**
+     *
+     * @since 2.5.0
+     */
     public static Vars of(final String key, final Object value) {
-        return (accepter) -> {
-            accepter.set(key, value);
-        };
+        return accepter -> accepter.set(key, value);
     }
 
+    /**
+     *
+     * @since 2.5.0
+     */
     public static Vars of(final String[] keys, final Object[] values) {
         if (keys == null || values == null) {
             return Vars.EMPTY;
@@ -53,24 +67,22 @@ public interface Vars {
         if (size == 0) {
             return Vars.EMPTY;
         }
-        return (accepter) -> {
-            final String[] mykeys = keys;
-            final Object[] myValues = values;
+        return accepter -> {
             for (int i = 0; i < size; i++) {
-                accepter.set(mykeys[i], myValues[i]);
+                accepter.set(keys[i], values[i]);
             }
         };
     }
 
+    /**
+     *
+     * @since 2.5.0
+     */
     public static Vars of(final Map<String, Object> map) {
         if (map == null || map.isEmpty()) {
             return Vars.EMPTY;
         }
-        return (accepter) -> {
-            map.entrySet().forEach((entry) -> {
-                accepter.set(entry.getKey(), entry.getValue());
-            });
-        };
+        return accepter -> map.forEach(accepter::set);
     }
 
     void exportTo(Accepter accepter);
