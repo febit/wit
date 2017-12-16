@@ -4,9 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,13 +51,8 @@ public class JavaNativeUtil {
                 .filter(m -> !(skipConflict && manager.hasConst(m.getName())))
                 .collect(Collectors.groupingBy(Method::getName));
 
-        methodMap.forEach(((name, methods) -> {
-            manager.setConst(name, methods.size() == 1
-                    ? nativeFactory.createNativeMethodDeclare(methods.get(0))
-                    : nativeFactory.createMultiNativeMethodDeclare(
-                            methods.toArray(new Method[methods.size()]))
-            );
-        }));
+        methodMap.forEach((name, methods) -> manager.setConst(name,
+                nativeFactory.createNativeMethodDeclare(methods)));
         return methodMap.size();
     }
 

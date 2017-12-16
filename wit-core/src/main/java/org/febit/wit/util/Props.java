@@ -98,9 +98,7 @@ public final class Props {
     }
 
     public void merge(final Props props) {
-        props.data.forEach((k, v) -> {
-            put(k, v.value, v.append);
-        });
+        props.data.forEach((k, v) -> put(k, v.value, v.append));
         addModules(props.modules);
     }
 
@@ -127,9 +125,7 @@ public final class Props {
 
     @SuppressWarnings("unchecked")
     public void extractTo(final Map target) {
-        this.data.forEach((k, v) -> {
-            target.put(k, resolveValue(v));
-        });
+        this.data.forEach((k, v) -> target.put(k, resolveValue(v)));
     }
 
     public Iterable<String> keySet() {

@@ -22,7 +22,8 @@ public final class Switch extends Statement implements Loopable {
     private final Map<Object, CaseEntry> caseMap;  //Note: key == null will be default also
     private final int label;
 
-    Switch(Expression switchExpr, CaseEntry defaultStatement, Map<Object, CaseEntry> caseMap, int label, int line, int column) {
+    Switch(Expression switchExpr, CaseEntry defaultStatement, Map<Object, CaseEntry> caseMap,
+            int label, int line, int column) {
         super(line, column);
         this.switchExpr = switchExpr;
         this.defaultStatement = defaultStatement;
@@ -45,14 +46,11 @@ public final class Switch extends Statement implements Loopable {
 
     @Override
     public List<LoopInfo> collectPossibleLoops() {
-        LinkedList<LoopInfo> loopInfos = new LinkedList<>();
+        List<LoopInfo> loopInfos = new LinkedList<>();
         //XXX: May have duplicated LoopInfo caused by duplicated CaseEntry
-        this.caseMap.values().forEach(entry -> {
-            loopInfos.addAll(StatementUtil.collectPossibleLoops(entry.body));
-        });
+        caseMap.values().forEach(entry -> loopInfos.addAll(entry.collectPossibleLoops()));
         //remove loops for this switch
-        loopInfos.removeIf(loop -> loop.matchLabel(this.label)
-                && loop.type == LoopInfo.BREAK);
+        loopInfos.removeIf(loop -> loop.matchLabel(this.label) && loop.type == LoopInfo.BREAK);
         return loopInfos;
     }
 
@@ -72,6 +70,10 @@ public final class Switch extends Statement implements Loopable {
                 return next.execute(context);
             }
             return null;
+        }
+
+        List<LoopInfo> collectPossibleLoops() {
+            return StatementUtil.collectPossibleLoops(body);
         }
     }
 }

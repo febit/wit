@@ -3,6 +3,7 @@ package org.febit.wit.core;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.febit.wit.exceptions.ParseException;
@@ -186,6 +187,17 @@ public class NativeFactory {
     public MethodDeclare createNativeMethodDeclare(Method method) {
         ClassUtil.setAccessible(method);
         return new NativeMethodDeclare(method);
+    }
+
+    public MethodDeclare createNativeMethodDeclare(List<Method> methods) {
+        if (methods == null || methods.isEmpty()) {
+            throw new IllegalArgumentException("methods must mot empty");
+        }
+        int size = methods.size();
+        if (size == 1) {
+            return createNativeMethodDeclare(methods.get(0));
+        }
+        return createMultiNativeMethodDeclare(methods.toArray(new Method[size]));
     }
 
     public MethodDeclare createMultiNativeMethodDeclare(Method[] methods) {

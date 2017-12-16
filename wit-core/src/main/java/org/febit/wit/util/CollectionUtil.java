@@ -163,7 +163,6 @@ public class CollectionUtil {
             return createIntAscIter(to, from);
         }
         return new Iter() {
-
             private int current = from - 1;
 
             @Override
@@ -173,11 +172,10 @@ public class CollectionUtil {
 
             @Override
             public Integer next() {
-                if (current < to) {
-                    return ++current;
-                } else {
+                if (current >= to) {
                     throw new NoSuchElementException("no more next");
                 }
+                return ++current;
             }
 
             @Override
@@ -192,7 +190,6 @@ public class CollectionUtil {
             return createIntDescIter(to, from);
         }
         return new Iter() {
-
             private int current = from + 1;
 
             @Override
@@ -202,11 +199,10 @@ public class CollectionUtil {
 
             @Override
             public Integer next() {
-                if (current > to) {
-                    return --current;
-                } else {
+                if (current <= to) {
                     throw new NoSuchElementException("no more next");
                 }
+                return --current;
             }
 
             @Override
