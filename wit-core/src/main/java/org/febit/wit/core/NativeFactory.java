@@ -42,18 +42,15 @@ public class NativeFactory {
         while (classForCheck.isArray()) {
             classForCheck = classForCheck.getComponentType();
         }
-
-        if (classForCheck == Void.class || classForCheck == Void.TYPE) {
-            throw new ParseException("ComponentType must not Void.class", line, column);
+        if (ClassUtil.isVoidType(classForCheck)) {
+            throw new ParseException("ComponentType must not void", line, column);
         }
-
         if (checkAccess) {
             final String path = classForCheck.getName().concat(".[]");
             if (!this.nativeSecurityManager.access(path)) {
                 throw createNotAccessablePathException(path, line, column);
             }
         }
-
         return new NativeNewArrayDeclare(componentType);
     }
 
@@ -192,6 +189,10 @@ public class NativeFactory {
     }
 
     public MethodDeclare createMultiNativeMethodDeclare(Method[] methods) {
+        if (methods == null || methods.length == 0) {
+            throw new IllegalArgumentException("methods must mot empty");
+        }
+        ClassUtil.setAccessible(methods);
         final boolean isStatic = ClassUtil.isStatic(methods[0]);
         boolean mix = false;
         for (int i = 1; i < methods.length; i++) {

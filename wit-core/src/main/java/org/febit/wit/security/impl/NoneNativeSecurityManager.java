@@ -8,7 +8,7 @@ import org.febit.wit.security.NativeSecurityManager;
  * @since 1.4.0
  * @author zqq90
  */
-public final class NoneNativeSecurityManager implements NativeSecurityManager {
+public class NoneNativeSecurityManager implements NativeSecurityManager {
 
     @Override
     public boolean access(String path) {

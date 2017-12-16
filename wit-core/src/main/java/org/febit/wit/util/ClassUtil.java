@@ -6,13 +6,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.febit.wit.exceptions.UncheckedException;
 
 /**
@@ -21,45 +17,26 @@ import org.febit.wit.exceptions.UncheckedException;
  */
 public class ClassUtil {
 
-    public static final ClassMap<Map<String, Method[]>> PUBLIC_MEMBER_METHODS_CACHE = new ClassMap<>();
+    private static final ClassMap<Map<String, Method[]>> PUBLIC_MEMBER_METHODS_CACHE = new ClassMap<>();
 
     private ClassUtil() {
     }
 
-    public static List<Class> classes(Class cls) {
-        List<Class> classes = new ArrayList<>();
-        while (cls != null && cls != Object.class) {
-            classes.add(cls);
-            cls = cls.getSuperclass();
-        }
-        return classes;
-    }
-
-    public static List<Class> impls(Class cls) {
-        List<Class> classes = new ArrayList<>();
-        Set<Class> interfaces = new HashSet<>();
-        while (cls != null && cls != Object.class) {
-            classes.add(cls);
-            interfaces.addAll(Arrays.asList(cls.getInterfaces()));
-            cls = cls.getSuperclass();
-        }
-        classes.addAll(interfaces);
-        return classes;
-    }
-
-    public static Map<String, Field> getSettableMemberFields(Class type) {
+    public static Map<String, Field> getSettableMemberFields(final Class type) {
         final Map<String, Field> fields = new HashMap<>();
-        for (Class cls : classes(type)) {
-            for (Field field : cls.getDeclaredFields()) {
-                int modifiers = field.getModifiers();
-                if (!Modifier.isStatic(modifiers) && !Modifier.isFinal(modifiers)
-                        && (field.getDeclaringClass() == type
-                        || Modifier.isPublic(modifiers)
-                        || Modifier.isProtected(modifiers))) {
-                    setAccessible(field);
-                    fields.put(field.getName(), field);
+        Class cls = type;
+        while (cls != null && cls != Object.class) {
+            for (Field f : cls.getDeclaredFields()) {
+                int mod = f.getModifiers();
+                if (Modifier.isStatic(mod)
+                        || Modifier.isFinal(mod)
+                        || !(Modifier.isPublic(mod) || Modifier.isProtected(mod))) {
+                    continue;
                 }
+                setAccessible(f);
+                fields.put(f.getName(), f);
             }
+            cls = cls.getSuperclass();
         }
         return fields;
     }
@@ -77,7 +54,7 @@ public class ClassUtil {
         return result;
     }
 
-    protected static Method[] resolvePublicMemberMethods(Class type, String name) {
+    private static Method[] resolvePublicMemberMethods(Class type, String name) {
         Method[] allMethods = type.getMethods();
         Map<String, Method> result = new HashMap<>();
         for (Method method : allMethods) {
@@ -200,7 +177,6 @@ public class ClassUtil {
     }
 
     public static Class getClass(final String name, final int arrayDepth) throws ClassNotFoundException {
-
         if (arrayDepth == 0) {
             return getClass(name);
         }
@@ -275,6 +251,10 @@ public class ClassUtil {
 
     public static boolean isPublic(Member member) {
         return Modifier.isPublic(member.getModifiers());
+    }
+
+    public static boolean isProtected(Member member) {
+        return Modifier.isProtected(member.getModifiers());
     }
 
     public static boolean isVoidType(Class cls) {

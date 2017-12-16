@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exceptions.AmbiguousMethodException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
@@ -47,35 +48,19 @@ public class JavaNativeUtil {
             Class type,
             boolean skipConflict
     ) {
-        int count = 0;
-        HashMap<String, List<Method>> methodMap = new HashMap<>();
-        for (Method method : type.getMethods()) {
-            if (!ClassUtil.isStatic(method)) {
-                continue;
-            }
-            String name = method.getName();
-            if (skipConflict && manager.hasConst(name)) {
-                continue;
-            }
-            List<Method> methods = methodMap.get(name);
-            if (methods == null) {
-                methods = new ArrayList<>();
-                methodMap.put(name, methods);
-            }
-            ClassUtil.setAccessible(method);
-            methods.add(method);
-        }
-        for (Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
-            String name = entry.getKey();
-            List<Method> methods = entry.getValue();
-            if (methods.size() == 1) {
-                manager.setConst(name, nativeFactory.createNativeMethodDeclare(methods.get(0)));
-            } else {
-                manager.setConst(name, nativeFactory.createMultiNativeMethodDeclare(
-                        methods.toArray(new Method[methods.size()])));
-            }
-        }
-        return count;
+        Map<String, List<Method>> methodMap = Arrays.stream(type.getMethods())
+                .filter(ClassUtil::isStatic)
+                .filter(m -> !(skipConflict && manager.hasConst(m.getName())))
+                .collect(Collectors.groupingBy(Method::getName));
+
+        methodMap.forEach(((name, methods) -> {
+            manager.setConst(name, methods.size() == 1
+                    ? nativeFactory.createNativeMethodDeclare(methods.get(0))
+                    : nativeFactory.createMultiNativeMethodDeclare(
+                            methods.toArray(new Method[methods.size()]))
+            );
+        }));
+        return methodMap.size();
     }
 
     public static int addConstFields(
@@ -102,14 +87,12 @@ public class JavaNativeUtil {
             if (skipConflict && manager.hasConst(name)) {
                 continue;
             }
-            Object value;
+            ClassUtil.setAccessible(field);
             try {
-                ClassUtil.setAccessible(field);
-                value = field.get(null);
+                manager.setConst(name, field.get(null));
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 throw new UncheckedException(e);
             }
-            manager.setConst(name, value);
         }
         return count;
     }

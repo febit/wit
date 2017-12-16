@@ -43,7 +43,7 @@ public final class DynamicNativeMethodExecute extends Expression implements Cons
         return invokeProperMethod(me, methods, params);
     }
 
-    protected Method[] getMethods(Object me) {
+    private Method[] getMethods(Object me) {
         if (me == null) {
             throw new ScriptRuntimeException("not a function (NPE)", this);
         }
@@ -54,7 +54,7 @@ public final class DynamicNativeMethodExecute extends Expression implements Cons
         return methods;
     }
 
-    protected Object invokeProperMethod(Object me, Method[] methods, Object[] params) {
+    private Object invokeProperMethod(Object me, Method[] methods, Object[] params) {
         Method method = JavaNativeUtil.getMatchMethod(methods, params);
         if (method == null) {
             throw new ScriptRuntimeException("not found match native method: " + me.getClass() + '#' + func);

@@ -37,13 +37,13 @@ public final class Import extends AbstractInclude {
         if (exportAll) {
             final VariantIndexer destIndexer = context.indexers[context.indexer];
             if (context.indexer == destIndexer.id) {
-                final Object[] destValues = context.vars;
-                for (Map.Entry<String, Object> entry : results.entrySet()) {
-                    int index = destIndexer.getCurrentIndex(entry.getKey());
+                final Object[] destVars = context.vars;
+                results.forEach((key, val) -> {
+                    int index = destIndexer.getCurrentIndex(key);
                     if (index >= 0) {
-                        destValues[index] = entry.getValue();
+                        destVars[index] = val;
                     }
-                }
+                });
             }
         } else {
             final String[] names = this.exportNames;

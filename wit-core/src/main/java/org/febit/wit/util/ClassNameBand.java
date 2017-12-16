@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author zqq90
  */
-public final class ClassNameBand {
+public class ClassNameBand {
 
     private final List<String> segment;
     private int arrayDepth;

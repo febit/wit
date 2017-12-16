@@ -62,7 +62,7 @@ public final class Props {
         this.modules.add(module);
     }
 
-    protected void initModules() {
+    private void initModules() {
         if (this.modules == null) {
             this.modules = new ArrayList<>();
         }
@@ -98,10 +98,9 @@ public final class Props {
     }
 
     public void merge(final Props props) {
-        for (Map.Entry<String, Entry> entry : props.data.entrySet()) {
-            Entry propsEntry = entry.getValue();
-            put(entry.getKey(), propsEntry.value, propsEntry.append);
-        }
+        props.data.forEach((k, v) -> {
+            put(k, v.value, v.append);
+        });
         addModules(props.modules);
     }
 
@@ -128,9 +127,9 @@ public final class Props {
 
     @SuppressWarnings("unchecked")
     public void extractTo(final Map target) {
-        for (Map.Entry<String, Entry> entry : this.data.entrySet()) {
-            target.put(entry.getKey(), resolveValue(entry.getValue()));
-        }
+        this.data.forEach((k, v) -> {
+            target.put(k, resolveValue(v));
+        });
     }
 
     public Iterable<String> keySet() {

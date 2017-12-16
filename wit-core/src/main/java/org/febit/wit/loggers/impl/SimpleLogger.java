@@ -9,7 +9,7 @@ import org.febit.wit.loggers.AbstractLogger;
  *
  * @author zqq90
  */
-public final class SimpleLogger extends AbstractLogger {
+public class SimpleLogger extends AbstractLogger {
 
     private static final PrintStream OUT = System.out;
 

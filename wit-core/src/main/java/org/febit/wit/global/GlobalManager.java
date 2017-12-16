@@ -20,7 +20,7 @@ public class GlobalManager {
     private Object[] globalContext;
 
     //settings
-    private GlobalRegister[] registers;
+    protected GlobalRegister[] registers;
 
     public GlobalManager() {
         this.constMap = new HashMap<>();

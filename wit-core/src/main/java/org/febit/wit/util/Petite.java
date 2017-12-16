@@ -15,7 +15,7 @@ import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.loggers.Logger;
 
 /**
- * A simple dependency injection.
+ * A simple component injection.
  *
  * @author zqq90
  * @since 2.0
@@ -107,9 +107,7 @@ public class Petite {
         }
 
         if (extras != null) {
-            for (Map.Entry<String, Object> entrySet : extras.entrySet()) {
-                setProp(entrySet.getKey(), entrySet.getValue());
-            }
+            extras.forEach(this::setProp);
         }
     }
 
@@ -132,8 +130,13 @@ public class Petite {
 
     public void addComponent(Object bean) {
         //regist all impls
-        for (Class cls : ClassUtil.impls(bean.getClass())) {
+        Class cls = bean.getClass();
+        while (cls != null && cls != Object.class) {
             this.components.put(cls, bean);
+            for (Class aInterface : cls.getInterfaces()) {
+                this.components.put(aInterface, bean);
+            }
+            cls = cls.getSuperclass();
         }
     }
 

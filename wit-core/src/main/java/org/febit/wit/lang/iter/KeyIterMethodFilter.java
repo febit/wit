@@ -12,9 +12,9 @@ import org.febit.wit.util.ALU;
  */
 public final class KeyIterMethodFilter extends IterFilter implements KeyIter {
 
-    protected final InternalContext context;
-    protected final MethodDeclare method;
-    protected final KeyIter keyIter;
+    private final InternalContext context;
+    private final MethodDeclare method;
+    private final KeyIter keyIter;
 
     public KeyIterMethodFilter(InternalContext context, MethodDeclare method, KeyIter keyIter) {
         super(keyIter);

@@ -11,7 +11,7 @@ import org.febit.wit.util.ClassUtil;
  *
  * @author zqq90
  */
-public final class FieldInfoResolver {
+public class FieldInfoResolver {
 
     private final Class beanType;
     private final Map<String, FieldInfo> fieldInfos;

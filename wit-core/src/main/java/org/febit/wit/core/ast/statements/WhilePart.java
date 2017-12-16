@@ -10,7 +10,7 @@ import org.febit.wit.util.StatementUtil;
  *
  * @author zqq90
  */
-public final class WhilePart {
+public class WhilePart {
 
     private final int line;
     private final int column;

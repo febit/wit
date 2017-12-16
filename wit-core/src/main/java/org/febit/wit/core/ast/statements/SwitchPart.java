@@ -13,10 +13,10 @@ import org.febit.wit.util.StatementUtil;
  *
  * @author zqq90
  */
-public final class SwitchPart {
+public class SwitchPart {
 
-    protected int line;
-    protected int column;
+    private int line;
+    private int column;
     private Expression switchExpr;
     private CaseEntry defaultStatement;
     private final Map<Object, CaseEntry> caseMap;

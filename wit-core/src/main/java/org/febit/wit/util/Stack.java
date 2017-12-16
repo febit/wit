@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * @author zqq90
  * @param <T>
  */
-public final class Stack<T> extends ArrayList<T> {
+public class Stack<T> extends ArrayList<T> {
 
     public Stack() {
         super();

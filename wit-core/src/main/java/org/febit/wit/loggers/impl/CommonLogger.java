@@ -10,7 +10,7 @@ import org.febit.wit.loggers.AbstractLogger;
  *
  * @author zqq90
  */
-public final class CommonLogger extends AbstractLogger {
+public class CommonLogger extends AbstractLogger {
 
     private Log log;
 

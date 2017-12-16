@@ -20,6 +20,7 @@ public class StringUtilTest {
         assertSame(ArrayUtil.emptyStrings(), StringUtil.toArray("\t\n ,,,  "));
         assertSame(ArrayUtil.emptyStrings(), StringUtil.toArray(","));
         assertSame(ArrayUtil.emptyStrings(), StringUtil.toArray(",, ,,"));
+        assertSame(ArrayUtil.emptyStrings(), StringUtil.toArray("   "));
         assertSame(ArrayUtil.emptyStrings(), StringUtil.toArray(null));
     }
 

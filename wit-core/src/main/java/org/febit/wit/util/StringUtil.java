@@ -41,6 +41,25 @@ public class StringUtil {
         return sb.toString();
     }
 
+    private static boolean isArrayValueEnd(char c) {
+        return c == ','
+                || c == '\n'
+                || c == '\r';
+    }
+
+    private static boolean isArrayValueEndOrEmpty(char c) {
+        switch (c) {
+            case ',':
+            case '\n':
+            case '\r':
+            case ' ':
+            case '\t':
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static String[] toArray(String src) {
         if (src == null || src.isEmpty()) {
             return ArrayUtil.emptyStrings();
@@ -49,24 +68,12 @@ public class StringUtil {
         final char[] srcc = src.toCharArray();
         final int len = srcc.length;
 
-        // list max size = (size + 1) / 2
-        List<String> list = new ArrayList<>(
-                len > 1024 ? 128
-                        : len > 64 ? 32
-                                : (len + 1) >> 1);
+        List<String> list = new ArrayList<>(len > 1024 ? 64 : 16);
 
         int i = 0;
         while (i < len) {
             //skip empty & splits
-            while (i < len) {
-                char c = srcc[i];
-                if (c != ','
-                        && c != '\n'
-                        && c != '\r'
-                        && c != ' '
-                        && c != '\t') {
-                    break;
-                }
+            while (i < len && isArrayValueEndOrEmpty(srcc[i])) {
                 i++;
             }
             //check if end
@@ -76,32 +83,20 @@ public class StringUtil {
             final int start = i;
 
             //find end
-            while (i < len) {
-                char c = srcc[i];
-                if (c == ','
-                        || c == '\n'
-                        || c == '\r') {
-                    break;
-                }
+            while (i < len
+                    && !isArrayValueEnd(srcc[i])) {
                 i++;
             }
             int end = i;
             //trim back end
-            for (;;) {
-                char c = srcc[end - 1];
-                if (c == ' '
-                        || c == '\t') {
-                    end--;
-                    continue;
-                }
-                break;
+            while (isArrayValueEndOrEmpty(srcc[end - 1])) {
+                end--;
             }
             list.add(new String(srcc, start, end - start));
         }
-        if (list.isEmpty()) {
-            return ArrayUtil.emptyStrings();
-        }
-        return list.toArray(new String[list.size()]);
+        return list.isEmpty()
+                ? ArrayUtil.emptyStrings()
+                : list.toArray(new String[list.size()]);
     }
 
     public static String format(String template, Object... array) {
@@ -124,7 +119,8 @@ public class StringUtil {
                 break;
             }
             int j = ndx - 1;
-            while ((j >= 0) && (template.charAt(j) == '\\')) {
+            while (j >= 0
+                    && template.charAt(j) == '\\') {
                 j--;
             }
             int escapeCharcount = ndx - 1 - j;

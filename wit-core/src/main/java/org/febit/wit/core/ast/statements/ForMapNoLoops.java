@@ -16,7 +16,7 @@ import org.febit.wit.util.StatementUtil;
  */
 public final class ForMapNoLoops extends Statement {
 
-    protected final FunctionDeclare functionDeclareExpr;
+    private final FunctionDeclare functionDeclareExpr;
     private final Expression mapExpr;
     private final int indexer;
     private final Statement[] statements;

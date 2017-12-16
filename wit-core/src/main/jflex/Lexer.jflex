@@ -168,19 +168,19 @@ import org.febit.wit.util.LexerCharArrayWriter;
         return symbol(Tokens.TEXT_STATEMENT, stringLine, stringColumn, chars);
     }
 
-    public final String yytext(int startOffset, int endOffset) {
+    public String yytext(int startOffset, int endOffset) {
         return new String(zzBuffer, zzStartRead + startOffset, zzMarkedPos - zzStartRead + endOffset);
     }
 
-    public final String yytext(int endOffset) {
+    public String yytext(int endOffset) {
         return new String(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead + endOffset);
     }
 
-    public final char yyTextChar(int startOffset) {
+    public char yyTextChar(int startOffset) {
         return zzBuffer[zzStartRead + startOffset];
     }
 
-    public final char yyTextChar() {
+    public char yyTextChar() {
         return zzBuffer[zzStartRead];
     }
 

@@ -12,8 +12,8 @@ import org.febit.wit.util.ALU;
  */
 public final class IterMethodFilter extends IterFilter {
 
-    protected final InternalContext context;
-    protected final MethodDeclare method;
+    private final InternalContext context;
+    private final MethodDeclare method;
 
     public IterMethodFilter(InternalContext context, MethodDeclare method, Iter iter) {
         super(iter);
