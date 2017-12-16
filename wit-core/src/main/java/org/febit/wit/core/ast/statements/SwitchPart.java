@@ -27,8 +27,10 @@ public class SwitchPart {
         this.caseMap = new HashMap<>();
     }
 
-    public SwitchPart setSwitchExpr(Expression switchExpr) {
+    public SwitchPart setSwitchExpr(Expression switchExpr, int line, int column) {
         this.switchExpr = switchExpr;
+        this.line = line;
+        this.column = column;
         return this;
     }
 
@@ -37,8 +39,8 @@ public class SwitchPart {
         CaseEntry current = currentCaseStatement;
         if (body != null) {
             current = currentCaseStatement = new CaseEntry(body, current);
-        } // else use last as current for this key
-
+        }
+        // else use last as current for this key
         if (key == null) {
             if (defaultStatement != null) {
                 throw new ParseException("multi default block in one swith", line, column);
@@ -53,11 +55,8 @@ public class SwitchPart {
     }
 
     public Statement pop(int label) {
-
         Map<Object, CaseEntry> newCaseMap = new HashMap<>((caseMap.size() + 1) * 4 / 3, 0.75f);
-
         newCaseMap.putAll(caseMap);
-
         return StatementUtil.optimize(new Switch(switchExpr, defaultStatement, newCaseMap, label, line, column));
     }
 }

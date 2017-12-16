@@ -344,7 +344,7 @@ switchPart0     ::=
 
 
 switchPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE TEXT_STATEMENT ? switchPart0:part RBRACE
-                    {: return (%part%).setSwitchExpr(%switchExpr%); :}
+                    {: return (%part%).setSwitchExpr(%switchExpr%, %sym.line%, %sym.column%); :}
                     ;
 
 
