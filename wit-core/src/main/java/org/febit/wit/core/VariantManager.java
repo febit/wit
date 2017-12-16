@@ -224,9 +224,6 @@ public class VariantManager {
         }
 
         void assignVarsIfAbsent(String[] vars) {
-            if (vars == null) {
-                return;
-            }
             for (String var : vars) {
                 if (!this.values.containsKey(var)) {
                     assignVar(var, -1, -1);

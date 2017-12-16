@@ -7,6 +7,7 @@ import java.util.Map;
 import org.febit.wit.Init;
 import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.lang.Bag;
+import org.febit.wit.util.ArrayUtil;
 
 /**
  *
@@ -17,7 +18,7 @@ public class GlobalManager {
     private final Map<String, Object> constMap;
     private final Map<String, Object> driftedGlobalMap;
     private final Map<String, Integer> globalIndexer;
-    private Object[] globalContext;
+    private Object[] globalContext = ArrayUtil.emptyObjects();
 
     //settings
     protected GlobalRegister[] registers;

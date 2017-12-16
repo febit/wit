@@ -78,9 +78,9 @@ public class ALU {
                 case FLOAT:
                     return num.floatValue() + 1F;
                 case BIG_INTEGER:
-                    return ((BigInteger) num).add(BigInteger.ONE);
+                    return toBigInteger(num).add(BigInteger.ONE);
                 case BIG_DECIMAL:
-                    return ((BigDecimal) num).add(BigDecimal.ONE);
+                    return toBigDecimal(num).add(BigDecimal.ONE);
                 default:
             }
         } else if (o1 instanceof Character) {
@@ -106,9 +106,9 @@ public class ALU {
                 case FLOAT:
                     return num.floatValue() - 1F;
                 case BIG_INTEGER:
-                    return ((BigInteger) num).subtract(BigInteger.ONE);
+                    return toBigInteger(num).subtract(BigInteger.ONE);
                 case BIG_DECIMAL:
-                    return ((BigDecimal) num).subtract(BigDecimal.ONE);
+                    return toBigDecimal(num).subtract(BigDecimal.ONE);
                 default:
             }
         } else if (o1 instanceof Character) {

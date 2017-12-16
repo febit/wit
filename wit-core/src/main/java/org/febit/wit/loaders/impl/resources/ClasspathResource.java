@@ -8,6 +8,7 @@ import java.io.Reader;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.util.ClassUtil;
+import org.febit.wit.util.InternedEncoding;
 
 /**
  *
@@ -37,7 +38,7 @@ public class ClasspathResource implements Resource {
      */
     public ClasspathResource(String path, String encoding, boolean codeFirst) {
         this.path = path;
-        this.encoding = encoding;
+        this.encoding = encoding != null ? encoding : InternedEncoding.UTF_8.value;
         this.codeFirst = codeFirst;
     }
 
@@ -59,9 +60,7 @@ public class ClasspathResource implements Resource {
         final InputStream in = ClassUtil.getDefaultClassLoader()
                 .getResourceAsStream(path);
         if (in != null) {
-            return encoding == null
-                    ? new InputStreamReader(in)
-                    : new InputStreamReader(in, encoding);
+            return new InputStreamReader(in, encoding);
         } else {
             throw new ResourceNotFoundException("Resource Not Found: ".concat(path));
         }

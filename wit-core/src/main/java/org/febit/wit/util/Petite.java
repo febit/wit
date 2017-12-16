@@ -264,7 +264,7 @@ public class Petite {
             if (string == null || string.isEmpty()) {
                 return 0;
             }
-            return Integer.valueOf(string);
+            return Integer.parseInt(string);
         }
         if (cls == boolean.class) {
             return Boolean.valueOf(string);
@@ -288,14 +288,14 @@ public class Petite {
             if (cls == int[].class) {
                 final int[] results = new int[len];
                 for (int i = 0; i < len; i++) {
-                    results[i] = Integer.valueOf(strings[i]);
+                    results[i] = Integer.parseInt(strings[i]);
                 }
                 return results;
             }
             if (cls == Integer[].class) {
                 final Integer[] results = new Integer[len];
                 for (int i = 0; i < len; i++) {
-                    results[i] = Integer.valueOf(strings[i]);
+                    results[i] = Integer.parseInt(strings[i]);
                 }
                 return results;
             }
@@ -329,7 +329,7 @@ public class Petite {
                 return ClassUtil.getClass(string);
             }
             if (cls == Integer.class) {
-                return Integer.valueOf(string);
+                return Integer.parseInt(string);
             }
             if (cls == InternedEncoding.class) {
                 return InternedEncoding.intern(string);

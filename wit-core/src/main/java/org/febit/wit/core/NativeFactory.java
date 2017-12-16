@@ -163,7 +163,7 @@ public class NativeFactory {
 
     public MethodDeclare createNativeConstructorDeclare(Class clazz) {
         Constructor[] constructors = clazz.getConstructors();
-        if (constructors == null || constructors.length == 0) {
+        if (constructors.length == 0) {
             throw new ScriptRuntimeException("Not found public constructor for class： " + clazz.getName());
         }
         if (constructors.length == 1) {

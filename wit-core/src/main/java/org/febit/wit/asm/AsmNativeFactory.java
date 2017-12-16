@@ -44,7 +44,7 @@ public class AsmNativeFactory extends NativeFactory {
         }
         MethodDeclare declare = methodCaching.get(member);
         if (declare == null) {
-            synchronized (methodCaching) {
+            synchronized (this) {
                 try {
                     declare = methodCaching.get(member);
                     if (declare == null) {

@@ -15,6 +15,7 @@ import org.febit.wit.loaders.Loader;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.resolvers.ResolverManager;
 import org.febit.wit.security.NativeSecurityManager;
+import org.febit.wit.util.ArrayUtil;
 import org.febit.wit.util.InternedEncoding;
 import org.febit.wit.util.Petite;
 import org.febit.wit.util.Props;
@@ -51,7 +52,9 @@ public class Engine {
 
     @Init
     public void init() {
-        // Do nothing
+        if (vars == null) {
+            vars = ArrayUtil.emptyStrings();
+        }
     }
 
     protected void executeInits() throws ResourceNotFoundException {
@@ -231,7 +234,7 @@ public class Engine {
     }
 
     public String[] getVars() {
-        return vars;
+        return vars.clone();
     }
 
     public static Props createConfigProps(final String configPath) {
