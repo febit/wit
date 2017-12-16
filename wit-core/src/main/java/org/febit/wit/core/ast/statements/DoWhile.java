@@ -1,8 +1,6 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
@@ -21,15 +19,15 @@ public final class DoWhile extends Statement implements Loopable {
     private final Expression whileExpr;
     private final int indexer;
     private final Statement[] statements;
-    public final LoopInfo[] possibleLoopsInfo;
+    private final LoopInfo[] possibleLoops;
     private final int label;
 
-    public DoWhile(Expression whileExpr, int indexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, int label, int line, int column) {
+    public DoWhile(Expression whileExpr, int indexer, Statement[] statements, LoopInfo[] possibleLoops, int label, int line, int column) {
         super(line, column);
         this.whileExpr = whileExpr;
         this.indexer = indexer;
         this.statements = statements;
-        this.possibleLoopsInfo = possibleLoopsInfo;
+        this.possibleLoops = possibleLoops;
         this.label = label;
     }
 
@@ -66,7 +64,7 @@ public final class DoWhile extends Statement implements Loopable {
     }
 
     @Override
-    public List<LoopInfo> collectPossibleLoopsInfo() {
-        return possibleLoopsInfo != null ? new LinkedList<>(Arrays.asList(possibleLoopsInfo)) : null;
+    public List<LoopInfo> collectPossibleLoops() {
+        return StatementUtil.asList(possibleLoops);
     }
 }

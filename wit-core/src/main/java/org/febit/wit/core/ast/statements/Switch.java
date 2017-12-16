@@ -1,7 +1,6 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -45,28 +44,16 @@ public final class Switch extends Statement implements Loopable {
     }
 
     @Override
-    public List<LoopInfo> collectPossibleLoopsInfo() {
-
+    public List<LoopInfo> collectPossibleLoops() {
         LinkedList<LoopInfo> loopInfos = new LinkedList<>();
-        List<LoopInfo> list;
         //XXX: May have duplicated LoopInfo caused by duplicated CaseEntry
-        for (Map.Entry<Object, CaseEntry> entry : caseMap.entrySet()) {
-            list = StatementUtil.collectPossibleLoopsInfo(entry.getValue().body);
-            if (list != null) {
-                loopInfos.addAll(list);
-            }
-        }
-
+        this.caseMap.values().forEach(entry -> {
+            loopInfos.addAll(StatementUtil.collectPossibleLoops(entry.body));
+        });
         //remove loops for this switch
-        LoopInfo loopInfo;
-        for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
-            loopInfo = it.next();
-            if (loopInfo.matchLabel(this.label)
-                    && loopInfo.type == LoopInfo.BREAK) {
-                it.remove();
-            }
-        }
-        return loopInfos.isEmpty() ? null : loopInfos;
+        loopInfos.removeIf(loop -> loop.matchLabel(this.label)
+                && loop.type == LoopInfo.BREAK);
+        return loopInfos;
     }
 
     static final class CaseEntry {

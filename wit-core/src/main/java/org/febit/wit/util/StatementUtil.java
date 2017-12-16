@@ -3,9 +3,9 @@ package org.febit.wit.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.ast.Constable;
@@ -101,65 +101,39 @@ public class StatementUtil {
         }
     }
 
-    public static List<LoopInfo> collectPossibleLoopsInfo(Statement statement) {
+    public static List<LoopInfo> asList(LoopInfo... loops) {
+        if (loops == null || loops.length == 0) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(loops);
+    }
+
+    public static List<LoopInfo> collectPossibleLoops(Statement statement) {
         if (statement instanceof Loopable) {
-            return ((Loopable) statement).collectPossibleLoopsInfo();
+            return ((Loopable) statement).collectPossibleLoops();
         }
-        return null;
+        return Collections.emptyList();
     }
 
-    public static List<LoopInfo> collectPossibleLoopsInfo(Statement stat1, Statement stat2) {
-        List<LoopInfo> list = StatementUtil.collectPossibleLoopsInfo(stat1);
-        List<LoopInfo> list2 = StatementUtil.collectPossibleLoopsInfo(stat2);
-        if (list == null) {
-            return list2;
-        }
-        if (list2 != null) {
-            list.addAll(list2);
-        }
-        return list;
-    }
-
-    public static List<LoopInfo> collectPossibleLoopsInfo(Statement... statements) {
+    public static List<LoopInfo> collectPossibleLoops(Statement... statements) {
         if (statements == null || statements.length == 0) {
-            return null;
+            return Collections.emptyList();
         }
-        final LinkedList<LoopInfo> loopInfos = new LinkedList<>();
-        int i = statements.length;
-        do {
-            List<LoopInfo> list = collectPossibleLoopsInfo(statements[--i]);
-            if (list != null) {
-                loopInfos.addAll(list);
-            }
-        } while (i != 0);
-        return loopInfos.isEmpty() ? null : loopInfos;
+        List<LoopInfo> loopInfos = new ArrayList<>();
+        for (Statement statement : statements) {
+            loopInfos.addAll(collectPossibleLoops(statement));
+        }
+        return loopInfos;
     }
 
-    public static LoopInfo[] collectPossibleLoopsInfoForWhile(Statement bodyStatement, Statement elseStatement, int label) {
-        List<LoopInfo> list = StatementUtil.collectPossibleLoopsInfo(bodyStatement);
-        if (list != null) {
-            LoopInfo loopInfo;
-            for (Iterator<LoopInfo> it = list.iterator(); it.hasNext();) {
-                loopInfo = it.next();
-                if (loopInfo.matchLabel(label)
-                        && (loopInfo.type == LoopInfo.BREAK
-                        || loopInfo.type == LoopInfo.CONTINUE)) {
-                    it.remove();
-                }
-            }
-            list = list.isEmpty() ? null : list;
-        }
+    public static LoopInfo[] collectPossibleLoopsForWhile(Statement bodyStatement, Statement elseStatement, int label) {
+        List<LoopInfo> list = StatementUtil.collectPossibleLoops(bodyStatement)
+                .stream()
+                .filter(loop -> !(loop.matchLabel(label) && (loop.type == LoopInfo.BREAK || loop.type == LoopInfo.CONTINUE)))
+                .collect(Collectors.toList());
 
-        if (elseStatement != null) {
-            List<LoopInfo> list2 = StatementUtil.collectPossibleLoopsInfo(elseStatement);
-            if (list == null) {
-                list = list2;
-            } else if (list2 != null) {
-                list.addAll(list2);
-            }
-        }
-        return list == null || list.isEmpty()
-                ? null
+        list.addAll(StatementUtil.collectPossibleLoops(elseStatement));
+        return list.isEmpty() ? null
                 : list.toArray(new LoopInfo[list.size()]);
     }
 

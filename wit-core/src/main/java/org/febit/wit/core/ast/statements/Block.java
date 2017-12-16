@@ -1,8 +1,6 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
@@ -16,15 +14,15 @@ import org.febit.wit.util.StatementUtil;
  */
 public final class Block extends IBlock implements Loopable {
 
-    public final int indexer;
-    public final Statement[] statements;
-    public final LoopInfo[] possibleLoopsInfo;
+    private final int indexer;
+    private final Statement[] statements;
+    private final LoopInfo[] possibleLoops;
 
-    public Block(int indexer, Statement[] statements, LoopInfo[] possibleLoopsInfo, int line, int column) {
+    public Block(int indexer, Statement[] statements, LoopInfo[] possibleLoops, int line, int column) {
         super(line, column);
         this.indexer = indexer;
         this.statements = statements;
-        this.possibleLoopsInfo = possibleLoopsInfo;
+        this.possibleLoops = possibleLoops;
     }
 
     @Override
@@ -37,8 +35,8 @@ public final class Block extends IBlock implements Loopable {
     }
 
     @Override
-    public List<LoopInfo> collectPossibleLoopsInfo() {
-        return new LinkedList<>(Arrays.asList(possibleLoopsInfo));
+    public List<LoopInfo> collectPossibleLoops() {
+        return StatementUtil.asList(possibleLoops);
     }
 
     @Override

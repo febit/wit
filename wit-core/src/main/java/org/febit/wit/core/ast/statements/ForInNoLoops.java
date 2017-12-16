@@ -20,9 +20,9 @@ public final class ForInNoLoops extends Statement {
     private final int indexer;
     private final Statement[] statements;
     private final Statement elseStatement;
-    protected final FunctionDeclare functionDeclareExpr;
-    protected final int iterIndex;
-    protected final int itemIndex;
+    private final FunctionDeclare functionDeclareExpr;
+    private final int iterIndex;
+    private final int itemIndex;
 
     public ForInNoLoops(FunctionDeclare functionDeclareExpr, Expression collectionExpr, int indexer, int iterIndex, int itemIndex, Statement[] statements, Statement elseStatement, int line, int column) {
         super(line, column);

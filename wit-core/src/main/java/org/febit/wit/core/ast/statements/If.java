@@ -34,7 +34,7 @@ public final class If extends Statement implements Loopable {
     }
 
     @Override
-    public List<LoopInfo> collectPossibleLoopsInfo() {
-        return StatementUtil.collectPossibleLoopsInfo(thenStatement);
+    public List<LoopInfo> collectPossibleLoops() {
+        return StatementUtil.collectPossibleLoops(thenStatement);
     }
 }

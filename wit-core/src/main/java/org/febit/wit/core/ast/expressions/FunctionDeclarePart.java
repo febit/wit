@@ -2,7 +2,6 @@
 package org.febit.wit.core.ast.expressions;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.VariantIndexer;
@@ -112,24 +111,23 @@ public class FunctionDeclarePart {
         return popFunctionDeclare(StatementUtil.toStatementArray(list));
     }
 
-    protected FunctionDeclare popFunctionDeclare(Statement[] invertedStatements) {
+    protected FunctionDeclare popFunctionDeclare(Statement[] statements) {
 
         VariantIndexer[] indexers = varmgr.getIndexers();
         int varSize = varmgr.getVarCount();
         varmgr.popScope();
         boolean hasReturnLoops = false;
-        List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(invertedStatements);
-        if (loopInfos != null) {
-            for (Iterator<LoopInfo> it = loopInfos.iterator(); it.hasNext();) {
-                LoopInfo loopInfo = it.next();
-                if (loopInfo.type == LoopInfo.RETURN) {
-                    hasReturnLoops = true;
-                    it.remove();
-                }
+
+        List<LoopInfo> overflowLoops = new ArrayList<>();
+        for (LoopInfo loop : StatementUtil.collectPossibleLoops(statements)) {
+            if (loop.type == LoopInfo.RETURN) {
+                hasReturnLoops = true;
+            } else {
+                overflowLoops.add(loop);
             }
-            if (!loopInfos.isEmpty()) {
-                throw new ParseException("Loops overflow in function body: ".concat(StringUtil.join(loopInfos, ',')));
-            }
+        }
+        if (!overflowLoops.isEmpty()) {
+            throw new ParseException("Loops overflow in function body: ".concat(StringUtil.join(overflowLoops, ',')));
         }
 
         Object[] argDefaults = new Object[this.args.size()];
@@ -140,7 +138,7 @@ public class FunctionDeclarePart {
         return new FunctionDeclare(argDefaults,
                 varSize,
                 indexers,
-                invertedStatements,
+                statements,
                 assignVariantStart,
                 hasReturnLoops,
                 line, column);

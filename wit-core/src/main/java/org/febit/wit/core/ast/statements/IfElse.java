@@ -34,7 +34,7 @@ public final class IfElse extends Statement implements Loopable {
     }
 
     @Override
-    public List<LoopInfo> collectPossibleLoopsInfo() {
-        return StatementUtil.collectPossibleLoopsInfo(thenStatement, elseStatement);
+    public List<LoopInfo> collectPossibleLoops() {
+        return StatementUtil.collectPossibleLoops(thenStatement, elseStatement);
     }
 }

@@ -12,8 +12,8 @@ import org.febit.wit.util.StatementUtil;
  */
 public final class WhilePart {
 
-    protected final int line;
-    protected final int column;
+    private final int line;
+    private final int column;
     private Expression whileExpr;
     private IBlock bodyStatement;
     private boolean doWhileAtFirst;
@@ -28,7 +28,7 @@ public final class WhilePart {
 
     public Statement pop(int label) {
         if (bodyStatement.hasLoops()) {
-            LoopInfo[] loopInfos = StatementUtil.collectPossibleLoopsInfoForWhile(bodyStatement, null, label);
+            LoopInfo[] loopInfos = StatementUtil.collectPossibleLoopsForWhile(bodyStatement, null, label);
             return doWhileAtFirst
                     ? new While(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), loopInfos, label, line, column)
                     : new DoWhile(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), loopInfos, label, line, column);

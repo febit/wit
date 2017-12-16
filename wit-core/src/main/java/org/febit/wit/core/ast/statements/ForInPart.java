@@ -39,7 +39,7 @@ public class ForInPart extends AbstractForInPart {
     public Statement pop(int label) {
         if (bodyStatement.hasLoops()) {
             return new ForIn(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), iterIndex, itemIndex, bodyStatement.getStatements(),
-                    StatementUtil.collectPossibleLoopsInfoForWhile(bodyStatement, elseStatement, label),
+                    StatementUtil.collectPossibleLoopsForWhile(bodyStatement, elseStatement, label),
                     elseStatement, label, line, column);
         } else {
             return new ForInNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), iterIndex, itemIndex, bodyStatement.getStatements(), elseStatement, line, column);

@@ -10,5 +10,10 @@ import org.febit.wit.core.LoopInfo;
  */
 public interface Loopable {
 
-    List<LoopInfo> collectPossibleLoopsInfo();
+    /**
+     * Collect possible loops.
+     *
+     * @return loops list, must not null.
+     */
+    List<LoopInfo> collectPossibleLoops();
 }

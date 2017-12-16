@@ -34,7 +34,7 @@ public final class IfNot extends Statement implements Loopable {
     }
 
     @Override
-    public List<LoopInfo> collectPossibleLoopsInfo() {
-        return StatementUtil.collectPossibleLoopsInfo(elseStatement);
+    public List<LoopInfo> collectPossibleLoops() {
+        return StatementUtil.collectPossibleLoops(elseStatement);
     }
 }

@@ -739,19 +739,19 @@ abstract class AbstractParser {
 
     TemplateAST createTemplateAST(List<Statement> list) {
         Statement[] statements = StatementUtil.toStatementArray(list);
-        List<LoopInfo> loopInfos = StatementUtil.collectPossibleLoopsInfo(statements);
-        if (loopInfos != null) {
-            throw new ParseException("loop overflow: ".concat(StringUtil.join(loopInfos, ',')));
+        List<LoopInfo> loops = StatementUtil.collectPossibleLoops(statements);
+        if (!loops.isEmpty()) {
+            throw new ParseException("loop overflow: " + StringUtil.join(loops, ','));
         }
         return new TemplateAST(varmgr.getIndexers(), statements, varmgr.getVarCount());
     }
 
     IBlock createIBlock(List<Statement> list, int varIndexer, int line, int column) {
         Statement[] statements = StatementUtil.toStatementArray(list);
-        List<LoopInfo> loopInfoList = StatementUtil.collectPossibleLoopsInfo(statements);
-        return loopInfoList != null
-                ? new Block(varIndexer, statements, loopInfoList.toArray(new LoopInfo[loopInfoList.size()]), line, column)
-                : new BlockNoLoops(varIndexer, statements, line, column);
+        List<LoopInfo> loops = StatementUtil.collectPossibleLoops(statements);
+        return loops.isEmpty()
+                ? new BlockNoLoops(varIndexer, statements, line, column)
+                : new Block(varIndexer, statements, loops.toArray(new LoopInfo[loops.size()]), line, column);
     }
 
     TryPart createTryPart(List<Statement> list, int varIndexer, int line, int column) {

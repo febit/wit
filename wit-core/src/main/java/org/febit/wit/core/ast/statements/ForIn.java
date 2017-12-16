@@ -1,8 +1,6 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
@@ -25,19 +23,19 @@ public class ForIn extends Statement implements Loopable {
     protected final Expression collectionExpr;
     protected final int indexer;
     protected final Statement[] statements;
-    protected final LoopInfo[] possibleLoopsInfo;
+    protected final LoopInfo[] possibleLoops;
     protected final Statement elseStatement;
     protected final int label;
     protected final int iterIndex;
     protected final int itemIndex;
 
-    public ForIn(FunctionDeclare functionDeclareExpr, Expression collectionExpr, int indexer, int iterIndex, int itemIndex, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
+    public ForIn(FunctionDeclare functionDeclareExpr, Expression collectionExpr, int indexer, int iterIndex, int itemIndex, Statement[] statements, LoopInfo[] possibleLoops, Statement elseStatement, int label, int line, int column) {
         super(line, column);
         this.functionDeclareExpr = functionDeclareExpr;
         this.collectionExpr = collectionExpr;
         this.indexer = indexer;
         this.statements = statements;
-        this.possibleLoopsInfo = possibleLoopsInfo;
+        this.possibleLoops = possibleLoops;
         this.elseStatement = elseStatement;
         this.label = label;
         this.iterIndex = iterIndex;
@@ -92,7 +90,7 @@ public class ForIn extends Statement implements Loopable {
     }
 
     @Override
-    public List<LoopInfo> collectPossibleLoopsInfo() {
-        return possibleLoopsInfo != null ? new LinkedList<>(Arrays.asList(possibleLoopsInfo)) : null;
+    public List<LoopInfo> collectPossibleLoops() {
+        return StatementUtil.asList(possibleLoops);
     }
 }

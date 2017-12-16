@@ -1,8 +1,6 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
@@ -21,24 +19,24 @@ import org.febit.wit.util.StatementUtil;
  */
 public final class ForMap extends Statement implements Loopable {
 
-    protected final FunctionDeclare functionDeclareExpr;
+    private final FunctionDeclare functionDeclareExpr;
     private final Expression mapExpr;
     private final int indexer;
     private final Statement[] statements;
-    public final LoopInfo[] possibleLoopsInfo;
+    private final LoopInfo[] possibleLoops;
     private final Statement elseStatement;
     private final int label;
     private final int iterIndex;
     private final int keyIndex;
     private final int valueIndex;
 
-    public ForMap(FunctionDeclare functionDeclareExpr, Expression mapExpr, int indexer, int iterIndex, int keyIndex, int valueIndex, Statement[] statements, LoopInfo[] possibleLoopsInfo, Statement elseStatement, int label, int line, int column) {
+    public ForMap(FunctionDeclare functionDeclareExpr, Expression mapExpr, int indexer, int iterIndex, int keyIndex, int valueIndex, Statement[] statements, LoopInfo[] possibleLoops, Statement elseStatement, int label, int line, int column) {
         super(line, column);
         this.functionDeclareExpr = functionDeclareExpr;
         this.mapExpr = mapExpr;
         this.indexer = indexer;
         this.statements = statements;
-        this.possibleLoopsInfo = possibleLoopsInfo;
+        this.possibleLoops = possibleLoops;
         this.elseStatement = elseStatement;
         this.label = label;
         this.iterIndex = iterIndex;
@@ -97,7 +95,7 @@ public final class ForMap extends Statement implements Loopable {
     }
 
     @Override
-    public List<LoopInfo> collectPossibleLoopsInfo() {
-        return possibleLoopsInfo != null ? new LinkedList<>(Arrays.asList(possibleLoopsInfo)) : null;
+    public List<LoopInfo> collectPossibleLoops() {
+        return StatementUtil.asList(possibleLoops);
     }
 }

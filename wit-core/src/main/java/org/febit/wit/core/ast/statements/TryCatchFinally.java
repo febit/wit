@@ -43,7 +43,7 @@ public class TryCatchFinally extends Statement implements Loopable {
     }
 
     @Override
-    public List<LoopInfo> collectPossibleLoopsInfo() {
-        return StatementUtil.collectPossibleLoopsInfo(tryStat, catchStat, finalStat);
+    public List<LoopInfo> collectPossibleLoops() {
+        return StatementUtil.collectPossibleLoops(tryStat, catchStat, finalStat);
     }
 }
