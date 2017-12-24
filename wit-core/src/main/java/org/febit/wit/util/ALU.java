@@ -682,9 +682,11 @@ public class ALU {
     private static void requireNonNull(final Object o1, final Object o2) {
         if (o1 == null || o2 == null) {
             throw new ScriptRuntimeException(
-                    o1 == null
-                            ? (o2 == null ? "left & right values are null" : "left value is null")
-                            : (o2 == null ? "right value is null" : "left & right values are not null"));
+                    o1 != null
+                            ? "right value is null"
+                            : o2 != null
+                                    ? "left value is null"
+                                    : "left & right values are null");
         }
     }
 }
