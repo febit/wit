@@ -10,12 +10,10 @@ import org.febit.wit.exceptions.IllegalConfigException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.io.charset.CoderFactory;
-import org.febit.wit.lang.Bag;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.resolvers.ResolverManager;
 import org.febit.wit.security.NativeSecurityManager;
-import org.febit.wit.util.ArrayUtil;
 import org.febit.wit.util.InternedEncoding;
 import org.febit.wit.util.Petite;
 import org.febit.wit.util.Props;
@@ -38,7 +36,7 @@ public class Engine {
     protected boolean looseSemicolon = true;
     protected InternedEncoding encoding;
     protected String inits;
-    protected String[] vars;
+    protected String vars;
 
     protected Petite petite;
     protected Logger logger;
@@ -52,20 +50,18 @@ public class Engine {
 
     @Init
     public void init() {
-        if (vars == null) {
-            vars = ArrayUtil.emptyStrings();
-        }
     }
 
     protected void executeInits() throws ResourceNotFoundException {
         if (this.inits == null) {
             return;
         }
-        final Bag globalBag = this.globalManager.getGlobalBag();
-        final Bag constBag = this.globalManager.getConstBag();
         final Vars params = Vars.of(
                 new String[]{"GLOBAL", "CONST"},
-                new Object[]{globalBag, constBag}
+                new Object[]{
+                    this.globalManager.getGlobalBag(),
+                    this.globalManager.getConstBag()
+                }
         );
         for (String templateName : StringUtil.toArray(this.inits)) {
             this.logger.info("Merge init template: {}", templateName);
@@ -130,21 +126,13 @@ public class Engine {
         if (template != null) {
             return template;
         }
-        //then newInstance Template
+        // then create Template
         template = new Template(this, normalizedName, myLoader.get(normalizedName));
-        Template oldTemplate;
         if (myLoader.isEnableCache(normalizedName)) {
-            oldTemplate = this.cachedTemplates.putIfAbsent(normalizedName, template);
-            //if old Template exist, use the old one
+            Template oldTemplate = this.cachedTemplates.putIfAbsent(normalizedName, template);
+            // if old Template exist, use the old one
             if (oldTemplate != null) {
                 template = oldTemplate;
-            }
-            if (!name.equals(normalizedName)) {
-                // cache Template with un-normalized name
-                oldTemplate = this.cachedTemplates.putIfAbsent(name, template);
-                if (oldTemplate != null) {
-                    template = oldTemplate;
-                }
             }
         }
         return template;
@@ -234,7 +222,7 @@ public class Engine {
     }
 
     public String[] getVars() {
-        return vars.clone();
+        return StringUtil.toArray(vars);
     }
 
     public static Props createConfigProps(final String configPath) {
