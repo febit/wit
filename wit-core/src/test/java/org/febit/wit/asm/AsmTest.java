@@ -1,6 +1,6 @@
+// Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.asm;
 
-// Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 import java.lang.reflect.InvocationTargetException;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;

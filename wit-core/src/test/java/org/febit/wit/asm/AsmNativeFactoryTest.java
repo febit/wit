@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016, febit.org. All Rights Reserved.
+// Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.asm;
 
 import java.util.ArrayList;

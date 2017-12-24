@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2017, febit.org. All Rights Reserved.
+// Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.plugin;
 
 import org.febit.wit.Engine;
