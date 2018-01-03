@@ -1,13 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.global;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiConsumer;
 import org.febit.wit.Init;
 import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.lang.Bag;
-import org.febit.wit.util.ArrayUtil;
 
 /**
  *
@@ -15,18 +15,15 @@ import org.febit.wit.util.ArrayUtil;
  */
 public class GlobalManager {
 
-    private final Map<String, Object> constMap;
-    private final Map<String, Object> driftedGlobalMap;
-    private final Map<String, Integer> globalIndexer;
-    private Object[] globalContext = ArrayUtil.emptyObjects();
+    private final ConcurrentMap<String, Object> constVars;
+    private final ConcurrentMap<String, Object> globalVars;
 
     //settings
     protected GlobalRegister[] registers;
 
     public GlobalManager() {
-        this.constMap = new HashMap<>();
-        this.driftedGlobalMap = new HashMap<>();
-        this.globalIndexer = new HashMap<>();
+        this.constVars = new ConcurrentHashMap<>();
+        this.globalVars = new ConcurrentHashMap<>();
     }
 
     @Init
@@ -35,91 +32,70 @@ public class GlobalManager {
             try {
                 for (GlobalRegister register : registers) {
                     register.regist(this);
-                    this.commit();
                 }
             } catch (Exception ex) {
                 throw new UncheckedException(ex);
             }
         }
-        commit();
     }
 
     public void clear() {
-        this.driftedGlobalMap.clear();
-        this.globalIndexer.clear();
-        this.constMap.clear();
-        Object[] myGlobalContext = this.globalContext;
-        if (myGlobalContext != null) {
-            Arrays.fill(myGlobalContext, null);
-        }
+        this.constVars.clear();
+        this.globalVars.clear();
         init();
     }
 
+    /**
+     * Performs the given action for each const vars until all have been processed or the action throws an exception.
+     *
+     * @param action
+     * @since 2.5.0
+     */
+    public void forEachConst(BiConsumer<String, Object> action) {
+        Objects.requireNonNull(action);
+        this.constVars.forEach(action);
+    }
+
+    /**
+     * Performs the given action for each global vars until all have been processed or the action throws an exception.
+     *
+     * @param action
+     * @since 2.5.0
+     */
+    public void forEachGlobal(BiConsumer<String, Object> action) {
+        Objects.requireNonNull(action);
+        this.globalVars.forEach(action);
+    }
+
+    /**
+     * @deprecated since 2.5.0, do nothing
+     */
+    @Deprecated
     public void commit() {
-        if (this.driftedGlobalMap.isEmpty()) {
-            return;
-        }
-        final int oldSize;
-        final Object[] oldGlobalContext = this.globalContext;
-        oldSize = oldGlobalContext != null ? oldGlobalContext.length : 0;
-
-        final Object[] newGlobalContext = new Object[oldSize + this.driftedGlobalMap.size()];
-        this.globalContext = newGlobalContext;
-        if (oldSize > 0) {
-            //Copy old data
-            System.arraycopy(oldGlobalContext, 0, newGlobalContext, 0, oldSize);
-        }
-
-        int i = oldSize;
-        for (Map.Entry<String, Object> entry : this.driftedGlobalMap.entrySet()) {
-            newGlobalContext[i] = entry.getValue();
-            this.globalIndexer.put(entry.getKey(), i);
-            i++;
-        }
-        this.driftedGlobalMap.clear();
     }
 
-    public void setConst(String key, Object value) {
-        this.constMap.put(key, value);
-    }
-
-    public void setGlobal(String key, Object value) {
-        int index = this.getGlobalIndex(key);
-        if (index >= 0) {
-            this.setGlobal(index, value);
-        } else {
-            this.driftedGlobalMap.put(key, value);
-        }
-    }
-
-    public int getGlobalIndex(String name) {
-        Integer index = globalIndexer.get(name);
-        return index != null ? index : -1;
+    public boolean hasGlobal(String name) {
+        return this.globalVars.containsKey(name);
     }
 
     public Object getGlobal(String key) {
-        int index = this.getGlobalIndex(key);
-        if (index >= 0) {
-            return this.getGlobal(index);
-        } else {
-            return this.driftedGlobalMap.get(key);
-        }
+        return this.globalVars.get(key);
     }
 
-    public Object getGlobal(int index) {
-        return globalContext[index];
-    }
-
-    public void setGlobal(int index, Object value) {
-        this.globalContext[index] = value;
+    public void setGlobal(String key, Object value) {
+        this.globalVars.put(key, value);
     }
 
     public boolean hasConst(String name) {
-        return this.constMap.containsKey(name);
+        return this.constVars.containsKey(name);
     }
 
     public Object getConst(String name) {
-        return this.constMap.get(name);
+        return this.constVars.get(name);
+    }
+
+    public void setConst(String key, Object value) {
+        this.constVars.put(key, value);
     }
 
     public Bag getConstBag() {

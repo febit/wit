@@ -66,8 +66,6 @@ public class Engine {
         for (String templateName : StringUtil.toArray(this.inits)) {
             this.logger.info("Merge init template: {}", templateName);
             this.getTemplate(templateName).merge(params);
-            // Commit after each init-template
-            this.globalManager.commit();
         }
     }
 

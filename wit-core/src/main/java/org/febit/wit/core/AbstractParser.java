@@ -606,7 +606,7 @@ abstract class AbstractParser {
     Expression createContextValue(VarAddress addr, int line, int column) {
         switch (addr.type) {
             case VarAddress.GLOBAL:
-                return new GlobalValue(this.engine.getGlobalManager(), addr.index, line, column);
+                return new GlobalValue(this.engine.getGlobalManager(), addr.constValue.toString(), line, column);
             case VarAddress.CONST:
                 return new DirectValue(addr.constValue, line, column);
             case VarAddress.SCOPE:

@@ -123,9 +123,8 @@ public class VariantManager {
 
         //global var/const
         final GlobalManager globalMgr = this.globalManager;
-        final int index = globalMgr.getGlobalIndex(name);
-        if (index >= 0) {
-            return global(index);
+        if (globalMgr.hasGlobal(name)) {
+            return global(name);
         }
         if (globalMgr.hasConst(name)) {
             return constValue(globalMgr.getConst(name));
@@ -166,8 +165,8 @@ public class VariantManager {
         }
     }
 
-    static VarAddress global(int index) {
-        return new VarAddress(VarAddress.GLOBAL, index, null);
+    static VarAddress global(String name) {
+        return new VarAddress(VarAddress.GLOBAL, -1, name);
     }
 
     static VarAddress constValue(Object value) {
