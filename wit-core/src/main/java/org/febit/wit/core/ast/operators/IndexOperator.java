@@ -10,10 +10,10 @@ import org.febit.wit.util.StatementUtil;
  *
  * @author zqq90
  */
-public final class IndexOperator extends AssignableExpression {
+public class IndexOperator extends AssignableExpression {
 
-    public final Expression leftExpr;
-    public final Expression rightExpr;
+    private final Expression leftExpr;
+    private final Expression rightExpr;
 
     public IndexOperator(Expression leftExp, Expression rightExp, int line, int column) {
         super(line, column);

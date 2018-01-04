@@ -333,6 +333,11 @@ public class ALU {
         return false;
     }
 
+    // !=
+    public static boolean notEqual(final Object o1, final Object o2) {
+        return !isEqual(o1, o2);
+    }
+
     // >
     public static boolean greater(final Object o1, final Object o2) {
         switch (getTypeMark(o1, o2)) {
@@ -361,28 +366,7 @@ public class ALU {
 
     // >=
     public static boolean greaterEqual(final Object o1, final Object o2) {
-        switch (getTypeMark(o1, o2)) {
-            case CHAR:
-                return greaterEqual(charToInt(o1), charToInt(o2));
-            case BYTE:
-            case SHORT:
-            case INTEGER:
-                return ((Number) o1).intValue() >= ((Number) o2).intValue();
-            case LONG:
-                return ((Number) o1).longValue() >= ((Number) o2).longValue();
-            case BIG_INTEGER:
-                if (notDoubleOrFloat(o1, o2)) {
-                    return toBigInteger(o1).compareTo(toBigInteger(o2)) >= 0;
-                }
-            //Note: else upgrade to BigDecimal
-            case DOUBLE:
-            case FLOAT:
-            //Note: Floating point numbers should not be tested for equality.
-            case BIG_DECIMAL:
-                return toBigDecimal(o1).compareTo(toBigDecimal(o2)) >= 0;
-            default:
-        }
-        throw unsupportedTypeException(o1, o2);
+        return !less(o1, o2);
     }
 
     // <
@@ -413,28 +397,7 @@ public class ALU {
 
     // <=
     public static boolean lessEqual(final Object o1, final Object o2) {
-        switch (getTypeMark(o1, o2)) {
-            case CHAR:
-                return lessEqual(charToInt(o1), charToInt(o2));
-            case BYTE:
-            case SHORT:
-            case INTEGER:
-                return ((Number) o1).intValue() <= ((Number) o2).intValue();
-            case LONG:
-                return ((Number) o1).longValue() <= ((Number) o2).longValue();
-            case BIG_INTEGER:
-                if (notDoubleOrFloat(o1, o2)) {
-                    return toBigInteger(o1).compareTo(toBigInteger(o2)) <= 0;
-                }
-            //Note: else upgrade to BigDecimal
-            case DOUBLE:
-            case FLOAT:
-            //Note: Floating point numbers should not be tested for equality.
-            case BIG_DECIMAL:
-                return toBigDecimal(o1).compareTo(toBigDecimal(o2)) <= 0;
-            default:
-        }
-        throw unsupportedTypeException(o1, o2);
+        return !greater(o1, o2);
     }
 
     // &

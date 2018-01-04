@@ -2,7 +2,6 @@
 package org.febit.wit.core.ast.operators;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.BinaryOperator;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.util.CollectionUtil;
@@ -12,7 +11,7 @@ import org.febit.wit.util.StringUtil;
  *
  * @author zqq90
  */
-public class IntStep extends BinaryOperator {
+public class IntStep extends BiOperator {
 
     public IntStep(Expression leftExp, Expression rightExp, int line, int column) {
         super(leftExp, rightExp, line, column);

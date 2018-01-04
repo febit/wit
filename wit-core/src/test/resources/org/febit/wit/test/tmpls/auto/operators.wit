@@ -12,6 +12,26 @@
     assertEquals(-2, -5 >> 2);
     assertEquals(1073741822, -5 >>> 2);
 
+    var VOID = (()->{ return; })();
+
+    assertTrue(true);
+    assertTrue(!false);
+    assertTrue(!null);
+    assertTrue(!"");
+    assertTrue(![]);
+    assertTrue(!VOID);
+    assertTrue(!!true);
+
+    assertFalse(!true);
+    assertFalse(!1);
+    assertFalse(!0);
+    assertFalse(!-1);
+    assertFalse(!"0");
+    assertFalse(![0]);
+    assertFalse(!!null);
+    assertFalse(!!VOID);
+
+
     //chars
     //a : 97
     var a = 'a';

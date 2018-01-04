@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
+import org.febit.wit.core.ast.operators.BiOperator;
+import org.febit.wit.core.ast.operators.SelfOperator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
@@ -8,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.febit.wit.Engine;
 import org.febit.wit.Template;
 import org.febit.wit.core.VariantManager.VarAddress;
@@ -22,6 +26,7 @@ import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.ResourceOffset;
+import org.febit.wit.util.ALU;
 import org.febit.wit.util.ClassNameBand;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.ExceptionUtil;
@@ -540,7 +545,6 @@ abstract class AbstractParser {
     }
 
     Expression createGroupAssign(Expression[] lexpres, Expression rexpr, int line, int column) {
-
         AssignableExpression[] resetableExprs = new AssignableExpression[lexpres.length];
         for (int i = 0; i < lexpres.length; i++) {
             resetableExprs[i] = castToAssignableExpression(lexpres[i]);
@@ -767,122 +771,105 @@ abstract class AbstractParser {
 
     Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column) {
         AssignableExpression leftExpr = castToAssignableExpression(lexpr);
-        SelfOperator oper;
-        switch (sym) {
+        BiFunction<Object, Object, Object> biFunc = getBiFunctionForBiOperator(sym);
+        if (biFunc == null) {
+            throw new ParseException("Unsupported Operator", line, column);
+        }
+        return StatementUtil.optimize(new SelfOperator(leftExpr, rightExpr, biFunc, line, column));
+    }
 
-            // (+ - * / %)=
+    BiFunction<Object, Object, Object> getBiFunctionForBiOperator(int op) {
+        switch (op) {
             case OP_PLUSEQ:
-                oper = new SelfPlus(leftExpr, rightExpr, line, column);
-                break;
+            case Tokens.PLUS:
+                return ALU::plus;
             case OP_MINUSEQ:
-                oper = new SelfMinus(leftExpr, rightExpr, line, column);
-                break;
+            case Tokens.MINUS:
+                return ALU::minus;
             case OP_MULTEQ:
-                oper = new SelfMult(leftExpr, rightExpr, line, column);
-                break;
+            case Tokens.MULT:
+                return ALU::mult;
             case OP_DIVEQ:
-                oper = new SelfDiv(leftExpr, rightExpr, line, column);
-                break;
+            case Tokens.DIV:
+                return ALU::div;
             case OP_MODEQ:
-                oper = new SelfMod(leftExpr, rightExpr, line, column);
-                break;
-
-            // (<< >> >>>)=
+            case Tokens.MOD:
+                return ALU::mod;
             case OP_LSHIFTEQ:
-                oper = new SelfLShift(leftExpr, rightExpr, line, column);
-                break;
+            case Tokens.LSHIFT:
+                return ALU::lshift;
             case OP_RSHIFTEQ:
-                oper = new SelfRShift(leftExpr, rightExpr, line, column);
-                break;
+            case Tokens.RSHIFT:
+                return ALU::rshift;
             case OP_URSHIFTEQ:
-                oper = new SelfURShift(leftExpr, rightExpr, line, column);
-                break;
-
-            // (& ^ |)=
+            case Tokens.URSHIFT:
+                return ALU::urshift;
+            case Tokens.LT:
+                return ALU::less;
+            case Tokens.GT:
+                return ALU::greater;
+            case Tokens.LTEQ:
+                return ALU::lessEqual;
+            case Tokens.GTEQ:
+                return ALU::greaterEqual;
+            case Tokens.EQEQ:
+                return ALU::isEqual;
+            case Tokens.NOTEQ:
+                return ALU::notEqual;
             case OP_ANDEQ:
-                oper = new SelfBitAnd(leftExpr, rightExpr, line, column);
-                break;
+            case Tokens.AND:
+                return ALU::bitAnd;
             case OP_XOREQ:
-                oper = new SelfBitXor(leftExpr, rightExpr, line, column);
-                break;
+            case Tokens.XOR:
+                return ALU::bitXor;
             case OP_OREQ:
-                oper = new SelfBitOr(leftExpr, rightExpr, line, column);
-                break;
+            case Tokens.OR:
+                return ALU::bitOr;
+            default:
+                return null;
+        }
+    }
 
+    Expression createOperator(Expression expr, Symbol symSymbol) {
+        int line = symSymbol.line;
+        int column = symSymbol.column;
+        Function<Object, Object> func;
+        switch ((Integer) symSymbol.value) {
+            case Tokens.COMP:
+                func = ALU::bitNot;
+                break;
+            case Tokens.MINUS:
+                func = ALU::negative;
+                break;
+            case Tokens.NOT:
+                func = ALU::not;
+                break;
             default:
                 throw new ParseException("Unsupported Operator", line, column);
         }
-
-        return StatementUtil.optimize(oper);
+        return StatementUtil.optimize(new ConstableOperator(expr, func, line, column));
     }
 
-    Expression createBinaryOperator(Expression leftExpr, Symbol symSymbol, Expression rightExpr) {
+    Expression createBiOperator(Expression leftExpr, Symbol symSymbol, Expression rightExpr) {
         int line = symSymbol.line;
         int column = symSymbol.column;
-        BinaryOperator oper;
+        BiOperator oper;
         switch ((Integer) symSymbol.value) {
             case Tokens.ANDAND:
                 oper = new And(leftExpr, rightExpr, line, column);
                 break;
-            case Tokens.AND:
-                oper = new BitAnd(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.OR:
-                oper = new BitOr(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.XOR:
-                oper = new BitXor(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.DIV:
-                oper = new Div(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.EQEQ:
-                oper = new Equal(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.GTEQ:
-                oper = new GreaterEqual(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.GT:
-                oper = new Greater(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.LSHIFT:
-                oper = new LShift(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.LTEQ:
-                oper = new LessEqual(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.LT:
-                oper = new Less(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.MINUS:
-                oper = new Minus(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.MOD:
-                oper = new Mod(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.MULT:
-                oper = new Mult(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.NOTEQ:
-                oper = new NotEqual(leftExpr, rightExpr, line, column);
-                break;
             case Tokens.OROR:
                 oper = new Or(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.PLUS:
-                oper = new Plus(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.RSHIFT:
-                oper = new RShift(leftExpr, rightExpr, line, column);
-                break;
-            case Tokens.URSHIFT:
-                oper = new URShift(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.DOTDOT:
                 oper = new IntStep(leftExpr, rightExpr, line, column);
                 break;
             default:
-                throw new ParseException("Unsupported Operator", line, column);
+                BiFunction<Object, Object, Object> biFunc = getBiFunctionForBiOperator((Integer) symSymbol.value);
+                if (biFunc == null) {
+                    throw new ParseException("Unsupported Operator", line, column);
+                }
+                oper = new ConstableBiOperator(leftExpr, rightExpr, biFunc, line, column);
         }
         return StatementUtil.optimize(oper);
     }

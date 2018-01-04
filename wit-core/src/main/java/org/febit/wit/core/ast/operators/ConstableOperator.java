@@ -1,30 +1,33 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.operators;
 
+import java.util.function.Function;
 import org.febit.wit.InternalContext;
+import org.febit.wit.core.ast.Constable;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Optimizable;
 import org.febit.wit.core.ast.expressions.DirectValue;
-import org.febit.wit.util.ALU;
 import org.febit.wit.util.StatementUtil;
 
 /**
  *
  * @author zqq90
  */
-public final class BitNot extends Expression implements Optimizable {
+public class ConstableOperator extends Expression implements Optimizable, Constable {
 
-    private final Expression expr;
+    protected final Expression expr;
+    protected final Function<Object, Object> op;
 
-    public BitNot(Expression expr, int line, int column) {
+    public ConstableOperator(Expression expr, Function<Object, Object> op, int line, int column) {
         super(line, column);
         this.expr = expr;
+        this.op = op;
     }
 
     @Override
     public Object execute(final InternalContext context) {
         try {
-            return ALU.bitNot(expr.execute(context));
+            return op.apply(expr.execute(context));
         } catch (Exception e) {
             throw StatementUtil.castToScriptRuntimeException(e, this);
         }
@@ -33,7 +36,12 @@ public final class BitNot extends Expression implements Optimizable {
     @Override
     public Expression optimize() {
         return expr instanceof DirectValue
-                ? new DirectValue(ALU.bitNot(((DirectValue) expr).value), line, column)
+                ? new DirectValue(op.apply(((DirectValue) expr).value), line, column)
                 : this;
+    }
+
+    @Override
+    public Object getConstValue() {
+        return op.apply(StatementUtil.calcConst(expr, true));
     }
 }

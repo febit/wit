@@ -390,20 +390,20 @@ expression      ::= expression_statementable:$
 
                     //bitNotOper ~
                     |COMP:sym expression:expr
-                    {: return StatementUtil.optimize(new BitNot(%expr%, %sym.line%, %sym.column%)); :}
-                    
+                    {: return createOperator(%expr%, %sym.symbol%); :}
+
                     //negativeOper  -
                     |MINUS:sym expression:expr %prec UMINUS
-                    {: return StatementUtil.optimize(new Negative(%expr%, %sym.line%, %sym.column%)); :}
-                    
+                    {: return createOperator(%expr%, %sym.symbol%); :}
+
                     //notOper !
                     |NOT:sym expression:expr
-                    {: return StatementUtil.optimize(new Not(%expr%, %sym.line%, %sym.column%)); :}
+                    {: return createOperator(%expr%, %sym.symbol%); :}
 
                     //propertyOper .
                     |expression:expr DOT:sym IDENTIFIER:ident 
                     {: return new PropertyOperator(%expr%, %ident%, %sym.line%, %sym.column%); :}
-                    
+
                     //indexOper []
                     |expression:lexpr LBRACK:sym expression:rexpr RBRACK
                     {: return new IndexOperator(%lexpr%, %rexpr%, %sym.line%, %sym.column%); :}
@@ -411,64 +411,64 @@ expression      ::= expression_statementable:$
                     /***********  binarys *************/
                     //-- binary:  *
                     |expression:lexpr MULT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  /
                     |expression:lexpr DIV:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  %
                     |expression:lexpr MOD:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  +
                     |expression:lexpr PLUS:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  -
                     |expression:lexpr MINUS:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  <<
                     |expression:lexpr LSHIFT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  >>
                     |expression:lexpr RSHIFT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  >>>
                     |expression:lexpr URSHIFT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  <
                     |expression:lexpr LT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  <=
                     |expression:lexpr LTEQ:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  >
                     |expression:lexpr GT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  >=
                     |expression:lexpr GTEQ:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  ==
                     |expression:lexpr EQEQ:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  !=
                     |expression:lexpr NOTEQ:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  &
                     |expression:lexpr AND:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  |
                     |expression:lexpr OR:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  ^
                     |expression:lexpr XOR:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  &&
                     |expression:lexpr ANDAND:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  ..
                     |expression:lexpr DOTDOT:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
                     //-- binary:  ||
                     |expression:lexpr OROR:sym expression:rexpr
-                    {: return createBinaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
 
                     //ifOper ? :
                     |expression:ifexpr QUESTION:sym expression:lexpr COLON expression:rexpr

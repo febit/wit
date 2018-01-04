@@ -2,7 +2,6 @@
 package org.febit.wit.core.ast.operators;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.BinaryOperator;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Optimizable;
 import org.febit.wit.core.ast.expressions.DirectValue;
@@ -12,7 +11,7 @@ import org.febit.wit.util.ALU;
  *
  * @author zqq90
  */
-public final class And extends BinaryOperator implements Optimizable {
+public final class And extends BiOperator implements Optimizable {
 
     public And(Expression leftExpr, Expression rightExpr, int line, int column) {
         super(leftExpr, rightExpr, line, column);
