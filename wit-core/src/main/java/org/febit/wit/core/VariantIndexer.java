@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
+import java.util.function.ObjIntConsumer;
 import org.febit.wit.util.ArrayUtil;
 
 /**
@@ -9,15 +10,13 @@ import org.febit.wit.util.ArrayUtil;
  */
 public final class VariantIndexer {
 
-    public static final VariantIndexer EMPTY = new VariantIndexer(0, null, ArrayUtil.emptyStrings(), null);
+    public static final VariantIndexer EMPTY = new VariantIndexer(null, ArrayUtil.emptyStrings(), null);
 
-    public final int id;
-    public final VariantIndexer parent;
-    public final String[] names;
-    public final int[] indexs;
+    private final VariantIndexer parent;
+    private final String[] names;
+    private final int[] indexs;
 
-    VariantIndexer(int id, VariantIndexer parent, String[] names, int[] indexs) {
-        this.id = id;
+    VariantIndexer(VariantIndexer parent, String[] names, int[] indexs) {
         this.parent = parent;
         this.names = names;
         this.indexs = indexs;
@@ -25,9 +24,7 @@ public final class VariantIndexer {
 
     public int getCurrentIndex(final String name) {
         final String[] myNames = this.names;
-        int i = myNames.length;
-        while (i != 0) {
-            --i;
+        for (int i = 0, len = myNames.length; i < len; i++) {
             if (myNames[i].equals(name)) {
                 return indexs[i];
             }
@@ -35,21 +32,18 @@ public final class VariantIndexer {
         return -1;
     }
 
-    public int getIndex(final int level, final String name) {
-        if (level == id) {
-            return getCurrentIndex(name);
+    public void forEach(ObjIntConsumer<String> action) {
+        final String[] myNames = this.names;
+        final int[] myIndexs = this.indexs;
+        for (int i = 0, len = myNames.length; i < len; i++) {
+            action.accept(myNames[i], myIndexs[i]);
         }
-        return -1;
     }
 
     public int getIndex(final String name) {
-        final String[] myNames = this.names;
-        int i = myNames.length;
-        while (i != 0) {
-            --i;
-            if (myNames[i].equals(name)) {
-                return indexs[i];
-            }
+        final int index = getCurrentIndex(name);
+        if (index != -1) {
+            return index;
         }
         if (this.parent != null) {
             return parent.getIndex(name);

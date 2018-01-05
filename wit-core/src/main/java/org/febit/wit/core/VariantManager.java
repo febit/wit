@@ -72,10 +72,8 @@ public class VariantManager {
         final int size = varStairs.size();
         final VariantIndexer[] result = new VariantIndexer[size];
         int i = 0;
-
         for (; i < size; i++) {
-            VarStair stair = varStairs.get(i);
-            if (stair.scopeLevel == this.scopeLevelCount) {
+            if (varStairs.get(i).scopeLevel == this.scopeLevelCount) {
                 break;
             }
         }
@@ -86,11 +84,9 @@ public class VariantManager {
             //remove consts
             final Map<String, Integer> indexerMap = stair.values;
             if (stair.constMap != null) {
-                for (String key : stair.constMap.keySet()) {
-                    indexerMap.remove(key);
-                }
+                stair.constMap.keySet().forEach(indexerMap::remove);
             }
-            result[i] = getVariantIndexer(i, stair.parentId >= 0 ? result[stair.parentId] : null, indexerMap);
+            result[i] = getVariantIndexer(stair.parentId >= 0 ? result[stair.parentId] : null, indexerMap);
         }
         return Arrays.copyOfRange(result, start, size);
     }
@@ -124,10 +120,10 @@ public class VariantManager {
         //global var/const
         final GlobalManager globalMgr = this.globalManager;
         if (globalMgr.hasGlobal(name)) {
-            return global(name);
+            return globalAddress(name);
         }
         if (globalMgr.hasConst(name)) {
-            return constValue(globalMgr.getConst(name));
+            return constAddress(globalMgr.getConst(name));
         }
 
         //failed
@@ -135,15 +131,15 @@ public class VariantManager {
             throw new ParseException("Can't locate vars: ".concat(name), line, column);
         }
         //assign at root
-        return context(root.scopeLevel, root.assignVar(name, line, column));
+        return contextAddress(root.scopeLevel, root.assignVar(name, line, column));
     }
 
-    private static VariantIndexer getVariantIndexer(final int id, final VariantIndexer parent, final Map<String, Integer> map) {
+    private static VariantIndexer getVariantIndexer(final VariantIndexer parent, final Map<String, Integer> map) {
         if (map.isEmpty()) {
             if (parent != null) {
                 return parent;
             }
-            return new VariantIndexer(id, null, ArrayUtil.emptyStrings(), null);
+            return new VariantIndexer(null, ArrayUtil.emptyStrings(), null);
         }
         final int size = map.size();
         final String[] names = new String[size];
@@ -154,22 +150,20 @@ public class VariantManager {
             indexs[i] = entry.getValue();
             i++;
         }
-        return new VariantIndexer(id, parent, names, indexs);
+        return new VariantIndexer(parent, names, indexs);
     }
 
-    VarAddress context(int scope, int index) {
-        if (scope == this.scopeLevelCount) {
-            return new VarAddress(VarAddress.CONTEXT, index, null);
-        } else {
-            return new VarAddress(VarAddress.SCOPE, this.scopeLevelCount - scope - 1, index, null);
-        }
+    VarAddress contextAddress(int scope, int index) {
+        return scope == this.scopeLevelCount
+                ? new VarAddress(VarAddress.CONTEXT, index, null)
+                : new VarAddress(VarAddress.SCOPE, this.scopeLevelCount - scope - 1, index, null);
     }
 
-    static VarAddress global(String name) {
+    VarAddress globalAddress(String name) {
         return new VarAddress(VarAddress.GLOBAL, -1, name);
     }
 
-    static VarAddress constValue(Object value) {
+    VarAddress constAddress(Object value) {
         return new VarAddress(VarAddress.CONST, -1, value);
     }
 
@@ -194,9 +188,9 @@ public class VariantManager {
                 return null;
             }
             if (index < 0) {
-                return constValue(this.constMap.get(name));
+                return constAddress(this.constMap.get(name));
             }
-            return context(this.scopeLevel, index);
+            return contextAddress(this.scopeLevel, index);
         }
 
         void checkDuplicate(final String name, int line, int column) {

@@ -10,8 +10,8 @@ import org.febit.wit.core.ast.AssignableExpression;
  */
 public final class ContextScopeValue extends AssignableExpression {
 
-    private final int index;
     private final int scope;
+    private final int index;
 
     public ContextScopeValue(int scope, int index, int line, int column) {
         super(line, column);
@@ -21,12 +21,12 @@ public final class ContextScopeValue extends AssignableExpression {
 
     @Override
     public Object execute(final InternalContext context) {
-        return context.parentScopes[scope][index];
+        return context.getParentScopeValue(scope, index);
     }
 
     @Override
     public Object setValue(final InternalContext context, final Object value) {
-        context.parentScopes[scope][index] = value;
+        context.setParentScopeValue(scope, index, value);
         return value;
     }
 }

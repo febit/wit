@@ -35,16 +35,14 @@ public final class Import extends AbstractInclude {
     public Object execute(final InternalContext context) {
         final Map<String, Object> results = mergeTemplate(context, true);
         if (exportAll) {
-            final VariantIndexer destIndexer = context.indexers[context.indexer];
-            if (context.indexer == destIndexer.id) {
-                final Object[] destVars = context.vars;
-                results.forEach((key, val) -> {
-                    int index = destIndexer.getCurrentIndex(key);
-                    if (index >= 0) {
-                        destVars[index] = val;
-                    }
-                });
-            }
+            final VariantIndexer destIndexer = context.getCurrentIndexer();
+            final Object[] destVars = context.vars;
+            results.forEach((key, val) -> {
+                int index = destIndexer.getCurrentIndex(key);
+                if (index >= 0) {
+                    destVars[index] = val;
+                }
+            });
         } else {
             final String[] names = this.exportNames;
             final int len = names.length;

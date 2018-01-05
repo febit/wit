@@ -39,11 +39,11 @@ public final class InternalContext implements Context {
     /**
      * Parent scopes's variables, if this's a sub-context.
      */
-    public final Object[][] parentScopes;
+    private final Object[][] parentScopes;
     /**
      * Variables indexers.
      */
-    public final VariantIndexer[] indexers;
+    private final VariantIndexer[] indexers;
     /**
      * If this.write is a bytes stream.
      */
@@ -341,7 +341,7 @@ public final class InternalContext implements Context {
 
     @Override
     public Object get(final String name, boolean force) throws ScriptRuntimeException {
-        int index = indexers[this.indexer].getIndex(name);
+        int index = getCurrentIndexer().getIndex(name);
         if (index >= 0) {
             return this.vars[index];
         }
@@ -351,16 +351,25 @@ public final class InternalContext implements Context {
         return null;
     }
 
+    public Object getParentScopeValue(int scope, int index) {
+        return this.parentScopes[scope][index];
+    }
+
+    public void setParentScopeValue(int scope, int index, Object value) {
+        this.parentScopes[scope][index] = value;
+    }
+
+    public VariantIndexer getCurrentIndexer() {
+        return this.indexers[this.indexer];
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void exportTo(final Map map) {
-        final VariantIndexer varIndexer = indexers[this.indexer];
-        final String[] names = varIndexer.names;
-        final int[] indexs = varIndexer.indexs;
         final Object[] varsPool = this.vars;
-        for (int i = 0, len = names.length; i < len; i++) {
-            map.put(names[i], varsPool[indexs[i]]);
-        }
+        getCurrentIndexer().forEach((name, index) -> {
+            map.put(name, varsPool[index]);
+        });
     }
 
     @Override
