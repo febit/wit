@@ -13,6 +13,7 @@ import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Loopable;
 import org.febit.wit.core.ast.Optimizable;
 import org.febit.wit.core.ast.Statement;
+import org.febit.wit.core.ast.expressions.DirectValue;
 import org.febit.wit.core.ast.statements.StatementGroup;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
@@ -28,6 +29,11 @@ public class StatementUtil {
     private static final Expression[] EMPTY_EXPRESSIONS = new Expression[0];
 
     private StatementUtil() {
+    }
+
+    public static boolean isImmutableDirectValue(Expression expr) {
+        return (expr instanceof DirectValue)
+                && ALU.isKnownBaseImmutable(((DirectValue) expr).value);
     }
 
     public static Object calcConst(Expression expr, boolean force) {

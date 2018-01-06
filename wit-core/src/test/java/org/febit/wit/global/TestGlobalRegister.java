@@ -3,6 +3,7 @@ package org.febit.wit.global;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.util.JavaNativeUtil;
 
@@ -38,5 +39,10 @@ public class TestGlobalRegister implements GlobalRegister {
         manager.setConst("const2Member", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Member"));
         manager.setConst("const2Size", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Size"));
         manager.setConst("const2Foo", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Foo"));
+        
+        // For optimize.wit
+        manager.setConst("CONST_STRING_BUILDER", new StringBuilder());
+        manager.setConst("CONST_ATOMIC_INT", new AtomicInteger());
+
     }
 }

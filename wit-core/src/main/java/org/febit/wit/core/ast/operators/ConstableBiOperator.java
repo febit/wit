@@ -35,9 +35,13 @@ public class ConstableBiOperator extends BiOperator implements Optimizable, Cons
 
     @Override
     public Expression optimize() {
-        return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
-                ? new DirectValue(op.apply(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
-                : this;
+        if (StatementUtil.isImmutableDirectValue(leftExpr)
+                && StatementUtil.isImmutableDirectValue(rightExpr)) {
+            return new DirectValue(
+                    op.apply(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value),
+                    line, column);
+        }
+        return this;
     }
 
     @Override

@@ -9,9 +9,16 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.LongAdder;
 import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
+import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
+import org.febit.wit.core.ast.Expression;
+import org.febit.wit.core.ast.Statement;
+import org.febit.wit.core.ast.expressions.BreakPointExpression;
+import org.febit.wit.core.ast.expressions.DirectValue;
+import org.febit.wit.debug.BreakPointListener;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
@@ -20,6 +27,7 @@ import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.tools.testunit.AssertGlobalRegister;
 import org.febit.wit.util.ClassUtil;
+import org.febit.wit.util.StringUtil;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -31,6 +39,8 @@ public class AutoTest {
 
     private final static int BUFFER_SIZE = 1024;
     private final static String AUTO_TEST_PATH = "org/febit/wit/test/tmpls/auto/";
+
+    private final LongAdder breakpointCount = new LongAdder();
 
     private Map<String, String> collectAutoTestTemplates() throws IOException {
         final Map<String, String> templates = new TreeMap<>();
@@ -56,6 +66,7 @@ public class AutoTest {
     @Test
     public void test() throws ResourceNotFoundException, IOException, ParseException, ScriptRuntimeException {
 
+        breakpointCount.reset();
         Map<String, String> templates = collectAutoTestTemplates();
         ClassLoader classLoader = ClassUtil.getDefaultClassLoader();
 
@@ -87,6 +98,7 @@ public class AutoTest {
                 mergeTemplate(templatePath);
             }
         }
+        System.out.println("Break point count: " + breakpointCount);
     }
 
     public void mergeTemplate(String templatePath) throws ResourceNotFoundException {
@@ -98,13 +110,42 @@ public class AutoTest {
     }
 
     public void mergeTemplate(String templatePath, Out out) throws ResourceNotFoundException {
-        System.out.println("AUTO RUN: " + templatePath);
+        System.out.println("Auto Test: " + templatePath);
         Template template = EngineManager.getEngine().getTemplate(templatePath);
         try {
-            Context context = template.merge(out);
+            Context context = template.debug(out, (BreakPointListener) this::onBreakPoint);
             System.out.println("\tassert count: " + context.getLocal(AssertGlobalRegister.ASSERT_COUNT_KEY));
         } catch (ScriptRuntimeException e) {
             throw e;
         }
     }
+
+    public void onBreakPoint(Object label, InternalContext context, Statement statement, Object result) {
+        breakpointCount.increment();
+        Expression innerExpr = statement instanceof BreakPointExpression
+                ? ((BreakPointExpression) statement).getExpression()
+                : null;
+
+        if ("assert:DirectValue".equals(label)) {
+            if (!(innerExpr instanceof DirectValue)) {
+                throw newException(statement, "Required DirectValue, at {}:{}",
+                        statement.line, statement.column);
+            }
+        } else if ("assert:NotDirectValue".equals(label)) {
+            if (innerExpr instanceof DirectValue) {
+                throw newException(statement, "Required No-DirectValue, at {}:{}",
+                        statement.line, statement.column);
+            }
+        } else {
+            throw newException(statement, "Not handled break point: {}, at {}:{}", label,
+                    statement.line, statement.column);
+        }
+    }
+
+    private static ScriptRuntimeException newException(Statement statement, String message, Object... args) {
+        return new ScriptRuntimeException(
+                StringUtil.format(message, args),
+                statement);
+    }
+
 }

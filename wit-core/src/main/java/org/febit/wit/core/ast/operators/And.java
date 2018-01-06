@@ -6,6 +6,7 @@ import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Optimizable;
 import org.febit.wit.core.ast.expressions.DirectValue;
 import org.febit.wit.util.ALU;
+import org.febit.wit.util.StatementUtil;
 
 /**
  *
@@ -27,8 +28,16 @@ public final class And extends BiOperator implements Optimizable {
 
     @Override
     public Expression optimize() {
-        return (leftExpr instanceof DirectValue && rightExpr instanceof DirectValue)
-                ? new DirectValue(ALU.and(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value), line, column)
-                : this;
+        if (!StatementUtil.isImmutableDirectValue(leftExpr)) {
+            return this;
+        }
+        if (StatementUtil.isImmutableDirectValue(rightExpr)) {
+            return new DirectValue(
+                    ALU.and(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value),
+                    line, column);
+        } else {
+            return ALU.not(((DirectValue) leftExpr).value)
+                    ? leftExpr : rightExpr;
+        }
     }
 }

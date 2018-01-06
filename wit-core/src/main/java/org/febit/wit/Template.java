@@ -292,6 +292,33 @@ public final class Template {
         return debug(vars, DiscardOut.INSTANCE, listener);
     }
 
+    /**
+     * Debug this template, and discard outputs.
+     *
+     * @since 2.5.0
+     * @param out
+     * @param listener
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context debug(final Out out, final BreakPointListener listener) {
+        return debug(Vars.EMPTY, out, listener);
+    }
+
+    /**
+     * Debug this template, and discard outputs.
+     *
+     * @since 2.5.0
+     * @param listener
+     * @return Context
+     * @throws ScriptRuntimeException
+     * @throws ParseException
+     */
+    public Context debug(final BreakPointListener listener) {
+        return debug(Vars.EMPTY, DiscardOut.INSTANCE, listener);
+    }
+
     public void reset() {
         this.ast = null;
         this.lastModified = 0;

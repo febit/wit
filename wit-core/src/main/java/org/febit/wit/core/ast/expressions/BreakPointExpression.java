@@ -29,4 +29,8 @@ public class BreakPointExpression extends Expression {
         listener.onBreak(label, context, this, result);
         return result;
     }
+
+    public Expression getExpression() {
+        return expression;
+    }
 }

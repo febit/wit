@@ -35,9 +35,10 @@ public class ConstableOperator extends Expression implements Optimizable, Consta
 
     @Override
     public Expression optimize() {
-        return expr instanceof DirectValue
-                ? new DirectValue(op.apply(((DirectValue) expr).value), line, column)
-                : this;
+        if (StatementUtil.isImmutableDirectValue(expr)) {
+            return new DirectValue(op.apply(((DirectValue) expr).value), line, column);
+        }
+        return this;
     }
 
     @Override

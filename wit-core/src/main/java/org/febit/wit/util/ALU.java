@@ -29,7 +29,37 @@ public class ALU {
     private static final int SHORT = (1 << 2) - 1;
     private static final int BYTE = (1 << 1) - 1;
 
+    private static final Class<?>[] KNOWN_BASE_IMMUTABLES = new Class[]{
+        String.class,
+        Integer.class,
+        Long.class,
+        Boolean.class,
+        Short.class,
+        Double.class,
+        Float.class,
+        Character.class,
+        Byte.class,
+        BigInteger.class,
+        BigDecimal.class
+    };
+
     private ALU() {
+    }
+
+    public static boolean isKnownBaseImmutable(Object obj) {
+        if (obj == null) {
+            return true;
+        }
+        return isKnownBaseImmutableType(obj.getClass());
+    }
+
+    public static boolean isKnownBaseImmutableType(Class<?> cls) {
+        for (Class<?> known : KNOWN_BASE_IMMUTABLES) {
+            if (known.equals(cls)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static int getTypeMark(final Object o1) {

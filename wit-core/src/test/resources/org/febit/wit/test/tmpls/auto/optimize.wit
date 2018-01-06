@@ -1,0 +1,93 @@
+<%
+
+assertEquals(CONST_STRING_BUILDER.~toString(), "");
+assertEquals(CONST_ATOMIC_INT.~get(), 0);
+
+assertEquals(CONST_STRING_BUILDER + "", "");
+assertEquals(CONST_ATOMIC_INT + 0, 0);
+
+assertEquals(CONST_STRING_BUILDER + "abc", "abc");
+assertEquals(CONST_ATOMIC_INT + 100, 100);
+
+// changed
+CONST_STRING_BUILDER.~append("XYZ");
+CONST_ATOMIC_INT.~set(1024);
+
+assertEquals(CONST_STRING_BUILDER.~toString(), "XYZ");
+assertEquals(CONST_ATOMIC_INT.~get(), 1024);
+
+assertEquals(CONST_STRING_BUILDER + "abc", "XYZabc");
+assertEquals(CONST_ATOMIC_INT + 100, 1124);
+
+// AST asserts
+CONST_STRING_BUILDER.~setLength(0)
+CONST_STRING_BUILDER.~append("XYZ")
+CONST_ATOMIC_INT.~set(1024)
+var obj
+
+obj = [? "assert:DirectValue" : 1 ?]
+assertEquals(obj, 1);
+obj = [? "assert:DirectValue" : "abc" ?]
+assertEquals(obj, "abc");
+obj = [? "assert:DirectValue" : CONST_STRING_BUILDER ?]
+assertEquals(obj.~toString(), "XYZ");
+
+obj = [? "assert:DirectValue" : 1 + 2 ?]
+assertEquals(obj, 3);
+obj = [? "assert:DirectValue" : "abc" + "xyz" ?]
+assertEquals(obj, "abcxyz");
+obj = [? "assert:DirectValue" : "abc" + 123 ?]
+assertEquals(obj, "abc123");
+
+obj = [? "assert:NotDirectValue" : 100 + CONST_ATOMIC_INT ?]
+obj = [? "assert:NotDirectValue" : CONST_ATOMIC_INT + 100 ?]
+assertEquals(obj, 1124);
+obj = [? "assert:NotDirectValue" : "abc" + CONST_STRING_BUILDER ?]
+obj = [? "assert:NotDirectValue" : CONST_STRING_BUILDER + "abc" ?]
+assertEquals(obj, "XYZabc");
+
+
+obj = [? "assert:DirectValue" : 100 && 200 ?]
+assertEquals(obj, 200);
+obj = [? "assert:DirectValue" : 100 && 200 * 100 ?]
+assertEquals(obj, 20000);
+obj = [? "assert:DirectValue" : 100 || 200 ?]
+assertEquals(obj, 100);
+
+
+const N100 = 100; 
+
+obj = [? "assert:DirectValue" : -100 ?]
+assertEquals(obj, -100);
+obj = [? "assert:DirectValue" : -N100 ?]
+assertEquals(obj, -100);
+
+obj = [? "assert:DirectValue" : !-N100 ?]
+assertEquals(obj, false);
+obj = [? "assert:DirectValue" : !100 ?]
+assertEquals(obj, false);
+obj = [? "assert:DirectValue" : !!100 ?]
+assertEquals(obj, true);
+obj = [? "assert:DirectValue" : !!!100 ?]
+assertEquals(obj, false);
+
+obj = [? "assert:NotDirectValue" : !CONST_ATOMIC_INT ?]
+assertEquals(obj, false);
+
+obj = [? "assert:DirectValue" : false && CONST_ATOMIC_INT ?]
+assertEquals(obj, false);
+obj = [? "assert:DirectValue" : "" && CONST_ATOMIC_INT ?]
+assertEquals(obj, "");
+obj = [? "assert:DirectValue" : 100 || CONST_ATOMIC_INT ?]
+assertEquals(obj, 100);
+
+obj = [? "assert:DirectValue" : true && CONST_ATOMIC_INT ?]
+assertEquals(obj, CONST_ATOMIC_INT);
+obj = [? "assert:DirectValue" : false || CONST_ATOMIC_INT ?]
+assertEquals(obj, CONST_ATOMIC_INT);
+
+obj = [? "assert:NotDirectValue" : CONST_ATOMIC_INT && 100 ?]
+assertEquals(obj, 100);
+obj = [? "assert:NotDirectValue" : CONST_ATOMIC_INT || 100 ?]
+assertEquals(obj, CONST_ATOMIC_INT);
+
