@@ -3,6 +3,11 @@ package org.febit.wit.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.DoubleAdder;
+import java.util.concurrent.atomic.LongAccumulator;
+import java.util.concurrent.atomic.LongAdder;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.InternalVoid;
 
@@ -48,6 +53,16 @@ public class ALU {
         } else if (o1 instanceof Number) {
             if (o1 instanceof BigInteger) {
                 return BIG_INTEGER;
+            } else if (o1 instanceof BigDecimal) {
+                return BIG_DECIMAL;
+            } else if (o1 instanceof AtomicInteger) {
+                return INTEGER;
+            } else if (o1 instanceof AtomicLong
+                    || o1 instanceof LongAdder
+                    || o1 instanceof LongAccumulator) {
+                return LONG;
+            } else if (o1 instanceof DoubleAdder) {
+                return DOUBLE;
             } else {
                 //Note: otherwise, treat as BigDecimal
                 return BIG_DECIMAL;
