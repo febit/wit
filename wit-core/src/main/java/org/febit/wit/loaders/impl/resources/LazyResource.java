@@ -26,10 +26,9 @@ public class LazyResource implements Resource {
     public boolean isModified() {
         if (this.expire >= System.currentTimeMillis()) {
             return false;
-        } else {
-            recalculateExpire();
-            return resource.isModified();
         }
+        recalculateExpire();
+        return resource.isModified();
     }
 
     @Override

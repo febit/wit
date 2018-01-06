@@ -49,23 +49,26 @@ public class ResolverManager {
     }
 
     @SuppressWarnings("unchecked")
+    protected static int lookup(ArrayList<Class> types, final Class<?> type) {
+        int i = types.size();
+        while (i > 0) {
+            --i;
+            if (types.get(i).isAssignableFrom(type)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     protected GetResolver resolveGetResolverIfAbsent(final Class<?> type) {
         GetResolver resolver = getters.get(type);
         if (resolver != null) {
             return resolver;
         }
-        final ArrayList<Class> types = getResolverTypes;
-        int i = types.size();
-        while (i > 0) {
-            --i;
-            if (types.get(i).isAssignableFrom(type)) {
-                resolver = getResolvers.get(i);
-                break;
-            }
-        }
-        if (resolver == null) {
-            resolver = resolveGetResolver(type);
-        }
+        final int index = lookup(getResolverTypes, type);
+        resolver = index >= 0
+                ? getResolvers.get(index)
+                : resolveGetResolver(type);
         return getters.putIfAbsent(type, resolver);
     }
 
@@ -73,25 +76,16 @@ public class ResolverManager {
         return commonResolver;
     }
 
-    @SuppressWarnings("unchecked")
     protected SetResolver resolveSetResolverIfAbsent(final Class<?> type) {
         SetResolver resolver;
         resolver = setters.get(type);
         if (resolver != null) {
             return resolver;
         }
-        final ArrayList<Class> types = setResolverTypes;
-        int i = types.size();
-        while (i > 0) {
-            --i;
-            if (types.get(i).isAssignableFrom(type)) {
-                resolver = setResolvers.get(i);
-                break;
-            }
-        }
-        if (resolver == null) {
-            resolver = resolveSetResolver(type);
-        }
+        final int index = lookup(setResolverTypes, type);
+        resolver = index >= 0
+                ? setResolvers.get(index)
+                : resolveSetResolver(type);
         return setters.putIfAbsent(type, resolver);
     }
 
@@ -99,26 +93,16 @@ public class ResolverManager {
         return commonResolver;
     }
 
-    @SuppressWarnings("unchecked")
     public OutResolver resolveOutResolver(final Class<?> type) {
         OutResolver resolver;
         resolver = outters.get(type);
         if (resolver != null) {
             return resolver;
         }
-        final ArrayList<Class> types = outResolverTypes;
-        int i = types.size();
-        while (i > 0) {
-            --i;
-            if (types.get(i).isAssignableFrom(type)) {
-                resolver = outResolvers.get(i);
-                break;
-            }
-        }
-
-        if (resolver == null) {
-            resolver = commonResolver;
-        }
+        final int index = lookup(outResolverTypes, type);
+        resolver = index >= 0
+                ? outResolvers.get(index)
+                : commonResolver;
         return outters.putIfAbsent(type, resolver);
     }
 

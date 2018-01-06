@@ -214,7 +214,8 @@ public final class InternalContext implements Context {
      * @param label
      */
     public void resetBreakLoopIfMatch(int label) {
-        if (this.loopType == LoopInfo.BREAK && (this.label == 0 || this.label == label)) {
+        if (this.loopType == LoopInfo.BREAK
+                && (this.label == 0 || this.label == label)) {
             this.resetLoop();
         }
     }
@@ -225,7 +226,8 @@ public final class InternalContext implements Context {
      * @return the returned
      */
     public Object resetReturnLoop() {
-        Object result = this.loopType == LoopInfo.RETURN ? this.returned : InternalVoid.VOID;
+        Object result = this.loopType == LoopInfo.RETURN
+                ? this.returned : InternalVoid.VOID;
         resetLoop();
         return result;
     }

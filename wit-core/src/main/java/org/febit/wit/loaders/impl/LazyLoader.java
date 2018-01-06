@@ -17,11 +17,10 @@ public class LazyLoader implements Loader {
 
     @Override
     public Resource get(String name) {
-        if (this.timeout > 0) {
-            return new LazyResource(this.loader.get(name), this.timeout);
-        } else {
-            return this.loader.get(name);
-        }
+        Resource inside = this.loader.get(name);
+        return this.timeout > 0
+                ? new LazyResource(inside, this.timeout)
+                : inside;
     }
 
     @Override

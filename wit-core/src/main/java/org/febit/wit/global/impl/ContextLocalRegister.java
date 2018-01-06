@@ -18,12 +18,12 @@ public class ContextLocalRegister implements GlobalRegister {
     @Override
     public void regist(GlobalManager manager) {
         manager.setConst(this.name, (MethodDeclare) (context, args) -> {
-            final int i = args.length - 1;
-            if (i == 0) {
-                return context.getLocal(args[0]);
-            }
-            if (i < 0) {
+            final int len = args.length;
+            if (len < 1) {
                 throw new ScriptRuntimeException("This function need at least 1 arg: ");
+            }
+            if (len == 1) {
+                return context.getLocal(args[0]);
             }
             context.setLocal(args[0], args[1]);
             return args[1];

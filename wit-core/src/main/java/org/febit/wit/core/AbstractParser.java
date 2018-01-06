@@ -1,8 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import org.febit.wit.core.ast.operators.BiOperator;
-import org.febit.wit.core.ast.operators.SelfOperator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Field;

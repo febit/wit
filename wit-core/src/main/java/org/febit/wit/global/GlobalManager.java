@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
 import org.febit.wit.Init;
-import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.lang.Bag;
 
 /**
@@ -29,12 +28,8 @@ public class GlobalManager {
     @Init
     public void init() {
         if (registers != null) {
-            try {
-                for (GlobalRegister register : registers) {
-                    register.regist(this);
-                }
-            } catch (Exception ex) {
-                throw new UncheckedException(ex);
+            for (GlobalRegister register : registers) {
+                register.regist(this);
             }
         }
     }

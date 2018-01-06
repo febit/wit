@@ -59,11 +59,10 @@ public class ClasspathResource implements Resource {
     public Reader openReader() throws IOException {
         final InputStream in = ClassUtil.getDefaultClassLoader()
                 .getResourceAsStream(path);
-        if (in != null) {
-            return new InputStreamReader(in, encoding);
-        } else {
+        if (in == null) {
             throw new ResourceNotFoundException("Resource Not Found: ".concat(path));
         }
+        return new InputStreamReader(in, encoding);
     }
 
     /**

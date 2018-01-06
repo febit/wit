@@ -51,7 +51,6 @@ public class Slf4jLogger extends AbstractLogger {
                 return;
             case LEVEL_OFF:
             default:
-                return;
         }
     }
 
@@ -72,7 +71,6 @@ public class Slf4jLogger extends AbstractLogger {
                 return;
             case LEVEL_OFF:
             default:
-                return;
         }
     }
 }

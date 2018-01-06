@@ -18,22 +18,22 @@ public class AmbiguousMethodException extends ScriptRuntimeException {
     }
 
     protected static <T extends Member> String buildMessage(T[] methods, Class<?>[] argTypes) {
-        StringBuilder msg = new StringBuilder();
-        msg.append("Ambiguous method for [");
+        StringBuilder buf = new StringBuilder();
+        buf.append("Ambiguous method for [");
         for (int i = 0; i < argTypes.length; i++) {
             if (i != 0) {
-                msg.append(',');
+                buf.append(',');
             }
-            msg.append(argTypes[i].getName());
+            buf.append(argTypes[i].getName());
         }
-        msg.append("] with ");
+        buf.append("] with ");
         for (int i = 0; i < methods.length; i++) {
             if (i != 0) {
-                msg.append(',');
+                buf.append(',');
             }
-            msg.append(methods[i].toString());
+            buf.append(methods[i].toString());
         }
-        return msg.toString();
+        return buf.toString();
     }
 
 }
