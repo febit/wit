@@ -9,4 +9,8 @@ package org.febit.wit.resolvers;
 public interface Resolver<T> {
 
     Class<T> getMatchClass();
+
+    default void register(ResolverManager resolverManager) {
+        resolverManager.registerResolver(getMatchClass(), this);
+    }
 }

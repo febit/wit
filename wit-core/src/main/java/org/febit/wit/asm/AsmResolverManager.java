@@ -28,7 +28,7 @@ public class AsmResolverManager extends ResolverManager {
     private static final ClassMap<AsmResolver> CACHE = new ClassMap<>();
 
     @Override
-    protected SetResolver resolveSetResolver(Class type) {
+    protected SetResolver resolveSetResolver(Class<?> type) {
         SetResolver resolver = getAsmResolver(type);
         if (resolver != null) {
             return resolver;
@@ -37,7 +37,7 @@ public class AsmResolverManager extends ResolverManager {
     }
 
     @Override
-    protected GetResolver resolveGetResolver(Class type) {
+    protected GetResolver resolveGetResolver(Class<?> type) {
         GetResolver resolver = getAsmResolver(type);
         if (resolver != null) {
             return resolver;
@@ -45,7 +45,7 @@ public class AsmResolverManager extends ResolverManager {
         return super.resolveGetResolver(type);
     }
 
-    private AsmResolver getAsmResolver(Class type) {
+    private AsmResolver getAsmResolver(Class<?> type) {
         AsmResolver resolver = CACHE.get(type);
         if (resolver == null) {
             synchronized (CACHE) {
@@ -63,7 +63,7 @@ public class AsmResolverManager extends ResolverManager {
         return resolver;
     }
 
-    static Class createResolverClass(Class beanClass) {
+    static Class createResolverClass(Class<?> beanClass) {
         //XXX: rewrite
         if (!ClassUtil.isPublic(beanClass)) {
             throw new UncheckedException(StringUtil.format("Class [{}] is not public", beanClass));

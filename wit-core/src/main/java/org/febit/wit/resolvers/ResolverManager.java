@@ -49,7 +49,7 @@ public class ResolverManager {
     }
 
     @SuppressWarnings("unchecked")
-    protected GetResolver resolveGetResolverIfAbsent(final Class type) {
+    protected GetResolver resolveGetResolverIfAbsent(final Class<?> type) {
         GetResolver resolver = getters.get(type);
         if (resolver != null) {
             return resolver;
@@ -69,12 +69,12 @@ public class ResolverManager {
         return getters.putIfAbsent(type, resolver);
     }
 
-    protected GetResolver resolveGetResolver(final Class type) {
+    protected GetResolver resolveGetResolver(final Class<?> type) {
         return commonResolver;
     }
 
     @SuppressWarnings("unchecked")
-    protected SetResolver resolveSetResolverIfAbsent(final Class type) {
+    protected SetResolver resolveSetResolverIfAbsent(final Class<?> type) {
         SetResolver resolver;
         resolver = setters.get(type);
         if (resolver != null) {
@@ -95,12 +95,12 @@ public class ResolverManager {
         return setters.putIfAbsent(type, resolver);
     }
 
-    protected SetResolver resolveSetResolver(final Class type) {
+    protected SetResolver resolveSetResolver(final Class<?> type) {
         return commonResolver;
     }
 
     @SuppressWarnings("unchecked")
-    public OutResolver resolveOutResolver(final Class type) {
+    public OutResolver resolveOutResolver(final Class<?> type) {
         OutResolver resolver;
         resolver = outters.get(type);
         if (resolver != null) {
@@ -126,10 +126,7 @@ public class ResolverManager {
     public void init() {
         if (resolvers != null) {
             for (Resolver resolver : resolvers) {
-                registResolver(resolver.getMatchClass(), resolver);
-                if (resolver instanceof RegistModeResolver) {
-                    ((RegistModeResolver) resolver).regist(this);
-                }
+                resolver.register(this);
             }
             getResolvers.trimToSize();
             setResolvers.trimToSize();
@@ -140,7 +137,18 @@ public class ResolverManager {
         }
     }
 
-    public void registResolver(Class type, Resolver resolver) {
+    /**
+     *
+     * @param type
+     * @param resolver
+     * @deprecated use <code>registerResolver</code> instead
+     */
+    @Deprecated
+    public void registResolver(Class<?> type, Resolver resolver) {
+        registerResolver(type, resolver);
+    }
+
+    public void registerResolver(Class<?> type, Resolver resolver) {
         if (type == null) {
             return;
         }

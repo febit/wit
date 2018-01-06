@@ -3,7 +3,6 @@ package org.febit.wit.resolvers.impl;
 
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.resolvers.GetResolver;
-import org.febit.wit.resolvers.RegistModeResolver;
 import org.febit.wit.resolvers.ResolverManager;
 import org.febit.wit.resolvers.SetResolver;
 import org.febit.wit.util.ALU;
@@ -14,7 +13,7 @@ import org.febit.wit.util.StringUtil;
  *
  * @author zqq90
  */
-public class PrimitiveArrayResolver implements RegistModeResolver, GetResolver, SetResolver {
+public class PrimitiveArrayResolver implements GetResolver, SetResolver {
 
     @Override
     public Object get(Object array, Object property) {
@@ -85,14 +84,14 @@ public class PrimitiveArrayResolver implements RegistModeResolver, GetResolver, 
     }
 
     @Override
-    public void regist(ResolverManager resolverManager) {
-        resolverManager.registResolver(int[].class, this);
-        resolverManager.registResolver(boolean[].class, this);
-        resolverManager.registResolver(char[].class, this);
-        resolverManager.registResolver(float[].class, this);
-        resolverManager.registResolver(double[].class, this);
-        resolverManager.registResolver(long[].class, this);
-        resolverManager.registResolver(short[].class, this);
-        resolverManager.registResolver(byte[].class, this);
+    public void register(ResolverManager resolverManager) {
+        resolverManager.registerResolver(int[].class, this);
+        resolverManager.registerResolver(boolean[].class, this);
+        resolverManager.registerResolver(char[].class, this);
+        resolverManager.registerResolver(float[].class, this);
+        resolverManager.registerResolver(double[].class, this);
+        resolverManager.registerResolver(long[].class, this);
+        resolverManager.registerResolver(short[].class, this);
+        resolverManager.registerResolver(byte[].class, this);
     }
 }
