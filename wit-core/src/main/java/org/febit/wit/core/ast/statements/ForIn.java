@@ -61,24 +61,24 @@ public class ForIn extends Statement implements Loopable {
             do {
                 vars[index] = iter.next();
                 StatementUtil.executeWithLoopCheck(stats, context);
-                if (context.hasLoop()) {
-                    if (context.matchLabel(myLabel)) {
-                        switch (context.getLoopType()) {
-                            case LoopInfo.BREAK:
-                                context.resetLoop();
-                                break label; // while
-                            case LoopInfo.RETURN:
-                                //can't deal
-                                break label; //while
-                            case LoopInfo.CONTINUE:
-                                context.resetLoop();
-                                break; //switch
-                            default:
-                                break label; //while
-                            }
-                    } else {
-                        break;
-                    }
+                if (!context.hasLoop()) {
+                    continue;
+                }
+                if (!context.matchLabel(myLabel)) {
+                    break; //while
+                }
+                switch (context.getLoopType()) {
+                    case LoopInfo.BREAK:
+                        context.resetLoop();
+                        break label; // while
+                    case LoopInfo.RETURN:
+                        //can't deal
+                        break label; //while
+                    case LoopInfo.CONTINUE:
+                        context.resetLoop();
+                        break; //switch
+                    default:
+                        break label; //while
                 }
             } while (iter.hasNext());
             context.indexer = preIndex;

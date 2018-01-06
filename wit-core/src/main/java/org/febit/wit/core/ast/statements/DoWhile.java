@@ -34,29 +34,30 @@ public final class DoWhile extends Statement implements Loopable {
     @Override
     public Object execute(final InternalContext context) {
         final Statement[] stats = this.statements;
+        final int myLabel = this.label;
         final int preIndex = context.indexer;
         context.indexer = indexer;
         label:
         do {
             StatementUtil.executeWithLoopCheck(stats, context);
-            if (context.hasLoop()) {
-                if (context.matchLabel(label)) {
-                    switch (context.getLoopType()) {
-                        case LoopInfo.BREAK:
-                            context.resetLoop();
-                            break label; // while
-                        case LoopInfo.RETURN:
-                            //can't deal
-                            break label; //while
-                        case LoopInfo.CONTINUE:
-                            context.resetLoop();
-                            break; //switch
-                        default:
-                            break label; //while
-                        }
-                } else {
-                    break;
-                }
+            if (!context.hasLoop()) {
+                continue;
+            }
+            if (!context.matchLabel(myLabel)) {
+                break; //while
+            }
+            switch (context.getLoopType()) {
+                case LoopInfo.BREAK:
+                    context.resetLoop();
+                    break label; // while
+                case LoopInfo.RETURN:
+                    //can't deal
+                    break label; //while
+                case LoopInfo.CONTINUE:
+                    context.resetLoop();
+                    break; //switch
+                default:
+                    break label; //while
             }
         } while (ALU.isTrue(whileExpr.execute(context)));
         context.indexer = preIndex;

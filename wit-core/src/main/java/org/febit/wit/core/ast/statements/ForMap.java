@@ -54,7 +54,6 @@ public final class ForMap extends Statement implements Loopable {
         if (iter != null && iter.hasNext()) {
             final int preIndex = context.indexer;
             context.indexer = indexer;
-
             final Statement[] stats = this.statements;
             final int myLabel = this.label;
             final int indexOfKey = this.keyIndex;
@@ -66,24 +65,24 @@ public final class ForMap extends Statement implements Loopable {
                 vars[indexOfKey] = iter.next();
                 vars[indexOfValue] = iter.value();
                 StatementUtil.executeWithLoopCheck(stats, context);
-                if (context.hasLoop()) {
-                    if (context.matchLabel(myLabel)) {
-                        switch (context.getLoopType()) {
-                            case LoopInfo.BREAK:
-                                context.resetLoop();
-                                break label; // while
-                            case LoopInfo.RETURN:
-                                //can't deal
-                                break label; //while
-                            case LoopInfo.CONTINUE:
-                                context.resetLoop();
-                                break; //switch
-                            default:
-                                break label; //while
-                            }
-                    } else {
-                        break; //while
-                    }
+                if (!context.hasLoop()) {
+                    continue;
+                }
+                if (!context.matchLabel(myLabel)) {
+                    break; //while
+                }
+                switch (context.getLoopType()) {
+                    case LoopInfo.BREAK:
+                        context.resetLoop();
+                        break label; // while
+                    case LoopInfo.RETURN:
+                        //can't deal
+                        break label; //while
+                    case LoopInfo.CONTINUE:
+                        context.resetLoop();
+                        break; //switch
+                    default:
+                        break label; //while
                 }
             } while (iter.hasNext());
             context.indexer = preIndex;
