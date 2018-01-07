@@ -4,7 +4,6 @@ package org.febit.wit.core.ast.operators;
 import java.util.function.Function;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.Optimizable;
 import org.febit.wit.core.ast.expressions.DirectValue;
 import org.febit.wit.util.StatementUtil;
 
@@ -12,7 +11,7 @@ import org.febit.wit.util.StatementUtil;
  *
  * @author zqq90
  */
-public class ConstableOperator extends Expression implements Optimizable {
+public class ConstableOperator extends Expression {
 
     protected final Expression expr;
     protected final Function<Object, Object> op;

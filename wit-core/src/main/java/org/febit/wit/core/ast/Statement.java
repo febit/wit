@@ -18,4 +18,8 @@ public abstract class Statement {
     }
 
     public abstract Object execute(InternalContext context);
+
+    public Statement optimize() {
+        return this;
+    }
 }

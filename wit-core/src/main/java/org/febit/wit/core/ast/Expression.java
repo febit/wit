@@ -16,4 +16,9 @@ public abstract class Expression extends Statement {
     public Object getConstValue() {
         throw new ParseException("Can't get a const value from this expression.", line, column);
     }
+
+    @Override
+    public Expression optimize() {
+        return this;
+    }
 }

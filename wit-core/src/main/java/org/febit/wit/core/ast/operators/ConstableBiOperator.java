@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.Optimizable;
 import org.febit.wit.core.ast.expressions.DirectValue;
 import org.febit.wit.util.StatementUtil;
 
@@ -13,7 +12,7 @@ import org.febit.wit.util.StatementUtil;
  *
  * @author zqq90
  */
-public class ConstableBiOperator extends BiOperator implements Optimizable {
+public class ConstableBiOperator extends BiOperator {
 
     protected final BiFunction<Object, Object, Object> op;
 

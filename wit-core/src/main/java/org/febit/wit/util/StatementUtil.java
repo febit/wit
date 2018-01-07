@@ -10,7 +10,6 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Loopable;
-import org.febit.wit.core.ast.Optimizable;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.core.ast.expressions.DirectValue;
 import org.febit.wit.core.ast.statements.StatementGroup;
@@ -74,13 +73,10 @@ public class StatementUtil {
     }
 
     public static Expression optimize(Expression expression) {
-        try {
-            return expression instanceof Optimizable
-                    ? (Expression) ((Optimizable) expression).optimize()
-                    : expression;
-        } catch (Exception e) {
-            throw new ParseException("Exception occur when do optimization", e, expression);
+        if (expression == null) {
+            return null;
         }
+        return expression.optimize();
     }
 
     public static void optimize(Expression[] expression) {
@@ -90,10 +86,11 @@ public class StatementUtil {
     }
 
     public static Statement optimize(Statement statement) {
+        if (statement == null) {
+            return null;
+        }
         try {
-            return statement instanceof Optimizable
-                    ? ((Optimizable) statement).optimize()
-                    : statement;
+            return statement.optimize();
         } catch (Exception e) {
             throw new ParseException("Exception occur when do optimization", e, statement);
         }

@@ -2,14 +2,13 @@
 package org.febit.wit.core.ast.statements;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.Optimizable;
 import org.febit.wit.core.ast.Statement;
 
 /**
  *
  * @author zqq90
  */
-public final class NoneStatement extends Statement implements Optimizable {
+public final class NoneStatement extends Statement {
 
     public static final NoneStatement INSTANCE = new NoneStatement();
 

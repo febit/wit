@@ -2,7 +2,6 @@
 package org.febit.wit.core.ast.statements;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.Optimizable;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.util.StatementUtil;
 
@@ -10,7 +9,7 @@ import org.febit.wit.util.StatementUtil;
  *
  * @author zqq90
  */
-public class StatementGroup extends Statement implements Optimizable {
+public class StatementGroup extends Statement {
 
     private final Statement[] list;
 

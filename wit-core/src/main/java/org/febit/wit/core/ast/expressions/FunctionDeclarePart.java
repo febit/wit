@@ -58,9 +58,7 @@ public class FunctionDeclarePart {
 
     public FunctionDeclarePart appendArgs(List<ArgumentInfo> infos) {
         if (infos != null) {
-            for (ArgumentInfo name : infos) {
-                appendArg(name);
-            }
+            infos.forEach(this::appendArg);
         }
         return this;
     }
