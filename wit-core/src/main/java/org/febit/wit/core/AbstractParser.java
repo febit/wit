@@ -551,7 +551,7 @@ abstract class AbstractParser {
     }
 
     Expression createBreakPointExpression(Expression labelExpr, Expression expr, int line, int column) {
-        final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr, true);
+        final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr);
         if (breakPointListener == null) {
             return expr;
         }
@@ -559,7 +559,7 @@ abstract class AbstractParser {
     }
 
     Statement createBreakPointStatement(Expression labelExpr, Statement statement, int line, int column) {
-        final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr, true);
+        final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr);
         if (breakPointListener == null) {
             return statement;
         }
@@ -628,7 +628,7 @@ abstract class AbstractParser {
     }
 
     void assignConst(String name, Expression expr, int line, int column) {
-        varmgr.assignConst(name, StatementUtil.calcConst(expr, true), line, column);
+        varmgr.assignConst(name, StatementUtil.calcConst(expr), line, column);
     }
 
     Expression createNativeStaticValue(ClassNameBand classNameBand, int line, int column) {

@@ -3,7 +3,6 @@ package org.febit.wit.core.ast.operators;
 
 import java.util.function.Function;
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.Constable;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Optimizable;
 import org.febit.wit.core.ast.expressions.DirectValue;
@@ -13,7 +12,7 @@ import org.febit.wit.util.StatementUtil;
  *
  * @author zqq90
  */
-public class ConstableOperator extends Expression implements Optimizable, Constable {
+public class ConstableOperator extends Expression implements Optimizable {
 
     protected final Expression expr;
     protected final Function<Object, Object> op;
@@ -43,6 +42,6 @@ public class ConstableOperator extends Expression implements Optimizable, Consta
 
     @Override
     public Object getConstValue() {
-        return op.apply(StatementUtil.calcConst(expr, true));
+        return op.apply(StatementUtil.calcConst(expr));
     }
 }

@@ -4,7 +4,6 @@ package org.febit.wit.core.ast.expressions;
 import java.util.HashMap;
 import java.util.Map;
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.Constable;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.util.StatementUtil;
 
@@ -12,7 +11,7 @@ import org.febit.wit.util.StatementUtil;
  *
  * @author zqq90
  */
-public final class MapValue extends Expression implements Constable {
+public final class MapValue extends Expression {
 
     private final Expression[] keyExprs;
     private final Expression[] valueExprs;
@@ -46,8 +45,8 @@ public final class MapValue extends Expression implements Constable {
         final int len = keys.length;
         final Map<Object, Object> value = new HashMap<>(initialCapacity, 0.75f);
         for (int i = 0; i < len; i++) {
-            value.put(StatementUtil.calcConst(keys[i], true),
-                    StatementUtil.calcConst(values[i], true));
+            value.put(StatementUtil.calcConst(keys[i]),
+                    StatementUtil.calcConst(values[i]));
         }
         return value;
     }

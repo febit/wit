@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
-import org.febit.wit.core.ast.Constable;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Loopable;
 import org.febit.wit.core.ast.Optimizable;
@@ -17,7 +16,6 @@ import org.febit.wit.core.ast.expressions.DirectValue;
 import org.febit.wit.core.ast.statements.StatementGroup;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.InternalVoid;
 
 /**
  *
@@ -36,22 +34,16 @@ public class StatementUtil {
                 && ALU.isKnownBaseImmutable(((DirectValue) expr).value);
     }
 
-    public static Object calcConst(Expression expr, boolean force) {
-        expr = StatementUtil.optimize(expr);
-        if (expr instanceof Constable) {
-            return ((Constable) expr).getConstValue();
-        }
-        if (force) {
-            throw new ParseException("Can't get a const value from this expression.", expr.line, expr.column);
-        }
-        return InternalVoid.VOID;
+    public static Object calcConst(Expression expr) {
+        return StatementUtil.optimize(expr)
+                .getConstValue();
     }
 
-    public static Object[] calcConstArrayForce(Expression[] expressions) {
+    public static Object[] calcConstArray(Expression[] expressions) {
         final int len = expressions.length;
         final Object[] results = new Object[len];
         for (int i = 0; i < len; i++) {
-            results[i] = StatementUtil.calcConst(expressions[i], true);
+            results[i] = StatementUtil.calcConst(expressions[i]);
         }
         return results;
     }

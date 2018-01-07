@@ -3,7 +3,6 @@ package org.febit.wit.core.ast.expressions;
 
 import java.lang.reflect.Method;
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.Constable;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.util.ClassUtil;
@@ -14,7 +13,7 @@ import org.febit.wit.util.StatementUtil;
  *
  * @author zqq90
  */
-public final class DynamicNativeMethodExecute extends Expression implements Constable {
+public final class DynamicNativeMethodExecute extends Expression {
 
     private final String func;
     private final Expression thisExpr;
@@ -37,9 +36,9 @@ public final class DynamicNativeMethodExecute extends Expression implements Cons
 
     @Override
     public Object getConstValue() {
-        Object me = StatementUtil.calcConst(thisExpr, true);
+        Object me = StatementUtil.calcConst(thisExpr);
         Method[] methods = getMethods(me);
-        Object[] params = StatementUtil.calcConstArrayForce(paramExprs);
+        Object[] params = StatementUtil.calcConstArray(paramExprs);
         return invokeProperMethod(me, methods, params);
     }
 

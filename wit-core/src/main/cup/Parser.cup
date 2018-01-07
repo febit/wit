@@ -575,7 +575,7 @@ templateStringExprPart  ::= TEMPLATE_STRING_START:sym
 funcArg             ::= IDENTIFIER:ident
                         {: return new ArgumentInfo(%ident%, null); :}
                         | IDENTIFIER:ident EQ expression:expr
-                        {: return new ArgumentInfo(%ident%, StatementUtil.calcConst(%expr%, true)); :}
+                        {: return new ArgumentInfo(%ident%, StatementUtil.calcConst(%expr%)); :}
                         ;
 
 

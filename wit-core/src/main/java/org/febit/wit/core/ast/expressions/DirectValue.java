@@ -2,14 +2,13 @@
 package org.febit.wit.core.ast.expressions;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.core.ast.Constable;
 import org.febit.wit.core.ast.Expression;
 
 /**
  *
  * @author zqq90
  */
-public final class DirectValue extends Expression implements Constable {
+public final class DirectValue extends Expression {
 
     public final Object value;
 
