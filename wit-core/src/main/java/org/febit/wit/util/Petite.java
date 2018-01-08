@@ -102,9 +102,7 @@ public class Petite {
             extras = null;
         }
 
-        for (String key : props.keySet()) {
-            setProp(key, props.get(key));
-        }
+        props.forEach(this::setProp);
 
         if (extras != null) {
             extras.forEach(this::setProp);

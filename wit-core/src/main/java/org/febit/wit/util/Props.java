@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 
 /**
  * A mini version of 'Jodd-props', refer to the
@@ -118,18 +120,16 @@ public final class Props {
         put(name, value, true);
     }
 
-    @SuppressWarnings("unchecked")
-    public void export(final Map target) {
-        this.extractTo(target);
+    public void forEach(BiConsumer<String, String> action) {
+        Objects.requireNonNull(action);
+        this.data.forEach((k, v) -> {
+            action.accept(k, resolveValue(v));
+        });
     }
 
     @SuppressWarnings("unchecked")
     public void extractTo(final Map target) {
-        this.data.forEach((k, v) -> target.put(k, resolveValue(v)));
-    }
-
-    public Iterable<String> keySet() {
-        return this.data.keySet();
+        forEach(target::put);
     }
 
     private void put(String key, String value, boolean append) {
