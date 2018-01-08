@@ -29,13 +29,10 @@ appendLostSuffix=true
 [classpathLoader]
 root=org/febit/wit/test/tmpls
 
-[codeStringLoader :stringLoader]
-codeFirst=true
 
 [routeLoader]
 defaultLoader=lazyLoader
 loaders +='''
-  code: codeStringLoader
   lib-test: lazyLoader
   lib: classpathLoader-lib
   lib:sub: classpathLoader-lib-sub

@@ -75,6 +75,9 @@ suffix=.wit
 
 [stringLoader :org.febit.wit.loaders.impl.StringLoader]
 
+[codeStringLoader :org.febit.wit.loaders.impl.StringLoader]
+codeFirst=true
+
 [classpathLoader :org.febit.wit.loaders.impl.ClasspathLoader]
 @extends=pathLoader
 
@@ -90,6 +93,7 @@ defaultLoader=classpathLoader
 loaders +='''
   classpath:  classpathLoader
   string:     stringLoader
+  code:       codeStringLoader
 '''
 
 [securityLoader :org.febit.wit.loaders.impl.SecurityLoader]
