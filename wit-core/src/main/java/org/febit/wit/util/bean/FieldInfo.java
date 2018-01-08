@@ -4,6 +4,7 @@ package org.febit.wit.util.bean;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import org.febit.wit.util.ClassUtil;
 
 /**
  *
@@ -57,12 +58,12 @@ public final class FieldInfo implements Comparable<FieldInfo> {
     }
 
     public boolean isFieldSettable() {
-        return this.field != null && !Modifier.isFinal(this.field.getModifiers());
+        return this.field != null && !ClassUtil.isFinal(this.field);
     }
 
     @Override
     public int compareTo(final FieldInfo o) {
-        return (this.hashOfName < o.hashOfName) ? -1 : ((this.hashOfName == o.hashOfName) ? 0 : 1);
+        return Integer.compare(this.hashOfName, o.hashOfName);
     }
 
     @Override

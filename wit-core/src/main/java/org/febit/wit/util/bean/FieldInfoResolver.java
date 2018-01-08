@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.febit.wit.util.ClassUtil;
 
 /**
@@ -13,26 +14,24 @@ import org.febit.wit.util.ClassUtil;
  */
 public class FieldInfoResolver {
 
-    private final Class beanType;
+    private final Class<?> beanType;
     private final Map<String, FieldInfo> fieldInfos;
 
-    private FieldInfoResolver(Class beanClass) {
+    private FieldInfoResolver(Class<?> beanClass) {
         this.beanType = beanClass;
         this.fieldInfos = new HashMap<>();
     }
 
-    public static FieldInfo[] resolve(Class beanClass) {
+    public static Stream<FieldInfo> resolve(Class<?> beanClass) {
         return new FieldInfoResolver(beanClass).resolve();
     }
 
-    private FieldInfo[] resolve() {
-
+    private Stream<FieldInfo> resolve() {
         for (Field field : beanType.getFields()) {
             if (!ClassUtil.isStatic(field)) {
                 registField(field);
             }
         }
-
         for (Method method : beanType.getMethods()) {
             if (ClassUtil.isStatic(method)
                     || method.getDeclaringClass() == Object.class) {
@@ -57,17 +56,11 @@ public class FieldInfoResolver {
                 registSetterMethod(cutFieldName(methodName, 3), method);
             }
         }
-
-        return fieldInfos.values().toArray(new FieldInfo[fieldInfos.size()]);
+        return fieldInfos.values().stream();
     }
 
     private FieldInfo getOrCreateFieldInfo(String name) {
-        FieldInfo fieldInfo = fieldInfos.get(name);
-        if (fieldInfo == null) {
-            fieldInfo = new FieldInfo(beanType, name);
-            fieldInfos.put(name, fieldInfo);
-        }
-        return fieldInfo;
+        return fieldInfos.computeIfAbsent(name, key -> new FieldInfo(beanType, key));
     }
 
     private void registField(Field field) {

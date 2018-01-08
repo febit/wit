@@ -95,13 +95,10 @@ public class FieldInfoResolverTest {
 
     @Test
     public void test() {
-
-        FieldInfo[] infos = FieldInfoResolver.resolve(Foo.class);
-
         Map<String, FieldInfo> infoMap = new HashMap<>();
-        for (FieldInfo fieldInfo : infos) {
-            infoMap.put(fieldInfo.name, fieldInfo);
-        }
+        FieldInfoResolver.resolve(Foo.class)
+                .forEach(fieldInfo -> infoMap.put(fieldInfo.name, fieldInfo));
+        
         assertNull(infoMap.get("publicStatic"));
         assertNull(infoMap.get("publicStatic0"));
         assertNull(infoMap.get("privateStatic0"));

@@ -73,7 +73,9 @@ public class AsmResolverManager extends ResolverManager {
         final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", ASM_RESOLVER);
         ASMUtil.visitConstructor(classWriter);
 
-        final FieldInfo[] all = FieldInfoResolver.resolve(beanClass);
+        final FieldInfo[] all = FieldInfoResolver.resolve(beanClass)
+                .sorted()
+                .toArray(FieldInfo[]::new);
         Arrays.sort(all);
         final int size = all.length;
         int[] hashs;

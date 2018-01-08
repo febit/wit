@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.febit.wit.util.ClassMap;
 import org.febit.wit.util.ClassUtil;
-import org.febit.wit.util.StringUtil;
 
 /**
  *
@@ -26,7 +25,7 @@ public class BeanUtil {
         if (getter != null) {
             return getter.get(bean);
         }
-        throw new BeanException(StringUtil.format("Unable to get getter for {}#{}", bean.getClass(), name));
+        throw new BeanException("Unable to get getter for {}#{}", bean.getClass(), name);
     }
 
     public static void set(final Object bean, final String name, Object value) throws BeanException {
@@ -35,7 +34,7 @@ public class BeanUtil {
             setter.set(bean, value);
             return;
         }
-        throw new BeanException(StringUtil.format("Unable to get setter for {}#{}", bean.getClass(), name));
+        throw new BeanException("Unable to get setter for {}#{}", bean.getClass(), name);
     }
 
     private static Accessor getAccessor(final Class cls, final String name) throws BeanException {
@@ -47,15 +46,14 @@ public class BeanUtil {
         if (fieldDescriptor != null) {
             return fieldDescriptor;
         }
-        throw new BeanException(StringUtil.format("Unable to get field: {}#{}", cls.getName(), name));
+        throw new BeanException("Unable to get field: {}#{}", cls, name);
     }
 
     private static Map<String, Accessor> resolveAccessors(Class cls) {
-        final FieldInfo[] fieldInfos = FieldInfoResolver.resolve(cls);
-        final Map<String, Accessor> map = new HashMap<>(fieldInfos.length * 4 / 3 + 1, 0.75f);
-        for (FieldInfo fieldInfo : fieldInfos) {
-            map.put(fieldInfo.name, new Accessor(fieldInfo.getGetter(), fieldInfo.getSetter()));
-        }
+        final Map<String, Accessor> map = new HashMap<>();
+        FieldInfoResolver.resolve(cls)
+                .forEach(fieldInfo -> map.put(fieldInfo.name,
+                new Accessor(fieldInfo.getGetter(), fieldInfo.getSetter())));
         return map;
     }
 
