@@ -9,12 +9,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.febit.wit.InternalContext;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exceptions.AmbiguousMethodException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.global.GlobalManager;
-import org.febit.wit.lang.InternalVoid;
 
 /**
  *
@@ -37,14 +37,14 @@ public class JavaNativeUtil {
 
     public static int addStaticMethods(GlobalManager manager,
             NativeFactory nativeFactory,
-            Class type) {
+            Class<?> type) {
         return addStaticMethods(manager, nativeFactory, type, false);
     }
 
     public static int addStaticMethods(
             GlobalManager manager,
             NativeFactory nativeFactory,
-            Class type,
+            Class<?> type,
             boolean skipConflict
     ) {
         Map<String, List<Method>> methodMap = Arrays.stream(type.getMethods())
@@ -60,7 +60,7 @@ public class JavaNativeUtil {
     public static int addConstFields(
             GlobalManager manager,
             NativeFactory nativeFactory,
-            Class type
+            Class<?> type
     ) {
         return addConstFields(manager, nativeFactory, type, false);
     }
@@ -68,7 +68,7 @@ public class JavaNativeUtil {
     public static int addConstFields(
             GlobalManager manager,
             NativeFactory nativeFactory,
-            Class type,
+            Class<?> type,
             boolean skipConflict
     ) {
         int count = 0;
@@ -372,7 +372,7 @@ public class JavaNativeUtil {
         try {
             Object result = method.invoke(me, methodArgs);
             return ClassUtil.isVoidType(method.getReturnType())
-                    ? InternalVoid.VOID
+                    ? InternalContext.VOID
                     : result;
         } catch (IllegalAccessException ex) {
             throw new ScriptRuntimeException("this method is inaccessible: ".concat(ex.getLocalizedMessage()), ex);

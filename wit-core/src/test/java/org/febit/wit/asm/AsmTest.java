@@ -45,7 +45,7 @@ public class AsmTest implements Constants {
         ASMUtil.visitScriptRuntimeException(m, "First argument can't be null.");
         m.visitMaxs();
 
-        Class exampleClass = ASMUtil.loadClass("x.Example", clssWriter);
+        Class<?> exampleClass = ASMUtil.loadClass("x.Example", clssWriter);
 
         try {
             Object obj = exampleClass.newInstance();

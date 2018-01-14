@@ -128,10 +128,10 @@ public class Petite {
 
     public void addComponent(Object bean) {
         //regist all impls
-        Class cls = bean.getClass();
+        Class<?> cls = bean.getClass();
         while (cls != null && cls != Object.class) {
             this.components.put(cls, bean);
-            for (Class aInterface : cls.getInterfaces()) {
+            for (Class<?> aInterface : cls.getInterfaces()) {
                 this.components.put(aInterface, bean);
             }
             cls = cls.getSuperclass();
@@ -254,7 +254,7 @@ public class Petite {
         }
     }
 
-    private Object convert(String string, Class cls) {
+    private Object convert(String string, Class<?> cls) {
         if (cls == String.class) {
             return string;
         }

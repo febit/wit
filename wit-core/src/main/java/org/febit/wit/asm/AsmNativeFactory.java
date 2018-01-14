@@ -72,7 +72,7 @@ public class AsmNativeFactory extends NativeFactory {
         final String destName;
         final String destDesc;
         final Class[] paramTypes;
-        final Class returnType;
+        final Class<?> returnType;
 
         if (obj instanceof Method) {
             Method method = (Method) obj;
@@ -152,7 +152,7 @@ public class AsmNativeFactory extends NativeFactory {
                 paramCount++;
             }
 
-            for (Class paramType : paramTypes) {
+            for (Class<?> paramType : paramTypes) {
                 m.visitVarInsn(Constants.ALOAD, 2);
                 m.push(paramCount);
                 m.visitInsn(Constants.AALOAD);

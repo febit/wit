@@ -466,7 +466,7 @@ abstract class AbstractParser {
         return true;
     }
 
-    Class toClass(String className) {
+    Class<?> toClass(String className) {
         int arrayDept = 0;
         int flag = className.indexOf('[');
         if (flag >= 0) {
@@ -482,7 +482,7 @@ abstract class AbstractParser {
         try {
             return ClassUtil.getClass(classFullName, arrayDept);
         } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class not found:".concat(classFullName), ex);
+            throw new ParseException("Class<?> not found:".concat(classFullName), ex);
         }
     }
 
@@ -498,7 +498,7 @@ abstract class AbstractParser {
         if (fullName != null) {
             return fullName;
         }
-        Class cls;
+        Class<?> cls;
 
         // 2. find as primitive type
         cls = ClassUtil.getPrimitiveClass(className);
@@ -520,12 +520,12 @@ abstract class AbstractParser {
         return className;
     }
 
-    Class toClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
+    Class<?> toClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
         String classFullName = resolveClassFullName(classNameBand.getClassPureName());
         try {
             return ClassUtil.getClass(classFullName, classNameBand.getArrayDepth());
         } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class not found:".concat(classFullName), ex, line, column);
+            throw new ParseException("Class<?> not found:".concat(classFullName), ex, line, column);
         }
     }
 
@@ -636,7 +636,7 @@ abstract class AbstractParser {
             throw new ParseException("native static need a field name.", line, column);
         }
         final String fieldName = classNameBand.pop();
-        final Class clazz = toClass(classNameBand, line, column);
+        final Class<?> clazz = toClass(classNameBand, line, column);
         final String path = clazz.getName() + '.' + fieldName;
         if (!this.engine.checkNativeAccess(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
@@ -667,11 +667,11 @@ abstract class AbstractParser {
         return new Interpolation(expr);
     }
 
-    Expression createNativeNewArrayDeclareExpression(Class componentType, int line, int column) {
+    Expression createNativeNewArrayDeclareExpression(Class<?> componentType, int line, int column) {
         return new DirectValue(this.nativeFactory.getNativeNewArrayMethodDeclare(componentType, line, column, true), line, column);
     }
 
-    Expression createNativeMethodDeclareExpression(Class clazz, String methodName, List<Class> list, int line, int column) {
+    Expression createNativeMethodDeclareExpression(Class<?> clazz, String methodName, List<Class> list, int line, int column) {
         return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName,
                 list == null ? new Class[0] : list.toArray(new Class[list.size()]),
                 line, column, true), line, column);
@@ -682,7 +682,7 @@ abstract class AbstractParser {
         String className = ref.substring(0, split).trim();
         String method = ref.substring(split + 2).trim();
         MethodDeclare methodDeclare;
-        Class cls = toClass(className);
+        Class<?> cls = toClass(className);
         if ("new".equals(method)) {
             if (cls.isArray()) {
                 methodDeclare = this.nativeFactory.getNativeNewArrayMethodDeclare(cls.getComponentType(), line, column, true);
@@ -695,7 +695,7 @@ abstract class AbstractParser {
         return new DirectValue(methodDeclare, line, column);
     }
 
-    Expression createNativeConstructorDeclareExpression(Class clazz, List<Class> list, int line, int column) {
+    Expression createNativeConstructorDeclareExpression(Class<?> clazz, List<Class> list, int line, int column) {
         return new DirectValue(this.nativeFactory.getNativeConstructorDeclare(clazz,
                 list == null ? new Class[0] : list.toArray(new Class[list.size()]),
                 line, column, true), line, column);

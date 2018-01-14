@@ -32,7 +32,7 @@ public final class ClassMap<V> {
         return size;
     }
 
-    public V unsafeGet(final Class key) {
+    public V unsafeGet(final Class<?> key) {
         Entry<V> e;
         final Entry<V>[] tab = table;
         e = tab[key.hashCode() & (tab.length - 1)];
@@ -45,7 +45,7 @@ public final class ClassMap<V> {
         return null;
     }
 
-    public V get(Class key) {
+    public V get(Class<?> key) {
         synchronized (this) {
             return unsafeGet(key);
         }
@@ -90,7 +90,7 @@ public final class ClassMap<V> {
     }
 
     @SuppressWarnings("unchecked")
-    public V putIfAbsent(Class key, V value) {
+    public V putIfAbsent(Class<?> key, V value) {
         synchronized (this) {
             final int id = key.hashCode();
             Entry<V>[] tab = table;
@@ -119,11 +119,11 @@ public final class ClassMap<V> {
     private static final class Entry<V> {
 
         final int id;
-        final Class key;
+        final Class<?> key;
         V value;
         Entry<V> next;
 
-        Entry(int id, Class key, V value, Entry<V> next) {
+        Entry(int id, Class<?> key, V value, Entry<V> next) {
             this.value = value;
             this.id = id;
             this.key = key;

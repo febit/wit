@@ -8,7 +8,6 @@ import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.Out;
-import org.febit.wit.lang.InternalVoid;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.OutResolver;
@@ -227,7 +226,7 @@ public final class InternalContext implements Context {
      */
     public Object resetReturnLoop() {
         Object result = this.loopType == LoopInfo.RETURN
-                ? this.returned : InternalVoid.VOID;
+                ? this.returned : VOID;
         resetLoop();
         return result;
     }
@@ -294,7 +293,7 @@ public final class InternalContext implements Context {
         if (obj == null) {
             return;
         }
-        final Class type = obj.getClass();
+        final Class<?> type = obj.getClass();
         if (type == String.class) {
             this.out.write((String) obj);
             return;
@@ -368,10 +367,10 @@ public final class InternalContext implements Context {
     @Override
     @SuppressWarnings("unchecked")
     public void exportTo(final Map map) {
-        final Object[] varsPool = this.vars;
-        getCurrentIndexer().forEach((name, index) -> {
-            map.put(name, varsPool[index]);
-        });
+        Object[] varsPool = this.vars;
+        getCurrentIndexer()
+                .forEach((name, index)
+                        -> map.put(name, varsPool[index]));
     }
 
     @Override

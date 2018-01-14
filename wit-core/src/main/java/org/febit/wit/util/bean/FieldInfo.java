@@ -3,7 +3,6 @@ package org.febit.wit.util.bean;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import org.febit.wit.util.ClassUtil;
 
 /**
@@ -13,13 +12,13 @@ import org.febit.wit.util.ClassUtil;
 public final class FieldInfo implements Comparable<FieldInfo> {
 
     public final String name;
-    public final Class owner;
+    public final Class<?> owner;
     public final int hashOfName;
     Field field;
     Method getterMethod;
     Method setterMethod;
 
-    public FieldInfo(Class owner, String name) {
+    public FieldInfo(Class<?> owner, String name) {
         this.owner = owner;
         this.name = name;
         this.hashOfName = name.hashCode();

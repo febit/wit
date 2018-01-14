@@ -76,7 +76,7 @@ public class CollectionUtil {
         if (o1 == null) {
             return null;
         }
-        final Class clazz = o1.getClass();
+        final Class<?> clazz = o1.getClass();
         if (clazz.isArray()) {
             if (o1 instanceof Object[]) {
                 return createIter((Object[]) o1);

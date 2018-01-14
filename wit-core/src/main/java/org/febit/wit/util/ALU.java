@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.concurrent.atomic.LongAccumulator;
 import java.util.concurrent.atomic.LongAdder;
+import org.febit.wit.Context;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.InternalVoid;
 
 /**
  *
@@ -63,7 +63,7 @@ public class ALU {
     }
 
     private static int getTypeMark(final Object o1) {
-        final Class cls = o1.getClass();
+        final Class<?> cls = o1.getClass();
         if (cls == String.class) {
             return STRING;
         } else if (cls == Integer.class) {
@@ -612,7 +612,7 @@ public class ALU {
         return o1;
     }
 
-    private static boolean isSafeToLong(Class type) {
+    private static boolean isSafeToLong(Class<?> type) {
         return type == Integer.class
                 || type == Long.class
                 || type == Short.class
@@ -656,7 +656,7 @@ public class ALU {
         if (o.getClass() == Boolean.class) {
             return (Boolean) o;
         }
-        if (o == InternalVoid.VOID) {
+        if (o == Context.VOID) {
             return false;
         }
         //if Collection empty 
@@ -664,7 +664,7 @@ public class ALU {
     }
 
     private static boolean notDoubleOrFloat(Object o1) {
-        Class type = o1.getClass();
+        Class<?> type = o1.getClass();
         return type != Float.class
                 && type != Double.class;
     }

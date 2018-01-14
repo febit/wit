@@ -13,9 +13,9 @@ import org.febit.wit.util.StringUtil;
  */
 public class NativeNewArrayDeclare implements MethodDeclare {
 
-    private final Class componentType;
+    private final Class<?> componentType;
 
-    public NativeNewArrayDeclare(Class componentType) {
+    public NativeNewArrayDeclare(Class<?> componentType) {
         this.componentType = componentType;
     }
 

@@ -11,7 +11,7 @@ import org.junit.Test;
  */
 public class ASMUtilTest {
 
-    static String getInternalName(final Class c) {
+    static String getInternalName(final Class<?> c) {
         return ASMUtil.getInternalName(c.getName());
     }
 

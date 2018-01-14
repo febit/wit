@@ -23,11 +23,11 @@ class ASMUtil {
     private ASMUtil() {
     }
 
-    static Class loadClass(String name, ClassWriter classWriter) {
+    static Class<?> loadClass(String name, ClassWriter classWriter) {
         return CLASS_LOADER.loadClass(name, classWriter.toByteArray());
     }
 
-    static String getBoxedInternalName(Class type) {
+    static String getBoxedInternalName(Class<?> type) {
         if (!type.isPrimitive()) {
             return ASMUtil.getInternalName(type.getName());
         }
@@ -77,7 +77,7 @@ class ASMUtil {
     static String getDescriptor(final Constructor c) {
         StringBuilder buf = new StringBuilder();
         buf.append('(');
-        for (Class paramType : c.getParameterTypes()) {
+        for (Class<?> paramType : c.getParameterTypes()) {
             buf.append(getDescriptor(paramType));
         }
         return buf.append(")V").toString();
@@ -86,13 +86,13 @@ class ASMUtil {
     static String getDescriptor(final Method m) {
         StringBuilder buf = new StringBuilder();
         buf.append('(');
-        for (Class paramType : m.getParameterTypes()) {
+        for (Class<?> paramType : m.getParameterTypes()) {
             buf.append(getDescriptor(paramType));
         }
         return buf.append(')').append(getDescriptor(m.getReturnType())).toString();
     }
 
-    static String getDescriptor(Class c) {
+    static String getDescriptor(Class<?> c) {
         if (!c.isPrimitive()) {
             String internalName = getInternalName(c.getName());
             if (c.isArray()) {
@@ -128,19 +128,19 @@ class ASMUtil {
         return "V";
     }
 
-    static void visitBoxIfNeed(final MethodWriter m, final Class type) {
+    static void visitBoxIfNeed(final MethodWriter m, final Class<?> type) {
         if (!type.isPrimitive()) {
             return;
         }
         if (type == void.class) {
-            m.visitFieldInsn(Constants.GETSTATIC, "org/febit/wit/lang/InternalVoid", "VOID", "Lorg/febit/wit/lang/InternalVoid;");
+            m.visitFieldInsn(Constants.GETSTATIC, "org/febit/wit/Context", "VOID", "Ljava/lang/Object;");
             return;
         }
         String boxedType = getBoxedInternalName(type);
         m.invokeStatic(boxedType, "valueOf", "(" + getDescriptor(type) + ")L" + boxedType + ";");
     }
 
-    static void visitUnboxIfNeed(final MethodWriter m, final Class type) {
+    static void visitUnboxIfNeed(final MethodWriter m, final Class<?> type) {
         if (!type.isPrimitive()) {
             return;
         }
@@ -173,11 +173,11 @@ class ASMUtil {
         }
 
         @Override
-        protected Class findClass(String name) throws ClassNotFoundException {
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
             return ClassUtil.getDefaultClassLoader().loadClass(name);
         }
 
-        Class loadClass(String name, byte[] b) throws ClassFormatError {
+        Class<?> loadClass(String name, byte[] b) throws ClassFormatError {
             return defineClass(name, b, 0, b.length, null);
         }
     }

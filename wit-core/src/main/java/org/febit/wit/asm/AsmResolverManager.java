@@ -63,10 +63,10 @@ public class AsmResolverManager extends ResolverManager {
         return resolver;
     }
 
-    static Class createResolverClass(Class<?> beanClass) {
+    static Class<?> createResolverClass(Class<?> beanClass) {
         //XXX: rewrite
         if (!ClassUtil.isPublic(beanClass)) {
-            throw new UncheckedException(StringUtil.format("Class [{}] is not public", beanClass));
+            throw new UncheckedException(StringUtil.format("Class<?> [{}] is not public", beanClass));
         }
         final String className = "org.febit.wit.asm.Resolver" + ASMUtil.NEXT_SN.getAndIncrement();
 
@@ -115,7 +115,7 @@ public class AsmResolverManager extends ResolverManager {
         return ASMUtil.loadClass(className, classWriter);
     }
 
-    private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class beanClass, final FieldInfo[] all, final int[] hashs, final int[] indexer) {
+    private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class<?> beanClass, final FieldInfo[] all, final int[] hashs, final int[] indexer) {
         final String beanName = ASMUtil.getBoxedInternalName(beanClass);
         final MethodWriter m;
         if (isGetter) {
@@ -198,7 +198,7 @@ public class AsmResolverManager extends ResolverManager {
         final Method getter = fieldInfo.getGetterMethod();
         final Field field = fieldInfo.getField();
         if (getter != null || field != null) {
-            Class resultType = getter != null ? getter.getReturnType() : field.getType();
+            Class<?> resultType = getter != null ? getter.getReturnType() : field.getType();
             m.visitVarInsn(Constants.ALOAD, 1);
             m.checkCast(beanName);
             if (getter != null) {
@@ -219,7 +219,7 @@ public class AsmResolverManager extends ResolverManager {
     private static void appendSetFieldCode(final MethodWriter m, final FieldInfo fieldInfo, final String beanName) {
         final Method setter = fieldInfo.getSetterMethod();
         if (setter != null || fieldInfo.isFieldSettable()) {
-            Class fieldClass = setter != null ? setter.getParameterTypes()[0] : fieldInfo.getField().getType();
+            Class<?> fieldClass = setter != null ? setter.getParameterTypes()[0] : fieldInfo.getField().getType();
             m.visitVarInsn(Constants.ALOAD, 1);
             m.checkCast(beanName);
             m.visitVarInsn(Constants.ALOAD, 3);

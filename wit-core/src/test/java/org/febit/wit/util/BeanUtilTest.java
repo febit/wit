@@ -17,7 +17,7 @@ public class BeanUtilTest {
         public final String public1 = "public1";
         public String public2 = "public2";
         private String private0 = "private0";
-        private Class private1 = String.class;
+        private Class<?> private1 = String.class;
         private boolean bool = false;
 
         public String getPrivate0() {
@@ -28,11 +28,11 @@ public class BeanUtilTest {
             this.private0 = private0;
         }
 
-        public Class getPrivate1() {
+        public Class<?> getPrivate1() {
             return private1;
         }
 
-        public void setPrivate1(Class private1) {
+        public void setPrivate1(Class<?> private1) {
             this.private1 = private1;
         }
 

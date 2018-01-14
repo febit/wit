@@ -22,9 +22,9 @@ public class ClassUtil {
     private ClassUtil() {
     }
 
-    public static Map<String, Field> getSettableMemberFields(final Class type) {
+    public static Map<String, Field> getSettableMemberFields(final Class<?> type) {
         final Map<String, Field> fields = new HashMap<>();
-        Class cls = type;
+        Class<?> cls = type;
         while (cls != null && cls != Object.class) {
             for (Field f : cls.getDeclaredFields()) {
                 int mod = f.getModifiers();
@@ -41,7 +41,7 @@ public class ClassUtil {
         return fields;
     }
 
-    public static Method[] getPublicMemberMethods(Class type, String name) {
+    public static Method[] getPublicMemberMethods(Class<?> type, String name) {
         Map<String, Method[]> map = PUBLIC_MEMBER_METHODS_CACHE.get(type);
         if (map == null) {
             map = PUBLIC_MEMBER_METHODS_CACHE.putIfAbsent(type, new HashMap<>());
@@ -54,7 +54,7 @@ public class ClassUtil {
         return result;
     }
 
-    private static Method[] resolvePublicMemberMethods(Class type, String name) {
+    private static Method[] resolvePublicMemberMethods(Class<?> type, String name) {
         Method[] allMethods = type.getMethods();
         Map<String, Method> result = new HashMap<>();
         for (Method method : allMethods) {
@@ -88,7 +88,7 @@ public class ClassUtil {
      * @param name
      * @return
      */
-    public static Method[] getPublicMethods(Class type, String name) {
+    public static Method[] getPublicMethods(Class<?> type, String name) {
         Method[] allMethods = type.getMethods();
         Map<String, Method> result = new HashMap<>();
         for (Method method : allMethods) {
@@ -118,7 +118,7 @@ public class ClassUtil {
         return Thread.currentThread().getContextClassLoader();
     }
 
-    public static Class getBoxedPrimitiveClass(Class type) {
+    public static Class<?> getBoxedPrimitiveClass(Class<?> type) {
         if (!type.isPrimitive()) {
             return null;
         }
@@ -176,7 +176,7 @@ public class ClassUtil {
         return '\0';
     }
 
-    public static Class getClass(final String name, final int arrayDepth) throws ClassNotFoundException {
+    public static Class<?> getClass(final String name, final int arrayDepth) throws ClassNotFoundException {
         if (arrayDepth == 0) {
             return getClass(name);
         }
@@ -196,7 +196,7 @@ public class ClassUtil {
         return getClassByInternalName(new String(chars));
     }
 
-    public static Class getPrimitiveClass(final String name) {
+    public static Class<?> getPrimitiveClass(final String name) {
         if (name == null) {
             return null;
         }
@@ -224,16 +224,16 @@ public class ClassUtil {
         }
     }
 
-    public static Class getClass(final String name) {
+    public static Class<?> getClass(final String name) {
         try {
-            Class cls = getPrimitiveClass(name);
+            Class<?> cls = getPrimitiveClass(name);
             return cls != null ? cls : getClassByInternalName(name);
         } catch (ClassNotFoundException ex) {
             throw new UncheckedException(ex);
         }
     }
 
-    private static Class getClassByInternalName(String name) throws ClassNotFoundException {
+    private static Class<?> getClassByInternalName(String name) throws ClassNotFoundException {
         return Class.forName(name, true, getDefaultClassLoader());
     }
 
@@ -245,7 +245,7 @@ public class ClassUtil {
         return Modifier.isFinal(member.getModifiers());
     }
 
-    public static boolean isPublic(Class cls) {
+    public static boolean isPublic(Class<?> cls) {
         return Modifier.isPublic(cls.getModifiers());
     }
 
@@ -257,7 +257,7 @@ public class ClassUtil {
         return Modifier.isProtected(member.getModifiers());
     }
 
-    public static boolean isVoidType(Class cls) {
+    public static boolean isVoidType(Class<?> cls) {
         return cls == void.class || cls == Void.class;
     }
 
@@ -282,7 +282,7 @@ public class ClassUtil {
         return newInstance(getClass(type));
     }
 
-    public static Object newInstance(final Class type) {
+    public static Object newInstance(final Class<?> type) {
         try {
             return type.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {

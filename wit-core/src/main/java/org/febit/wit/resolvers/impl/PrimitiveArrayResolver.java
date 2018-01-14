@@ -71,7 +71,7 @@ public class PrimitiveArrayResolver implements Resolver {
     }
 
     @Override
-    public Class getMatchClass() {
+    public Class<?> getMatchClass() {
         return null;
     }
 

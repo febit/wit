@@ -37,7 +37,7 @@ public class BeanUtil {
         throw new BeanException("Unable to get setter for {}#{}", bean.getClass(), name);
     }
 
-    private static Accessor getAccessor(final Class cls, final String name) throws BeanException {
+    private static Accessor getAccessor(final Class<?> cls, final String name) throws BeanException {
         Map<String, Accessor> descs = CACHE.unsafeGet(cls);
         if (descs == null) {
             descs = CACHE.putIfAbsent(cls, resolveAccessors(cls));
@@ -49,7 +49,7 @@ public class BeanUtil {
         throw new BeanException("Unable to get field: {}#{}", cls, name);
     }
 
-    private static Map<String, Accessor> resolveAccessors(Class cls) {
+    private static Map<String, Accessor> resolveAccessors(Class<?> cls) {
         final Map<String, Accessor> map = new HashMap<>();
         FieldInfoResolver.resolve(cls)
                 .forEach(fieldInfo -> map.put(fieldInfo.name,
@@ -75,7 +75,7 @@ public class BeanUtil {
 
     public interface Setter {
 
-        Class getType();
+        Class<?> getType();
 
         void set(Object bean, Object value);
     }
@@ -102,7 +102,7 @@ public class BeanUtil {
     static final class MethodSetter implements Setter {
 
         private final Method method;
-        private final Class fieldType;
+        private final Class<?> fieldType;
 
         MethodSetter(Method method) {
             ClassUtil.setAccessible(method);
@@ -111,7 +111,7 @@ public class BeanUtil {
         }
 
         @Override
-        public Class getType() {
+        public Class<?> getType() {
             return this.fieldType;
         }
 
@@ -163,7 +163,7 @@ public class BeanUtil {
         }
 
         @Override
-        public Class getType() {
+        public Class<?> getType() {
             return this.field.getType();
         }
     }

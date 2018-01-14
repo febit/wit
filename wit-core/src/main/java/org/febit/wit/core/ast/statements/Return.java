@@ -7,7 +7,6 @@ import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Loopable;
 import org.febit.wit.core.ast.Statement;
-import org.febit.wit.lang.InternalVoid;
 import org.febit.wit.util.StatementUtil;
 
 /**
@@ -27,7 +26,7 @@ public final class Return extends Statement implements Loopable {
     public Object execute(final InternalContext context) {
         context.returnLoop(expr != null
                 ? expr.execute(context)
-                : InternalVoid.VOID);
+                : InternalContext.VOID);
         return null;
     }
 

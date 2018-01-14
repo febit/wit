@@ -4,7 +4,6 @@ package org.febit.wit.core.ast.expressions;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.InternalVoid;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.lang.UnConstableMethodDeclare;
 import org.febit.wit.util.StatementUtil;
@@ -41,7 +40,7 @@ public final class MethodExecute extends Expression {
             throw new ScriptRuntimeException("not a function", this);
         }
         if (func instanceof UnConstableMethodDeclare) {
-            return InternalVoid.VOID;
+            return InternalContext.VOID;
         }
         final Object[] params = StatementUtil.calcConstArray(paramExprs);
         return ((MethodDeclare) func).invoke(null, params);

@@ -5,7 +5,6 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Statement;
-import org.febit.wit.lang.InternalVoid;
 import org.febit.wit.lang.method.FunctionMethodDeclare;
 import org.febit.wit.util.StatementUtil;
 
@@ -60,7 +59,7 @@ public final class FunctionDeclare extends Expression {
             return context.resetReturnLoop();
         } else {
             StatementUtil.execute(statements, context);
-            return InternalVoid.VOID;
+            return InternalContext.VOID;
         }
     }
 }
