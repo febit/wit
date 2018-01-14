@@ -122,9 +122,7 @@ public final class Props {
 
     public void forEach(BiConsumer<String, String> action) {
         Objects.requireNonNull(action);
-        this.data.forEach((k, v) -> {
-            action.accept(k, resolveValue(v));
-        });
+        this.data.forEach((k, v) -> action.accept(k, resolveValue(v)));
     }
 
     @SuppressWarnings("unchecked")
@@ -137,16 +135,16 @@ public final class Props {
             if (!append) {
                 data.remove(key);
             }
-        } else {
-            if (append) {
-                Entry pv = data.get(key);
-                if (pv != null) {
-                    value = pv.value + ',' + value;
-                    append = pv.append;
-                }
-            }
-            data.put(key, new Entry(value, append));
+            return;
         }
+        if (append) {
+            Entry pv = data.get(key);
+            if (pv != null) {
+                value = pv.value + ',' + value;
+                append = pv.append;
+            }
+        }
+        data.put(key, new Entry(key, value, append));
     }
 
     /**
@@ -157,23 +155,38 @@ public final class Props {
         if (key == null) {
             return;
         }
-        if (section != null) {
-            key = key.isEmpty() ? section : section + '.' + key;
+        if (section == null) {
+            put(key, value, append);
+            return;
         }
-        put(key, value, append);
+        put(key.isEmpty()
+                ? section
+                : section + '.' + key,
+                value, append);
+    }
+
+    protected Entry resolveEntry(final String space, final String key) {
+        if (space == null || space.isEmpty()) {
+            return data.get(key);
+        }
+        Entry entry = data.get(space + '.' + key);
+        if (entry != null) {
+            return entry;
+        }
+        return resolveEntry(cutSpace(space), key);
     }
 
     private String resolveValue(Entry entry) {
         if (entry == null) {
             return null;
         }
-        return resolveValue(entry.value, 0);
+        return resolveValue(entry.space(), entry.value, 0);
     }
 
-    private String resolveValue(String template, int macrosTimes) {
+    private String resolveValue(String space, String template, int macrosTimes) {
         if (macrosTimes > 100) {
             //Note: MAX_MACROS
-            return template;
+            throw new IllegalArgumentException("Invalid string template, macros nested times > 100");
         }
 
         int ndx = template.indexOf("${");
@@ -196,7 +209,7 @@ public final class Props {
         final String partStart = template.substring(0, ndx - count);
 
         // Anyway, resolve ending first
-        final String resolvedEnding = resolveValue(template.substring(ndx + 2), ++macrosTimes);
+        final String resolvedEnding = resolveValue(space, template.substring(ndx + 2), ++macrosTimes);
 
         // If ${ is escaped
         if (escape) {
@@ -205,18 +218,18 @@ public final class Props {
 
         //
         int end = resolvedEnding.indexOf('}');
-
         if (end < 0) {
-            //XXX lost index
+            // XXX lost index
             throw new IllegalArgumentException("Invalid string template, unclosed macro ");
         }
         final String partEnd = resolvedEnding.substring(end + 1);
         // find value and append
-        Entry entry = data.get(resolvedEnding.substring(0, end));
+        String key = resolvedEnding.substring(0, end);
+        Entry entry = resolveEntry(space, key);
         if (entry != null && entry.value != null) {
-            return partStart + resolveValue(entry.value, ++macrosTimes) + partEnd;
+            return partStart + resolveValue(entry.space(), entry.value, ++macrosTimes) + partEnd;
         } else {
-            return partStart.concat(partEnd);
+            return partStart + partEnd;
         }
     }
 
@@ -242,7 +255,9 @@ public final class Props {
                 if (c == '\n') {
                     state = STATE_TEXT;
                 }
-            } else if (state == STATE_ESCAPE) {
+                continue;
+            }
+            if (state == STATE_ESCAPE) {
                 state = stateOnEscape;//STATE_VALUE
                 switch (c) {
                     case '\r':
@@ -252,21 +267,8 @@ public final class Props {
                         break;
                     // encode UTF character
                     case 'u':
-                        int value = 0;
-
-                        for (int i = 0; i < 4; i++) {
-                            final char hexChar = in[ndx++];
-                            if (hexChar >= '0' && hexChar <= '9') {
-                                value = (value << 4) + hexChar - '0';
-                            } else if (hexChar >= 'a' && hexChar <= 'f') {
-                                value = (value << 4) + 10 + hexChar - 'a';
-                            } else if (hexChar >= 'A' && hexChar <= 'F') {
-                                value = (value << 4) + 10 + hexChar - 'A';
-                            } else {
-                                throw new IllegalArgumentException("Malformed \\uXXXX encoding.");
-                            }
-                        }
-                        sb.append((char) value);
+                        sb.append(readUtf(in, ndx));
+                        ndx += 4;
                         break;
                     case 't':
                         sb.append('\t');
@@ -283,7 +285,9 @@ public final class Props {
                     default:
                         sb.append(c);
                 }
-            } else if (state == STATE_TEXT) {
+                continue;
+            }
+            if (state == STATE_TEXT) {
                 switch (c) {
                     case '\\':
                         // escape char, take the next char as is
@@ -300,22 +304,7 @@ public final class Props {
                     // end section
                     case ']':
                         if (insideSection) {
-                            currentSection = sb.toString().trim();
-                            if (currentSection.isEmpty()) {
-                                currentSection = null;
-                            } else {
-                                int split = currentSection.indexOf(':');
-                                if (split == 0) {
-                                    throw new IllegalArgumentException("Invalid section, should not start with ':' : " + currentSection);
-                                }
-                                if (split > 0) {
-                                    String type = currentSection.substring(split + 1).trim();
-                                    currentSection = currentSection.substring(0, split).trim();
-                                    if (!type.isEmpty()) {
-                                        put(currentSection + ".@class", type, false);
-                                    }
-                                }
-                            }
+                            currentSection = formatSection(sb.toString());
                             sb.setLength(0);
                             insideSection = false;
                         } else {
@@ -356,73 +345,59 @@ public final class Props {
 
                     case ' ':
                     case '\t':
-                        // ignore whitespaces
+                        if (sb.length() > 0) {
+                            sb.append(c);
+                        }
+                        // ignore whitespaces before the key
                         break;
                     default:
                         sb.append(c);
                 }
-            } else {
-                switch (c) {
-                    case '\\':
-                        // escape char, take the next char as is
-                        stateOnEscape = state;
-                        state = STATE_ESCAPE;
+                continue;
+            }
+
+            // STATE_VALUE || STATE_ESCAPE_NEWLINE
+            switch (c) {
+                case '\\':
+                    // escape char, take the next char as is
+                    stateOnEscape = state;
+                    state = STATE_ESCAPE;
+                    break;
+
+                case '\r':
+                case '\n':
+                    if ((state != STATE_ESCAPE_NEWLINE) || (c != '\n')) {
+                        put(currentSection, key, sb.toString().trim(), append);
+                        sb.setLength(0);
+                        key = null;
+                        append = false;
+
+                        // end of value, continue to text
+                        state = STATE_TEXT;
+                    }
+                    break;
+
+                case ' ':
+                case '\t':
+                    if (state == STATE_ESCAPE_NEWLINE) {
                         break;
+                    }
+                default:
+                    sb.append(c);
+                    state = STATE_VALUE;
 
-                    case '\r':
-                    case '\n':
-                        if ((state != STATE_ESCAPE_NEWLINE) || (c != '\n')) {
-                            put(currentSection, key, sb.toString().trim(), append);
-                            sb.setLength(0);
-                            key = null;
-                            append = false;
+                    if (isMultiLineStartFlag(sb)) {
+                        int end = findMultiLineEndFlagPos(in, ndx);
+                        put(currentSection, key, new String(in, ndx, end - ndx), append);
 
-                            // end of value, continue to text
-                            state = STATE_TEXT;
-                        }
-                        break;
+                        sb.setLength(0);
+                        key = null;
+                        append = false;
 
-                    case ' ':
-                    case '\t':
-                        if (state == STATE_ESCAPE_NEWLINE) {
-                            break;
-                        }
-                    default:
-                        sb.append(c);
-                        state = STATE_VALUE;
-
-                        // check for ''' beginning
-                        if (sb.length() == 3
-                                && sb.charAt(0) == '\''
-                                && sb.charAt(1) == '\''
-                                && sb.charAt(2) == '\'') {
-
-                            int end = ndx;
-                            int count = 0;
-                            while (end < len) {
-                                if (in[end] == '\'') {
-                                    if (count == 2) {
-                                        end -= 2;
-                                        break;
-                                    }
-                                    count++;
-                                } else {
-                                    count = 0;
-                                }
-                                end++;
-                            }
-
-                            put(currentSection, key, new String(in, ndx, end - ndx), append);
-
-                            sb.setLength(0);
-                            key = null;
-                            append = false;
-
-                            // end of value, continue to text
-                            state = STATE_TEXT;
-                            ndx = end + 3;
-                        }
-                }
+                        // end of value, continue to text
+                        state = STATE_TEXT;
+                        ndx = end + 3;
+                    }
             }
         }
 
@@ -431,15 +406,92 @@ public final class Props {
         }
     }
 
+    private String formatSection(String section) {
+        String currentSection = section.trim();
+        if (currentSection.isEmpty()) {
+            return null;
+        }
+        int split = currentSection.indexOf(':');
+        if (split == 0) {
+            throw new IllegalArgumentException("Invalid section, should not start with ':' : " + currentSection);
+        }
+        if (split < 0) {
+            return currentSection;
+        }
+        String type = currentSection.substring(split + 1).trim();
+        currentSection = currentSection.substring(0, split).trim();
+        if (!type.isEmpty()) {
+            put(currentSection + ".@class", type, false);
+        }
+        return currentSection;
+    }
+
+    private static char readUtf(final char[] in, final int start) {
+        final int end = start + 4;
+        if (end >= in.length) {
+            throw new IllegalArgumentException("No more chars for UTF");
+        }
+        int value = 0;
+        for (int i = start; i < end; i++) {
+            final char hexChar = in[i];
+            if (hexChar >= '0' && hexChar <= '9') {
+                value = (value << 4) + hexChar - '0';
+            } else if (hexChar >= 'a' && hexChar <= 'f') {
+                value = (value << 4) + 10 + hexChar - 'a';
+            } else if (hexChar >= 'A' && hexChar <= 'F') {
+                value = (value << 4) + 10 + hexChar - 'A';
+            } else {
+                throw new IllegalArgumentException("Malformed \\uXXXX encoding.");
+            }
+        }
+        return (char) value;
+    }
+
+    private static int findMultiLineEndFlagPos(final char[] in, final int start) {
+        final int len = in.length;
+        int end = start;
+        int count = 0;
+        while (end < len) {
+            if (in[end] == '\'') {
+                if (count == 2) {
+                    end -= 2;
+                    break;
+                }
+                count++;
+            } else {
+                count = 0;
+            }
+            end++;
+        }
+        return end;
+    }
+
+    private static boolean isMultiLineStartFlag(final StringBuilder sb) {
+        return sb.length() == 3
+                && sb.charAt(0) == '\''
+                && sb.charAt(1) == '\''
+                && sb.charAt(2) == '\'';
+    }
+
+    private static String cutSpace(String key) {
+        int i = key.lastIndexOf('.');
+        return i < 0 ? null : key.substring(0, i);
+    }
+
     private static class Entry {
 
+        final String key;
         final String value;
         final boolean append;
 
-        Entry(final String value, boolean append) {
+        Entry(final String key, final String value, boolean append) {
+            this.key = key;
             this.value = value;
             this.append = append;
         }
-    }
 
+        String space() {
+            return cutSpace(key);
+        }
+    }
 }
