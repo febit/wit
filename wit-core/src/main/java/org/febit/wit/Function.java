@@ -18,7 +18,7 @@ import org.febit.wit.util.InternedEncoding;
  */
 public class Function {
 
-    private static final VariantIndexer[] EMPTY_INDEXERS = new VariantIndexer[]{VariantIndexer.EMPTY};
+    private static final VariantIndexer[] EMPTY_INDEXERS = {VariantIndexer.EMPTY};
 
     protected final Template template;
     protected final MethodDeclare methodDeclare;

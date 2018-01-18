@@ -24,7 +24,7 @@ import org.febit.wit_shaded.asm.MethodWriter;
  */
 public class AsmResolverManager extends ResolverManager {
 
-    private static final String[] ASM_RESOLVER = new String[]{"org/febit/wit/asm/AsmResolver"};
+    private static final String[] ASM_RESOLVER = {"org/febit/wit/asm/AsmResolver"};
     private static final ClassMap<AsmResolver> CACHE = new ClassMap<>();
 
     @Override

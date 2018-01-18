@@ -29,7 +29,7 @@ public class ALU {
     private static final int SHORT = (1 << 2) - 1;
     private static final int BYTE = (1 << 1) - 1;
 
-    private static final Class<?>[] KNOWN_BASE_IMMUTABLES = new Class[]{
+    private static final Class<?>[] KNOWN_BASE_IMMUTABLES = {
         String.class,
         Integer.class,
         Long.class,

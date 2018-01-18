@@ -36,7 +36,7 @@ public class AsmNativeFactoryTest {
         assertEquals(currentTimeMillis.invoke(null, new Object[0]).getClass(), Long.class);
         assertEquals(currentTimeMillis.invoke(null, new Object[]{1, 2, 3}).getClass(), Long.class);
 
-        int[] array1 = new int[]{1, 2, 3, 4, 6};
+        int[] array1 = {1, 2, 3, 4, 6};
         int[] array2 = new int[array1.length];
 
         assertEquals(arraycopy.invoke(null, new Object[]{array1, 0, array2, 0, array1.length}), Context.VOID);

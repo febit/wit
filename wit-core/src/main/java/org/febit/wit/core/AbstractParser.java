@@ -55,7 +55,7 @@ abstract class AbstractParser {
     private static final short[][] PRODUCTION_TABLE = loadData("Production");
     private static final short[][] ACTION_TABLE = loadData("Action");
     private static final short[][] REDUCE_TABLE = loadData("Reduce");
-    private static final String[] SYMBOL_STRS = new String[]{
+    private static final String[] SYMBOL_STRS = {
         "EOF", //EOF
         "ERROR", //ERROR
         "var", //VAR

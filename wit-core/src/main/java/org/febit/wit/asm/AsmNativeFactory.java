@@ -18,7 +18,7 @@ import org.febit.wit_shaded.asm.MethodWriter;
  */
 public class AsmNativeFactory extends NativeFactory {
 
-    private static final String[] METHOD_DECLARE = new String[]{"org/febit/wit/lang/MethodDeclare"};
+    private static final String[] METHOD_DECLARE = {"org/febit/wit/lang/MethodDeclare"};
 
     @Override
     protected MethodDeclare createNativeConstructorDeclare(Constructor constructor) {
