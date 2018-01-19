@@ -154,7 +154,7 @@ public class ClassUtil {
         return Void.class;
     }
 
-    private static char getAliasOfBaseType(final String name) {
+    public static char getAliasOfBaseType(final String name) {
         switch (name) {
             case "int":
                 return 'I';

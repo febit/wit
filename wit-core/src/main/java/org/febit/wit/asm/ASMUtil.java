@@ -28,35 +28,9 @@ class ASMUtil {
     }
 
     static String getBoxedInternalName(Class<?> type) {
-        if (!type.isPrimitive()) {
-            return ASMUtil.getInternalName(type.getName());
-        }
-        if (type == int.class) {
-            return "java/lang/Integer";
-        }
-        if (type == boolean.class) {
-            return "java/lang/Boolean";
-        }
-        if (type == long.class) {
-            return "java/lang/Long";
-        }
-        if (type == double.class) {
-            return "java/lang/Double";
-        }
-        if (type == float.class) {
-            return "java/lang/Float";
-        }
-        if (type == short.class) {
-            return "java/lang/Short";
-        }
-        if (type == char.class) {
-            return "java/lang/Character";
-        }
-        if (type == byte.class) {
-            return "java/lang/Byte";
-        }
-        // void.class
-        return "java/lang/Void";
+        return getInternalName(type.isPrimitive()
+                ? ClassUtil.getBoxedPrimitiveClass(type).getName()
+                : type.getName());
     }
 
     static String getInternalName(String className) {
@@ -93,39 +67,14 @@ class ASMUtil {
     }
 
     static String getDescriptor(Class<?> c) {
-        if (!c.isPrimitive()) {
-            String internalName = getInternalName(c.getName());
-            if (c.isArray()) {
-                return internalName;
-            }
-            return new StringBuffer(internalName.length() + 2).append('L').append(internalName).append(';').toString();
+        if (c.isPrimitive()) {
+            return String.valueOf(ClassUtil.getAliasOfBaseType(c.getName()));
         }
-        if (c == int.class) {
-            return "I";
+        String internalName = getInternalName(c.getName());
+        if (c.isArray()) {
+            return internalName;
         }
-        if (c == boolean.class) {
-            return "Z";
-        }
-        if (c == byte.class) {
-            return "B";
-        }
-        if (c == char.class) {
-            return "C";
-        }
-        if (c == short.class) {
-            return "S";
-        }
-        if (c == double.class) {
-            return "D";
-        }
-        if (c == float.class) {
-            return "F";
-        }
-        if (c == long.class) {
-            return "J";
-        }
-        // void.class
-        return "V";
+        return new StringBuffer(internalName.length() + 2).append('L').append(internalName).append(';').toString();
     }
 
     static void visitBoxIfNeed(final MethodWriter m, final Class<?> type) {
