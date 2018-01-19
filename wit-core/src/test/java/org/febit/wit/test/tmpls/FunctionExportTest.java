@@ -81,7 +81,7 @@ public class FunctionExportTest {
         }
         assertNotNull(exception);
 
-        assertEquals("Not a function but a [null].", exception.getMessage());
+        assertEquals("Not function: null", exception.getMessage());
 
         //
         exception = null;
@@ -92,6 +92,6 @@ public class FunctionExportTest {
         }
         assertNotNull(exception);
 
-        assertEquals("Not a function but a [class java.lang.Integer].", exception.getMessage());
+        assertEquals("Not function: java.lang.Integer", exception.getMessage());
     }
 }

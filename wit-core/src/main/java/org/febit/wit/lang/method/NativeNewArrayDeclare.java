@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.StringUtil;
 
 /**
@@ -25,7 +26,7 @@ public class NativeNewArrayDeclare implements MethodDeclare {
         if (args != null && args.length != 0) {
             Object lenObject = args[0];
             if (!(lenObject instanceof Number)) {
-                throw new ScriptRuntimeException(StringUtil.concatObjectClass("must given a number as array's length, but get a: ", lenObject));
+                throw new ScriptRuntimeException("must given a number as array's length, but get : ".concat(ClassUtil.getClassName(lenObject)));
             }
             len = ((Number) lenObject).intValue();
             if (len < 0) {

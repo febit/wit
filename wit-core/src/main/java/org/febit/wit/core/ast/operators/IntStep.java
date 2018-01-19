@@ -4,8 +4,8 @@ package org.febit.wit.core.ast.operators;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.CollectionUtil;
-import org.febit.wit.util.StringUtil;
 
 /**
  *
@@ -25,14 +25,14 @@ public class IntStep extends BiOperator {
         if (tempResult instanceof Number) {
             num1 = ((Number) tempResult).intValue();
         } else {
-            throw new ScriptRuntimeException(StringUtil.concatObjectClass("left need a int, but found ", tempResult), this);
+            throw new ScriptRuntimeException("left need a int, but found ".concat(ClassUtil.getClassName(tempResult)), this);
         }
         final int num2;
         tempResult = rightExpr.execute(context);
         if (tempResult instanceof Number) {
             num2 = ((Number) tempResult).intValue();
         } else {
-            throw new ScriptRuntimeException(StringUtil.concatObjectClass("right need a int, but found ", tempResult), this);
+            throw new ScriptRuntimeException("right need a int, but found ".concat(ClassUtil.getClassName(tempResult)), this);
         }
         if (num1 < num2) {
             return CollectionUtil.createIntAscIter(num1, num2);

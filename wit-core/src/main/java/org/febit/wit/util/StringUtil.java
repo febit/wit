@@ -13,32 +13,17 @@ public class StringUtil {
     private StringUtil() {
     }
 
-    public static String concatObjectClass(String string, Object object) {
-        return string.concat(object != null ? object.getClass().getName() : "[null]");
-    }
-
-    public static String join(List list, char separator) {
-        if (list == null) {
+    public static String join(List<?> list, char separator) {
+        if (list == null
+                || list.isEmpty()) {
             return "";
         }
-        int size = list.size();
-        if (size == 0) {
-            return "";
-        }
-        if (size == 1) {
-            return String.valueOf(list.get(0));
-        }
-        final StringBuilder sb = new StringBuilder();
-        boolean notfirst = false;
+        final StringBuilder buf = new StringBuilder();
         for (Object item : list) {
-            if (notfirst) {
-                sb.append(separator);
-            } else {
-                notfirst = true;
-            }
-            sb.append(item);
+            buf.append(item)
+                    .append(separator);
         }
-        return sb.toString();
+        return buf.substring(0, buf.length() - 1);
     }
 
     private static boolean isArrayValueEnd(char c) {
@@ -136,16 +121,11 @@ public class StringUtil {
             ndx += 1;
             int ndxEnd = template.indexOf('}', ndx);
             if (ndxEnd == -1) {
-                throw new IllegalArgumentException(StringUtil.format("Invalid message, unclosed macro at: {}", ndx - 1));
+                throw new IllegalArgumentException("Invalid message, unclosed macro at: " + (ndx - 1));
             }
-            if (ndx == ndxEnd) {
-                index = currentIndex++;
-            } else {
-                index = template.charAt(ndx) - '0';
-                for (int k = ndx + 1; k < ndxEnd; k++) {
-                    index = index * 10 + (template.charAt(k) - '0');
-                }
-            }
+            index = ndx == ndxEnd
+                    ? currentIndex++
+                    : Integer.parseInt(template.substring(ndx, ndxEnd));
             if (index < arrayLen && index >= 0 && array[index] != null) {
                 result.append(array[index].toString());
             }

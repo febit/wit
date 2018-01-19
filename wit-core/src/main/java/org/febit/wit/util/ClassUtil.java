@@ -22,6 +22,10 @@ public class ClassUtil {
     private ClassUtil() {
     }
 
+    public static String getClassName(Object object) {
+        return object != null ? object.getClass().getName() : "null";
+    }
+
     public static Map<String, Field> getSettableMemberFields(final Class<?> type) {
         final Map<String, Field> fields = new HashMap<>();
         Class<?> cls = type;
