@@ -62,7 +62,7 @@ public abstract class TemplateException extends RuntimeException {
         if (this.template != null) {
             out.print(prefix)
                     .print("template: ")
-                    .print(this.template.name)
+                    .print(this.template.getName())
                     .print('\n');
         }
         printBody(out, prefix);

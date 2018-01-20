@@ -411,8 +411,8 @@ abstract class AbstractParser {
      * @throws ParseException
      */
     protected TemplateAST doParse(final Template template, final BreakPointListener breakPointListener) throws ParseException {
-        final Engine myEngine = template.engine;
-        final Resource resource = template.resource;
+        final Engine myEngine = template.getEngine();
+        final Resource resource = template.getResource();
         final TextStatementFactory textStatFactory = myEngine.getTextStatementFactory();
         this.breakPointListener = breakPointListener;
         this.template = template;

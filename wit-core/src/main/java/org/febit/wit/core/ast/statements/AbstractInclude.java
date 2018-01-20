@@ -33,8 +33,8 @@ public abstract class AbstractInclude extends Statement {
         super(line, column);
         this.pathExpr = StatementUtil.optimize(pathExpr);
         this.paramsExpr = paramsExpr == null ? EXPR_EMPTY_PARAMS : StatementUtil.optimize(paramsExpr);
-        this.myTemplateName = template.name;
-        this.engine = template.engine;
+        this.myTemplateName = template.getName();
+        this.engine = template.getEngine();
     }
 
     @SuppressWarnings("unchecked")

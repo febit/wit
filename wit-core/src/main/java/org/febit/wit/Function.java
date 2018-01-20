@@ -59,11 +59,11 @@ public class Function {
     }
 
     public Object invokeWithOut(Writer writer, Object... args) {
-        return invokeWithOut(new WriterOut(writer, template.engine), args);
+        return invokeWithOut(new WriterOut(writer, template.getEngine()), args);
     }
 
     public Object invokeWithOut(final OutputStream outputStream, Object... args) {
-        return invokeWithOut(new OutputStreamOut(outputStream, template.engine), args);
+        return invokeWithOut(new OutputStreamOut(outputStream, template.getEngine()), args);
     }
 
     public Object invokeWithOut(final String encoding, final OutputStream outputStream, Object... args) {
@@ -71,6 +71,6 @@ public class Function {
     }
 
     public Object invokeWithOut(final InternedEncoding encoding, final OutputStream outputStream, Object... args) {
-        return invokeWithOut(new OutputStreamOut(outputStream, encoding, template.engine), args);
+        return invokeWithOut(new OutputStreamOut(outputStream, encoding, template.getEngine()), args);
     }
 }

@@ -37,7 +37,7 @@ public class RedirectOut extends Statement {
             CharArrayWriter writer = new CharArrayWriter(256);
             context.out = current instanceof WriterOut
                     ? new WriterOut(writer, (WriterOut) current)
-                    : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory());
+                    : new WriterOut(writer, context.encoding, context.template.getEngine().getCoderFactory());
             srcStatement.execute(context);
             toExpr.setValue(context, writer.toCharArray());
         }

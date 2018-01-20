@@ -98,7 +98,7 @@ public final class InternalContext implements Context {
         this.isByteStream = out.isByteStream();
 
         //resolvers
-        ResolverManager resolverMgr = template.engine.getResolverManager();
+        ResolverManager resolverMgr = template.getEngine().getResolverManager();
         this.resolverManager = resolverMgr;
         this.outters = resolverMgr.outters;
         this.getters = resolverMgr.getters;

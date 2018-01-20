@@ -21,11 +21,11 @@ import org.febit.wit.util.InternedEncoding;
  *
  * @author zqq90
  */
-public final class Template {
+public class Template {
 
-    public final Engine engine;
-    public final String name;
-    public final Resource resource;
+    private final Engine engine;
+    private final String name;
+    private final Resource resource;
 
     private TemplateAST ast;
     private long lastModified;
@@ -326,6 +326,36 @@ public final class Template {
 
     public long getLastModified() {
         return this.lastModified;
+    }
+
+    /**
+     * Get engine engine.
+     *
+     * @since 2.5.0
+     * @return template engine
+     */
+    public Engine getEngine() {
+        return engine;
+    }
+
+    /**
+     * Get template name.
+     *
+     * @since 2.5.0
+     * @return template name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Get resource for this template.
+     *
+     * @since 2.5.0
+     * @return resource
+     */
+    public Resource getResource() {
+        return resource;
     }
 
     @Override

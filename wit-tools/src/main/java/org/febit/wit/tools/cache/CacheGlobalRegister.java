@@ -140,7 +140,7 @@ public class CacheGlobalRegister implements GlobalRegister {
 
                     context.out = preOut instanceof WriterOut
                             ? new WriterOut(writer, (WriterOut) preOut)
-                            : new WriterOut(writer, context.encoding, context.template.engine.getCoderFactory());
+                            : new WriterOut(writer, context.encoding, context.template.getEngine().getCoderFactory());
 
                     try {
                         returned = methodDeclare.invoke(context, methodArgs);
