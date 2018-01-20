@@ -48,10 +48,6 @@ public class Engine {
     protected NativeFactory nativeFactory;
     protected ResolverManager resolverManager;
 
-    @Init
-    public void init() {
-    }
-
     protected void executeInits() throws ResourceNotFoundException {
         if (this.inits == null) {
             return;
