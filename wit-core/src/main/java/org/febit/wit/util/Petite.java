@@ -74,15 +74,12 @@ public class Petite {
         if (props == null) {
             props = new Props();
         }
-        final Map<String, Object> extras;
+        Map<String, Object> extras = null;
         if (parameters != null) {
+            parameters.remove(null);
             extras = new HashMap<>();
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-                String key = entry.getKey();
-                if (key == null) {
-                    continue;
-                }
-                key = key.trim();
+                String key = entry.getKey().trim();
                 if (key.isEmpty()) {
                     continue;
                 }
@@ -98,10 +95,7 @@ public class Petite {
                     props.set(key, (String) value);
                 }
             }
-        } else {
-            extras = null;
         }
-
         props.forEach(this::setProp);
 
         if (extras != null) {
@@ -272,68 +266,33 @@ public class Petite {
         }
         if (cls.isArray()) {
             final String[] strings = StringUtil.toArray(string);
-            final int len = strings.length;
             if (cls == String[].class) {
                 return strings;
             }
-            if (cls == Class[].class) {
-                final Class[] results = new Class[len];
-                for (int i = 0; i < len; i++) {
-                    results[i] = ClassUtil.getClass(strings[i]);
-                }
-                return results;
-            }
-            if (cls == int[].class) {
-                final int[] results = new int[len];
-                for (int i = 0; i < len; i++) {
-                    results[i] = Integer.parseInt(strings[i]);
-                }
-                return results;
-            }
-            if (cls == Integer[].class) {
-                final Integer[] results = new Integer[len];
-                for (int i = 0; i < len; i++) {
-                    results[i] = Integer.parseInt(strings[i]);
-                }
-                return results;
-            }
-            if (cls == boolean[].class) {
-                final boolean[] results = new boolean[len];
-                for (int i = 0; i < len; i++) {
-                    results[i] = Boolean.valueOf(strings[i]);
-                }
-                return results;
-            }
-            if (cls == Boolean[].class) {
-                final Boolean[] results = new Boolean[len];
-                for (int i = 0; i < len; i++) {
-                    results[i] = Boolean.valueOf(strings[i]);
-                }
-                return results;
-            }
-            Object[] array = (Object[]) Array.newInstance(cls.getComponentType(), len);
+            final Class<?> componentType = cls.getComponentType();
+            final int len = strings.length;
+            final Object array = Array.newInstance(componentType, len);
             for (int i = 0; i < len; i++) {
-                array[i] = get(strings[i]);
+                Array.set(array, i, convert(strings[i], componentType));
             }
             return array;
-        } else {
-            if (cls == Boolean.class) {
-                return Boolean.valueOf(string);
-            }
-            if (string.isEmpty()) {
-                return null;
-            }
-            if (cls == Class.class) {
-                return ClassUtil.getClass(string);
-            }
-            if (cls == Integer.class) {
-                return Integer.parseInt(string);
-            }
-            if (cls == InternedEncoding.class) {
-                return InternedEncoding.intern(string);
-            }
-            return get(string);
         }
+        if (cls == Boolean.class) {
+            return Boolean.valueOf(string);
+        }
+        if (string.isEmpty()) {
+            return null;
+        }
+        if (cls == Class.class) {
+            return ClassUtil.getClass(string);
+        }
+        if (cls == Integer.class) {
+            return Integer.parseInt(string);
+        }
+        if (cls == InternedEncoding.class) {
+            return InternedEncoding.intern(string);
+        }
+        return get(string);
     }
 
     private static final class Entry {
