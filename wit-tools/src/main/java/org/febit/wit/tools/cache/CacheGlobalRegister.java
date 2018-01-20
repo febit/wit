@@ -64,7 +64,7 @@ public class CacheGlobalRegister implements GlobalRegister {
 
         @Override
         public Object invoke(InternalContext context, Object[] args) {
-            this.cacheProvider.remove(ArrayUtil.get(args, 0, null));
+            this.cacheProvider.remove(args[0]);
             return InternalContext.VOID;
         }
     }

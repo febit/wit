@@ -7,7 +7,7 @@ import org.febit.wit.resolvers.Resolver;
 import org.febit.wit.resolvers.ResolverManager;
 import org.febit.wit.resolvers.SetResolver;
 import org.febit.wit.util.ALU;
-import org.febit.wit.util.ArrayUtil;
+import org.febit.wit.util.CollectionUtil;
 import org.febit.wit.util.StringUtil;
 
 /**
@@ -29,9 +29,9 @@ public class PrimitiveArrayResolver implements Resolver {
             switch (property.toString()) {
                 case "size":
                 case "length":
-                    return ArrayUtil.getSize(array);
+                    return CollectionUtil.getSize(array);
                 case "isEmpty":
-                    return ArrayUtil.getSize(array) == 0;
+                    return CollectionUtil.getSize(array) == 0;
                 default:
             }
             throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));

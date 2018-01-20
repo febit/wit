@@ -27,7 +27,7 @@ public class CollectionUtil {
             return 0;
         }
         if (object.getClass().isArray()) {
-            return ArrayUtil.getSize(object);
+            return Array.getLength(object);
         }
         if (object instanceof Collection) {
             return ((Collection) object).size();

@@ -2,6 +2,7 @@
 package org.febit.wit.loaders.impl;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import org.febit.wit.Engine;
@@ -9,7 +10,6 @@ import org.febit.wit.Init;
 import org.febit.wit.exceptions.IllegalConfigException;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loaders.Resource;
-import org.febit.wit.util.ArrayUtil;
 import org.febit.wit.util.StringUtil;
 
 /**
@@ -43,8 +43,7 @@ public class RouteLoader implements Loader {
             loaderMap.put(rule, new LoaderEntry(rule,
                     (Loader) engine.get(raw.substring(index + 1).trim())));
         }
-        Arrays.sort(prefixes);
-        ArrayUtil.invert(prefixes);
+        Arrays.sort(prefixes, Comparator.reverseOrder());
         final LoaderEntry[] loaderEntrys = new LoaderEntry[size];
         for (int i = 0; i < size; i++) {
             loaderEntrys[i] = loaderMap.get(prefixes[i]);

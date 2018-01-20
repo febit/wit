@@ -1,10 +1,11 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.tools.type;
 
+import org.febit.wit.Context;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
 import org.febit.wit.lang.MethodDeclare;
-import org.febit.wit.util.ArrayUtil;
+import static org.febit.wit.util.ArrayUtil.get;
 
 /**
  *
@@ -14,35 +15,34 @@ public class TypeGlobalRegister implements GlobalRegister {
 
     @Override
     public void regist(GlobalManager manager) {
-        manager.setConst("is_array", is_array);
-        manager.setConst("is_bool", is_bool);
-        manager.setConst("is_function", is_function);
-        manager.setConst("is_callable", is_function);
-        manager.setConst("is_null", is_null);
-        manager.setConst("is_number", is_number);
+        manager.setConstMethod("is_array", TypeGlobalRegister::is_array);
+        manager.setConstMethod("is_bool", TypeGlobalRegister::is_bool);
+        manager.setConstMethod("is_function", TypeGlobalRegister::is_function);
+        manager.setConstMethod("is_callable", TypeGlobalRegister::is_function);
+        manager.setConstMethod("is_null", TypeGlobalRegister::is_null);
+        manager.setConstMethod("is_number", TypeGlobalRegister::is_number);
     }
 
-    public final static MethodDeclare is_function = (context, args) -> {
-        return ArrayUtil.get(args, 0, null) instanceof MethodDeclare;
-    };
+    private static boolean is_function(Context context, Object[] args) {
+        return get(args, 0) instanceof MethodDeclare;
+    }
 
-    public final static MethodDeclare is_number = (context, args) -> {
-        return ArrayUtil.get(args, 0, null) instanceof Number;
-    };
+    private static boolean is_number(Context context, Object[] args) {
+        return get(args, 0) instanceof Number;
+    }
 
-    public final static MethodDeclare is_bool = (context, args) -> {
-        return ArrayUtil.get(args, 0, null) instanceof Boolean;
-    };
+    private static boolean is_bool(Context context, Object[] args) {
+        return get(args, 0) instanceof Boolean;
+    }
 
-    public final static MethodDeclare is_null = (context, args) -> {
-        return args == null
-                || args.length == 0
-                || args[0] == null;
-    };
+    private static boolean is_null(Context context, Object[] args) {
+        return args.length == 0
+                || get(args, 0) == null;
+    }
 
-    public final static MethodDeclare is_array = (context, args) -> {
-        final Object item;
-        return (item = ArrayUtil.get(args, 0, null)) != null
+    private static boolean is_array(Context context, Object[] args) {
+        final Object item = get(args, 0);
+        return item != null
                 && item.getClass().isArray();
-    };
+    }
 }

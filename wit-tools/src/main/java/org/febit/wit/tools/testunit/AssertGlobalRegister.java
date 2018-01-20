@@ -2,11 +2,12 @@
 package org.febit.wit.tools.testunit;
 
 import java.lang.reflect.Array;
+import java.util.concurrent.atomic.LongAdder;
+import static org.febit.wit.Context.VOID;
 import org.febit.wit.InternalContext;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
-import org.febit.wit.lang.MethodDeclare;
-import org.febit.wit.util.ArrayUtil;
+import static org.febit.wit.util.ArrayUtil.get;
 
 /**
  *
@@ -18,19 +19,23 @@ public class AssertGlobalRegister implements GlobalRegister {
 
     @Override
     public void regist(final GlobalManager manager) {
-        manager.setConst("assertTrue", new AssertTrue());
-        manager.setConst("assertFalse", new AssertFalse());
-        manager.setConst("assertNull", new AssertNull());
-        manager.setConst("assertNotNull", new AssertNotNull());
-        manager.setConst("assertSame", new AssertSame());
-        manager.setConst("assertNotSame", new AssertNotSame());
-        manager.setConst("assertEquals", new AssertEquals());
-        manager.setConst("assertArrayEquals", new AssertArrayEquals());
+        manager.setConstMethod("assertTrue", AssertGlobalRegister::assertTrue);
+        manager.setConstMethod("assertFalse", AssertGlobalRegister::assertFalse);
+        manager.setConstMethod("assertNull", AssertGlobalRegister::assertNull);
+        manager.setConstMethod("assertNotNull", AssertGlobalRegister::assertNotNull);
+        manager.setConstMethod("assertSame", AssertGlobalRegister::assertSame);
+        manager.setConstMethod("assertNotSame", AssertGlobalRegister::assertNotSame);
+        manager.setConstMethod("assertEquals", AssertGlobalRegister::assertEquals);
+        manager.setConstMethod("assertArrayEquals", AssertGlobalRegister::assertArrayEquals);
     }
 
     private static void plusAssertCount(InternalContext context) {
-        Integer count = (Integer) context.getLocal(ASSERT_COUNT_KEY);
-        context.setLocal(ASSERT_COUNT_KEY, count != null ? count + 1 : 1);
+        LongAdder count = (LongAdder) context.getLocal(ASSERT_COUNT_KEY);
+        if (count == null) {
+            count = new LongAdder();
+            context.setLocal(ASSERT_COUNT_KEY, count);
+        }
+        count.increment();
     }
 
     private static void assertObjectTrue(Object condition) {
@@ -146,111 +151,51 @@ public class AssertGlobalRegister implements GlobalRegister {
         return (value == null ? "null" : value.getClass().getName()) + "<" + valueString + ">";
     }
 
-    protected static class AssertTrue implements MethodDeclare {
+    private static Object assertTrue(InternalContext context, Object[] args) {
+        plusAssertCount(context);
+        assertObjectTrue(get(args, 0));
+        return VOID;
+    }
 
-        AssertTrue() {
-        }
+    private static Object assertFalse(InternalContext context, Object[] args) {
+        plusAssertCount(context);
+        assertObjectFalse(get(args, 0));
+        return VOID;
+    }
 
-        @Override
-        public Object invoke(InternalContext context, Object[] args) {
-            plusAssertCount(context);
-            assertObjectTrue(ArrayUtil.get(args, 0, null));
-            return null;
-        }
-    };
+    private static Object assertNotNull(InternalContext context, Object[] args) {
+        plusAssertCount(context);
+        assertNotNull(get(args, 0));
+        return VOID;
+    }
 
-    protected static class AssertFalse implements MethodDeclare {
+    private static Object assertNull(InternalContext context, Object[] args) {
+        plusAssertCount(context);
+        assertNull(get(args, 0));
+        return VOID;
+    }
 
-        AssertFalse() {
-        }
+    private static Object assertEquals(InternalContext context, Object[] args) {
+        plusAssertCount(context);
+        assertEquals(get(args, 0), get(args, 1));
+        return VOID;
+    }
 
-        @Override
-        public Object invoke(InternalContext context, Object[] args) {
-            plusAssertCount(context);
-            assertObjectFalse(ArrayUtil.get(args, 0, null));
-            return null;
-        }
-    };
+    private static Object assertSame(InternalContext context, Object[] args) {
+        plusAssertCount(context);
+        assertSame(get(args, 0), get(args, 1));
+        return VOID;
+    }
 
-    protected static class AssertNotNull implements MethodDeclare {
+    private static Object assertNotSame(InternalContext context, Object[] args) {
+        plusAssertCount(context);
+        assertNotSame(get(args, 0), get(args, 1));
+        return VOID;
+    }
 
-        AssertNotNull() {
-        }
-
-        @Override
-        public Object invoke(InternalContext context, Object[] args) {
-            plusAssertCount(context);
-            assertNotNull(ArrayUtil.get(args, 0, null));
-            return null;
-        }
-    };
-
-    protected static class AssertNull implements MethodDeclare {
-
-        AssertNull() {
-        }
-
-        @Override
-        public Object invoke(InternalContext context, Object[] args) {
-            plusAssertCount(context);
-            assertNull(ArrayUtil.get(args, 0, null));
-            return null;
-        }
-    };
-
-    protected static class AssertEquals implements MethodDeclare {
-
-        AssertEquals() {
-        }
-
-        @Override
-        public Object invoke(InternalContext context, Object[] args) {
-            plusAssertCount(context);
-            args = ArrayUtil.ensureMinSize(args, 2);
-            assertEquals(args[0], args[1]);
-            return null;
-        }
-    };
-
-    protected static class AssertSame implements MethodDeclare {
-
-        AssertSame() {
-        }
-
-        @Override
-        public Object invoke(InternalContext context, Object[] args) {
-            plusAssertCount(context);
-            args = ArrayUtil.ensureMinSize(args, 2);
-            assertSame(args[0], args[1]);
-            return null;
-        }
-    };
-
-    protected static class AssertNotSame implements MethodDeclare {
-
-        AssertNotSame() {
-        }
-
-        @Override
-        public Object invoke(InternalContext context, Object[] args) {
-            plusAssertCount(context);
-            args = ArrayUtil.ensureMinSize(args, 2);
-            assertNotSame(args[0], args[1]);
-            return null;
-        }
-    };
-
-    protected static class AssertArrayEquals implements MethodDeclare {
-
-        AssertArrayEquals() {
-        }
-
-        @Override
-        public Object invoke(InternalContext context, Object[] args) {
-            plusAssertCount(context);
-            args = ArrayUtil.ensureMinSize(args, 2);
-            assertArrayEquals(args[0], args[1]);
-            return null;
-        }
-    };
+    private static Object assertArrayEquals(InternalContext context, Object[] args) {
+        plusAssertCount(context);
+        assertArrayEquals(get(args, 0), get(args, 1));
+        return VOID;
+    }
 }
