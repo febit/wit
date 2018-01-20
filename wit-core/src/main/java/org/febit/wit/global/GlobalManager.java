@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
 import org.febit.wit.Init;
 import org.febit.wit.lang.Bag;
+import org.febit.wit.lang.MethodDeclare;
 
 /**
  *
@@ -91,6 +92,16 @@ public class GlobalManager {
 
     public void setConst(String key, Object value) {
         this.constVars.put(key, value);
+    }
+
+    /**
+     *
+     * @since 2.5.0
+     * @param key
+     * @param method
+     */
+    public void setConstMethod(String key, MethodDeclare method) {
+        setConst(key, method);
     }
 
     public Bag getConstBag() {
