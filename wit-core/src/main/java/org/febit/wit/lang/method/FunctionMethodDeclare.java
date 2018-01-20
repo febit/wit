@@ -34,7 +34,7 @@ public final class FunctionMethodDeclare implements MethodDeclare, UnConstableMe
         } catch (Exception e) {
             ScriptRuntimeException runtimeException = StatementUtil.castToScriptRuntimeException(e, function);
             if (context != this.scopeContext) {
-                runtimeException.setTemplate(this.scopeContext.template);
+                throw runtimeException.setTemplate(this.scopeContext.getTemplate());
             }
             throw runtimeException;
         }

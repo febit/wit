@@ -2,7 +2,6 @@
 package org.febit.wit.core.ast.statements;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.Template;
 import org.febit.wit.core.ast.Expression;
 
 /**
@@ -11,8 +10,8 @@ import org.febit.wit.core.ast.Expression;
  */
 public final class Include extends AbstractInclude {
 
-    public Include(Expression pathExpr, Expression paramsExpr, Template template, int line, int column) {
-        super(pathExpr, paramsExpr, template, line, column);
+    public Include(Expression pathExpr, Expression paramsExpr, String refer, int line, int column) {
+        super(pathExpr, paramsExpr, refer, line, column);
     }
 
     @Override

@@ -42,13 +42,13 @@ public class ImportPart {
     }
 
     public Import pop(Template template) {
-
+        final String refer = template.getName();
         final int len = exportNameList.size();
         return len == 0
-                ? new Import(expr, paramsExpr, null, null, template, line, column)
+                ? new Import(expr, paramsExpr, null, null, refer, line, column)
                 : new Import(expr, paramsExpr,
                         exportNameList.toArray(new String[len]),
                         toResetableValueList.toArray(new AssignableExpression[len]),
-                        template, line, column);
+                        refer, line, column);
     }
 }

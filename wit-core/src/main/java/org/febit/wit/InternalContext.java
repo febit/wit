@@ -25,11 +25,12 @@ import org.febit.wit.util.InternedEncoding;
  */
 public final class InternalContext implements Context {
 
-    public final Template template;
+    private final Template template;
+
     /**
      * params for this context.
      */
-    public final Vars rootParams;
+    private final Vars rootParams;
 
     /**
      * Variables in this scope.
@@ -59,7 +60,7 @@ public final class InternalContext implements Context {
     /**
      * Output, stream or writer.
      */
-    public Out out;
+    private Out out;
 
     /**
      * Used by functions, store value to be returned.
@@ -123,7 +124,6 @@ public final class InternalContext implements Context {
      */
     public InternalContext createSubContext(VariantIndexer[] indexers, InternalContext localContext, int varSize) {
         Object[][] myParentScopes = this.parentScopes;
-
         //cal the new-context's parent-scopes
         Object[][] scopes;
         if (myParentScopes == null) {
@@ -288,6 +288,16 @@ public final class InternalContext implements Context {
         this.out.write(chars);
     }
 
+    public Object temporaryOut(Out newOut, java.util.function.Function<InternalContext, Object> action) {
+        Out prevOut = this.out;
+        this.out = newOut;
+        try {
+            return action.apply(this);
+        } finally {
+            this.out = prevOut;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public void write(final Object obj) {
         if (obj == null) {
@@ -381,4 +391,17 @@ public final class InternalContext implements Context {
         }
         return new Function(this.template, (MethodDeclare) func, this.encoding, this.isByteStream);
     }
+
+    public Engine getEngine() {
+        return this.template.getEngine();
+    }
+
+    public Template getTemplate() {
+        return template;
+    }
+
+    public Vars getRootParams() {
+        return rootParams;
+    }
+
 }

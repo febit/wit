@@ -4,7 +4,6 @@ package org.febit.wit.core.ast.statements;
 import java.util.HashMap;
 import java.util.Map;
 import org.febit.wit.Context;
-import org.febit.wit.Engine;
 import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
 import org.febit.wit.Vars;
@@ -26,15 +25,13 @@ public abstract class AbstractInclude extends Statement {
 
     private final Expression pathExpr;
     private final Expression paramsExpr;
-    private final String myTemplateName;
-    private final Engine engine;
+    private final String refer;
 
-    public AbstractInclude(Expression pathExpr, Expression paramsExpr, Template template, int line, int column) {
+    public AbstractInclude(Expression pathExpr, Expression paramsExpr, String refer, int line, int column) {
         super(line, column);
         this.pathExpr = StatementUtil.optimize(pathExpr);
         this.paramsExpr = paramsExpr == null ? EXPR_EMPTY_PARAMS : StatementUtil.optimize(paramsExpr);
-        this.myTemplateName = template.getName();
-        this.engine = template.getEngine();
+        this.refer = refer;
     }
 
     @SuppressWarnings("unchecked")
@@ -48,7 +45,7 @@ public abstract class AbstractInclude extends Statement {
         } else {
             throw new ScriptRuntimeException("Template param must be a Map.", paramsExpr);
         }
-        return engine.isShareRootData() ? Vars.of(context.rootParams, params) : params;
+        return context.getEngine().isShareRootData() ? Vars.of(context.getRootParams(), params) : params;
     }
 
     protected Map<String, Object> mergeTemplate(final InternalContext context, boolean export) {
@@ -57,7 +54,7 @@ public abstract class AbstractInclude extends Statement {
             throw new ScriptRuntimeException("Template name should not be null.", pathExpr);
         }
         try {
-            Template template = engine.getTemplate(myTemplateName, String.valueOf(templatePath));
+            Template template = context.getEngine().getTemplate(refer, String.valueOf(templatePath));
             Context newContext = template.mergeToContext(context, prepareParams(context));
             if (export) {
                 Map<String, Object> result = new HashMap<>();

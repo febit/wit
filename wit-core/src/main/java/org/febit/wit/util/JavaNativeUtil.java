@@ -335,7 +335,7 @@ public class JavaNativeUtil {
         return COST_NEVER;
     }
 
-    public static final Object invokeMethod(
+    public static Object invokeMethod(
             final Method method,
             final Object[] args
     ) {
@@ -345,30 +345,30 @@ public class JavaNativeUtil {
         if (args == null || args.length == 0 || args[0] == null) {
             throw new ScriptRuntimeException("this method need one argument at least");
         }
-        final int acceptArgsCount = method.getParameterCount();
-        final Object[] methodArgs = new Object[acceptArgsCount];
-        System.arraycopy(args, 1, methodArgs, 0, Math.min(args.length - 1, acceptArgsCount));
+        final Object[] methodArgs = prepareArgs(method.getParameterCount(), args, 1);
         return invokeMethod(method, args[0], methodArgs);
     }
 
-    public static final Object invokeMethod(
+    public static Object[] prepareArgs(final int acceptArgsCount, final Object[] args, final int from) {
+        if (args == null) {
+            return acceptArgsCount == 0
+                    ? ArrayUtil.emptyObjects()
+                    : new Object[acceptArgsCount];
+        }
+        if (from == 0 && args.length == acceptArgsCount) {
+            return args;
+        }
+        final Object[] result = new Object[acceptArgsCount];
+        System.arraycopy(args, from, result, 0, Math.min(args.length - from, acceptArgsCount));
+        return result;
+    }
+
+    public static Object invokeMethod(
             final Method method,
             final Object me,
             final Object[] args
     ) {
-        final int acceptArgsCount = method.getParameterCount();
-        final Object[] methodArgs;
-        if (args != null) {
-            int argsLen = args.length;
-            if (argsLen == acceptArgsCount) {
-                methodArgs = args;
-            } else {
-                methodArgs = new Object[acceptArgsCount];
-                System.arraycopy(args, 0, methodArgs, 0, argsLen <= acceptArgsCount ? argsLen : acceptArgsCount);
-            }
-        } else {
-            methodArgs = new Object[acceptArgsCount];
-        }
+        final Object[] methodArgs = prepareArgs(method.getParameterCount(), args, 0);
         try {
             Object result = method.invoke(me, methodArgs);
             return ClassUtil.isVoidType(method.getReturnType())
@@ -383,20 +383,8 @@ public class JavaNativeUtil {
         }
     }
 
-    public static final Object invokeConstructor(final Constructor constructor, final Object[] args) {
-        final int acceptArgsCount = constructor.getParameterCount();
-        final Object[] methodArgs;
-        final int argsLen;
-        if (args != null && (argsLen = args.length) != 0) {
-            if (argsLen == acceptArgsCount) {
-                methodArgs = args;
-            } else {
-                methodArgs = new Object[acceptArgsCount];
-                System.arraycopy(args, 0, methodArgs, 0, argsLen <= acceptArgsCount ? argsLen : acceptArgsCount);
-            }
-        } else {
-            methodArgs = new Object[acceptArgsCount];
-        }
+    public static Object invokeConstructor(final Constructor constructor, final Object[] args) {
+        final Object[] methodArgs = prepareArgs(constructor.getParameterCount(), args, 0);
         try {
             return constructor.newInstance(methodArgs);
         } catch (InstantiationException ex) {

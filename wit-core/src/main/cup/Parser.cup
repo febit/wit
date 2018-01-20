@@ -218,7 +218,7 @@ statement       ::= expression_statementable:$ SEMICOLON
 
                     //includeStat
                     |INCLUDE:sym expression:expr mapValue:paramsExpr? SEMICOLON
-                    {: return new Include(%expr%, %paramsExpr%, this.template, %sym.line%, %sym.column%); :}
+                    {: return new Include(%expr%, %paramsExpr%, this.template.getName(), %sym.line%, %sym.column%); :}
 
                     //funcStatement
                     |funcStatementHead:part LBRACE statement[]:list? RBRACE

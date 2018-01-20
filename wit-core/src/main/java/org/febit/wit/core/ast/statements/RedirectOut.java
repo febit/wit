@@ -6,7 +6,6 @@ import java.io.CharArrayWriter;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Statement;
-import org.febit.wit.io.Out;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
 
@@ -27,21 +26,17 @@ public class RedirectOut extends Statement {
 
     @Override
     public Object execute(final InternalContext context) {
-        final Out current = context.out;
-        if (current.isByteStream()) {
+        if (context.isByteStream) {
             ByteArrayOutputStream out = new ByteArrayOutputStream(256);
-            context.out = new OutputStreamOut(out, (OutputStreamOut) current);
-            srcStatement.execute(context);
+            context.temporaryOut(new OutputStreamOut(out, context.getEngine()),
+                    srcStatement::execute);
             toExpr.setValue(context, out.toByteArray());
         } else {
             CharArrayWriter writer = new CharArrayWriter(256);
-            context.out = current instanceof WriterOut
-                    ? new WriterOut(writer, (WriterOut) current)
-                    : new WriterOut(writer, context.encoding, context.template.getEngine().getCoderFactory());
-            srcStatement.execute(context);
+            context.temporaryOut(new WriterOut(writer, context.getEngine()),
+                    srcStatement::execute);
             toExpr.setValue(context, writer.toCharArray());
         }
-        context.out = current;
         return null;
     }
 }

@@ -9,7 +9,7 @@ import org.junit.Test;
  *
  * @author zqq90
  */
-public class UTF_8Test {
+public class UTF8Test {
 
     public boolean matchEncode(String string) throws UnsupportedEncodingException {
 

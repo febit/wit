@@ -4,11 +4,11 @@ package org.febit.wit.tools.cache;
 import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
 import java.io.Serializable;
+import java.util.Arrays;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
-import org.febit.wit.io.Out;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
 import org.febit.wit.lang.MethodDeclare;
@@ -71,7 +71,6 @@ public class CacheGlobalRegister implements GlobalRegister {
 
     protected static class CacheMethodDeclare implements MethodDeclare {
 
-        protected final static Object[] EMPTY_ARRAY = new Object[0];
         protected final CacheProvider cacheProvider;
 
         public CacheMethodDeclare(CacheProvider cacheProvider) {
@@ -89,8 +88,8 @@ public class CacheGlobalRegister implements GlobalRegister {
             if (firstArgument instanceof MethodDeclare) {
                 cachingEntry = buildIfAbent(context, firstArgument, (MethodDeclare) firstArgument, args, 1);
             } else if (len > 1) {
-                final Object secondArgument;
-                if ((secondArgument = args[1]) instanceof MethodDeclare) {
+                final Object secondArgument = args[1];
+                if (secondArgument instanceof MethodDeclare) {
                     cachingEntry = buildIfAbent(context, firstArgument, (MethodDeclare) secondArgument, args, 2);
                 } else {
                     throw new ScriptRuntimeException("This method need a function argument at index 0 or 1.");
@@ -108,49 +107,30 @@ public class CacheGlobalRegister implements GlobalRegister {
                 final Object[] args,
                 final int argsStart) {
 
-            CachingEntry result;
-            if ((result = (CachingEntry) this.cacheProvider.get(key)) == null) {
-                final Object returned;
-                final Object outted;
-                final Out preOut;
-
-                final Object[] methodArgs;
-
-                final int len = args.length;
-                if (len > argsStart) {
-                    final int methodArgsLen = len - argsStart;
-                    System.arraycopy(args, argsStart, methodArgs = new Object[methodArgsLen], 0, methodArgsLen);
-                } else {
-                    methodArgs = EMPTY_ARRAY;
-                }
-                preOut = context.out;
-                if (preOut.isByteStream()) {
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream(256);
-
-                    context.out = new OutputStreamOut(out, (OutputStreamOut) preOut);
-
-                    try {
-                        returned = methodDeclare.invoke(context, methodArgs);
-                    } finally {
-                        context.out = preOut;
-                    }
-                    outted = out.toByteArray();
-                } else {
-                    final CharArrayWriter writer = new CharArrayWriter(256);
-
-                    context.out = preOut instanceof WriterOut
-                            ? new WriterOut(writer, (WriterOut) preOut)
-                            : new WriterOut(writer, context.encoding, context.template.getEngine().getCoderFactory());
-
-                    try {
-                        returned = methodDeclare.invoke(context, methodArgs);
-                        outted = writer.toCharArray();
-                    } finally {
-                        context.out = preOut;
-                    }
-                }
-                this.cacheProvider.put(key, result = new CachingEntry(returned, outted));
+            CachingEntry result = (CachingEntry) this.cacheProvider.get(key);
+            if (result != null) {
+                return result;
             }
+            final Object returned;
+            final Object outted;
+
+            final Object[] methodArgs = args.length > argsStart
+                    ? Arrays.copyOfRange(args, argsStart, args.length)
+                    : ArrayUtil.emptyObjects();
+
+            if (context.isByteStream) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream(256);
+                returned = context.temporaryOut(new OutputStreamOut(out, context.getEngine()),
+                        contxt -> methodDeclare.invoke(contxt, methodArgs));
+                outted = out.toByteArray();
+            } else {
+                CharArrayWriter writer = new CharArrayWriter(256);
+                returned = context.temporaryOut(new WriterOut(writer, context.getEngine()),
+                        contxt -> methodDeclare.invoke(contxt, methodArgs));
+                outted = writer.toCharArray();
+            }
+            result = new CachingEntry(returned, outted);
+            this.cacheProvider.put(key, result);
             return result;
         }
     }
