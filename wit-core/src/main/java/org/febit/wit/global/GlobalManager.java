@@ -63,13 +63,6 @@ public class GlobalManager {
         this.globalVars.forEach(action);
     }
 
-    /**
-     * @deprecated since 2.5.0, do nothing
-     */
-    @Deprecated
-    public void commit() {
-    }
-
     public boolean hasGlobal(String name) {
         return this.globalVars.containsKey(name);
     }
