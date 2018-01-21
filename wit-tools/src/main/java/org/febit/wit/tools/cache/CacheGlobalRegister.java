@@ -120,12 +120,12 @@ public class CacheGlobalRegister implements GlobalRegister {
 
             if (context.isByteStream) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream(256);
-                returned = context.temporaryOut(new OutputStreamOut(out, context.getEngine()),
+                returned = context.temporaryOut(new OutputStreamOut(out, context.encoding, context.getEngine()),
                         contxt -> methodDeclare.invoke(contxt, methodArgs));
                 outted = out.toByteArray();
             } else {
                 CharArrayWriter writer = new CharArrayWriter(256);
-                returned = context.temporaryOut(new WriterOut(writer, context.getEngine()),
+                returned = context.temporaryOut(new WriterOut(writer, context.encoding, context.getEngine()),
                         contxt -> methodDeclare.invoke(contxt, methodArgs));
                 outted = writer.toCharArray();
             }

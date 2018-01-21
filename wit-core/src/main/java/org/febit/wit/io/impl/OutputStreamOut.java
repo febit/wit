@@ -26,7 +26,7 @@ public final class OutputStreamOut implements Out {
         this.encoder = encoder;
     }
 
-    private OutputStreamOut(OutputStream outputStream, InternedEncoding encoding, CoderFactory coderFactory) {
+    public OutputStreamOut(OutputStream outputStream, InternedEncoding encoding, CoderFactory coderFactory) {
         this(outputStream, encoding, coderFactory.newEncoder(encoding));
     }
 

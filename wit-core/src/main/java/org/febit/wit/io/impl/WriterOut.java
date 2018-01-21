@@ -22,18 +22,18 @@ public final class WriterOut implements Out {
     private final Decoder decoder;
     private final Buffers buffers;
 
-    public WriterOut(Writer writer, InternedEncoding encoding, Decoder decoder, Buffers buffers) {
+    private WriterOut(Writer writer, InternedEncoding encoding, Decoder decoder, Buffers buffers) {
         this.writer = writer;
         this.encoding = encoding;
         this.decoder = decoder;
         this.buffers = buffers;
     }
 
-    public WriterOut(Writer writer, final WriterOut writerOut) {
-        this(writer, writerOut.encoding, writerOut.decoder, writerOut.buffers);
+    public WriterOut(Writer writer, InternedEncoding encoding, Engine engine) {
+        this(writer, encoding != null ? encoding : engine.getEncoding(), engine.getCoderFactory());
     }
 
-    public WriterOut(Writer writer, final Engine engine) {
+    public WriterOut(Writer writer, Engine engine) {
         this(writer, engine.getEncoding(), engine.getCoderFactory());
     }
 

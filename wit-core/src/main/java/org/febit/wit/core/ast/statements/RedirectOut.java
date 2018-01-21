@@ -28,12 +28,12 @@ public class RedirectOut extends Statement {
     public Object execute(final InternalContext context) {
         if (context.isByteStream) {
             ByteArrayOutputStream out = new ByteArrayOutputStream(256);
-            context.temporaryOut(new OutputStreamOut(out, context.getEngine()),
+            context.temporaryOut(new OutputStreamOut(out, context.encoding, context.getEngine()),
                     srcStatement::execute);
             toExpr.setValue(context, out.toByteArray());
         } else {
             CharArrayWriter writer = new CharArrayWriter(256);
-            context.temporaryOut(new WriterOut(writer, context.getEngine()),
+            context.temporaryOut(new WriterOut(writer, context.encoding, context.getEngine()),
                     srcStatement::execute);
             toExpr.setValue(context, writer.toCharArray());
         }
