@@ -121,17 +121,6 @@ public class ResolverManager {
         }
     }
 
-    /**
-     *
-     * @param type
-     * @param resolver
-     * @deprecated use <code>registerResolver</code> instead
-     */
-    @Deprecated
-    public void registResolver(Class<?> type, Resolver resolver) {
-        registerResolver(type, resolver);
-    }
-
     public void registerResolver(Class<?> type, Resolver resolver) {
         if (type == null) {
             return;
