@@ -11,7 +11,7 @@ import org.febit.wit.lang.InternalVoid;
  *
  * @author zqq90
  */
-public interface Context extends Vars.Accepter {
+public interface Context {
 
     final Object VOID = InternalVoid.VOID;
 
@@ -40,7 +40,6 @@ public interface Context extends Vars.Accepter {
      * @param name
      * @param value
      */
-    @Override
     void set(String name, Object value);
 
     /**

@@ -113,7 +113,7 @@ public final class InternalContext implements Context {
         this.parentScopes = parentScopes;
 
         //import params
-        rootParams.exportTo(this);
+        rootParams.exportTo(this::set);
     }
 
     /**

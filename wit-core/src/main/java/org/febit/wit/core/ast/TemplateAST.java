@@ -26,7 +26,7 @@ public final class TemplateAST {
 
     public InternalContext execute(Template template, final Out out, Vars rootParams) {
         final InternalContext context = new InternalContext(template, out, rootParams, indexers, varSize, null);
-        rootParams.exportTo(context);
+        rootParams.exportTo(context::set);
         StatementUtil.execute(this.statements, context);
         //assert context.indexer = 0
         return context;
@@ -34,7 +34,7 @@ public final class TemplateAST {
 
     public InternalContext execute(Template template, final InternalContext context, Vars rootParams) {
         final InternalContext newContext = context.createPeerContext(template, indexers, varSize);
-        rootParams.exportTo(newContext);
+        rootParams.exportTo(newContext::set);
         StatementUtil.execute(this.statements, newContext);
         //assert context.indexer = 0
         return newContext;
