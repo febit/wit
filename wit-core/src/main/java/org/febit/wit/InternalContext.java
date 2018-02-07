@@ -3,6 +3,7 @@ package org.febit.wit;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.exceptions.NotFunctionException;
@@ -374,13 +375,23 @@ public final class InternalContext implements Context {
         return this.indexers[this.indexer];
     }
 
+    /**
+     *
+     * @since 2.6.0
+     * @param action
+     */
     @Override
-    @SuppressWarnings("unchecked")
-    public void exportTo(final Map map) {
+    public void forEachVar(BiConsumer<String, Object> action) {
         Object[] varsPool = this.vars;
         getCurrentIndexer()
                 .forEach((name, index)
-                        -> map.put(name, varsPool[index]));
+                        -> action.accept(name, varsPool[index]));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void exportTo(final Map map) {
+        forEachVar(map::put);
     }
 
     @Override

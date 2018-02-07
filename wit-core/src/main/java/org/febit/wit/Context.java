@@ -2,6 +2,7 @@
 package org.febit.wit;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.InternalVoid;
@@ -74,4 +75,11 @@ public interface Context extends Vars.Accepter {
      * @param map
      */
     void exportTo(final Map map);
+
+    /**
+     *
+     * @since 2.6.0
+     * @param action
+     */
+    void forEachVar(BiConsumer<String, Object> action);
 }
