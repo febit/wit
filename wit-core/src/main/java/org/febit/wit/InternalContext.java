@@ -240,10 +240,6 @@ public final class InternalContext implements Context {
         return this.loopType == 0;
     }
 
-    public boolean hasLoop() {
-        return this.loopType != 0;
-    }
-
     /**
      * Get a bean's property.
      *

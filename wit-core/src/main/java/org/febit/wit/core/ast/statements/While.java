@@ -40,7 +40,7 @@ public final class While extends Statement implements Loopable {
         label:
         while (ALU.isTrue(whileExpr.execute(context))) {
             StatementUtil.executeWithLoopCheck(stats, context);
-            if (!context.hasLoop()) {
+            if (context.noLoop()) {
                 continue;
             }
             if (!context.matchLabel(myLabel)) {

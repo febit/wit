@@ -40,7 +40,7 @@ public final class DoWhile extends Statement implements Loopable {
         label:
         do {
             StatementUtil.executeWithLoopCheck(stats, context);
-            if (!context.hasLoop()) {
+            if (context.noLoop()) {
                 continue;
             }
             if (!context.matchLabel(myLabel)) {

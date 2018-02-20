@@ -65,7 +65,7 @@ public final class ForMap extends Statement implements Loopable {
                 vars[indexOfKey] = iter.next();
                 vars[indexOfValue] = iter.value();
                 StatementUtil.executeWithLoopCheck(stats, context);
-                if (!context.hasLoop()) {
+                if (context.noLoop()) {
                     continue;
                 }
                 if (!context.matchLabel(myLabel)) {
