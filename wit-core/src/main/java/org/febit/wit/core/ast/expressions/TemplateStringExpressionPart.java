@@ -23,11 +23,12 @@ public class TemplateStringExpressionPart {
 
     public TemplateStringExpressionPart add(final Expression expr) {
         if (expr instanceof DirectValue) {
-            if (((DirectValue) expr).value == null) {
+            Object innerValue = ((DirectValue) expr).value;
+            if (innerValue == null) {
                 return this;
             }
-            if (!(((DirectValue) expr).value instanceof String)) {
-                return add(new DirectValue(String.valueOf(((DirectValue) expr).value), expr.line, expr.column));
+            if (!(innerValue instanceof String)) {
+                return add(new DirectValue(String.valueOf(innerValue), expr.line, expr.column));
             }
         }
         exprs.add(expr);
