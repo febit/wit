@@ -24,6 +24,7 @@ import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.ResourceOffset;
+import org.febit.wit.security.NativeSecurityManager;
 import org.febit.wit.util.ALU;
 import org.febit.wit.util.ClassNameBand;
 import org.febit.wit.util.ClassUtil;
@@ -149,6 +150,7 @@ abstract class AbstractParser {
     private final AtomicInteger nextLabelIndex = new AtomicInteger();
 
     private TextStatementFactory textStatementFactory;
+    private NativeSecurityManager nativeSecurityManager;
     private BreakPointListener breakPointListener;
     private Engine engine;
     private NativeFactory nativeFactory;
@@ -414,6 +416,7 @@ abstract class AbstractParser {
         final Engine myEngine = template.getEngine();
         final Resource resource = template.getResource();
         this.textStatementFactory = myEngine.get(TextStatementFactory.class);
+        this.nativeSecurityManager = myEngine.get(NativeSecurityManager.class);
         this.breakPointListener = breakPointListener;
         this.template = template;
         this.engine = myEngine;
@@ -637,7 +640,7 @@ abstract class AbstractParser {
         final String fieldName = classNameBand.pop();
         final Class<?> clazz = toClass(classNameBand, line, column);
         final String path = clazz.getName() + '.' + fieldName;
-        if (!this.engine.checkNativeAccess(path)) {
+        if (!this.nativeSecurityManager.access(path)) {
             throw new ParseException("Not accessable of native path: ".concat(path), line, column);
         }
         final Field field;

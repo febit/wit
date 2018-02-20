@@ -12,7 +12,6 @@ import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.resolvers.ResolverManager;
-import org.febit.wit.security.NativeSecurityManager;
 import org.febit.wit.util.InternedEncoding;
 import org.febit.wit.util.Petite;
 import org.febit.wit.util.Props;
@@ -41,7 +40,6 @@ public class Engine {
     protected Logger logger;
     protected Loader loader;
     protected GlobalManager globalManager;
-    protected NativeSecurityManager nativeSecurityManager;
     protected CoderFactory coderFactory;
     protected NativeFactory nativeFactory;
     protected ResolverManager resolverManager;
@@ -159,10 +157,6 @@ public class Engine {
 
     public void addComponent(Object bean) {
         this.petite.addComponent(bean);
-    }
-
-    public boolean checkNativeAccess(String path) {
-        return this.nativeSecurityManager.access(path);
     }
 
     public void inject(String key, final Object bean) {
