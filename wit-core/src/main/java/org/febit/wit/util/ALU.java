@@ -109,27 +109,24 @@ public class ALU {
     // +1
     public static Object plusOne(final Object o1) {
         requireNonNull(o1);
-        if (o1 instanceof Number) {
-            final Number num = (Number) o1;
-            switch (getTypeMark(num)) {
-                case INTEGER:
-                case SHORT:
-                case BYTE:
-                    return num.intValue() + 1;
-                case LONG:
-                    return num.longValue() + 1L;
-                case DOUBLE:
-                    return num.doubleValue() + 1D;
-                case FLOAT:
-                    return num.floatValue() + 1F;
-                case BIG_INTEGER:
-                    return toBigInteger(num).add(BigInteger.ONE);
-                case BIG_DECIMAL:
-                    return toBigDecimal(num).add(BigDecimal.ONE);
-                default:
-            }
-        } else if (o1 instanceof Character) {
-            return ((Character) o1) + 1;
+        switch (getTypeMark(o1)) {
+            case INTEGER:
+            case SHORT:
+            case BYTE:
+                return ((Number) o1).intValue() + 1;
+            case CHAR:
+                return ((Character) o1) + 1;
+            case LONG:
+                return ((Number) o1).longValue() + 1L;
+            case DOUBLE:
+                return ((Number) o1).doubleValue() + 1D;
+            case FLOAT:
+                return ((Number) o1).floatValue() + 1F;
+            case BIG_INTEGER:
+                return toBigInteger(o1).add(BigInteger.ONE);
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).add(BigDecimal.ONE);
+            default:
         }
         throw unsupportedTypeException(o1);
     }
@@ -137,27 +134,24 @@ public class ALU {
     // -1
     public static Object minusOne(final Object o1) {
         requireNonNull(o1);
-        if (o1 instanceof Number) {
-            final Number num = (Number) o1;
-            switch (getTypeMark(num)) {
-                case INTEGER:
-                case SHORT:
-                case BYTE:
-                    return num.intValue() - 1;
-                case LONG:
-                    return num.longValue() - 1L;
-                case DOUBLE:
-                    return num.doubleValue() - 1D;
-                case FLOAT:
-                    return num.floatValue() - 1F;
-                case BIG_INTEGER:
-                    return toBigInteger(num).subtract(BigInteger.ONE);
-                case BIG_DECIMAL:
-                    return toBigDecimal(num).subtract(BigDecimal.ONE);
-                default:
-            }
-        } else if (o1 instanceof Character) {
-            return ((Character) o1) - 1;
+        switch (getTypeMark(o1)) {
+            case INTEGER:
+            case SHORT:
+            case BYTE:
+                return ((Number) o1).intValue() - 1;
+            case CHAR:
+                return ((Character) o1) - 1;
+            case LONG:
+                return ((Number) o1).longValue() - 1L;
+            case DOUBLE:
+                return ((Number) o1).doubleValue() - 1D;
+            case FLOAT:
+                return ((Number) o1).floatValue() - 1F;
+            case BIG_INTEGER:
+                return toBigInteger(o1).subtract(BigInteger.ONE);
+            case BIG_DECIMAL:
+                return toBigDecimal(o1).subtract(BigDecimal.ONE);
+            default:
         }
         throw unsupportedTypeException(o1);
     }
@@ -538,71 +532,65 @@ public class ALU {
     // <<
     public static Object lshift(final Object o1, final Object o2) {
         requireNonNull(o1, o2);
-        if (o2 instanceof Number) {
-            int right = ((Number) o2).intValue();
-            switch (getTypeMark(o1)) {
-                case CHAR:
-                    return ((Character) o1) << right;
-                case BYTE:
-                    return ((Byte) o1) << right;
-                case SHORT:
-                    return ((Short) o1) << right;
-                case INTEGER:
-                    return ((Integer) o1) << right;
-                case LONG:
-                    return ((Long) o1) << right;
-                case BIG_INTEGER:
-                    return ((BigInteger) o1).shiftLeft(right);
-                default:
-            }
+        int right = requireNumber(o2).intValue();
+        switch (getTypeMark(o1)) {
+            case CHAR:
+                return ((Character) o1) << right;
+            case BYTE:
+                return ((Byte) o1) << right;
+            case SHORT:
+                return ((Short) o1) << right;
+            case INTEGER:
+                return ((Integer) o1) << right;
+            case LONG:
+                return ((Long) o1) << right;
+            case BIG_INTEGER:
+                return ((BigInteger) o1).shiftLeft(right);
+            default:
+                throw unsupportedTypeException(o1, o2);
         }
-        throw unsupportedTypeException(o1, o2);
     }
 
     // >>
     public static Object rshift(final Object o1, final Object o2) {
         requireNonNull(o1, o2);
-        if (o2 instanceof Number) {
-            int right = ((Number) o2).intValue();
-            switch (getTypeMark(o1)) {
-                case CHAR:
-                    return ((Character) o1) >> right;
-                case BYTE:
-                    return ((Byte) o1) >> right;
-                case SHORT:
-                    return ((Short) o1) >> right;
-                case INTEGER:
-                    return ((Integer) o1) >> right;
-                case LONG:
-                    return ((Long) o1) >> right;
-                case BIG_INTEGER:
-                    return ((BigInteger) o1).shiftRight(right);
-                default:
-            }
+        int right = requireNumber(o2).intValue();
+        switch (getTypeMark(o1)) {
+            case CHAR:
+                return ((Character) o1) >> right;
+            case BYTE:
+                return ((Byte) o1) >> right;
+            case SHORT:
+                return ((Short) o1) >> right;
+            case INTEGER:
+                return ((Integer) o1) >> right;
+            case LONG:
+                return ((Long) o1) >> right;
+            case BIG_INTEGER:
+                return ((BigInteger) o1).shiftRight(right);
+            default:
+                throw unsupportedTypeException(o1, o2);
         }
-        throw unsupportedTypeException(o1, o2);
     }
 
     // >>>
     public static Object urshift(final Object o1, final Object o2) {
         requireNonNull(o1, o2);
-        if (o2 instanceof Number) {
-            int right = ((Number) o2).intValue();
-            switch (getTypeMark(o1)) {
-                case CHAR:
-                    return ((Character) o1) >>> right;
-                case BYTE:
-                    return ((Byte) o1) >>> right;
-                case SHORT:
-                    return ((Short) o1) >>> right;
-                case INTEGER:
-                    return ((Integer) o1) >>> right;
-                case LONG:
-                    return ((Long) o1) >>> right;
-                default:
-            }
+        int right = requireNumber(o2).intValue();
+        switch (getTypeMark(o1)) {
+            case CHAR:
+                return ((Character) o1) >>> right;
+            case BYTE:
+                return ((Byte) o1) >>> right;
+            case SHORT:
+                return ((Short) o1) >>> right;
+            case INTEGER:
+                return ((Integer) o1) >>> right;
+            case LONG:
+                return ((Long) o1) >>> right;
+            default:
+                throw unsupportedTypeException(o1, o2);
         }
-        throw unsupportedTypeException(o1, o2);
     }
 
     private static Object charToInt(final Object o1) {
@@ -679,6 +667,16 @@ public class ALU {
 
     private static ScriptRuntimeException unsupportedTypeException(final Object o1) {
         return new ScriptRuntimeException(StringUtil.format("Unsupported type: [{}]", o1.getClass()));
+    }
+
+    public static Number requireNumber(final Object val) {
+        if (val instanceof Number) {
+            return (Number) val;
+        }
+        if (val instanceof Character) {
+            return Integer.valueOf((Character) val);
+        }
+        throw new ScriptRuntimeException("Number is required, not found: " + ClassUtil.getClassName(val));
     }
 
     private static void requireNonNull(final Object obj) {

@@ -45,6 +45,7 @@
     assertTrue(90 < a);
     assertTrue(90 <= a);
 
+    assertEquals(97 -1 , a -1);
     assertEquals(97 +1 , temp);
     assertEquals(97 +1 , a +1);
     assertEquals(97 +1 , a +1);
@@ -84,6 +85,17 @@
 
     assertEquals("c1", "c" + '1');
 
+}
+{
+    var a = 'a';
+    assertEquals('a', a -- );
+    assertEquals(97 -1 , a -- );
+    assertEquals(97 -2 , a -- );
+    assertEquals(97 -3 , a ++ );
+    assertEquals(97 -2 , a ++ );
+    assertEquals(97 -1, a ++ );
+    assertEquals(97, a ++ );
+    assertEquals(97 +1, a);
 }
 {
     //Int Step test
