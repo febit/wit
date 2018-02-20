@@ -413,11 +413,10 @@ abstract class AbstractParser {
     protected TemplateAST doParse(final Template template, final BreakPointListener breakPointListener) throws ParseException {
         final Engine myEngine = template.getEngine();
         final Resource resource = template.getResource();
-        final TextStatementFactory textStatFactory = myEngine.getTextStatementFactory();
+        this.textStatementFactory = myEngine.get(TextStatementFactory.class);
         this.breakPointListener = breakPointListener;
         this.template = template;
         this.engine = myEngine;
-        this.textStatementFactory = textStatFactory;
         this.locateVarForce = !myEngine.isLooseVar();
         this.nativeFactory = myEngine.getNativeFactory();
         this.varmgr = new VariantManager(myEngine);
@@ -436,14 +435,14 @@ abstract class AbstractParser {
             } else {
                 lexer.setOffset(0, 0);
             }
-            textStatFactory.startTemplateParser(template);
+            this.textStatementFactory.startTemplateParser(template);
             return (TemplateAST) this.process(lexer).value;
         } catch (ParseException e) {
             throw e;
         } catch (Exception e) {
             throw new ParseException(e);
         } finally {
-            textStatFactory.finishTemplateParser(template);
+            this.textStatementFactory.finishTemplateParser(template);
             if (lexer != null) {
                 try {
                     lexer.close();

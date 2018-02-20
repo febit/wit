@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.febit.wit.core.NativeFactory;
-import org.febit.wit.core.text.TextStatementFactory;
 import org.febit.wit.exceptions.IllegalConfigException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.global.GlobalManager;
@@ -42,7 +41,6 @@ public class Engine {
     protected Logger logger;
     protected Loader loader;
     protected GlobalManager globalManager;
-    protected TextStatementFactory textStatementFactory;
     protected NativeSecurityManager nativeSecurityManager;
     protected CoderFactory coderFactory;
     protected NativeFactory nativeFactory;
@@ -193,10 +191,6 @@ public class Engine {
 
     public GlobalManager getGlobalManager() {
         return globalManager;
-    }
-
-    public TextStatementFactory getTextStatementFactory() {
-        return textStatementFactory;
     }
 
     public NativeFactory getNativeFactory() {
