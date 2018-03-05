@@ -23,8 +23,7 @@ public class UTF8 {
                 int b2 = sa[pos++];
                 if ((b1 & 0x1e) != 0x0 && (b2 & 0xc0) == 0x80) {
                     da[count++] = (char) (((b1 << 6) ^ b2)
-                            ^ (((byte) 0xC0 << 6)
-                            ^ ((byte) 0x80)));
+                            ^ ((0xFFFFFFC0 << 6) ^ 0xFFFFFF80));
                     continue;
                 }
                 pos--;
@@ -37,9 +36,7 @@ public class UTF8 {
                     da[count++] = (char) ((b1 << 12)
                             ^ (b2 << 6)
                             ^ (b3
-                            ^ (((byte) 0xE0 << 12)
-                            ^ ((byte) 0x80 << 6)
-                            ^ ((byte) 0x80))));
+                            ^ ((0xFFFFFFE0 << 12) ^ (0xFFFFFF80 << 6) ^ 0xFFFFFF80)));
                     continue;
                 }
                 pos -= 2;
@@ -49,10 +46,7 @@ public class UTF8 {
                         ^ (sa[pos++] << 12)
                         ^ (sa[pos++] << 6)
                         ^ (sa[pos++]
-                        ^ (((byte) 0xF0 << 18)
-                        ^ ((byte) 0x80 << 12)
-                        ^ ((byte) 0x80 << 6)
-                        ^ ((byte) 0x80)));
+                        ^ ((0xFFFFFFF0 << 18) ^ (0xFFFFFF80 << 12) ^ (0xFFFFFF80 << 6) ^ 0xFFFFFF80));
                 if (Character.isSupplementaryCodePoint(uc)) {
                     da[count++] = (char) ((uc >>> 10) + (Character.MIN_HIGH_SURROGATE - (Character.MIN_SUPPLEMENTARY_CODE_POINT >>> 10)));
                     da[count++] = (char) ((uc & 0x3ff) + Character.MIN_LOW_SURROGATE);
@@ -60,6 +54,7 @@ public class UTF8 {
                 }
                 pos -= 3;
             }
+            // unsupport bytes
             da[count++] = '\uFFFD';
         }
         return count;
@@ -106,6 +101,7 @@ public class UTF8 {
                 }
                 --pos; // back the LOW_SURROGATE char
             }
+            // unsupport char
             da[dp++] = '?';
         }
         return dp;
