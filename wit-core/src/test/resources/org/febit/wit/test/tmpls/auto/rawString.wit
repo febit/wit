@@ -1,0 +1,13 @@
+<%
+
+assertEquals(r"", "")
+assertEquals(r"\\ \r\n", "\\\\ \\r\\n")
+
+assertEquals("abc:" + r"\\ \r\n", "abc:\\\\ \\r\\n")
+
+assertEquals(r"
+", "
+")
+assertEquals(r"\
+", "\\
+")

@@ -310,7 +310,7 @@ lambdaArgsClosing = ")" {WhiteSpace}* "->"
 
 MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpace}* "]" {WhiteSpace}*)* {WhiteSpace}* "::" {WhiteSpace}* {Identifier}
 
-%state  YYSTATEMENT, STRING, TEMPLATE_STRING, CHARLITERAL, END_OF_FILE
+%state  YYSTATEMENT, STRING, RAW_STRING, TEMPLATE_STRING, CHARLITERAL, END_OF_FILE
 
 %%
 
@@ -444,6 +444,8 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   /* string literal */
   \"                             { yybegin(STRING); resetString(); }
 
+  "r\""                          { yybegin(RAW_STRING); resetString(); }
+
   /* character literal */
   \'                             { yybegin(CHARLITERAL); }
 
@@ -513,6 +515,11 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   
   /* error cases */
   \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getLine(), getColumn()); }
+}
+
+<RAW_STRING> {
+  \"                             { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, stringLine, stringColumn, popAsString()); }
+  [^\"]+                         { pullToString(); }
 }
 
 <TEMPLATE_STRING> {
