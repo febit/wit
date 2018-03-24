@@ -23,7 +23,7 @@ public class ConetextTest {
 
         Context context = template.merge();
 
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
 
         assertEquals("a", context.get("a"));
 

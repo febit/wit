@@ -34,14 +34,13 @@ public abstract class AbstractInclude extends Statement {
         this.refer = refer;
     }
 
-    @SuppressWarnings("unchecked")
     protected Vars prepareParams(final InternalContext context) {
         final Vars params;
         final Object paramsObject = paramsExpr.execute(context);
         if (paramsObject == null) {
             params = Vars.EMPTY;
         } else if (paramsObject instanceof Map) {
-            params = Vars.of((Map) paramsObject);
+            params = Vars.of((Map<?, ?>) paramsObject);
         } else {
             throw new ScriptRuntimeException("Template param must be a Map.", paramsExpr);
         }

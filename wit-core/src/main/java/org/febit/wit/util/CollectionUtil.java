@@ -71,7 +71,6 @@ public class CollectionUtil {
         throw new ScriptRuntimeException("Unsupported type to KeyIter: ".concat(o1.getClass().getName()), statement);
     }
 
-    @SuppressWarnings("unchecked")
     public static Iter toIter(final Object o1, Statement statement) {
         if (o1 == null) {
             return null;

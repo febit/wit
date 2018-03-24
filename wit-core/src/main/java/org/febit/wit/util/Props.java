@@ -120,13 +120,12 @@ public final class Props {
         put(name, value, true);
     }
 
-    public void forEach(BiConsumer<String, String> action) {
+    public void forEach(BiConsumer<? super String, ? super String> action) {
         Objects.requireNonNull(action);
         this.data.forEach((k, v) -> action.accept(k, resolveValue(v)));
     }
 
-    @SuppressWarnings("unchecked")
-    public void extractTo(final Map target) {
+    public void extractTo(final Map<? super String, ? super String> target) {
         forEach(target::put);
     }
 

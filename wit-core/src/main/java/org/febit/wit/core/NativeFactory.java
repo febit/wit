@@ -71,7 +71,6 @@ public class NativeFactory {
         return getNativeMethodDeclare(clazz, methodName, paramTypes, -1, -1, checkAccess);
     }
 
-    @SuppressWarnings("unchecked")
     public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, Class[] paramTypes, int line, int column, boolean checkAccess) {
         if (checkAccess) {
             final String path = clazz.getName() + '.' + methodName;
@@ -112,7 +111,6 @@ public class NativeFactory {
         return getNativeConstructorDeclare(clazz, paramTypes, -1, -1, checkAccess);
     }
 
-    @SuppressWarnings("unchecked")
     public MethodDeclare getNativeConstructorDeclare(Class<?> clazz, Class[] paramTypes, int line, int column, boolean checkAccess) {
         if (checkAccess) {
             final String path = clazz.getName().concat(".<init>");

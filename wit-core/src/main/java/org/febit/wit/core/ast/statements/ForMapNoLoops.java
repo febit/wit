@@ -37,7 +37,6 @@ public final class ForMapNoLoops extends Statement {
         this.valueIndex = valueIndex;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object execute(final InternalContext context) {
         KeyIter iter = CollectionUtil.toKeyIter(mapExpr.execute(context), this);

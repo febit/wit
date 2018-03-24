@@ -73,12 +73,12 @@ public interface Context {
      *
      * @param map
      */
-    void exportTo(final Map map);
+    void exportTo(final Map<? super String, Object> map);
 
     /**
      *
      * @since 2.6.0
      * @param action
      */
-    void forEachVar(BiConsumer<String, Object> action);
+    void forEachVar(BiConsumer<? super String, Object> action);
 }

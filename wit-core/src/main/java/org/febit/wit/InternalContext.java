@@ -243,14 +243,15 @@ public final class InternalContext implements Context {
     /**
      * Get a bean's property.
      *
+     * @param <T>
      * @param bean
      * @param property
      * @return
      */
-    @SuppressWarnings("unchecked")
-    public Object getBeanProperty(final Object bean, final Object property) {
+    public <T> Object getBeanProperty(final T bean, final Object property) {
         if (bean != null) {
-            final GetResolver resolver = this.getters.unsafeGet(bean.getClass());
+            @SuppressWarnings("unchecked")
+            final GetResolver<T> resolver = this.getters.unsafeGet(bean.getClass());
             if (resolver != null) {
                 return resolver.get(bean, property);
             }
@@ -265,10 +266,10 @@ public final class InternalContext implements Context {
      * @param property
      * @param value
      */
-    @SuppressWarnings("unchecked")
-    public void setBeanProperty(final Object bean, final Object property, final Object value) {
+    public <T> void setBeanProperty(final T bean, final Object property, final Object value) {
         if (bean != null) {
-            final SetResolver resolver = this.setters.unsafeGet(bean.getClass());
+            @SuppressWarnings("unchecked")
+            final SetResolver<T> resolver = this.setters.unsafeGet(bean.getClass());
             if (resolver != null) {
                 resolver.set(bean, property, value);
                 return;
@@ -296,7 +297,7 @@ public final class InternalContext implements Context {
     }
 
     @SuppressWarnings("unchecked")
-    public void write(final Object obj) {
+    public <T> void write(final T obj) {
         if (obj == null) {
             return;
         }
@@ -305,7 +306,7 @@ public final class InternalContext implements Context {
             this.out.write((String) obj);
             return;
         }
-        final OutResolver resolver = this.outters.unsafeGet(type);
+        final OutResolver<T> resolver = this.outters.unsafeGet(type);
         if (resolver != null) {
             resolver.render(this.out, obj);
             return;
@@ -377,7 +378,7 @@ public final class InternalContext implements Context {
      * @param action
      */
     @Override
-    public void forEachVar(BiConsumer<String, Object> action) {
+    public void forEachVar(BiConsumer<? super String, Object> action) {
         Object[] varsPool = this.vars;
         getCurrentIndexer()
                 .forEach((name, index)
@@ -385,8 +386,7 @@ public final class InternalContext implements Context {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void exportTo(final Map map) {
+    public void exportTo(final Map<? super String, Object> map) {
         forEachVar(map::put);
     }
 

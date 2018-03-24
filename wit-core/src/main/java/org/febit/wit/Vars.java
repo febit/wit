@@ -18,6 +18,10 @@ public interface Vars {
     @FunctionalInterface
     public static interface Accepter {
 
+        default void set(Object key, Object value) {
+            set(String.valueOf(key), value);
+        }
+
         void set(String key, Object value);
     }
 
@@ -78,7 +82,7 @@ public interface Vars {
      *
      * @since 2.5.0
      */
-    public static Vars of(final Map<String, Object> map) {
+    public static Vars of(final Map<?, ?> map) {
         if (map == null || map.isEmpty()) {
             return Vars.EMPTY;
         }

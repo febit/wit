@@ -44,7 +44,6 @@ public final class ForMap extends Statement implements Loopable {
         this.valueIndex = valueIndex;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object execute(final InternalContext context) {
         KeyIter iter = CollectionUtil.toKeyIter(mapExpr.execute(context), this);
