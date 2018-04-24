@@ -15,14 +15,14 @@ This is a template engine, all writen in Java, **support Java 8+**.
 <dependency>
     <groupId>org.febit.wit</groupId>
     <artifactId>wit-core</artifactId>
-    <version>2.5.0-beta</version>
+    <version>2.6.0</version>
 </dependency>
 ```
 
 + or Gradle
 
 ```
-compile 'org.febit.wit:wit-core:2.5.0-beta'
+compile 'org.febit.wit:wit-core:2.6.0'
 ```
 
 + demo:
