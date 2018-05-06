@@ -1,13 +1,16 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.loaders.ResourceOffset;
 import org.febit.wit.util.LexerCharArrayWriter;
 
 %%
 %class Lexer
-%function _nextToken
+%function _parseNextToken
 %apiprivate
 %type Symbol
 %line
@@ -32,22 +35,48 @@ import org.febit.wit.util.LexerCharArrayWriter;
     private int stringColumn = 0;
     
     private int offsetLine = 0;
-    private int offsetColumnOfFirstLine= 0;
+    private int offsetColumnOfFirstLine = 0;
 
-    private Symbol pendding = null;
+    private final Deque<Symbol> penddingQueue = new ArrayDeque<>(8);
 
-    public Symbol nextToken() throws java.io.IOException {
-        Symbol next = this.pendding;
-        this.pendding = null;
-        while (next == null || next == SYM_NEW_LINE) {
-            next = _nextToken();
-        }
-        if (next.id == Tokens.EOF
-              || next.id == Tokens.SEMICOLON) {
+    private void addPenddingSymbols(Symbol... syms) {
+        this.penddingQueue.addAll(Arrays.asList(syms));
+    }
+
+    private Symbol _nextToken() throws java.io.IOException {
+        // check pedding queue first
+        Deque<Symbol> pendding = this.penddingQueue;
+        Symbol next = pendding.pollFirst();
+        if (next != null) {
             return next;
         }
+        // parse next when queque is empty
+        next = _parseNextToken();
+        if (next != null) {
+            return next;
+        }
+        // try again
+        return _nextToken();
+    }
+
+    public Symbol nextToken() throws java.io.IOException {
+        Symbol next;
+        
+        // skip new-line 
+        do {
+            next = _nextToken();
+        } while (next == SYM_NEW_LINE);
+
+        // EOF or SEMICOLON
+        if (next.id == Tokens.EOF
+                || next.id == Tokens.SEMICOLON) {
+            return next;
+        }
+        
+        // Others must check if next token is new-line or EOF
         Symbol nextAfter = _nextToken();
-        this.pendding = nextAfter;
+        // return back
+        this.penddingQueue.addFirst(nextAfter);
         if (nextAfter == SYM_NEW_LINE || nextAfter.id == Tokens.EOF) {
             next.isOnEdgeOfNewLine = true;
         }
