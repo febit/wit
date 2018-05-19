@@ -17,11 +17,13 @@ public final class TemplateAST {
     private final Statement[] statements;
     private final VariantIndexer[] indexers;
     private final int varSize;
+    private final long createdAt;
 
     public TemplateAST(VariantIndexer[] indexers, Statement[] statements, int varSize) {
         this.indexers = indexers;
         this.statements = statements;
         this.varSize = varSize;
+        this.createdAt = System.currentTimeMillis();
     }
 
     public InternalContext execute(Template template, final Out out, Vars rootParams) {
@@ -38,5 +40,9 @@ public final class TemplateAST {
         StatementUtil.execute(this.statements, newContext);
         //assert context.indexer = 0
         return newContext;
+    }
+
+    public long getCreatedAt() {
+        return this.createdAt;
     }
 }

@@ -27,8 +27,7 @@ public class Template {
     private final String name;
     private final Resource resource;
 
-    private TemplateAST ast;
-    private long lastModified;
+    private volatile TemplateAST ast;
 
     Template(Engine engine, String name, Resource resource) {
         this.engine = engine;
@@ -43,17 +42,23 @@ public class Template {
      * @throws ParseException
      */
     public void reload() {
-        parse(true);
+        prepareAst(true);
     }
 
-    private TemplateAST parse(boolean force) {
+    private TemplateAST prepareAst() {
+        final TemplateAST myAst = this.ast;
+        if (myAst != null
+                && !this.resource.isModified()) {
+            return myAst;
+        }
+        return prepareAst(false);
+    }
+
+    private synchronized TemplateAST prepareAst(boolean forceRebuild) {
         TemplateAST myAst = this.ast;
-        synchronized (this) {
-            if (force || myAst == null || this.resource.isModified()) {
-                myAst = Parser.parse(this);
-                this.ast = myAst;
-                this.lastModified = System.currentTimeMillis();
-            }
+        if (forceRebuild || myAst == null || this.resource.isModified()) {
+            myAst = Parser.parse(this);
+            this.ast = myAst;
         }
         return myAst;
     }
@@ -237,10 +242,7 @@ public class Template {
      */
     public Context merge(final Vars vars, final Out out) {
         try {
-            final TemplateAST myAst = this.ast;
-            return ((myAst == null || this.resource.isModified())
-                    ? parse(false)
-                    : myAst)
+            return prepareAst()
                     .execute(this, out, vars);
         } catch (Exception e) {
             throw completeException(e);
@@ -249,10 +251,7 @@ public class Template {
 
     public Context mergeToContext(final InternalContext context, final Vars vars) {
         try {
-            final TemplateAST myAst = this.ast;
-            return ((myAst == null || this.resource.isModified())
-                    ? parse(false)
-                    : myAst)
+            return prepareAst()
                     .execute(this, context, vars);
         } catch (Exception e) {
             throw completeException(e);
@@ -321,15 +320,20 @@ public class Template {
 
     public void reset() {
         this.ast = null;
-        this.lastModified = 0;
-    }
-
-    public long getLastModified() {
-        return this.lastModified;
     }
 
     /**
-     * Get engine engine.
+     * Get the time that the template AST was last modified.
+     *
+     * @return the last modified time, measured in milliseconds
+     */
+    public long getLastModified() {
+        final TemplateAST myAst = this.ast;
+        return myAst != null ? myAst.getCreatedAt() : -1L;
+    }
+
+    /**
+     * Get engine.
      *
      * @since 2.5.0
      * @return template engine
