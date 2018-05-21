@@ -18,12 +18,14 @@ public final class TemplateAST {
     private final VariantIndexer[] indexers;
     private final int varSize;
     private final long createdAt;
+    private final long resourceVersion;
 
-    public TemplateAST(VariantIndexer[] indexers, Statement[] statements, int varSize) {
+    public TemplateAST(VariantIndexer[] indexers, Statement[] statements, int varSize, long resourceVersion) {
         this.indexers = indexers;
         this.statements = statements;
         this.varSize = varSize;
         this.createdAt = System.currentTimeMillis();
+        this.resourceVersion = resourceVersion;
     }
 
     public InternalContext execute(Template template, final Out out, Vars rootParams) {
@@ -44,5 +46,9 @@ public final class TemplateAST {
 
     public long getCreatedAt() {
         return this.createdAt;
+    }
+
+    public long getResourceVersion() {
+        return resourceVersion;
     }
 }

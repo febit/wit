@@ -21,11 +21,6 @@ public class NotFoundResource implements Resource {
     }
 
     @Override
-    public boolean isModified() {
-        return false;
-    }
-
-    @Override
     public boolean exists() {
         return false;
     }
@@ -41,5 +36,10 @@ public class NotFoundResource implements Resource {
     @Override
     public boolean isCodeFirst() {
         return false;
+    }
+
+    @Override
+    public long version() {
+        return 0L;
     }
 }

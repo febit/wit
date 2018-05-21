@@ -12,33 +12,50 @@ import org.febit.wit.loaders.Resource;
  */
 public class LazyResource implements Resource {
 
-    protected final int timeout;
-    protected final Resource resource;
-    protected long expire;
+    public static class VersionStamp {
 
-    public LazyResource(Resource resource, int timeout) {
-        this.timeout = timeout;
-        this.resource = resource;
-        this.expire = 0;
+        public final long version;
+        public final long expire;
+
+        public VersionStamp(long version, long expire) {
+            this.version = version;
+            this.expire = expire;
+        }
     }
 
-    @Override
-    public boolean isModified() {
-        if (this.expire >= System.currentTimeMillis()) {
-            return false;
-        }
-        recalculateExpire();
-        return resource.isModified();
+    protected final long timeout;
+    protected final Resource resource;
+    protected volatile VersionStamp versionStamp;
+
+    public LazyResource(Resource resource, int timeout) {
+        this(resource, (long) timeout);
+    }
+
+    public LazyResource(Resource resource, long timeout) {
+        this.timeout = timeout;
+        this.resource = resource;
     }
 
     @Override
     public Reader openReader() throws IOException {
-        recalculateExpire();
+        // force clear version stamp
         return this.resource.openReader();
     }
 
-    private void recalculateExpire() {
-        this.expire = System.currentTimeMillis() + this.timeout;
+    protected long currentTimeMillis() {
+        return System.currentTimeMillis();
+    }
+
+    @Override
+    public long version() {
+        VersionStamp stamp = this.versionStamp;
+        if (stamp == null
+                || stamp.expire <= currentTimeMillis()) {
+            stamp = new VersionStamp(this.resource.version(),
+                    currentTimeMillis() + this.timeout);
+            this.versionStamp = stamp;
+        }
+        return stamp.version;
     }
 
     /**

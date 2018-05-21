@@ -161,6 +161,11 @@ abstract class AbstractParser {
     protected VariantManager varmgr;
 
     /**
+     * Caching current resource version.
+     */
+    private long lastResourceVersion;
+
+    /**
      * flag to stop parser
      */
     protected boolean goonParse;
@@ -427,6 +432,8 @@ abstract class AbstractParser {
         this.nextLabelIndex.set(1);
         Lexer lexer = null;
         try {
+            // get resource version before open it, may less than actual value.
+            this.lastResourceVersion = resource.version();
             //ISSUE: LexerProvider
             lexer = new Lexer(resource.openReader());
             lexer.setTrimCodeBlockBlankLine(myEngine.isTrimCodeBlockBlankLine());
@@ -747,7 +754,7 @@ abstract class AbstractParser {
         if (!loops.isEmpty()) {
             throw new ParseException("loop overflow: " + StringUtil.join(loops, ','));
         }
-        return new TemplateAST(varmgr.getIndexers(), statements, varmgr.getVarCount());
+        return new TemplateAST(varmgr.getIndexers(), statements, varmgr.getVarCount(), this.lastResourceVersion);
     }
 
     IBlock createIBlock(List<Statement> list, int varIndexer, int line, int column) {

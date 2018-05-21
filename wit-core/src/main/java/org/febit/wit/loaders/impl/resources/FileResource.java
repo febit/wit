@@ -17,7 +17,6 @@ public class FileResource implements Resource {
     protected final File file;
     protected final String encoding;
     protected final boolean codeFirst;
-    protected long lastModified;
 
     public FileResource(String path, String encoding) {
         this(path, encoding, false);
@@ -47,13 +46,12 @@ public class FileResource implements Resource {
     }
 
     @Override
-    public boolean isModified() {
-        return lastModified != file.lastModified();
+    public long version() {
+        return file.lastModified();
     }
 
     @Override
     public Reader openReader() throws IOException {
-        lastModified = file.lastModified();
         return new InputStreamReader(
                 new FileInputStream(file),
                 encoding);

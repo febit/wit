@@ -47,8 +47,7 @@ public class Template {
 
     private TemplateAST prepareAst() {
         final TemplateAST myAst = this.ast;
-        if (myAst != null
-                && !this.resource.isModified()) {
+        if (!isAstExpired(myAst)) {
             return myAst;
         }
         return prepareAst(false);
@@ -56,11 +55,18 @@ public class Template {
 
     private synchronized TemplateAST prepareAst(boolean forceRebuild) {
         TemplateAST myAst = this.ast;
-        if (forceRebuild || myAst == null || this.resource.isModified()) {
+        if (forceRebuild || isAstExpired(myAst)) {
             myAst = Parser.parse(this);
             this.ast = myAst;
         }
         return myAst;
+    }
+
+    private boolean isAstExpired(TemplateAST myAst) {
+        if (myAst == null) {
+            return true;
+        }
+        return myAst.getResourceVersion() != this.resource.version();
     }
 
     /**

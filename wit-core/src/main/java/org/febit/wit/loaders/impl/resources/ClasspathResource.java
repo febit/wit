@@ -51,11 +51,6 @@ public class ClasspathResource implements Resource {
     }
 
     @Override
-    public boolean isModified() {
-        return false;
-    }
-
-    @Override
     public Reader openReader() throws IOException {
         final InputStream in = ClassUtil.getDefaultClassLoader()
                 .getResourceAsStream(path);
@@ -71,5 +66,10 @@ public class ClasspathResource implements Resource {
     @Override
     public boolean isCodeFirst() {
         return codeFirst;
+    }
+
+    @Override
+    public long version() {
+        return 0L;
     }
 }

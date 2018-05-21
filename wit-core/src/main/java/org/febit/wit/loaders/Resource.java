@@ -6,8 +6,6 @@ import java.io.Reader;
 
 public interface Resource {
 
-    boolean isModified();
-
     /**
      * if exists this resource.
      *
@@ -25,4 +23,12 @@ public interface Resource {
     boolean isCodeFirst();
 
     Reader openReader() throws IOException;
+
+    /**
+     * Return current resource version.
+     *
+     * @return current resource version.
+     * @since 2.7.0
+     */
+    long version();
 }

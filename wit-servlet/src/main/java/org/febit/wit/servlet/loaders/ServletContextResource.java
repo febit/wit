@@ -46,11 +46,6 @@ public class ServletContextResource implements Resource {
     }
 
     @Override
-    public boolean isModified() {
-        return false;
-    }
-
-    @Override
     public Reader openReader() throws IOException {
         final InputStream in = servletContext.getResourceAsStream(path);
         if (in != null) {
@@ -79,5 +74,10 @@ public class ServletContextResource implements Resource {
     @Override
     public boolean isCodeFirst() {
         return codeFirst;
+    }
+
+    @Override
+    public long version() {
+        return 0L;
     }
 }
