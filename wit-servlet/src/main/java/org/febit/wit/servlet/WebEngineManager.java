@@ -15,11 +15,12 @@ import org.febit.wit.Vars;
  */
 public class WebEngineManager {
 
-    private String configPath = "/WEB-INF/webpage.wim";
-
     private final ServletContextProvider servletContextProvider;
+
+    private String configPath = "/WEB-INF/webpage.wim";
     private Map<String, Object> extraProperties;
-    private Engine engine;
+
+    private volatile Engine engine;
 
     public WebEngineManager(ServletContextProvider servletContextAware) {
         this.servletContextProvider = servletContextAware;
@@ -97,6 +98,7 @@ public class WebEngineManager {
                 .merge(parameters, response.getOutputStream());
     }
 
+    @FunctionalInterface
     public static interface ServletContextProvider {
 
         ServletContext getServletContext();
