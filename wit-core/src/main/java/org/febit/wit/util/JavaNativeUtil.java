@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.febit.wit.Engine;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exceptions.AmbiguousMethodException;
@@ -35,6 +36,14 @@ public class JavaNativeUtil {
     private JavaNativeUtil() {
     }
 
+    public static int addStaticMethods(Engine engine, Class<?> type) {
+        return addStaticMethods(engine.getGlobalManager(), engine.getNativeFactory(), type, false);
+    }
+
+    public static int addStaticMethods(Engine engine, Class<?> type, boolean skipConflict) {
+        return addStaticMethods(engine.getGlobalManager(), engine.getNativeFactory(), type, skipConflict);
+    }
+
     public static int addStaticMethods(GlobalManager manager,
             NativeFactory nativeFactory,
             Class<?> type) {
@@ -55,6 +64,14 @@ public class JavaNativeUtil {
         methodMap.forEach((name, methods) -> manager.setConst(name,
                 nativeFactory.createNativeMethodDeclare(methods)));
         return methodMap.size();
+    }
+
+    public static int addConstFields(Engine engine, Class<?> type) {
+        return addConstFields(engine.getGlobalManager(), engine.getNativeFactory(), type, false);
+    }
+
+    public static int addConstFields(Engine engine, Class<?> type, boolean skipConflict) {
+        return addConstFields(engine.getGlobalManager(), engine.getNativeFactory(), type, skipConflict);
     }
 
     public static int addConstFields(
