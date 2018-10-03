@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.exceptions;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import org.febit.wit.Template;
 import org.febit.wit.util.ExceptionUtil;
 import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
 /**
- *
  * @author zqq90
  */
 public abstract class TemplateException extends RuntimeException {
@@ -17,7 +17,7 @@ public abstract class TemplateException extends RuntimeException {
     protected Template template;
 
     public TemplateException(String message) {
-        super(message);
+        this(message, null);
     }
 
     public TemplateException(Throwable cause) {
@@ -25,7 +25,7 @@ public abstract class TemplateException extends RuntimeException {
     }
 
     public TemplateException(String message, Throwable cause) {
-        super(message, cause);
+        super(message, cause, true, false);
         if (cause instanceof TemplateException) {
             ((TemplateException) cause).isCaused = true;
         }
@@ -56,7 +56,7 @@ public abstract class TemplateException extends RuntimeException {
         }
     }
 
-    protected void printStackTrace(PrintStreamOrWriter out) {
+    private void printStackTrace(PrintStreamOrWriter out) {
         String prefix = isCaused ? "\t" : "";
         out.print(prefix).print(this).print('\n');
         if (this.template != null) {
