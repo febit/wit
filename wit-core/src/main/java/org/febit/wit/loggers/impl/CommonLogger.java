@@ -53,7 +53,6 @@ public class CommonLogger extends AbstractLogger {
                 return;
             case LEVEL_OFF:
             default:
-                return;
         }
     }
 
@@ -74,7 +73,6 @@ public class CommonLogger extends AbstractLogger {
                 return;
             case LEVEL_OFF:
             default:
-                return;
         }
     }
 }

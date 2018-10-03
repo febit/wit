@@ -109,10 +109,9 @@ public class StringUtil {
                 j--;
             }
             int escapeCharcount = ndx - 1 - j;
-            result.append(template.substring(i,
-                    escapeCharcount > 0
-                            ? ndx - ((escapeCharcount + 1) >> 1)
-                            : ndx));
+            result.append(template, i, escapeCharcount > 0
+                    ? ndx - ((escapeCharcount + 1) >> 1)
+                    : ndx);
             if ((escapeCharcount & 1) == 1) {
                 result.append('{');
                 i = ndx + 1;

@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.exceptions.NotFunctionException;
@@ -17,9 +14,13 @@ import org.febit.wit.resolvers.SetResolver;
 import org.febit.wit.util.ClassMap;
 import org.febit.wit.util.InternedEncoding;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 /**
  * Internal Context.
- *
+ * <p>
  * store variables and access global components for AST-nodes
  *
  * @author zqq90
@@ -117,7 +118,6 @@ public final class InternalContext implements Context {
     }
 
     /**
-     *
      * @param indexers
      * @param localContext
      * @param varSize
@@ -143,7 +143,7 @@ public final class InternalContext implements Context {
 
     /**
      * Create a peer-context used by include/import.
-     *
+     * <p>
      * Only share locals and out
      *
      * @param template
@@ -200,7 +200,6 @@ public final class InternalContext implements Context {
 
     /**
      * Unmark loops.
-     *
      */
     public void resetLoop() {
         this.returned = null;
@@ -250,8 +249,7 @@ public final class InternalContext implements Context {
      */
     public <T> Object getBeanProperty(final T bean, final Object property) {
         if (bean != null) {
-            @SuppressWarnings("unchecked")
-            final GetResolver<T> resolver = this.getters.unsafeGet(bean.getClass());
+            @SuppressWarnings("unchecked") final GetResolver<T> resolver = this.getters.unsafeGet(bean.getClass());
             if (resolver != null) {
                 return resolver.get(bean, property);
             }
@@ -269,7 +267,7 @@ public final class InternalContext implements Context {
     public <T> void setBeanProperty(final T bean, final Object property, final Object value) {
         if (bean != null) {
             @SuppressWarnings("unchecked")
-            final SetResolver<T> resolver = this.setters.unsafeGet(bean.getClass());
+            SetResolver<T> resolver = this.setters.unsafeGet(bean.getClass());
             if (resolver != null) {
                 resolver.set(bean, property, value);
                 return;
@@ -373,9 +371,8 @@ public final class InternalContext implements Context {
     }
 
     /**
-     *
-     * @since 2.6.0
      * @param action
+     * @since 2.6.0
      */
     @Override
     public void forEachVar(BiConsumer<? super String, Object> action) {

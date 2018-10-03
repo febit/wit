@@ -74,7 +74,7 @@ public class BeanUtilTest {
 
         foo.setBool(false);
         BeanUtil.set(foo, "bool", true);
-        assertEquals(true, foo.isBool());
+        assertTrue(foo.isBool());
 
     }
 }

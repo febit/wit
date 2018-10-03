@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exceptions.IllegalConfigException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
@@ -12,14 +9,13 @@ import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.resolvers.ResolverManager;
-import org.febit.wit.util.InternedEncoding;
-import org.febit.wit.util.Petite;
-import org.febit.wit.util.Props;
-import org.febit.wit.util.PropsUtil;
-import org.febit.wit.util.StringUtil;
+import org.febit.wit.util.*;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- *
  * @author zqq90
  */
 public class Engine {
@@ -51,8 +47,8 @@ public class Engine {
         final Vars params = Vars.of(
                 new String[]{"GLOBAL", "CONST"},
                 new Object[]{
-                    this.globalManager.getGlobalBag(),
-                    this.globalManager.getConstBag()
+                        this.globalManager.getGlobalBag(),
+                        this.globalManager.getConstBag()
                 }
         );
         for (String templateName : StringUtil.toArray(this.inits)) {
@@ -65,7 +61,7 @@ public class Engine {
      * get template by parent template's name and it's relative name.
      *
      * @param parentName parent template's name
-     * @param name template's relative name
+     * @param name       template's relative name
      * @return Template
      * @throws ResourceNotFoundException
      */

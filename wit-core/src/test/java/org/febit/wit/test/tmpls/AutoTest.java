@@ -18,7 +18,6 @@ import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.core.ast.expressions.BreakPointExpression;
 import org.febit.wit.core.ast.expressions.DirectValue;
-import org.febit.wit.debug.BreakPointListener;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
@@ -64,7 +63,7 @@ public class AutoTest {
     }
 
     @Test
-    public void test() throws ResourceNotFoundException, IOException, ParseException, ScriptRuntimeException {
+    public void test() throws IOException, ParseException, ScriptRuntimeException {
 
         breakpointCount.reset();
         Map<String, String> templates = collectAutoTestTemplates();
@@ -112,12 +111,8 @@ public class AutoTest {
     public void mergeTemplate(String templatePath, Out out) throws ResourceNotFoundException {
         System.out.println("Auto Test: " + templatePath);
         Template template = EngineManager.getEngine().getTemplate(templatePath);
-        try {
-            Context context = template.debug(out, (BreakPointListener) this::onBreakPoint);
-            System.out.println("\tassert count: " + context.getLocal(AssertGlobalRegister.ASSERT_COUNT_KEY));
-        } catch (ScriptRuntimeException e) {
-            throw e;
-        }
+        Context context = template.debug(out, this::onBreakPoint);
+        System.out.println("\tassert count: " + context.getLocal(AssertGlobalRegister.ASSERT_COUNT_KEY));
     }
 
     public void onBreakPoint(Object label, InternalContext context, Statement statement, Object result) {

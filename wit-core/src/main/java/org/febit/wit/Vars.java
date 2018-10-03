@@ -4,19 +4,18 @@ package org.febit.wit;
 import java.util.Map;
 
 /**
- *
  * @author zqq90
  * @since 2.4.0
  */
 @FunctionalInterface
 public interface Vars {
 
-    public static final Vars EMPTY = accepter -> {
+    Vars EMPTY = accepter -> {
         // Do nothing
     };
 
     @FunctionalInterface
-    public static interface Accepter {
+    interface Accepter {
 
         default void set(Object key, Object value) {
             set(String.valueOf(key), value);
@@ -26,10 +25,9 @@ public interface Vars {
     }
 
     /**
-     *
      * @since 2.5.0
      */
-    public static Vars of(final Vars v1, final Vars v2) {
+    static Vars of(final Vars v1, final Vars v2) {
         return accepter -> {
             v1.exportTo(accepter);
             v2.exportTo(accepter);
@@ -37,10 +35,9 @@ public interface Vars {
     }
 
     /**
-     *
      * @since 2.5.0
      */
-    public static Vars of(final Vars... values) {
+    static Vars of(final Vars... values) {
         if (values == null || values.length == 0) {
             return Vars.EMPTY;
         }
@@ -52,18 +49,16 @@ public interface Vars {
     }
 
     /**
-     *
      * @since 2.5.0
      */
-    public static Vars of(final String key, final Object value) {
+    static Vars of(final String key, final Object value) {
         return accepter -> accepter.set(key, value);
     }
 
     /**
-     *
      * @since 2.5.0
      */
-    public static Vars of(final String[] keys, final Object[] values) {
+    static Vars of(final String[] keys, final Object[] values) {
         if (keys == null || values == null) {
             return Vars.EMPTY;
         }
@@ -79,10 +74,9 @@ public interface Vars {
     }
 
     /**
-     *
      * @since 2.5.0
      */
-    public static Vars of(final Map<?, ?> map) {
+    static Vars of(final Map<?, ?> map) {
         if (map == null || map.isEmpty()) {
             return Vars.EMPTY;
         }

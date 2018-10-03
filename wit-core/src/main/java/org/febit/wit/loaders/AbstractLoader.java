@@ -57,7 +57,7 @@ public abstract class AbstractLoader implements Loader {
     protected String getRealPath(final String name) {
         return this.root != null
                 ? this.root.concat(name)
-                : name.substring(1, name.length());
+                : name.substring(1);
     }
 
     /**

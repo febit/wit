@@ -1,19 +1,19 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import java.util.Map;
-import java.util.function.BiConsumer;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.InternalVoid;
 
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 /**
- *
  * @author zqq90
  */
 public interface Context {
 
-    final Object VOID = InternalVoid.VOID;
+    Object VOID = InternalVoid.VOID;
 
     /**
      * Get a variable by name.
@@ -61,10 +61,10 @@ public interface Context {
     /**
      * Export a function by name.
      *
-     * @since 1.5.0
      * @param name
      * @return
      * @throws NotFunctionException
+     * @since 1.5.0
      */
     Function exportFunction(String name) throws NotFunctionException;
 
@@ -76,9 +76,8 @@ public interface Context {
     void exportTo(final Map<? super String, Object> map);
 
     /**
-     *
-     * @since 2.6.0
      * @param action
+     * @since 2.6.0
      */
     void forEachVar(BiConsumer<? super String, Object> action);
 }

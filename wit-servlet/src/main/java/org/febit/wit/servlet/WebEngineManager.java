@@ -99,8 +99,7 @@ public class WebEngineManager {
     }
 
     @FunctionalInterface
-    public static interface ServletContextProvider {
-
+    public interface ServletContextProvider {
         ServletContext getServletContext();
     }
 

@@ -118,7 +118,7 @@ public class BeanUtil {
         @Override
         public void set(Object bean, Object value) throws BeanException {
             try {
-                this.method.invoke(bean, new Object[]{value});
+                this.method.invoke(bean, value);
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 throw new BeanException(ex.toString(), ex);
             }

@@ -61,7 +61,7 @@ public class AsmResolverManagerTest {
     }
 
     @Test
-    public void testPrivateClass() throws Exception {
+    public void testPrivateClass() {
         Exception exception = null;
         try {
             assertNull(AsmResolverManager.createResolverClass(Book.class).newInstance());
@@ -79,7 +79,7 @@ public class AsmResolverManagerTest {
 
         AsmResolver resolver = (AsmResolver) AsmResolverManager.createResolverClass(Foo.class).newInstance();
 
-        assertEquals(null, resolver.getMatchClass());
+        assertNull(resolver.getMatchClass());
 
         int i = 0;
         assertEquals(resolver.get(foo, "f" + (i + 1)), "foo:f1");

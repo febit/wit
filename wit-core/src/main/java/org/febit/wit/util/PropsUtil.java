@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -97,7 +98,7 @@ public class PropsUtil {
             if (in == null) {
                 throw new IllegalConfigException("Not found props: ".concat(inputResolver.getViewPath(path)));
             }
-            try (Reader reader = new InputStreamReader(in, "UTF-8")) {
+            try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
                 charsBuf.reset();
                 int read;
                 while ((read = reader.read(buf)) >= 0) {
@@ -129,7 +130,7 @@ public class PropsUtil {
         }
     }
 
-    public static interface InputResolver {
+    public interface InputResolver {
 
         InputStream openInputStream(String path);
 

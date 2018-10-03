@@ -1,8 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import java.io.OutputStream;
-import java.io.Writer;
 import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.impl.DiscardOut;
@@ -10,6 +8,9 @@ import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.InternedEncoding;
+
+import java.io.OutputStream;
+import java.io.Writer;
 
 /**
  * Exported function.

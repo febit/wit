@@ -2,6 +2,8 @@
 package org.febit.wit.util.charset;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -11,9 +13,9 @@ import org.junit.Test;
  */
 public class UTF8Test {
 
-    public boolean matchEncode(String string) throws UnsupportedEncodingException {
-        byte[] buffer = new byte[(int) (string.length() * UTF8.MAX_BYTES_PER_CHAR)];
-        byte[] expr = string.getBytes("utf-8");
+    public boolean matchEncode(String string) {
+        byte[] buffer = new byte[string.length() * UTF8.MAX_BYTES_PER_CHAR];
+        byte[] expr = string.getBytes(StandardCharsets.UTF_8);
         int used = UTF8.encode(buffer, string.toCharArray(), 0, string.length());
         if (used != expr.length) {
             return false;
@@ -26,10 +28,10 @@ public class UTF8Test {
         return true;
     }
 
-    public boolean matchDencode(String string) throws UnsupportedEncodingException {
+    public boolean matchDencode(String string) {
         char[] expr = string.toCharArray();
-        byte[] src = string.getBytes("utf-8");
-        char[] buffer = new char[(int) (src.length)];
+        byte[] src = string.getBytes(StandardCharsets.UTF_8);
+        char[] buffer = new char[src.length];
         int used = UTF8.decode(src, 0, src.length, buffer);
         if (used != expr.length) {
             return false;

@@ -26,7 +26,7 @@ public class ImportPart {
         this.line = line;
         this.column = column;
         this.expr = StatementUtil.optimize(expr);
-        this.paramsExpr = StatementUtil.optimize(paramsExpr);;
+        this.paramsExpr = StatementUtil.optimize(paramsExpr);
         this.exportNameList = new ArrayList<>();
         this.toResetableValueList = new ArrayList<>();
     }

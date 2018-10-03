@@ -74,7 +74,7 @@ class ASMUtil {
         if (c.isArray()) {
             return internalName;
         }
-        return new StringBuffer(internalName.length() + 2).append('L').append(internalName).append(';').toString();
+        return "L" + internalName + ';';
     }
 
     static void visitBoxIfNeed(final MethodWriter m, final Class<?> type) {

@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.Map;
 import org.febit.wit.core.Parser;
 import org.febit.wit.core.ast.TemplateAST;
 import org.febit.wit.debug.BreakPointListener;
@@ -17,8 +14,11 @@ import org.febit.wit.io.impl.WriterOut;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.util.InternedEncoding;
 
+import java.io.OutputStream;
+import java.io.Writer;
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public class Template {
@@ -38,8 +38,8 @@ public class Template {
     /**
      * Reload this template.
      *
-     * @since 1.4.0
      * @throws ParseException
+     * @since 1.4.0
      */
     public void reload() {
         prepareAst(true);
@@ -189,11 +189,11 @@ public class Template {
     /**
      * Merge this template.
      *
-     * @since 1.4.0
      * @param out
      * @return Context
      * @throws ScriptRuntimeException
      * @throws ParseException
+     * @since 1.4.0
      */
     public Context merge(final Out out) {
         return merge(Vars.EMPTY, out);
@@ -202,10 +202,10 @@ public class Template {
     /**
      * Merge this template, and discard outputs.
      *
-     * @since 2.4.0
      * @return Context
      * @throws ScriptRuntimeException
      * @throws ParseException
+     * @since 2.4.0
      */
     public Context merge() {
         return merge(Vars.EMPTY);
@@ -214,11 +214,11 @@ public class Template {
     /**
      * Merge this template, and discard outputs.
      *
-     * @since 2.4.0
      * @param vars
      * @return Context
      * @throws ScriptRuntimeException
      * @throws ParseException
+     * @since 2.4.0
      */
     public Context merge(final Map<String, Object> vars) {
         return merge(Vars.of(vars));
@@ -227,11 +227,11 @@ public class Template {
     /**
      * Merge this template, and discard outputs.
      *
-     * @since 2.4.0
      * @param vars
      * @return Context
      * @throws ScriptRuntimeException
      * @throws ParseException
+     * @since 2.4.0
      */
     public Context merge(final Vars vars) {
         return merge(vars, DiscardOut.INSTANCE);
@@ -286,12 +286,12 @@ public class Template {
     /**
      * Debug this template, and discard outputs.
      *
-     * @since 2.4.0
      * @param vars
      * @param listener
      * @return Context
      * @throws ScriptRuntimeException
      * @throws ParseException
+     * @since 2.4.0
      */
     public Context debug(final Vars vars, final BreakPointListener listener) {
         return debug(vars, DiscardOut.INSTANCE, listener);
@@ -300,12 +300,12 @@ public class Template {
     /**
      * Debug this template, and discard outputs.
      *
-     * @since 2.5.0
      * @param out
      * @param listener
      * @return Context
      * @throws ScriptRuntimeException
      * @throws ParseException
+     * @since 2.5.0
      */
     public Context debug(final Out out, final BreakPointListener listener) {
         return debug(Vars.EMPTY, out, listener);
@@ -314,11 +314,11 @@ public class Template {
     /**
      * Debug this template, and discard outputs.
      *
-     * @since 2.5.0
      * @param listener
      * @return Context
      * @throws ScriptRuntimeException
      * @throws ParseException
+     * @since 2.5.0
      */
     public Context debug(final BreakPointListener listener) {
         return debug(Vars.EMPTY, DiscardOut.INSTANCE, listener);
@@ -341,8 +341,8 @@ public class Template {
     /**
      * Get engine.
      *
-     * @since 2.5.0
      * @return template engine
+     * @since 2.5.0
      */
     public Engine getEngine() {
         return engine;
@@ -351,8 +351,8 @@ public class Template {
     /**
      * Get template name.
      *
-     * @since 2.5.0
      * @return template name
+     * @since 2.5.0
      */
     public String getName() {
         return name;
@@ -361,8 +361,8 @@ public class Template {
     /**
      * Get resource for this template.
      *
-     * @since 2.5.0
      * @return resource
+     * @since 2.5.0
      */
     public Resource getResource() {
         return resource;
@@ -378,7 +378,7 @@ public class Template {
         if (obj == this) {
             return true;
         }
-        if (obj == null || !(obj instanceof Template)) {
+        if (!(obj instanceof Template)) {
             return false;
         }
         Template other = (Template) obj;

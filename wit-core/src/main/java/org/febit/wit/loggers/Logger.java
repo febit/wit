@@ -7,35 +7,35 @@ package org.febit.wit.loggers;
  */
 public interface Logger {
 
-    public boolean isDebugEnabled();
+    boolean isDebugEnabled();
 
-    public void debug(String msg);
+    void debug(String msg);
 
-    public void debug(String format, Object... args);
+    void debug(String format, Object... args);
 
-    public void debug(String msg, Throwable t);
+    void debug(String msg, Throwable t);
 
-    public boolean isInfoEnabled();
+    boolean isInfoEnabled();
 
-    public void info(String msg);
+    void info(String msg);
 
-    public void info(String format, Object... args);
+    void info(String format, Object... args);
 
-    public void info(String msg, Throwable t);
+    void info(String msg, Throwable t);
 
-    public boolean isWarnEnabled();
+    boolean isWarnEnabled();
 
-    public void warn(String msg);
+    void warn(String msg);
 
-    public void warn(String format, Object... args);
+    void warn(String format, Object... args);
 
-    public void warn(String msg, Throwable t);
+    void warn(String msg, Throwable t);
 
-    public boolean isErrorEnabled();
+    boolean isErrorEnabled();
 
-    public void error(String msg);
+    void error(String msg);
 
-    public void error(String format, Object... args);
+    void error(String format, Object... args);
 
-    public void error(String msg, Throwable t);
+    void error(String msg, Throwable t);
 }

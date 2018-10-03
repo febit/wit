@@ -91,7 +91,7 @@ public class JavaNativeUtilTest {
     }
 
     @Test
-    public void testMix() throws NoSuchMethodException {
+    public void testMix() {
 
         assertEquals(methodPool.get("mixStaticEmpty"),
                 matchMix());
@@ -130,7 +130,7 @@ public class JavaNativeUtilTest {
         assertEquals(Methods.class.getConstructor(List.class), matchConstructor(List.class));
         assertEquals(Methods.class.getConstructor(List.class), matchConstructor(LinkedList.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class), matchConstructor(ArrayList.class));
-        assertEquals(null, matchConstructor(ArrayList.class, Boolean.class));
+        assertNull(matchConstructor(ArrayList.class, Boolean.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class, String.class),
                 matchConstructor(ArrayList.class, String.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class, String.class),

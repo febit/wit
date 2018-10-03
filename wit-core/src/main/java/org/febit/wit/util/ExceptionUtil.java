@@ -47,7 +47,7 @@ public class ExceptionUtil {
         };
     }
 
-    public static interface PrintStreamOrWriter {
+    public interface PrintStreamOrWriter {
 
         PrintStreamOrWriter print(Object o);
 

@@ -27,7 +27,7 @@ public class LazyResourceTest {
         }
 
         @Override
-        public Reader openReader() throws IOException {
+        public Reader openReader() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
