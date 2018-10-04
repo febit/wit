@@ -118,10 +118,12 @@ public final class InternalContext implements Context {
     }
 
     /**
-     * @param indexers
-     * @param localContext
-     * @param varSize
-     * @return
+     * Create a sub context.
+     *
+     * @param indexers indexers
+     * @param localContext local context
+     * @param varSize var size
+     * @return a new sub context
      */
     public InternalContext createSubContext(VariantIndexer[] indexers, InternalContext localContext, int varSize) {
         Object[][] myParentScopes = this.parentScopes;
@@ -136,7 +138,6 @@ public final class InternalContext implements Context {
         }
 
         InternalContext newContext = new InternalContext(template, localContext.out, Vars.EMPTY, indexers, varSize, scopes);
-        //set the gaven localContext
         newContext.localContext = localContext;
         return newContext;
     }
@@ -146,10 +147,10 @@ public final class InternalContext implements Context {
      * <p>
      * Only share locals and out
      *
-     * @param template
-     * @param indexers
-     * @param varSize
-     * @return
+     * @param template template
+     * @param indexers indexers
+     * @param varSize var size
+     * @return a new peer context
      */
     public InternalContext createPeerContext(Template template, VariantIndexer[] indexers, int varSize) {
         InternalContext newContext = new InternalContext(template, this.out, Vars.EMPTY, indexers, varSize, null);
@@ -160,8 +161,8 @@ public final class InternalContext implements Context {
     /**
      * if gaven loop label matched current loop.
      *
-     * @param label
-     * @return
+     * @param label label id
+     * @return true if match
      */
     public boolean matchLabel(int label) {
         return this.label == 0 || this.label == label;
@@ -170,7 +171,7 @@ public final class InternalContext implements Context {
     /**
      * Mark a break-loop.
      *
-     * @param label
+     * @param label label id
      */
     public void breakLoop(int label) {
         this.label = label;
@@ -180,7 +181,7 @@ public final class InternalContext implements Context {
     /**
      * Mark a continue-loop.
      *
-     * @param label
+     * @param label label id
      */
     public void continueLoop(int label) {
         this.label = label;
@@ -210,7 +211,7 @@ public final class InternalContext implements Context {
     /**
      * Unmark loops, is a break and match the label.
      *
-     * @param label
+     * @param label label id
      */
     public void resetBreakLoopIfMatch(int label) {
         if (this.loopType == LoopInfo.BREAK
@@ -242,10 +243,10 @@ public final class InternalContext implements Context {
     /**
      * Get a bean's property.
      *
-     * @param <T>
-     * @param bean
-     * @param property
-     * @return
+     * @param <T> bean type
+     * @param bean bean
+     * @param property property
+     * @return value
      */
     public <T> Object getBeanProperty(final T bean, final Object property) {
         if (bean != null) {
@@ -260,9 +261,9 @@ public final class InternalContext implements Context {
     /**
      * Set a bean's property.
      *
-     * @param bean
-     * @param property
-     * @param value
+     * @param bean bean
+     * @param property property
+     * @param value value
      */
     public <T> void setBeanProperty(final T bean, final Object property, final Object value) {
         if (bean != null) {
@@ -370,10 +371,6 @@ public final class InternalContext implements Context {
         return this.indexers[this.indexer];
     }
 
-    /**
-     * @param action
-     * @since 2.6.0
-     */
     @Override
     public void forEachVar(BiConsumer<? super String, Object> action) {
         Object[] varsPool = this.vars;

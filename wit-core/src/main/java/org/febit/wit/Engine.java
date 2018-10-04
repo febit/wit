@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
+ * Script engine.
+ *
  * @author zqq90
  */
 public class Engine {
@@ -44,16 +46,12 @@ public class Engine {
         if (this.inits == null) {
             return;
         }
-        final Vars params = Vars.of(
-                new String[]{"GLOBAL", "CONST"},
-                new Object[]{
-                        this.globalManager.getGlobalBag(),
-                        this.globalManager.getConstBag()
-                }
-        );
         for (String templateName : StringUtil.toArray(this.inits)) {
             this.logger.info("Merge init template: {}", templateName);
-            this.getTemplate(templateName).merge(params);
+            this.getTemplate(templateName).merge(accepter -> {
+                accepter.set("GLOBAL", this.globalManager.getGlobalBag());
+                accepter.set("CONST", this.globalManager.getConstBag());
+            });
         }
     }
 
@@ -63,7 +61,7 @@ public class Engine {
      * @param parentName parent template's name
      * @param name       template's relative name
      * @return Template
-     * @throws ResourceNotFoundException
+     * @throws ResourceNotFoundException if resource not found
      */
     public Template getTemplate(final String parentName, final String name) throws ResourceNotFoundException {
         return getTemplate(this.loader.concat(parentName, name));
@@ -74,7 +72,7 @@ public class Engine {
      *
      * @param name template's name
      * @return Template
-     * @throws ResourceNotFoundException
+     * @throws ResourceNotFoundException if resource not found
      */
     public Template getTemplate(final String name) throws ResourceNotFoundException {
         final Template template = this.cachedTemplates.get(name);
@@ -87,8 +85,8 @@ public class Engine {
     /**
      * if exists this resource.
      *
-     * @param resourceName
-     * @return boolean
+     * @param resourceName resource name
+     * @return if exists
      * @since 1.4.1
      */
     public boolean exists(final String resourceName) {
@@ -101,13 +99,13 @@ public class Engine {
     }
 
     protected Template createTemplateIfAbsent(final String name) throws ResourceNotFoundException {
-        Template template;
         final Loader myLoader = this.loader;
         final String normalizedName = myLoader.normalize(name);
         if (normalizedName == null) {
             //if normalized-name is null means not found resource.
             throw new ResourceNotFoundException("Illegal template path: ".concat(name));
         }
+        Template template;
         template = this.cachedTemplates.get(normalizedName);
         if (template != null) {
             return template;
@@ -127,9 +125,9 @@ public class Engine {
     /**
      * Get component or bean by type.
      *
-     * @param <T>
-     * @param type
-     * @return Component
+     * @param <T>  component type
+     * @param type component class
+     * @return component
      * @since 2.0
      */
     public <T> T get(final Class<T> type) {
@@ -139,7 +137,7 @@ public class Engine {
     /**
      * Get bean by name.
      *
-     * @param name
+     * @param name bean name
      * @return bean
      * @since 2.0
      */
@@ -210,7 +208,7 @@ public class Engine {
     /**
      * Create a Engine with default configPath.
      *
-     * @return
+     * @return Engine
      * @since 1.5.0
      */
     public static Engine create() {
@@ -220,8 +218,8 @@ public class Engine {
     /**
      * Create a Engine with given configPath.
      *
-     * @param configPath
-     * @return
+     * @param configPath config path
+     * @return Engine
      * @since 1.5.0
      */
     public static Engine create(final String configPath) {
@@ -231,9 +229,9 @@ public class Engine {
     /**
      * Create a Engine with given configPath and extra-parameters.
      *
-     * @param configPath
-     * @param parameters
-     * @return
+     * @param configPath config path
+     * @param parameters parameters map
+     * @return Engine
      * @since 1.5.0
      */
     public static Engine create(final String configPath, final Map<String, Object> parameters) {
@@ -243,9 +241,9 @@ public class Engine {
     /**
      * Create a Engine with given baseProps and extra-parameters.
      *
-     * @param props
-     * @param parameters
-     * @return
+     * @param props      props
+     * @param parameters parameters map
+     * @return Engine
      * @since 1.5.0
      */
     public static Engine create(final Props props, final Map<String, Object> parameters) {
