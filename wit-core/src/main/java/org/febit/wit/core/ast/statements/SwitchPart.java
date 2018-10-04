@@ -43,11 +43,11 @@ public class SwitchPart {
         // else use last as current for this key
         if (key == null) {
             if (defaultStatement != null) {
-                throw new ParseException("multi default block in one swith", line, column);
+                throw new ParseException("multi default block in one switch", line, column);
             }
             defaultStatement = current;
         } else if (caseMap.containsKey(key)) {
-            throw new ParseException("duplicated case value in one swith", line, column);
+            throw new ParseException("duplicated case value in one switch", line, column);
         }
 
         caseMap.put(key, current);

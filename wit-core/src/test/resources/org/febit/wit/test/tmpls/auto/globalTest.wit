@@ -11,7 +11,7 @@
 }
 
 {
-    // cutsom definded in `TestGlobalRegister`
+    // custom defined in `TestGlobalRegister`
 
     assertEquals("MY_CONST", MY_CONST);
     assertEquals("MY_CONST_2", MY_CONST_2);
@@ -22,7 +22,7 @@
     assertEquals("a new value", MY_GLOBAL);
 }
 {
-    // definded in ConstMethods
+    // defined in ConstMethods
     assertEquals("CONST_FIELD", CONST_FIELD);
     assertEquals("CONST_METHOD", CONST_METHOD());
 
@@ -46,7 +46,7 @@
     assertEquals(2, const2Size(me,{"name":"wit","say":"hi!"}));
 }
 {
-    // custom definded in "/init.wit"
+    // custom defined in "/init.wit"
 
     assertEquals($GLOBAL["one"], 1);
     assertEquals($GLOBAL["string"], "string");
@@ -61,7 +61,7 @@
 }
 
 {
-    // custom definded in "/init2.wit"
+    // custom defined in "/init2.wit"
 
     assertEquals($GLOBAL["two"], 2);
     assertEquals($GLOBAL["string2"], "string2");

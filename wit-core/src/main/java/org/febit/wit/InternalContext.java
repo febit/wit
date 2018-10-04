@@ -87,7 +87,7 @@ public final class InternalContext implements Context {
     private InternalContext localContext;
 
     private final ResolverManager resolverManager;
-    private final ClassMap<OutResolver> outters;
+    private final ClassMap<OutResolver> outers;
     private final ClassMap<GetResolver> getters;
     private final ClassMap<SetResolver> setters;
 
@@ -103,7 +103,7 @@ public final class InternalContext implements Context {
         //resolvers
         ResolverManager resolverMgr = template.getEngine().getResolverManager();
         this.resolverManager = resolverMgr;
-        this.outters = resolverMgr.outters;
+        this.outers = resolverMgr.outers;
         this.getters = resolverMgr.getters;
         this.setters = resolverMgr.setters;
 
@@ -305,7 +305,7 @@ public final class InternalContext implements Context {
             this.out.write((String) obj);
             return;
         }
-        final OutResolver<T> resolver = this.outters.unsafeGet(type);
+        final OutResolver<T> resolver = this.outers.unsafeGet(type);
         if (resolver != null) {
             resolver.render(this.out, obj);
             return;

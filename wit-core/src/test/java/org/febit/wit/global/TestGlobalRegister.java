@@ -22,7 +22,7 @@ public class TestGlobalRegister implements GlobalRegister {
         manager.setGlobal("MY_GLOBAL", "MY_GLOBAL");
         manager.setGlobal("MY_GLOBAL_2", "MY_GLOBAL_2");
 
-        //Consts
+        //Const
         manager.setConst("MY_CONST", "MY_CONST");
         manager.setConst("MY_CONST_2", "MY_CONST_2");
 

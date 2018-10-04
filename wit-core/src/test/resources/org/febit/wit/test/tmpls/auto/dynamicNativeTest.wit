@@ -73,8 +73,8 @@ const b = "bbb";
   
 }
 {
-    var new_stringbuilder = native new StringBuilder();
-    var buf = new_stringbuilder();
+    var new_stringBuilder = native new StringBuilder();
+    var buf = new_stringBuilder();
 
     buf.~append("123").~append(456);
     assertEquals("123456", buf.~toString());

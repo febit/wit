@@ -196,7 +196,7 @@ statement       ::= expression_statementable:$ SEMICOLON
 
                     //@import
                     |NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
-                    {: registClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatement.INSTANCE; :}
+                    {: registerClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatement.INSTANCE; :}
 
                     //BREAK
                     |BREAK:sym IDENTIFIER:label? SEMICOLON
@@ -235,14 +235,14 @@ statement       ::= expression_statementable:$ SEMICOLON
 
 
 varAssign       ::= IDENTIFIER:ident EQ:sym (expression:$ | varAssign:$):expr
-                    {: return createAssign(declearVarAndCreateContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return createAssign(declareVarAndCreateContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
                     ;
 
 varPart         ::= varAssign:$
                     | IDENTIFIER:ident
-                    {: return declearVar(%ident%, %ident.line%, %ident.column%); :}
+                    {: return declareVar(%ident%, %ident.line%, %ident.column%); :}
                     | LBRACK IDENTIFIER[COMMA]:idents RBRACK EQ:sym expression:expr
-                    {: return createGroupAssign(declearVarAndCreateContextValues(%idents%, %idents.line%, %idents.column%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return createGroupAssign(declareVarAndCreateContextValues(%idents%, %idents.line%, %idents.column%), %expr%, %sym.line%, %sym.column%); :}
                     ;
 
 
@@ -318,7 +318,7 @@ lambdaForHead   ::= lambdaForHead2:part expression:items RPAREN
 
 
 forInPart       ::= (forInHead:$ | lambdaForHead:$):part LBRACE statement[]:list? RBRACE (ELSE block:$):elseBody?
-                    {: return (%part%).setBodys(createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%), %elseBody%); :}
+                    {: return (%part%).setBodies(createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%), %elseBody%); :}
                     ;
 
 
@@ -352,26 +352,26 @@ switchPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE TEXT_S
 /* Expressions */
 
 expression_statementable ::= 
-                    //assignOper = 
+                    //assignOp =
                     expression:lexpr EQ:sym expression:expr
                     {: return createAssign(castToAssignableExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
                     
                     |LBRACK expression[COMMA]:list COMMA? RBRACK EQ:sym expression:expr
                     {: return createGroupAssign(StatementUtil.toExpressionArray(%list%), %expr%, %sym.line%, %sym.column%); :}
 
-                    //plusPlusOper ++
+                    //plusPlusOp ++
                     |PLUSPLUS:sym expression:expr
                     {: return new PlusPlusBefore(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
                     |expression:expr PLUSPLUS:sym
                     {: return new PlusPlusAfter(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
 
-                    //minusMinusOper --
+                    //minusMinusOp --
                     |MINUSMINUS:sym expression:expr
                     {: return new MinusMinusBefore(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
                     |expression:expr MINUSMINUS:sym
                     {: return new MinusMinusAfter(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
 
-                    //selfOper
+                    //selfOp
                     |expression:lexpr SELFEQ:sym expression:rexpr
                     {: return createSelfOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
 
@@ -388,27 +388,27 @@ expression      ::= expression_statementable:$
                     |LDEBUG:sym expression:label COLON expression:expr RDEBUG
                     {: return createBreakPointExpression(%label%, %expr%, %sym.line%, %sym.column%); :}
 
-                    //bitNotOper ~
+                    //bitNotOp ~
                     |COMP:sym expression:expr
                     {: return createOperator(%expr%, %sym.symbol%); :}
 
-                    //negativeOper  -
+                    //negativeOp  -
                     |MINUS:sym expression:expr %prec UMINUS
                     {: return createOperator(%expr%, %sym.symbol%); :}
 
-                    //notOper !
+                    //notOp !
                     |NOT:sym expression:expr
                     {: return createOperator(%expr%, %sym.symbol%); :}
 
-                    //propertyOper .
+                    //propertyOp .
                     |expression:expr DOT:sym IDENTIFIER:ident 
                     {: return new PropertyOperator(%expr%, %ident%, %sym.line%, %sym.column%); :}
 
-                    //indexOper []
+                    //indexOp []
                     |expression:lexpr LBRACK:sym expression:rexpr RBRACK
                     {: return new IndexOperator(%lexpr%, %rexpr%, %sym.line%, %sym.column%); :}
 
-                    /***********  binarys *************/
+                    /***********  binaries *************/
                     //-- binary:  *
                     |expression:lexpr MULT:sym expression:rexpr
                     {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
@@ -470,9 +470,9 @@ expression      ::= expression_statementable:$
                     |expression:lexpr OROR:sym expression:rexpr
                     {: return createBiOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
 
-                    //ifOper ? :
-                    |expression:ifexpr QUESTION:sym expression:lexpr COLON expression:rexpr
-                    {: return new IfOperator(%ifexpr%, %lexpr%, %rexpr%, %sym.line%, %sym.column%); :}
+                    // ? :
+                    |expression:ifExpr QUESTION:sym expression:lexpr COLON expression:rexpr
+                    {: return new IfOperator(%ifExpr%, %lexpr%, %rexpr%, %sym.line%, %sym.column%); :}
 
                     //
                     |DIRECT_VALUE:sym

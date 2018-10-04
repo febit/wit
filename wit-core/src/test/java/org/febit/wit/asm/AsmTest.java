@@ -17,23 +17,23 @@ public class AsmTest implements Constants {
 
     @Test
     public void test() throws Exception {
-        ClassWriter clssWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC, "x/Example", "java/lang/Object", null);
+        ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC, "x/Example", "java/lang/Object", null);
 
-        ASMUtil.visitConstructor(clssWriter);
+        ASMUtil.visitConstructor(classWriter);
 
-        MethodWriter m = clssWriter.visitMethod(ACC_PUBLIC, "test", "([Ljava/lang/Object;)Ljava/lang/Object;", null);
+        MethodWriter m = classWriter.visitMethod(ACC_PUBLIC, "test", "([Ljava/lang/Object;)Ljava/lang/Object;", null);
 
-        Label toExcaption = new Label();
+        Label toException = new Label();
         m.visitVarInsn(Constants.ALOAD, 1);
-        m.visitJumpInsn(Constants.IFNULL, toExcaption);
+        m.visitJumpInsn(Constants.IFNULL, toException);
         m.visitVarInsn(Constants.ALOAD, 1);
         m.visitInsn(Constants.ARRAYLENGTH);
-        m.visitJumpInsn(Constants.IFEQ, toExcaption);
+        m.visitJumpInsn(Constants.IFEQ, toException);
         m.visitVarInsn(Constants.ALOAD, 1);
-        m.visitInsn(Constants.ICONST_0); //m.visitIntInsn(Constants.SIPUSH, 17);
+        m.visitInsn(Constants.ICONST_0);
 
         m.visitInsn(Constants.AALOAD);
-        m.visitJumpInsn(Constants.IFNULL, toExcaption);
+        m.visitJumpInsn(Constants.IFNULL, toException);
         m.visitVarInsn(Constants.ALOAD, 1);
         m.visitInsn(Constants.ICONST_0);
         m.visitInsn(Constants.AALOAD);
@@ -41,11 +41,11 @@ public class AsmTest implements Constants {
         m.visitMethodInsn(Constants.INVOKEVIRTUAL, "java/lang/String", "length", "()I");
         ASMUtil.visitBoxIfNeed(m, int.class);
         m.visitInsn(Constants.ARETURN);
-        m.visitLabel(toExcaption);
+        m.visitLabel(toException);
         ASMUtil.visitScriptRuntimeException(m, "First argument can't be null.");
         m.visitMaxs();
 
-        Class<?> exampleClass = ASMUtil.loadClass("x.Example", clssWriter);
+        Class<?> exampleClass = ASMUtil.loadClass("x.Example", classWriter);
 
         try {
             Object obj = exampleClass.newInstance();

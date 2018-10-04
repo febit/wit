@@ -28,7 +28,7 @@ public class UTF8Test {
         return true;
     }
 
-    public boolean matchDencode(String string) {
+    public boolean matchDecode(String string) {
         char[] expr = string.toCharArray();
         byte[] src = string.getBytes(StandardCharsets.UTF_8);
         char[] buffer = new char[src.length];
@@ -58,14 +58,14 @@ public class UTF8Test {
 
     @Test
     public void testDecode() throws UnsupportedEncodingException {
-        assertTrue(matchDencode(""));
-        assertTrue(matchDencode("1234567890Az"));
-        assertTrue(matchDencode("中文"));
-        assertTrue(matchDencode("┯┰┱╂╁┾"));
-        assertTrue(matchDencode("ⅠⅡⅢⅣ㈣㈢⒈⒐⑽"));
-        assertTrue(matchDencode("\u0080\u00CA\u01CA\u07FF"));
-        assertTrue(matchDencode("\uD856\uDC65\uD866\uDC66"));
-        assertTrue(matchDencode("\uD700\uE000"));
+        assertTrue(matchDecode(""));
+        assertTrue(matchDecode("1234567890Az"));
+        assertTrue(matchDecode("中文"));
+        assertTrue(matchDecode("┯┰┱╂╁┾"));
+        assertTrue(matchDecode("ⅠⅡⅢⅣ㈣㈢⒈⒐⑽"));
+        assertTrue(matchDecode("\u0080\u00CA\u01CA\u07FF"));
+        assertTrue(matchDecode("\uD856\uDC65\uD866\uDC66"));
+        assertTrue(matchDecode("\uD700\uE000"));
 
     }
 }

@@ -80,8 +80,8 @@ public class VariantManager {
         final int start = i;
         for (; i < size; i++) {
             VarStair stair = varStairs.get(i);
-            //assert i == stair.id
-            //remove consts
+            // assert i == stair.id
+            // exclude const vars
             final Map<String, Integer> indexerMap = stair.values;
             if (stair.constMap != null) {
                 stair.constMap.keySet().forEach(indexerMap::remove);
@@ -143,14 +143,14 @@ public class VariantManager {
         }
         final int size = map.size();
         final String[] names = new String[size];
-        final int[] indexs = new int[size];
+        final int[] indexes = new int[size];
         int i = 0;
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             names[i] = entry.getKey();
-            indexs[i] = entry.getValue();
+            indexes[i] = entry.getValue();
             i++;
         }
-        return new VariantIndexer(parent, names, indexs);
+        return new VariantIndexer(parent, names, indexes);
     }
 
     VarAddress contextAddress(int scope, int index) {

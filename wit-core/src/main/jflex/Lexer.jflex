@@ -37,20 +37,20 @@ import org.febit.wit.util.LexerCharArrayWriter;
     private int offsetLine = 0;
     private int offsetColumnOfFirstLine = 0;
 
-    private final Deque<Symbol> penddingQueue = new ArrayDeque<>(8);
+    private final Deque<Symbol> pendingQueue = new ArrayDeque<>(8);
 
-    private void addPenddingSymbols(Symbol... syms) {
-        this.penddingQueue.addAll(Arrays.asList(syms));
+    private void addPendingSymbols(Symbol... syms) {
+        this.pendingQueue.addAll(Arrays.asList(syms));
     }
 
     private Symbol _nextToken() throws java.io.IOException {
-        // check pedding queue first
-        Deque<Symbol> pendding = this.penddingQueue;
-        Symbol next = pendding.pollFirst();
+        // check pending queue first
+        Deque<Symbol> pending = this.pendingQueue;
+        Symbol next = pending.pollFirst();
         if (next != null) {
             return next;
         }
-        // parse next when queque is empty
+        // parse next when queue is empty
         next = _parseNextToken();
         if (next != null) {
             return next;
@@ -76,7 +76,7 @@ import org.febit.wit.util.LexerCharArrayWriter;
         // Others must check if next token is new-line or EOF
         Symbol nextAfter = _nextToken();
         // return back
-        this.penddingQueue.addFirst(nextAfter);
+        this.pendingQueue.addFirst(nextAfter);
         if (nextAfter == SYM_NEW_LINE || nextAfter.id == Tokens.EOF) {
             next.isOnEdgeOfNewLine = true;
         }

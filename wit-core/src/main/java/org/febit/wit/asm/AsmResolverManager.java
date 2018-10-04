@@ -78,33 +78,33 @@ public class AsmResolverManager extends ResolverManager {
                 .toArray(FieldInfo[]::new);
         Arrays.sort(all);
         final int size = all.length;
-        int[] hashs;
+        int[] hashes;
         int[] indexer;
         if (size > 0) {
-            hashs = new int[size];
+            hashes = new int[size];
             indexer = new int[size];
-            int hashsCount = 0;
+            int hashCount = 0;
             int hash;
-            hashs[hashsCount++] = hash = all[0].hashOfName;
+            hashes[hashCount++] = hash = all[0].hashOfName;
             int i = 1;
             while (i < size) {
                 FieldInfo fieldInfo = all[i];
                 if (hash != fieldInfo.hashOfName) {
-                    indexer[hashsCount - 1] = i;
-                    hashs[hashsCount++] = hash = fieldInfo.hashOfName;
+                    indexer[hashCount - 1] = i;
+                    hashes[hashCount++] = hash = fieldInfo.hashOfName;
                 }
                 i++;
             }
-            indexer[hashsCount - 1] = size;
-            hashs = Arrays.copyOf(hashs, hashsCount);
-            indexer = Arrays.copyOf(indexer, hashsCount);
+            indexer[hashCount - 1] = size;
+            hashes = Arrays.copyOf(hashes, hashCount);
+            indexer = Arrays.copyOf(indexer, hashCount);
         } else {
-            hashs = null;
+            hashes = null;
             indexer = null;
         }
 
-        visitXetMethod(true, classWriter, beanClass, all, hashs, indexer);
-        visitXetMethod(false, classWriter, beanClass, all, hashs, indexer);
+        visitXetMethod(true, classWriter, beanClass, all, hashes, indexer);
+        visitXetMethod(false, classWriter, beanClass, all, hashes, indexer);
 
         //getMatchClass
         final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "getMatchClass", "()Ljava/lang/Class;", null);
@@ -115,7 +115,7 @@ public class AsmResolverManager extends ResolverManager {
         return ASMUtil.loadClass(className, classWriter);
     }
 
-    private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class<?> beanClass, final FieldInfo[] all, final int[] hashs, final int[] indexer) {
+    private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class<?> beanClass, final FieldInfo[] all, final int[] hashes, final int[] indexer) {
         final String beanName = ASMUtil.getBoxedInternalName(beanClass);
         final MethodWriter m;
         if (isGetter) {
@@ -132,13 +132,13 @@ public class AsmResolverManager extends ResolverManager {
                 m.visitVarInsn(Constants.ALOAD, 2);
                 m.invokeVirtual("java/lang/Object", "hashCode", "()I");
 
-                final int size = hashs.length;
+                final int size = hashes.length;
                 Label[] labels = new Label[size];
                 for (int i = 0; i < size; i++) {
                     labels[i] = new Label();
                 }
 
-                m.visitLookupSwitchInsn(finalEndLabel, hashs, labels);
+                m.visitLookupSwitchInsn(finalEndLabel, hashes, labels);
                 int start = 0;
                 for (int i = 0; i < size; i++) {
                     int end = indexer[i];

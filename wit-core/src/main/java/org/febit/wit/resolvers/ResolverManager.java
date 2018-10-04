@@ -22,7 +22,7 @@ public class ResolverManager {
 
     public final ClassMap<GetResolver> getters;
     public final ClassMap<SetResolver> setters;
-    public final ClassMap<OutResolver> outters;
+    public final ClassMap<OutResolver> outers;
 
     protected final ArrayList<GetResolver> getResolvers;
     protected final ArrayList<SetResolver> setResolvers;
@@ -36,7 +36,7 @@ public class ResolverManager {
 
         getters = new ClassMap<>();
         setters = new ClassMap<>();
-        outters = new ClassMap<>();
+        outers = new ClassMap<>();
 
         getResolvers = new ArrayList<>();
         setResolvers = new ArrayList<>();
@@ -95,7 +95,7 @@ public class ResolverManager {
 
     public OutResolver resolveOutResolver(final Class<?> type) {
         OutResolver resolver;
-        resolver = outters.get(type);
+        resolver = outers.get(type);
         if (resolver != null) {
             return resolver;
         }
@@ -103,7 +103,7 @@ public class ResolverManager {
         resolver = index >= 0
                 ? outResolvers.get(index)
                 : commonResolver;
-        return outters.putIfAbsent(type, resolver);
+        return outers.putIfAbsent(type, resolver);
     }
 
     @Init
@@ -154,7 +154,7 @@ public class ResolverManager {
                 outResolvers.add((OutResolver) resolver);
             }
             if (notAbstract) {
-                outters.putIfAbsent(type, (OutResolver) resolver);
+                outers.putIfAbsent(type, (OutResolver) resolver);
             }
         }
     }

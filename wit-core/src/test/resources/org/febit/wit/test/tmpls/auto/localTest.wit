@@ -21,9 +21,8 @@ assertNull(LOCAL("a"));
     //TEST: Global function
 
     LOCAL("a","xxx");
-    localTestInClobal("a","xxx");
-
-    localTestInClobal_set("a", "yyy");
+    localTestInGlobal("a","xxx");
+    localTestInGlobal_set("a", "yyy");
     assertEquals("yyy", LOCAL("a"));
 }
 

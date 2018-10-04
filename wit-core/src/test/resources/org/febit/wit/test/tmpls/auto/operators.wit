@@ -70,7 +70,7 @@
     assertFalse(0.1f > 0.1D);
     assertFalse(0.1f < 0.1D);
 
-    //FIXME: unpass
+    //FIXME: failed case
     //assertTrue((0.1F+0D) == 0.1F);
     
     // ?:

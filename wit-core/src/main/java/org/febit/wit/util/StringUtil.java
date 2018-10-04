@@ -50,15 +50,15 @@ public class StringUtil {
             return ArrayUtil.emptyStrings();
         }
 
-        final char[] srcc = src.toCharArray();
-        final int len = srcc.length;
+        final char[] srcChars = src.toCharArray();
+        final int len = srcChars.length;
 
         List<String> list = new ArrayList<>(len > 1024 ? 64 : 16);
 
         int i = 0;
         while (i < len) {
             //skip empty & splits
-            while (i < len && isArrayValueEndOrEmpty(srcc[i])) {
+            while (i < len && isArrayValueEndOrEmpty(srcChars[i])) {
                 i++;
             }
             //check if end
@@ -69,15 +69,15 @@ public class StringUtil {
 
             //find end
             while (i < len
-                    && !isArrayValueEnd(srcc[i])) {
+                    && !isArrayValueEnd(srcChars[i])) {
                 i++;
             }
             int end = i;
             //trim back end
-            while (isArrayValueEndOrEmpty(srcc[end - 1])) {
+            while (isArrayValueEndOrEmpty(srcChars[end - 1])) {
                 end--;
             }
-            list.add(new String(srcc, start, end - start));
+            list.add(new String(srcChars, start, end - start));
         }
         return list.isEmpty()
                 ? ArrayUtil.emptyStrings()
@@ -108,11 +108,11 @@ public class StringUtil {
                     && template.charAt(j) == '\\') {
                 j--;
             }
-            int escapeCharcount = ndx - 1 - j;
-            result.append(template, i, escapeCharcount > 0
-                    ? ndx - ((escapeCharcount + 1) >> 1)
+            int escapeCharCount = ndx - 1 - j;
+            result.append(template, i, escapeCharCount > 0
+                    ? ndx - ((escapeCharCount + 1) >> 1)
                     : ndx);
-            if ((escapeCharcount & 1) == 1) {
+            if ((escapeCharCount & 1) == 1) {
                 result.append('{');
                 i = ndx + 1;
                 continue;

@@ -120,10 +120,10 @@ public class PropsUtil {
                 }
             } else {
                 for (String path : paths) {
-                    for (String subpath : StringUtil.toArray(path)) {
-                        Props temp = loadProps(inputResolver, subpath);
+                    for (String subPath : StringUtil.toArray(path)) {
+                        Props temp = loadProps(inputResolver, subPath);
                         resolveModules(temp);
-                        mergeProps(temp, inputResolver.getViewPath(subpath));
+                        mergeProps(temp, inputResolver.getViewPath(subPath));
                     }
                 }
             }

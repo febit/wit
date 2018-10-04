@@ -29,7 +29,7 @@ public class FieldInfoResolver {
     private Stream<FieldInfo> resolve() {
         for (Field field : beanType.getFields()) {
             if (!ClassUtil.isStatic(field)) {
-                registField(field);
+                registerField(field);
             }
         }
         for (Method method : beanType.getMethods()) {
@@ -44,16 +44,16 @@ public class FieldInfoResolver {
                     && method.getReturnType() != void.class) {
                 if (methodNameLength > 3
                         && methodName.startsWith("get")) {
-                    registGetterMethod(cutFieldName(methodName, 3), method);
+                    registerGetterMethod(cutFieldName(methodName, 3), method);
                 } else if (methodNameLength > 2
                         && methodName.startsWith("is")) {
-                    registGetterMethod(cutFieldName(methodName, 2), method);
+                    registerGetterMethod(cutFieldName(methodName, 2), method);
                 }
             } else if (argsCount == 1
                     && methodNameLength > 3
                     && method.getReturnType() == void.class
                     && methodName.startsWith("set")) {
-                registSetterMethod(cutFieldName(methodName, 3), method);
+                registerSetterMethod(cutFieldName(methodName, 3), method);
             }
         }
         return fieldInfos.values().stream();
@@ -63,15 +63,15 @@ public class FieldInfoResolver {
         return fieldInfos.computeIfAbsent(name, key -> new FieldInfo(beanType, key));
     }
 
-    private void registField(Field field) {
+    private void registerField(Field field) {
         getOrCreateFieldInfo(field.getName()).field = field;
     }
 
-    private void registGetterMethod(String name, Method method) {
+    private void registerGetterMethod(String name, Method method) {
         getOrCreateFieldInfo(name).getterMethod = method;
     }
 
-    private void registSetterMethod(String name, Method method) {
+    private void registerSetterMethod(String name, Method method) {
         getOrCreateFieldInfo(name).setterMethod = method;
     }
 

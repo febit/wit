@@ -35,7 +35,7 @@ public abstract class AbstractForInPart {
         return this;
     }
 
-    public AbstractForInPart setBodys(IBlock thenStatement, Statement elseStatement) {
+    public AbstractForInPart setBodies(IBlock thenStatement, Statement elseStatement) {
         this.bodyStatement = thenStatement;
         this.elseStatement = StatementUtil.optimize(elseStatement);
         return this;

@@ -86,26 +86,26 @@ public class CacheGlobalRegister implements GlobalRegister {
             final CachingEntry cachingEntry;
             final Object firstArgument = args[0];
             if (firstArgument instanceof MethodDeclare) {
-                cachingEntry = buildIfAbent(context, firstArgument, (MethodDeclare) firstArgument, args, 1);
+                cachingEntry = buildIfAbsent(context, firstArgument, (MethodDeclare) firstArgument, args, 1);
             } else if (len > 1) {
                 final Object secondArgument = args[1];
                 if (secondArgument instanceof MethodDeclare) {
-                    cachingEntry = buildIfAbent(context, firstArgument, (MethodDeclare) secondArgument, args, 2);
+                    cachingEntry = buildIfAbsent(context, firstArgument, (MethodDeclare) secondArgument, args, 2);
                 } else {
                     throw new ScriptRuntimeException("This method need a function argument at index 0 or 1.");
                 }
             } else {
                 throw new ScriptRuntimeException("This method need a function argument.");
             }
-            context.write(cachingEntry.outted);
+            context.write(cachingEntry.outed);
             return cachingEntry.returned;
         }
 
-        protected CachingEntry buildIfAbent(final InternalContext context,
-                final Object key,
-                final MethodDeclare methodDeclare,
-                final Object[] args,
-                final int argsStart) {
+        protected CachingEntry buildIfAbsent(final InternalContext context,
+                                             final Object key,
+                                             final MethodDeclare methodDeclare,
+                                             final Object[] args,
+                                             final int argsStart) {
 
             CachingEntry result = (CachingEntry) this.cacheProvider.get(key);
             if (result != null) {
@@ -121,12 +121,12 @@ public class CacheGlobalRegister implements GlobalRegister {
             if (context.isByteStream) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream(256);
                 returned = context.temporaryOut(new OutputStreamOut(out, context.encoding, context.getEngine()),
-                        contxt -> methodDeclare.invoke(contxt, methodArgs));
+                        c -> methodDeclare.invoke(c, methodArgs));
                 outted = out.toByteArray();
             } else {
                 CharArrayWriter writer = new CharArrayWriter(256);
                 returned = context.temporaryOut(new WriterOut(writer, context.encoding, context.getEngine()),
-                        contxt -> methodDeclare.invoke(contxt, methodArgs));
+                        c -> methodDeclare.invoke(c, methodArgs));
                 outted = writer.toCharArray();
             }
             result = new CachingEntry(returned, outted);
@@ -140,11 +140,11 @@ public class CacheGlobalRegister implements GlobalRegister {
         private static final long serialVersionUID = 1L;
 
         public final Object returned;
-        public final Object outted;
+        public final Object outed;
 
-        public CachingEntry(Object returned, Object outted) {
+        public CachingEntry(Object returned, Object outed) {
             this.returned = returned;
-            this.outted = outted;
+            this.outed = outed;
         }
     }
 }

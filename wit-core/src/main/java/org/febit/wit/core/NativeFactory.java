@@ -49,7 +49,7 @@ public class NativeFactory {
         if (checkAccess) {
             final String path = classForCheck.getName().concat(".[]");
             if (!this.nativeSecurityManager.access(path)) {
-                throw createNotAccessablePathException(path, line, column);
+                throw createNotAccessiblePathException(path, line, column);
             }
         }
         return new NativeNewArrayDeclare(componentType);
@@ -75,7 +75,7 @@ public class NativeFactory {
         if (checkAccess) {
             final String path = clazz.getName() + '.' + methodName;
             if (!this.nativeSecurityManager.access(path)) {
-                throw createNotAccessablePathException(path, line, column);
+                throw createNotAccessiblePathException(path, line, column);
             }
         }
         try {
@@ -89,7 +89,7 @@ public class NativeFactory {
         if (checkAccess) {
             final String path = clazz.getName() + '.' + methodName;
             if (!this.nativeSecurityManager.access(path)) {
-                throw createNotAccessablePathException(path, line, column);
+                throw createNotAccessiblePathException(path, line, column);
             }
         }
         return createNativeMethodDeclare(clazz, methodName);
@@ -115,7 +115,7 @@ public class NativeFactory {
         if (checkAccess) {
             final String path = clazz.getName().concat(".<init>");
             if (!this.nativeSecurityManager.access(path)) {
-                throw createNotAccessablePathException(path, line, column);
+                throw createNotAccessiblePathException(path, line, column);
             }
         }
         try {
@@ -129,7 +129,7 @@ public class NativeFactory {
         if (checkAccess) {
             final String path = clazz.getName().concat(".<init>");
             if (!this.nativeSecurityManager.access(path)) {
-                throw createNotAccessablePathException(path, line, column);
+                throw createNotAccessiblePathException(path, line, column);
             }
         }
         return createNativeConstructorDeclare(clazz);
@@ -220,7 +220,7 @@ public class NativeFactory {
         return new NativeConstructorDeclare(constructor);
     }
 
-    protected static ParseException createNotAccessablePathException(String path, int line, int column) {
-        return new ParseException("Not accessable of native path: ".concat(path), line, column);
+    protected static ParseException createNotAccessiblePathException(String path, int line, int column) {
+        return new ParseException("Not accessible of native path: ".concat(path), line, column);
     }
 }

@@ -22,7 +22,7 @@ public class SecurityLoader implements Loader {
                 return this.loader.get(name);
             }
         }
-        return new NotFoundResource(name, "Security Unaccessable: " + name);
+        return new NotFoundResource(name, "Security inaccessible: " + name);
     }
 
     @Override

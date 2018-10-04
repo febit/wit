@@ -22,7 +22,7 @@ public class RouteLoader implements Loader {
     protected String loaders;
     protected Loader defaultLoader;
 
-    protected LoaderEntry[] entrys;
+    protected LoaderEntry[] entries;
     protected String[] rules;
 
     @Init
@@ -44,12 +44,12 @@ public class RouteLoader implements Loader {
                     (Loader) engine.get(raw.substring(index + 1).trim())));
         }
         Arrays.sort(prefixes, Comparator.reverseOrder());
-        final LoaderEntry[] loaderEntrys = new LoaderEntry[size];
+        final LoaderEntry[] loaderEntries = new LoaderEntry[size];
         for (int i = 0; i < size; i++) {
-            loaderEntrys[i] = loaderMap.get(prefixes[i]);
+            loaderEntries[i] = loaderMap.get(prefixes[i]);
         }
         this.rules = prefixes;
-        this.entrys = loaderEntrys;
+        this.entries = loaderEntries;
         //default Loader
     }
 
@@ -57,7 +57,7 @@ public class RouteLoader implements Loader {
         final String[] prefixes = this.rules;
         for (int i = 0, len = prefixes.length; i < len; i++) {
             if (resourceName.startsWith(prefixes[i])) {
-                return this.entrys[i];
+                return this.entries[i];
             }
         }
         return null;

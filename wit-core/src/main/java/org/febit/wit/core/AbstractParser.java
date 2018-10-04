@@ -231,8 +231,8 @@ abstract class AbstractParser {
         if (len == 0) {
             return "[no hints]";
         }
-        final boolean highterLevel = len > 8;
-        if (highterLevel && getAction(row, Tokens.SEMICOLON) != 0) {
+        final boolean higherLevel = len > 8;
+        if (higherLevel && getAction(row, Tokens.SEMICOLON) != 0) {
             return "forget ';' ?";
         }
         final StringBuilder sb = new StringBuilder();
@@ -240,7 +240,7 @@ abstract class AbstractParser {
         short sym;
         for (int i = 0; i < len; i += 2) {
             sym = row[i];
-            if (highterLevel && !isHintLevelOne(sym)) {
+            if (higherLevel && !isHintLevelOne(sym)) {
                 continue;
             }
             if (notFirst) {
@@ -463,7 +463,7 @@ abstract class AbstractParser {
         }
     }
 
-    boolean registClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
+    boolean registerClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
         final String className = classNameBand.getClassSimpleName();
         if (ClassUtil.getPrimitiveClass(className) != null) {
             throw new ParseException("Duplicate class simple name:".concat(classNameBand.getClassPureName()), line, column);
@@ -551,10 +551,10 @@ abstract class AbstractParser {
         return new Assign(lexpr, rexpr, line, column);
     }
 
-    Expression createGroupAssign(Expression[] lexpres, Expression rexpr, int line, int column) {
-        AssignableExpression[] resetableExprs = new AssignableExpression[lexpres.length];
-        for (int i = 0; i < lexpres.length; i++) {
-            resetableExprs[i] = castToAssignableExpression(lexpres[i]);
+    Expression createGroupAssign(Expression[] lexprs, Expression rexpr, int line, int column) {
+        AssignableExpression[] resetableExprs = new AssignableExpression[lexprs.length];
+        for (int i = 0; i < lexprs.length; i++) {
+            resetableExprs[i] = castToAssignableExpression(lexprs[i]);
         }
         return new GroupAssign(resetableExprs, rexpr, line, column);
     }
@@ -582,14 +582,14 @@ abstract class AbstractParser {
         return this.textStatementFactory.getTextStatement(template, text, line, column);
     }
 
-    ContextValue declearVarAndCreateContextValue(String name, int line, int column) {
+    ContextValue declareVarAndCreateContextValue(String name, int line, int column) {
         return new ContextValue(varmgr.assignVariant(name, line, column), line, column);
     }
 
-    ContextValue[] declearVarAndCreateContextValues(List<String> names, int line, int column) {
+    ContextValue[] declareVarAndCreateContextValues(List<String> names, int line, int column) {
         ContextValue[] contextValues = new ContextValue[names.size()];
         for (int i = 0; i < names.size(); i++) {
-            contextValues[i] = declearVarAndCreateContextValue(names.get(i), line, column);
+            contextValues[i] = declareVarAndCreateContextValue(names.get(i), line, column);
         }
         return contextValues;
     }
@@ -648,7 +648,7 @@ abstract class AbstractParser {
         final Class<?> clazz = toClass(classNameBand, line, column);
         final String path = clazz.getName() + '.' + fieldName;
         if (!this.nativeSecurityManager.access(path)) {
-            throw new ParseException("Not accessable of native path: ".concat(path), line, column);
+            throw new ParseException("Inaccessible native path: ".concat(path), line, column);
         }
         final Field field;
         try {
@@ -710,7 +710,7 @@ abstract class AbstractParser {
                 line, column, true), line, column);
     }
 
-    Statement declearVar(String ident, int line, int column) {
+    Statement declareVar(String ident, int line, int column) {
         //XXX: Should Check var used before init
         varmgr.assignVariant(ident, line, column);
         return NoneStatement.INSTANCE;
@@ -860,25 +860,25 @@ abstract class AbstractParser {
     Expression createBiOperator(Expression leftExpr, Symbol symSymbol, Expression rightExpr) {
         int line = symSymbol.line;
         int column = symSymbol.column;
-        BiOperator oper;
+        BiOperator op;
         switch ((Integer) symSymbol.value) {
             case Tokens.ANDAND:
-                oper = new And(leftExpr, rightExpr, line, column);
+                op = new And(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.OROR:
-                oper = new Or(leftExpr, rightExpr, line, column);
+                op = new Or(leftExpr, rightExpr, line, column);
                 break;
             case Tokens.DOTDOT:
-                oper = new IntStep(leftExpr, rightExpr, line, column);
+                op = new IntStep(leftExpr, rightExpr, line, column);
                 break;
             default:
                 BiFunction<Object, Object, Object> biFunc = getBiFunctionForBiOperator((Integer) symSymbol.value);
                 if (biFunc == null) {
                     throw new ParseException("Unsupported Operator", line, column);
                 }
-                oper = new ConstableBiOperator(leftExpr, rightExpr, biFunc, line, column);
+                op = new ConstableBiOperator(leftExpr, rightExpr, biFunc, line, column);
         }
-        return StatementUtil.optimize(oper);
+        return StatementUtil.optimize(op);
     }
 
 }

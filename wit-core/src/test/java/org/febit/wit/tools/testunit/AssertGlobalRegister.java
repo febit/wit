@@ -88,34 +88,34 @@ public class AssertGlobalRegister implements GlobalRegister {
         }
     }
 
-    private static void assertArrayEquals(Object expecteds, Object actuals) {
-        if (expecteds == actuals) {
+    private static void assertArrayEquals(Object expected, Object actual) {
+        if (expected == actual) {
             return;
         }
-        final int expectedsLength = assertArraysAreSameLength(expecteds, actuals);
-        for (int i = 0; i < expectedsLength; i++) {
+        final int expectedLength = assertArraysAreSameLength(expected, actual);
+        for (int i = 0; i < expectedLength; i++) {
             try {
-                assertEquals(Array.get(expecteds, i), Array.get(actuals, i));
+                assertEquals(Array.get(expected, i), Array.get(actual, i));
             } catch (AssertionError e) {
                 fail("arrays first differed at element " + i);
             }
         }
     }
 
-    private static int assertArraysAreSameLength(Object expecteds, Object actuals) {
-        if (expecteds == null) {
+    private static int assertArraysAreSameLength(Object expected, Object actual) {
+        if (expected == null) {
             fail("expected array was null");
         }
-        if (actuals == null) {
+        if (actual == null) {
             fail("actual array was null");
         }
-        int actualsLength = Array.getLength(actuals);
-        int expectedsLength = Array.getLength(expecteds);
-        if (actualsLength != expectedsLength) {
+        int actualLength = Array.getLength(actual);
+        int expectedLength = Array.getLength(expected);
+        if (actualLength != expectedLength) {
             fail("array lengths differed, expected.length="
-                    + expectedsLength + " actual.length=" + actualsLength);
+                    + expectedLength + " actual.length=" + actualLength);
         }
-        return expectedsLength;
+        return expectedLength;
     }
 
     private static void fail(String message) {

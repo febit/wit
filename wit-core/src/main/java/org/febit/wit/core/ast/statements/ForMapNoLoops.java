@@ -47,12 +47,12 @@ public final class ForMapNoLoops extends Statement {
             final int preIndex = context.indexer;
             context.indexer = indexer;
             final Statement[] stats = this.statements;
-            final int indexOfkey = this.keyIndex;
+            final int indexOfKey = this.keyIndex;
             final int indexOfValue = this.valueIndex;
             final Object[] vars = context.vars;
             vars[iterIndex] = iter;
             do {
-                vars[indexOfkey] = iter.next();
+                vars[indexOfKey] = iter.next();
                 vars[indexOfValue] = iter.value();
                 StatementUtil.execute(stats, context);
             } while (iter.hasNext());

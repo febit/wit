@@ -11,17 +11,17 @@ public final class ClassMap<V> {
 
     @SuppressWarnings("unchecked")
     public ClassMap(int initialCapacity) {
-        int initlen;
+        int initLen;
         if (initialCapacity > MAXIMUM_CAPACITY) {
-            initlen = MAXIMUM_CAPACITY;
+            initLen = MAXIMUM_CAPACITY;
         } else {
-            initlen = 16;
-            while (initlen < initialCapacity) {
-                initlen <<= 1;
+            initLen = 16;
+            while (initLen < initialCapacity) {
+                initLen <<= 1;
             }
         }
-        this.table = new Entry[initlen];
-        this.threshold = (int) (initlen * 0.75f);
+        this.table = new Entry[initLen];
+        this.threshold = (int) (initLen * 0.75f);
     }
 
     public ClassMap() {

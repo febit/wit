@@ -110,16 +110,16 @@ public class AsmNativeFactory extends NativeFactory {
                 m.visitMethodInsn(Constants.INVOKESPECIAL, ownerClass, ASMUtil.METHOD_CTOR, "()V");
                 m.visitInsn(Constants.ARETURN);
             } else {
-                Label toExcaption = new Label();
+                Label toException = new Label();
                 m.visitVarInsn(Constants.ALOAD, 2);
-                m.visitJumpInsn(Constants.IFNULL, toExcaption);
+                m.visitJumpInsn(Constants.IFNULL, toException);
                 m.visitVarInsn(Constants.ALOAD, 2);
                 m.visitInsn(Constants.ARRAYLENGTH);
-                m.visitJumpInsn(Constants.IFEQ, toExcaption);
+                m.visitJumpInsn(Constants.IFEQ, toException);
                 m.visitVarInsn(Constants.ALOAD, 2);
                 m.visitInsn(Constants.ICONST_0);
                 m.visitInsn(Constants.AALOAD);
-                m.visitJumpInsn(Constants.IFNULL, toExcaption);
+                m.visitJumpInsn(Constants.IFNULL, toException);
                 m.visitVarInsn(Constants.ALOAD, 2);
                 m.visitInsn(Constants.ICONST_0);
                 m.visitInsn(Constants.AALOAD);
@@ -128,7 +128,7 @@ public class AsmNativeFactory extends NativeFactory {
                         : Constants.INVOKEVIRTUAL, ownerClass, destName, destDesc);
                 ASMUtil.visitBoxIfNeed(m, returnType);
                 m.visitInsn(Constants.ARETURN);
-                m.visitLabel(toExcaption);
+                m.visitLabel(toException);
                 ASMUtil.visitScriptRuntimeException(m, "First argument can't be null.");
             }
         } else {

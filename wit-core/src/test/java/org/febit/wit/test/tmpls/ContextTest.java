@@ -14,7 +14,7 @@ import org.junit.Test;
  *
  * @author zqq90
  */
-public class ConetextTest {
+public class ContextTest {
 
     @Test
     public void test() throws ResourceNotFoundException {

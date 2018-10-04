@@ -54,7 +54,7 @@ public class UTF8 {
                 }
                 pos -= 3;
             }
-            // unsupport bytes
+            // unsupported bytes
             da[count++] = '\uFFFD';
         }
         return count;
@@ -101,7 +101,7 @@ public class UTF8 {
                 }
                 --pos; // back the LOW_SURROGATE char
             }
-            // unsupport char
+            // unsupported char
             da[dp++] = '?';
         }
         return dp;

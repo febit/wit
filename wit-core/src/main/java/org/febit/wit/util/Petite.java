@@ -24,8 +24,8 @@ public class Petite {
 
     private final Map<Class, Object> components = new HashMap<>();
     private final Map<String, Object> beans = new HashMap<>();
-    private final Map<String, Object> datas = new HashMap<>();
-    private final Map<String, Entry> entrys = new HashMap<>();
+    private final Map<String, Object> data = new HashMap<>();
+    private final Map<String, Entry> entries = new HashMap<>();
 
     private Logger logger;
 
@@ -104,24 +104,24 @@ public class Petite {
     }
 
     public Object getConfig(String key) {
-        return this.datas.get(key);
+        return this.data.get(key);
     }
 
     private void setProp(String key, Object value) {
-        this.datas.put(key, value);
+        this.data.put(key, value);
         int index = key.lastIndexOf('.');
         int index2 = index + 1;
         if (index > 0
                 && index2 < key.length()
                 && key.charAt(index2) != '@') {
             String beanName = key.substring(0, index);
-            this.entrys.put(beanName,
-                    new Entry(key.substring(index2), value, this.entrys.get(beanName)));
+            this.entries.put(beanName,
+                    new Entry(key.substring(index2), value, this.entries.get(beanName)));
         }
     }
 
     public void addComponent(Object bean) {
-        //regist all impls
+        //register all impls
         Class<?> cls = bean.getClass();
         while (cls != null && cls != Object.class) {
             this.components.put(cls, bean);
@@ -135,7 +135,7 @@ public class Petite {
     public void initComponents() {
         addComponent(this);
 
-        final String[] beanNames = StringUtil.toArray((String) datas.get("@global"));
+        final String[] beanNames = StringUtil.toArray((String) data.get("@global"));
         final int size = beanNames.length;
         final Object[] globalBeans = new Object[size];
         for (int i = 0; i < size; i++) {
@@ -155,7 +155,7 @@ public class Petite {
         String type;
         do {
             type = key;
-            key = (String) this.datas.get(key + ".@class");
+            key = (String) this.data.get(key + ".@class");
         } while (key != null);
         return ClassUtil.newInstance(type);
     }
@@ -164,7 +164,7 @@ public class Petite {
         LinkedList<String> keys = new LinkedList<>();
         do {
             keys.addFirst(key);
-            key = (String) this.datas.get(key + ".@class");
+            key = (String) this.data.get(key + ".@class");
         } while (key != null);
 
         Map<String, Field> fields = ClassUtil.getSettableMemberFields(bean.getClass());
@@ -224,11 +224,11 @@ public class Petite {
 
         //inject @extends first
         for (String profile : StringUtil.toArray(
-                (String) datas.get(beanName.concat(".@extends")))) {
+                (String) data.get(beanName.concat(".@extends")))) {
             inject(profile, bean, injected, fields);
         }
 
-        for (Entry entry = entrys.get(beanName); entry != null; entry = entry.next) {
+        for (Entry entry = entries.get(beanName); entry != null; entry = entry.next) {
             Field field = fields.get(entry.name);
             if (field == null) {
                 if (logger != null) {

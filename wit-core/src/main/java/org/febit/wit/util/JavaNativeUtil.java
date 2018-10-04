@@ -407,7 +407,7 @@ public class JavaNativeUtil {
         } catch (InstantiationException ex) {
             throw new ScriptRuntimeException("Can't create new instance: ".concat(ex.getLocalizedMessage()), ex);
         } catch (IllegalAccessException ex) {
-            throw new ScriptRuntimeException("Unaccessible method: ".concat(ex.getLocalizedMessage()), ex);
+            throw new ScriptRuntimeException("Inaccessible method: ".concat(ex.getLocalizedMessage()), ex);
         } catch (IllegalArgumentException ex) {
             throw new ScriptRuntimeException("Illegal arguments: ".concat(ex.getLocalizedMessage()), ex);
         } catch (InvocationTargetException ex) {

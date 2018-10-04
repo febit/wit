@@ -21,7 +21,7 @@ return;
     return null;
 };
 
-xxx("outter");
+xxx("outer");
 
 {
 @import java.util.Map;
