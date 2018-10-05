@@ -1,15 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet.resolvers;
 
-import javax.servlet.http.HttpServletRequest;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.servlet.HttpServletRequestAttributes;
 import org.febit.wit.servlet.HttpServletRequestHeader;
 import org.febit.wit.servlet.HttpServletRequestHeaders;
 import org.febit.wit.servlet.HttpServletRequestParameters;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
- *
  * @author zqq90
  */
 public class HttpServletRequestResolver implements GetResolver<HttpServletRequest> {
@@ -34,8 +34,6 @@ public class HttpServletRequestResolver implements GetResolver<HttpServletReques
                 return bean.getProtocol();
             case "secure":
                 return bean.isSecure();
-//            case "inputStream":
-//                return bean.getInputStream();
             case "url":
             case "requestURL":
                 return bean.getRequestURL();
@@ -105,12 +103,12 @@ public class HttpServletRequestResolver implements GetResolver<HttpServletReques
                 return bean.getMethod();
             case "requestedSessionIdFromUrl":
                 return bean.isRequestedSessionIdFromURL();
-//            case "reader":
-//                return bean.getReader();
             case "requestURI":
                 return bean.getRequestURI();
             case "characterEncoding":
                 return bean.getCharacterEncoding();
+            case "reader":
+            case "inputStream":
             default:
         }
         return null;

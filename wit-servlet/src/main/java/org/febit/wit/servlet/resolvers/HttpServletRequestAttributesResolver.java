@@ -6,10 +6,10 @@ import org.febit.wit.resolvers.SetResolver;
 import org.febit.wit.servlet.HttpServletRequestAttributes;
 
 /**
- *
  * @author zqq90
  */
-public class HttpServletRequestAttributesResolver implements GetResolver<HttpServletRequestAttributes>, SetResolver<HttpServletRequestAttributes> {
+public class HttpServletRequestAttributesResolver
+        implements GetResolver<HttpServletRequestAttributes>, SetResolver<HttpServletRequestAttributes> {
 
     @Override
     public Object get(HttpServletRequestAttributes bean, Object property) {

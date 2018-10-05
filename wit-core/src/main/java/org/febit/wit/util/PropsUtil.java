@@ -1,20 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import org.febit.wit.exceptions.IllegalConfigException;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.febit.wit.exceptions.IllegalConfigException;
 
 /**
- *
  * @author zqq90
  */
 public class PropsUtil {
@@ -96,7 +92,7 @@ public class PropsUtil {
             final char[] buf = this.buffer;
             final InputStream in = inputResolver.openInputStream(path);
             if (in == null) {
-                throw new IllegalConfigException("Not found props: ".concat(inputResolver.getViewPath(path)));
+                throw new IllegalConfigException("Not found props: " + inputResolver.getViewPath(path));
             }
             try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
                 charsBuf.reset();
@@ -109,7 +105,7 @@ public class PropsUtil {
                 charsBuf.reset();
                 return tempProps;
             } catch (IOException ex) {
-                throw new IllegalConfigException("Not found props: ".concat(inputResolver.getViewPath(path)), ex);
+                throw new IllegalConfigException("Not found props: " + inputResolver.getViewPath(path), ex);
             }
         }
 
@@ -151,7 +147,7 @@ public class PropsUtil {
 
         @Override
         public String getViewPath(String path) {
-            return "classpath:".concat(fixModuleName(path));
+            return "classpath:" + fixModuleName(path);
         }
 
         @Override

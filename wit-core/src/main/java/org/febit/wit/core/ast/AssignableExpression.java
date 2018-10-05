@@ -4,7 +4,6 @@ package org.febit.wit.core.ast;
 import org.febit.wit.InternalContext;
 
 /**
- *
  * @author zqq90
  */
 public abstract class AssignableExpression extends Expression {

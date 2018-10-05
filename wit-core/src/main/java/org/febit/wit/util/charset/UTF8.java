@@ -48,7 +48,8 @@ public class UTF8 {
                         ^ (sa[pos++]
                         ^ ((0xFFFFFFF0 << 18) ^ (0xFFFFFF80 << 12) ^ (0xFFFFFF80 << 6) ^ 0xFFFFFF80));
                 if (Character.isSupplementaryCodePoint(uc)) {
-                    da[count++] = (char) ((uc >>> 10) + (Character.MIN_HIGH_SURROGATE - (Character.MIN_SUPPLEMENTARY_CODE_POINT >>> 10)));
+                    da[count++] = (char) ((uc >>> 10) + (Character.MIN_HIGH_SURROGATE
+                            - (Character.MIN_SUPPLEMENTARY_CODE_POINT >>> 10)));
                     da[count++] = (char) ((uc & 0x3ff) + Character.MIN_LOW_SURROGATE);
                     continue;
                 }

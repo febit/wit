@@ -2,7 +2,6 @@
 package org.febit.wit.tools.tld;
 
 /**
- *
  * @author zqq90
  */
 public final class TLDFunction {
@@ -13,7 +12,8 @@ public final class TLDFunction {
     final String methodName;
     final String[] parameterTypes;
 
-    TLDFunction(String name, String declaredClass, String returnType, String methodName, String[] parameterTypes) {
+    TLDFunction(String name, String declaredClass, String returnType,
+                String methodName, String[] parameterTypes) {
         this.name = name;
         this.declaredClass = declaredClass;
         this.returnType = returnType;

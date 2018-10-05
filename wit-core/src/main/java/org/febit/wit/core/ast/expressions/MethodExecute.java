@@ -9,7 +9,6 @@ import org.febit.wit.lang.UnConstableMethodDeclare;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class MethodExecute extends Expression {

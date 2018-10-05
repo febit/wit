@@ -1,15 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.test.tmpls;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.LongAdder;
 import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
 import org.febit.wit.InternalContext;
@@ -27,11 +18,17 @@ import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.tools.testunit.AssertGlobalRegister;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.StringUtil;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.io.*;
+import java.net.URL;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.LongAdder;
+
+import static org.junit.Assert.assertArrayEquals;
+
 /**
- *
  * @author zqq90
  */
 public class AutoTest {

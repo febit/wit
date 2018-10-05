@@ -1,8 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io.impl;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import org.febit.wit.Engine;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.Out;
@@ -10,8 +8,10 @@ import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.io.charset.Encoder;
 import org.febit.wit.util.InternedEncoding;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
- *
  * @author zqq90
  */
 public final class OutputStreamOut implements Out {

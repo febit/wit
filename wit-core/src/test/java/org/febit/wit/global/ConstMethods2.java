@@ -4,7 +4,6 @@ package org.febit.wit.global;
 import java.util.Map;
 
 /**
- *
  * @author zqq90
  */
 public class ConstMethods2 {

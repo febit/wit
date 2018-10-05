@@ -9,7 +9,6 @@ import org.febit.wit.lang.method.FunctionMethodDeclare;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class FunctionDeclare extends Expression {
@@ -21,7 +20,8 @@ public final class FunctionDeclare extends Expression {
     private final int start;
     private final int varSize;
 
-    public FunctionDeclare(Object[] argDefaults, int varSize, VariantIndexer[] indexers, Statement[] statements, int start, boolean hasReturnLoops, int line, int column) {
+    public FunctionDeclare(Object[] argDefaults, int varSize, VariantIndexer[] indexers,
+                           Statement[] statements, int start, boolean hasReturnLoops, int line, int column) {
         super(line, column);
         this.argDefaults = argDefaults;
         this.indexers = indexers;

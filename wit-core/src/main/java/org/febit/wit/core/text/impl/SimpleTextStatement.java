@@ -6,7 +6,6 @@ import org.febit.wit.core.ast.Statement;
 import org.febit.wit.util.InternedEncoding;
 
 /**
- *
  * @author zqq90
  */
 public final class SimpleTextStatement extends Statement {

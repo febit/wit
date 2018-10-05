@@ -1,26 +1,21 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
+import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.method.*;
+import org.febit.wit.loggers.Logger;
+import org.febit.wit.security.NativeSecurityManager;
+import org.febit.wit.util.ClassUtil;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.MethodDeclare;
-import org.febit.wit.lang.method.MixedMultiNativeMethodDeclare;
-import org.febit.wit.lang.method.MultiNativeConstructorDeclare;
-import org.febit.wit.lang.method.MultiNativeMethodDeclare;
-import org.febit.wit.lang.method.NativeConstructorDeclare;
-import org.febit.wit.lang.method.NativeMethodDeclare;
-import org.febit.wit.lang.method.NativeNewArrayDeclare;
-import org.febit.wit.loggers.Logger;
-import org.febit.wit.security.NativeSecurityManager;
-import org.febit.wit.util.ClassUtil;
 
 /**
- *
  * @author zqq90
  */
 public class NativeFactory {
@@ -38,7 +33,8 @@ public class NativeFactory {
         return getNativeNewArrayMethodDeclare(componentType, -1, -1, checkAccess);
     }
 
-    public MethodDeclare getNativeNewArrayMethodDeclare(Class<?> componentType, int line, int column, boolean checkAccess) {
+    public MethodDeclare getNativeNewArrayMethodDeclare(Class<?> componentType, int line,
+                                                        int column, boolean checkAccess) {
         Class<?> classForCheck = componentType;
         while (classForCheck.isArray()) {
             classForCheck = classForCheck.getComponentType();
@@ -67,11 +63,13 @@ public class NativeFactory {
         return getNativeMethodDeclare(clazz, methodName, paramTypes, -1, -1, true);
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, Class[] paramTypes, boolean checkAccess) {
+    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName,
+                                                Class[] paramTypes, boolean checkAccess) {
         return getNativeMethodDeclare(clazz, methodName, paramTypes, -1, -1, checkAccess);
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, Class[] paramTypes, int line, int column, boolean checkAccess) {
+    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, Class[] paramTypes,
+                                                int line, int column, boolean checkAccess) {
         if (checkAccess) {
             final String path = clazz.getName() + '.' + methodName;
             if (!this.nativeSecurityManager.access(path)) {
@@ -85,7 +83,8 @@ public class NativeFactory {
         }
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, int line, int column, boolean checkAccess) {
+    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, int line,
+                                                int column, boolean checkAccess) {
         if (checkAccess) {
             final String path = clazz.getName() + '.' + methodName;
             if (!this.nativeSecurityManager.access(path)) {
@@ -111,7 +110,8 @@ public class NativeFactory {
         return getNativeConstructorDeclare(clazz, paramTypes, -1, -1, checkAccess);
     }
 
-    public MethodDeclare getNativeConstructorDeclare(Class<?> clazz, Class[] paramTypes, int line, int column, boolean checkAccess) {
+    public MethodDeclare getNativeConstructorDeclare(Class<?> clazz, Class[] paramTypes,
+                                                     int line, int column, boolean checkAccess) {
         if (checkAccess) {
             final String path = clazz.getName().concat(".<init>");
             if (!this.nativeSecurityManager.access(path)) {
@@ -125,7 +125,8 @@ public class NativeFactory {
         }
     }
 
-    public MethodDeclare getNativeConstructorDeclare(Class<?> clazz, int line, int column, boolean checkAccess) {
+    public MethodDeclare getNativeConstructorDeclare(Class<?> clazz, int line,
+                                                     int column, boolean checkAccess) {
         if (checkAccess) {
             final String path = clazz.getName().concat(".<init>");
             if (!this.nativeSecurityManager.access(path)) {

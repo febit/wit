@@ -1,27 +1,30 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.asm;
 
-import java.lang.reflect.InvocationTargetException;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
 import org.febit.wit_shaded.asm.Label;
 import org.febit.wit_shaded.asm.MethodWriter;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.lang.reflect.InvocationTargetException;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- *
  * @author zqq90
  */
 public class AsmTest implements Constants {
 
     @Test
     public void test() throws Exception {
-        ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC, "x/Example", "java/lang/Object", null);
+        ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC,
+                "x/Example", "java/lang/Object", null);
 
         ASMUtil.visitConstructor(classWriter);
 
-        MethodWriter m = classWriter.visitMethod(ACC_PUBLIC, "test", "([Ljava/lang/Object;)Ljava/lang/Object;", null);
+        MethodWriter m = classWriter.visitMethod(ACC_PUBLIC, "test",
+                "([Ljava/lang/Object;)Ljava/lang/Object;", null);
 
         Label toException = new Label();
         m.visitVarInsn(Constants.ALOAD, 1);

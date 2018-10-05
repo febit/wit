@@ -4,10 +4,9 @@ package org.febit.wit.core.ast.operators;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.util.StatementUtil;
+import org.febit.wit.util.ExceptionUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class PropertyOperator extends AssignableExpression {
@@ -28,7 +27,7 @@ public final class PropertyOperator extends AssignableExpression {
                     expr.execute(context),
                     property);
         } catch (Exception e) {
-            throw StatementUtil.castToScriptRuntimeException(e, this);
+            throw ExceptionUtil.toScriptRuntimeException(e, this);
         }
     }
 
@@ -40,7 +39,7 @@ public final class PropertyOperator extends AssignableExpression {
                     property, value);
             return value;
         } catch (Exception e) {
-            throw StatementUtil.castToScriptRuntimeException(e, this);
+            throw ExceptionUtil.toScriptRuntimeException(e, this);
         }
     }
 }

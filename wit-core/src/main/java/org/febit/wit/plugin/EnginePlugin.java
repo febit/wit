@@ -4,9 +4,8 @@ package org.febit.wit.plugin;
 import org.febit.wit.Engine;
 
 /**
- *
- * @since 2.4.0
  * @author zqq90
+ * @since 2.4.0
  */
 @FunctionalInterface
 public interface EnginePlugin {

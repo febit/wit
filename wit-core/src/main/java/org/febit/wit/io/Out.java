@@ -4,7 +4,6 @@ package org.febit.wit.io;
 import org.febit.wit.util.InternedEncoding;
 
 /**
- *
  * @author zqq90
  */
 public interface Out {

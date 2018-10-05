@@ -1,13 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loggers.impl;
 
-import java.io.PrintStream;
-import java.util.Locale;
 import org.febit.wit.Init;
 import org.febit.wit.loggers.AbstractLogger;
 
+import java.io.PrintStream;
+import java.util.Locale;
+
 /**
- *
  * @author zqq90
  */
 public class SimpleLogger extends AbstractLogger {

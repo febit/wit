@@ -1,18 +1,18 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet;
 
+import org.febit.wit.Engine;
+import org.febit.wit.util.Props;
+import org.febit.wit.util.PropsUtil;
+
+import javax.servlet.ServletContext;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.ServletContext;
-import org.febit.wit.Engine;
-import org.febit.wit.util.Props;
-import org.febit.wit.util.PropsUtil;
 
 /**
- *
  * @author zqq90
  */
 public class ServletEngineUtil {
@@ -25,7 +25,8 @@ public class ServletEngineUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static Engine createEngine(final ServletContext servletContext, final String configFiles, final Map<String, Object> extraSettings) {
+    public static Engine createEngine(final ServletContext servletContext, final String configFiles,
+                                      final Map<String, Object> extraSettings) {
         final Map<String, Object> settings;
         final Props props;
         props = loadProps(Engine.createConfigProps(DEFAULT_WEB_PROPERTIES), servletContext, configFiles);

@@ -1,7 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.List;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.ast.Expression;
@@ -10,8 +9,9 @@ import org.febit.wit.core.ast.Statement;
 import org.febit.wit.util.ALU;
 import org.febit.wit.util.StatementUtil;
 
+import java.util.List;
+
 /**
- *
  * @author zqq90
  */
 public final class IfElse extends Statement implements Loopable {

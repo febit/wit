@@ -1,19 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.febit.wit.Engine;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.util.ArrayUtil;
 import org.febit.wit.util.Stack;
 
+import java.util.*;
+
 /**
- *
  * @author zqq90
  */
 public class VariantManager {

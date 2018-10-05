@@ -1,15 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util.bean;
 
+import org.febit.wit.util.ClassUtil;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-import org.febit.wit.util.ClassUtil;
 
 /**
- *
  * @author zqq90
  */
 public class FieldInfoResolver {

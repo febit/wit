@@ -7,7 +7,6 @@ import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.junit.Test;
 
 /**
- *
  * @author zqq90
  */
 public class HelloTest {

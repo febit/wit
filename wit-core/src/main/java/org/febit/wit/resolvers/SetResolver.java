@@ -2,9 +2,8 @@
 package org.febit.wit.resolvers;
 
 /**
- *
- * @author zqq90
  * @param <T>
+ * @author zqq90
  */
 public interface SetResolver<T> extends Resolver<T> {
 

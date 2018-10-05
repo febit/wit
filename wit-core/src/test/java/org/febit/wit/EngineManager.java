@@ -4,7 +4,6 @@ package org.febit.wit;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 
 /**
- *
  * @author zqq90
  */
 public class EngineManager {

@@ -1,12 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.resolvers.impl;
 
-import java.util.Map;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.SetResolver;
 
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public class MapResolver implements GetResolver<Map>, SetResolver<Map> {

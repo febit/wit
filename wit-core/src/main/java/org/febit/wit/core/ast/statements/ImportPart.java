@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.febit.wit.Template;
 import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.util.StatementUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author zqq90
  */
 public class ImportPart {
@@ -47,8 +47,8 @@ public class ImportPart {
         return len == 0
                 ? new Import(expr, paramsExpr, null, null, refer, line, column)
                 : new Import(expr, paramsExpr,
-                        exportNameList.toArray(new String[len]),
-                        toResetableValueList.toArray(new AssignableExpression[len]),
-                        refer, line, column);
+                exportNameList.toArray(new String[len]),
+                toResetableValueList.toArray(new AssignableExpression[len]),
+                refer, line, column);
     }
 }

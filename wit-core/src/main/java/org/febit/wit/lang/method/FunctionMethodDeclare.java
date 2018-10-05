@@ -7,10 +7,9 @@ import org.febit.wit.core.ast.expressions.FunctionDeclare;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.lang.UnConstableMethodDeclare;
-import org.febit.wit.util.StatementUtil;
+import org.febit.wit.util.ExceptionUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class FunctionMethodDeclare implements MethodDeclare, UnConstableMethodDeclare {
@@ -20,7 +19,8 @@ public final class FunctionMethodDeclare implements MethodDeclare, UnConstableMe
     private final VariantIndexer[] indexers;
     private final int varSize;
 
-    public FunctionMethodDeclare(FunctionDeclare function, InternalContext scopeContext, VariantIndexer[] indexers, int varSize) {
+    public FunctionMethodDeclare(FunctionDeclare function, InternalContext scopeContext,
+                                 VariantIndexer[] indexers, int varSize) {
         this.function = function;
         this.scopeContext = scopeContext;
         this.indexers = indexers;
@@ -32,7 +32,7 @@ public final class FunctionMethodDeclare implements MethodDeclare, UnConstableMe
         try {
             return function.invoke(this.scopeContext.createSubContext(this.indexers, context, this.varSize), args);
         } catch (Exception e) {
-            ScriptRuntimeException runtimeException = StatementUtil.castToScriptRuntimeException(e, function);
+            ScriptRuntimeException runtimeException = ExceptionUtil.toScriptRuntimeException(e, function);
             if (context != this.scopeContext) {
                 throw runtimeException.setTemplate(this.scopeContext.getTemplate());
             }

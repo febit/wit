@@ -5,7 +5,6 @@ import org.febit.wit.Init;
 import org.febit.wit.util.FileNameUtil;
 
 /**
- *
  * @author zqq90
  */
 public abstract class AbstractLoader implements Loader {
@@ -38,7 +37,7 @@ public abstract class AbstractLoader implements Loader {
      * </pre>
      *
      * @param parent parent template's name
-     * @param name relative name
+     * @param name   relative name
      * @return child template's name
      */
     @Override

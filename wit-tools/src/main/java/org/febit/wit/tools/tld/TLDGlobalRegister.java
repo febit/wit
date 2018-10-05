@@ -1,8 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.tools.tld;
 
-import java.io.IOException;
-import java.io.InputStream;
 import org.febit.wit.Engine;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.global.GlobalManager;
@@ -12,8 +10,10 @@ import org.febit.wit.loggers.Logger;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.FileNameUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
- *
  * @author zqq90
  */
 public class TLDGlobalRegister implements GlobalRegister {
@@ -39,8 +39,7 @@ public class TLDGlobalRegister implements GlobalRegister {
 
         try {
             TLDFunction[] functions = TLDDocumentParser.parse(input);
-            for (int i = 0, len = functions.length; i < len; i++) {
-                TLDFunction func = functions[i];
+            for (TLDFunction func : functions) {
                 manager.setConst(this.prefix + func.name, createMethodDeclare(func));
             }
         } catch (Exception e) {

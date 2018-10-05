@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author zqq90
  */
 public class StringUtil {

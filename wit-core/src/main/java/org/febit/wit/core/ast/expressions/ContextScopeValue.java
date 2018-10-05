@@ -5,7 +5,6 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.AssignableExpression;
 
 /**
- *
  * @author zqq90
  */
 public final class ContextScopeValue extends AssignableExpression {

@@ -2,7 +2,6 @@
 package org.febit.wit.util;
 
 /**
- *
  * @author zqq90
  */
 public class ArrayUtil {

@@ -1,13 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 /**
@@ -159,8 +153,8 @@ public final class Props {
             return;
         }
         put(key.isEmpty()
-                ? section
-                : section + '.' + key,
+                        ? section
+                        : section + '.' + key,
                 value, append);
     }
 

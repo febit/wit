@@ -1,13 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.tools.cache.impl;
 
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import org.febit.wit.tools.cache.CacheProvider;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 /**
- *
  * @author zqq90
  */
 public class SimpleCacheProvider implements CacheProvider {
@@ -47,11 +46,7 @@ public class SimpleCacheProvider implements CacheProvider {
     //XXX: prune 1/N  each time
     protected void pruneCache() {
         final long expired = System.currentTimeMillis() - timeToLive;
-        for (Iterator<CachingEntry> it = this.cacheMap.values().iterator(); it.hasNext();) {
-            if (it.next().createTime < expired) {
-                it.remove();
-            }
-        }
+        this.cacheMap.values().removeIf(entry -> entry.createTime < expired);
     }
 
     @Override

@@ -7,7 +7,6 @@ import org.febit.wit.core.ast.Statement;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public class WhilePart {
@@ -30,12 +29,16 @@ public class WhilePart {
         if (bodyStatement.hasLoops()) {
             LoopInfo[] loopInfos = StatementUtil.collectPossibleLoopsForWhile(bodyStatement, null, label);
             return doWhileAtFirst
-                    ? new While(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), loopInfos, label, line, column)
-                    : new DoWhile(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), loopInfos, label, line, column);
+                    ? new While(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(),
+                    loopInfos, label, line, column)
+                    : new DoWhile(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(),
+                    loopInfos, label, line, column);
         } else {
             return doWhileAtFirst
-                    ? new WhileNoLoops(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), line, column)
-                    : new DoWhileNoLoops(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(), line, column);
+                    ? new WhileNoLoops(whileExpr, bodyStatement.getVarIndexer(),
+                    bodyStatement.getStatements(), line, column)
+                    : new DoWhileNoLoops(whileExpr, bodyStatement.getVarIndexer(),
+                    bodyStatement.getStatements(), line, column);
         }
     }
 }

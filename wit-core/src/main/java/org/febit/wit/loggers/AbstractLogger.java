@@ -4,7 +4,6 @@ package org.febit.wit.loggers;
 import org.febit.wit.util.StringUtil;
 
 /**
- *
  * @author zqq90
  */
 public abstract class AbstractLogger implements Logger {

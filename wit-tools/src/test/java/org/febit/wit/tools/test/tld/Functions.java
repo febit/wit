@@ -2,7 +2,6 @@
 package org.febit.wit.tools.test.tld;
 
 /**
- *
  * @author zqq90
  */
 public class Functions {

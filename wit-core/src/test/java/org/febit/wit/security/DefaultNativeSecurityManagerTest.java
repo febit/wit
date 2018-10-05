@@ -2,11 +2,12 @@
 package org.febit.wit.security;
 
 import org.febit.wit.security.impl.DefaultNativeSecurityManager;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
- *
  * @author zqq90
  */
 public class DefaultNativeSecurityManagerTest {

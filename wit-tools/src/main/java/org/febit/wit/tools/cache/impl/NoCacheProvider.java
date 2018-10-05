@@ -4,7 +4,6 @@ package org.febit.wit.tools.cache.impl;
 import org.febit.wit.tools.cache.CacheProvider;
 
 /**
- *
  * @author zqq90
  */
 public class NoCacheProvider implements CacheProvider {

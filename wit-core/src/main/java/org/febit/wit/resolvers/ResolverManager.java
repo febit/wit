@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.resolvers;
 
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import org.febit.wit.Init;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.resolvers.impl.CommonResolver;
 import org.febit.wit.util.ClassMap;
 
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+
 /**
- *
  * @author zqq90
  */
 public class ResolverManager {

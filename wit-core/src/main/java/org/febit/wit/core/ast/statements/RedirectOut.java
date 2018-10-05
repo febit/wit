@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayWriter;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
 
+import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
+
 /**
- *
  * @author zqq90
  */
 public class RedirectOut extends Statement {

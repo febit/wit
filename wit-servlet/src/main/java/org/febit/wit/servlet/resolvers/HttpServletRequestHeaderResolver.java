@@ -5,7 +5,6 @@ import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.servlet.HttpServletRequestHeader;
 
 /**
- *
  * @author zqq90
  */
 public class HttpServletRequestHeaderResolver implements GetResolver<HttpServletRequestHeader> {

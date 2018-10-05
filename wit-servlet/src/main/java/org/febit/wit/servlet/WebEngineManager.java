@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
 import org.febit.wit.Engine;
 import org.febit.wit.Vars;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public class WebEngineManager {
@@ -83,7 +83,8 @@ public class WebEngineManager {
                 this.extraProperties);
     }
 
-    public void renderTemplate(final String name, final Map<String, Object> parameters, final HttpServletResponse response) throws IOException {
+    public void renderTemplate(final String name, final Map<String, Object> parameters,
+                               final HttpServletResponse response) throws IOException {
         getEngine().getTemplate(name)
                 .merge(parameters, response.getOutputStream());
     }
@@ -93,7 +94,8 @@ public class WebEngineManager {
                 .merge(parameters, response.getOutputStream());
     }
 
-    public void renderTemplate(final String parent, final String name, final Vars parameters, final HttpServletResponse response) throws IOException {
+    public void renderTemplate(final String parent, final String name, final Vars parameters,
+                               final HttpServletResponse response) throws IOException {
         getEngine().getTemplate(parent, name)
                 .merge(parameters, response.getOutputStream());
     }

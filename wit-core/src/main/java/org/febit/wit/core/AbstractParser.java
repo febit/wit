@@ -1,19 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import org.febit.wit.Engine;
 import org.febit.wit.Template;
 import org.febit.wit.core.VariantManager.VarAddress;
-import org.febit.wit.core.ast.*;
+import org.febit.wit.core.ast.AssignableExpression;
+import org.febit.wit.core.ast.Expression;
+import org.febit.wit.core.ast.Statement;
+import org.febit.wit.core.ast.TemplateAST;
 import org.febit.wit.core.ast.expressions.*;
 import org.febit.wit.core.ast.operators.*;
 import org.febit.wit.core.ast.statements.*;
@@ -25,16 +19,19 @@ import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.ResourceOffset;
 import org.febit.wit.security.NativeSecurityManager;
-import org.febit.wit.util.ALU;
-import org.febit.wit.util.ClassNameBand;
-import org.febit.wit.util.ClassUtil;
-import org.febit.wit.util.ExceptionUtil;
-import org.febit.wit.util.Stack;
-import org.febit.wit.util.StatementUtil;
-import org.febit.wit.util.StringUtil;
+import org.febit.wit.util.*;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
- *
  * @author zqq90
  */
 abstract class AbstractParser {
@@ -57,92 +54,92 @@ abstract class AbstractParser {
     private static final short[][] ACTION_TABLE = loadData("Action");
     private static final short[][] REDUCE_TABLE = loadData("Reduce");
     private static final String[] SYMBOL_STRS = {
-        "EOF", //EOF
-        "ERROR", //ERROR
-        "var", //VAR
-        "if", //IF
-        "else", //ELSE
-        "for", //FOR
-        "this", //THIS
-        "super", //SUPER
-        "switch", //SWITCH
-        "case", //CASE
-        "default", //DEFAULT
-        "do", //DO
-        "while", //WHILE
-        "throw", //THROW
-        "try", //TRY
-        "catch", //CATCH
-        "finally", //FINALLY
-        "new", //NEW
-        "instanceof", //INSTANCEOF
-        "function", //FUNCTION
-        "echo", //ECHO
-        "static", //STATIC
-        "native", //NATIVE
-        "import", //IMPORT
-        "include", //INCLUDE
-        "@import", //NATIVE_IMPORT
-        "break", //BREAK
-        "continue", //CONTINUE
-        "return", //RETURN
-        "++", //PLUSPLUS
-        "--", //MINUSMINUS
-        "+", //PLUS
-        "-", //MINUS
-        "*", //MULT
-        "/", //DIV
-        "%", //MOD
-        "<<", //LSHIFT
-        ">>", //RSHIFT
-        ">>>", //URSHIFT
-        "<", //LT
-        ">", //GT
-        "<=", //LTEQ
-        ">=", //GTEQ
-        "==", //EQEQ
-        "!=", //NOTEQ
-        "&", //AND
-        "^", //XOR
-        "|", //OR
-        "~", //COMP
-        "&&", //ANDAND
-        "||", //OROR
-        "!", //NOT
-        "?", //QUESTION
-        "*=", //SELFEQ
-        "-", //UMINUS
-        ".", //DOT
-        ":", //COLON
-        "::", //COLONCOLON
-        ",", //COMMA
-        ";", //SEMICOLON
-        "{", //LBRACE
-        "}", //RBRACE
-        "}", //INTERPOLATION_END
-        "(", //LPAREN
-        ")", //RPAREN
-        "[", //LBRACK
-        "]", //RBRACK
-        "[?", //LDEBUG
-        "?]", //RDEBUG
-        "[?]", //LRDEBUG
-        "=>", //EQGT
-        ")->", //RPAREN_MINUSGT
-        "->", //MINUSGT
-        ".~", //DYNAMIC_DOT
-        "..", //DOTDOT
-        "=", //EQ
-        "`", //TEMPLATE_STRING_START
-        "}", //TEMPLATE_STRING_INTERPOLATION_END
-        "${", //TEMPLATE_STRING_INTERPOLATION_START
-        "`", //TEMPLATE_STRING_END
-        "IDENTIFIER", //IDENTIFIER
-        "::", //METHOD_REFERENCE
-        "TEXT", //TEXT_STATEMENT
-        "DIRECT_VALUE", // DIRECT_VALUE
-        "const", //CONST
-        "UNKNOWN"
+            "EOF", //EOF
+            "ERROR", //ERROR
+            "var", //VAR
+            "if", //IF
+            "else", //ELSE
+            "for", //FOR
+            "this", //THIS
+            "super", //SUPER
+            "switch", //SWITCH
+            "case", //CASE
+            "default", //DEFAULT
+            "do", //DO
+            "while", //WHILE
+            "throw", //THROW
+            "try", //TRY
+            "catch", //CATCH
+            "finally", //FINALLY
+            "new", //NEW
+            "instanceof", //INSTANCEOF
+            "function", //FUNCTION
+            "echo", //ECHO
+            "static", //STATIC
+            "native", //NATIVE
+            "import", //IMPORT
+            "include", //INCLUDE
+            "@import", //NATIVE_IMPORT
+            "break", //BREAK
+            "continue", //CONTINUE
+            "return", //RETURN
+            "++", //PLUSPLUS
+            "--", //MINUSMINUS
+            "+", //PLUS
+            "-", //MINUS
+            "*", //MULT
+            "/", //DIV
+            "%", //MOD
+            "<<", //LSHIFT
+            ">>", //RSHIFT
+            ">>>", //URSHIFT
+            "<", //LT
+            ">", //GT
+            "<=", //LTEQ
+            ">=", //GTEQ
+            "==", //EQEQ
+            "!=", //NOTEQ
+            "&", //AND
+            "^", //XOR
+            "|", //OR
+            "~", //COMP
+            "&&", //ANDAND
+            "||", //OROR
+            "!", //NOT
+            "?", //QUESTION
+            "*=", //SELFEQ
+            "-", //UMINUS
+            ".", //DOT
+            ":", //COLON
+            "::", //COLONCOLON
+            ",", //COMMA
+            ";", //SEMICOLON
+            "{", //LBRACE
+            "}", //RBRACE
+            "}", //INTERPOLATION_END
+            "(", //LPAREN
+            ")", //RPAREN
+            "[", //LBRACK
+            "]", //RBRACK
+            "[?", //LDEBUG
+            "?]", //RDEBUG
+            "[?]", //LRDEBUG
+            "=>", //EQGT
+            ")->", //RPAREN_MINUSGT
+            "->", //MINUSGT
+            ".~", //DYNAMIC_DOT
+            "..", //DOTDOT
+            "=", //EQ
+            "`", //TEMPLATE_STRING_START
+            "}", //TEMPLATE_STRING_INTERPOLATION_END
+            "${", //TEMPLATE_STRING_INTERPOLATION_START
+            "`", //TEMPLATE_STRING_END
+            "IDENTIFIER", //IDENTIFIER
+            "::", //METHOD_REFERENCE
+            "TEXT", //TEXT_STATEMENT
+            "DIRECT_VALUE", // DIRECT_VALUE
+            "const", //CONST
+            "UNKNOWN"
     };
 
     private final Map<String, String> importedClasses = new HashMap<>();
@@ -278,7 +275,8 @@ abstract class AbstractParser {
         return "UNKNOWN";
     }
 
-    public static TemplateAST parse(final Template template, BreakPointListener breakPointListener) throws ParseException {
+    public static TemplateAST parse(final Template template,
+                                    BreakPointListener breakPointListener) throws ParseException {
         return new Parser().doParse(template, breakPointListener);
     }
 
@@ -345,7 +343,7 @@ abstract class AbstractParser {
                                 pending = createLooseSemicolonSymbol(pendingPending);
                                 break;
                             default:
-                            // Do nothing
+                                // Do nothing
                         }
                     }
                 }
@@ -359,7 +357,7 @@ abstract class AbstractParser {
                             pendingPending = createLooseSemicolonSymbol(pending);
                             break;
                         default:
-                        // Do nothing
+                            // Do nothing
                     }
                 }
                 continue;
@@ -380,7 +378,9 @@ abstract class AbstractParser {
                 }
             }
             if (act == 0) {
-                throw new ParseException(StringUtil.format("Syntax error at line {} column {}, Hints: {}", lexer.getLine(), lexer.getColumn(), getSimpleHintMessage(currentSymbol)), lexer.getLine(), lexer.getColumn());
+                throw new ParseException(StringUtil.format("Syntax error at line {} column {}, Hints: {}",
+                        lexer.getLine(), lexer.getColumn(), getSimpleHintMessage(currentSymbol)),
+                        lexer.getLine(), lexer.getColumn());
             }
             boolean isLastSymbolOnEdgeOfNewLine = currentSymbol.isOnEdgeOfNewLine;
             // if its less than zero, then it encodes a reduce action
@@ -412,12 +412,12 @@ abstract class AbstractParser {
     }
 
     /**
-     *
      * @param template Template
      * @return TemplateAST
      * @throws ParseException
      */
-    protected TemplateAST doParse(final Template template, final BreakPointListener breakPointListener) throws ParseException {
+    protected TemplateAST doParse(final Template template,
+                                  final BreakPointListener breakPointListener) throws ParseException {
         final Engine myEngine = template.getEngine();
         final Resource resource = template.getResource();
         this.textStatementFactory = myEngine.get(TextStatementFactory.class);
@@ -466,10 +466,10 @@ abstract class AbstractParser {
     boolean registerClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
         final String className = classNameBand.getClassSimpleName();
         if (ClassUtil.getPrimitiveClass(className) != null) {
-            throw new ParseException("Duplicate class simple name:".concat(classNameBand.getClassPureName()), line, column);
+            throw new ParseException("Duplicate class simple name:" + classNameBand.getClassPureName(), line, column);
         }
         if (importedClasses.containsKey(className)) {
-            throw new ParseException("Duplicate class register:".concat(classNameBand.getClassPureName()), line, column);
+            throw new ParseException("Duplicate class register:" + classNameBand.getClassPureName(), line, column);
         }
         importedClasses.put(className, classNameBand.getClassPureName());
         return true;
@@ -677,10 +677,12 @@ abstract class AbstractParser {
     }
 
     Expression createNativeNewArrayDeclareExpression(Class<?> componentType, int line, int column) {
-        return new DirectValue(this.nativeFactory.getNativeNewArrayMethodDeclare(componentType, line, column, true), line, column);
+        return new DirectValue(this.nativeFactory.getNativeNewArrayMethodDeclare(componentType, line, column, true),
+                line, column);
     }
 
-    Expression createNativeMethodDeclareExpression(Class<?> clazz, String methodName, List<Class> list, int line, int column) {
+    Expression createNativeMethodDeclareExpression(Class<?> clazz, String methodName,
+                                                   List<Class> list, int line, int column) {
         return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName,
                 list == null ? new Class[0] : list.toArray(new Class[list.size()]),
                 line, column, true), line, column);
@@ -694,7 +696,8 @@ abstract class AbstractParser {
         Class<?> cls = toClass(className);
         if ("new".equals(method)) {
             if (cls.isArray()) {
-                methodDeclare = this.nativeFactory.getNativeNewArrayMethodDeclare(cls.getComponentType(), line, column, true);
+                methodDeclare = this.nativeFactory.getNativeNewArrayMethodDeclare(cls.getComponentType(),
+                        line, column, true);
             } else {
                 methodDeclare = this.nativeFactory.getNativeConstructorDeclare(cls, line, column, true);
             }
@@ -716,7 +719,8 @@ abstract class AbstractParser {
         return NoneStatement.INSTANCE;
     }
 
-    Statement createIfStatement(Expression ifExpr, Statement thenStatement, Statement elseStatement, int line, int column) {
+    Statement createIfStatement(Expression ifExpr, Statement thenStatement,
+                                Statement elseStatement, int line, int column) {
         thenStatement = StatementUtil.optimize(thenStatement);
         elseStatement = StatementUtil.optimize(elseStatement);
         if (thenStatement != null) {
@@ -742,7 +746,8 @@ abstract class AbstractParser {
         return new MethodExecute(funcExpr, paramExprs, line, column);
     }
 
-    Expression createDynamicNativeMethodExecute(Expression thisExpr, String func, Expression[] paramExprs, int line, int column) {
+    Expression createDynamicNativeMethodExecute(Expression thisExpr, String func,
+                                                Expression[] paramExprs, int line, int column) {
         StatementUtil.optimize(paramExprs);
         thisExpr = StatementUtil.optimize(thisExpr);
         return new DynamicNativeMethodExecute(thisExpr, func, paramExprs, line, column);

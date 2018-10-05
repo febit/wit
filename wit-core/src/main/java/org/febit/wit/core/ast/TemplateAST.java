@@ -9,7 +9,6 @@ import org.febit.wit.io.Out;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class TemplateAST {

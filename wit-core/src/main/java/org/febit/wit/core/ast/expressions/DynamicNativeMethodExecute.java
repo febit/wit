@@ -1,7 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.expressions;
 
-import java.lang.reflect.Method;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.exceptions.ScriptRuntimeException;
@@ -9,8 +8,9 @@ import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.JavaNativeUtil;
 import org.febit.wit.util.StatementUtil;
 
+import java.lang.reflect.Method;
+
 /**
- *
  * @author zqq90
  */
 public final class DynamicNativeMethodExecute extends Expression {
@@ -19,7 +19,8 @@ public final class DynamicNativeMethodExecute extends Expression {
     private final Expression thisExpr;
     private final Expression[] paramExprs;
 
-    public DynamicNativeMethodExecute(Expression thisExpr, String func, Expression[] paramExprs, int line, int column) {
+    public DynamicNativeMethodExecute(Expression thisExpr, String func,
+                                      Expression[] paramExprs, int line, int column) {
         super(line, column);
         this.thisExpr = thisExpr;
         this.func = func;

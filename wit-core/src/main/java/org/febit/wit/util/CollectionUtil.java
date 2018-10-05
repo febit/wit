@@ -1,20 +1,18 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.Iter;
 import org.febit.wit.lang.KeyIter;
-import org.febit.wit.lang.iter.*;
+import org.febit.wit.lang.iter.AbstractArrayIter;
+import org.febit.wit.lang.iter.AbstractIter;
+import org.febit.wit.lang.iter.MapKeyIter;
+
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
- *
  * @author zqq90
  */
 public class CollectionUtil {
@@ -68,7 +66,7 @@ public class CollectionUtil {
         if (o1 instanceof Map) {
             return new MapKeyIter((Map) o1);
         }
-        throw new ScriptRuntimeException("Unsupported type to KeyIter: ".concat(o1.getClass().getName()), statement);
+        throw new ScriptRuntimeException("Unsupported type to KeyIter: " + o1.getClass(), statement);
     }
 
     public static Iter toIter(final Object o1, Statement statement) {
@@ -99,7 +97,7 @@ public class CollectionUtil {
                 return createIter((CharSequence) o1);
             }
         }
-        throw new ScriptRuntimeException("Unsupported type to Iter: ".concat(o1.getClass().getName()), statement);
+        throw new ScriptRuntimeException("Unsupported type to Iter: " + o1.getClass(), statement);
     }
 
     private static Iter createIter(Object[] array) {

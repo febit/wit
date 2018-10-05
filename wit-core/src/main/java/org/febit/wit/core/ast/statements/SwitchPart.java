@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.core.ast.statements.Switch.CaseEntry;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.util.StatementUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public class SwitchPart {

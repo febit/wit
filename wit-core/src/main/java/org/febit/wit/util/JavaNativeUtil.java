@@ -1,14 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.febit.wit.Engine;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.NativeFactory;
@@ -17,8 +9,16 @@ import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.global.GlobalManager;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
- *
  * @author zqq90
  */
 public class JavaNativeUtil {
@@ -45,8 +45,8 @@ public class JavaNativeUtil {
     }
 
     public static int addStaticMethods(GlobalManager manager,
-            NativeFactory nativeFactory,
-            Class<?> type) {
+                                       NativeFactory nativeFactory,
+                                       Class<?> type) {
         return addStaticMethods(manager, nativeFactory, type, false);
     }
 
@@ -120,7 +120,6 @@ public class JavaNativeUtil {
     }
 
     /**
-     *
      * @param methods
      * @param args
      * @return null if not found
@@ -130,10 +129,9 @@ public class JavaNativeUtil {
     }
 
     /**
-     *
      * @param methods
-     * @param args if mixed, first arg is the host of member methods.
-     * @param mix if mix, static methods with member methods
+     * @param args    if mixed, first arg is the host of member methods.
+     * @param mix     if mix, static methods with member methods
      * @return null if not found
      */
     public static Method getMatchMethod(Method[] methods, Object[] args, boolean mix) {
@@ -141,7 +139,6 @@ public class JavaNativeUtil {
     }
 
     /**
-     *
      * @param methods
      * @param argTypes
      * @return null if not found
@@ -151,10 +148,9 @@ public class JavaNativeUtil {
     }
 
     /**
-     *
      * @param methods
      * @param argTypes if mixed, first arg is the host of member methods.
-     * @param mix if mix static methods with member methods
+     * @param mix      if mix static methods with member methods
      * @return null if not found
      */
     public static Method getMatchMethod(Method[] methods, Class<?>[] argTypes, boolean mix) {
@@ -205,7 +201,6 @@ public class JavaNativeUtil {
     }
 
     /**
-     *
      * @param argTypes
      * @param methods
      * @param count
@@ -241,7 +236,6 @@ public class JavaNativeUtil {
     }
 
     /**
-     *
      * @param constructors
      * @param args
      * @return null if not found
@@ -251,9 +245,8 @@ public class JavaNativeUtil {
     }
 
     /**
-     *
      * @param constructors
-     * @param argTypes if mixed, first arg is the host of member methods.
+     * @param argTypes     if mixed, first arg is the host of member methods.
      * @return null if not found
      */
     public static Constructor getMatchConstructor(Constructor[] constructors, Class<?>[] argTypes) {
@@ -289,7 +282,8 @@ public class JavaNativeUtil {
         return candidate[0];
     }
 
-    protected static Constructor resolveAmbiguousConstructors(Class<?>[] argTypes, Constructor[] constructors, int count) {
+    protected static Constructor resolveAmbiguousConstructors(Class<?>[] argTypes,
+                                                              Constructor[] constructors, int count) {
         if (argTypes.length == 0) {
             return null;
         }

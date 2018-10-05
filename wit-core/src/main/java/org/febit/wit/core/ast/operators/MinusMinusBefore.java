@@ -5,10 +5,9 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.util.ALU;
-import org.febit.wit.util.StatementUtil;
+import org.febit.wit.util.ExceptionUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class MinusMinusBefore extends Expression {
@@ -27,7 +26,7 @@ public final class MinusMinusBefore extends Expression {
             return resetable.setValue(context, ALU.minusOne(
                     resetable.execute(context)));
         } catch (Exception e) {
-            throw StatementUtil.castToScriptRuntimeException(e, this);
+            throw ExceptionUtil.toScriptRuntimeException(e, this);
         }
     }
 }

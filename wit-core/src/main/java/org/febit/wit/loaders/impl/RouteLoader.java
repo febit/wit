@@ -1,10 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import org.febit.wit.Engine;
 import org.febit.wit.Init;
 import org.febit.wit.exceptions.IllegalConfigException;
@@ -12,10 +8,14 @@ import org.febit.wit.loaders.Loader;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.util.StringUtil;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- *
- * @since 1.4.0
  * @author zqq90
+ * @since 1.4.0
  */
 public class RouteLoader implements Loader {
 

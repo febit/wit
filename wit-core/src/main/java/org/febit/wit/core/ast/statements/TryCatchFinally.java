@@ -1,15 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.List;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.ast.Loopable;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.util.StatementUtil;
 
+import java.util.List;
+
 /**
- *
  * @author zqq90
  */
 public class TryCatchFinally extends Statement implements Loopable {
@@ -19,7 +19,8 @@ public class TryCatchFinally extends Statement implements Loopable {
     private final Statement catchStat;
     private final Statement finalStat;
 
-    public TryCatchFinally(Statement tryStat, int exceptionVarIndex, Statement catchStat, Statement finalStat, int line, int column) {
+    public TryCatchFinally(Statement tryStat, int exceptionVarIndex, Statement catchStat,
+                           Statement finalStat, int line, int column) {
         super(line, column);
         this.tryStat = tryStat;
         this.exceptionVarIndex = exceptionVarIndex;

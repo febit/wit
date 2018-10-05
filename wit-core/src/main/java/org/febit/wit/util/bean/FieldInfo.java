@@ -1,12 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util.bean;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import org.febit.wit.util.ClassUtil;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 /**
- *
  * @author zqq90
  */
 public final class FieldInfo implements Comparable<FieldInfo> {

@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.test.tmpls;
 
-import java.io.StringWriter;
 import org.febit.wit.EngineManager;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.StringWriter;
+
 /**
- *
  * @author zqq90
  */
 public class StringLoaderTest {

@@ -2,7 +2,6 @@
 package org.febit.wit.exceptions;
 
 /**
- *
  * @author zqq90
  */
 public class UncheckedException extends RuntimeException {

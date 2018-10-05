@@ -5,7 +5,6 @@ import org.febit.wit.io.Out;
 import org.febit.wit.resolvers.OutResolver;
 
 /**
- *
  * @author zqq90
  */
 public class ByteArrayOutResolver implements OutResolver<byte[]> {

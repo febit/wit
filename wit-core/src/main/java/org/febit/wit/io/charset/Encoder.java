@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- *
  * @author zqq90
  */
 public interface Encoder {

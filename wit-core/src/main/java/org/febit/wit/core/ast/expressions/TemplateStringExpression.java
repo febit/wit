@@ -5,7 +5,6 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
 
 /**
- *
  * @author zqq90
  */
 public class TemplateStringExpression extends Expression {

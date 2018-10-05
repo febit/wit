@@ -5,15 +5,15 @@ import com.jfinal.core.JFinal;
 import com.jfinal.render.IMainRenderFactory;
 import com.jfinal.render.Render;
 import com.jfinal.render.RenderException;
-import java.io.IOException;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.febit.wit.servlet.ServletUtil;
 import org.febit.wit.servlet.WebEngineManager;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public class WitRenderFactory implements IMainRenderFactory {
@@ -32,7 +32,7 @@ public class WitRenderFactory implements IMainRenderFactory {
         this.suffix = suffix;
         this.engineManager
                 = new WebEngineManager(JFinal.me().getServletContext())
-                        .appendProperties(RESOLVERS, "org.febit.wit.support.jfinal.ModelResolver, org.febit.wit.support.jfinal.RecordResolver");
+                .appendProperties(RESOLVERS, "org.febit.wit.support.jfinal.ModelResolver, org.febit.wit.support.jfinal.RecordResolver");
     }
 
     public void setConfigPath(String configPath) {

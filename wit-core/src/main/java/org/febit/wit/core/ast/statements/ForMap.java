@@ -1,7 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.List;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.ast.Expression;
@@ -13,8 +12,9 @@ import org.febit.wit.lang.iter.KeyIterMethodFilter;
 import org.febit.wit.util.CollectionUtil;
 import org.febit.wit.util.StatementUtil;
 
+import java.util.List;
+
 /**
- *
  * @author zqq90
  */
 public final class ForMap extends Statement implements Loopable {
@@ -30,7 +30,9 @@ public final class ForMap extends Statement implements Loopable {
     private final int keyIndex;
     private final int valueIndex;
 
-    public ForMap(FunctionDeclare functionDeclareExpr, Expression mapExpr, int indexer, int iterIndex, int keyIndex, int valueIndex, Statement[] statements, LoopInfo[] possibleLoops, Statement elseStatement, int label, int line, int column) {
+    public ForMap(FunctionDeclare functionDeclareExpr, Expression mapExpr, int indexer, int iterIndex,
+                  int keyIndex, int valueIndex, Statement[] statements, LoopInfo[] possibleLoops,
+                  Statement elseStatement, int label, int line, int column) {
         super(line, column);
         this.functionDeclareExpr = functionDeclareExpr;
         this.mapExpr = mapExpr;

@@ -6,7 +6,6 @@ import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.SetResolver;
 
 /**
- *
  * @author zqq90
  */
 public class BagResolver implements GetResolver<Bag>, SetResolver<Bag> {

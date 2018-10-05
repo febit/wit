@@ -1,11 +1,11 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.iter;
 
-import java.util.NoSuchElementException;
 import org.febit.wit.lang.Iter;
 
+import java.util.NoSuchElementException;
+
 /**
- *
  * @author zqq90
  */
 public abstract class IterFilter implements Iter {

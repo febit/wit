@@ -4,7 +4,6 @@ package org.febit.wit.lang;
 import org.febit.wit.InternalContext;
 
 /**
- *
  * @author zqq90
  */
 @FunctionalInterface

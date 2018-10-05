@@ -4,11 +4,12 @@ package org.febit.wit.test.tmpls;
 import org.febit.wit.EngineManager;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 /**
- *
  * @author zqq90
  */
 public class UnsupportedSyntaxTest {

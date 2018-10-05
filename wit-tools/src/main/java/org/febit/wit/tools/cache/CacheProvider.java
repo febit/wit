@@ -2,7 +2,6 @@
 package org.febit.wit.tools.cache;
 
 /**
- *
  * @author zqq90
  */
 public interface CacheProvider {

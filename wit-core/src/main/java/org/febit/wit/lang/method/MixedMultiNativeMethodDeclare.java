@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.method;
 
-import java.lang.reflect.Method;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.JavaNativeUtil;
 
+import java.lang.reflect.Method;
+
 /**
- *
  * @author zqq90
  */
 public class MixedMultiNativeMethodDeclare implements MethodDeclare {

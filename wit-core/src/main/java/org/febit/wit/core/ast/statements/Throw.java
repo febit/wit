@@ -7,7 +7,6 @@ import org.febit.wit.core.ast.Statement;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 
 /**
- *
  * @author zqq90
  */
 public class Throw extends Statement {

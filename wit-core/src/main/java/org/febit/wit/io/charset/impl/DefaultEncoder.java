@@ -1,17 +1,17 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io.charset.impl;
 
+import org.febit.wit.io.Buffers;
+import org.febit.wit.io.charset.Encoder;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import org.febit.wit.io.Buffers;
-import org.febit.wit.io.charset.Encoder;
 
 /**
- *
  * @author zqq90
  */
 public class DefaultEncoder implements Encoder {
@@ -27,7 +27,8 @@ public class DefaultEncoder implements Encoder {
     }
 
     @Override
-    public void write(final String string, final int offset, final int length, final OutputStream out) throws IOException {
+    public void write(final String string, final int offset, final int length,
+                      final OutputStream out) throws IOException {
         char[] chars;
         string.getChars(offset, offset + length,
                 chars = this.buffers.getChars(length),
@@ -36,7 +37,8 @@ public class DefaultEncoder implements Encoder {
     }
 
     @Override
-    public void write(final char[] chars, final int offset, final int length, final OutputStream out) throws IOException {
+    public void write(final char[] chars, final int offset, final int length,
+                      final OutputStream out) throws IOException {
         if (chars == null || length == 0) {
             return;
         }

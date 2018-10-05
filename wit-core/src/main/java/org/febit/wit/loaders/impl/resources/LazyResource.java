@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl.resources;
 
-import java.io.IOException;
-import java.io.Reader;
 import org.febit.wit.loaders.Resource;
 
+import java.io.IOException;
+import java.io.Reader;
+
 /**
- *
- * @since 1.4.0
  * @author zqq90
+ * @since 1.4.0
  */
 public class LazyResource implements Resource {
 

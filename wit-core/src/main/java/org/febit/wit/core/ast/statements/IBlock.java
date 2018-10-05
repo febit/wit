@@ -4,7 +4,6 @@ package org.febit.wit.core.ast.statements;
 import org.febit.wit.core.ast.Statement;
 
 /**
- *
  * @author zqq90
  */
 public abstract class IBlock extends Statement {

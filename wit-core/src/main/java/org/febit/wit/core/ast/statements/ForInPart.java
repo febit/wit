@@ -8,7 +8,6 @@ import org.febit.wit.core.ast.expressions.FunctionDeclare;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public class ForInPart extends AbstractForInPart {
@@ -38,11 +37,13 @@ public class ForInPart extends AbstractForInPart {
     @Override
     public Statement pop(int label) {
         if (bodyStatement.hasLoops()) {
-            return new ForIn(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), iterIndex, itemIndex, bodyStatement.getStatements(),
+            return new ForIn(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(),
+                    iterIndex, itemIndex, bodyStatement.getStatements(),
                     StatementUtil.collectPossibleLoopsForWhile(bodyStatement, elseStatement, label),
                     elseStatement, label, line, column);
         } else {
-            return new ForInNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), iterIndex, itemIndex, bodyStatement.getStatements(), elseStatement, line, column);
+            return new ForInNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(),
+                    iterIndex, itemIndex, bodyStatement.getStatements(), elseStatement, line, column);
         }
     }
 }

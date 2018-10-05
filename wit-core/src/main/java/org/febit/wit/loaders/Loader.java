@@ -15,7 +15,7 @@ public interface Loader {
      * get child template name by parent template name and relative name.
      *
      * @param parent parent template's name
-     * @param name relative name
+     * @param name   relative name
      * @return child template's name
      */
     String concat(String parent, String name);

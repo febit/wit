@@ -8,7 +8,6 @@ import org.febit.wit.Init;
 import org.febit.wit.tools.cache.CacheProvider;
 
 /**
- *
  * @author zqq90
  */
 public class EhcacheProvider implements CacheProvider {

@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.security.impl;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import org.febit.wit.Init;
 import org.febit.wit.security.NativeSecurityManager;
 import org.febit.wit.util.StringUtil;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 /**
- *
  * @author zqq90
  */
 public class DefaultNativeSecurityManager implements NativeSecurityManager {

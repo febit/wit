@@ -1,17 +1,19 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.test.tmpls;
 
-import java.util.HashSet;
-import java.util.Set;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
 import org.febit.wit.Vars;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
- *
  * @author zqq90
  */
 public class DebugTest {

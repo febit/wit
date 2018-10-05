@@ -4,7 +4,6 @@ package org.febit.wit.util.bean;
 import org.febit.wit.util.StringUtil;
 
 /**
- *
  * @author zqq90
  */
 public class BeanException extends RuntimeException {

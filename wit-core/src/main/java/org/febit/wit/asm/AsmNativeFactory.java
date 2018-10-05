@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.asm;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.ClassUtil;
@@ -12,8 +9,11 @@ import org.febit.wit_shaded.asm.Constants;
 import org.febit.wit_shaded.asm.Label;
 import org.febit.wit_shaded.asm.MethodWriter;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+
 /**
- *
  * @author zqq90
  */
 public class AsmNativeFactory extends NativeFactory {
@@ -61,7 +61,8 @@ public class AsmNativeFactory extends NativeFactory {
 
     static MethodDeclare createAccessor(Member obj) throws InstantiationException, IllegalAccessException {
         final String className = "org.febit.wit.asm.Accessor" + ASMUtil.NEXT_SN.getAndIncrement();
-        final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", METHOD_DECLARE);
+        final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
+                ASMUtil.getInternalName(className), "java/lang/Object", METHOD_DECLARE);
 
         ASMUtil.visitConstructor(classWriter);
 
@@ -97,7 +98,8 @@ public class AsmNativeFactory extends NativeFactory {
         }
 
         final int paramTypesLen = paramTypes.length;
-        final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke", "(Lorg/febit/wit/InternalContext;[Ljava/lang/Object;)Ljava/lang/Object;", null);
+        final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke",
+                "(Lorg/febit/wit/InternalContext;[Ljava/lang/Object;)Ljava/lang/Object;", null);
 
         if (paramTypesLen == 0) {
             if (isStatic) {
@@ -140,7 +142,8 @@ public class AsmNativeFactory extends NativeFactory {
             m.visitVarInsn(Constants.ALOAD, 2);
 
             m.push(isStatic || isConstructor ? paramTypesLen : paramTypesLen + 1);
-            m.invokeStatic("org/febit/wit/util/ArrayUtil", "ensureMinSize", "([Ljava/lang/Object;I)[Ljava/lang/Object;");
+            m.invokeStatic("org/febit/wit/util/ArrayUtil", "ensureMinSize",
+                    "([Ljava/lang/Object;I)[Ljava/lang/Object;");
             m.visitVarInsn(Constants.ASTORE, 2);
 
             int paramCount = 0;
@@ -164,7 +167,7 @@ public class AsmNativeFactory extends NativeFactory {
             //Invoke Method
             m.visitMethodInsn(isStatic ? Constants.INVOKESTATIC
                     : isConstructor ? Constants.INVOKESPECIAL : isInterface ? Constants.INVOKEINTERFACE
-                                    : Constants.INVOKEVIRTUAL, ownerClass, destName, destDesc);
+                    : Constants.INVOKEVIRTUAL, ownerClass, destName, destDesc);
             ASMUtil.visitBoxIfNeed(m, returnType);
             m.visitInsn(Constants.ARETURN);
         }

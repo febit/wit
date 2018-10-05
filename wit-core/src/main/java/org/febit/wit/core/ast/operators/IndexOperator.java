@@ -4,10 +4,9 @@ package org.febit.wit.core.ast.operators;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Expression;
-import org.febit.wit.util.StatementUtil;
+import org.febit.wit.util.ExceptionUtil;
 
 /**
- *
  * @author zqq90
  */
 public class IndexOperator extends AssignableExpression {
@@ -26,7 +25,7 @@ public class IndexOperator extends AssignableExpression {
         try {
             return context.getBeanProperty(leftExpr.execute(context), rightExpr.execute(context));
         } catch (Exception e) {
-            throw StatementUtil.castToScriptRuntimeException(e, this);
+            throw ExceptionUtil.toScriptRuntimeException(e, this);
         }
     }
 
@@ -39,7 +38,7 @@ public class IndexOperator extends AssignableExpression {
                     value);
             return value;
         } catch (Exception e) {
-            throw StatementUtil.castToScriptRuntimeException(e, this);
+            throw ExceptionUtil.toScriptRuntimeException(e, this);
         }
     }
 }

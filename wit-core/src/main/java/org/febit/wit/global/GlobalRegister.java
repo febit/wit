@@ -2,7 +2,6 @@
 package org.febit.wit.global;
 
 /**
- *
  * @author zqq90
  */
 @FunctionalInterface

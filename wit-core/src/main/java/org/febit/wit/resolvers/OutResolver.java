@@ -4,9 +4,8 @@ package org.febit.wit.resolvers;
 import org.febit.wit.io.Out;
 
 /**
- *
- * @author zqq90
  * @param <T>
+ * @author zqq90
  */
 public interface OutResolver<T> extends Resolver<T> {
 

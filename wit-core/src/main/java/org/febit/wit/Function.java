@@ -63,15 +63,15 @@ public class Function {
         return invokeWithOut(new WriterOut(writer, template.getEngine()), args);
     }
 
-    public Object invokeWithOut(final OutputStream outputStream, Object... args) {
-        return invokeWithOut(new OutputStreamOut(outputStream, template.getEngine()), args);
+    public Object invokeWithOut(final OutputStream out, Object... args) {
+        return invokeWithOut(new OutputStreamOut(out, template.getEngine()), args);
     }
 
-    public Object invokeWithOut(final String encoding, final OutputStream outputStream, Object... args) {
-        return invokeWithOut(InternedEncoding.intern(encoding), outputStream, args);
+    public Object invokeWithOut(final String encoding, final OutputStream out, Object... args) {
+        return invokeWithOut(InternedEncoding.intern(encoding), out, args);
     }
 
-    public Object invokeWithOut(final InternedEncoding encoding, final OutputStream outputStream, Object... args) {
-        return invokeWithOut(new OutputStreamOut(outputStream, encoding, template.getEngine()), args);
+    public Object invokeWithOut(final InternedEncoding encoding, final OutputStream out, Object... args) {
+        return invokeWithOut(new OutputStreamOut(out, encoding, template.getEngine()), args);
     }
 }

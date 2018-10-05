@@ -4,7 +4,6 @@ package org.febit.wit.lang.iter;
 import org.febit.wit.lang.Iter;
 
 /**
- *
  * @author zqq90
  */
 public abstract class AbstractArrayIter implements Iter {

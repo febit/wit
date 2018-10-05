@@ -1,12 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet.resolvers;
 
-import javax.servlet.http.HttpSession;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.SetResolver;
 
+import javax.servlet.http.HttpSession;
+
 /**
- *
  * @author zqq90
  */
 public class HttpSessionResolver implements GetResolver<HttpSession>, SetResolver<HttpSession> {

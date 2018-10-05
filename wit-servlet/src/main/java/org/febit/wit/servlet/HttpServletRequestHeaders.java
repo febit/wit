@@ -4,7 +4,6 @@ package org.febit.wit.servlet;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- *
  * @author zqq90
  */
 public final class HttpServletRequestHeaders {

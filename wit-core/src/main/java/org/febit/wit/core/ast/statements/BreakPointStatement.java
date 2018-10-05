@@ -6,7 +6,6 @@ import org.febit.wit.core.ast.Statement;
 import org.febit.wit.debug.BreakPointListener;
 
 /**
- *
  * @author zqq90
  */
 public class BreakPointStatement extends Statement {

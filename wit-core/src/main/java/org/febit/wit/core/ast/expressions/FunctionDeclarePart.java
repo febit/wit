@@ -1,8 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.expressions;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.core.VariantManager;
@@ -14,8 +12,10 @@ import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.util.StatementUtil;
 import org.febit.wit.util.StringUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author zqq90
  */
 public class FunctionDeclarePart {
@@ -125,7 +125,8 @@ public class FunctionDeclarePart {
             }
         }
         if (!overflowLoops.isEmpty()) {
-            throw new ParseException("Loops overflow in function body: ".concat(StringUtil.join(overflowLoops, ',')));
+            throw new ParseException("Loops overflow in function body: "
+                    + StringUtil.join(overflowLoops, ','));
         }
 
         Object[] argDefaults = new Object[this.args.size()];

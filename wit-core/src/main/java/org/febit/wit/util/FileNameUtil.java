@@ -134,6 +134,7 @@ public class FileNameUtil {
     }
 
     // ---------------------------------------------------------------- prefix
+
     /**
      * Returns the length of the filename prefix, such as <code>C:/</code> or <code>~/</code>.
      * <p>

@@ -1,12 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.asm;
 
-import java.util.Map;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- *
  * @author zqq90
  */
 public class ASMUtilTest {

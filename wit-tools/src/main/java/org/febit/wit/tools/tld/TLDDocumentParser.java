@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.tools.tld;
 
-import java.io.InputStream;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.febit.wit.util.StringUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.InputStream;
+
 /**
- *
  * @author zqq90
  */
 public class TLDDocumentParser {
@@ -33,7 +33,8 @@ public class TLDDocumentParser {
             final String returnType;
             final String methodName;
             final String[] parameterTypes;
-            final String functionSignature = getRequestChildElementValue(functionElement, "function-signature").trim();
+            final String functionSignature =
+                    getRequestChildElementValue(functionElement, "function-signature").trim();
 
             final int lparenIndex = functionSignature.indexOf('(');
             int methodNameEnd = lparenIndex;
@@ -48,7 +49,8 @@ public class TLDDocumentParser {
 
             methodName = functionSignature.substring(returnTypeEndIndex + 1, methodNameEnd);
 
-            String parameterTypesString = functionSignature.substring(lparenIndex + 1, functionSignature.lastIndexOf(')')).trim();
+            String parameterTypesString =
+                    functionSignature.substring(lparenIndex + 1, functionSignature.lastIndexOf(')')).trim();
             if (parameterTypesString.length() != 0) {
                 parameterTypes = StringUtil.toArray(parameterTypesString);
             } else {

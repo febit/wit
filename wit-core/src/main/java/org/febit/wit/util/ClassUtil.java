@@ -1,18 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import org.febit.wit.exceptions.UncheckedException;
+
+import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.febit.wit.exceptions.UncheckedException;
 
 /**
- *
  * @author zqq90
  */
 public class ClassUtil {
@@ -76,7 +72,7 @@ public class ClassUtil {
             Method old = result.get(key);
             if (old == null
                     || old.getDeclaringClass()
-                            .isAssignableFrom(method.getDeclaringClass())) {
+                    .isAssignableFrom(method.getDeclaringClass())) {
                 result.put(key, method);
             }
         }
@@ -85,13 +81,6 @@ public class ClassUtil {
         return methods;
     }
 
-    /**
-     * XXX: without cache
-     *
-     * @param type
-     * @param name
-     * @return
-     */
     public static Method[] getPublicMethods(Class<?> type, String name) {
         Method[] allMethods = type.getMethods();
         Map<String, Method> result = new HashMap<>();
@@ -109,7 +98,7 @@ public class ClassUtil {
             Method old = result.get(key);
             if (old == null
                     || old.getDeclaringClass()
-                            .isAssignableFrom(method.getDeclaringClass())) {
+                    .isAssignableFrom(method.getDeclaringClass())) {
                 result.put(key, method);
             }
         }

@@ -1,16 +1,17 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.tools.testunit;
 
-import java.lang.reflect.Array;
-import java.util.concurrent.atomic.LongAdder;
-import static org.febit.wit.Context.VOID;
 import org.febit.wit.InternalContext;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
+
+import java.lang.reflect.Array;
+import java.util.concurrent.atomic.LongAdder;
+
+import static org.febit.wit.Context.VOID;
 import static org.febit.wit.util.ArrayUtil.get;
 
 /**
- *
  * @author zqq90
  */
 public class AssertGlobalRegister implements GlobalRegister {

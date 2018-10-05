@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet.loaders;
 
+import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.loaders.Resource;
+
+import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import javax.servlet.ServletContext;
-import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.loaders.Resource;
 
 /**
- *
  * @author zqq90
  */
 public class ServletContextResource implements Resource {
@@ -21,7 +21,6 @@ public class ServletContextResource implements Resource {
     protected final boolean codeFirst;
 
     /**
-     *
      * @param path
      * @param encoding
      * @param servletContext
@@ -31,7 +30,6 @@ public class ServletContextResource implements Resource {
     }
 
     /**
-     *
      * @param path
      * @param encoding
      * @param servletContext

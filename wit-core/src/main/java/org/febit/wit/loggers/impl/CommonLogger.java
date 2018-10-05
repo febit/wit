@@ -7,7 +7,6 @@ import org.febit.wit.Init;
 import org.febit.wit.loggers.AbstractLogger;
 
 /**
- *
  * @author zqq90
  */
 public class CommonLogger extends AbstractLogger {

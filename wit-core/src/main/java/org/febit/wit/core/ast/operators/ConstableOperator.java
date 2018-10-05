@@ -1,14 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.operators;
 
-import java.util.function.Function;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.expressions.DirectValue;
+import org.febit.wit.util.ExceptionUtil;
 import org.febit.wit.util.StatementUtil;
 
+import java.util.function.Function;
+
 /**
- *
  * @author zqq90
  */
 public class ConstableOperator extends Expression {
@@ -27,7 +28,7 @@ public class ConstableOperator extends Expression {
         try {
             return op.apply(expr.execute(context));
         } catch (Exception e) {
-            throw StatementUtil.castToScriptRuntimeException(e, this);
+            throw ExceptionUtil.toScriptRuntimeException(e, this);
         }
     }
 

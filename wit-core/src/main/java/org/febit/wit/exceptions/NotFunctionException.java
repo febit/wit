@@ -4,7 +4,6 @@ package org.febit.wit.exceptions;
 import org.febit.wit.util.ClassUtil;
 
 /**
- *
  * @author zqq90
  */
 public class NotFunctionException extends RuntimeException {

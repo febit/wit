@@ -4,7 +4,6 @@ package org.febit.wit.exceptions;
 import java.io.IOException;
 
 /**
- *
  * @author zqq90
  */
 public class ResourceNotFoundException extends IOException {

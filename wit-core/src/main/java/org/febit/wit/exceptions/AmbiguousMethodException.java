@@ -4,7 +4,6 @@ package org.febit.wit.exceptions;
 import java.lang.reflect.Member;
 
 /**
- *
  * @author zqq90
  */
 public class AmbiguousMethodException extends ScriptRuntimeException {

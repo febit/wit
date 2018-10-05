@@ -6,7 +6,6 @@ import org.febit.wit.core.ast.Expression;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class ArrayValue extends Expression {

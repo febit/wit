@@ -4,7 +4,6 @@ package org.febit.wit.support.jodd3;
 import jodd.madvoc.meta.RenderWith;
 
 /**
- *
  * @author zqq90
  */
 @RenderWith(WitResult.class)

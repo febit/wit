@@ -6,7 +6,6 @@ import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Expression;
 
 /**
- *
  * @author zqq90
  */
 public final class Assign extends Expression {

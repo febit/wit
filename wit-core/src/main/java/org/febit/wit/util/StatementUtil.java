@@ -1,11 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.ast.Expression;
@@ -14,10 +9,14 @@ import org.febit.wit.core.ast.Statement;
 import org.febit.wit.core.ast.expressions.DirectValue;
 import org.febit.wit.core.ast.statements.StatementGroup;
 import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.exceptions.ScriptRuntimeException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- *
  * @author zqq90
  */
 public class StatementUtil {
@@ -124,22 +123,13 @@ public class StatementUtil {
     public static LoopInfo[] collectPossibleLoopsForWhile(Statement bodyStatement, Statement elseStatement, int label) {
         List<LoopInfo> list = StatementUtil.collectPossibleLoops(bodyStatement)
                 .stream()
-                .filter(loop -> !(loop.matchLabel(label) && (loop.type == LoopInfo.BREAK || loop.type == LoopInfo.CONTINUE)))
+                .filter(loop -> !(loop.matchLabel(label)
+                        && (loop.type == LoopInfo.BREAK || loop.type == LoopInfo.CONTINUE)))
                 .collect(Collectors.toList());
 
         list.addAll(StatementUtil.collectPossibleLoops(elseStatement));
         return list.isEmpty() ? null
                 : list.toArray(new LoopInfo[list.size()]);
-    }
-
-    public static ScriptRuntimeException castToScriptRuntimeException(final Exception exception, final Statement statement) {
-        if (exception instanceof ScriptRuntimeException) {
-            ScriptRuntimeException scriptException = (ScriptRuntimeException) exception;
-            scriptException.addStatement(statement);
-            return scriptException;
-        } else {
-            return new ScriptRuntimeException(exception.toString(), exception, statement);
-        }
     }
 
     public static Expression[] emptyExpressions() {

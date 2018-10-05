@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.expressions;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.util.StatementUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public final class MapValue extends Expression {

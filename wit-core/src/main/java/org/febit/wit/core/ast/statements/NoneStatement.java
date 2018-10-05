@@ -5,7 +5,6 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Statement;
 
 /**
- *
  * @author zqq90
  */
 public final class NoneStatement extends Statement {

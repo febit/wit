@@ -7,7 +7,6 @@ import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.util.StringUtil;
 
 /**
- *
  * @author zqq90
  */
 public class IterGetResolver implements GetResolver<Iter> {
@@ -39,6 +38,7 @@ public class IterGetResolver implements GetResolver<Iter> {
                 return (iter.index() & 1) == 0;
             default:
         }
-        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: org.febit.wit.lang.Iter#{}", property));
+        throw new ScriptRuntimeException(StringUtil.format(
+                "Invalid property or can't read: org.febit.wit.lang.Iter#{}", property));
     }
 }

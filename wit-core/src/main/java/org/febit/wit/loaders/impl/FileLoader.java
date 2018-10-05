@@ -6,7 +6,6 @@ import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.impl.resources.FileResource;
 
 /**
- *
  * @author zqq90
  */
 public class FileLoader extends AbstractLoader {

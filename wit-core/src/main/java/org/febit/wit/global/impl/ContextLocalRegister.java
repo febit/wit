@@ -7,9 +7,8 @@ import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
 
 /**
- *
- * @since 1.4.0
  * @author zqq90
+ * @since 1.4.0
  */
 public class ContextLocalRegister implements GlobalRegister {
 

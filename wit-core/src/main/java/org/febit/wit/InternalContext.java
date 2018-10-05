@@ -91,7 +91,8 @@ public final class InternalContext implements Context {
     private final ClassMap<GetResolver> getters;
     private final ClassMap<SetResolver> setters;
 
-    public InternalContext(final Template template, final Out out, final Vars rootParams, final VariantIndexer[] indexers, final int varSize, final Object[][] parentScopes) {
+    public InternalContext(final Template template, final Out out, final Vars rootParams,
+                           final VariantIndexer[] indexers, final int varSize, final Object[][] parentScopes) {
         this.template = template;
         this.rootParams = rootParams;
 
@@ -120,9 +121,9 @@ public final class InternalContext implements Context {
     /**
      * Create a sub context.
      *
-     * @param indexers indexers
+     * @param indexers     indexers
      * @param localContext local context
-     * @param varSize var size
+     * @param varSize      var size
      * @return a new sub context
      */
     public InternalContext createSubContext(VariantIndexer[] indexers, InternalContext localContext, int varSize) {
@@ -137,7 +138,8 @@ public final class InternalContext implements Context {
             System.arraycopy(myParentScopes, 0, scopes, 1, myParentScopes.length);
         }
 
-        InternalContext newContext = new InternalContext(template, localContext.out, Vars.EMPTY, indexers, varSize, scopes);
+        InternalContext newContext = new InternalContext(template, localContext.out, Vars.EMPTY,
+                indexers, varSize, scopes);
         newContext.localContext = localContext;
         return newContext;
     }
@@ -149,11 +151,12 @@ public final class InternalContext implements Context {
      *
      * @param template template
      * @param indexers indexers
-     * @param varSize var size
+     * @param varSize  var size
      * @return a new peer context
      */
     public InternalContext createPeerContext(Template template, VariantIndexer[] indexers, int varSize) {
-        InternalContext newContext = new InternalContext(template, this.out, Vars.EMPTY, indexers, varSize, null);
+        InternalContext newContext = new InternalContext(template, this.out, Vars.EMPTY,
+                indexers, varSize, null);
         newContext.localContext = this;
         return newContext;
     }
@@ -243,14 +246,15 @@ public final class InternalContext implements Context {
     /**
      * Get a bean's property.
      *
-     * @param <T> bean type
-     * @param bean bean
+     * @param <T>      bean type
+     * @param bean     bean
      * @param property property
      * @return value
      */
     public <T> Object getBeanProperty(final T bean, final Object property) {
         if (bean != null) {
-            @SuppressWarnings("unchecked") final GetResolver<T> resolver = this.getters.unsafeGet(bean.getClass());
+            @SuppressWarnings("unchecked")
+            GetResolver<T> resolver = this.getters.unsafeGet(bean.getClass());
             if (resolver != null) {
                 return resolver.get(bean, property);
             }
@@ -261,9 +265,9 @@ public final class InternalContext implements Context {
     /**
      * Set a bean's property.
      *
-     * @param bean bean
+     * @param bean     bean
      * @param property property
-     * @param value value
+     * @param value    value
      */
     public <T> void setBeanProperty(final T bean, final Object property, final Object value) {
         if (bean != null) {

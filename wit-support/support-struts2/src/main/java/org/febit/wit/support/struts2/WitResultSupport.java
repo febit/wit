@@ -2,16 +2,16 @@
 package org.febit.wit.support.struts2;
 
 import com.opensymphony.xwork2.ActionInvocation;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StrutsResultSupport;
 import org.febit.wit.Vars;
 import org.febit.wit.servlet.WebEngineManager;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public class WitResultSupport extends StrutsResultSupport {
@@ -37,7 +37,7 @@ public class WitResultSupport extends StrutsResultSupport {
     }
 
     private final static String[] PARAM_KEYS = new String[]{
-        "request", "response", "stackContext", "action"
+            "request", "response", "stackContext", "action"
     };
 
     @Override
@@ -49,10 +49,10 @@ public class WitResultSupport extends StrutsResultSupport {
             response.setContentType(contentType);
         }
         engineManager.renderTemplate(view, Vars.of(PARAM_KEYS, new Object[]{
-            request,
-            response,
-            context,
-            ai.getAction()
+                request,
+                response,
+                context,
+                ai.getAction()
         }), response);
     }
 }

@@ -1,12 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet.global;
 
-import javax.servlet.ServletContext;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
 
+import javax.servlet.ServletContext;
+
 /**
- *
  * @author zqq90
  * @since 1.4.0
  */

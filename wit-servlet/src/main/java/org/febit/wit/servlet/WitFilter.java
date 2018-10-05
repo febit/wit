@@ -1,19 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Enumeration;
 
 /**
- *
  * @author zqq90
  */
 public class WitFilter implements Filter {
@@ -48,16 +42,19 @@ public class WitFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response,
+                         FilterChain chain) throws IOException, ServletException {
         doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
     }
 
-    public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(HttpServletRequest request, HttpServletResponse response,
+                         FilterChain chain) throws IOException, ServletException {
         chain.doFilter(request, response);
         if (contentType != null) {
             response.setContentType(contentType);
         }
-        this.engineManager.renderTemplate(WitServletUtil.getTemplatePath(request), ServletUtil.wrapToKeyValues(request, response), response);
+        this.engineManager.renderTemplate(WitServletUtil.getTemplatePath(request),
+                ServletUtil.wrapToKeyValues(request, response), response);
     }
 
     @Override

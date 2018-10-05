@@ -11,7 +11,6 @@ import org.febit.wit.util.CollectionUtil;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class ForInNoLoops extends Statement {
@@ -24,7 +23,9 @@ public final class ForInNoLoops extends Statement {
     private final int iterIndex;
     private final int itemIndex;
 
-    public ForInNoLoops(FunctionDeclare functionDeclareExpr, Expression collectionExpr, int indexer, int iterIndex, int itemIndex, Statement[] statements, Statement elseStatement, int line, int column) {
+    public ForInNoLoops(FunctionDeclare functionDeclareExpr, Expression collectionExpr,
+                        int indexer, int iterIndex, int itemIndex, Statement[] statements,
+                        Statement elseStatement, int line, int column) {
         super(line, column);
         this.functionDeclareExpr = functionDeclareExpr;
         this.collectionExpr = collectionExpr;

@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util.bean;
 
+import org.febit.wit.util.ClassMap;
+import org.febit.wit.util.ClassUtil;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import org.febit.wit.util.ClassMap;
-import org.febit.wit.util.ClassUtil;
 
 /**
- *
  * @author zqq90
  */
 public class BeanUtil {
@@ -53,7 +53,7 @@ public class BeanUtil {
         final Map<String, Accessor> map = new HashMap<>();
         FieldInfoResolver.resolve(cls)
                 .forEach(fieldInfo -> map.put(fieldInfo.name,
-                new Accessor(fieldInfo.getGetter(), fieldInfo.getSetter())));
+                        new Accessor(fieldInfo.getGetter(), fieldInfo.getSetter())));
         return map;
     }
 

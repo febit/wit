@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.global;
 
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.function.BiConsumer;
 import org.febit.wit.Init;
 import org.febit.wit.lang.Bag;
 import org.febit.wit.lang.MethodDeclare;
 
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiConsumer;
+
 /**
- *
  * @author zqq90
  */
 public class GlobalManager {
@@ -88,10 +88,9 @@ public class GlobalManager {
     }
 
     /**
-     *
-     * @since 2.5.0
      * @param key
      * @param method
+     * @since 2.5.0
      */
     public void setConstMethod(String key, MethodDeclare method) {
         setConst(key, method);

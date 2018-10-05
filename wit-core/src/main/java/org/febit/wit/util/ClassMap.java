@@ -71,9 +71,9 @@ public final class ClassMap<V> {
             final int newMark = newCapacity - 1;
             final Entry<V>[] newTable = new Entry[newCapacity];
 
-            for (int i = oldCapacity; i-- > 0;) {
+            for (int i = oldCapacity; i-- > 0; ) {
                 int index;
-                for (Entry<V> old = oldTable[i], e; old != null;) {
+                for (Entry<V> old = oldTable[i], e; old != null; ) {
                     e = old;
                     old = old.next;
 

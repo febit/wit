@@ -7,7 +7,6 @@ import org.febit.wit.loaders.impl.resources.NotFoundResource;
 import org.febit.wit.util.ArrayUtil;
 
 /**
- *
  * @author zqq90
  */
 public class SecurityLoader implements Loader {

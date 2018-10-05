@@ -8,7 +8,6 @@ import org.febit.wit.core.ast.expressions.FunctionDeclare;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public abstract class AbstractForInPart {

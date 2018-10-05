@@ -1,10 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.tools.cache;
 
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayWriter;
-import java.io.Serializable;
-import java.util.Arrays;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.global.GlobalManager;
@@ -14,8 +10,12 @@ import org.febit.wit.io.impl.WriterOut;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.ArrayUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
+import java.io.Serializable;
+import java.util.Arrays;
+
 /**
- *
  * @author zqq90
  */
 public class CacheGlobalRegister implements GlobalRegister {

@@ -5,7 +5,6 @@ import org.febit.wit.Template;
 import org.febit.wit.core.ast.Statement;
 
 /**
- *
  * @author zqq90
  */
 public interface TextStatementFactory {

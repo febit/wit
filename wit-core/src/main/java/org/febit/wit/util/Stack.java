@@ -4,9 +4,8 @@ package org.febit.wit.util;
 import java.util.ArrayList;
 
 /**
- *
- * @author zqq90
  * @param <T>
+ * @author zqq90
  */
 public class Stack<T> extends ArrayList<T> {
 

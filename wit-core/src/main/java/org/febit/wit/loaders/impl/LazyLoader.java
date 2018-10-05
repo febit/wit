@@ -6,9 +6,8 @@ import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.impl.resources.LazyResource;
 
 /**
- *
- * @since 1.4.0
  * @author zqq90
+ * @since 1.4.0
  */
 public class LazyLoader implements Loader {
 

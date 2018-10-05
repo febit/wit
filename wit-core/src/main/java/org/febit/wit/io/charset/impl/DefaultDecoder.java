@@ -1,17 +1,17 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io.charset.impl;
 
+import org.febit.wit.io.Buffers;
+import org.febit.wit.io.charset.Decoder;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import org.febit.wit.io.Buffers;
-import org.febit.wit.io.charset.Decoder;
 
 /**
- *
  * @author zqq90
  */
 public class DefaultDecoder implements Decoder {

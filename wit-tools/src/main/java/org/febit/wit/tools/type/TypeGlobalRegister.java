@@ -5,10 +5,10 @@ import org.febit.wit.Context;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
 import org.febit.wit.lang.MethodDeclare;
+
 import static org.febit.wit.util.ArrayUtil.get;
 
 /**
- *
  * @author zqq90
  */
 public class TypeGlobalRegister implements GlobalRegister {

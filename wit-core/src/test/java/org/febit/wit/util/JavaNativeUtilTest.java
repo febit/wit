@@ -1,18 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 /**
- *
  * @author zqq90
  */
 public class JavaNativeUtilTest {
@@ -79,9 +77,9 @@ public class JavaNativeUtilTest {
         //overflow
         assertNull(getMatchMethod(
                 new Method[]{
-                    methodPool.get("fooEmpty"),
-                    methodPool.get("fooObject"),
-                    methodPool.get("fooString")
+                        methodPool.get("fooEmpty"),
+                        methodPool.get("fooObject"),
+                        methodPool.get("fooString")
                 },
                 String.class, null)
         );

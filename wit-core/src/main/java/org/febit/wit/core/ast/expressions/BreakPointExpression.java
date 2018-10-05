@@ -7,7 +7,6 @@ import org.febit.wit.debug.BreakPointListener;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public class BreakPointExpression extends Expression {
@@ -16,7 +15,8 @@ public class BreakPointExpression extends Expression {
     private final Object label;
     private final Expression expression;
 
-    public BreakPointExpression(BreakPointListener listener, Object label, Expression expression, int line, int column) {
+    public BreakPointExpression(BreakPointListener listener, Object label,
+                                Expression expression, int line, int column) {
         super(line, column);
         this.listener = listener;
         this.label = label;

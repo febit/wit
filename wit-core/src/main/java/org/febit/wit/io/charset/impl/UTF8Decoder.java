@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io.charset.impl;
 
-import java.io.IOException;
-import java.io.Writer;
 import org.febit.wit.io.Buffers;
 import org.febit.wit.io.charset.Decoder;
 import org.febit.wit.util.charset.UTF8;
 
+import java.io.IOException;
+import java.io.Writer;
+
 /**
- *
  * @author zqq90
  */
 public final class UTF8Decoder implements Decoder {

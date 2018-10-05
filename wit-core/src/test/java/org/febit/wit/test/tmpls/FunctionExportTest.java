@@ -1,17 +1,19 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.test.tmpls;
 
-import java.io.StringWriter;
 import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Function;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.io.StringWriter;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
- *
  * @author zqq90
  */
 public class FunctionExportTest {

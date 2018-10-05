@@ -6,7 +6,6 @@ import org.febit.wit.core.ast.Statement;
 import org.febit.wit.core.text.TextStatementFactory;
 
 /**
- *
  * @author zqq90
  */
 public class CharArrayTextStatementFactory implements TextStatementFactory {

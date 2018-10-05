@@ -1,15 +1,11 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl.resources;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import org.febit.wit.loaders.Resource;
 
+import java.io.*;
+
 /**
- *
  * @author zqq90
  */
 public class FileResource implements Resource {

@@ -4,9 +4,8 @@ package org.febit.wit.security.impl;
 import org.febit.wit.security.NativeSecurityManager;
 
 /**
- *
- * @since 1.4.0
  * @author zqq90
+ * @since 1.4.0
  */
 public class NoneNativeSecurityManager implements NativeSecurityManager {
 

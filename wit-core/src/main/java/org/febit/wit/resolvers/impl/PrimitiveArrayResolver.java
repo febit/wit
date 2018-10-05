@@ -11,7 +11,6 @@ import org.febit.wit.util.CollectionUtil;
 import org.febit.wit.util.StringUtil;
 
 /**
- *
  * @author zqq90
  */
 public class PrimitiveArrayResolver implements Resolver {
@@ -56,12 +55,14 @@ public class PrimitiveArrayResolver implements Resolver {
                     setValue(array, ((Number) property).intValue(), (C) value);
                     return;
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    throw new ScriptRuntimeException(StringUtil.format("Array index out of bounds, index={}", property), e);
+                    throw new ScriptRuntimeException(StringUtil.format(
+                            "Array index out of bounds, index={}", property), e);
                 } catch (ClassCastException e) {
                     throw new ScriptRuntimeException(e.getMessage(), e);
                 }
             }
-            throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't write: array#{}", property));
+            throw new ScriptRuntimeException(StringUtil.format(
+                    "Invalid property or can't write: array#{}", property));
         }
 
         @Override

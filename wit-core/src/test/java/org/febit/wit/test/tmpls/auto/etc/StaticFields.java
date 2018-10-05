@@ -2,7 +2,6 @@
 package org.febit.wit.test.tmpls.auto.etc;
 
 /**
- *
  * @author zqq90
  */
 public class StaticFields {

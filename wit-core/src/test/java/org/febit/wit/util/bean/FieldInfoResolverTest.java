@@ -1,13 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util.bean;
 
-import java.util.HashMap;
-import java.util.Map;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+
 /**
- *
  * @author zqq90
  */
 public class FieldInfoResolverTest {
@@ -98,7 +99,7 @@ public class FieldInfoResolverTest {
         Map<String, FieldInfo> infoMap = new HashMap<>();
         FieldInfoResolver.resolve(Foo.class)
                 .forEach(fieldInfo -> infoMap.put(fieldInfo.name, fieldInfo));
-        
+
         assertNull(infoMap.get("publicStatic"));
         assertNull(infoMap.get("publicStatic0"));
         assertNull(infoMap.get("privateStatic0"));

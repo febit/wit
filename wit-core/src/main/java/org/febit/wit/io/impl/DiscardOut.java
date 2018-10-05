@@ -5,7 +5,6 @@ import org.febit.wit.io.Out;
 import org.febit.wit.util.InternedEncoding;
 
 /**
- *
  * @author zqq90
  */
 public class DiscardOut implements Out {

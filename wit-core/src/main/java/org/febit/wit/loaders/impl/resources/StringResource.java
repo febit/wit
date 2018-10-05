@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl.resources;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.ResourceOffset;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+
 /**
- *
  * @author zqq90
  */
 public class StringResource implements Resource, ResourceOffset {

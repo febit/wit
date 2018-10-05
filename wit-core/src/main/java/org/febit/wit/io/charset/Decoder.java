@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
  * @author zqq90
  */
 public interface Decoder {

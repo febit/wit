@@ -5,7 +5,6 @@ import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.servlet.HttpServletRequestParameters;
 
 /**
- *
  * @author zqq90
  */
 public class HttpServletRequestParametersResolver implements GetResolver<HttpServletRequestParameters> {

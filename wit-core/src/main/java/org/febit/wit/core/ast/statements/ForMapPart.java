@@ -8,7 +8,6 @@ import org.febit.wit.core.ast.expressions.FunctionDeclare;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public class ForMapPart extends AbstractForInPart {
@@ -18,14 +17,16 @@ public class ForMapPart extends AbstractForInPart {
     protected int keyIndex;
     protected int valueIndex;
 
-    public ForMapPart(String key, String value, Expression collectionExpr, VariantManager varmgr, int line, int column) {
+    public ForMapPart(String key, String value, Expression collectionExpr,
+                      VariantManager varmgr, int line, int column) {
         super(varmgr, line, column);
         this.keyVarName = key;
         this.valueVarName = value;
         setCollectionExpr(collectionExpr);
     }
 
-    public ForMapPart(String key, String value, FunctionDeclare functionDeclareExpr, VariantManager varmgr, int line, int column) {
+    public ForMapPart(String key, String value, FunctionDeclare functionDeclareExpr,
+                      VariantManager varmgr, int line, int column) {
         super(varmgr, line, column);
         this.keyVarName = key;
         this.valueVarName = value;
@@ -43,11 +44,13 @@ public class ForMapPart extends AbstractForInPart {
     @Override
     public Statement pop(int label) {
         if (bodyStatement.hasLoops()) {
-            return new ForMap(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), iterIndex, keyIndex, valueIndex, bodyStatement.getStatements(),
+            return new ForMap(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(),
+                    iterIndex, keyIndex, valueIndex, bodyStatement.getStatements(),
                     StatementUtil.collectPossibleLoopsForWhile(bodyStatement, elseStatement, label),
                     elseStatement, label, line, column);
         } else {
-            return new ForMapNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(), iterIndex, keyIndex, valueIndex, bodyStatement.getStatements(), elseStatement, line, column);
+            return new ForMapNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(),
+                    iterIndex, keyIndex, valueIndex, bodyStatement.getStatements(), elseStatement, line, column);
         }
     }
 }

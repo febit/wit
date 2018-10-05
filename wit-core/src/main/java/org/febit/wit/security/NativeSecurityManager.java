@@ -2,7 +2,6 @@
 package org.febit.wit.security;
 
 /**
- *
  * @author zqq90
  */
 public interface NativeSecurityManager {

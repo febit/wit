@@ -1,8 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.text.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import org.febit.wit.Template;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.core.text.TextStatementFactory;
@@ -11,8 +9,10 @@ import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.io.charset.Encoder;
 import org.febit.wit.util.InternedEncoding;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /**
- *
  * @author zqq90
  */
 public class ByteArrayTextStatementFactory implements TextStatementFactory {

@@ -2,11 +2,11 @@
 package org.febit.wit.asm;
 
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 /**
- *
  * @author zqq90
  */
 public class AsmResolverManagerTest {

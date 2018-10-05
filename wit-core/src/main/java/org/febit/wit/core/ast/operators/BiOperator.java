@@ -4,7 +4,6 @@ package org.febit.wit.core.ast.operators;
 import org.febit.wit.core.ast.Expression;
 
 /**
- *
  * @author zqq90
  */
 public abstract class BiOperator extends Expression {

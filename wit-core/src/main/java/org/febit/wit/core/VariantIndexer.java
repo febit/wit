@@ -1,11 +1,11 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import java.util.function.ObjIntConsumer;
 import org.febit.wit.util.ArrayUtil;
 
+import java.util.function.ObjIntConsumer;
+
 /**
- *
  * @author zqq90
  */
 public final class VariantIndexer {

@@ -8,7 +8,6 @@ import org.febit.wit.util.ALU;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class DoWhileNoLoops extends Statement {

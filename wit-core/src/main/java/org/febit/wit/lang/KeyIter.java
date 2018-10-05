@@ -2,7 +2,6 @@
 package org.febit.wit.lang;
 
 /**
- *
  * @author zqq90
  */
 public interface KeyIter extends Iter {

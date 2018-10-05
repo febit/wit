@@ -2,7 +2,6 @@
 package org.febit.wit.exceptions;
 
 /**
- *
  * @author zqq90
  */
 public class IllegalConfigException extends RuntimeException {
@@ -23,7 +22,8 @@ public class IllegalConfigException extends RuntimeException {
         super(cause);
     }
 
-    public IllegalConfigException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public IllegalConfigException(String message, Throwable cause,
+                                  boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

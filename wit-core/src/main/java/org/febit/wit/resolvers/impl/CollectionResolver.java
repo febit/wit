@@ -1,15 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.resolvers.impl;
 
-import java.util.Collection;
-import java.util.List;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.SetResolver;
 import org.febit.wit.util.StringUtil;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
- *
  * @author zqq90
  */
 public class CollectionResolver implements GetResolver<Collection>, SetResolver<Collection> {
@@ -36,11 +36,12 @@ public class CollectionResolver implements GetResolver<Collection>, SetResolver<
                 return collection.isEmpty();
             default:
         }
-        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.util.Collection#{}", property));
+        throw new ScriptRuntimeException(StringUtil.format(
+                "Invalid property or can't read: java.util.Collection#{}", property));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public void set(Collection collection, Object property, Object value) {
         if (property instanceof Number) {
             final int index = ((Number) property).intValue();
@@ -56,6 +57,7 @@ public class CollectionResolver implements GetResolver<Collection>, SetResolver<
                 return;
             }
         }
-        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't write: java.util.Collection#{}", property));
+        throw new ScriptRuntimeException(StringUtil.format(
+                "Invalid property or can't write: java.util.Collection#{}", property));
     }
 }

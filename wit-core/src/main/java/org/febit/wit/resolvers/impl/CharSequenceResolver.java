@@ -6,7 +6,6 @@ import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.util.StringUtil;
 
 /**
- *
  * @author zqq90
  */
 public class CharSequenceResolver implements GetResolver<CharSequence> {
@@ -28,7 +27,8 @@ public class CharSequenceResolver implements GetResolver<CharSequence> {
                 return seq.length() == 0;
             default:
         }
-        throw new ScriptRuntimeException(StringUtil.format("Invalid property or can't read: java.lang.CharSequence#{}", property));
+        throw new ScriptRuntimeException(StringUtil.format(
+                "Invalid property or can't read: java.lang.CharSequence#{}", property));
     }
 
     @Override

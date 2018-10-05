@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet;
 
-import java.util.Enumeration;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.febit.wit.Vars;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public class ServletUtil {
@@ -31,7 +31,8 @@ public class ServletUtil {
         return wrapToKeyValues(request, response, true, false);
     }
 
-    public static Vars wrapToKeyValues(HttpServletRequest request, HttpServletResponse response, boolean exportAttributes, boolean exportParameters) {
+    public static Vars wrapToKeyValues(HttpServletRequest request, HttpServletResponse response,
+                                       boolean exportAttributes, boolean exportParameters) {
         return new ServletVars(request, response, exportAttributes, exportParameters);
     }
 
@@ -42,7 +43,8 @@ public class ServletUtil {
         private final boolean exportAttributes;
         private final boolean exportParameters;
 
-        ServletVars(HttpServletRequest request, HttpServletResponse response, boolean exportAttributes, boolean exportParameters) {
+        ServletVars(HttpServletRequest request, HttpServletResponse response,
+                    boolean exportAttributes, boolean exportParameters) {
             this.request = request;
             this.response = response;
             this.exportAttributes = exportAttributes;

@@ -1,13 +1,13 @@
 package org.febit.wit.loaders;
 
-import java.io.IOException;
-import java.io.Reader;
 import org.febit.wit.loaders.impl.resources.LazyResource;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
+import java.io.Reader;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- *
  * @author zqq
  */
 public class LazyResourceTest {

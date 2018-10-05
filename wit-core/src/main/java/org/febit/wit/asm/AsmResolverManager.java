@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.asm;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.ResolverManager;
@@ -18,8 +15,11 @@ import org.febit.wit_shaded.asm.Constants;
 import org.febit.wit_shaded.asm.Label;
 import org.febit.wit_shaded.asm.MethodWriter;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+
 /**
- *
  * @author zqq90
  */
 public class AsmResolverManager extends ResolverManager {
@@ -70,7 +70,8 @@ public class AsmResolverManager extends ResolverManager {
         }
         final String className = "org.febit.wit.asm.Resolver" + ASMUtil.NEXT_SN.getAndIncrement();
 
-        final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL, ASMUtil.getInternalName(className), "java/lang/Object", ASM_RESOLVER);
+        final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
+                ASMUtil.getInternalName(className), "java/lang/Object", ASM_RESOLVER);
         ASMUtil.visitConstructor(classWriter);
 
         final FieldInfo[] all = FieldInfoResolver.resolve(beanClass)
@@ -107,7 +108,8 @@ public class AsmResolverManager extends ResolverManager {
         visitXetMethod(false, classWriter, beanClass, all, hashes, indexer);
 
         //getMatchClass
-        final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "getMatchClass", "()Ljava/lang/Class;", null);
+        final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "getMatchClass",
+                "()Ljava/lang/Class;", null);
         m.visitInsn(Constants.ACONST_NULL);
         m.visitInsn(Constants.ARETURN);
         m.visitMaxs();
@@ -115,13 +117,16 @@ public class AsmResolverManager extends ResolverManager {
         return ASMUtil.loadClass(className, classWriter);
     }
 
-    private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class<?> beanClass, final FieldInfo[] all, final int[] hashes, final int[] indexer) {
+    private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class<?> beanClass,
+                                       final FieldInfo[] all, final int[] hashes, final int[] indexer) {
         final String beanName = ASMUtil.getBoxedInternalName(beanClass);
         final MethodWriter m;
         if (isGetter) {
-            m = classWriter.visitMethod(Constants.ACC_PUBLIC, "get", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", null);
+            m = classWriter.visitMethod(Constants.ACC_PUBLIC, "get",
+                    "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", null);
         } else {
-            m = classWriter.visitMethod(Constants.ACC_PUBLIC, "set", "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V", null);
+            m = classWriter.visitMethod(Constants.ACC_PUBLIC, "set",
+                    "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V", null);
         }
         final int fieldInfosLength = all.length;
         if (fieldInfosLength != 0) {
@@ -156,12 +161,15 @@ public class AsmResolverManager extends ResolverManager {
         m.visitVarInsn(Constants.ALOAD, 2);
         m.invokeStatic(ASMUtil.TYPE_STRING_NAME, "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
         m.invokeVirtual(ASMUtil.TYPE_STRING_NAME, "concat", "(Ljava/lang/String;)Ljava/lang/String;");
-        m.visitMethodInsn(Constants.INVOKESPECIAL, "org/febit/wit/exceptions/ScriptRuntimeException", ASMUtil.METHOD_CTOR, "(Ljava/lang/String;)V");
+        m.visitMethodInsn(Constants.INVOKESPECIAL, "org/febit/wit/exceptions/ScriptRuntimeException",
+                ASMUtil.METHOD_CTOR, "(Ljava/lang/String;)V");
         m.visitInsn(Constants.ATHROW);
         m.visitMaxs();
     }
 
-    private static void visitXetFields(final boolean isGetter, final MethodWriter m, final FieldInfo[] fieldInfos, final int start, final int end, final String beanName, final Label failedMatchLabel) {
+    private static void visitXetFields(final boolean isGetter, final MethodWriter m,
+                                       final FieldInfo[] fieldInfos, final int start, final int end,
+                                       final String beanName, final Label failedMatchLabel) {
         final Label[] gotoTable = new Label[end - start];
         //if ==
         for (int i = start; i < end; i++) {
@@ -212,7 +220,8 @@ public class AsmResolverManager extends ResolverManager {
             m.visitInsn(Constants.ARETURN);
         } else {
             //Unreadable Exception
-            ASMUtil.visitScriptRuntimeException(m, StringUtil.format("Unreadable property {}#{}", fieldInfo.owner.getName(), fieldInfo.name));
+            ASMUtil.visitScriptRuntimeException(m, StringUtil.format("Unreadable property {}#{}",
+                    fieldInfo.owner.getName(), fieldInfo.name));
         }
     }
 
@@ -236,7 +245,8 @@ public class AsmResolverManager extends ResolverManager {
             m.visitInsn(Constants.RETURN);
         } else {
             //UnwriteableException
-            ASMUtil.visitScriptRuntimeException(m, StringUtil.format("Unwriteable property {}#{}", fieldInfo.owner.getName(), fieldInfo.name));
+            ASMUtil.visitScriptRuntimeException(m, StringUtil.format("Unwriteable property {}#{}",
+                    fieldInfo.owner.getName(), fieldInfo.name));
         }
     }
 }

@@ -1,22 +1,24 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.operators;
 
-import java.util.Objects;
-import java.util.function.BiFunction;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.expressions.DirectValue;
+import org.febit.wit.util.ExceptionUtil;
 import org.febit.wit.util.StatementUtil;
 
+import java.util.Objects;
+import java.util.function.BiFunction;
+
 /**
- *
  * @author zqq90
  */
 public class ConstableBiOperator extends BiOperator {
 
     protected final BiFunction<Object, Object, Object> op;
 
-    public ConstableBiOperator(Expression leftExpr, Expression rightExpr, BiFunction<Object, Object, Object> op, int line, int column) {
+    public ConstableBiOperator(Expression leftExpr, Expression rightExpr,
+                               BiFunction<Object, Object, Object> op, int line, int column) {
         super(leftExpr, rightExpr, line, column);
         Objects.requireNonNull(op);
         this.op = op;
@@ -27,7 +29,7 @@ public class ConstableBiOperator extends BiOperator {
         try {
             return op.apply(leftExpr.execute(context), rightExpr.execute(context));
         } catch (Exception e) {
-            throw StatementUtil.castToScriptRuntimeException(e, this);
+            throw ExceptionUtil.toScriptRuntimeException(e, this);
         }
     }
 

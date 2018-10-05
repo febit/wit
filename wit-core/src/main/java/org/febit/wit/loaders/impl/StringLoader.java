@@ -6,7 +6,6 @@ import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.impl.resources.StringResource;
 
 /**
- *
  * @author zqq90
  */
 public class StringLoader implements Loader {

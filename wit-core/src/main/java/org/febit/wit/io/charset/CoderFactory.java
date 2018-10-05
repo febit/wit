@@ -5,7 +5,6 @@ import org.febit.wit.io.Buffers;
 import org.febit.wit.util.InternedEncoding;
 
 /**
- *
  * @author zqq90
  */
 public interface CoderFactory {

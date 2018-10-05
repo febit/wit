@@ -2,7 +2,6 @@
 package org.febit.wit.loggers;
 
 /**
- *
  * @author zqq90
  */
 public interface Logger {

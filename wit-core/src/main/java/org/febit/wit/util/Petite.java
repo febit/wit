@@ -1,18 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import org.febit.wit.Init;
+import org.febit.wit.exceptions.UncheckedException;
+import org.febit.wit.loggers.Logger;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
-import org.febit.wit.Init;
-import org.febit.wit.exceptions.UncheckedException;
-import org.febit.wit.loggers.Logger;
+import java.util.*;
 
 /**
  * A simple component injection.
@@ -215,7 +212,8 @@ public class Petite {
         }
     }
 
-    private void inject(final String beanName, final Object bean, final Set<String> injected, final Map<String, Field> fields) {
+    private void inject(final String beanName, final Object bean,
+                        final Set<String> injected, final Map<String, Field> fields) {
 
         if (injected.contains(beanName)) {
             return;

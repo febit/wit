@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author zqq
  */
 public class InternedEncoding {

@@ -8,7 +8,6 @@ import org.febit.wit.io.charset.Encoder;
 import org.febit.wit.util.InternedEncoding;
 
 /**
- *
  * @author zqq90
  */
 public class DefaultCoderFactory implements CoderFactory {

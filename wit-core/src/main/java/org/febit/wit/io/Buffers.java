@@ -4,7 +4,6 @@ package org.febit.wit.io;
 import java.lang.ref.WeakReference;
 
 /**
- *
  * @author zqq90
  */
 public final class Buffers {
@@ -39,7 +38,7 @@ public final class Buffers {
 
     private static int getAllocateLength(final int init, final int length) {
         int value = init;
-        for (;;) {
+        for (; ; ) {
             if (value >= length) {
                 return value;
             }

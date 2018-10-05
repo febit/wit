@@ -7,7 +7,6 @@ import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.ALU;
 
 /**
- *
  * @author zqq90
  */
 public final class KeyIterMethodFilter extends IterFilter implements KeyIter {

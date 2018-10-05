@@ -9,10 +9,10 @@ import org.febit.wit.resolvers.OutResolver;
 import org.febit.wit.resolvers.SetResolver;
 
 /**
- *
  * @author zqq90
  */
-public class InternalVoidResolver implements GetResolver<InternalVoid>, SetResolver<InternalVoid>, OutResolver<InternalVoid> {
+public class InternalVoidResolver implements GetResolver<InternalVoid>,
+        SetResolver<InternalVoid>, OutResolver<InternalVoid> {
 
     @Override
     public Object get(InternalVoid object, Object property) {

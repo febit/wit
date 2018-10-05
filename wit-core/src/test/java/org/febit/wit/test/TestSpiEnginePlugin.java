@@ -6,7 +6,6 @@ import org.febit.wit.global.GlobalManager;
 import org.febit.wit.plugin.EnginePlugin;
 
 /**
- *
  * @author zqq90
  */
 public class TestSpiEnginePlugin implements EnginePlugin {

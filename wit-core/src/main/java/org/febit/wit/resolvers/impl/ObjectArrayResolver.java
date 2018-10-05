@@ -7,7 +7,6 @@ import org.febit.wit.resolvers.SetResolver;
 import org.febit.wit.util.StringUtil;
 
 /**
- *
  * @author zqq90
  */
 public class ObjectArrayResolver implements GetResolver<Object[]>, SetResolver<Object[]> {
@@ -35,7 +34,8 @@ public class ObjectArrayResolver implements GetResolver<Object[]>, SetResolver<O
                 array[((Number) property).intValue()] = value;
                 return;
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ScriptRuntimeException(StringUtil.format("Array index out of bounds, index={}", property), e);
+                throw new ScriptRuntimeException(StringUtil.format(
+                        "Array index out of bounds, index={}", property), e);
             }
         }
         throw new ScriptRuntimeException(StringUtil.format("Invalid property: array#{}", property));

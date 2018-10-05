@@ -2,11 +2,12 @@
 package org.febit.wit.util;
 
 import org.febit.wit.util.bean.BeanUtil;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
- *
  * @author zqq90
  */
 public class BeanUtilTest {

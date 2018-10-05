@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.support.jodd3;
 
-import java.util.HashMap;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
 import jodd.madvoc.ActionRequest;
 import jodd.madvoc.MadvocUtil;
 import jodd.madvoc.ResultPath;
@@ -15,8 +12,11 @@ import jodd.madvoc.result.BaseActionResult;
 import org.febit.wit.servlet.ServletUtil;
 import org.febit.wit.servlet.WebEngineManager;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+
 /**
- *
  * @author zqq90
  */
 public class WitResult extends BaseActionResult<Object> implements WebEngineManager.ServletContextProvider {
@@ -31,7 +31,7 @@ public class WitResult extends BaseActionResult<Object> implements WebEngineMana
         this.targetCache = new HashMap<>();
         this.engineManager
                 = new WebEngineManager(this)
-                        .setProperties(APPEND_LOST_SUFFIX, Boolean.TRUE);
+                .setProperties(APPEND_LOST_SUFFIX, Boolean.TRUE);
     }
 
     public static WitData render() {

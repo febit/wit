@@ -11,7 +11,6 @@ import org.febit.wit.util.CollectionUtil;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class ForMapNoLoops extends Statement {
@@ -25,7 +24,9 @@ public final class ForMapNoLoops extends Statement {
     private final int keyIndex;
     private final int valueIndex;
 
-    public ForMapNoLoops(FunctionDeclare functionDeclareExpr, Expression mapExpr, int indexer, int iterIndex, int keyIndex, int valueIndex, Statement[] statements, Statement elseStatement, int line, int column) {
+    public ForMapNoLoops(FunctionDeclare functionDeclareExpr, Expression mapExpr, int indexer,
+                         int iterIndex, int keyIndex, int valueIndex, Statement[] statements,
+                         Statement elseStatement, int line, int column) {
         super(line, column);
         this.functionDeclareExpr = functionDeclareExpr;
         this.mapExpr = mapExpr;

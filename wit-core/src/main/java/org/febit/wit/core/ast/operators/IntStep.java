@@ -7,7 +7,6 @@ import org.febit.wit.util.ALU;
 import org.febit.wit.util.CollectionUtil;
 
 /**
- *
  * @author zqq90
  */
 public class IntStep extends BiOperator {

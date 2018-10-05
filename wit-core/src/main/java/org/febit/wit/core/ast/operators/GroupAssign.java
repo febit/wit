@@ -8,7 +8,6 @@ import org.febit.wit.lang.Iter;
 import org.febit.wit.util.CollectionUtil;
 
 /**
- *
  * @author zqq90
  */
 public final class GroupAssign extends Expression {

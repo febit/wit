@@ -1,14 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.tools.test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.Map;
-import java.util.TreeMap;
 import org.febit.wit.Context;
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ParseException;
@@ -19,11 +11,16 @@ import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.tools.EngineManager;
 import org.febit.wit.util.ClassUtil;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.io.*;
+import java.net.URL;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.junit.Assert.assertArrayEquals;
+
 /**
- *
  * @author zqq90
  */
 public class AutoTest {
@@ -106,6 +103,7 @@ public class AutoTest {
         System.out.println("AUTO RUN: " + templatePath);
         Template template = EngineManager.getEngine().getTemplate(templatePath);
         Context context = template.merge(out);
-        System.out.println("\tassert count: " + context.getLocal(org.febit.wit.tools.testunit.AssertGlobalRegister.ASSERT_COUNT_KEY));
+        System.out.println("\tassert count: "
+                + context.getLocal(org.febit.wit.tools.testunit.AssertGlobalRegister.ASSERT_COUNT_KEY));
     }
 }

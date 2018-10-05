@@ -1,17 +1,17 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl.resources;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.InternedEncoding;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 /**
- *
  * @author zqq90
  */
 public class ClasspathResource implements Resource {
@@ -21,7 +21,6 @@ public class ClasspathResource implements Resource {
     protected final boolean codeFirst;
 
     /**
-     *
      * @param path
      * @param encoding
      */
@@ -30,7 +29,6 @@ public class ClasspathResource implements Resource {
     }
 
     /**
-     *
      * @param path
      * @param encoding
      * @param codeFirst
@@ -55,7 +53,7 @@ public class ClasspathResource implements Resource {
         final InputStream in = ClassUtil.getDefaultClassLoader()
                 .getResourceAsStream(path);
         if (in == null) {
-            throw new ResourceNotFoundException("Resource Not Found: ".concat(path));
+            throw new ResourceNotFoundException("Resource Not Found: " + path);
         }
         return new InputStreamReader(in, encoding);
     }

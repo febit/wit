@@ -5,7 +5,6 @@ import org.febit.wit.core.ast.Statement;
 import org.febit.wit.util.StatementUtil;
 
 /**
- *
  * @author zqq90
  */
 public class TryPart {

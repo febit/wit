@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.ast.Expression;
@@ -11,8 +8,11 @@ import org.febit.wit.core.ast.Loopable;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.util.StatementUtil;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public final class Switch extends Statement implements Loopable {
@@ -23,7 +23,7 @@ public final class Switch extends Statement implements Loopable {
     private final int label;
 
     Switch(Expression switchExpr, CaseEntry defaultStatement, Map<Object, CaseEntry> caseMap,
-            int label, int line, int column) {
+           int label, int line, int column) {
         super(line, column);
         this.switchExpr = switchExpr;
         this.defaultStatement = defaultStatement;

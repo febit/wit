@@ -1,12 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.global;
 
-import java.util.Map;
 import org.febit.wit.Context;
 import org.febit.wit.lang.MethodDeclare;
 
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public class ConstMethods {

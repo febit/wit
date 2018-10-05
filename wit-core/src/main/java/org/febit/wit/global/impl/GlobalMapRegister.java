@@ -1,13 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.global.impl;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
- *
  * @author zqq90
  */
 public class GlobalMapRegister implements GlobalRegister {

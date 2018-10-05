@@ -6,7 +6,6 @@ import org.febit.wit.core.ast.Expression;
 import org.febit.wit.util.ALU;
 
 /**
- *
  * @author zqq90
  */
 public final class IfOperator extends Expression {

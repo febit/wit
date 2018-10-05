@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.ast.statements;
 
-import java.util.Map;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Expression;
 
+import java.util.Map;
+
 /**
- *
  * @author zqq90
  */
 public final class Import extends AbstractInclude {
@@ -17,7 +17,8 @@ public final class Import extends AbstractInclude {
     private final AssignableExpression[] toResetableValues;
     private final boolean exportAll;
 
-    public Import(Expression pathExpr, Expression paramsExpr, String[] exportNames, AssignableExpression[] toContextValues, String refer, int line, int column) {
+    public Import(Expression pathExpr, Expression paramsExpr, String[] exportNames,
+                  AssignableExpression[] toContextValues, String refer, int line, int column) {
         super(pathExpr, paramsExpr, refer, line, column);
         if (exportNames == null || exportNames.length == 0) {
             this.exportNames = null;
