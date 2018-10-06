@@ -145,9 +145,9 @@ statement       ::= expression_statementable:$ SEMICOLON
                     {: return NoneStatement.INSTANCE; :}
 
                     |LRDEBUG:sym
-                    {: return createBreakPointStatement(null, null, %sym.line%, %sym.column%); :}
+                    {: return createBreakpointStatement(null, null, %sym.line%, %sym.column%); :}
                     |LDEBUG:sym expression:label COLON RDEBUG
-                    {: return createBreakPointStatement(%label%, null, %sym.line%, %sym.column%); :}
+                    {: return createBreakpointStatement(%label%, null, %sym.line%, %sym.column%); :}
 
                     |expression:expr INTERPOLATION_END
                     {: return createInterpolation(%expr%); :}
@@ -383,10 +383,10 @@ expression_statementable ::=
 expression      ::= expression_statementable:$
 
                     |LDEBUG:sym expression:expr RDEBUG
-                    {: return createBreakPointExpression(null, %expr%, %sym.line%, %sym.column%); :}
+                    {: return createBreakpointExpression(null, %expr%, %sym.line%, %sym.column%); :}
 
                     |LDEBUG:sym expression:label COLON expression:expr RDEBUG
-                    {: return createBreakPointExpression(%label%, %expr%, %sym.line%, %sym.column%); :}
+                    {: return createBreakpointExpression(%label%, %expr%, %sym.line%, %sym.column%); :}
 
                     //bitNotOp ~
                     |COMP:sym expression:expr

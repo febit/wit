@@ -3,7 +3,7 @@ package org.febit.wit;
 
 import org.febit.wit.core.Parser;
 import org.febit.wit.core.ast.TemplateAST;
-import org.febit.wit.debug.BreakPointListener;
+import org.febit.wit.debug.BreakpointListener;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.exceptions.TemplateException;
@@ -274,7 +274,7 @@ public class Template {
      * @throws ScriptRuntimeException
      * @throws ParseException
      */
-    public Context debug(final Vars vars, final Out out, final BreakPointListener listener) {
+    public Context debug(final Vars vars, final Out out, final BreakpointListener listener) {
         try {
             return Parser.parse(this, listener)
                     .execute(this, out, vars);
@@ -293,7 +293,7 @@ public class Template {
      * @throws ParseException
      * @since 2.4.0
      */
-    public Context debug(final Vars vars, final BreakPointListener listener) {
+    public Context debug(final Vars vars, final BreakpointListener listener) {
         return debug(vars, DiscardOut.INSTANCE, listener);
     }
 
@@ -307,7 +307,7 @@ public class Template {
      * @throws ParseException
      * @since 2.5.0
      */
-    public Context debug(final Out out, final BreakPointListener listener) {
+    public Context debug(final Out out, final BreakpointListener listener) {
         return debug(Vars.EMPTY, out, listener);
     }
 
@@ -320,7 +320,7 @@ public class Template {
      * @throws ParseException
      * @since 2.5.0
      */
-    public Context debug(final BreakPointListener listener) {
+    public Context debug(final BreakpointListener listener) {
         return debug(Vars.EMPTY, DiscardOut.INSTANCE, listener);
     }
 

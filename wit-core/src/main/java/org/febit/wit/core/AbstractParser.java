@@ -12,7 +12,7 @@ import org.febit.wit.core.ast.expressions.*;
 import org.febit.wit.core.ast.operators.*;
 import org.febit.wit.core.ast.statements.*;
 import org.febit.wit.core.text.TextStatementFactory;
-import org.febit.wit.debug.BreakPointListener;
+import org.febit.wit.debug.BreakpointListener;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.lang.MethodDeclare;
@@ -148,7 +148,7 @@ abstract class AbstractParser {
 
     private TextStatementFactory textStatementFactory;
     private NativeSecurityManager nativeSecurityManager;
-    private BreakPointListener breakPointListener;
+    private BreakpointListener breakpointListener;
     private Engine engine;
     private NativeFactory nativeFactory;
     private boolean locateVarForce;
@@ -276,8 +276,8 @@ abstract class AbstractParser {
     }
 
     public static TemplateAST parse(final Template template,
-                                    BreakPointListener breakPointListener) throws ParseException {
-        return new Parser().doParse(template, breakPointListener);
+                                    BreakpointListener breakpointListener) throws ParseException {
+        return new Parser().doParse(template, breakpointListener);
     }
 
     public static TemplateAST parse(final Template template) throws ParseException {
@@ -417,12 +417,12 @@ abstract class AbstractParser {
      * @throws ParseException
      */
     protected TemplateAST doParse(final Template template,
-                                  final BreakPointListener breakPointListener) throws ParseException {
+                                  final BreakpointListener breakpointListener) throws ParseException {
         final Engine myEngine = template.getEngine();
         final Resource resource = template.getResource();
         this.textStatementFactory = myEngine.get(TextStatementFactory.class);
         this.nativeSecurityManager = myEngine.get(NativeSecurityManager.class);
-        this.breakPointListener = breakPointListener;
+        this.breakpointListener = breakpointListener;
         this.template = template;
         this.engine = myEngine;
         this.locateVarForce = !myEngine.isLooseVar();
@@ -559,20 +559,20 @@ abstract class AbstractParser {
         return new GroupAssign(resetableExprs, rexpr, line, column);
     }
 
-    Expression createBreakPointExpression(Expression labelExpr, Expression expr, int line, int column) {
+    Expression createBreakpointExpression(Expression labelExpr, Expression expr, int line, int column) {
         final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr);
-        if (breakPointListener == null) {
+        if (breakpointListener == null) {
             return expr;
         }
-        return new BreakPointExpression(breakPointListener, label, expr, line, column);
+        return new BreakpointExpression(breakpointListener, label, expr, line, column);
     }
 
-    Statement createBreakPointStatement(Expression labelExpr, Statement statement, int line, int column) {
+    Statement createBreakpointStatement(Expression labelExpr, Statement statement, int line, int column) {
         final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr);
-        if (breakPointListener == null) {
+        if (breakpointListener == null) {
             return statement;
         }
-        return new BreakPointStatement(breakPointListener, label, statement, line, column);
+        return new BreakpointStatement(breakpointListener, label, statement, line, column);
     }
 
     Statement createTextStatement(char[] text, int line, int column) {
