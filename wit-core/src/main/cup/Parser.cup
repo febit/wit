@@ -1,11 +1,8 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.febit.wit.core.ast.*;
 import org.febit.wit.core.ast.expressions.*;
-import static org.febit.wit.core.ast.expressions.FunctionDeclarePart.ArgumentInfo;
 import org.febit.wit.core.ast.operators.*;
 import org.febit.wit.core.ast.statements.*;
 import org.febit.wit.exceptions.ParseException;
@@ -13,6 +10,8 @@ import org.febit.wit.util.ALU;
 import org.febit.wit.util.ClassNameBand;
 import org.febit.wit.util.Stack;
 import org.febit.wit.util.StatementUtil;
+
+import static org.febit.wit.core.ast.expressions.FunctionDeclarePart.ArgumentInfo;
 
 /* Terminals */
 terminal Integer    VAR,

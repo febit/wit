@@ -1,12 +1,13 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Deque;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.loaders.ResourceOffset;
 import org.febit.wit.util.LexerCharArrayWriter;
+
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
 
 %%
 %class Lexer
@@ -29,8 +30,8 @@ import org.febit.wit.util.LexerCharArrayWriter;
     private boolean templateStringFlag = false;
     private int templateStringBraceClosingCounter = 0;
 
-    private boolean trimCodeBlockBlankLine = false;
     private final LexerCharArrayWriter stringBuffer = new LexerCharArrayWriter(256);
+    private boolean trimCodeBlockBlankLine = false;
     private int stringLine = 0;
     private int stringColumn = 0;
     
@@ -163,10 +164,6 @@ import org.febit.wit.util.LexerCharArrayWriter;
     void codeFirst() {
         yybegin(YYSTATEMENT);
     }
-
-//    private void pullToString(int startOffset, int endOffset) {
-//        stringBuffer.write(zzBuffer, zzStartRead + startOffset, zzMarkedPos - zzStartRead + endOffset);
-//    }
 
     private Symbol symbol(int sym) {
         return new Symbol(sym, yyline + 1, yycolumn + 1, sym);
