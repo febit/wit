@@ -7,10 +7,6 @@ assertEquals(a2,"A2");
 assertEquals(v1,"V1");
 assertEquals(v2,"V2");
 
-{
-  include "/shareData.include.include.wit";
-}
+include "/shareData.include.include.include.wit";
 
-var back1 = "BACK1";
-var back2 = "BACK2";
 %>

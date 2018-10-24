@@ -152,10 +152,11 @@ public final class InternalContext implements Context {
      * @param template template
      * @param indexers indexers
      * @param varSize  var size
+     * @param rootParams root params
      * @return a new peer context
      */
-    public InternalContext createPeerContext(Template template, VariantIndexer[] indexers, int varSize) {
-        InternalContext newContext = new InternalContext(template, this.out, Vars.EMPTY,
+    public InternalContext createPeerContext(Template template, VariantIndexer[] indexers, int varSize, Vars rootParams) {
+        InternalContext newContext = new InternalContext(template, this.out, rootParams,
                 indexers, varSize, null);
         newContext.localContext = this;
         return newContext;
