@@ -12,8 +12,6 @@
     <name>wit-support</name>
     <modules>
         <module>support-jodd3</module>
-        <module>support-jfinal</module>
         <module>support-springmvc3</module>
-        <module>support-struts2</module>
     </modules>
 </project>

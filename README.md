@@ -73,9 +73,7 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
 ## Official Support
 
 + Jodd Madvoc
-+ JFinal
 + Spring MVC
-+ Struts2
 + Servlet & Filter
 
 > [Demo][mvc-demo]
