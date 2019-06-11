@@ -1,0 +1,28 @@
+# EditorConfig is awesome: https://EditorConfig.org
+root = true
+
+[*]
+end_of_line = lf
+charset = utf-8
+indent_style = space
+max_line_length = 120
+
+[*.{java, gradle, groovy, kt, jflex, cup}]
+indent_size = 4
+continuation_indent_size = 8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{js, yaml, yml, json, xml, sh, wim, props}]
+indent_size = 2
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.md]
+indent_size = 2
+trim_trailing_whitespace = false
+insert_final_newline = true
+
+[Makefile]
+indent_style = tab
+insert_final_newline = true
