@@ -497,9 +497,9 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   {OctIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(1, 0, 8)); }  
   {OctLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(1, -1, 8)); }
 
-  {FloatLiteral}                 { return symbol(Tokens.DIRECT_VALUE, new Float(yytext(0, -1))); }
-  {DoubleLiteralPart}            { return symbol(Tokens.DIRECT_VALUE, new Double(yytext())); }
-  {DoubleLiteral}                { return symbol(Tokens.DIRECT_VALUE, new Double(yytext(0, -1))); }
+  {FloatLiteral}                 { return symbol(Tokens.DIRECT_VALUE, Float.valueOf(yytext(0, -1))); }
+  {DoubleLiteralPart}            { return symbol(Tokens.DIRECT_VALUE, Double.valueOf(yytext())); }
+  {DoubleLiteral}                { return symbol(Tokens.DIRECT_VALUE, Double.valueOf(yytext(0, -1))); }
 
   /* comments */
   {Comment}                      { /* ignore */ }

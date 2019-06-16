@@ -10,6 +10,7 @@ import org.febit.wit_shaded.asm.Label;
 import org.febit.wit_shaded.asm.MethodWriter;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 
@@ -59,7 +60,8 @@ public class AsmNativeFactory extends NativeFactory {
         return declare;
     }
 
-    static MethodDeclare createAccessor(Member obj) throws InstantiationException, IllegalAccessException {
+    static MethodDeclare createAccessor(Member obj)
+            throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         final String className = "org.febit.wit.asm.Accessor" + ASMUtil.NEXT_SN.getAndIncrement();
         final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
                 ASMUtil.getInternalName(className), "java/lang/Object", METHOD_DECLARE);
@@ -173,6 +175,7 @@ public class AsmNativeFactory extends NativeFactory {
         }
         m.visitMaxs();
 
-        return (MethodDeclare) ASMUtil.loadClass(className, classWriter).newInstance();
+        return (MethodDeclare) ASMUtil.loadClass(className, classWriter)
+                .getConstructor().newInstance();
     }
 }

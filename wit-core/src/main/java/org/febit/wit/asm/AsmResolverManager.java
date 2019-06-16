@@ -52,7 +52,8 @@ public class AsmResolverManager extends ResolverManager {
                 resolver = CACHE.get(type);
                 if (resolver == null) {
                     try {
-                        resolver = (AsmResolver) createResolverClass(type).newInstance();
+                        resolver = (AsmResolver) createResolverClass(type)
+                                .getConstructor().newInstance();
                         resolver = CACHE.putIfAbsent(type, resolver);
                     } catch (Exception | LinkageError e) {
                         logger.error("Failed to create resolver for:".concat(type.getName()), e);

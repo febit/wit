@@ -51,7 +51,7 @@ public class AsmTest implements Constants {
         Class<?> exampleClass = ASMUtil.loadClass("x.Example", classWriter);
 
         try {
-            Object obj = exampleClass.newInstance();
+            Object obj = exampleClass.getConstructor().newInstance();
             Object result = exampleClass.getMethods()[0].invoke(obj, new Object[]{new Object[]{""}});
             assertEquals(0, result);
         } catch (InvocationTargetException exception) {

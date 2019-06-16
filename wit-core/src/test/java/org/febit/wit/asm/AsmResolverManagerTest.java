@@ -4,7 +4,9 @@ package org.febit.wit.asm;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author zqq90
@@ -64,7 +66,7 @@ public class AsmResolverManagerTest {
     public void testPrivateClass() {
         Exception exception = null;
         try {
-            assertNull(AsmResolverManager.createResolverClass(Book.class).newInstance());
+            assertNull(AsmResolverManager.createResolverClass(Book.class).getConstructor().newInstance());
         } catch (Exception e) {
             exception = e;
         }
@@ -77,7 +79,8 @@ public class AsmResolverManagerTest {
 
         Foo foo = new Foo();
 
-        AsmResolver resolver = (AsmResolver) AsmResolverManager.createResolverClass(Foo.class).newInstance();
+        AsmResolver resolver = (AsmResolver) AsmResolverManager.createResolverClass(Foo.class)
+                .getConstructor().newInstance();
 
         assertNull(resolver.getMatchClass());
 
