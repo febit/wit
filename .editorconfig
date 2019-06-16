@@ -7,16 +7,25 @@ charset = utf-8
 indent_style = space
 max_line_length = 120
 
-[*.{java, gradle, groovy, kt, jflex, cup}]
+[*.{java, kt, jflex, cup}]
 indent_size = 4
 continuation_indent_size = 8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.{js, yaml, yml, json, xml, sh, wim, props}]
+[*.{gradle, groovy}]
+indent_size = 2
+continuation_indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{js, yaml, yml, json, xml, sh, wim, props, properties}]
 indent_size = 2
 trim_trailing_whitespace = true
 insert_final_newline = true
+
+[*.bat]
+end_of_line = crlf
 
 [*.md]
 indent_size = 2

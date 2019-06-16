@@ -1,0 +1,10 @@
+ext {
+  moduleName = 'Wit Jodd-Madvoc 3'
+  moduleDescription = 'Wit Support for Jodd-Madvoc 3'
+}
+
+dependencies {
+  compile project(':wit-servlet')
+  compileOnly 'org.jodd:jodd-madvoc:3.5'
+  compileOnly 'javax.servlet:servlet-api'
+}

@@ -1,0 +1,58 @@
+ext {
+  moduleName = 'Wit Core'
+  moduleDescription = 'Wit Core'
+
+  parserSrcDir = file("${buildDir}/generated/sources/parser")
+  parserResDir = file("${buildDir}/generated/resources/parser")
+  parserCorePackageDir = file("${parserSrcDir}/org/febit/wit/core")
+  parserCorePackageResDir = file("${parserResDir}/org/febit/wit/core")
+  javaCupRuntime = getConfigurations().create('javaCup')
+  jflexRuntime = getConfigurations().create('jflex')
+}
+
+tasks.withType(Javadoc) {
+  exclude 'org/febit/wit_shaded/**'
+}
+
+dependencies {
+
+  compileOnly 'org.slf4j:slf4j-api'
+  compileOnly 'commons-logging:commons-logging-api'
+
+  testCompile 'commons-io:commons-io:2.6'
+
+  javaCup files('src/main/cup/java_cup_wit-20171014.jar')
+  jflex 'de.jflex:jflex:1.6.1'
+}
+
+task generateParser() {
+  doLast {
+    javaexec({ JavaExecSpec exec ->
+      exec.setMain('java_cup.Main')
+          .setClasspath(javaCupRuntime)
+          .args(
+              '-exception', 'ParseException',
+              '-destdir', parserCorePackageDir.absolutePath,
+              '-destresdir', parserCorePackageResDir.absolutePath,
+              file('src/main/cup/Parser.cup').absolutePath
+          )
+    })
+  }
+}
+
+task generateLexer() {
+  doLast {
+    javaexec({ JavaExecSpec exec ->
+      exec.setMain('jflex.Main')
+          .setClasspath(jflexRuntime)
+          .args(
+              '-d', parserCorePackageDir.absolutePath,
+              '-q', file('src/main/jflex/Lexer.jflex').absolutePath
+          )
+    })
+  }
+}
+
+compileJava.dependsOn(generateParser, generateLexer)
+sourceSets.main.java.srcDir "${parserSrcDir}"
+sourceSets.main.resources.srcDir "${parserResDir}"

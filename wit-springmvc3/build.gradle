@@ -1,0 +1,10 @@
+ext {
+  moduleName = 'Wit Spring-MVC 3'
+  moduleDescription = 'Wit Support for Spring-MVC 3'
+}
+
+dependencies {
+  compile project(':wit-servlet')
+  compileOnly 'org.springframework:spring-webmvc:3.2.18.RELEASE'
+  compileOnly 'javax.servlet:servlet-api'
+}

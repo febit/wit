@@ -1,12 +1,13 @@
 language: java
+
 install:
-  mvn install -Dmaven.test.skip -B -fae
+  - ./gradlew clean assemble
+
 script:
-  mvn test -B -fae
+  - ./gradlew check --stacktrace
+
 jdk:
-  - oraclejdk9
   - oraclejdk8
   - openjdk8
   - openjdk9
-  - openjdk10
   - openjdk11
