@@ -7,7 +7,11 @@ import org.febit.wit.global.GlobalManager;
 import org.febit.wit.util.ArrayUtil;
 import org.febit.wit.util.Stack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author zqq90
@@ -206,7 +210,7 @@ public class VariantManager {
         void assignConst(final String name, final Object value, int line, int column) {
             checkDuplicate(name, line, column);
             if (this.constMap == null) {
-                this.constMap = new HashMap<>();
+                this.constMap = new HashMap<>(16);
             }
             this.values.put(name, -1);
             this.constMap.put(name, value);

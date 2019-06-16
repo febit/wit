@@ -3,7 +3,6 @@ package org.febit.wit.util.charset;
 
 import org.junit.Test;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertTrue;
@@ -11,12 +10,12 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author zqq90
  */
-public class UTF8Test {
+public class Utf8Test {
 
-    public boolean matchEncode(String string) {
-        byte[] buffer = new byte[string.length() * UTF8.MAX_BYTES_PER_CHAR];
+    private boolean matchEncode(String string) {
+        byte[] buffer = new byte[string.length() * Utf8.MAX_BYTES_PER_CHAR];
         byte[] expr = string.getBytes(StandardCharsets.UTF_8);
-        int used = UTF8.encode(buffer, string.toCharArray(), 0, string.length());
+        int used = Utf8.encode(buffer, string.toCharArray(), 0, string.length());
         if (used != expr.length) {
             return false;
         }
@@ -28,11 +27,11 @@ public class UTF8Test {
         return true;
     }
 
-    public boolean matchDecode(String string) {
+    private boolean matchDecode(String string) {
         char[] expr = string.toCharArray();
         byte[] src = string.getBytes(StandardCharsets.UTF_8);
         char[] buffer = new char[src.length];
-        int used = UTF8.decode(src, 0, src.length, buffer);
+        int used = Utf8.decode(src, 0, src.length, buffer);
         if (used != expr.length) {
             return false;
         }
@@ -45,7 +44,7 @@ public class UTF8Test {
     }
 
     @Test
-    public void testEncode() throws UnsupportedEncodingException {
+    public void testEncode() {
         assertTrue(matchEncode(""));
         assertTrue(matchEncode("1234567890Az"));
         assertTrue(matchEncode("中文"));
@@ -57,7 +56,7 @@ public class UTF8Test {
     }
 
     @Test
-    public void testDecode() throws UnsupportedEncodingException {
+    public void testDecode() {
         assertTrue(matchDecode(""));
         assertTrue(matchDecode("1234567890Az"));
         assertTrue(matchDecode("中文"));
@@ -66,6 +65,5 @@ public class UTF8Test {
         assertTrue(matchDecode("\u0080\u00CA\u01CA\u07FF"));
         assertTrue(matchDecode("\uD856\uDC65\uD866\uDC66"));
         assertTrue(matchDecode("\uD700\uE000"));
-
     }
 }

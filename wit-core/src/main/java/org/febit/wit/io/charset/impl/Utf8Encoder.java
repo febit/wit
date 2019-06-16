@@ -3,7 +3,7 @@ package org.febit.wit.io.charset.impl;
 
 import org.febit.wit.io.Buffers;
 import org.febit.wit.io.charset.Encoder;
-import org.febit.wit.util.charset.UTF8;
+import org.febit.wit.util.charset.Utf8;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,11 +11,11 @@ import java.io.OutputStream;
 /**
  * @author zqq90
  */
-public final class UTF8Encoder implements Encoder {
+public final class Utf8Encoder implements Encoder {
 
     private final Buffers buffers;
 
-    public UTF8Encoder(Buffers buffers) {
+    public Utf8Encoder(Buffers buffers) {
         this.buffers = buffers;
     }
 
@@ -24,8 +24,8 @@ public final class UTF8Encoder implements Encoder {
         if (chars == null || len == 0) {
             return;
         }
-        final byte[] bytes = this.buffers.getBytes(len * UTF8.MAX_BYTES_PER_CHAR);
-        int used = UTF8.encode(bytes, chars, off, off + len);
+        final byte[] bytes = this.buffers.getBytes(len * Utf8.MAX_BYTES_PER_CHAR);
+        int used = Utf8.encode(bytes, chars, off, off + len);
         out.write(bytes, 0, used);
     }
 
@@ -36,8 +36,8 @@ public final class UTF8Encoder implements Encoder {
         }
         final char[] chars = this.buffers.getChars(len);
         string.getChars(off, off + len, chars, 0);
-        final byte[] bytes = this.buffers.getBytes(len * UTF8.MAX_BYTES_PER_CHAR);
-        int used = UTF8.encode(bytes, chars, off, off + len);
+        final byte[] bytes = this.buffers.getBytes(len * Utf8.MAX_BYTES_PER_CHAR);
+        int used = Utf8.encode(bytes, chars, off, off + len);
         out.write(bytes, 0, used);
     }
 }

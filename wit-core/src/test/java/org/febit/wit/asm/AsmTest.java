@@ -21,7 +21,7 @@ public class AsmTest implements Constants {
         ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC,
                 "x/Example", "java/lang/Object", null);
 
-        ASMUtil.visitConstructor(classWriter);
+        AsmUtil.visitConstructor(classWriter);
 
         MethodWriter m = classWriter.visitMethod(ACC_PUBLIC, "test",
                 "([Ljava/lang/Object;)Ljava/lang/Object;", null);
@@ -42,13 +42,13 @@ public class AsmTest implements Constants {
         m.visitInsn(Constants.AALOAD);
         m.visitTypeInsn(Constants.CHECKCAST, "java/lang/String");
         m.visitMethodInsn(Constants.INVOKEVIRTUAL, "java/lang/String", "length", "()I");
-        ASMUtil.visitBoxIfNeed(m, int.class);
+        AsmUtil.visitBoxIfNeed(m, int.class);
         m.visitInsn(Constants.ARETURN);
         m.visitLabel(toException);
-        ASMUtil.visitScriptRuntimeException(m, "First argument can't be null.");
+        AsmUtil.visitScriptRuntimeException(m, "First argument can't be null.");
         m.visitMaxs();
 
-        Class<?> exampleClass = ASMUtil.loadClass("x.Example", classWriter);
+        Class<?> exampleClass = AsmUtil.loadClass("x.Example", classWriter);
 
         try {
             Object obj = exampleClass.getConstructor().newInstance();

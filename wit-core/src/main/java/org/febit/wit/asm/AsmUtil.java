@@ -13,14 +13,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author zqq90
  */
-class ASMUtil {
+class AsmUtil {
 
     static final String TYPE_STRING_NAME = "java/lang/String";
     static final String METHOD_CTOR = "<init>";
     static final AtomicInteger NEXT_SN = new AtomicInteger(1);
     private static final AsmClassLoader CLASS_LOADER = new AsmClassLoader();
 
-    private ASMUtil() {
+    private AsmUtil() {
     }
 
     static Class<?> loadClass(String name, ClassWriter classWriter) {

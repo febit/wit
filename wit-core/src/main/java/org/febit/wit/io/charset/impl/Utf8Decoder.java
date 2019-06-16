@@ -3,7 +3,7 @@ package org.febit.wit.io.charset.impl;
 
 import org.febit.wit.io.Buffers;
 import org.febit.wit.io.charset.Decoder;
-import org.febit.wit.util.charset.UTF8;
+import org.febit.wit.util.charset.Utf8;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -11,11 +11,11 @@ import java.io.Writer;
 /**
  * @author zqq90
  */
-public final class UTF8Decoder implements Decoder {
+public final class Utf8Decoder implements Decoder {
 
     private final Buffers buffers;
 
-    public UTF8Decoder(Buffers buffers) {
+    public Utf8Decoder(Buffers buffers) {
         this.buffers = buffers;
     }
 
@@ -25,7 +25,7 @@ public final class UTF8Decoder implements Decoder {
             return;
         }
         final char[] chars = this.buffers.getChars(len);
-        int used = UTF8.decode(bytes, off, len, chars);
+        int used = Utf8.decode(bytes, off, len, chars);
         writer.write(chars, 0, used);
     }
 }

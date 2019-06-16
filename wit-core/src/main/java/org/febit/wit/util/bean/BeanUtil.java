@@ -50,7 +50,7 @@ public class BeanUtil {
     }
 
     private static Map<String, Accessor> resolveAccessors(Class<?> cls) {
-        final Map<String, Accessor> map = new HashMap<>();
+        final Map<String, Accessor> map = new HashMap<>(16);
         FieldInfoResolver.resolve(cls)
                 .forEach(fieldInfo -> map.put(fieldInfo.name,
                         new Accessor(fieldInfo.getGetter(), fieldInfo.getSetter())));

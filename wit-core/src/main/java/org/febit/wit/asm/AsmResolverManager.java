@@ -69,11 +69,11 @@ public class AsmResolverManager extends ResolverManager {
         if (!ClassUtil.isPublic(beanClass)) {
             throw new UncheckedException(StringUtil.format("Class<?> [{}] is not public", beanClass));
         }
-        final String className = "org.febit.wit.asm.Resolver" + ASMUtil.NEXT_SN.getAndIncrement();
+        final String className = "org.febit.wit.asm.Resolver" + AsmUtil.NEXT_SN.getAndIncrement();
 
         final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
-                ASMUtil.getInternalName(className), "java/lang/Object", ASM_RESOLVER);
-        ASMUtil.visitConstructor(classWriter);
+                AsmUtil.getInternalName(className), "java/lang/Object", ASM_RESOLVER);
+        AsmUtil.visitConstructor(classWriter);
 
         final FieldInfo[] all = FieldInfoResolver.resolve(beanClass)
                 .sorted()
@@ -115,12 +115,12 @@ public class AsmResolverManager extends ResolverManager {
         m.visitInsn(Constants.ARETURN);
         m.visitMaxs();
 
-        return ASMUtil.loadClass(className, classWriter);
+        return AsmUtil.loadClass(className, classWriter);
     }
 
     private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class<?> beanClass,
                                        final FieldInfo[] all, final int[] hashes, final int[] indexer) {
-        final String beanName = ASMUtil.getBoxedInternalName(beanClass);
+        final String beanName = AsmUtil.getBoxedInternalName(beanClass);
         final MethodWriter m;
         if (isGetter) {
             m = classWriter.visitMethod(Constants.ACC_PUBLIC, "get",
@@ -160,10 +160,10 @@ public class AsmResolverManager extends ResolverManager {
         m.visitInsn(Constants.DUP);
         m.visitLdcInsn("Invalid property " + beanClass.getName() + '#');
         m.visitVarInsn(Constants.ALOAD, 2);
-        m.invokeStatic(ASMUtil.TYPE_STRING_NAME, "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
-        m.invokeVirtual(ASMUtil.TYPE_STRING_NAME, "concat", "(Ljava/lang/String;)Ljava/lang/String;");
+        m.invokeStatic(AsmUtil.TYPE_STRING_NAME, "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
+        m.invokeVirtual(AsmUtil.TYPE_STRING_NAME, "concat", "(Ljava/lang/String;)Ljava/lang/String;");
         m.visitMethodInsn(Constants.INVOKESPECIAL, "org/febit/wit/exceptions/ScriptRuntimeException",
-                ASMUtil.METHOD_CTOR, "(Ljava/lang/String;)V");
+                AsmUtil.METHOD_CTOR, "(Ljava/lang/String;)V");
         m.visitInsn(Constants.ATHROW);
         m.visitMaxs();
     }
@@ -185,7 +185,7 @@ public class AsmResolverManager extends ResolverManager {
         for (int i = start; i < end; i++) {
             m.visitLdcInsn(fieldInfos[i].name);
             m.visitVarInsn(Constants.ALOAD, 2);
-            m.invokeVirtual(ASMUtil.TYPE_STRING_NAME, "equals", "(Ljava/lang/Object;)Z");
+            m.invokeVirtual(AsmUtil.TYPE_STRING_NAME, "equals", "(Ljava/lang/Object;)Z");
             // if true goto
             m.visitJumpInsn(Constants.IFNE, gotoTable[i - start]);
         }
@@ -212,16 +212,16 @@ public class AsmResolverManager extends ResolverManager {
             m.checkCast(beanName);
             if (getter != null) {
                 //return book.getName()
-                m.invokeVirtual(beanName, getter.getName(), ASMUtil.getDescriptor(getter));
+                m.invokeVirtual(beanName, getter.getName(), AsmUtil.getDescriptor(getter));
             } else {
                 //return book.name
-                m.visitFieldInsn(Constants.GETFIELD, beanName, fieldInfo.name, ASMUtil.getDescriptor(resultType));
+                m.visitFieldInsn(Constants.GETFIELD, beanName, fieldInfo.name, AsmUtil.getDescriptor(resultType));
             }
-            ASMUtil.visitBoxIfNeed(m, resultType);
+            AsmUtil.visitBoxIfNeed(m, resultType);
             m.visitInsn(Constants.ARETURN);
         } else {
             //Unreadable Exception
-            ASMUtil.visitScriptRuntimeException(m, StringUtil.format("Unreadable property {}#{}",
+            AsmUtil.visitScriptRuntimeException(m, StringUtil.format("Unreadable property {}#{}",
                     fieldInfo.owner.getName(), fieldInfo.name));
         }
     }
@@ -233,20 +233,20 @@ public class AsmResolverManager extends ResolverManager {
             m.visitVarInsn(Constants.ALOAD, 1);
             m.checkCast(beanName);
             m.visitVarInsn(Constants.ALOAD, 3);
-            m.checkCast(ASMUtil.getBoxedInternalName(fieldClass));
-            ASMUtil.visitUnboxIfNeed(m, fieldClass);
+            m.checkCast(AsmUtil.getBoxedInternalName(fieldClass));
+            AsmUtil.visitUnboxIfNeed(m, fieldClass);
             if (setter != null) {
                 //book.setName((String)name)
-                m.invokeVirtual(beanName, setter.getName(), ASMUtil.getDescriptor(setter));
+                m.invokeVirtual(beanName, setter.getName(), AsmUtil.getDescriptor(setter));
             } else {
                 //book.name = (String) name
-                m.visitFieldInsn(Constants.PUTFIELD, beanName, fieldInfo.name, ASMUtil.getDescriptor(fieldClass));
+                m.visitFieldInsn(Constants.PUTFIELD, beanName, fieldInfo.name, AsmUtil.getDescriptor(fieldClass));
             }
 
             m.visitInsn(Constants.RETURN);
         } else {
             //UnwriteableException
-            ASMUtil.visitScriptRuntimeException(m, StringUtil.format("Unwriteable property {}#{}",
+            AsmUtil.visitScriptRuntimeException(m, StringUtil.format("Unwriteable property {}#{}",
                     fieldInfo.owner.getName(), fieldInfo.name));
         }
     }

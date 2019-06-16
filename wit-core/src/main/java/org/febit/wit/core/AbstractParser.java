@@ -8,9 +8,35 @@ import org.febit.wit.core.ast.AssignableExpression;
 import org.febit.wit.core.ast.Expression;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.core.ast.TemplateAST;
-import org.febit.wit.core.ast.expressions.*;
-import org.febit.wit.core.ast.operators.*;
-import org.febit.wit.core.ast.statements.*;
+import org.febit.wit.core.ast.expressions.BreakpointExpression;
+import org.febit.wit.core.ast.expressions.ContextScopeValue;
+import org.febit.wit.core.ast.expressions.ContextValue;
+import org.febit.wit.core.ast.expressions.DirectValue;
+import org.febit.wit.core.ast.expressions.DynamicNativeMethodExecute;
+import org.febit.wit.core.ast.expressions.GlobalValue;
+import org.febit.wit.core.ast.expressions.MapValue;
+import org.febit.wit.core.ast.expressions.MethodExecute;
+import org.febit.wit.core.ast.expressions.NativeStaticValue;
+import org.febit.wit.core.ast.operators.And;
+import org.febit.wit.core.ast.operators.Assign;
+import org.febit.wit.core.ast.operators.BiOperator;
+import org.febit.wit.core.ast.operators.ConstableBiOperator;
+import org.febit.wit.core.ast.operators.ConstableOperator;
+import org.febit.wit.core.ast.operators.GroupAssign;
+import org.febit.wit.core.ast.operators.IntStep;
+import org.febit.wit.core.ast.operators.Or;
+import org.febit.wit.core.ast.operators.SelfOperator;
+import org.febit.wit.core.ast.statements.Block;
+import org.febit.wit.core.ast.statements.BlockNoLoops;
+import org.febit.wit.core.ast.statements.BreakpointStatement;
+import org.febit.wit.core.ast.statements.IBlock;
+import org.febit.wit.core.ast.statements.If;
+import org.febit.wit.core.ast.statements.IfElse;
+import org.febit.wit.core.ast.statements.IfNot;
+import org.febit.wit.core.ast.statements.Interpolation;
+import org.febit.wit.core.ast.statements.NoneStatement;
+import org.febit.wit.core.ast.statements.StatementGroup;
+import org.febit.wit.core.ast.statements.TryPart;
 import org.febit.wit.core.text.TextStatementFactory;
 import org.febit.wit.debug.BreakpointListener;
 import org.febit.wit.exceptions.ParseException;
@@ -19,7 +45,13 @@ import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.ResourceOffset;
 import org.febit.wit.security.NativeSecurityManager;
-import org.febit.wit.util.*;
+import org.febit.wit.util.ALU;
+import org.febit.wit.util.ClassNameBand;
+import org.febit.wit.util.ClassUtil;
+import org.febit.wit.util.ExceptionUtil;
+import org.febit.wit.util.Stack;
+import org.febit.wit.util.StatementUtil;
+import org.febit.wit.util.StringUtil;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -641,7 +673,7 @@ abstract class AbstractParser {
     }
 
     Expression createNativeStaticValue(ClassNameBand classNameBand, int line, int column) {
-        if (classNameBand.size() < 2) {
+        if (classNameBand.size() <= 1) {
             throw new ParseException("native static need a field name.", line, column);
         }
         final String fieldName = classNameBand.pop();

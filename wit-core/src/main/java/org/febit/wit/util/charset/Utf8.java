@@ -1,11 +1,11 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util.charset;
 
-public class UTF8 {
+public class Utf8 {
 
     public static final int MAX_BYTES_PER_CHAR = 3;
 
-    private UTF8() {
+    private Utf8() {
     }
 
     public static int decode(final byte[] sa, final int from, final int len, final char[] da) {

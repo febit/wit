@@ -25,7 +25,7 @@ public class DefaultCoderFactory implements CoderFactory {
     @Override
     public Encoder newEncoder(InternedEncoding encoding, Buffers buffers) {
         if (encoding == InternedEncoding.UTF_8) {
-            return new UTF8Encoder(buffers);
+            return new Utf8Encoder(buffers);
         } else {
             return new DefaultEncoder(encoding.value, buffers);
         }
@@ -34,7 +34,7 @@ public class DefaultCoderFactory implements CoderFactory {
     @Override
     public Decoder newDecoder(InternedEncoding encoding, Buffers buffers) {
         if (encoding == InternedEncoding.UTF_8) {
-            return new UTF8Decoder(buffers);
+            return new Utf8Decoder(buffers);
         } else {
             return new DefaultDecoder(encoding.value, buffers);
         }

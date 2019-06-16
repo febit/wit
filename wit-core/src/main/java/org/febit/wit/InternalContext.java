@@ -334,7 +334,7 @@ public final class InternalContext implements Context {
             return;
         }
         if (this.locals == null) {
-            this.locals = new HashMap<>();
+            this.locals = new HashMap<>(16);
         }
         this.locals.put(name, value);
     }
