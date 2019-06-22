@@ -12,34 +12,6 @@ signing {
   sign publishing.publications
 }
 
-publishing {
-  repositories {
-    maven {
-      credentials {
-        username publishProperty("username")
-        password publishProperty("password")
-      }
-      def uploadUrl
-      if (project.version.endsWith('-SNAPSHOT')) {
-        uploadUrl = publishProperty("snapshotsUrl")
-      } else {
-        uploadUrl = publishProperty("releasesUrl")
-      }
-      url uploadUrl
-    }
-  }
-  publications {
-    mavenJava(MavenPublication) {
-      from components.java
-      customizePom(pom)
-      afterEvaluate {
-        artifact sourcesJar
-        artifact javadocJar
-      }
-    }
-  }
-}
-
 artifacts {
   archives jar
 }
@@ -59,50 +31,65 @@ task install(dependsOn: publishToMavenLocal) {
   description = 'Installs artifacts to local Maven repository'
 }
 
-def publishProperty(def key) {
-  if (publishProfile == null) {
-    return null
+publishing {
+  repositories {
+    maven {
+      credentials {
+        username publishProperty("username")
+        password publishProperty("password")
+      }
+      url = version.endsWith('-SNAPSHOT')
+          ? publishProperty("snapshotsUrl")
+          : publishProperty("releasesUrl")
+    }
   }
-  return findProperty("publish." + publishProfile + "." + key)
-}
-
-def customizePom(pom) {
-  pom.withXml {
-    asNode().version.last() + {
-      resolveStrategy = Closure.DELEGATE_FIRST
-
-      name project.ext.moduleName
-      description project.ext.moduleDescription
-      url 'https://github.com/febit/wit'
-      organization {
-        name 'Febit'
-        url 'https://github.com/febit'
-      }
-      licenses {
-        license {
-          name 'The New BSD License'
-          url 'https://github.com/febit/wit/blob/master/LICENSE'
-          distribution 'repo'
-        }
-      }
-      scm {
-        url 'https://github.com/febit/wit'
-        connection 'scm:git:https://github.com/febit/wit.git'
-        developerConnection 'scm:git:https://github.com/febit/wit.git'
-      }
-      issueManagement {
-        system 'GitHub'
-        url 'https://github.com/febit/wit/issues'
-      }
-      developers {
-        developer {
-          id 'zqq'
-          name 'Zhu Qingqing'
-          email 'zqq@febit.org'
-          timezone '+8'
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+      artifact sourcesJar
+      artifact javadocJar
+      afterEvaluate {
+        pom {
+          name = project.ext.moduleName
+          description = project.ext.moduleDescription
+          url = 'https://github.com/febit/wit'
+          organization {
+            name = 'Febit'
+            url = 'https://github.com/febit'
+          }
+          licenses {
+            license {
+              name = 'The New BSD License'
+              url = 'https://github.com/febit/wit/blob/master/LICENSE'
+              distribution = 'repo'
+            }
+          }
+          scm {
+            url = 'https://github.com/febit/wit'
+            connection = 'scm:git:https://github.com/febit/wit.git'
+            developerConnection = 'scm:git:https://github.com/febit/wit.git'
+          }
+          issueManagement {
+            system = 'GitHub'
+            url = 'https://github.com/febit/wit/issues'
+          }
+          developers {
+            developer {
+              id = 'zqq'
+              name = 'Zhu Qingqing'
+              email = 'zqq@febit.org'
+              timezone = '+8'
+            }
+          }
         }
       }
     }
   }
 }
 
+def publishProperty(def key) {
+  if (publishProfile == null) {
+    return null
+  }
+  return findProperty("publish." + publishProfile + "." + key)
+}
