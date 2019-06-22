@@ -3,7 +3,6 @@ apply plugin: 'maven-publish'
 
 ext {
   publishProfile = findProperty('publish.profile')
-  // println "Using publish profile：" + publishProfile
 }
 
 signing {
@@ -26,7 +25,6 @@ publishing {
       } else {
         uploadUrl = publishProperty("releasesUrl")
       }
-      // println "Publish upload url is: " + uploadUrl
       url uploadUrl
     }
   }
