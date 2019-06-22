@@ -5,7 +5,12 @@ out/
 target/
 build/
 
-.gradle/
+!**/src/**/dist/
+!**/src/**/out/
+!**/src/**/target/
+!**/src/**/build/
+
+.gradle
 gradle.properties
 
 *.iml
