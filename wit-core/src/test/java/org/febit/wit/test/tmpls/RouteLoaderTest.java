@@ -3,15 +3,15 @@ package org.febit.wit.test.tmpls;
 
 import org.febit.wit.EngineManager;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author zqq90
  */
-public class RouteLoaderTest {
+class RouteLoaderTest {
 
     @Test
-    public void test() throws ResourceNotFoundException {
+    void test() throws ResourceNotFoundException {
         EngineManager.getTemplate("lib:/lib.wit").merge();
         EngineManager.getTemplate("lib:sub:/lib-sub.wit").merge();
     }

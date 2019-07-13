@@ -1,17 +1,17 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author zqq90
  */
-public class CharArrayWriterTest {
+class CharArrayWriterTest {
 
     @Test
-    public void trimTest() {
+    void trimTest() {
         LexerCharArrayWriter buffer;
 
         //

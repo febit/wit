@@ -1,19 +1,23 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author zqq90
  */
-public class JavaNativeUtilTest {
+class JavaNativeUtilTest {
 
     Method[] fooMethods;
     Method[] mixMethods;
@@ -39,7 +43,7 @@ public class JavaNativeUtilTest {
     }
 
     @Test
-    public void test() {
+    void test() {
 
         //let's go
         assertEquals(methodPool.get("fooEmpty"),
@@ -89,7 +93,7 @@ public class JavaNativeUtilTest {
     }
 
     @Test
-    public void testMix() {
+    void testMix() {
 
         assertEquals(methodPool.get("mixStaticEmpty"),
                 matchMix());
@@ -120,7 +124,7 @@ public class JavaNativeUtilTest {
     }
 
     @Test
-    public void testMatchConstructor() throws NoSuchMethodException {
+    void testMatchConstructor() throws NoSuchMethodException {
         assertEquals(Methods.class.getConstructor(), matchConstructor());
         assertEquals(Methods.class.getConstructor(int.class), matchConstructor(Integer.class));
         assertEquals(Methods.class.getConstructor(int.class), matchConstructor(int.class));

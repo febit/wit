@@ -4,15 +4,15 @@ package org.febit.wit.test.tmpls;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author zqq90
  */
-public class HelloTest {
+class HelloTest {
 
     @Test
-    public void test() throws ResourceNotFoundException {
+    void test() throws ResourceNotFoundException {
 
         Template template = EngineManager.getTemplate("/helloTest.wit");
         template.reload();

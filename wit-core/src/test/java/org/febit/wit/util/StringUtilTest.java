@@ -1,17 +1,19 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * @author zqq90
  */
-public class StringUtilTest {
+class StringUtilTest {
 
     @Test
-    public void toArray() {
+    void toArray() {
         assertArrayEquals(new String[]{"abc", "def", "g"}, StringUtil.toArray("abc,def,g"));
         assertArrayEquals(new String[]{"abc", "def", "g"}, StringUtil.toArray(" abc , def , g "));
         assertArrayEquals(new String[]{"abc", "def", "g"}, StringUtil.toArray("\t\n abc\n\r \n, def \n,,, g ,,, "));
@@ -25,7 +27,7 @@ public class StringUtilTest {
     }
 
     @Test
-    public void format() {
+    void format() {
         assertEquals("\\abcd", StringUtil.format("\\ab{}cd{1}"));
         assertEquals("ab-123-cd-456|ab-456-cd-123|ab-{1}-cd-123|ab-\\456-cd-123|\\\\123",
                 StringUtil.format("ab-{}-cd-{}|ab-{1}-cd-{0}|ab-\\{1}-cd-{0}|ab-\\\\{1}-cd-{0}|\\\\\\\\{0}", 123, 456));

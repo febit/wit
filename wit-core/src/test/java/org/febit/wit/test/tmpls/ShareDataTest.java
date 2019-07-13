@@ -7,17 +7,17 @@ import org.febit.wit.Template;
 import org.febit.wit.Vars;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.util.ClassUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
 /**
  * @author zqq90
  */
-public class ShareDataTest {
+class ShareDataTest {
 
     @Test
-    public void test() throws ResourceNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+    void test() throws ResourceNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         Engine engine = EngineManager.getEngine();
         Field field = Engine.class.getDeclaredField("shareRootData");
         ClassUtil.setAccessible(field);

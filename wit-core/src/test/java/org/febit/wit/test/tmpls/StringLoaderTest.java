@@ -3,33 +3,34 @@ package org.febit.wit.test.tmpls;
 
 import org.febit.wit.EngineManager;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author zqq90
  */
-public class StringLoaderTest {
+class StringLoaderTest {
 
     @Test
-    public void test() throws ResourceNotFoundException {
+    void test() throws ResourceNotFoundException {
 
         final StringWriter writer = new StringWriter();
 
         EngineManager.getTemplate("string:<% echo \"Hello Wit！\"; %>")
                 .merge(writer);
-        Assert.assertEquals("Hello Wit！", writer.toString());
+        assertEquals("Hello Wit！", writer.toString());
     }
 
     @Test
-    public void testCodeFirst() throws ResourceNotFoundException {
+    void testCodeFirst() throws ResourceNotFoundException {
 
         final StringWriter writer = new StringWriter();
 
         EngineManager.getTemplate("code: echo \"Hello Wit！\";")
                 .merge(writer);
-        Assert.assertEquals("Hello Wit！", writer.toString());
+        assertEquals("Hello Wit！", writer.toString());
     }
 }

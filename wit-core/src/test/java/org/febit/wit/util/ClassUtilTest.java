@@ -1,19 +1,19 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * @author zqq90
  */
-public class ClassUtilTest {
+class ClassUtilTest {
 
     @Test
-    public void getClassByNameTest() throws ClassNotFoundException {
+    void getClassByNameTest() throws ClassNotFoundException {
 
         assertSame(int.class, ClassUtil.getClass("int", 0));
         assertSame(int[].class, ClassUtil.getClass("int", 1));

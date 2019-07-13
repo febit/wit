@@ -6,20 +6,21 @@ import org.febit.wit.EngineManager;
 import org.febit.wit.Function;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author zqq90
  */
-public class FunctionExportTest {
+class FunctionExportTest {
 
     @Test
-    public void test() throws ResourceNotFoundException {
+    void test() throws ResourceNotFoundException {
 
         Context context = EngineManager.getTemplate("/functionExportTest.wit").merge();
 
@@ -73,27 +74,15 @@ public class FunctionExportTest {
         print.invokeWithOut(writer, "hello function");
         assertEquals("hello function", writer.toString());
 
-        //Exception cases:
-        //
-        Exception exception = null;
-        try {
-            context.exportFunction("notExistFunction");
-        } catch (NotFunctionException e) {
-            exception = e;
-        }
-        assertNotNull(exception);
+        // Exception cases:
+        NotFunctionException exception;
 
+        exception = assertThrows(NotFunctionException.class,
+                () -> context.exportFunction("notExistFunction"));
         assertEquals("Not function: null", exception.getMessage());
 
-        //
-        exception = null;
-        try {
-            context.exportFunction("count");
-        } catch (NotFunctionException e) {
-            exception = e;
-        }
-        assertNotNull(exception);
-
+        exception = assertThrows(NotFunctionException.class,
+                () -> context.exportFunction("count"));
         assertEquals("Not function: java.lang.Integer", exception.getMessage());
     }
 }

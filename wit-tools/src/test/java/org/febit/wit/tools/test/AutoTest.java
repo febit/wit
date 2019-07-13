@@ -11,19 +11,23 @@ import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.tools.EngineManager;
 import org.febit.wit.util.ClassUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * @author zqq90
  */
-public class AutoTest {
+class AutoTest {
 
     private final static int BUFFER_SIZE = 1024;
     private final static String AUTO_TEST_PATH = "org/febit/wit/tools/test/tmpls/auto/";
@@ -49,7 +53,7 @@ public class AutoTest {
     }
 
     @Test
-    public void test() throws ResourceNotFoundException, IOException {
+    void test() throws IOException {
 
         Map<String, String> templates = collectAutoTestTemplates();
         ClassLoader classLoader = ClassUtil.getDefaultClassLoader();

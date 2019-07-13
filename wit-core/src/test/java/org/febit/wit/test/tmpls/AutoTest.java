@@ -18,7 +18,7 @@ import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.tools.testunit.AssertGlobalRegister;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.StringUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,12 +30,12 @@ import java.net.URL;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * @author zqq90
  */
-public class AutoTest {
+class AutoTest {
 
     private static final String AUTO_TEST_ROOT = "org/febit/wit/test/tmpls/auto";
     private static final String AUTO_TEST_ROOT_FLAG = AUTO_TEST_ROOT + "/flag";
@@ -43,7 +43,7 @@ public class AutoTest {
     private final LongAdder breakpointCount = new LongAdder();
 
     @Test
-    public void test() throws ParseException, ScriptRuntimeException {
+    void test() throws ParseException, ScriptRuntimeException {
 
         breakpointCount.reset();
         ClassLoader classLoader = ClassUtil.getDefaultClassLoader();

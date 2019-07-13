@@ -7,7 +7,7 @@ import org.febit.wit.Template;
 import org.febit.wit.Vars;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.util.ClassUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -16,10 +16,10 @@ import java.util.Map;
 /**
  * @author zqq90
  */
-public class TrimBlankLineTest {
+class TrimBlankLineTest {
 
     @Test
-    public void test() throws ResourceNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+    void test() throws ResourceNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         Engine engine = EngineManager.getEngine();
 
         Field field = Engine.class.getDeclaredField("trimCodeBlockBlankLine");

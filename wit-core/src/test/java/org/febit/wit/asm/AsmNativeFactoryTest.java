@@ -4,21 +4,25 @@ package org.febit.wit.asm;
 import org.febit.wit.Context;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.MethodDeclare;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author zqq90
  */
-public class AsmNativeFactoryTest {
+class AsmNativeFactoryTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test() throws Exception {
+    void test() throws Exception {
 
         MethodDeclare str_toString = AsmNativeFactory.createAccessor(String.class.getMethod("toString"));
 
@@ -51,13 +55,8 @@ public class AsmNativeFactoryTest {
         list.add("i1");
         list.add("i2");
 
-        Exception exception = null;
-        try {
-            assertEquals(listSize.invoke(null, new Object[0]), 2);
-        } catch (ScriptRuntimeException e) {
-            exception = e;
-        }
-        assertNotNull(exception);
+        assertThrows(ScriptRuntimeException.class,
+                () -> listSize.invoke(null, new Object[0]));
 
         assertEquals(listSize.invoke(null, new Object[]{list}), 2);
         assertEquals(listSize.invoke(null, new Object[]{list, 2, 3}), 2);

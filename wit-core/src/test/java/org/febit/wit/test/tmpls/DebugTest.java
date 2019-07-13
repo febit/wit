@@ -5,24 +5,24 @@ import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
 import org.febit.wit.Vars;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author zqq90
  */
-public class DebugTest {
+class DebugTest {
 
     private final Set<Object> labelCache = new HashSet<>();
     private int pointCount = 0;
 
     @Test
-    public void test() throws ResourceNotFoundException {
+    void test() throws ResourceNotFoundException {
         Template template = EngineManager.getTemplate("/debug.wit");
 
         template.merge();

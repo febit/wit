@@ -1,17 +1,19 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util.bean;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author zqq90
  */
-public class FieldInfoResolverTest {
+class FieldInfoResolverTest {
 
     public static class FooParent {
 
@@ -95,7 +97,7 @@ public class FieldInfoResolverTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         Map<String, FieldInfo> infoMap = new HashMap<>();
         FieldInfoResolver.resolve(Foo.class)
                 .forEach(fieldInfo -> infoMap.put(fieldInfo.name, fieldInfo));
@@ -168,7 +170,7 @@ public class FieldInfoResolverTest {
     }
 
     @Test
-    public void cutFieldNameTest() {
+    void cutFieldNameTest() {
         assertEquals("a", FieldInfoResolver.cutFieldName("getA", 3));
         assertEquals("ab", FieldInfoResolver.cutFieldName("getAb", 3));
         assertEquals("AB", FieldInfoResolver.cutFieldName("getAB", 3));

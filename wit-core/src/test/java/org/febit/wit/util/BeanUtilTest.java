@@ -2,15 +2,15 @@
 package org.febit.wit.util;
 
 import org.febit.wit.util.bean.BeanUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author zqq90
  */
-public class BeanUtilTest {
+class BeanUtilTest {
 
     public class Foo {
 
@@ -55,7 +55,7 @@ public class BeanUtilTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         Foo foo = new Foo();
 
         assertEquals(foo.public0, BeanUtil.get(foo, "public0"));

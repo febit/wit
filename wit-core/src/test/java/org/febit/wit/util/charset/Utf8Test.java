@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util.charset;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author zqq90
  */
-public class Utf8Test {
+class Utf8Test {
 
     private boolean matchEncode(String string) {
         byte[] buffer = new byte[string.length() * Utf8.MAX_BYTES_PER_CHAR];
@@ -44,7 +44,7 @@ public class Utf8Test {
     }
 
     @Test
-    public void testEncode() {
+    void testEncode() {
         assertTrue(matchEncode(""));
         assertTrue(matchEncode("1234567890Az"));
         assertTrue(matchEncode("中文"));
@@ -56,7 +56,7 @@ public class Utf8Test {
     }
 
     @Test
-    public void testDecode() {
+    void testDecode() {
         assertTrue(matchDecode(""));
         assertTrue(matchDecode("1234567890Az"));
         assertTrue(matchDecode("中文"));

@@ -1,16 +1,16 @@
 package org.febit.wit.loaders;
 
 import org.febit.wit.loaders.impl.resources.LazyResource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.Reader;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author zqq
  */
-public class LazyResourceTest {
+class LazyResourceTest {
 
     public static class InnerResource implements Resource {
 
@@ -42,7 +42,7 @@ public class LazyResourceTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         final int timeout = 100;
         final InnerResource inner = new InnerResource();
 

@@ -5,20 +5,22 @@ import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author zqq90
  */
-public class ContextTest {
+class ContextTest {
 
     @Test
-    public void test() throws ResourceNotFoundException {
+    void test() throws ResourceNotFoundException {
 
         Template template = EngineManager.getTemplate("contextTest.wit");
 
