@@ -20,6 +20,7 @@ subprojects {
   version rootProject.version
 
   apply plugin: 'java'
+  apply plugin: 'jacoco'
   apply plugin: 'idea'
   apply plugin: 'eclipse'
   apply plugin: 'io.spring.dependency-management'
