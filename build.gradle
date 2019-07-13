@@ -49,6 +49,20 @@ subprojects {
     options.addStringOption('Xdoclint:none', '-quiet')
   }
 
+  jar {
+    manifest {
+      attributes(
+          'Implementation-Title': project.name,
+          'Implementation-Vendor': 'febit.org',
+          'Implementation-Vendor-Id': project.group,
+          'Implementation-Version': version.toString(),
+          'Created-By': "Gradle ${project.getGradle().getGradleVersion()}",
+          'Build-Jdk': System.getProperty('java.version'),
+          'Build-Time': "${Instant.now()}"
+      )
+    }
+  }
+
   dependencyManagement {
     dependencies {
       dependencySet(group: 'org.slf4j', version: "${versions.slf4j}") {
