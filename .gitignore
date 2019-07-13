@@ -12,6 +12,7 @@ build/
 
 .gradle
 gradle.properties
+lombok.config
 
 *.iml
 .idea
