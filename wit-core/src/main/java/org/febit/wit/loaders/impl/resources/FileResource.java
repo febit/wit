@@ -3,11 +3,18 @@ package org.febit.wit.loaders.impl.resources;
 
 import org.febit.wit.loaders.Resource;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class FileResource implements Resource {
 
     protected final File file;

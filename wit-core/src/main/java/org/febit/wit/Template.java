@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
+import lombok.val;
 import org.febit.wit.core.Parser;
 import org.febit.wit.core.ast.TemplateAST;
 import org.febit.wit.debug.BreakpointListener;
@@ -46,7 +47,7 @@ public class Template {
     }
 
     private TemplateAST prepareAst() {
-        final TemplateAST myAst = this.ast;
+        val myAst = this.ast;
         if (!isAstExpired(myAst)) {
             return myAst;
         }
@@ -334,7 +335,7 @@ public class Template {
      * @return the last modified time, measured in milliseconds
      */
     public long getLastModified() {
-        final TemplateAST myAst = this.ast;
+        val myAst = this.ast;
         return myAst != null ? myAst.getCreatedAt() : -1L;
     }
 
@@ -381,7 +382,7 @@ public class Template {
         if (!(obj instanceof Template)) {
             return false;
         }
-        Template other = (Template) obj;
+        val other = (Template) obj;
         return this.engine == other.engine
                 && this.name.equals(other.name);
     }

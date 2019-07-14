@@ -10,8 +10,14 @@ import java.util.Locale;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class SimpleLogger extends AbstractLogger {
 
+    @SuppressWarnings({
+            "squid:S106" // Standard outputs should not be used directly to log anything
+    })
     private static final PrintStream OUT = System.out;
 
     //settings

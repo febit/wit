@@ -8,6 +8,9 @@ import org.febit.wit.loaders.impl.resources.StringResource;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class StringLoader implements Loader {
 
     protected boolean enableCache;

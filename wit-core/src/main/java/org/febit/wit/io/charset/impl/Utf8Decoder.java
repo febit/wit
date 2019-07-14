@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io.charset.impl;
 
+import lombok.val;
 import org.febit.wit.io.Buffers;
 import org.febit.wit.io.charset.Decoder;
 import org.febit.wit.util.charset.Utf8;
@@ -24,7 +25,7 @@ public final class Utf8Decoder implements Decoder {
         if (bytes == null || len == 0) {
             return;
         }
-        final char[] chars = this.buffers.getChars(len);
+        val chars = this.buffers.getChars(len);
         int used = Utf8.decode(bytes, off, len, chars);
         writer.write(chars, 0, used);
     }

@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import lombok.val;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 
@@ -17,7 +18,7 @@ public class ExceptionUtil {
 
     public static ScriptRuntimeException toScriptRuntimeException(final Exception ex, final Statement statement) {
         if (ex instanceof ScriptRuntimeException) {
-            ScriptRuntimeException scriptException = (ScriptRuntimeException) ex;
+            val scriptException = (ScriptRuntimeException) ex;
             scriptException.addStatement(statement);
             return scriptException;
         } else {

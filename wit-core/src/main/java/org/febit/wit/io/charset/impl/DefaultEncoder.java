@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io.charset.impl;
 
+import lombok.val;
 import org.febit.wit.io.Buffers;
 import org.febit.wit.io.charset.Encoder;
 
@@ -42,9 +43,9 @@ public class DefaultEncoder implements Encoder {
         if (chars == null || length == 0) {
             return;
         }
-        final CharsetEncoder encoder = this.charsetEncoder.reset();
-        final byte[] bytes = this.buffers.getBytes((int) (length * this.expansionFactor));
-        final ByteBuffer bb = ByteBuffer.wrap(bytes);
+        val encoder = this.charsetEncoder.reset();
+        val bytes = this.buffers.getBytes((int) (length * this.expansionFactor));
+        val bb = ByteBuffer.wrap(bytes);
         encoder.encode(CharBuffer.wrap(chars, offset, length), bb, true);
         encoder.flush(bb);
         out.write(bytes, 0, bb.position());

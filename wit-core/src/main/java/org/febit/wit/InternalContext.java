@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
+import lombok.Getter;
 import lombok.val;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.VariantIndexer;
@@ -31,11 +32,13 @@ import java.util.function.BiConsumer;
 })
 public final class InternalContext implements Context {
 
+    @Getter
     private final Template template;
 
     /**
      * params for this context.
      */
+    @Getter
     private final Vars rootParams;
 
     /**
@@ -82,6 +85,7 @@ public final class InternalContext implements Context {
     /**
      * Current loop type, ==0 if no loop.
      */
+    @Getter
     private int loopType;
 
     /**
@@ -109,7 +113,7 @@ public final class InternalContext implements Context {
         this.isByteStream = out.isByteStream();
 
         //resolvers
-        ResolverManager resolverMgr = template.getEngine().getResolverManager();
+        val resolverMgr = template.getEngine().getResolverManager();
         this.resolverManager = resolverMgr;
         this.outers = resolverMgr.outers;
         this.getters = resolverMgr.getters;
@@ -134,7 +138,7 @@ public final class InternalContext implements Context {
      * @return a new sub context
      */
     public InternalContext createSubContext(VariantIndexer[] indexers, InternalContext localContext, int varSize) {
-        Object[][] myParentScopes = this.parentScopes;
+        val myParentScopes = this.parentScopes;
         //cal the new-context's parent-scopes
         Object[][] scopes;
         if (myParentScopes == null) {
@@ -145,7 +149,7 @@ public final class InternalContext implements Context {
             System.arraycopy(myParentScopes, 0, scopes, 1, myParentScopes.length);
         }
 
-        InternalContext newContext = new InternalContext(template, localContext.out, Vars.EMPTY,
+        val newContext = new InternalContext(template, localContext.out, Vars.EMPTY,
                 indexers, varSize, scopes);
         newContext.localContext = localContext;
         return newContext;
@@ -163,7 +167,7 @@ public final class InternalContext implements Context {
      * @return a new peer context
      */
     public InternalContext createPeerContext(Template template, VariantIndexer[] indexers, int varSize, Vars rootParams) {
-        InternalContext newContext = new InternalContext(template, this.out, rootParams,
+        val newContext = new InternalContext(template, this.out, rootParams,
                 indexers, varSize, null);
         newContext.localContext = this;
         return newContext;
@@ -175,6 +179,9 @@ public final class InternalContext implements Context {
      * @param label label id
      * @return true if match
      */
+    @SuppressWarnings({
+            "BooleanMethodIsAlwaysInverted"
+    })
     public boolean matchLabel(int label) {
         return this.label == 0 || this.label == label;
     }
@@ -237,14 +244,11 @@ public final class InternalContext implements Context {
      * @return the returned
      */
     public Object resetReturnLoop() {
-        Object result = this.loopType == LoopInfo.RETURN
-                ? this.returned : VOID;
+        val result = this.loopType == LoopInfo.RETURN
+                ? this.returned
+                : VOID;
         resetLoop();
         return result;
-    }
-
-    public int getLoopType() {
-        return this.loopType;
     }
 
     public boolean noLoop() {
@@ -312,17 +316,18 @@ public final class InternalContext implements Context {
         if (obj == null) {
             return;
         }
-        final Class<?> type = obj.getClass();
+        val type = obj.getClass();
         if (type == String.class) {
             this.out.write((String) obj);
             return;
         }
-        final OutResolver<T> resolver = this.outers.unsafeGet(type);
+        val resolver = this.outers.unsafeGet(type);
         if (resolver != null) {
             resolver.render(this.out, obj);
             return;
         }
-        this.resolverManager.resolveOutResolver(type).render(this.out, obj);
+        this.resolverManager.resolveOutResolver(type)
+                .render(this.out, obj);
     }
 
     @Override
@@ -330,7 +335,7 @@ public final class InternalContext implements Context {
         if (localContext != null) {
             return localContext.getLocal(name);
         }
-        final Map<Object, Object> map = this.locals;
+        val map = this.locals;
         return map != null ? map.get(name) : null;
     }
 
@@ -385,10 +390,10 @@ public final class InternalContext implements Context {
 
     @Override
     public void forEachVar(BiConsumer<? super String, Object> action) {
-        val varsPool = this.vars;
+        val myVars = this.vars;
         getCurrentIndexer()
                 .forEach((name, index)
-                        -> action.accept(name, varsPool[index]));
+                        -> action.accept(name, myVars[index]));
     }
 
     @Override
@@ -398,7 +403,7 @@ public final class InternalContext implements Context {
 
     @Override
     public Function exportFunction(String name) throws NotFunctionException {
-        Object func = get(name, false);
+        val func = get(name, false);
         if (!(func instanceof MethodDeclare)) {
             throw new NotFunctionException(func);
         }
@@ -408,13 +413,4 @@ public final class InternalContext implements Context {
     public Engine getEngine() {
         return this.template.getEngine();
     }
-
-    public Template getTemplate() {
-        return template;
-    }
-
-    public Vars getRootParams() {
-        return rootParams;
-    }
-
 }

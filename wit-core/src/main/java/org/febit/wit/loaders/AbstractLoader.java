@@ -7,6 +7,9 @@ import org.febit.wit.util.FileNameUtil;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public abstract class AbstractLoader implements Loader {
 
     protected String encoding;

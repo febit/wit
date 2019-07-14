@@ -10,6 +10,9 @@ import java.io.Reader;
  * @author zqq90
  * @since 1.4.0
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class LazyResource implements Resource {
 
     public static class VersionStamp {

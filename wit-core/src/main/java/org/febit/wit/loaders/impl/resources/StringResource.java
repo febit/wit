@@ -11,6 +11,9 @@ import java.io.StringReader;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class StringResource implements Resource, ResourceOffset {
 
     protected final String text;

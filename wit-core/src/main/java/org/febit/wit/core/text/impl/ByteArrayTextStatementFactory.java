@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core.text.impl;
 
+import lombok.val;
 import org.febit.wit.Template;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.core.text.TextStatementFactory;
@@ -36,7 +37,7 @@ public class ByteArrayTextStatementFactory implements TextStatementFactory {
 
     protected byte[] getBytes(char[] text) {
         try {
-            final ByteArrayOutputStream out = outputs.get();
+            val out = outputs.get();
             encoders.get().write(text, 0, text.length, out);
             final byte[] bytes = out.toByteArray();
             out.reset();

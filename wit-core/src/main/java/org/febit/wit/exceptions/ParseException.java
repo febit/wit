@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.exceptions;
 
+import lombok.Getter;
 import org.febit.wit.core.ast.Statement;
 import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
 
@@ -9,7 +10,9 @@ import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
  */
 public class ParseException extends TemplateException {
 
+    @Getter
     protected int line;
+    @Getter
     protected int column;
 
     public ParseException(String message) {
@@ -20,6 +23,10 @@ public class ParseException extends TemplateException {
         super(message);
         this.line = line;
         this.column = column;
+    }
+
+    public static ParseException unsupportedOperator(int line, int column) {
+        return new ParseException("Unsupported Operator", line, column);
     }
 
     public ParseException(String message, Statement statement) {
@@ -59,13 +66,5 @@ public class ParseException extends TemplateException {
                 .print(this.line)
                 .print(":")
                 .print(this.column);
-    }
-
-    public int getLine() {
-        return line;
-    }
-
-    public int getColumn() {
-        return column;
     }
 }

@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.exceptions;
 
+import lombok.Getter;
 import org.febit.wit.Template;
 import org.febit.wit.util.ExceptionUtil;
 import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
@@ -11,9 +12,13 @@ import java.io.PrintWriter;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public abstract class TemplateException extends RuntimeException {
 
     protected boolean isCaused;
+    @Getter
     protected Template template;
 
     public TemplateException(String message) {
@@ -32,10 +37,6 @@ public abstract class TemplateException extends RuntimeException {
     }
 
     protected abstract void printBody(PrintStreamOrWriter out, String prefix);
-
-    public Template getTemplate() {
-        return template;
-    }
 
     public TemplateException setTemplate(Template template) {
         this.template = template;

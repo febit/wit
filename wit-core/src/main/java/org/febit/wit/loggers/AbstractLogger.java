@@ -6,6 +6,9 @@ import org.febit.wit.util.StringUtil;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public abstract class AbstractLogger implements Logger {
 
     protected static final int LEVEL_DEBUG = 1;

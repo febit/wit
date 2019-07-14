@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io.charset.impl;
 
+import lombok.val;
 import org.febit.wit.io.Buffers;
 import org.febit.wit.io.charset.Decoder;
 
@@ -31,9 +32,9 @@ public class DefaultDecoder implements Decoder {
         if (bytes == null || length == 0) {
             return;
         }
-        final CharsetDecoder decoder = this.charsetDecoder.reset();
-        final char[] chars = this.buffers.getChars((int) (length * this.expansionFactor));
-        final CharBuffer cb = CharBuffer.wrap(chars);
+        val decoder = this.charsetDecoder.reset();
+        val chars = this.buffers.getChars((int) (length * this.expansionFactor));
+        val cb = CharBuffer.wrap(chars);
         decoder.decode(ByteBuffer.wrap(bytes, offset, length), cb, true);
         decoder.flush(cb);
         writer.write(chars, 0, cb.position());

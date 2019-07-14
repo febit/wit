@@ -1,11 +1,11 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.plugin;
 
+import lombok.val;
 import org.febit.wit.Engine;
 import org.febit.wit.Init;
 import org.febit.wit.loggers.Logger;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
@@ -29,9 +29,7 @@ public class SpiPluginCollector {
             logger.info("SpiPluginCollector is disabled.");
             return;
         }
-        Iterator<EnginePlugin> iterator = ServiceLoader.load(EnginePlugin.class).iterator();
-        while (iterator.hasNext()) {
-            EnginePlugin plugin = iterator.next();
+        for (val plugin : ServiceLoader.load(EnginePlugin.class)) {
             String name = plugin.getClass().getName();
             logger.info("Applying spi plugin: {}.", name);
             engine.inject(name, plugin);

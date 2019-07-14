@@ -65,6 +65,9 @@ public class ALU {
         return false;
     }
 
+    @SuppressWarnings({
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     private static int getTypeMark(final Object o1) {
         final Class<?> cls = o1.getClass();
         if (cls == String.class) {

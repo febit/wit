@@ -1,13 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.asm;
 
+import lombok.val;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
 import org.febit.wit_shaded.asm.Label;
-import org.febit.wit_shaded.asm.MethodWriter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -23,7 +23,7 @@ public class AsmNativeFactory extends NativeFactory {
 
     @Override
     protected MethodDeclare createNativeConstructorDeclare(Constructor constructor) {
-        MethodDeclare accessor = createMethodDeclare(constructor);
+        val accessor = createMethodDeclare(constructor);
         if (accessor != null) {
             return accessor;
         }
@@ -32,7 +32,7 @@ public class AsmNativeFactory extends NativeFactory {
 
     @Override
     public MethodDeclare createNativeMethodDeclare(Method method) {
-        MethodDeclare accessor = createMethodDeclare(method);
+        val accessor = createMethodDeclare(method);
         if (accessor != null) {
             return accessor;
         }
@@ -62,8 +62,8 @@ public class AsmNativeFactory extends NativeFactory {
 
     static MethodDeclare createAccessor(Member obj)
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        final String className = "org.febit.wit.asm.Accessor" + AsmUtil.NEXT_SN.getAndIncrement();
-        final ClassWriter classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
+        val className = "org.febit.wit.asm.Accessor" + AsmUtil.NEXT_SN.getAndIncrement();
+        val classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
                 AsmUtil.getInternalName(className), "java/lang/Object", METHOD_DECLARE);
 
         AsmUtil.visitConstructor(classWriter);
@@ -99,8 +99,8 @@ public class AsmNativeFactory extends NativeFactory {
             returnType = constructor.getDeclaringClass();
         }
 
-        final int paramTypesLen = paramTypes.length;
-        final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke",
+        val paramTypesLen = paramTypes.length;
+        val m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke",
                 "(Lorg/febit/wit/InternalContext;[Ljava/lang/Object;)Ljava/lang/Object;", null);
 
         if (paramTypesLen == 0) {

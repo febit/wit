@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.exceptions;
 
+import lombok.val;
+
 import java.lang.reflect.Member;
 
 /**
@@ -17,7 +19,7 @@ public class AmbiguousMethodException extends ScriptRuntimeException {
     }
 
     protected static <T extends Member> String buildMessage(T[] methods, Class<?>[] argTypes) {
-        StringBuilder buf = new StringBuilder();
+        val buf = new StringBuilder();
         buf.append("Ambiguous method for [");
         for (int i = 0; i < argTypes.length; i++) {
             if (i != 0) {

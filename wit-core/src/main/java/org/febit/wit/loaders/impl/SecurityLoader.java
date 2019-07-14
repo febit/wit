@@ -9,6 +9,9 @@ import org.febit.wit.util.ArrayUtil;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class SecurityLoader implements Loader {
 
     protected String[] list = ArrayUtil.emptyStrings();

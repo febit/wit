@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
+import lombok.val;
 import org.febit.wit.Engine;
 import org.febit.wit.Template;
 import org.febit.wit.core.VariantManager.VarAddress;
@@ -66,6 +67,9 @@ import java.util.function.Function;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 abstract class AbstractParser {
 
     //Self Operators
@@ -362,7 +366,7 @@ abstract class AbstractParser {
                     if (looseSemicolon
                             && currentSymbol.isOnEdgeOfNewLine) {
                         switch (pending.id) {
-                            case Tokens.LBRACK:
+                            case Tokens.LBRACK: // NOSONAR squid:S128 Switch cases should end with an unconditional "break" statement
                                 if (currentSymbol.id == Tokens.COMMA
                                         || currentSymbol.id == Tokens.LBRACE) {
                                     break;
@@ -495,7 +499,7 @@ abstract class AbstractParser {
         }
     }
 
-    boolean registerClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
+    void registerClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
         final String className = classNameBand.getClassSimpleName();
         if (ClassUtil.getPrimitiveClass(className) != null) {
             throw new ParseException("Duplicate class simple name:" + classNameBand.getClassPureName(), line, column);
@@ -504,7 +508,6 @@ abstract class AbstractParser {
             throw new ParseException("Duplicate class register:" + classNameBand.getClassPureName(), line, column);
         }
         importedClasses.put(className, classNameBand.getClassPureName());
-        return true;
     }
 
     Class<?> toClass(String className) {
@@ -571,12 +574,8 @@ abstract class AbstractParser {
     }
 
     int getLabelIndex(String label) {
-        Integer index = labelIndexMap.get(label);
-        if (index == null) {
-            index = nextLabelIndex.getAndIncrement();
-            labelIndexMap.put(label, index);
-        }
-        return index;
+        return labelIndexMap.computeIfAbsent(label,
+                l -> nextLabelIndex.getAndIncrement());
     }
 
     Expression createAssign(AssignableExpression lexpr, Expression rexpr, int line, int column) {
@@ -716,7 +715,7 @@ abstract class AbstractParser {
     Expression createNativeMethodDeclareExpression(Class<?> clazz, String methodName,
                                                    List<Class> list, int line, int column) {
         return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName,
-                list == null ? new Class[0] : list.toArray(new Class[list.size()]),
+                list == null ? new Class[0] : list.toArray(new Class[0]),
                 line, column, true), line, column);
     }
 
@@ -741,7 +740,7 @@ abstract class AbstractParser {
 
     Expression createNativeConstructorDeclareExpression(Class<?> clazz, List<Class> list, int line, int column) {
         return new DirectValue(this.nativeFactory.getNativeConstructorDeclare(clazz,
-                list == null ? new Class[0] : list.toArray(new Class[list.size()]),
+                list == null ? new Class[0] : list.toArray(new Class[0]),
                 line, column, true), line, column);
     }
 
@@ -799,7 +798,7 @@ abstract class AbstractParser {
         List<LoopInfo> loops = StatementUtil.collectPossibleLoops(statements);
         return loops.isEmpty()
                 ? new BlockNoLoops(varIndexer, statements, line, column)
-                : new Block(varIndexer, statements, loops.toArray(new LoopInfo[loops.size()]), line, column);
+                : new Block(varIndexer, statements, loops.toArray(new LoopInfo[0]), line, column);
     }
 
     TryPart createTryPart(List<Statement> list, int varIndexer, int line, int column) {
@@ -815,9 +814,9 @@ abstract class AbstractParser {
 
     Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column) {
         AssignableExpression leftExpr = castToAssignableExpression(lexpr);
-        BiFunction<Object, Object, Object> biFunc = getBiFunctionForBiOperator(sym);
+        val biFunc = getBiFunctionForBiOperator(sym);
         if (biFunc == null) {
-            throw new ParseException("Unsupported Operator", line, column);
+            throw ParseException.unsupportedOperator(line, column);
         }
         return StatementUtil.optimize(new SelfOperator(leftExpr, rightExpr, biFunc, line, column));
     }
@@ -889,7 +888,7 @@ abstract class AbstractParser {
                 func = ALU::not;
                 break;
             default:
-                throw new ParseException("Unsupported Operator", line, column);
+                throw ParseException.unsupportedOperator(line, column);
         }
         return StatementUtil.optimize(new ConstableOperator(expr, func, line, column));
     }
@@ -909,9 +908,9 @@ abstract class AbstractParser {
                 op = new IntStep(leftExpr, rightExpr, line, column);
                 break;
             default:
-                BiFunction<Object, Object, Object> biFunc = getBiFunctionForBiOperator((Integer) symSymbol.value);
+                val biFunc = getBiFunctionForBiOperator((Integer) symSymbol.value);
                 if (biFunc == null) {
-                    throw new ParseException("Unsupported Operator", line, column);
+                    throw ParseException.unsupportedOperator(line, column);
                 }
                 op = new ConstableBiOperator(leftExpr, rightExpr, biFunc, line, column);
         }

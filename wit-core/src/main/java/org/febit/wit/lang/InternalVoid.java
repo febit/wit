@@ -9,6 +9,6 @@ public final class InternalVoid {
     public static final InternalVoid VOID = new InternalVoid();
 
     private InternalVoid() {
-        //single instance
+        // single instance
     }
 }
