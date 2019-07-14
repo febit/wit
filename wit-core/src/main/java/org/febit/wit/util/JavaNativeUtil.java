@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class JavaNativeUtil {
 
     private static final int COST_NEVER = -1;

@@ -9,7 +9,11 @@ import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.resolvers.ResolverManager;
-import org.febit.wit.util.*;
+import org.febit.wit.util.InternedEncoding;
+import org.febit.wit.util.Petite;
+import org.febit.wit.util.Props;
+import org.febit.wit.util.PropsUtil;
+import org.febit.wit.util.StringUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +24,9 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class Engine {
 
     public static final String DEFAULT_WIM = "/wit-default.wim";

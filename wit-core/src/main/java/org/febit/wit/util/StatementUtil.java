@@ -129,7 +129,7 @@ public class StatementUtil {
 
         list.addAll(StatementUtil.collectPossibleLoops(elseStatement));
         return list.isEmpty() ? null
-                : list.toArray(new LoopInfo[list.size()]);
+                : list.toArray(new LoopInfo[0]);
     }
 
     public static Expression[] emptyExpressions() {
@@ -140,7 +140,7 @@ public class StatementUtil {
         if (list == null || list.isEmpty()) {
             return EMPTY_EXPRESSIONS;
         }
-        Expression[] arr = list.toArray(new Expression[list.size()]);
+        Expression[] arr = list.toArray(new Expression[0]);
         for (int i = 0; i < arr.length; i++) {
             arr[i] = optimize(arr[i]);
         }
@@ -164,6 +164,6 @@ public class StatementUtil {
         }
         return list.isEmpty()
                 ? EMPTY_STATEMENTS
-                : temp.toArray(new Statement[temp.size()]);
+                : temp.toArray(new Statement[0]);
     }
 }

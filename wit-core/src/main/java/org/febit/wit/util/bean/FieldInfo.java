@@ -9,6 +9,9 @@ import java.lang.reflect.Method;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public final class FieldInfo implements Comparable<FieldInfo> {
 
     public final String name;

@@ -9,7 +9,11 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A simple component injection.
@@ -67,6 +71,9 @@ public class Petite {
         return bean;
     }
 
+    @SuppressWarnings({
+            "squid:S135" // Loops should not contain more than a single "break" or "continue" statement
+    })
     public void config(Props props, Map<String, Object> parameters) {
         if (props == null) {
             props = new Props();
@@ -246,6 +253,9 @@ public class Petite {
         }
     }
 
+    @SuppressWarnings({
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     private Object convert(String string, Class<?> cls) {
         if (cls == String.class) {
             return string;

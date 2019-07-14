@@ -13,6 +13,10 @@ import java.util.function.BiConsumer;
  *
  * @author zqq90
  */
+@SuppressWarnings({
+        "squid:S1214", //Constants should not be defined in interfaces
+        "squid:RedundantThrowsDeclarationCheck"
+})
 public interface Context {
 
     Object VOID = InternalVoid.VOID;

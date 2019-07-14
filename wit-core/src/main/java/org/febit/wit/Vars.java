@@ -7,6 +7,9 @@ import java.util.Map;
  * @author zqq90
  * @since 2.4.0
  */
+@SuppressWarnings({
+        "squid:S1214" //Constants should not be defined in interfaces
+})
 @FunctionalInterface
 public interface Vars {
 

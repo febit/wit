@@ -12,6 +12,9 @@ import java.util.ServiceLoader;
  * @author zqq90
  * @since 2.4.0
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class SpiPluginCollector {
 
     protected Engine engine;

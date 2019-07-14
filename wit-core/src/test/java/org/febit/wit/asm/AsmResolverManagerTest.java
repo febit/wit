@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class AsmResolverManagerTest {
 
+    @SuppressWarnings({"unused"})
     public static class Foo {
 
         public String f1 = "foo:f1";

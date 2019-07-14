@@ -8,6 +8,10 @@ public class Utf8 {
     private Utf8() {
     }
 
+    @SuppressWarnings({
+            "squid:S3776", // Cognitive Complexity of methods should not be too high
+            "squid:S135" // Loops should not contain more than a single "break" or "continue" statement
+    })
     public static int decode(final byte[] sa, final int from, final int len, final char[] da) {
         final int end = from + len;
         int count = 0;
@@ -61,6 +65,9 @@ public class Utf8 {
         return count;
     }
 
+    @SuppressWarnings({
+            "squid:S135" // Loops should not contain more than a single "break" or "continue" statement
+    })
     public static int encode(final byte[] da, final char[] sa, final int from, final int to) {
         int dp = 0;
         char c;

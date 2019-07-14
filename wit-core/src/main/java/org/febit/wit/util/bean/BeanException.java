@@ -6,6 +6,9 @@ import org.febit.wit.util.StringUtil;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class BeanException extends RuntimeException {
 
     public BeanException(String message, Object... args) {

@@ -52,6 +52,11 @@ public class FileNameUtil {
      * @param filename file name
      * @return normalized filename
      */
+    @SuppressWarnings({
+            "squid:S3776", // Cognitive Complexity of methods should not be too high
+            "squid:ForLoopCounterChangedCheck",
+            "squid:LabelsShouldNotBeUsedCheck"
+    })
     public static String normalize(String filename) {
         if (filename == null) {
             return null;
@@ -165,6 +170,9 @@ public class FileNameUtil {
      * @param filename the filename to find the prefix in, null returns -1
      * @return the length of the prefix, -1 if invalid or null
      */
+    @SuppressWarnings({
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     private static int getPrefixLength(String filename) {
         if (filename == null) {
             return -1;

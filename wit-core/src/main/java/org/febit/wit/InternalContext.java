@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
+import lombok.val;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.exceptions.NotFunctionException;
@@ -25,6 +26,9 @@ import java.util.function.BiConsumer;
  *
  * @author zqq90
  */
+@SuppressWarnings({
+        "squid:RedundantThrowsDeclarationCheck"
+})
 public final class InternalContext implements Context {
 
     private final Template template;
@@ -57,6 +61,9 @@ public final class InternalContext implements Context {
     /**
      * Index of current indexer.
      */
+    @SuppressWarnings({
+            "squid:ClassVariableVisibilityCheck"
+    })
     public int indexer;
 
     /**
@@ -149,9 +156,9 @@ public final class InternalContext implements Context {
      * <p>
      * Only share locals and out
      *
-     * @param template template
-     * @param indexers indexers
-     * @param varSize  var size
+     * @param template   template
+     * @param indexers   indexers
+     * @param varSize    var size
      * @param rootParams root params
      * @return a new peer context
      */
@@ -378,7 +385,7 @@ public final class InternalContext implements Context {
 
     @Override
     public void forEachVar(BiConsumer<? super String, Object> action) {
-        Object[] varsPool = this.vars;
+        val varsPool = this.vars;
         getCurrentIndexer()
                 .forEach((name, index)
                         -> action.accept(name, varsPool[index]));

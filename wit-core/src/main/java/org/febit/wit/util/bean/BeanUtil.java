@@ -13,6 +13,9 @@ import java.util.Map;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "squid:RedundantThrowsDeclarationCheck"
+})
 public class BeanUtil {
 
     private static final ClassMap<Map<String, Accessor>> CACHE = new ClassMap<>();

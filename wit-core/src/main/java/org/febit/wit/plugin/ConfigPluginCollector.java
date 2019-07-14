@@ -8,6 +8,9 @@ import org.febit.wit.Init;
  * @author zqq90
  * @since 2.4.0
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class ConfigPluginCollector {
 
     protected Engine engine;

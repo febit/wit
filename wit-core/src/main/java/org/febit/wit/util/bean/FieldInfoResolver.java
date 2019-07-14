@@ -26,6 +26,9 @@ public class FieldInfoResolver {
         return new FieldInfoResolver(beanClass).resolve();
     }
 
+    @SuppressWarnings({
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     private Stream<FieldInfo> resolve() {
         for (Field field : beanType.getFields()) {
             if (!ClassUtil.isStatic(field)) {

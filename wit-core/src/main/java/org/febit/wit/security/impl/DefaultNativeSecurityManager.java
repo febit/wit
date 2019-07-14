@@ -11,6 +11,9 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class DefaultNativeSecurityManager implements NativeSecurityManager {
 
     private static final String ROOT_NODE_NAME = "*";

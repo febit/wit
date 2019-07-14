@@ -1,6 +1,9 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public final class ClassMap<V> {
 
     private static final int MAXIMUM_CAPACITY = 1 << 29;
@@ -51,7 +54,10 @@ public final class ClassMap<V> {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({
+            "unchecked",
+            "squid:ForLoopCounterChangedCheck"
+    })
     private void resize() {
         synchronized (this) {
             if (size < threshold) {
@@ -89,7 +95,10 @@ public final class ClassMap<V> {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({
+            "unchecked",
+            "squid:ForLoopCounterChangedCheck"
+    })
     public V putIfAbsent(Class<?> key, V value) {
         synchronized (this) {
             final int id = key.hashCode();

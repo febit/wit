@@ -25,6 +25,9 @@ public class ExceptionUtil {
         }
     }
 
+    @SuppressWarnings({
+            "unused"
+    })
     public static void ignore(Throwable ex) {
         // ignore
     }

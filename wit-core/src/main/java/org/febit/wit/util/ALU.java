@@ -6,11 +6,18 @@ import org.febit.wit.exceptions.ScriptRuntimeException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.concurrent.atomic.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.DoubleAdder;
+import java.util.concurrent.atomic.LongAccumulator;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class ALU {
 
     private static final int OBJECT = (1 << 29) - 1;
@@ -62,37 +69,48 @@ public class ALU {
         final Class<?> cls = o1.getClass();
         if (cls == String.class) {
             return STRING;
-        } else if (cls == Integer.class) {
+        }
+        if (cls == Integer.class) {
             return INTEGER;
-        } else if (cls == Long.class) {
+        }
+        if (cls == Long.class) {
             return LONG;
-        } else if (cls == Short.class) {
+        }
+        if (cls == Short.class) {
             return SHORT;
-        } else if (cls == Double.class) {
+        }
+        if (cls == Double.class) {
             return DOUBLE;
-        } else if (cls == Float.class) {
+        }
+        if (cls == Float.class) {
             return FLOAT;
-        } else if (cls == Character.class) {
+        }
+        if (cls == Character.class) {
             return CHAR;
-        } else if (cls == Byte.class) {
+        }
+        if (cls == Byte.class) {
             return BYTE;
-        } else if (o1 instanceof Number) {
+        }
+        if (o1 instanceof Number) {
             if (o1 instanceof BigInteger) {
                 return BIG_INTEGER;
-            } else if (o1 instanceof BigDecimal) {
+            }
+            if (o1 instanceof BigDecimal) {
                 return BIG_DECIMAL;
-            } else if (o1 instanceof AtomicInteger) {
+            }
+            if (o1 instanceof AtomicInteger) {
                 return INTEGER;
-            } else if (o1 instanceof AtomicLong
+            }
+            if (o1 instanceof AtomicLong
                     || o1 instanceof LongAdder
                     || o1 instanceof LongAccumulator) {
                 return LONG;
-            } else if (o1 instanceof DoubleAdder) {
-                return DOUBLE;
-            } else {
-                //Note: otherwise, treat as BigDecimal
-                return BIG_DECIMAL;
             }
+            if (o1 instanceof DoubleAdder) {
+                return DOUBLE;
+            }
+            // Note: otherwise, treat as BigDecimal
+            return BIG_DECIMAL;
         }
         return OBJECT;
     }
@@ -175,7 +193,8 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).add(toBigInteger(o2));
                 }
-                //Note: else upgrade to BigDecimal
+                // Note: else upgrade to BigDecimal
+                return toBigDecimal(o1).add(toBigDecimal(o2));
             case BIG_DECIMAL:
                 return toBigDecimal(o1).add(toBigDecimal(o2));
             case CHAR:
@@ -202,7 +221,8 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).subtract(toBigInteger(o2));
                 }
-                //Note: else upgrade to BigDecimal
+                // Note: else upgrade to BigDecimal
+                return toBigDecimal(o1).subtract(toBigDecimal(o2));
             case BIG_DECIMAL:
                 return toBigDecimal(o1).subtract(toBigDecimal(o2));
             case CHAR:
@@ -254,7 +274,8 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).multiply(toBigInteger(o2));
                 }
-                //Note: else upgrade to BigDecimal
+                // Note: else upgrade to BigDecimal
+                return toBigDecimal(o1).multiply(toBigDecimal(o2));
             case BIG_DECIMAL:
                 return toBigDecimal(o1).multiply(toBigDecimal(o2));
             case CHAR:
@@ -281,7 +302,8 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).divide(toBigInteger(o2));
                 }
-                //Note: else upgrade to BigDecimal
+                // Note: else upgrade to BigDecimal
+                return toBigDecimal(o1).divide(toBigDecimal(o2));
             case BIG_DECIMAL:
                 return toBigDecimal(o1).divide(toBigDecimal(o2));
             case CHAR:
@@ -308,7 +330,8 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).remainder(toBigInteger(o2));
                 }
-                //Note: else upgrade to BigDecimal
+                // Note: else upgrade to BigDecimal
+                return toBigDecimal(o1).remainder(toBigDecimal(o2));
             case BIG_DECIMAL:
                 return toBigDecimal(o1).remainder(toBigDecimal(o2));
             case CHAR:
@@ -355,10 +378,11 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).compareTo(toBigInteger(o2)) == 0;
                 }
-                //Note: else upgrade to BigDecimal
+                // Note: else upgrade to BigDecimal
+                return toBigDecimal(o1).compareTo(toBigDecimal(o2)) == 0;
             case DOUBLE:
             case FLOAT:
-                //Note: Floating point numbers should not be tested for equality.
+                // Note: Floating point numbers should not be tested for equality.
             case BIG_DECIMAL:
                 return toBigDecimal(o1).compareTo(toBigDecimal(o2)) == 0;
             case CHAR:
@@ -386,10 +410,11 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).compareTo(toBigInteger(o2)) > 0;
                 }
-                //Note: else upgrade to BigDecimal
+                // Note: else upgrade to BigDecimal
+                return toBigDecimal(o1).compareTo(toBigDecimal(o2)) > 0;
             case DOUBLE:
             case FLOAT:
-                //Note: Floating point numbers should not be tested for equality.
+                // Note: Floating point numbers should not be tested for equality.
             case BIG_DECIMAL:
                 return toBigDecimal(o1).compareTo(toBigDecimal(o2)) > 0;
             case CHAR:
@@ -419,10 +444,11 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).compareTo(toBigInteger(o2)) < 0;
                 }
-                //Note: else upgrade to BigDecimal
+                // Note: else upgrade to BigDecimal
+                return toBigDecimal(o1).compareTo(toBigDecimal(o2)) < 0;
             case DOUBLE:
             case FLOAT:
-                //Note: Floating point numbers should not be tested for equality.
+                // Note: Floating point numbers should not be tested for equality.
             case BIG_DECIMAL:
                 return toBigDecimal(o1).compareTo(toBigDecimal(o2)) < 0;
             default:
@@ -452,7 +478,8 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).and(toBigInteger(o2));
                 }
-                //Note: else unsupported
+                // Note: else unsupported
+                throw unsupportedTypeException(o1, o2);
             default:
         }
         throw unsupportedTypeException(o1, o2);
@@ -475,7 +502,8 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).or(toBigInteger(o2));
                 }
-                //Note: else unsupported
+                // Note: else unsupported
+                throw unsupportedTypeException(o1, o2);
             default:
         }
         throw unsupportedTypeException(o1, o2);
@@ -498,7 +526,8 @@ public class ALU {
                 if (notDoubleOrFloat(o1, o2)) {
                     return toBigInteger(o1).xor(toBigInteger(o2));
                 }
-                //Note: else unsupported
+                // Note: else unsupported
+                throw unsupportedTypeException(o1, o2);
             default:
         }
         throw unsupportedTypeException(o1, o2);
@@ -684,12 +713,13 @@ public class ALU {
 
     private static void requireNonNull(final Object o1, final Object o2) {
         if (o1 == null || o2 == null) {
-            throw new ScriptRuntimeException(
-                    o1 != null
-                            ? "right value is null"
-                            : o2 != null
-                            ? "left value is null"
-                            : "left & right values are null");
+            if (o1 != null) {
+                throw new ScriptRuntimeException("right value is null");
+            } else {
+                throw new ScriptRuntimeException(o2 != null
+                        ? "left value is null"
+                        : "left & right values are null");
+            }
         }
     }
 }

@@ -80,9 +80,13 @@ public class StringUtil {
         }
         return list.isEmpty()
                 ? ArrayUtil.emptyStrings()
-                : list.toArray(new String[list.size()]);
+                : list.toArray(new String[0]);
     }
 
+    @SuppressWarnings({
+            "squid:S135", // Loops should not contain more than a single "break" or "continue" statement
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     public static String format(String template, Object... array) {
         if (template == null) {
             return null;

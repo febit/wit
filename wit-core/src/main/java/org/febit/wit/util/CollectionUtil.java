@@ -10,11 +10,18 @@ import org.febit.wit.lang.iter.AbstractIter;
 import org.febit.wit.lang.iter.MapKeyIter;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class CollectionUtil {
 
     private CollectionUtil() {

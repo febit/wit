@@ -1,7 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -10,6 +16,9 @@ import java.util.function.BiConsumer;
  *
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public final class Props {
 
     private static final int STATE_TEXT = 1;
@@ -226,6 +235,10 @@ public final class Props {
         }
     }
 
+    @SuppressWarnings({
+            "squid:S3776", // Cognitive Complexity of methods should not be too high
+            "squid:S135" // Loops should not contain more than a single "break" or "continue" statement
+    })
     private void parse(final char[] in) {
 
         final StringBuilder sb = new StringBuilder();
@@ -371,7 +384,7 @@ public final class Props {
                     break;
 
                 case ' ':
-                case '\t':
+                case '\t': // NOSONAR squid:S128 Switch cases should end with an unconditional "break" statement
                     if (state == STATE_ESCAPE_NEWLINE) {
                         break;
                     }

@@ -17,6 +17,9 @@ import java.io.Writer;
  *
  * @author zqq90
  */
+@SuppressWarnings({
+        "WeakerAccess"
+})
 public class Function {
 
     private static final VariantIndexer[] EMPTY_INDEXERS = {VariantIndexer.EMPTY};
