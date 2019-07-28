@@ -75,7 +75,7 @@ public class ServletUtil {
                 final Enumeration<String> enumeration = req.getParameterNames();
                 while (enumeration.hasMoreElements()) {
                     String key = enumeration.nextElement();
-                    accepter.set(key, req.getAttribute(key));
+                    accepter.set(key, req.getParameter(key));
                 }
             }
         }
