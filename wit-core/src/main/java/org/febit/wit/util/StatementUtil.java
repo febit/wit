@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.LoopInfo;
 import org.febit.wit.core.ast.Expression;
@@ -19,13 +21,11 @@ import java.util.stream.Collectors;
 /**
  * @author zqq90
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StatementUtil {
 
     private static final Statement[] EMPTY_STATEMENTS = new Statement[0];
     private static final Expression[] EMPTY_EXPRESSIONS = new Expression[0];
-
-    private StatementUtil() {
-    }
 
     public static boolean isImmutableDirectValue(Expression expr) {
         return (expr instanceof DirectValue)

@@ -45,6 +45,9 @@ public class ForIn extends Statement implements Loopable {
     }
 
     @Override
+    @SuppressWarnings({
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     public Object execute(final InternalContext context) {
         Iter iter = CollectionUtil.toIter(collectionExpr.execute(context), this);
         if (iter != null && functionDeclareExpr != null) {

@@ -47,6 +47,9 @@ public final class ForMap extends Statement implements Loopable {
     }
 
     @Override
+    @SuppressWarnings({
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     public Object execute(final InternalContext context) {
         KeyIter iter = CollectionUtil.toKeyIter(mapExpr.execute(context), this);
         if (iter != null && functionDeclareExpr != null) {

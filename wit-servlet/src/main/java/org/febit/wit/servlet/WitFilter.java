@@ -1,7 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -59,5 +64,6 @@ public class WitFilter implements Filter {
 
     @Override
     public void destroy() {
+        // Nothing need to do
     }
 }

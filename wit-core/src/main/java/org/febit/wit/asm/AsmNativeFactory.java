@@ -60,6 +60,9 @@ public class AsmNativeFactory extends NativeFactory {
         return declare;
     }
 
+    @SuppressWarnings({
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     static MethodDeclare createAccessor(Member obj)
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         val className = "org.febit.wit.asm.Accessor" + AsmUtil.NEXT_SN.getAndIncrement();
@@ -166,10 +169,17 @@ public class AsmNativeFactory extends NativeFactory {
                 paramCount++;
             }
 
+            @SuppressWarnings({
+                    "squid:S3358" // Ternary operators should not be nested
+            })
+            val opCode = isStatic ? Constants.INVOKESTATIC
+                    : isConstructor
+                    ? Constants.INVOKESPECIAL
+                    : isInterface
+                    ? Constants.INVOKEINTERFACE
+                    : Constants.INVOKEVIRTUAL;
             //Invoke Method
-            m.visitMethodInsn(isStatic ? Constants.INVOKESTATIC
-                    : isConstructor ? Constants.INVOKESPECIAL : isInterface ? Constants.INVOKEINTERFACE
-                    : Constants.INVOKEVIRTUAL, ownerClass, destName, destDesc);
+            m.visitMethodInsn(opCode, ownerClass, destName, destDesc);
             AsmUtil.visitBoxIfNeed(m, returnType);
             m.visitInsn(Constants.ARETURN);
         }

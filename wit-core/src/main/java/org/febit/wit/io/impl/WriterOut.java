@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io.impl;
 
+import lombok.val;
 import org.febit.wit.Engine;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.Buffers;
@@ -21,13 +22,6 @@ public final class WriterOut implements Out {
     private final InternedEncoding encoding;
     private final Decoder decoder;
     private final Buffers buffers;
-
-    private WriterOut(Writer writer, InternedEncoding encoding, Decoder decoder, Buffers buffers) {
-        this.writer = writer;
-        this.encoding = encoding;
-        this.decoder = decoder;
-        this.buffers = buffers;
-    }
 
     public WriterOut(Writer writer, InternedEncoding encoding, Engine engine) {
         this(writer, encoding != null ? encoding : engine.getEncoding(), engine.getCoderFactory());
@@ -83,7 +77,7 @@ public final class WriterOut implements Out {
     @Override
     public void write(final String string, final int offset, final int length) {
         try {
-            final char[] chars = this.buffers.getChars(length);
+            val chars = this.buffers.getChars(length);
             string.getChars(offset, offset + length, chars, 0);
             this.writer.write(chars, 0, length);
         } catch (IOException ex) {

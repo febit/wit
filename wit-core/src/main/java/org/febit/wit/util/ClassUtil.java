@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.val;
 import org.febit.wit.exceptions.UncheckedException;
 
@@ -21,12 +23,10 @@ import java.util.function.Predicate;
 @SuppressWarnings({
         "WeakerAccess"
 })
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClassUtil {
 
     private static final ClassMap<Map<String, Method[]>> PUBLIC_MEMBER_METHODS_CACHE = new ClassMap<>();
-
-    private ClassUtil() {
-    }
 
     public static String getClassName(Object object) {
         return object != null ? object.getClass().getName() : "null";

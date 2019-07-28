@@ -28,6 +28,9 @@ public class DefaultEncoder implements Encoder {
     }
 
     @Override
+    @SuppressWarnings({
+            "squid:AssignmentInSubExpressionCheck"
+    })
     public void write(final String string, final int offset, final int length,
                       final OutputStream out) throws IOException {
         char[] chars;

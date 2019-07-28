@@ -25,6 +25,9 @@ public final class Buffers {
         return buf.length >= len ? buf : upgradeChars(len);
     }
 
+    @SuppressWarnings({
+            "squid:AssignmentInSubExpressionCheck"
+    })
     private char[] upgradeChars(final int len) {
         return this.chars = new char[getAllocateLength(this.chars.length, len)];
     }
@@ -34,6 +37,9 @@ public final class Buffers {
         return buf.length >= len ? buf : upgradeBytes(len);
     }
 
+    @SuppressWarnings({
+            "squid:AssignmentInSubExpressionCheck"
+    })
     private byte[] upgradeBytes(final int len) {
         return this.bytes = new byte[getAllocateLength(this.bytes.length, len)];
     }

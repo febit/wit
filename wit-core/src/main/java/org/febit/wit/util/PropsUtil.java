@@ -1,9 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.febit.wit.exceptions.IllegalConfigException;
 
-import java.io.*;
+import java.io.CharArrayWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,12 +19,10 @@ import java.util.Set;
 /**
  * @author zqq90
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PropsUtil {
 
     public static final ClasspathInputResolver CLASSPATH_INPUT_RESOLVER = new ClasspathInputResolver();
-
-    private PropsUtil() {
-    }
 
     public static Props loadFromClasspath(final Props props, final String... pathSets) {
         return load(props, CLASSPATH_INPUT_RESOLVER, pathSets);

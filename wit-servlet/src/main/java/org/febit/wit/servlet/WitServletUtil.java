@@ -1,11 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author zqq90
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WitServletUtil {
 
     private static final String PATH_ATTRIBUTE_KEY = WitServletUtil.class.getName().concat("$$PATH");

@@ -33,6 +33,10 @@ public final class While extends Statement implements Loopable {
     }
 
     @Override
+    @SuppressWarnings({
+            "squid:LabelsShouldNotBeUsedCheck",
+            "squid:S135" // Loops should not contain more than a single "break" or "continue" statement
+    })
     public Object execute(final InternalContext context) {
         final Statement[] stats = this.statements;
         final int myLabel = this.label;

@@ -1,17 +1,18 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * refer to the
  * <a href="https://github.com/oblac/jodd">Jodd</a> project.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileNameUtil {
 
     private static final char UNIX_SEPARATOR = '/';
     private static final char WINDOWS_SEPARATOR = '\\';
-
-    private FileNameUtil() {
-    }
 
     private static boolean isSeparator(char ch) {
         return (ch == UNIX_SEPARATOR) || (ch == WINDOWS_SEPARATOR);

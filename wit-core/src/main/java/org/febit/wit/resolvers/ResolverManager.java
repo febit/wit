@@ -121,6 +121,9 @@ public class ResolverManager {
         }
     }
 
+    @SuppressWarnings({
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     public void registerResolver(Class<?> type, Resolver resolver) {
         if (type == null) {
             return;

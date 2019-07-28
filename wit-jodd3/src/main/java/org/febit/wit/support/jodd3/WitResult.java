@@ -58,6 +58,9 @@ public class WitResult extends BaseActionResult<Object> implements WebEngineMana
     protected HashMap<String, String> targetCache;
 
     @Override
+    @SuppressWarnings({
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     public void render(final ActionRequest actionRequest, final Object resultValue) throws Exception {
         final HttpServletResponse response = actionRequest.getHttpServletResponse();
 

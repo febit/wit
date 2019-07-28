@@ -1,6 +1,9 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.val;
 import org.febit.wit.Vars;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,14 +14,15 @@ import java.util.Map;
 /**
  * @author zqq90
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServletUtil {
 
     @SuppressWarnings("unchecked")
     public static void exportAttributes(final Map<String, Object> map, final HttpServletRequest request) {
         final Enumeration<String> enumeration = request.getAttributeNames();
-        String key;
         while (enumeration.hasMoreElements()) {
-            map.put(key = enumeration.nextElement(), request.getAttribute(key));
+            String key = enumeration.nextElement();
+            map.put(key, request.getAttribute(key));
         }
     }
 
@@ -54,24 +58,24 @@ public class ServletUtil {
         @SuppressWarnings("unchecked")
         @Override
         public void exportTo(final Vars.Accepter accepter) {
-            final HttpServletRequest myRequest = this.request;
+            val req = this.request;
 
-            accepter.set("request", myRequest);
+            accepter.set("request", req);
             accepter.set("response", this.response);
 
             if (this.exportAttributes) {
-                final Enumeration<String> enumeration = myRequest.getAttributeNames();
-                String key;
+                final Enumeration<String> enumeration = req.getAttributeNames();
                 while (enumeration.hasMoreElements()) {
-                    accepter.set(key = enumeration.nextElement(), myRequest.getAttribute(key));
+                    String key = enumeration.nextElement();
+                    accepter.set(key, req.getAttribute(key));
                 }
             }
 
             if (this.exportParameters) {
-                final Enumeration<String> enumeration = myRequest.getParameterNames();
-                String key;
+                final Enumeration<String> enumeration = req.getParameterNames();
                 while (enumeration.hasMoreElements()) {
-                    accepter.set(key = enumeration.nextElement(), myRequest.getAttribute(key));
+                    String key = enumeration.nextElement();
+                    accepter.set(key, req.getAttribute(key));
                 }
             }
         }

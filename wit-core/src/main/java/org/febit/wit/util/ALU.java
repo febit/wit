@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.febit.wit.Context;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 
@@ -18,6 +20,7 @@ import java.util.concurrent.atomic.LongAdder;
 @SuppressWarnings({
         "WeakerAccess"
 })
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ALU {
 
     private static final int OBJECT = (1 << 29) - 1;
@@ -45,9 +48,6 @@ public class ALU {
             BigInteger.class,
             BigDecimal.class
     };
-
-    private ALU() {
-    }
 
     public static boolean isKnownBaseImmutable(Object obj) {
         if (obj == null) {

@@ -1,16 +1,17 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * @author zqq90
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ArrayUtil {
 
     private static final Object[] EMPTY_OBJECTS = {};
     private static final String[] EMPTY_STRINGS = {};
-
-    private ArrayUtil() {
-    }
 
     public static Object[] emptyObjects() {
         return EMPTY_OBJECTS;

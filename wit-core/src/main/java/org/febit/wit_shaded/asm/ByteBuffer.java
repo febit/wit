@@ -1,5 +1,7 @@
 package org.febit.wit_shaded.asm;
 
+import lombok.val;
+
 /**
  * bytes buffer.
  */
@@ -27,9 +29,9 @@ final class ByteBuffer {
     ByteBuffer putBB(final int b1, final int b2) {
         int index = this.length;
         ensure(index + 2);
-        final byte[] data = this.data;
-        data[index] = (byte) b1;
-        data[index + 1] = (byte) b2;
+        val d = this.data;
+        d[index] = (byte) b1;
+        d[index + 1] = (byte) b2;
         this.length = index + 2;
         return this;
     }
@@ -37,10 +39,10 @@ final class ByteBuffer {
     ByteBuffer putBS(final int b, final int s) {
         int index = this.length;
         ensure(index + 3);
-        final byte[] data = this.data;
-        data[index] = (byte) b;
-        data[index + 1] = (byte) (s >>> 8);
-        data[index + 2] = (byte) s;
+        val d = this.data;
+        d[index] = (byte) b;
+        d[index + 1] = (byte) (s >>> 8);
+        d[index + 2] = (byte) s;
         this.length = index + 3;
         return this;
     }
@@ -48,9 +50,9 @@ final class ByteBuffer {
     ByteBuffer putShort(final int s) {
         int index = this.length;
         ensure(index + 2);
-        final byte[] data = this.data;
-        data[index] = (byte) (s >>> 8);
-        data[index + 1] = (byte) s;
+        val d = this.data;
+        d[index] = (byte) (s >>> 8);
+        d[index + 1] = (byte) s;
         this.length = index + 2;
         return this;
     }
@@ -58,33 +60,39 @@ final class ByteBuffer {
     ByteBuffer putInt(final int i) {
         int index = this.length;
         ensure(index + 4);
-        final byte[] data = this.data;
-        data[index++] = (byte) (i >>> 24);
-        data[index++] = (byte) (i >>> 16);
-        data[index++] = (byte) (i >>> 8);
-        data[index++] = (byte) i;
+        val d = this.data;
+        d[index++] = (byte) (i >>> 24);
+        d[index++] = (byte) (i >>> 16);
+        d[index++] = (byte) (i >>> 8);
+        d[index++] = (byte) i;
         this.length = index;
         return this;
     }
 
+    @SuppressWarnings({
+            "squid:S135" // Loops should not contain more than a single "break" or "continue" statement
+    })
     ByteBuffer putLong(final long l) {
         int index = this.length;
         ensure(index + 8);
-        final byte[] data = this.data;
+        val d = this.data;
         int i = (int) (l >>> 32);
-        data[index++] = (byte) (i >>> 24);
-        data[index++] = (byte) (i >>> 16);
-        data[index++] = (byte) (i >>> 8);
-        data[index++] = (byte) i;
+        d[index++] = (byte) (i >>> 24);
+        d[index++] = (byte) (i >>> 16);
+        d[index++] = (byte) (i >>> 8);
+        d[index++] = (byte) i;
         i = (int) l;
-        data[index++] = (byte) (i >>> 24);
-        data[index++] = (byte) (i >>> 16);
-        data[index++] = (byte) (i >>> 8);
-        data[index++] = (byte) i;
+        d[index++] = (byte) (i >>> 24);
+        d[index++] = (byte) (i >>> 16);
+        d[index++] = (byte) (i >>> 8);
+        d[index++] = (byte) i;
         this.length = index;
         return this;
     }
 
+    @SuppressWarnings({
+            "squid:S135" // Loops should not contain more than a single "break" or "continue" statement
+    })
     ByteBuffer putUTF8(final String s) {
         final int charLength = s.length();
         int byteLength = 0;
@@ -103,36 +111,28 @@ final class ByteBuffer {
         }
         int index = this.length;
         ensure(index + 2 + byteLength);
-        final byte[] data = this.data;
-        data[index++] = (byte) (byteLength >>> 8);
-        data[index++] = (byte) (byteLength);
+        val d = this.data;
+        d[index++] = (byte) (byteLength >>> 8);
+        d[index++] = (byte) (byteLength);
         for (int i = 0; i < charLength; i++) {
             char c = s.charAt(i);
             if (c >= '\001' && c <= '\177') {
-                data[index++] = (byte) c;
+                d[index++] = (byte) c;
                 continue;
             }
             if (c > '\u07FF') {
-                data[index++] = (byte) (0xE0 | c >> 12 & 0xF);
-                data[index++] = (byte) (0x80 | c >> 6 & 0x3F);
-                data[index++] = (byte) (0x80 | c & 0x3F);
+                d[index++] = (byte) (0xE0 | c >> 12 & 0xF);
+                d[index++] = (byte) (0x80 | c >> 6 & 0x3F);
+                d[index++] = (byte) (0x80 | c & 0x3F);
                 continue;
             }
-            data[index++] = (byte) (0xC0 | c >> 6 & 0x1F);
-            data[index++] = (byte) (0x80 | c & 0x3F);
+            d[index++] = (byte) (0xC0 | c >> 6 & 0x1F);
+            d[index++] = (byte) (0x80 | c & 0x3F);
         }
         this.length = index;
         return this;
     }
 
-//    ByteBuffer put(final byte[] b, final int off, final int len) {
-//        ensure(length + len);
-//        if (b != null) {
-//            System.arraycopy(b, off, data, length, len);
-//        }
-//        length += len;
-//        return this;
-//    }
     ByteBuffer put(final ByteBuffer buffer) {
         int len = buffer.length;
         ensure(length + len);
@@ -141,6 +141,9 @@ final class ByteBuffer {
         return this;
     }
 
+    @SuppressWarnings({
+            "squid:AssignmentInSubExpressionCheck"
+    })
     private void ensure(final int size) {
         if (size > data.length) {
             int len = data.length << 1;

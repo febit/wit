@@ -11,6 +11,10 @@ import static org.febit.wit.util.ArrayUtil.get;
 /**
  * @author zqq90
  */
+@SuppressWarnings({
+        "squid:S1172", // Unused method parameters should be removed
+        "squid:S00100" // Method names should comply with a naming convention
+})
 public class TypeGlobalRegister implements GlobalRegister {
 
     @Override

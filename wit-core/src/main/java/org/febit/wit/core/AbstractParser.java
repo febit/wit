@@ -236,6 +236,9 @@ abstract class AbstractParser {
         return 0;
     }
 
+    @SuppressWarnings({
+            "squid:ForLoopCounterChangedCheck"
+    })
     private static short getReduce(final short[] row, int sym) {
         if (row != null) {
             for (int probe = 0, len = row.length; probe < len; probe++) {
@@ -322,6 +325,10 @@ abstract class AbstractParser {
 
     abstract Object doAction(int actionId) throws ParseException;
 
+    @SuppressWarnings({
+            "squid:S135", // Loops should not contain more than a single "break" or "continue" statement
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     private Symbol process(final Lexer lexer) throws IOException {
 
         int act;

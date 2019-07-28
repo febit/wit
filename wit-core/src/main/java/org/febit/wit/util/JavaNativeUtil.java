@@ -156,6 +156,9 @@ public class JavaNativeUtil {
      * @param mix      if mix static methods with member methods
      * @return null if not found
      */
+    @SuppressWarnings({
+            "squid:S3776" // Cognitive Complexity of methods should not be too high
+    })
     public static Method getMatchMethod(Method[] methods, Class<?>[] argTypes, boolean mix) {
         if (methods == null
                 || methods.length == 0) {

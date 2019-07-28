@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.servlet;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.febit.wit.Engine;
 import org.febit.wit.util.Props;
 import org.febit.wit.util.PropsUtil;
@@ -15,6 +17,7 @@ import java.util.Map;
 /**
  * @author zqq90
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServletEngineUtil {
 
     private static final String SERVLET_CONTEXT = "servlet.servletContext";

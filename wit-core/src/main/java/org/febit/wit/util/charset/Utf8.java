@@ -1,12 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util.charset;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utf8 {
 
     public static final int MAX_BYTES_PER_CHAR = 3;
-
-    private Utf8() {
-    }
 
     @SuppressWarnings({
             "squid:S3776", // Cognitive Complexity of methods should not be too high

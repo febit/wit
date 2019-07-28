@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author zqq90
@@ -21,6 +22,7 @@ public class WebEngineManager {
     private Map<String, Object> extraProperties;
 
     private volatile Engine engine;
+    AtomicReference<Engine> engineHolder = new AtomicReference<>();
 
     public WebEngineManager(ServletContextProvider servletContextAware) {
         this.servletContextProvider = servletContextAware;
