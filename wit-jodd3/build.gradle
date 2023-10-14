@@ -1,7 +1,0 @@
-description = 'Wit Support for Jodd-Madvoc 3'
-
-dependencies {
-  api project(':wit-servlet')
-  compileOnly 'org.jodd:jodd-madvoc:3.5'
-  compileOnly 'javax.servlet:servlet-api'
-}

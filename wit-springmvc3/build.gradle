@@ -1,7 +1,0 @@
-description = 'Wit Support for Spring-MVC 3'
-
-dependencies {
-  api project(':wit-servlet')
-  compileOnly 'org.springframework:spring-webmvc:3.2.18.RELEASE'
-  compileOnly 'javax.servlet:servlet-api'
-}
