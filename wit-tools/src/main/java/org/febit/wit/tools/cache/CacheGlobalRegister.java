@@ -29,7 +29,7 @@ public class CacheGlobalRegister implements GlobalRegister {
     protected CacheProvider cacheProvider;
 
     @Override
-    public void regist(GlobalManager manager) {
+    public void register(GlobalManager manager) {
         manager.setConst(name, new CacheMethodDeclare(cacheProvider));
         if (registCacheRemove) {
             manager.setConst(name + "_remove", new CacheRemoveMethodDeclare(cacheProvider));
@@ -118,7 +118,7 @@ public class CacheGlobalRegister implements GlobalRegister {
                     ? Arrays.copyOfRange(args, argsStart, args.length)
                     : ArrayUtil.emptyObjects();
 
-            if (context.isByteStream) {
+            if (context.preferBytes) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream(256);
                 returned = context.temporaryOut(new OutputStreamOut(out, context.encoding, context.getEngine()),
                         c -> methodDeclare.invoke(c, methodArgs));

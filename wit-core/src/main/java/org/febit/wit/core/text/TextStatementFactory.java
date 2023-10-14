@@ -2,7 +2,8 @@
 package org.febit.wit.core.text;
 
 import org.febit.wit.Template;
-import org.febit.wit.core.ast.Statement;
+import org.febit.wit.lang.Position;
+import org.febit.wit.lang.ast.Statement;
 
 /**
  * @author zqq90
@@ -13,5 +14,5 @@ public interface TextStatementFactory {
 
     void finishTemplateParser(Template template);
 
-    Statement getTextStatement(Template template, char[] text, int line, int column);
+    Statement getTextStatement(Template template, char[] text, Position position);
 }

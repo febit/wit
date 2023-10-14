@@ -1,10 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang;
 
+import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+
 /**
  * @author zqq90
  */
-public final class InternalVoid {
+@EqualsAndHashCode
+public final class InternalVoid implements Serializable {
 
     public static final InternalVoid VOID = new InternalVoid();
 

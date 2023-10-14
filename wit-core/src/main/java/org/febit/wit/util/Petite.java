@@ -3,6 +3,7 @@ package org.febit.wit.util;
 
 import org.febit.wit.Init;
 import org.febit.wit.exceptions.UncheckedException;
+import org.febit.wit.lang.InternedEncoding;
 import org.febit.wit.loggers.Logger;
 
 import java.lang.reflect.Array;
@@ -199,7 +200,7 @@ public class Petite {
             if (method.getAnnotation(Init.class) == null) {
                 continue;
             }
-            final Class[] argTypes = method.getParameterTypes();
+            final Class<?>[] argTypes = method.getParameterTypes();
             final Object[] args;
             if (argTypes.length == 0) {
                 args = ArrayUtil.emptyObjects();

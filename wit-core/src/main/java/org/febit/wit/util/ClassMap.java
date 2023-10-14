@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import jakarta.annotation.Nullable;
+
 @SuppressWarnings({
         "WeakerAccess"
 })
@@ -35,6 +37,7 @@ public final class ClassMap<V> {
         return size;
     }
 
+    @Nullable
     public V unsafeGet(final Class<?> key) {
         Entry<V> e;
         final Entry<V>[] tab = table;
@@ -48,6 +51,7 @@ public final class ClassMap<V> {
         return null;
     }
 
+    @Nullable
     public V get(Class<?> key) {
         synchronized (this) {
             return unsafeGet(key);

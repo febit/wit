@@ -4,6 +4,9 @@ package org.febit.wit.core;
 import org.febit.wit.Engine;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.global.GlobalManager;
+import org.febit.wit.lang.Position;
+import org.febit.wit.lang.TextPosition;
+import org.febit.wit.lang.VariantIndexer;
 import org.febit.wit.util.ArrayUtil;
 import org.febit.wit.util.Stack;
 
@@ -91,23 +94,23 @@ public class VariantManager {
         return Arrays.copyOfRange(result, start, size);
     }
 
-    public int assignVariant(String name, int line, int column) {
-        return stairStack.peek().assignVar(name, line, column);
+    public int assignVariant(String name, Position position) {
+        return stairStack.peek().assignVar(name, position);
     }
 
-    public void assignConst(String name, Object value, int line, int column) {
-        stairStack.peek().assignConst(name, value, line, column);
+    public void assignConst(String name, Object value, Position position) {
+        stairStack.peek().assignConst(name, value, position);
     }
 
-    public VarAddress locateAtUpstair(String name, int upstair, int line, int column) {
+    public VarAddress locateAtUpstair(String name, int upstair, Position position) {
         VarAddress address = stairStack.peek(upstair).locate(name);
         if (address != null) {
             return address;
         }
-        throw new ParseException("Can't locate vars: ".concat(name), line, column);
+        throw new ParseException("Can't locate vars: ".concat(name), position);
     }
 
-    public VarAddress locate(String name, int fromUpstair, boolean force, int line, int column) {
+    public VarAddress locate(String name, int fromUpstair, boolean force, Position position) {
 
         //local var/const
         for (; fromUpstair < stairStack.size(); fromUpstair++) {
@@ -128,10 +131,10 @@ public class VariantManager {
 
         //failed
         if (force) {
-            throw new ParseException("Can't locate vars: ".concat(name), line, column);
+            throw new ParseException("Can't locate vars: ".concat(name), position);
         }
         //assign at root
-        return contextAddress(root.scopeLevel, root.assignVar(name, line, column));
+        return contextAddress(root.scopeLevel, root.assignVar(name, position));
     }
 
     private static VariantIndexer getVariantIndexer(final VariantIndexer parent, final Map<String, Integer> map) {
@@ -139,7 +142,7 @@ public class VariantManager {
             if (parent != null) {
                 return parent;
             }
-            return new VariantIndexer(null, ArrayUtil.emptyStrings(), null);
+            return new VariantIndexer(null, ArrayUtil.emptyStrings(), new int[0]);
         }
         final int size = map.size();
         final String[] names = new String[size];
@@ -193,22 +196,22 @@ public class VariantManager {
             return contextAddress(this.scopeLevel, index);
         }
 
-        void checkDuplicate(final String name, int line, int column) {
+        void checkDuplicate(final String name, Position position) {
             if (this.values.containsKey(name)) {
-                throw new ParseException("Duplicate Variant declare: ".concat(name), line, column);
+                throw new ParseException("Duplicate Variant declare: ".concat(name), position);
             }
         }
 
-        Integer assignVar(final String name, int line, int column) {
-            checkDuplicate(name, line, column);
+        Integer assignVar(final String name, Position position) {
+            checkDuplicate(name, position);
             //XXX: rewrite
             int index = VariantManager.this.varCount++;
             this.values.put(name, index);
             return index;
         }
 
-        void assignConst(final String name, final Object value, int line, int column) {
-            checkDuplicate(name, line, column);
+        void assignConst(final String name, final Object value, Position position) {
+            checkDuplicate(name, position);
             if (this.constMap == null) {
                 this.constMap = new HashMap<>(16);
             }
@@ -219,7 +222,7 @@ public class VariantManager {
         void assignVarsIfAbsent(String[] vars) {
             for (String var : vars) {
                 if (!this.values.containsKey(var)) {
-                    assignVar(var, -1, -1);
+                    assignVar(var, TextPosition.UNKNOWN);
                 }
             }
         }

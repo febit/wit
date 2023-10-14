@@ -6,10 +6,10 @@ import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
 import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
-import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.Statement;
-import org.febit.wit.core.ast.expressions.BreakpointExpression;
-import org.febit.wit.core.ast.expressions.DirectValue;
+import org.febit.wit.lang.ast.Expression;
+import org.febit.wit.lang.ast.Statement;
+import org.febit.wit.lang.ast.expr.BreakpointExpression;
+import org.febit.wit.lang.ast.expr.DirectValue;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
@@ -92,17 +92,19 @@ class AutoTest {
 
         if ("assert:DirectValue".equals(label)) {
             if (!(innerExpr instanceof DirectValue)) {
-                throw newException(statement, "Required DirectValue, at {}:{}",
-                        statement.line, statement.column);
+                throw newException(statement, "Required DirectValue, at {}",
+                        statement.pos());
             }
         } else if ("assert:NotDirectValue".equals(label)) {
             if (innerExpr instanceof DirectValue) {
                 throw newException(statement, "Required No-DirectValue, at {}:{}",
-                        statement.line, statement.column);
+                        statement.pos()
+                );
             }
         } else {
             throw newException(statement, "Not handled break point: {}, at {}:{}", label,
-                    statement.line, statement.column);
+                    statement.pos()
+            );
         }
     }
 

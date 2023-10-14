@@ -1,20 +1,22 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
-import lombok.val;
-import org.febit.wit.core.LoopInfo;
-import org.febit.wit.core.VariantIndexer;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.Out;
+import org.febit.wit.lang.InternedEncoding;
+import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.VariantIndexer;
+import org.febit.wit.lang.ast.Expression;
+import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.OutResolver;
 import org.febit.wit.resolvers.ResolverManager;
 import org.febit.wit.resolvers.SetResolver;
 import org.febit.wit.util.ClassMap;
-import org.febit.wit.util.InternedEncoding;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,9 +56,9 @@ public final class InternalContext implements Context {
      */
     private final VariantIndexer[] indexers;
     /**
-     * If this.write is a bytes stream.
+     * If this.write is prefer bytes.
      */
-    public final boolean isByteStream;
+    public final boolean preferBytes;
     /**
      * Output's charset.
      */
@@ -110,10 +112,10 @@ public final class InternalContext implements Context {
         //output
         this.out = out;
         this.encoding = out.getEncoding();
-        this.isByteStream = out.isByteStream();
+        this.preferBytes = out.preferBytes();
 
         //resolvers
-        val resolverMgr = template.getEngine().getResolverManager();
+        var resolverMgr = template.getEngine().getResolverManager();
         this.resolverManager = resolverMgr;
         this.outers = resolverMgr.outers;
         this.getters = resolverMgr.getters;
@@ -129,6 +131,31 @@ public final class InternalContext implements Context {
         rootParams.exportTo(this::set);
     }
 
+    public Object[] execute(Expression[] exprs) {
+        var len = exprs.length;
+        var results = new Object[len];
+        for (int i = 0; i < len; i++) {
+            results[i] = exprs[i].execute(this);
+        }
+        return results;
+    }
+
+    public void execute(final Statement[] stats) {
+        var i = 0;
+        var len = stats.length;
+        while (i < len) {
+            stats[i++].execute(this);
+        }
+    }
+
+    public void executeWithLoop(final Statement[] stats) {
+        var i = 0;
+        var len = stats.length;
+        while (i < len && noLoop()) {
+            stats[i++].execute(this);
+        }
+    }
+
     /**
      * Create a sub context.
      *
@@ -138,7 +165,7 @@ public final class InternalContext implements Context {
      * @return a new sub context
      */
     public InternalContext createSubContext(VariantIndexer[] indexers, InternalContext localContext, int varSize) {
-        val myParentScopes = this.parentScopes;
+        var myParentScopes = this.parentScopes;
         //cal the new-context's parent-scopes
         Object[][] scopes;
         if (myParentScopes == null) {
@@ -149,7 +176,7 @@ public final class InternalContext implements Context {
             System.arraycopy(myParentScopes, 0, scopes, 1, myParentScopes.length);
         }
 
-        val newContext = new InternalContext(template, localContext.out, Vars.EMPTY,
+        var newContext = new InternalContext(template, localContext.out, Vars.EMPTY,
                 indexers, varSize, scopes);
         newContext.localContext = localContext;
         return newContext;
@@ -167,7 +194,7 @@ public final class InternalContext implements Context {
      * @return a new peer context
      */
     public InternalContext createPeerContext(Template template, VariantIndexer[] indexers, int varSize, Vars rootParams) {
-        val newContext = new InternalContext(template, this.out, rootParams,
+        var newContext = new InternalContext(template, this.out, rootParams,
                 indexers, varSize, null);
         newContext.localContext = this;
         return newContext;
@@ -193,7 +220,7 @@ public final class InternalContext implements Context {
      */
     public void breakLoop(int label) {
         this.label = label;
-        this.loopType = LoopInfo.BREAK;
+        this.loopType = LoopMeta.BREAK;
     }
 
     /**
@@ -203,7 +230,7 @@ public final class InternalContext implements Context {
      */
     public void continueLoop(int label) {
         this.label = label;
-        this.loopType = LoopInfo.CONTINUE;
+        this.loopType = LoopMeta.CONTINUE;
     }
 
     /**
@@ -214,7 +241,7 @@ public final class InternalContext implements Context {
     public void returnLoop(Object value) {
         this.returned = value;
         this.label = 0;
-        this.loopType = LoopInfo.RETURN;
+        this.loopType = LoopMeta.RETURN;
     }
 
     /**
@@ -232,7 +259,7 @@ public final class InternalContext implements Context {
      * @param label label id
      */
     public void resetBreakLoopIfMatch(int label) {
-        if (this.loopType == LoopInfo.BREAK
+        if (this.loopType == LoopMeta.BREAK
                 && (this.label == 0 || this.label == label)) {
             this.resetLoop();
         }
@@ -243,8 +270,9 @@ public final class InternalContext implements Context {
      *
      * @return the returned
      */
+    @Nullable
     public Object resetReturnLoop() {
-        val result = this.loopType == LoopInfo.RETURN
+        var result = this.loopType == LoopMeta.RETURN
                 ? this.returned
                 : VOID;
         resetLoop();
@@ -316,12 +344,12 @@ public final class InternalContext implements Context {
         if (obj == null) {
             return;
         }
-        val type = obj.getClass();
+        var type = obj.getClass();
         if (type == String.class) {
             this.out.write((String) obj);
             return;
         }
-        val resolver = this.outers.unsafeGet(type);
+        var resolver = this.outers.unsafeGet(type);
         if (resolver != null) {
             resolver.render(this.out, obj);
             return;
@@ -335,7 +363,7 @@ public final class InternalContext implements Context {
         if (localContext != null) {
             return localContext.getLocal(name);
         }
-        val map = this.locals;
+        var map = this.locals;
         return map != null ? map.get(name) : null;
     }
 
@@ -390,7 +418,7 @@ public final class InternalContext implements Context {
 
     @Override
     public void forEachVar(BiConsumer<? super String, Object> action) {
-        val myVars = this.vars;
+        var myVars = this.vars;
         getCurrentIndexer()
                 .forEach((name, index)
                         -> action.accept(name, myVars[index]));
@@ -403,11 +431,11 @@ public final class InternalContext implements Context {
 
     @Override
     public Function exportFunction(String name) throws NotFunctionException {
-        val func = get(name, false);
+        var func = get(name, false);
         if (!(func instanceof MethodDeclare)) {
             throw new NotFunctionException(func);
         }
-        return new Function(this.template, (MethodDeclare) func, this.encoding, this.isByteStream);
+        return new Function(this.template, (MethodDeclare) func, this.encoding, this.preferBytes);
     }
 
     public Engine getEngine() {

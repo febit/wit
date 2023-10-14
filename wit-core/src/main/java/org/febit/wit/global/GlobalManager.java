@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.global;
 
+import jakarta.annotation.Nullable;
 import org.febit.wit.Init;
 import org.febit.wit.lang.Bag;
 import org.febit.wit.lang.MethodDeclare;
@@ -30,7 +31,7 @@ public class GlobalManager {
     public void init() {
         if (registers != null) {
             for (GlobalRegister register : registers) {
-                register.regist(this);
+                register.register(this);
             }
         }
     }
@@ -67,11 +68,12 @@ public class GlobalManager {
         return this.globalVars.containsKey(name);
     }
 
+    @Nullable
     public Object getGlobal(String key) {
         return this.globalVars.get(key);
     }
 
-    public void setGlobal(String key, Object value) {
+    public void setGlobal(String key, @Nullable Object value) {
         this.globalVars.put(key, value);
     }
 
@@ -79,6 +81,7 @@ public class GlobalManager {
         return this.constVars.containsKey(name);
     }
 
+    @Nullable
     public Object getConst(String name) {
         return this.constVars.get(name);
     }

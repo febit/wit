@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import jakarta.annotation.Nullable;
+import lombok.experimental.UtilityClass;
 import org.febit.wit.Engine;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.NativeFactory;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings({
         "WeakerAccess"
 })
+@UtilityClass
 public class JavaNativeUtil {
 
     private static final int COST_NEVER = -1;
@@ -36,9 +39,6 @@ public class JavaNativeUtil {
 
     private static final Class<?>[] EMPTY_CLASSES = new Class<?>[0];
 
-    private JavaNativeUtil() {
-    }
-
     public static int addStaticMethods(Engine engine, Class<?> type) {
         return addStaticMethods(engine.getGlobalManager(), engine.getNativeFactory(), type, false);
     }
@@ -47,6 +47,7 @@ public class JavaNativeUtil {
         return addStaticMethods(engine.getGlobalManager(), engine.getNativeFactory(), type, skipConflict);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static int addStaticMethods(GlobalManager manager,
                                        NativeFactory nativeFactory,
                                        Class<?> type) {
@@ -77,6 +78,7 @@ public class JavaNativeUtil {
         return addConstFields(engine.getGlobalManager(), engine.getNativeFactory(), type, skipConflict);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static int addConstFields(
             GlobalManager manager,
             NativeFactory nativeFactory,
@@ -111,7 +113,7 @@ public class JavaNativeUtil {
         return count;
     }
 
-    public static Class<?>[] getArgTypes(Object[] args) {
+    public static Class<?>[] getArgTypes(@Nullable Object[] args) {
         if (args == null || args.length == 0) {
             return EMPTY_CLASSES;
         }
@@ -123,35 +125,36 @@ public class JavaNativeUtil {
     }
 
     /**
-     * @param methods
-     * @param args
+     * @param methods methods
+     * @param args args
      * @return null if not found
      */
+    @Nullable
     public static Method getMatchMethod(Method[] methods, Object[] args) {
         return getMatchMethod(methods, getArgTypes(args));
     }
 
     /**
-     * @param methods
+     * @param methods methods
      * @param args    if mixed, first arg is the host of member methods.
      * @param mix     if mix, static methods with member methods
      * @return null if not found
      */
+    @Nullable
     public static Method getMatchMethod(Method[] methods, Object[] args, boolean mix) {
         return getMatchMethod(methods, getArgTypes(args), mix);
     }
 
     /**
-     * @param methods
-     * @param argTypes
      * @return null if not found
      */
+    @Nullable
     public static Method getMatchMethod(Method[] methods, Class<?>[] argTypes) {
         return getMatchMethod(methods, argTypes, false);
     }
 
     /**
-     * @param methods
+     * @param methods methods
      * @param argTypes if mixed, first arg is the host of member methods.
      * @param mix      if mix static methods with member methods
      * @return null if not found
@@ -159,7 +162,8 @@ public class JavaNativeUtil {
     @SuppressWarnings({
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    public static Method getMatchMethod(Method[] methods, Class<?>[] argTypes, boolean mix) {
+    @Nullable
+    public static Method getMatchMethod(@Nullable Method[] methods, Class<?>[] argTypes, boolean mix) {
         if (methods == null
                 || methods.length == 0) {
             return null;
@@ -207,13 +211,14 @@ public class JavaNativeUtil {
     }
 
     /**
-     * @param argTypes
-     * @param methods
-     * @param count
-     * @param mix
+     * @param argTypes  argTypes
+     * @param methods methods
+     * @param count count
+     * @param mix mix
      * @return null if can't resolve
      */
-    protected static Method resolveAmbiguousMethods(Class<?>[] argTypes, Method[] methods, int count, boolean mix) {
+    @Nullable
+    static Method resolveAmbiguousMethods(Class<?>[] argTypes, Method[] methods, int count, boolean mix) {
         if (argTypes.length == 0) {
             return null;
         }
@@ -242,28 +247,30 @@ public class JavaNativeUtil {
     }
 
     /**
-     * @param constructors
-     * @param args
+     * @param constructors  constructors
+     * @param args args
      * @return null if not found
      */
-    public static Constructor getMatchConstructor(Constructor[] constructors, Object[] args) {
+    @Nullable
+    public static Constructor<?> getMatchConstructor(@Nullable Constructor<?>[] constructors, Object[] args) {
         return getMatchConstructor(constructors, getArgTypes(args));
     }
 
     /**
-     * @param constructors
+     * @param constructors constructors
      * @param argTypes     if mixed, first arg is the host of member methods.
      * @return null if not found
      */
-    public static Constructor getMatchConstructor(Constructor[] constructors, Class<?>[] argTypes) {
+    @Nullable
+    public static Constructor<?> getMatchConstructor(@Nullable Constructor<?>[] constructors, Class<?>[] argTypes) {
         if (constructors == null
                 || constructors.length == 0) {
             return null;
         }
-        Constructor[] candidate = new Constructor[constructors.length];
+        var candidate = new Constructor[constructors.length];
         int candidateCount = 0;
         int leastCost = Integer.MAX_VALUE;
-        for (Constructor constructor : constructors) {
+        for (var constructor : constructors) {
             int cost = getAssignCost(argTypes, constructor.getParameterTypes());
             if (cost < 0) {
                 continue;
@@ -277,7 +284,7 @@ public class JavaNativeUtil {
             }
         }
         if (candidateCount > 1) {
-            Constructor constructor = resolveAmbiguousConstructors(argTypes, candidate, candidateCount);
+            var constructor = resolveAmbiguousConstructors(argTypes, candidate, candidateCount);
             if (constructor != null) {
                 return constructor;
             }
@@ -288,15 +295,20 @@ public class JavaNativeUtil {
         return candidate[0];
     }
 
-    protected static Constructor resolveAmbiguousConstructors(Class<?>[] argTypes,
-                                                              Constructor[] constructors, int count) {
+    @Nullable
+    static Constructor<?> resolveAmbiguousConstructors(
+            Class<?>[] argTypes, @Nullable Constructor<?>[] constructors, int count) {
+        if (constructors == null
+                || constructors.length == 0) {
+            return null;
+        }
         if (argTypes.length == 0) {
             return null;
         }
-        Constructor candidate = constructors[0];
+        var candidate = constructors[0];
         Class<?>[] candidateArgs = candidate.getParameterTypes();
         for (int i = 1; i < count; i++) {
-            Constructor next = constructors[i];
+            var next = constructors[i];
             Class<?>[] nextArgs = next.getParameterTypes();
             int cost = getAssignCost(nextArgs, candidateArgs);
             if (cost == 0) {
@@ -313,7 +325,7 @@ public class JavaNativeUtil {
         return candidate;
     }
 
-    protected static int getAssignCost(Class<?>[] froms, Class<?>[] tos) {
+    static int getAssignCost(Class<?>[] froms, Class<?>[] tos) {
         if (froms.length > tos.length) {
             return COST_NEVER;
         }
@@ -328,7 +340,7 @@ public class JavaNativeUtil {
         return totalCost;
     }
 
-    protected static int getAssignCost(Class<?> passedType, Class<?> acceptType) {
+    static int getAssignCost(@Nullable Class<?> passedType, Class<?> acceptType) {
         if (passedType == null) {
             return acceptType.isPrimitive() ? COST_NEVER : COST_NULL;
         }
@@ -354,7 +366,7 @@ public class JavaNativeUtil {
 
     public static Object invokeMethod(
             final Method method,
-            final Object[] args
+            @Nullable final Object[] args
     ) {
         if (ClassUtil.isStatic(method)) {
             return invokeMethod(method, null, args);
@@ -366,7 +378,7 @@ public class JavaNativeUtil {
         return invokeMethod(method, args[0], methodArgs);
     }
 
-    public static Object[] prepareArgs(final int acceptArgsCount, final Object[] args, final int from) {
+    public static Object[] prepareArgs(final int acceptArgsCount, @Nullable final Object[] args, final int from) {
         if (args == null) {
             return acceptArgsCount == 0
                     ? ArrayUtil.emptyObjects()
@@ -382,8 +394,8 @@ public class JavaNativeUtil {
 
     public static Object invokeMethod(
             final Method method,
-            final Object me,
-            final Object[] args
+            @Nullable final Object me,
+            @Nullable final Object[] args
     ) {
         final Object[] methodArgs = prepareArgs(method.getParameterCount(), args, 0);
         try {
@@ -400,7 +412,7 @@ public class JavaNativeUtil {
         }
     }
 
-    public static Object invokeConstructor(final Constructor constructor, final Object[] args) {
+    public static Object invokeConstructor(final Constructor<?> constructor, final Object[] args) {
         final Object[] methodArgs = prepareArgs(constructor.getParameterCount(), args, 0);
         try {
             return constructor.newInstance(methodArgs);

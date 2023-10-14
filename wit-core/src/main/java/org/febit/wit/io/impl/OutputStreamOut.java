@@ -6,7 +6,7 @@ import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.io.charset.Encoder;
-import org.febit.wit.util.InternedEncoding;
+import org.febit.wit.lang.InternedEncoding;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -84,21 +84,12 @@ public final class OutputStreamOut implements Out {
     }
 
     @Override
-    public void write(final String string) {
-        try {
-            this.encoder.write(string, 0, string.length(), this.outputStream);
-        } catch (IOException ex) {
-            throw new ScriptRuntimeException(ex);
-        }
-    }
-
-    @Override
     public InternedEncoding getEncoding() {
         return this.encoding;
     }
 
     @Override
-    public boolean isByteStream() {
+    public boolean preferBytes() {
         return true;
     }
 }

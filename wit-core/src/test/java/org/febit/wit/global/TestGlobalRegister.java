@@ -16,7 +16,7 @@ public class TestGlobalRegister implements GlobalRegister {
     protected NativeFactory nativeFactory;
 
     @Override
-    public void regist(final GlobalManager manager) {
+    public void register(final GlobalManager manager) {
 
         //Globals
         manager.setGlobal("MY_GLOBAL", "MY_GLOBAL");

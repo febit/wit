@@ -17,7 +17,7 @@ public class GlobalMapRegister implements GlobalRegister {
     protected String name = "$GLOBAL";
 
     @Override
-    public void regist(GlobalManager manager) {
+    public void register(GlobalManager manager) {
         manager.setConst(this.name, this.vars);
     }
 

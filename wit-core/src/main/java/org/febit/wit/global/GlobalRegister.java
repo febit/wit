@@ -7,5 +7,5 @@ package org.febit.wit.global;
 @FunctionalInterface
 public interface GlobalRegister {
 
-    void regist(GlobalManager manager);
+    void register(GlobalManager manager);
 }

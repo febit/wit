@@ -8,7 +8,7 @@ import org.febit.wit.io.Buffers;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.io.charset.Decoder;
-import org.febit.wit.util.InternedEncoding;
+import org.febit.wit.lang.InternedEncoding;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -86,17 +86,12 @@ public final class WriterOut implements Out {
     }
 
     @Override
-    public void write(final String string) {
-        write(string, 0, string.length());
-    }
-
-    @Override
     public InternedEncoding getEncoding() {
         return this.encoding;
     }
 
     @Override
-    public boolean isByteStream() {
+    public boolean preferBytes() {
         return false;
     }
 }

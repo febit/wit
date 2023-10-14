@@ -1,7 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.asm;
 
-import lombok.val;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.util.ClassUtil;
@@ -23,7 +22,7 @@ public class AsmNativeFactory extends NativeFactory {
 
     @Override
     protected MethodDeclare createNativeConstructorDeclare(Constructor constructor) {
-        val accessor = createMethodDeclare(constructor);
+        var accessor = createMethodDeclare(constructor);
         if (accessor != null) {
             return accessor;
         }
@@ -32,7 +31,7 @@ public class AsmNativeFactory extends NativeFactory {
 
     @Override
     public MethodDeclare createNativeMethodDeclare(Method method) {
-        val accessor = createMethodDeclare(method);
+        var accessor = createMethodDeclare(method);
         if (accessor != null) {
             return accessor;
         }
@@ -65,8 +64,8 @@ public class AsmNativeFactory extends NativeFactory {
     })
     static MethodDeclare createAccessor(Member obj)
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        val className = "org.febit.wit.asm.Accessor" + AsmUtil.NEXT_SN.getAndIncrement();
-        val classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
+        var className = "org.febit.wit.asm.Accessor" + AsmUtil.NEXT_SN.getAndIncrement();
+        var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
                 AsmUtil.getInternalName(className), "java/lang/Object", METHOD_DECLARE);
 
         AsmUtil.visitConstructor(classWriter);
@@ -102,8 +101,8 @@ public class AsmNativeFactory extends NativeFactory {
             returnType = constructor.getDeclaringClass();
         }
 
-        val paramTypesLen = paramTypes.length;
-        val m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke",
+        var paramTypesLen = paramTypes.length;
+        var m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke",
                 "(Lorg/febit/wit/InternalContext;[Ljava/lang/Object;)Ljava/lang/Object;", null);
 
         if (paramTypesLen == 0) {
@@ -172,7 +171,7 @@ public class AsmNativeFactory extends NativeFactory {
             @SuppressWarnings({
                     "squid:S3358" // Ternary operators should not be nested
             })
-            val opCode = isStatic ? Constants.INVOKESTATIC
+            var opCode = isStatic ? Constants.INVOKESTATIC
                     : isConstructor
                     ? Constants.INVOKESPECIAL
                     : isInterface

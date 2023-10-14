@@ -15,7 +15,7 @@ public class ContextLocalRegister implements GlobalRegister {
     protected String name = "LOCAL";
 
     @Override
-    public void regist(GlobalManager manager) {
+    public void register(GlobalManager manager) {
         manager.setConstMethod(this.name, ContextLocalRegister::local);
     }
 

@@ -1,30 +1,27 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.febit.wit.io.Out;
-import org.febit.wit.util.InternedEncoding;
+import org.febit.wit.lang.InternedEncoding;
 
 /**
  * @author zqq90
  */
+@RequiredArgsConstructor
 public class DiscardOut implements Out {
 
     public static final DiscardOut INSTANCE = new DiscardOut();
 
     private final InternedEncoding encoding;
-    private final boolean isByteStream;
+    private final boolean preferBytes;
 
     public DiscardOut() {
         this("UTF-8", false);
     }
 
-    public DiscardOut(String encoding, boolean isByteStream) {
-        this(InternedEncoding.intern(encoding), isByteStream);
-    }
-
-    public DiscardOut(InternedEncoding encoding, boolean isByteStream) {
-        this.encoding = encoding;
-        this.isByteStream = isByteStream;
+    public DiscardOut(String encoding, boolean preferBytes) {
+        this(InternedEncoding.intern(encoding), preferBytes);
     }
 
     @Override
@@ -63,8 +60,8 @@ public class DiscardOut implements Out {
     }
 
     @Override
-    public boolean isByteStream() {
-        return isByteStream;
+    public boolean preferBytes() {
+        return preferBytes;
     }
 
 }

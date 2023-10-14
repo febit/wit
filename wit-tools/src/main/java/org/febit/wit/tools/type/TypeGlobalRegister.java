@@ -18,7 +18,7 @@ import static org.febit.wit.util.ArrayUtil.get;
 public class TypeGlobalRegister implements GlobalRegister {
 
     @Override
-    public void regist(GlobalManager manager) {
+    public void register(GlobalManager manager) {
         manager.setConstMethod("is_array", TypeGlobalRegister::is_array);
         manager.setConstMethod("is_bool", TypeGlobalRegister::is_bool);
         manager.setConstMethod("is_function", TypeGlobalRegister::is_function);

@@ -1,17 +1,17 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import org.febit.wit.core.ast.*;
-import org.febit.wit.core.ast.expressions.*;
-import org.febit.wit.core.ast.operators.*;
-import org.febit.wit.core.ast.statements.*;
+import org.febit.wit.lang.ast.*;
+import org.febit.wit.lang.ast.expr.*;
+import org.febit.wit.lang.ast.oper.*;
+import org.febit.wit.lang.ast.stat.*;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.util.ALU;
 import org.febit.wit.util.ClassNameBand;
 import org.febit.wit.util.Stack;
 import org.febit.wit.util.StatementUtil;
 
-import static org.febit.wit.core.ast.expressions.FunctionDeclarePart.ArgumentInfo;
+import static org.febit.wit.lang.ast.expr.FunctionDeclarePart.ArgumentInfo;
 
 /* Terminals */
 terminal Integer    VAR,
@@ -110,7 +110,7 @@ precedence left     LSHIFT, RSHIFT, URSHIFT; // << >> >>>
 precedence left     PLUS, MINUS; // + -
 precedence left     MULT, DIV, MOD; // * / %
 precedence right    PLUSPLUS, MINUSMINUS, UMINUS, NOT, COMP; // ++ -- - ! ~
-precedence left     EQGT;  // => 
+precedence left     EQGT;  // =>
 precedence right    RPAREN_MINUSGT, MINUSGT; // ->
 precedence left     DOT, LBRACK, LBRACE, LPAREN, RPAREN, DYNAMIC_DOT; // . [ { ( ) @
 
@@ -134,19 +134,19 @@ className       ::= classPureName:part
 
 
 javaClass       ::= className:nameBand
-                    {: return toClass(%nameBand%, %nameBand.line%, %nameBand.column%); :}
+                    {: return toClass(%nameBand%, %nameBand.symbol%.pos); :}
                     ;
 
 
 /* statements  */
 statement       ::= expression_statementable:$ SEMICOLON
                     |SEMICOLON
-                    {: return NoneStatement.INSTANCE; :}
+                    {: return NoopStatement.INSTANCE; :}
 
                     |LRDEBUG:sym
-                    {: return createBreakpointStatement(null, null, %sym.line%, %sym.column%); :}
+                    {: return createBreakpointStatement(null, null, %sym.symbol%.pos); :}
                     |LDEBUG:sym expression:label COLON RDEBUG
-                    {: return createBreakpointStatement(%label%, null, %sym.line%, %sym.column%); :}
+                    {: return createBreakpointStatement(%label%, null, %sym.symbol%.pos); :}
 
                     |expression:expr INTERPOLATION_END
                     {: return createInterpolation(%expr%); :}
@@ -175,39 +175,39 @@ statement       ::= expression_statementable:$ SEMICOLON
 
                     //RedirectOut
                     |block:stat EQGT:sym expression:expr SEMICOLON
-                    {: return new RedirectOut(%stat%, castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new RedirectOut(%stat%, castToAssignableExpression(%expr%), %sym.symbol%.pos); :}
 
                     //textStat
                     |TEXT_STATEMENT:sym
-                    {: return createTextStatement(%sym%, %sym.line%, %sym.column%); :}
+                    {: return createTextStatement(%sym%, %sym.symbol%.pos); :}
 
                     //
                     |CONST IDENTIFIER:ident EQ expression:expr SEMICOLON
-                    {: assignConst(%ident%, %expr%, %ident.line%, %ident.column%); return NoneStatement.INSTANCE; :}
+                    {: assignConst(%ident%, %expr%, %ident.symbol%.pos); return NoopStatement.INSTANCE; :}
 
                     //var
                     |VAR varPart[COMMA]:parts SEMICOLON
-                    {: return createStatementGroup(%parts%, %parts.line%, %parts.column%); :}
+                    {: return createStatementGroup(%parts%, %parts.symbol%.pos); :}
 
                     //echoStat
                     |ECHO:sym expression:expr SEMICOLON
-                    {: return new Echo(%expr%, %sym.line%, %sym.column%); :}
+                    {: return new Echo(%expr%, %sym.symbol%.pos); :}
 
                     //@import
                     |NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
-                    {: registerClass(%nameBand%, %sym.line%, %sym.column%); return NoneStatement.INSTANCE; :}
+                    {: registerClass(%nameBand%, %sym.symbol%.pos); return NoopStatement.INSTANCE; :}
 
                     //BREAK
                     |BREAK:sym IDENTIFIER:label? SEMICOLON
-                    {: return new Break(getLabelIndex(%label%), %sym.line%, %sym.column%); :}
+                    {: return new Break(getLabelIndex(%label%), %sym.symbol%.pos); :}
 
                     //CONTINUE
                     |CONTINUE:sym IDENTIFIER:label? SEMICOLON
-                    {: return new Continue(getLabelIndex(%label%), %sym.line%, %sym.column%); :}
+                    {: return new Continue(getLabelIndex(%label%), %sym.symbol%.pos); :}
 
                     //RETURN
                     |RETURN:sym expression:expr? SEMICOLON
-                    {: return new Return(%expr%, %sym.line%, %sym.column%); :}
+                    {: return new Return(%expr%, %sym.symbol%.pos); :}
 
                     //importStat
                     |importPart1:part SEMICOLON
@@ -217,7 +217,7 @@ statement       ::= expression_statementable:$ SEMICOLON
 
                     //includeStat
                     |INCLUDE:sym expression:expr mapValue:paramsExpr? SEMICOLON
-                    {: return new Include(%expr%, %paramsExpr%, this.template.getName(), %sym.line%, %sym.column%); :}
+                    {: return new Include(%expr%, %paramsExpr%, this.template.getName(), %sym.symbol%.pos); :}
 
                     //funcStatement
                     |funcStatementHead:part LBRACE statement[]:list? RBRACE
@@ -229,85 +229,85 @@ statement       ::= expression_statementable:$ SEMICOLON
 
                     //
                     | THROW:sym expression:expr SEMICOLON
-                    {: return new Throw(%expr%, %sym.line%, %sym.column%); :}
+                    {: return new Throw(%expr%, %sym.symbol%.pos); :}
                     ;
 
 
 varAssign       ::= IDENTIFIER:ident EQ:sym (expression:$ | varAssign:$):expr
-                    {: return createAssign(declareVarAndCreateContextValue(%ident%, %ident.line%, %ident.column%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return createAssign(declareVarAndCreateContextValue(%ident%, %ident.symbol%.pos), %expr%, %sym.symbol%.pos); :}
                     ;
 
 varPart         ::= varAssign:$
                     | IDENTIFIER:ident
-                    {: return declareVar(%ident%, %ident.line%, %ident.column%); :}
+                    {: return declareVar(%ident%, %ident.symbol%.pos); :}
                     | LBRACK IDENTIFIER[COMMA]:idents RBRACK EQ:sym expression:expr
-                    {: return createGroupAssign(declareVarAndCreateContextValues(%idents%, %idents.line%, %idents.column%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return createGroupAssign(declareVarAndCreateContextValues(%idents%, %idents.symbol%.pos), %expr%, %sym.symbol%.pos); :}
                     ;
 
 
 importPart1     ::= IMPORT:sym expression:expr mapValue:paramsExpr?
-                    {: return new ImportPart(%expr%, %paramsExpr%, %sym.line%, %sym.column%); :}
+                    {: return new ImportPart(%expr%, %paramsExpr%, %sym.symbol%.pos); :}
                     ;
 
 
 importPart2     ::= importPart1:part IDENTIFIER:ident
-                    {: return (%part%).append(%ident%, createContextValue(0, %ident%, %ident.line%, %ident.column%)); :}
+                    {: return (%part%).append(%ident%, createContextValue(0, %ident%, %ident.symbol%.pos)); :}
                     |importPart1:part contextValueExpr:valueExpr EQ IDENTIFIER:ident
                     {: return (%part%).append(%ident%, %valueExpr%); :}
                     |importPart2:part COMMA IDENTIFIER:ident
-                    {: return (%part%).append(%ident%, createContextValue(0, %ident%, %ident.line%, %ident.column%)); :}
+                    {: return (%part%).append(%ident%, createContextValue(0, %ident%, %ident.symbol%.pos)); :}
                     |importPart2:part COMMA contextValueExpr:valueExpr EQ IDENTIFIER:ident
                     {: return (%part%).append(%ident%, %valueExpr%); :}
                     ;
 
 
 block           ::= (LBRACE {: varmgr.push(); return null; :}) statement[]:list? RBRACE
-                    {: return createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%); :}
+                    {: return createIBlock(%list%, varmgr.pop(), %list.symbol%.pos); :}
                     ;
 
 
-tryPart         ::= (TRY LBRACE {: varmgr.push(); return null; :}) statement[]:list? RBRACE 
-                    {: return createTryPart(%list%, varmgr.pop(), %list.line%, %list.column%); :}
+tryPart         ::= (TRY LBRACE {: varmgr.push(); return null; :}) statement[]:list? RBRACE
+                    {: return createTryPart(%list%, varmgr.pop(), %list.symbol%.pos); :}
                     ;
 
-catchPart       ::= tryPart:part (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: varmgr.push(); return varmgr.assignVariant(%ident%, %ident.line%, %ident.column%); :}):varIndex statement[]:list? RBRACE
-                    {: return (%part%).setCatchStat((Integer)(%varIndex%), createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%)); :}
+catchPart       ::= tryPart:part (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: varmgr.push(); return varmgr.assignVariant(%ident%, %ident.symbol%.pos); :}):varIndex statement[]:list? RBRACE
+                    {: return (%part%).setCatchStat((Integer)(%varIndex%), createIBlock(%list%, varmgr.pop(), %list.symbol%.pos)); :}
                     ;
 
-finallyPart     ::= (tryPart:$ | catchPart:$):part (FINALLY LBRACE {: varmgr.push(); return null; :}) statement[]:list? RBRACE 
-                    {: return (%part%).setFinalStat(createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%)); :}
+finallyPart     ::= (tryPart:$ | catchPart:$):part (FINALLY LBRACE {: varmgr.push(); return null; :}) statement[]:list? RBRACE
+                    {: return (%part%).setFinalStat(createIBlock(%list%, varmgr.pop(), %list.symbol%.pos)); :}
                     ;
 
 
 ifStat          ::= IF:sym LPAREN expression:expr RPAREN block:body (ELSE block:$ | ELSE ifStat:$):elseBody?
-                    {: return createIfStatement(%expr%, %body%, (Statement) (%elseBody%), %sym.line%, %sym.column%); :}
+                    {: return createIfStatement(%expr%, %body%, (Statement) (%elseBody%), %sym.symbol%.pos); :}
                     ;
 
 forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
-                    {: return new ForInPart(%item%, %items%, this.varmgr, %sym.line%, %sym.column%); :}
+                    {: return new ForInPart(%item%, %items%, this.varmgr, %sym.symbol%.pos); :}
                     |FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COLON expression:map RPAREN
-                    {: return new ForMapPart(%key%, %value%, %map%, this.varmgr, %sym.line%, %sym.column%); :}
+                    {: return new ForMapPart(%key%, %value%, %map%, this.varmgr, %sym.symbol%.pos); :}
                     ;
 
 
 lambdaForHead1  ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
-                    {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
+                    {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArg(%ident%); :}
                     ;
 
 
 lambdaForMapHead1   ::= FOR LPAREN IDENTIFIER:key COMMA IDENTIFIER:value MINUSGT:sym
-                    {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%key%).appendArg(%value%); :}
+                    {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArg(%key%).appendArg(%value%); :}
                     ;
 
 
 lambdaForHead2  ::= lambdaForHead1:part expression:expr COLON
-                    {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.line%, %part.column%); :}
+                    {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.symbol%.pos); :}
                     |lambdaForHead1:part LBRACE statement[]:list RBRACE COLON
-                    {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.line%, %part.column%); :}
+                    {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.symbol%.pos); :}
                     |lambdaForMapHead1:part expression:expr COLON
-                    {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.line%, %part.column%); :}
+                    {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.symbol%.pos); :}
                     |lambdaForMapHead1:part LBRACE statement[]:list RBRACE COLON
-                    {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.line%, %part.column%); :}
+                    {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.symbol%.pos); :}
                     ;
 
 
@@ -317,62 +317,62 @@ lambdaForHead   ::= lambdaForHead2:part expression:items RPAREN
 
 
 forInPart       ::= (forInHead:$ | lambdaForHead:$):part LBRACE statement[]:list? RBRACE (ELSE block:$):elseBody?
-                    {: return (%part%).setBodies(createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%), %elseBody%); :}
+                    {: return (%part%).setBodies(createIBlock(%list%, varmgr.pop(), %list.symbol%.pos), %elseBody%); :}
                     ;
 
 
 whilePart       ::= WHILE:sym LPAREN expression:whileExpr RPAREN block:body
-                    {: return new WhilePart(%whileExpr%, %body%, true, %sym.line%, %sym.column%); :}
+                    {: return new WhilePart(%whileExpr%, %body%, true, %sym.symbol%.pos); :}
                     |DO:sym block:body WHILE LPAREN expression:whileExpr RPAREN SEMICOLON
-                    {: return new WhilePart(%whileExpr%, %body%, false, %sym.line%, %sym.column%); :}
+                    {: return new WhilePart(%whileExpr%, %body%, false, %sym.symbol%.pos); :}
                     ;
 
 
 caseBlockStat   ::= {: varmgr.push(); return null; :} statement[]:list?
-                    {: return createIBlock(%list%, varmgr.pop(), %list.line%, %list.column%); :}
+                    {: return createIBlock(%list%, varmgr.pop(), %list.symbol%.pos); :}
                     ;
 
 
-switchPart0     ::= 
+switchPart0     ::=
                     {: return new SwitchPart(); :}
                     | CASE:sym MINUS:negative? DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:part
-                    {: return (%part%).appendCase((%negative% == null)?(%key%):ALU.negative(%key%), %body%, %sym.line%, %sym.column%); :}
+                    {: return (%part%).appendCase((%negative% == null)?(%key%):ALU.negative(%key%), %body%, %sym.symbol%.pos); :}
                     | DEFAULT:sym COLON caseBlockStat:body switchPart0:part
-                    {: return (%part%).appendCase(null, %body%, %sym.line%, %sym.column%); :}
+                    {: return (%part%).appendCase(null, %body%, %sym.symbol%.pos); :}
                     ;
 
 
 switchPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE TEXT_STATEMENT ? switchPart0:part RBRACE
-                    {: return (%part%).setSwitchExpr(%switchExpr%, %sym.line%, %sym.column%); :}
+                    {: return (%part%).setSwitchExpr(%switchExpr%, %sym.symbol%.pos); :}
                     ;
 
 
 
 /* Expressions */
 
-expression_statementable ::= 
+expression_statementable ::=
                     //assignOp =
                     expression:lexpr EQ:sym expression:expr
-                    {: return createAssign(castToAssignableExpression(%lexpr%), %expr%, %sym.line%, %sym.column%); :}
-                    
+                    {: return createAssign(castToAssignableExpression(%lexpr%), %expr%, %sym.symbol%.pos); :}
+
                     |LBRACK expression[COMMA]:list COMMA? RBRACK EQ:sym expression:expr
-                    {: return createGroupAssign(StatementUtil.toExpressionArray(%list%), %expr%, %sym.line%, %sym.column%); :}
+                    {: return createGroupAssign(StatementUtil.toExpressionArray(%list%), %expr%, %sym.symbol%.pos); :}
 
                     //plusPlusOp ++
                     |PLUSPLUS:sym expression:expr
-                    {: return new PlusPlusBefore(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new PlusPlusBefore(castToAssignableExpression(%expr%), %sym.symbol%.pos); :}
                     |expression:expr PLUSPLUS:sym
-                    {: return new PlusPlusAfter(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new PlusPlusAfter(castToAssignableExpression(%expr%), %sym.symbol%.pos); :}
 
                     //minusMinusOp --
                     |MINUSMINUS:sym expression:expr
-                    {: return new MinusMinusBefore(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new MinusMinusBefore(castToAssignableExpression(%expr%), %sym.symbol%.pos); :}
                     |expression:expr MINUSMINUS:sym
-                    {: return new MinusMinusAfter(castToAssignableExpression(%expr%), %sym.line%, %sym.column%); :}
+                    {: return new MinusMinusAfter(castToAssignableExpression(%expr%), %sym.symbol%.pos); :}
 
                     //selfOp
                     |expression:lexpr SELFEQ:sym expression:rexpr
-                    {: return createSelfOperator(%lexpr%, %sym%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return createSelfOperator(%lexpr%, %sym%, %rexpr%, %sym.symbol%.pos); :}
 
                     //
                     |funcExecuteExpr:$
@@ -382,10 +382,10 @@ expression_statementable ::=
 expression      ::= expression_statementable:$
 
                     |LDEBUG:sym expression:expr RDEBUG
-                    {: return createBreakpointExpression(null, %expr%, %sym.line%, %sym.column%); :}
+                    {: return createBreakpointExpression(null, %expr%, %sym.symbol%.pos); :}
 
                     |LDEBUG:sym expression:label COLON expression:expr RDEBUG
-                    {: return createBreakpointExpression(%label%, %expr%, %sym.line%, %sym.column%); :}
+                    {: return createBreakpointExpression(%label%, %expr%, %sym.symbol%.pos); :}
 
                     //bitNotOp ~
                     |COMP:sym expression:expr
@@ -400,12 +400,12 @@ expression      ::= expression_statementable:$
                     {: return createOperator(%expr%, %sym.symbol%); :}
 
                     //propertyOp .
-                    |expression:expr DOT:sym IDENTIFIER:ident 
-                    {: return new PropertyOperator(%expr%, %ident%, %sym.line%, %sym.column%); :}
+                    |expression:expr DOT:sym IDENTIFIER:ident
+                    {: return new PropertyOperator(%expr%, %ident%, %sym.symbol%.pos); :}
 
                     //indexOp []
                     |expression:lexpr LBRACK:sym expression:rexpr RBRACK
-                    {: return new IndexOperator(%lexpr%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return new IndexOperator(%lexpr%, %rexpr%, %sym.symbol%.pos); :}
 
                     /***********  binaries *************/
                     //-- binary:  *
@@ -471,7 +471,7 @@ expression      ::= expression_statementable:$
 
                     // ? :
                     |expression:ifExpr QUESTION:sym expression:lexpr COLON expression:rexpr
-                    {: return new IfOperator(%ifExpr%, %lexpr%, %rexpr%, %sym.line%, %sym.column%); :}
+                    {: return new IfOperator(%ifExpr%, %lexpr%, %rexpr%, %sym.symbol%.pos); :}
 
                     //
                     |DIRECT_VALUE:sym
@@ -486,28 +486,28 @@ expression      ::= expression_statementable:$
 
                     //arrayValue
                     |LBRACK:sym RBRACK
-                    {: return new ArrayValue(StatementUtil.emptyExpressions(), %sym.line%, %sym.column%); :}
+                    {: return new ArrayValue(StatementUtil.emptyExpressions(), %sym.symbol%.pos); :}
                     |LBRACK:sym expression[COMMA]:list COMMA? RBRACK
-                    {: return new ArrayValue(StatementUtil.toExpressionArray(%list%), %sym.line%, %sym.column%); :}
+                    {: return new ArrayValue(StatementUtil.toExpressionArray(%list%), %sym.symbol%.pos); :}
 
-                    //NativeNewArrayDeclareExpression 
+                    //NativeNewArrayDeclareExpression
                     |NATIVE:sym LBRACK RBRACK javaClass:javaClass
-                    {: return createNativeNewArrayDeclareExpression(%javaClass%, %sym.line%, %sym.column%); :}
+                    {: return createNativeNewArrayDeclareExpression(%javaClass%, %sym.symbol%.pos); :}
 
                     //nativeMethodExpr
                     |NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN javaClass[COMMA]:list? RPAREN
-                    {: return createNativeMethodDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %ident%, %list%, %sym.line%, %sym.column%); :}
+                    {: return createNativeMethodDeclareExpression(toClass(%nameBand%, %nameBand.symbol%.pos), %ident%, %list%, %sym.symbol%.pos); :}
 
                     //native static field
                     |NATIVE classPureName:nameBand
-                    {: return createNativeStaticValue(%nameBand%, %nameBand.line%, %nameBand.column%); :}
+                    {: return createNativeStaticValue(%nameBand%, %nameBand.symbol%.pos); :}
 
                     //nativeConstructorExpr
                     |NATIVE:sym NEW classPureName:nameBand LPAREN javaClass[COMMA]:list? RPAREN
-                    {: return createNativeConstructorDeclareExpression(toClass(%nameBand%, %nameBand.line%, %nameBand.column%), %list%, %sym.line%, %sym.column%); :}
+                    {: return createNativeConstructorDeclareExpression(toClass(%nameBand%, %nameBand.symbol%.pos), %list%, %sym.symbol%.pos); :}
 
                     |METHOD_REFERENCE:ref
-                    {: return createMethodReference(%ref%, %ref.line%, %ref.column%); :}
+                    {: return createMethodReference(%ref%, %ref.symbol%.pos); :}
 
                     |contextValueExpr:$
                     |mapValue:$
@@ -515,7 +515,7 @@ expression      ::= expression_statementable:$
                     //Lambda
                     |lambdaExpr:$
 
-                    // template string 
+                    // template string
                     |templateStringExprPart:part TEMPLATE_STRING_END:end
                     {: return (%part%).add(createDirectValue(%end.symbol%)).pop(); :}
                     ;
@@ -531,13 +531,13 @@ superCount      ::= SUPER DOT
 // ident  super...ident  this.ident
 
 contextValueExpr    ::= IDENTIFIER:ident
-                        {: return createContextValue(0, %ident%, %ident.line%, %ident.column%); :}
+                        {: return createContextValue(0, %ident%, %ident.symbol%.pos); :}
                         |superCount:count IDENTIFIER:ident
-                        {: return createContextValue(%count%, %ident%, %ident.line%, %ident.column%); :}
+                        {: return createContextValue(%count%, %ident%, %ident.symbol%.pos); :}
                         |FOR DOT IDENTIFIER:ident
-                        {: return createContextValue(0, ("for." + %ident%), %ident.line%, %ident.column%); :}
+                        {: return createContextValue(0, ("for." + %ident%), %ident.symbol%.pos); :}
                         |superCount:count FOR DOT IDENTIFIER:ident
-                        {: return createContextValue(%count%, ("for." + %ident%), %ident.line%, %ident.column%); :}
+                        {: return createContextValue(%count%, ("for." + %ident%), %ident.symbol%.pos); :}
                         ;
 
 // map {key:expr, ...}
@@ -545,9 +545,9 @@ contextValueExpr    ::= IDENTIFIER:ident
 mapPropertyDef        ::= DIRECT_VALUE:key COLON expression:expr
                         {: return new Expression[]{createDirectValue(%key.symbol%), %expr%}; :}
                         |MINUS:sym DIRECT_VALUE:key COLON expression:expr
-                        {: return new Expression[]{new DirectValue(ALU.negative(%key%), %key.line%, %key.column%), %expr%}; :}
+                        {: return new Expression[]{new DirectValue(ALU.negative(%key%), %key.symbol%.pos), %expr%}; :}
                         |IDENTIFIER:ident
-                        {: return new Expression[]{createDirectValue(%ident.symbol%), createContextValue(0, %ident%, %ident.line%, %ident.column%)}; :}
+                        {: return new Expression[]{createDirectValue(%ident.symbol%), createContextValue(0, %ident%, %ident.symbol%.pos)}; :}
                         |IDENTIFIER:ident COLON expression:expr
                         {: return new Expression[]{createDirectValue(%ident.symbol%), %expr%}; :}
                        // |IDENTIFIER:ident mapPropertyFuncHead:part LBRACE statement[]:list? RBRACE
@@ -558,14 +558,14 @@ mapPropertyDef        ::= DIRECT_VALUE:key COLON expression:expr
 
 
 mapValue            ::= LBRACE:sym RBRACE
-                        {: return createMapValue(null, %sym.line%,%sym.column%); :}
+                        {: return createMapValue(null, %sym.symbol%.pos); :}
                         |LBRACE:sym mapPropertyDef[COMMA]:list COMMA? RBRACE
-                        {: return createMapValue(%list%, %sym.line%, %sym.column%); :}
+                        {: return createMapValue(%list%, %sym.symbol%.pos); :}
                         ;
 
 
 templateStringExprPart  ::= TEMPLATE_STRING_START:sym
-                            {: return new TemplateStringExpressionPart(%sym.line%, %sym.column%); :}
+                            {: return new TemplateStringExpressionPart(%sym.symbol%.pos); :}
                             | templateStringExprPart:part TEMPLATE_STRING_INTERPOLATION_START:start expression:expr TEMPLATE_STRING_INTERPOLATION_END
                             {: return (%part%).add(createDirectValue(%start.symbol%)).add(%expr%); :}
                             ;
@@ -578,34 +578,34 @@ funcArg             ::= IDENTIFIER:ident
                         ;
 
 
-funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:args? RPAREN 
-                        {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.line%, %ident.column%).appendArgs(%args%); :}
+funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:args? RPAREN
+                        {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.symbol%.pos).appendArgs(%args%); :}
                         ;
 
-// mapPropertyFuncHead ::= LPAREN:sym funcArg[COMMA]:args? RPAREN 
-//                         {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%args%); :}
+// mapPropertyFuncHead ::= LPAREN:sym funcArg[COMMA]:args? RPAREN
+//                         {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArgs(%args%); :}
 //                         ;
 
 funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%args%); :}
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArgs(%args%); :}
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
-                        {: return createMethodExecute(%funcExpr%, StatementUtil.emptyExpressions(), %funcExpr.line%, %funcExpr.column%); :}
+                        {: return createMethodExecute(%funcExpr%, StatementUtil.emptyExpressions(), %funcExpr.symbol%.pos); :}
                         |expression:funcExpr LPAREN expression[COMMA]:list COMMA? RPAREN
-                        {: return createMethodExecute(%funcExpr%, StatementUtil.toExpressionArray(%list%), %funcExpr.line%, %funcExpr.column%); :}
+                        {: return createMethodExecute(%funcExpr%, StatementUtil.toExpressionArray(%list%), %funcExpr.symbol%.pos); :}
                         |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN RPAREN
-                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.emptyExpressions(), %ident.line%, %ident.column%); :}
+                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.emptyExpressions(), %ident.symbol%.pos); :}
                         |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expression[COMMA]:list COMMA? RPAREN
-                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.toExpressionArray(%list%), %ident.line%, %ident.column%); :}
+                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.toExpressionArray(%list%), %ident.symbol%.pos); :}
                         ;
 
 
 /* lambda */
 lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArg(%ident%); :}
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArg(%ident%); :}
                         |LPAREN funcArg[COMMA]:args? RPAREN_MINUSGT:sym
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.line%, %sym.column%).appendArgs(%args%); :}
+                        {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArgs(%args%); :}
                         ;
 
 

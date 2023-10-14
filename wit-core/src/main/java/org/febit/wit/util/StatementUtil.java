@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.febit.wit.InternalContext;
-import org.febit.wit.core.LoopInfo;
-import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.Loopable;
-import org.febit.wit.core.ast.Statement;
-import org.febit.wit.core.ast.expressions.DirectValue;
-import org.febit.wit.core.ast.statements.StatementGroup;
+import jakarta.annotation.Nullable;
+import lombok.experimental.UtilityClass;
 import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.lang.LoopMeta;
+import org.febit.wit.lang.Loopable;
+import org.febit.wit.lang.ast.Expression;
+import org.febit.wit.lang.ast.Statement;
+import org.febit.wit.lang.ast.expr.DirectValue;
+import org.febit.wit.lang.ast.stat.NoopStatement;
+import org.febit.wit.lang.ast.stat.StatementGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,17 +21,19 @@ import java.util.stream.Collectors;
 /**
  * @author zqq90
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class StatementUtil {
 
     private static final Statement[] EMPTY_STATEMENTS = new Statement[0];
     private static final Expression[] EMPTY_EXPRESSIONS = new Expression[0];
+    private static final LoopMeta[] EMPTY_LOOPS = new LoopMeta[0];
 
     public static boolean isImmutableDirectValue(Expression expr) {
         return (expr instanceof DirectValue)
                 && ALU.isKnownBaseImmutable(((DirectValue) expr).value);
     }
 
+    @Nullable
     public static Object calcConst(Expression expr) {
         return StatementUtil.optimize(expr)
                 .getConstValue();
@@ -46,32 +48,8 @@ public class StatementUtil {
         return results;
     }
 
-    public static Object[] execute(Expression[] expressions, InternalContext context) {
-        final int len = expressions.length;
-        final Object[] results = new Object[len];
-        for (int i = 0; i < len; i++) {
-            results[i] = expressions[i].execute(context);
-        }
-        return results;
-    }
-
-    public static void execute(final Statement[] statements, final InternalContext context) {
-        int i = 0;
-        final int len = statements.length;
-        while (i < len) {
-            statements[i++].execute(context);
-        }
-    }
-
-    public static void executeWithLoopCheck(final Statement[] statements, final InternalContext context) {
-        int i = 0;
-        final int len = statements.length;
-        while (i < len && context.noLoop()) {
-            statements[i++].execute(context);
-        }
-    }
-
-    public static Expression optimize(Expression expression) {
+    @Nullable
+    public static Expression optimize(@Nullable Expression expression) {
         if (expression == null) {
             return null;
         }
@@ -84,70 +62,70 @@ public class StatementUtil {
         }
     }
 
-    public static Statement optimize(Statement statement) {
+    public static Statement optimize(@Nullable Statement statement) {
         if (statement == null) {
-            return null;
+            return NoopStatement.INSTANCE;
         }
         try {
             return statement.optimize();
         } catch (Exception e) {
-            throw new ParseException("Exception occur when do optimization", e, statement);
+            throw new ParseException("Exception occur when do optimization", e, statement.getPosition());
         }
     }
 
-    public static List<LoopInfo> asList(LoopInfo... loops) {
-        if (loops == null || loops.length == 0) {
+    public static List<LoopMeta> asList(LoopMeta... loops) {
+        if (loops.length == 0) {
             return Collections.emptyList();
         }
         return Arrays.asList(loops);
     }
 
-    public static List<LoopInfo> collectPossibleLoops(Statement statement) {
+    public static List<LoopMeta> collectPossibleLoops(@Nullable Statement statement) {
         if (statement instanceof Loopable) {
             return ((Loopable) statement).collectPossibleLoops();
         }
         return Collections.emptyList();
     }
 
-    public static List<LoopInfo> collectPossibleLoops(Statement... statements) {
-        if (statements == null || statements.length == 0) {
+    public static List<LoopMeta> collectPossibleLoops(Statement... statements) {
+        if (statements.length == 0) {
             return Collections.emptyList();
         }
-        List<LoopInfo> loopInfos = new ArrayList<>();
+        List<LoopMeta> loops = new ArrayList<>();
         for (Statement statement : statements) {
-            loopInfos.addAll(collectPossibleLoops(statement));
+            loops.addAll(collectPossibleLoops(statement));
         }
-        return loopInfos;
+        return loops;
     }
 
-    public static LoopInfo[] collectPossibleLoopsForWhile(Statement bodyStatement, Statement elseStatement, int label) {
-        List<LoopInfo> list = StatementUtil.collectPossibleLoops(bodyStatement)
+    public static LoopMeta[] collectPossibleLoopsForWhile(Statement bodyStatement, Statement elseStatement, int label) {
+        List<LoopMeta> list = StatementUtil.collectPossibleLoops(bodyStatement)
                 .stream()
                 .filter(loop -> !(loop.matchLabel(label)
-                        && (loop.type == LoopInfo.BREAK || loop.type == LoopInfo.CONTINUE)))
+                        && (loop.type == LoopMeta.BREAK || loop.type == LoopMeta.CONTINUE)))
                 .collect(Collectors.toList());
 
         list.addAll(StatementUtil.collectPossibleLoops(elseStatement));
-        return list.isEmpty() ? null
-                : list.toArray(new LoopInfo[0]);
+        return list.isEmpty() ? EMPTY_LOOPS
+                : list.toArray(new LoopMeta[0]);
     }
 
     public static Expression[] emptyExpressions() {
         return EMPTY_EXPRESSIONS;
     }
 
-    public static Expression[] toExpressionArray(List<Expression> list) {
+    public static Expression[] toExpressionArray(@Nullable List<Expression> list) {
         if (list == null || list.isEmpty()) {
             return EMPTY_EXPRESSIONS;
         }
-        Expression[] arr = list.toArray(new Expression[0]);
+        var arr = list.toArray(new Expression[0]);
         for (int i = 0; i < arr.length; i++) {
             arr[i] = optimize(arr[i]);
         }
         return arr;
     }
 
-    public static Statement[] toStatementArray(List<Statement> list) {
+    public static Statement[] toStatementArray(@Nullable List<Statement> list) {
         if (list == null || list.isEmpty()) {
             return EMPTY_STATEMENTS;
         }
@@ -158,7 +136,7 @@ public class StatementUtil {
                 continue;
             }
             stat = StatementUtil.optimize(stat);
-            if (stat != null) {
+            if (!(stat instanceof NoopStatement)) {
                 temp.add(stat);
             }
         }

@@ -19,7 +19,7 @@ public class AssertGlobalRegister implements GlobalRegister {
     public static final String ASSERT_COUNT_KEY = "$$LIB_ASSERT_COUNT";
 
     @Override
-    public void regist(final GlobalManager manager) {
+    public void register(final GlobalManager manager) {
         manager.setConstMethod("assertTrue", AssertGlobalRegister::assertTrue);
         manager.setConstMethod("assertFalse", AssertGlobalRegister::assertFalse);
         manager.setConstMethod("assertNull", AssertGlobalRegister::assertNull);

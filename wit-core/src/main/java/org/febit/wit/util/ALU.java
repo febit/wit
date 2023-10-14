@@ -1,8 +1,10 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import lombok.experimental.UtilityClass;
+import org.febit.lang.annotation.NullableApi;
 import org.febit.wit.Context;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 
@@ -20,7 +22,8 @@ import java.util.concurrent.atomic.LongAdder;
 @SuppressWarnings({
         "WeakerAccess"
 })
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
+@NullableApi
 public class ALU {
 
     private static final int OBJECT = (1 << 29) - 1;
@@ -68,7 +71,7 @@ public class ALU {
     @SuppressWarnings({
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    private static int getTypeMark(final Object o1) {
+    private static int getTypeMark(@Nonnull final Object o1) {
         final Class<?> cls = o1.getClass();
         if (cls == String.class) {
             return STRING;
@@ -118,8 +121,7 @@ public class ALU {
         return OBJECT;
     }
 
-    private static int getTypeMark(final Object o1, final Object o2) {
-        requireNonNull(o1, o2);
+    private static int getTypeMark(@Nonnull final Object o1, @Nonnull final Object o2) {
         return getTypeMark(o1) | getTypeMark(o2);
     }
 
@@ -174,6 +176,7 @@ public class ALU {
     }
 
     //+
+    @Nullable
     public static Object plus(final Object o1, final Object o2) {
         if (o1 == null || o2 == null) {
             return o1 != null ? o1 : o2;
@@ -209,6 +212,7 @@ public class ALU {
 
     //-
     public static Object minus(final Object o1, final Object o2) {
+        requireNonNull(o1, o2);
         switch (getTypeMark(o1, o2)) {
             case INTEGER:
             case SHORT:
@@ -262,6 +266,7 @@ public class ALU {
 
     //*
     public static Object mult(final Object o1, final Object o2) {
+        requireNonNull(o1, o2);
         switch (getTypeMark(o1, o2)) {
             case INTEGER:
             case SHORT:
@@ -290,6 +295,7 @@ public class ALU {
 
     // /
     public static Object div(final Object o1, final Object o2) {
+        requireNonNull(o1, o2);
         switch (getTypeMark(o1, o2)) {
             case INTEGER:
             case SHORT:
@@ -318,6 +324,7 @@ public class ALU {
 
     // %
     public static Object mod(final Object o1, final Object o2) {
+        requireNonNull(o1, o2);
         switch (getTypeMark(o1, o2)) {
             case INTEGER:
             case SHORT:
@@ -345,11 +352,13 @@ public class ALU {
     }
 
     // &&
+    @Nullable
     public static Object and(final Object o1, final Object o2) {
         return isTrue(o1) ? o2 : o1;
     }
 
     // ||
+    @Nullable
     public static Object or(final Object o1, final Object o2) {
         return isTrue(o1) ? o1 : o2;
     }
@@ -402,6 +411,7 @@ public class ALU {
 
     // >
     public static boolean greater(final Object o1, final Object o2) {
+        requireNonNull(o1, o2);
         switch (getTypeMark(o1, o2)) {
             case BYTE:
             case SHORT:
@@ -434,6 +444,7 @@ public class ALU {
 
     // <
     public static boolean less(final Object o1, final Object o2) {
+        requireNonNull(o1, o2);
         switch (getTypeMark(o1, o2)) {
             case CHAR:
                 return less(charToInt(o1), charToInt(o2));
@@ -466,6 +477,7 @@ public class ALU {
 
     // &
     public static Object bitAnd(final Object o1, final Object o2) {
+        requireNonNull(o1, o2);
         switch (getTypeMark(o1, o2)) {
             case CHAR:
                 return bitAnd(charToInt(o1), charToInt(o2));
@@ -490,6 +502,7 @@ public class ALU {
 
     // |
     public static Object bitOr(final Object o1, final Object o2) {
+        requireNonNull(o1, o2);
         switch (getTypeMark(o1, o2)) {
             case CHAR:
                 return bitOr(charToInt(o1), charToInt(o2));
@@ -513,7 +526,9 @@ public class ALU {
     }
 
     // ^ XOR
+    @Nonnull
     public static Object bitXor(final Object o1, final Object o2) {
+        requireNonNull(o1, o2);
         switch (getTypeMark(o1, o2)) {
             case CHAR:
                 return bitXor(charToInt(o1), charToInt(o2));
@@ -536,7 +551,8 @@ public class ALU {
         throw unsupportedTypeException(o1, o2);
     }
 
-    // ~ 
+    // ~
+    @Nonnull
     public static Object bitNot(final Object o1) {
         requireNonNull(o1);
         switch (getTypeMark(o1)) {
@@ -558,6 +574,7 @@ public class ALU {
     }
 
     // <<
+    @Nonnull
     public static Object lshift(final Object o1, final Object o2) {
         requireNonNull(o1, o2);
         int right = requireNumber(o2).intValue();
@@ -580,6 +597,7 @@ public class ALU {
     }
 
     // >>
+    @Nonnull
     public static Object rshift(final Object o1, final Object o2) {
         requireNonNull(o1, o2);
         int right = requireNumber(o2).intValue();
@@ -602,6 +620,7 @@ public class ALU {
     }
 
     // >>>
+    @Nonnull
     public static Object urshift(final Object o1, final Object o2) {
         requireNonNull(o1, o2);
         int right = requireNumber(o2).intValue();
@@ -635,7 +654,11 @@ public class ALU {
                 || type == Byte.class;
     }
 
+    @Nonnull
     private static BigInteger toBigInteger(final Object o1) {
+        if (o1 == null) {
+            return BigInteger.ZERO;
+        }
         if (o1 instanceof BigInteger) {
             return (BigInteger) o1;
         }
@@ -648,6 +671,7 @@ public class ALU {
         return new BigDecimal(o1.toString()).toBigInteger();
     }
 
+    @Nonnull
     private static BigDecimal toBigDecimal(final Object o1) {
         if (o1 == null) {
             return BigDecimal.ZERO;
@@ -675,12 +699,12 @@ public class ALU {
         if (o == Context.VOID) {
             return false;
         }
-        //if Collection empty 
+        //if Collection empty
         return CollectionUtil.notEmpty(o, true);
     }
 
     private static boolean notDoubleOrFloat(Object o1) {
-        Class<?> type = o1.getClass();
+        Class<?> type = o1 == null ? null : o1.getClass();
         return type != Float.class
                 && type != Double.class;
     }
@@ -689,15 +713,28 @@ public class ALU {
         return notDoubleOrFloat(o1) && notDoubleOrFloat(o2);
     }
 
+    @Nonnull
     private static ScriptRuntimeException unsupportedTypeException(final Object o1, final Object o2) {
-        return new ScriptRuntimeException(StringUtil.format("Unsupported type: left[{}], right[{}]",
-                o1.getClass(), o2.getClass()));
+        return new ScriptRuntimeException(StringUtil.format(
+                "Unsupported type: left[{}], right[{}]",
+                typeString(o1), typeString(o2)
+        ));
     }
 
+    @Nonnull
+    private static String typeString(final Object o1) {
+        return o1 == null ? "null" : o1.getClass().getCanonicalName();
+    }
+
+    @Nonnull
     private static ScriptRuntimeException unsupportedTypeException(final Object o1) {
-        return new ScriptRuntimeException(StringUtil.format("Unsupported type: [{}]", o1.getClass()));
+        return new ScriptRuntimeException(StringUtil.format(
+                "Unsupported type: [{}]",
+                typeString(o1)
+        ));
     }
 
+    @Nonnull
     public static Number requireNumber(final Object val) {
         if (val instanceof Number) {
             return (Number) val;

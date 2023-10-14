@@ -17,7 +17,7 @@ public class GlobalServletRegister implements GlobalRegister {
     protected String servletContextName = "SERVLET_CONTEXT";
 
     @Override
-    public void regist(GlobalManager manager) {
+    public void register(GlobalManager manager) {
         manager.setConst(this.servletContextName, this.servletContext);
         manager.setConst(this.basePathName, this.servletContext.getContextPath());
     }

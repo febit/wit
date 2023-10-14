@@ -1,7 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.exceptions;
 
-import org.febit.wit.core.ast.Statement;
+import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
 
 import java.util.ArrayList;
@@ -55,9 +55,7 @@ public class ScriptRuntimeException extends TemplateException {
         for (Statement statement : statementStack) {
             out.print(prefix)
                     .print("\tat ")
-                    .print(statement.line)
-                    .print(":")
-                    .print(statement.column)
+                    .print(statement.getPosition())
                     .print(" ")
                     .print(statement.getClass().getSimpleName())
                     .print('\n');

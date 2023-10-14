@@ -1,7 +1,5 @@
 package org.febit.wit_shaded.asm;
 
-import lombok.val;
-
 /**
  * bytes buffer.
  */
@@ -29,7 +27,7 @@ final class ByteBuffer {
     ByteBuffer putBB(final int b1, final int b2) {
         int index = this.length;
         ensure(index + 2);
-        val d = this.data;
+        var d = this.data;
         d[index] = (byte) b1;
         d[index + 1] = (byte) b2;
         this.length = index + 2;
@@ -39,7 +37,7 @@ final class ByteBuffer {
     ByteBuffer putBS(final int b, final int s) {
         int index = this.length;
         ensure(index + 3);
-        val d = this.data;
+        var d = this.data;
         d[index] = (byte) b;
         d[index + 1] = (byte) (s >>> 8);
         d[index + 2] = (byte) s;
@@ -50,7 +48,7 @@ final class ByteBuffer {
     ByteBuffer putShort(final int s) {
         int index = this.length;
         ensure(index + 2);
-        val d = this.data;
+        var d = this.data;
         d[index] = (byte) (s >>> 8);
         d[index + 1] = (byte) s;
         this.length = index + 2;
@@ -60,7 +58,7 @@ final class ByteBuffer {
     ByteBuffer putInt(final int i) {
         int index = this.length;
         ensure(index + 4);
-        val d = this.data;
+        var d = this.data;
         d[index++] = (byte) (i >>> 24);
         d[index++] = (byte) (i >>> 16);
         d[index++] = (byte) (i >>> 8);
@@ -75,7 +73,7 @@ final class ByteBuffer {
     ByteBuffer putLong(final long l) {
         int index = this.length;
         ensure(index + 8);
-        val d = this.data;
+        var d = this.data;
         int i = (int) (l >>> 32);
         d[index++] = (byte) (i >>> 24);
         d[index++] = (byte) (i >>> 16);
@@ -111,7 +109,7 @@ final class ByteBuffer {
         }
         int index = this.length;
         ensure(index + 2 + byteLength);
-        val d = this.data;
+        var d = this.data;
         d[index++] = (byte) (byteLength >>> 8);
         d[index++] = (byte) (byteLength);
         for (int i = 0; i < charLength; i++) {

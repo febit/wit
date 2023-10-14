@@ -1,9 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.val;
+import jakarta.annotation.Nullable;
+import lombok.experimental.UtilityClass;
 import org.febit.wit.exceptions.UncheckedException;
 
 import java.lang.reflect.AccessibleObject;
@@ -23,17 +22,17 @@ import java.util.function.Predicate;
 @SuppressWarnings({
         "WeakerAccess"
 })
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class ClassUtil {
 
     private static final ClassMap<Map<String, Method[]>> PUBLIC_MEMBER_METHODS_CACHE = new ClassMap<>();
 
-    public static String getClassName(Object object) {
+    public static String getClassName(@Nullable Object object) {
         return object != null ? object.getClass().getName() : "null";
     }
 
     public static Map<String, Field> getSettableMemberFields(final Class<?> type) {
-        val fields = new HashMap<String, Field>();
+        var fields = new HashMap<String, Field>();
         Class<?> cls = type;
         while (cls != null && cls != Object.class) {
             for (Field f : cls.getDeclaredFields()) {
@@ -93,7 +92,7 @@ public class ClassUtil {
                 result.put(key, method);
             }
         }
-        val methods = result.values()
+        var methods = result.values()
                 .toArray(new Method[0]);
         setAccessible(methods);
         return methods;
@@ -103,6 +102,7 @@ public class ClassUtil {
         return Thread.currentThread().getContextClassLoader();
     }
 
+    @Nullable
     public static Class<?> getBoxedPrimitiveClass(Class<?> type) {
         if (!type.isPrimitive()) {
             return null;
@@ -181,7 +181,8 @@ public class ClassUtil {
         return getClassByInternalName(new String(chars));
     }
 
-    public static Class<?> getPrimitiveClass(final String name) {
+    @Nullable
+    public static Class<?> getPrimitiveClass(@Nullable final String name) {
         if (name == null) {
             return null;
         }

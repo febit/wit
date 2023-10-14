@@ -1,11 +1,9 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.val;
-import org.febit.wit.core.ast.Statement;
+import lombok.experimental.UtilityClass;
 import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.lang.ast.Statement;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -13,12 +11,12 @@ import java.io.PrintWriter;
 /**
  * @author zqq90
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class ExceptionUtil {
 
     public static ScriptRuntimeException toScriptRuntimeException(final Exception ex, final Statement statement) {
         if (ex instanceof ScriptRuntimeException) {
-            val scriptException = (ScriptRuntimeException) ex;
+            var scriptException = (ScriptRuntimeException) ex;
             scriptException.addStatement(statement);
             return scriptException;
         } else {

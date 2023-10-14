@@ -1,18 +1,20 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.febit.wit.core.ast.Statement;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.Iter;
 import org.febit.wit.lang.KeyIter;
+import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.iter.AbstractArrayIter;
 import org.febit.wit.lang.iter.AbstractIter;
 import org.febit.wit.lang.iter.MapKeyIter;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,7 +29,7 @@ import java.util.NoSuchElementException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CollectionUtil {
 
-    public static int getSize(final Object object) {
+    public static int getSize(@Nullable final Object object) {
         if (object == null) {
             return 0;
         }
@@ -35,10 +37,10 @@ public class CollectionUtil {
             return Array.getLength(object);
         }
         if (object instanceof Collection) {
-            return ((Collection) object).size();
+            return ((Collection<?>) object).size();
         }
         if (object instanceof Map) {
-            return ((Map) object).size();
+            return ((Map<?, ?>) object).size();
         }
         if (object instanceof CharSequence) {
             return ((CharSequence) object).length();
@@ -46,7 +48,7 @@ public class CollectionUtil {
         return -1;
     }
 
-    public static boolean notEmpty(final Object object, final boolean defaultValue) {
+    public static boolean notEmpty(@Nullable final Object object, final boolean defaultValue) {
         final int size = getSize(object);
         if (size == 0) {
             return false;
@@ -55,23 +57,24 @@ public class CollectionUtil {
             return true;
         }
         if (object instanceof Iterable) {
-            return ((Iterable) object).iterator().hasNext();
+            return ((Iterable<?>) object).iterator().hasNext();
         }
         if (object instanceof Iterator) {
-            return ((Iterator) object).hasNext();
+            return ((Iterator<?>) object).hasNext();
         }
         if (object instanceof Enumeration) {
-            return ((Enumeration) object).hasMoreElements();
+            return ((Enumeration<?>) object).hasMoreElements();
         }
         return defaultValue;
     }
 
-    public static KeyIter toKeyIter(final Object o1, Statement statement) {
+    public static KeyIter toKeyIter(@Nullable final Object o1, Statement statement) {
         if (o1 == null) {
+            // FIXME: NPE
             return null;
         }
         if (o1 instanceof Map) {
-            return new MapKeyIter((Map) o1);
+            return new MapKeyIter((Map<?, ?>) o1);
         }
         throw new ScriptRuntimeException("Unsupported type to KeyIter: " + o1.getClass(), statement);
     }
@@ -79,9 +82,10 @@ public class CollectionUtil {
     @SuppressWarnings({
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    public static Iter toIter(final Object o1, Statement statement) {
+    public static Iter toIter(@Nullable final Object o1, Statement statement) {
         if (o1 == null) {
-            return null;
+            // FIXME: empty iter
+            return createIter(Collections.emptyIterator());
         }
         final Class<?> clazz = o1.getClass();
         if (clazz.isArray()) {
@@ -92,16 +96,16 @@ public class CollectionUtil {
             }
         } else {
             if (o1 instanceof Iterable) {
-                return createIter(((Iterable) o1).iterator());
+                return createIter(((Iterable<?>) o1).iterator());
             }
             if (o1 instanceof Iterator) {
-                return createIter((Iterator) o1);
+                return createIter((Iterator<?>) o1);
             }
             if (o1 instanceof Iter) {
                 return (Iter) o1;
             }
             if (o1 instanceof Enumeration) {
-                return createIter((Enumeration) o1);
+                return createIter((Enumeration<?>) o1);
             }
             if (o1 instanceof CharSequence) {
                 return createIter((CharSequence) o1);
@@ -119,7 +123,7 @@ public class CollectionUtil {
         };
     }
 
-    private static Iter createIter(Iterator iterator) {
+    private static Iter createIter(Iterator<?> iterator) {
         return new AbstractIter() {
             @Override
             protected Object _next() {
@@ -133,7 +137,7 @@ public class CollectionUtil {
         };
     }
 
-    private static Iter createIter(Enumeration enumeration) {
+    private static Iter createIter(Enumeration<?> enumeration) {
         return new AbstractIter() {
             @Override
             protected Object _next() {

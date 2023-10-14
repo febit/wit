@@ -1,7 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl;
 
-import lombok.val;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.impl.resources.LazyResource;
@@ -20,7 +19,7 @@ public class LazyLoader implements Loader {
 
     @Override
     public Resource get(String name) {
-        val inside = this.loader.get(name);
+        var inside = this.loader.get(name);
         return this.timeout > 0
                 ? new LazyResource(inside, this.timeout)
                 : inside;

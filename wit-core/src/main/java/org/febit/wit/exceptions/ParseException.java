@@ -2,7 +2,8 @@
 package org.febit.wit.exceptions;
 
 import lombok.Getter;
-import org.febit.wit.core.ast.Statement;
+import org.febit.wit.lang.Position;
+import org.febit.wit.lang.TextPosition;
 import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
 
 /**
@@ -11,60 +12,39 @@ import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
 public class ParseException extends TemplateException {
 
     @Getter
-    protected int line;
-    @Getter
-    protected int column;
+    protected final Position position;
 
     public ParseException(String message) {
+        this(message, TextPosition.UNKNOWN);
+    }
+
+    public ParseException(String message, Position position) {
         super(message);
-    }
-
-    public ParseException(String message, int line, int column) {
-        super(message);
-        this.line = line;
-        this.column = column;
-    }
-
-    public static ParseException unsupportedOperator(int line, int column) {
-        return new ParseException("Unsupported Operator", line, column);
-    }
-
-    public ParseException(String message, Statement statement) {
-        this(message, statement.line, statement.column);
+        this.position = position;
     }
 
     public ParseException(String message, Throwable cause) {
-        super(message, cause);
+        this(message, cause, TextPosition.UNKNOWN);
     }
 
-    public ParseException(String message, Throwable cause, int line, int column) {
+    public ParseException(String message, Throwable cause, Position position) {
         super(message, cause);
-        this.line = line;
-        this.column = column;
-    }
-
-    public ParseException(String message, Throwable cause, Statement statement) {
-        this(message, cause, statement.line, statement.column);
+        this.position = position;
     }
 
     public ParseException(Throwable cause) {
-        super(cause);
+        this(cause, TextPosition.UNKNOWN);
     }
 
-    public ParseException(Throwable cause, int line, int column) {
+    public ParseException(Throwable cause, Position position) {
         super(cause);
-    }
-
-    public ParseException(Throwable cause, Statement statement) {
-        this(cause, statement.line, statement.column);
+        this.position = position;
     }
 
     @Override
     protected void printBody(PrintStreamOrWriter out, String prefix) {
         out.print(prefix)
                 .print("\tat ")
-                .print(this.line)
-                .print(":")
-                .print(this.column);
+                .print(this.position);
     }
 }

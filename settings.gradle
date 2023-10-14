@@ -1,5 +1,6 @@
 rootProject.name = 'febit-wit'
 
+include 'wit-bom'
 include 'wit-core'
 include 'wit-tools'
 include 'wit-servlet'

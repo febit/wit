@@ -1,11 +1,10 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl.resources;
 
-import lombok.val;
 import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.lang.InternedEncoding;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.util.ClassUtil;
-import org.febit.wit.util.InternedEncoding;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -50,7 +49,7 @@ public class ClasspathResource implements Resource {
 
     @Override
     public Reader openReader() throws IOException {
-        val in = ClassUtil.getDefaultClassLoader()
+        var in = ClassUtil.getDefaultClassLoader()
                 .getResourceAsStream(path);
         if (in == null) {
             throw new ResourceNotFoundException("Resource Not Found: " + path);

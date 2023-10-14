@@ -1,8 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io;
 
-import lombok.val;
-
 import java.lang.ref.WeakReference;
 
 /**
@@ -21,7 +19,7 @@ public final class Buffers {
     }
 
     public char[] getChars(final int len) {
-        val buf = chars;
+        var buf = chars;
         return buf.length >= len ? buf : upgradeChars(len);
     }
 
@@ -33,7 +31,7 @@ public final class Buffers {
     }
 
     public byte[] getBytes(final int len) {
-        val buf = bytes;
+        var buf = bytes;
         return buf.length >= len ? buf : upgradeBytes(len);
     }
 
@@ -68,7 +66,7 @@ public final class Buffers {
 
     private static Buffers createIfAbsent(final int length) {
         Buffers peers;
-        val ref = CACHE.get();
+        var ref = CACHE.get();
         if (ref == null
                 || (peers = ref.get()) == null) {
             if (ref != null) {

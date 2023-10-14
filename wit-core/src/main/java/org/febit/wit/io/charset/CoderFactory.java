@@ -2,7 +2,7 @@
 package org.febit.wit.io.charset;
 
 import org.febit.wit.io.Buffers;
-import org.febit.wit.util.InternedEncoding;
+import org.febit.wit.lang.InternedEncoding;
 
 /**
  * @author zqq90

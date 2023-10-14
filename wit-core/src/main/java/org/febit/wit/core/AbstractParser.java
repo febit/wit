@@ -1,48 +1,50 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import lombok.val;
+import jakarta.annotation.Nullable;
 import org.febit.wit.Engine;
 import org.febit.wit.Template;
 import org.febit.wit.core.VariantManager.VarAddress;
-import org.febit.wit.core.ast.AssignableExpression;
-import org.febit.wit.core.ast.Expression;
-import org.febit.wit.core.ast.Statement;
-import org.febit.wit.core.ast.TemplateAST;
-import org.febit.wit.core.ast.expressions.BreakpointExpression;
-import org.febit.wit.core.ast.expressions.ContextScopeValue;
-import org.febit.wit.core.ast.expressions.ContextValue;
-import org.febit.wit.core.ast.expressions.DirectValue;
-import org.febit.wit.core.ast.expressions.DynamicNativeMethodExecute;
-import org.febit.wit.core.ast.expressions.GlobalValue;
-import org.febit.wit.core.ast.expressions.MapValue;
-import org.febit.wit.core.ast.expressions.MethodExecute;
-import org.febit.wit.core.ast.expressions.NativeStaticValue;
-import org.febit.wit.core.ast.operators.And;
-import org.febit.wit.core.ast.operators.Assign;
-import org.febit.wit.core.ast.operators.BiOperator;
-import org.febit.wit.core.ast.operators.ConstableBiOperator;
-import org.febit.wit.core.ast.operators.ConstableOperator;
-import org.febit.wit.core.ast.operators.GroupAssign;
-import org.febit.wit.core.ast.operators.IntStep;
-import org.febit.wit.core.ast.operators.Or;
-import org.febit.wit.core.ast.operators.SelfOperator;
-import org.febit.wit.core.ast.statements.Block;
-import org.febit.wit.core.ast.statements.BlockNoLoops;
-import org.febit.wit.core.ast.statements.BreakpointStatement;
-import org.febit.wit.core.ast.statements.IBlock;
-import org.febit.wit.core.ast.statements.If;
-import org.febit.wit.core.ast.statements.IfElse;
-import org.febit.wit.core.ast.statements.IfNot;
-import org.febit.wit.core.ast.statements.Interpolation;
-import org.febit.wit.core.ast.statements.NoneStatement;
-import org.febit.wit.core.ast.statements.StatementGroup;
-import org.febit.wit.core.ast.statements.TryPart;
 import org.febit.wit.core.text.TextStatementFactory;
 import org.febit.wit.debug.BreakpointListener;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.UncheckedException;
+import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.Position;
+import org.febit.wit.lang.TextPosition;
+import org.febit.wit.lang.ast.AssignableExpression;
+import org.febit.wit.lang.ast.Expression;
+import org.febit.wit.lang.ast.Statement;
+import org.febit.wit.lang.ast.TemplateAST;
+import org.febit.wit.lang.ast.expr.BreakpointExpression;
+import org.febit.wit.lang.ast.expr.ContextScopeValue;
+import org.febit.wit.lang.ast.expr.ContextValue;
+import org.febit.wit.lang.ast.expr.DirectValue;
+import org.febit.wit.lang.ast.expr.DynamicNativeMethodExecute;
+import org.febit.wit.lang.ast.expr.GlobalValue;
+import org.febit.wit.lang.ast.expr.MapValue;
+import org.febit.wit.lang.ast.expr.MethodExecute;
+import org.febit.wit.lang.ast.expr.NativeStaticValue;
+import org.febit.wit.lang.ast.oper.And;
+import org.febit.wit.lang.ast.oper.Assign;
+import org.febit.wit.lang.ast.oper.ConstableBiOperator;
+import org.febit.wit.lang.ast.oper.ConstableUnaryOperator;
+import org.febit.wit.lang.ast.oper.GroupAssign;
+import org.febit.wit.lang.ast.oper.IntStep;
+import org.febit.wit.lang.ast.oper.Or;
+import org.febit.wit.lang.ast.oper.SelfOperator;
+import org.febit.wit.lang.ast.stat.Block;
+import org.febit.wit.lang.ast.stat.BlockNoLoops;
+import org.febit.wit.lang.ast.stat.BreakpointStatement;
+import org.febit.wit.lang.ast.stat.IBlock;
+import org.febit.wit.lang.ast.stat.If;
+import org.febit.wit.lang.ast.stat.IfElse;
+import org.febit.wit.lang.ast.stat.IfNot;
+import org.febit.wit.lang.ast.stat.Interpolation;
+import org.febit.wit.lang.ast.stat.NoopStatement;
+import org.febit.wit.lang.ast.stat.StatementGroup;
+import org.febit.wit.lang.ast.stat.TryPart;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.ResourceOffset;
 import org.febit.wit.security.NativeSecurityManager;
@@ -239,7 +241,7 @@ abstract class AbstractParser {
     @SuppressWarnings({
             "squid:ForLoopCounterChangedCheck"
     })
-    private static short getReduce(final short[] row, int sym) {
+    private static short getReduce(@Nullable final short[] row, int sym) {
         if (row != null) {
             for (int probe = 0, len = row.length; probe < len; probe++) {
                 if (row[probe++] == sym) {
@@ -315,7 +317,7 @@ abstract class AbstractParser {
     }
 
     public static TemplateAST parse(final Template template,
-                                    BreakpointListener breakpointListener) throws ParseException {
+                                    @Nullable BreakpointListener breakpointListener) throws ParseException {
         return new Parser().doParse(template, breakpointListener);
     }
 
@@ -324,6 +326,10 @@ abstract class AbstractParser {
     }
 
     abstract Object doAction(int actionId) throws ParseException;
+
+    static ParseException unsupportedOperator(Position position) {
+        return new ParseException("Unsupported Operator", position);
+    }
 
     @SuppressWarnings({
             "squid:S135", // Loops should not contain more than a single "break" or "continue" statement
@@ -338,13 +344,10 @@ abstract class AbstractParser {
         stack.clear();
 
         //Start Symbol
-        currentSymbol = new Symbol(0, -1, -1, null);
+        currentSymbol = new Symbol(0, TextPosition.UNKNOWN, null);
         currentSymbol.state = 0;
         stack.push(currentSymbol);
 
-        final short[][] actionTable = ACTION_TABLE;
-        final short[][] reduceTable = REDUCE_TABLE;
-        final short[][] productionTable = PRODUCTION_TABLE;
         final boolean looseSemicolon = this.engine.isLooseSemicolon();
 
         Symbol pendingPending = null;
@@ -354,7 +357,7 @@ abstract class AbstractParser {
         do {
 
             // look up action out of the current state with the current input
-            act = getAction(actionTable[currentSymbol.state], pending.id);
+            act = getAction(ACTION_TABLE[currentSymbol.state], pending.id);
 
             // decode the action -- > 0 encodes shift
             if (act > 0) {
@@ -410,12 +413,12 @@ abstract class AbstractParser {
                     && looseSemicolon
                     && pending.id != Tokens.SEMICOLON
                     && (currentSymbol.isOnEdgeOfNewLine || pending.id == Tokens.RBRACE)) {
-                act = getAction(actionTable[currentSymbol.state], Tokens.SEMICOLON);
+                act = getAction(ACTION_TABLE[currentSymbol.state], Tokens.SEMICOLON);
                 if (act != 0) {
                     pendingPending = pending;
                     pending = createLooseSemicolonSymbol(pendingPending);
                     if (act > 0) {
-                        // go back to do  
+                        // go back to do
                         continue;
                     }
                 }
@@ -423,26 +426,27 @@ abstract class AbstractParser {
             if (act == 0) {
                 throw new ParseException(StringUtil.format("Syntax error at line {} column {}, Hints: {}",
                         lexer.getLine(), lexer.getColumn(), getSimpleHintMessage(currentSymbol)),
-                        lexer.getLine(), lexer.getColumn());
+                        TextPosition.of(lexer.getLine(), lexer.getColumn())
+                );
             }
             boolean isLastSymbolOnEdgeOfNewLine = currentSymbol.isOnEdgeOfNewLine;
             // if its less than zero, then it encodes a reduce action
             act = (-act) - 1;
             final Object result = doAction(act);
-            final short[] row = productionTable[act];
+            final short[] row = PRODUCTION_TABLE[act];
             final int symId = row[0];
             final int handleSize = row[1];
             if (handleSize == 0) {
-                currentSymbol = new Symbol(symId, -1, -1, result);
+                currentSymbol = new Symbol(symId, TextPosition.UNKNOWN, result);
             } else {
                 //position based on left
-                currentSymbol = new Symbol(symId, result, stack.peek(handleSize - 1));
+                currentSymbol = new Symbol(symId, stack.peek(handleSize - 1).pos, result);
                 //pop the handle
                 stack.pops(handleSize);
             }
 
-            // look up the state to go to from the one popped back to shift to that state 
-            currentSymbol.state = getReduce(reduceTable[stack.peek().state], symId);
+            // look up the state to go to from the one popped back to shift to that state
+            currentSymbol.state = getReduce(REDUCE_TABLE[stack.peek().state], symId);
             currentSymbol.isOnEdgeOfNewLine = isLastSymbolOnEdgeOfNewLine;
             stack.push(currentSymbol);
         } while (goonParse);
@@ -451,16 +455,18 @@ abstract class AbstractParser {
     }
 
     private Symbol createLooseSemicolonSymbol(Symbol referSymbol) {
-        return new Symbol(Tokens.SEMICOLON, referSymbol.line, referSymbol.column, null);
+        return new Symbol(Tokens.SEMICOLON, referSymbol.pos, null);
     }
 
     /**
      * @param template Template
      * @return TemplateAST
-     * @throws ParseException
+     * @throws ParseException ParseException
      */
-    protected TemplateAST doParse(final Template template,
-                                  final BreakpointListener breakpointListener) throws ParseException {
+    protected TemplateAST doParse(
+            final Template template,
+            @Nullable final BreakpointListener breakpointListener
+    ) throws ParseException {
         final Engine myEngine = template.getEngine();
         final Resource resource = template.getResource();
         this.textStatementFactory = myEngine.get(TextStatementFactory.class);
@@ -504,17 +510,6 @@ abstract class AbstractParser {
                 }
             }
         }
-    }
-
-    void registerClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
-        final String className = classNameBand.getClassSimpleName();
-        if (ClassUtil.getPrimitiveClass(className) != null) {
-            throw new ParseException("Duplicate class simple name:" + classNameBand.getClassPureName(), line, column);
-        }
-        if (importedClasses.containsKey(className)) {
-            throw new ParseException("Duplicate class register:" + classNameBand.getClassPureName(), line, column);
-        }
-        importedClasses.put(className, classNameBand.getClassPureName());
     }
 
     Class<?> toClass(String className) {
@@ -571,13 +566,15 @@ abstract class AbstractParser {
         return className;
     }
 
-    Class<?> toClass(ClassNameBand classNameBand, int line, int column) throws ParseException {
-        String classFullName = resolveClassFullName(classNameBand.getClassPureName());
-        try {
-            return ClassUtil.getClass(classFullName, classNameBand.getArrayDepth());
-        } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class<?> not found:".concat(classFullName), ex, line, column);
+    void registerClass(ClassNameBand classNameBand, Position position) throws ParseException {
+        final String className = classNameBand.getClassSimpleName();
+        if (ClassUtil.getPrimitiveClass(className) != null) {
+            throw new ParseException("Duplicate class simple name:" + classNameBand.getClassPureName(), position);
         }
+        if (importedClasses.containsKey(className)) {
+            throw new ParseException("Duplicate class register:" + classNameBand.getClassPureName(), position);
+        }
+        importedClasses.put(className, classNameBand.getClassPureName());
     }
 
     int getLabelIndex(String label) {
@@ -585,56 +582,65 @@ abstract class AbstractParser {
                 l -> nextLabelIndex.getAndIncrement());
     }
 
-    Expression createAssign(AssignableExpression lexpr, Expression rexpr, int line, int column) {
-        return new Assign(lexpr, rexpr, line, column);
+    Class<?> toClass(ClassNameBand classNameBand, Position position) throws ParseException {
+        String classFullName = resolveClassFullName(classNameBand.getClassPureName());
+        try {
+            return ClassUtil.getClass(classFullName, classNameBand.getArrayDepth());
+        } catch (ClassNotFoundException ex) {
+            throw new ParseException("Class<?> not found:".concat(classFullName), ex, position);
+        }
     }
 
-    Expression createGroupAssign(Expression[] lexprs, Expression rexpr, int line, int column) {
+    Expression createAssign(AssignableExpression lexpr, Expression rexpr, Position position) {
+        return new Assign(lexpr, rexpr, position);
+    }
+
+    Expression createGroupAssign(Expression[] lexprs, Expression rexpr, Position position) {
         AssignableExpression[] resetableExprs = new AssignableExpression[lexprs.length];
         for (int i = 0; i < lexprs.length; i++) {
             resetableExprs[i] = castToAssignableExpression(lexprs[i]);
         }
-        return new GroupAssign(resetableExprs, rexpr, line, column);
+        return new GroupAssign(resetableExprs, rexpr, position);
     }
 
-    Expression createBreakpointExpression(Expression labelExpr, Expression expr, int line, int column) {
+    Expression createBreakpointExpression(@Nullable Expression labelExpr, Expression expr, Position position) {
         final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr);
         if (breakpointListener == null) {
             return expr;
         }
-        return new BreakpointExpression(breakpointListener, label, expr, line, column);
+        return new BreakpointExpression(breakpointListener, label, expr, position);
     }
 
-    Statement createBreakpointStatement(Expression labelExpr, Statement statement, int line, int column) {
+    Statement createBreakpointStatement(@Nullable Expression labelExpr, Statement statement, Position position) {
         final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr);
         if (breakpointListener == null) {
             return statement;
         }
-        return new BreakpointStatement(breakpointListener, label, statement, line, column);
+        return new BreakpointStatement(breakpointListener, label, statement, position);
     }
 
-    Statement createTextStatement(char[] text, int line, int column) {
+    Statement createTextStatement(@Nullable char[] text, Position position) {
         if (text == null || text.length == 0) {
-            return NoneStatement.INSTANCE;
+            return NoopStatement.INSTANCE;
         }
-        return this.textStatementFactory.getTextStatement(template, text, line, column);
+        return this.textStatementFactory.getTextStatement(template, text, position);
     }
 
-    ContextValue declareVarAndCreateContextValue(String name, int line, int column) {
-        return new ContextValue(varmgr.assignVariant(name, line, column), line, column);
+    ContextValue declareVarAndCreateContextValue(String name, Position position) {
+        return new ContextValue(varmgr.assignVariant(name, position), position);
     }
 
-    ContextValue[] declareVarAndCreateContextValues(List<String> names, int line, int column) {
+    ContextValue[] declareVarAndCreateContextValues(List<String> names, Position position) {
         ContextValue[] contextValues = new ContextValue[names.size()];
         for (int i = 0; i < names.size(); i++) {
-            contextValues[i] = declareVarAndCreateContextValue(names.get(i), line, column);
+            contextValues[i] = declareVarAndCreateContextValue(names.get(i), position);
         }
         return contextValues;
     }
 
-    MapValue createMapValue(List<Expression[]> propertyDefList, int line, int column) {
+    MapValue createMapValue(@Nullable List<Expression[]> propertyDefList, Position position) {
         if (propertyDefList == null || propertyDefList.isEmpty()) {
-            return new MapValue(StatementUtil.emptyExpressions(), StatementUtil.emptyExpressions(), line, column);
+            return new MapValue(StatementUtil.emptyExpressions(), StatementUtil.emptyExpressions(), position);
         }
         int size = propertyDefList.size();
         Expression[] keys = new Expression[size];
@@ -645,88 +651,88 @@ abstract class AbstractParser {
             keys[i] = def[0];
             values[i] = def[1];
         }
-        return new MapValue(keys, values, line, column);
+        return new MapValue(keys, values, position);
     }
 
     DirectValue createDirectValue(Symbol sym) {
-        return new DirectValue(sym.value, sym.line, sym.column);
+        return new DirectValue(sym.value, sym.pos);
     }
 
-    Expression createContextValue(VarAddress addr, int line, int column) {
+    Expression createContextValue(VarAddress addr, Position position) {
         switch (addr.type) {
             case VarAddress.GLOBAL:
-                return new GlobalValue(this.engine.getGlobalManager(), addr.constValue.toString(), line, column);
+                return new GlobalValue(this.engine.getGlobalManager(), addr.constValue.toString(), position);
             case VarAddress.CONST:
-                return new DirectValue(addr.constValue, line, column);
+                return new DirectValue(addr.constValue, position);
             case VarAddress.SCOPE:
-                return new ContextScopeValue(addr.scopeOffset, addr.index, line, column);
+                return new ContextScopeValue(addr.scopeOffset, addr.index, position);
             default:
                 //VarAddress.CONTEXT
-                return new ContextValue(addr.index, line, column);
+                return new ContextValue(addr.index, position);
         }
     }
 
-    Expression createContextValueAtUpstair(int upstair, String name, int line, int column) {
-        return createContextValue(varmgr.locateAtUpstair(name, upstair, line, column), line, column);
+    Expression createContextValueAtUpstair(int upstair, String name, Position position) {
+        return createContextValue(varmgr.locateAtUpstair(name, upstair, position), position);
     }
 
-    Expression createContextValue(int upstair, String name, int line, int column) {
-        return createContextValue(varmgr.locate(name, upstair, this.locateVarForce, line, column), line, column);
+    Expression createContextValue(int upstair, String name, Position position) {
+        return createContextValue(varmgr.locate(name, upstair, this.locateVarForce, position), position);
     }
 
-    void assignConst(String name, Expression expr, int line, int column) {
-        varmgr.assignConst(name, StatementUtil.calcConst(expr), line, column);
-    }
-
-    Expression createNativeStaticValue(ClassNameBand classNameBand, int line, int column) {
-        if (classNameBand.size() <= 1) {
-            throw new ParseException("native static need a field name.", line, column);
-        }
-        final String fieldName = classNameBand.pop();
-        final Class<?> clazz = toClass(classNameBand, line, column);
-        final String path = clazz.getName() + '.' + fieldName;
-        if (!this.nativeSecurityManager.access(path)) {
-            throw new ParseException("Inaccessible native path: ".concat(path), line, column);
-        }
-        final Field field;
-        try {
-            field = clazz.getField(fieldName);
-        } catch (NoSuchFieldException ex) {
-            throw new ParseException("No such field: ".concat(path), ex, line, column);
-        }
-        if (ClassUtil.isStatic(field)) {
-            ClassUtil.setAccessible(field);
-            if (ClassUtil.isFinal(field)) {
-                try {
-                    return new DirectValue(field.get(null), line, column);
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
-                    throw new ParseException("Failed to get static field value: ".concat(path), ex, line, column);
-                }
-            } else {
-                return new NativeStaticValue(field, line, column);
-            }
-        } else {
-            throw new ParseException("No a static field: ".concat(path), line, column);
-        }
+    void assignConst(String name, Expression expr, Position position) {
+        varmgr.assignConst(name, StatementUtil.calcConst(expr), position);
     }
 
     Statement createInterpolation(final Expression expr) {
         return new Interpolation(expr);
     }
 
-    Expression createNativeNewArrayDeclareExpression(Class<?> componentType, int line, int column) {
-        return new DirectValue(this.nativeFactory.getNativeNewArrayMethodDeclare(componentType, line, column, true),
-                line, column);
+    Expression createNativeStaticValue(ClassNameBand classNameBand, Position position) {
+        if (classNameBand.size() <= 1) {
+            throw new ParseException("native static need a field name.", position);
+        }
+        final String fieldName = classNameBand.pop();
+        final Class<?> clazz = toClass(classNameBand, position);
+        final String path = clazz.getName() + '.' + fieldName;
+        if (!this.nativeSecurityManager.access(path)) {
+            throw new ParseException("Inaccessible native path: ".concat(path), position);
+        }
+        final Field field;
+        try {
+            field = clazz.getField(fieldName);
+        } catch (NoSuchFieldException ex) {
+            throw new ParseException("No such field: ".concat(path), ex, position);
+        }
+        if (ClassUtil.isStatic(field)) {
+            ClassUtil.setAccessible(field);
+            if (ClassUtil.isFinal(field)) {
+                try {
+                    return new DirectValue(field.get(null), position);
+                } catch (IllegalArgumentException | IllegalAccessException ex) {
+                    throw new ParseException("Failed to get static field value: ".concat(path), ex, position);
+                }
+            } else {
+                return new NativeStaticValue(field, position);
+            }
+        } else {
+            throw new ParseException("No a static field: ".concat(path), position);
+        }
+    }
+
+    Expression createNativeNewArrayDeclareExpression(Class<?> componentType, Position position) {
+        return new DirectValue(this.nativeFactory.getNativeNewArrayMethodDeclare(componentType, position, true),
+                position);
     }
 
     Expression createNativeMethodDeclareExpression(Class<?> clazz, String methodName,
-                                                   List<Class> list, int line, int column) {
+                                                   @Nullable List<Class> list, Position position) {
         return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName,
                 list == null ? new Class[0] : list.toArray(new Class[0]),
-                line, column, true), line, column);
+                position, true), position);
     }
 
-    Expression createMethodReference(String ref, int line, int column) {
+    Expression createMethodReference(String ref, Position position) {
         int split = ref.indexOf("::");
         String className = ref.substring(0, split).trim();
         String method = ref.substring(split + 2).trim();
@@ -735,99 +741,100 @@ abstract class AbstractParser {
         if ("new".equals(method)) {
             if (cls.isArray()) {
                 methodDeclare = this.nativeFactory.getNativeNewArrayMethodDeclare(cls.getComponentType(),
-                        line, column, true);
+                        position, true);
             } else {
-                methodDeclare = this.nativeFactory.getNativeConstructorDeclare(cls, line, column, true);
+                methodDeclare = this.nativeFactory.getNativeConstructorDeclare(cls, position, true);
             }
         } else {
-            methodDeclare = this.nativeFactory.getNativeMethodDeclare(cls, method, line, column, true);
+            methodDeclare = this.nativeFactory.getNativeMethodDeclare(cls, method, position, true);
         }
-        return new DirectValue(methodDeclare, line, column);
+        return new DirectValue(methodDeclare, position);
     }
 
-    Expression createNativeConstructorDeclareExpression(Class<?> clazz, List<Class> list, int line, int column) {
+    Expression createNativeConstructorDeclareExpression(Class<?> clazz, List<Class> list, Position position) {
         return new DirectValue(this.nativeFactory.getNativeConstructorDeclare(clazz,
                 list == null ? new Class[0] : list.toArray(new Class[0]),
-                line, column, true), line, column);
+                position, true), position);
     }
 
-    Statement declareVar(String ident, int line, int column) {
+    Statement declareVar(String ident, Position position) {
         //XXX: Should Check var used before init
-        varmgr.assignVariant(ident, line, column);
-        return NoneStatement.INSTANCE;
+        varmgr.assignVariant(ident, position);
+        return NoopStatement.INSTANCE;
     }
 
     Statement createIfStatement(Expression ifExpr, Statement thenStatement,
-                                Statement elseStatement, int line, int column) {
+                                Statement elseStatement, Position position) {
         thenStatement = StatementUtil.optimize(thenStatement);
         elseStatement = StatementUtil.optimize(elseStatement);
-        if (thenStatement != null) {
-            if (elseStatement != null) {
-                return new IfElse(ifExpr, thenStatement, elseStatement, line, column);
+        if (!(thenStatement instanceof NoopStatement)) {
+            if (elseStatement instanceof NoopStatement) {
+                return new If(ifExpr, thenStatement, position);
             } else {
-                return new If(ifExpr, thenStatement, line, column);
+                return new IfElse(ifExpr, thenStatement, elseStatement, position);
             }
-        } else if (elseStatement != null) {
-            return new IfNot(ifExpr, elseStatement, line, column);
+        } else if (!(elseStatement instanceof NoopStatement)) {
+            return new IfNot(ifExpr, elseStatement, position);
         } else {
-            return NoneStatement.INSTANCE;
+            return NoopStatement.INSTANCE;
         }
     }
 
-    Statement createStatementGroup(List<Statement> list, int line, int column) {
-        return new StatementGroup(StatementUtil.toStatementArray(list), line, column);
+    Statement createStatementGroup(List<Statement> list, Position position) {
+        return new StatementGroup(StatementUtil.toStatementArray(list), position);
     }
 
-    Expression createMethodExecute(Expression funcExpr, Expression[] paramExprs, int line, int column) {
+    Expression createMethodExecute(Expression funcExpr, Expression[] paramExprs, Position position) {
         StatementUtil.optimize(paramExprs);
         funcExpr = StatementUtil.optimize(funcExpr);
-        return new MethodExecute(funcExpr, paramExprs, line, column);
+        return new MethodExecute(funcExpr, paramExprs, position);
     }
 
     Expression createDynamicNativeMethodExecute(Expression thisExpr, String func,
-                                                Expression[] paramExprs, int line, int column) {
+                                                Expression[] paramExprs, Position position) {
         StatementUtil.optimize(paramExprs);
         thisExpr = StatementUtil.optimize(thisExpr);
-        return new DynamicNativeMethodExecute(thisExpr, func, paramExprs, line, column);
+        return new DynamicNativeMethodExecute(thisExpr, func, paramExprs, position);
     }
 
     TemplateAST createTemplateAST(List<Statement> list) {
         Statement[] statements = StatementUtil.toStatementArray(list);
-        List<LoopInfo> loops = StatementUtil.collectPossibleLoops(statements);
+        List<LoopMeta> loops = StatementUtil.collectPossibleLoops(statements);
         if (!loops.isEmpty()) {
             throw new ParseException("loop overflow: " + StringUtil.join(loops, ','));
         }
         return new TemplateAST(varmgr.getIndexers(), statements, varmgr.getVarCount(), this.lastResourceVersion);
     }
 
-    IBlock createIBlock(List<Statement> list, int varIndexer, int line, int column) {
-        Statement[] statements = StatementUtil.toStatementArray(list);
-        List<LoopInfo> loops = StatementUtil.collectPossibleLoops(statements);
+    IBlock createIBlock(@Nullable List<Statement> list, int varIndexer, Position position) {
+        var statements = StatementUtil.toStatementArray(list);
+        var loops = StatementUtil.collectPossibleLoops(statements);
         return loops.isEmpty()
-                ? new BlockNoLoops(varIndexer, statements, line, column)
-                : new Block(varIndexer, statements, loops.toArray(new LoopInfo[0]), line, column);
-    }
-
-    TryPart createTryPart(List<Statement> list, int varIndexer, int line, int column) {
-        return new TryPart(createIBlock(list, varIndexer, line, column), line, column);
+                ? new BlockNoLoops(varIndexer, statements, position)
+                : new Block(varIndexer, statements, loops.toArray(new LoopMeta[0]), position);
     }
 
     AssignableExpression castToAssignableExpression(Expression expr) {
         if (expr instanceof AssignableExpression) {
             return (AssignableExpression) expr;
         }
-        throw new ParseException("expression is not assignable", expr);
+        throw new ParseException("expression is not assignable", expr.getPosition());
     }
 
-    Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, int line, int column) {
+    TryPart createTryPart(List<Statement> list, int varIndexer, Position position) {
+        return new TryPart(createIBlock(list, varIndexer, position), position);
+    }
+
+    Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, Position position) {
         AssignableExpression leftExpr = castToAssignableExpression(lexpr);
-        val biFunc = getBiFunctionForBiOperator(sym);
+        var biFunc = getBiFunctionForBiOperator(sym);
         if (biFunc == null) {
-            throw ParseException.unsupportedOperator(line, column);
+            throw unsupportedOperator(position);
         }
-        return StatementUtil.optimize(new SelfOperator(leftExpr, rightExpr, biFunc, line, column));
+        return StatementUtil.optimize(new SelfOperator(leftExpr, rightExpr, biFunc, position));
     }
 
+    @Nullable
     BiFunction<Object, Object, Object> getBiFunctionForBiOperator(int op) {
         switch (op) {
             case OP_PLUSEQ:
@@ -880,11 +887,9 @@ abstract class AbstractParser {
         }
     }
 
-    Expression createOperator(Expression expr, Symbol symSymbol) {
-        int line = symSymbol.line;
-        int column = symSymbol.column;
+    Expression createOperator(Expression expr, Symbol sym) {
         Function<Object, Object> func;
-        switch ((Integer) symSymbol.value) {
+        switch ((Integer) sym.value) {
             case Tokens.COMP:
                 func = ALU::bitNot;
                 break;
@@ -895,31 +900,29 @@ abstract class AbstractParser {
                 func = ALU::not;
                 break;
             default:
-                throw ParseException.unsupportedOperator(line, column);
+                throw unsupportedOperator(sym.pos);
         }
-        return StatementUtil.optimize(new ConstableOperator(expr, func, line, column));
+        return StatementUtil.optimize(new ConstableUnaryOperator(expr, func, sym.pos));
     }
 
-    Expression createBiOperator(Expression leftExpr, Symbol symSymbol, Expression rightExpr) {
-        int line = symSymbol.line;
-        int column = symSymbol.column;
-        BiOperator op;
-        switch ((Integer) symSymbol.value) {
+    Expression createBiOperator(Expression leftExpr, Symbol sym, Expression rightExpr) {
+        Expression op;
+        switch ((Integer) sym.value) {
             case Tokens.ANDAND:
-                op = new And(leftExpr, rightExpr, line, column);
+                op = new And(leftExpr, rightExpr, sym.pos);
                 break;
             case Tokens.OROR:
-                op = new Or(leftExpr, rightExpr, line, column);
+                op = new Or(leftExpr, rightExpr, sym.pos);
                 break;
             case Tokens.DOTDOT:
-                op = new IntStep(leftExpr, rightExpr, line, column);
+                op = new IntStep(leftExpr, rightExpr, sym.pos);
                 break;
             default:
-                val biFunc = getBiFunctionForBiOperator((Integer) symSymbol.value);
+                var biFunc = getBiFunctionForBiOperator((Integer) sym.value);
                 if (biFunc == null) {
-                    throw ParseException.unsupportedOperator(line, column);
+                    throw unsupportedOperator(sym.pos);
                 }
-                op = new ConstableBiOperator(leftExpr, rightExpr, biFunc, line, column);
+                op = new ConstableBiOperator(leftExpr, rightExpr, biFunc, sym.pos);
         }
         return StatementUtil.optimize(op);
     }

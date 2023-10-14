@@ -1,7 +1,9 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
+import jakarta.annotation.Nullable;
 import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.lang.TextPosition;
 import org.febit.wit.loaders.ResourceOffset;
 import org.febit.wit.util.LexerCharArrayWriter;
 
@@ -9,6 +11,16 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 
+@SuppressWarnings({
+        "unused",
+        "CStyleArrayDeclaration",
+        "DuplicateBranchesInSwitch",
+        "FieldCanBeLocal",
+        "JavadocBlankLines",
+        "SameParameterValue",
+        "UnnecessaryUnicodeEscape",
+        "UnnecessaryLocalVariable",
+})
 %%
 %class Lexer
 %function _parseNextToken
@@ -23,7 +35,7 @@ import java.util.Deque;
 
     private static final int INTERPOLATION_START_LEN = 2;
     private static final int TEXT_BLOCK_END_LEN = 2;
-    private static final Symbol SYM_NEW_LINE = new Symbol(-1, -1, -1, '\n');
+    private static final Symbol SYM_NEW_LINE = new Symbol(-1, TextPosition.UNKNOWN, '\n');
 
     private boolean interpolationFlag = false;
     private boolean leftInterpolationFlag = true;
@@ -34,7 +46,7 @@ import java.util.Deque;
     private boolean trimCodeBlockBlankLine = false;
     private int stringLine = 0;
     private int stringColumn = 0;
-    
+
     private int offsetLine = 0;
     private int offsetColumnOfFirstLine = 0;
 
@@ -62,8 +74,8 @@ import java.util.Deque;
 
     public Symbol nextToken() throws java.io.IOException {
         Symbol next;
-        
-        // skip new-line 
+
+        // skip new-line
         do {
             next = _nextToken();
         } while (next == SYM_NEW_LINE);
@@ -73,7 +85,7 @@ import java.util.Deque;
                 || next.id == Tokens.SEMICOLON) {
             return next;
         }
-        
+
         // Others must check if next token is new-line or EOF
         Symbol nextAfter = _nextToken();
         // return back
@@ -87,30 +99,34 @@ import java.util.Deque;
     public void close() throws java.io.IOException {
         yyclose();
     }
-    
-    public void setTrimCodeBlockBlankLine(boolean flag){
+
+    public void setTrimCodeBlockBlankLine(boolean flag) {
         trimCodeBlockBlankLine = flag;
     }
-    
-    public void setOffset(int offsetLine, int offsetColumnOfFirstLine){
+
+    public void setOffset(int offsetLine, int offsetColumnOfFirstLine) {
         this.offsetLine = offsetLine;
         this.offsetColumnOfFirstLine = 1 - offsetColumnOfFirstLine;
     }
-    
-    public void setOffset(ResourceOffset offset){
+
+    public void setOffset(ResourceOffset offset) {
         setOffset(offset.getOffsetLine(), offset.getOffsetColumnOfFirstLine());
     }
-    
-    public int getColumn(){
+
+    public int getColumn() {
         return yycolumn + (yyline == offsetLine ? offsetColumnOfFirstLine : 1);
     }
-    
-    public int getLine(){
+
+    public int getLine() {
         return yyline - offsetLine + 1;
     }
 
-    public char yychar(){
-        return (char)yychar;
+    public TextPosition getPosition() {
+        return TextPosition.of(getLine(), getColumn());
+    }
+
+    public char yychar() {
+        return (char) yychar;
     }
 
     private char[] popAsCharArray() {
@@ -144,7 +160,7 @@ import java.util.Deque;
             stringBuffer.append(c);
         } else if (repeat == 2) {
             stringBuffer.append(c).append(c);
-        } else if(repeat != 0){
+        } else if (repeat != 0) {
             final char[] chars = new char[repeat];
             while (repeat != 0) {
                 chars[--repeat] = c;
@@ -166,29 +182,29 @@ import java.util.Deque;
     }
 
     private Symbol symbol(int sym) {
-        return new Symbol(sym, yyline + 1, yycolumn + 1, sym);
+        return symbol(sym, yyline + 1, yycolumn + 1, sym);
     }
 
-    private Symbol symbol(int sym, Object val) {
-        return new Symbol(sym, yyline + 1, yycolumn + 1, val);
-    }
-    
-    private Symbol symbol(int sym, int line, int column, Object val) {
-        return new Symbol(sym, line, column, val);
+    private Symbol symbol(int sym, @Nullable Object val) {
+        return symbol(sym, yyline + 1, yycolumn + 1, val);
     }
 
-    private Symbol popTextStatementSymbol(boolean interpolationFlag){
+    private Symbol symbol(int sym, int line, int column, @Nullable Object val) {
+        return new Symbol(sym, TextPosition.of(line, column), val);
+    }
+
+    private Symbol popTextStatementSymbol(boolean interpolationFlag) {
         this.interpolationFlag = interpolationFlag;
         yybegin(YYSTATEMENT);
         final char[] chars;
-        if(trimCodeBlockBlankLine){
-            if(!interpolationFlag){
+        if (trimCodeBlockBlankLine) {
+            if (!interpolationFlag) {
                 stringBuffer.trimRightAfterLastLineSeparator();
             }
             chars = this.leftInterpolationFlag
                     ? popAsCharArray()
                     : popAsCharArrayOmitStartingLineSeparator();
-        }else{
+        } else {
             chars = popAsCharArray();
         }
         return symbol(Tokens.TEXT_STATEMENT, stringLine, stringColumn, chars);
@@ -210,31 +226,31 @@ import java.util.Deque;
         return zzBuffer[zzStartRead];
     }
 
-    private long yyDecLong(int startOffset, int endOffset){
+    private long yyDecLong(int startOffset, int endOffset) {
         return parseDecLong(zzBuffer, zzStartRead + startOffset, zzMarkedPos + endOffset);
     }
 
-    private int yyDecInt(int startOffset, int endOffset){
+    private int yyDecInt(int startOffset, int endOffset) {
         long result = parseDecLong(zzBuffer, zzStartRead + startOffset, zzMarkedPos + endOffset);
         if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
-            throw new ParseException("Number overflow", getLine(), getColumn());
+            throw new ParseException("Number overflow", getPosition());
         }
         return (int) result;
     }
 
-    private long yyLong(int startOffset, int endOffset, int radix){
+    private long yyLong(int startOffset, int endOffset, int radix) {
         return parseLong(zzBuffer, zzStartRead + startOffset, zzMarkedPos + endOffset, radix);
     }
 
-    private int yyInt(int startOffset, int endOffset, int radix){
+    private int yyInt(int startOffset, int endOffset, int radix) {
         return (int) parseLong(zzBuffer, zzStartRead + startOffset, zzMarkedPos + endOffset, radix);
     }
 
-    private long yyBinLong(int startOffset, int endOffset){
+    private long yyBinLong(int startOffset, int endOffset) {
         return parseBinLong(zzBuffer, zzStartRead + startOffset, zzMarkedPos + endOffset);
     }
 
-    private int yyBinInteger(int startOffset, int endOffset){
+    private int yyBinInteger(int startOffset, int endOffset) {
         return (int) parseBinLong(zzBuffer, zzStartRead + startOffset, zzMarkedPos + endOffset);
     }
 
@@ -242,8 +258,8 @@ import java.util.Deque;
         long result = 0;
         while (start < end) {
             result <<= 1;
-            if(buffer[start++] == '1'){
-                ++ result;
+            if (buffer[start++] == '1') {
+                ++result;
             }
         }
         return result;
@@ -253,12 +269,12 @@ import java.util.Deque;
         long result = 0;
         while (start < end) {
             if (result > Long.MAX_VALUE / 10) {
-                throw new ParseException("Number overflow", getLine(), getColumn());
+                throw new ParseException("Number overflow", getPosition());
             }
             result *= 10;
-            int digit = Character.digit(buffer[start++],10);
+            int digit = Character.digit(buffer[start++], 10);
             if (result > (Long.MAX_VALUE - digit)) {
-                throw new ParseException("Number overflow", getLine(), getColumn());
+                throw new ParseException("Number overflow", getPosition());
             }
             result += digit;
         }
@@ -285,7 +301,7 @@ Blanks = [ \t\f]
 WhiteSpace = {LineTerminator} | {Blanks}
 
 /* comments */
-Comment = {TraditionalComment} | {LineComment} | 
+Comment = {TraditionalComment} | {LineComment} |
           {DocumentationComment}
 
 TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
@@ -348,7 +364,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 
   /* if to INTERPOLATION */
   {DelimiterInterpolationStartMatch}      { int length = yylength() - INTERPOLATION_START_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(true);} else {appendToString('$', '{');} }
-  
+
 
   [^]                                  { pullToString(); }
 
@@ -395,11 +411,11 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   "@import"                      { return symbol(Tokens.NATIVE_IMPORT); }
 
   "const"                        { return symbol(Tokens.CONST); }
-  
+
   /* boolean literals */
   "true"                         { return symbol(Tokens.DIRECT_VALUE, Boolean.TRUE); }
   "false"                        { return symbol(Tokens.DIRECT_VALUE, Boolean.FALSE); }
-  
+
   /* null literal */
   "null"                         { return symbol(Tokens.DIRECT_VALUE, null); }
 
@@ -419,7 +435,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   ","                            { return symbol(Tokens.COMMA); }
   "."                            { return symbol(Tokens.DOT); }
   ".."                           { return symbol(Tokens.DOTDOT); }
-  
+
   /* operators */
   "="                            { return symbol(Tokens.EQ); }
   ">"                            { return symbol(Tokens.GT); }
@@ -466,7 +482,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   "->"                           { return symbol(Tokens.MINUSGT); }
   {lambdaArgsClosing}            { return symbol(Tokens.RPAREN_MINUSGT); }
 
-  
+
   /* string literal */
   \"                             { yybegin(STRING); resetString(); }
 
@@ -476,17 +492,17 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   \'                             { yybegin(CHARLITERAL); }
 
   /* template string literal */
-  "`"                             { if(templateStringFlag){ throw new ParseException("Illegal character '`', not support nesting template string.", getLine(), getColumn()); } yybegin(TEMPLATE_STRING); this.templateStringFlag = true; templateStringBraceClosingCounter = 0; return symbol(Tokens.TEMPLATE_STRING_START); }
+  "`"                             { if(templateStringFlag){ throw new ParseException("Illegal character '`', not support nesting template string.", getPosition()); } yybegin(TEMPLATE_STRING); this.templateStringFlag = true; templateStringBraceClosingCounter = 0; return symbol(Tokens.TEMPLATE_STRING_START); }
 
   /* numeric literals */
 
-  /* Note: This is matched together with the minus, because the number is too big to 
+  /* Note: This is matched together with the minus, because the number is too big to
      be represented by a positive integer/long. */
   {IntegerMin}                   { return symbol(Tokens.DIRECT_VALUE, Integer.MIN_VALUE); }
   {LongMin}                      { return symbol(Tokens.DIRECT_VALUE, Long.MIN_VALUE); }
 
   {BinIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyBinInteger(2, 0)); }
-  {BinLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyBinLong(2, -1)); }  
+  {BinLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyBinLong(2, -1)); }
 
   {DecIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyDecInt(0, 0)); }
   {DecLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyDecLong(0, -1)); }
@@ -494,7 +510,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   {HexIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(2, 0, 16)); }
   {HexLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(2, -1, 16)); }
 
-  {OctIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(1, 0, 8)); }  
+  {OctIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(1, 0, 8)); }
   {OctLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(1, -1, 8)); }
 
   {FloatLiteral}                 { return symbol(Tokens.DIRECT_VALUE, Float.valueOf(yytext(0, -1))); }
@@ -522,9 +538,9 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 
 <STRING> {
   \"                             { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, stringLine, stringColumn, popAsString()); }
-  
+
   {StringCharacter}+             { pullToString(); }
-  
+
   /* escape sequences */
   "\\b"                          { appendToString('\b'); }
   "\\t"                          { appendToString('\t'); }
@@ -538,9 +554,9 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   \\[0-3]?{OctDigit}?{OctDigit}  { char val = (char) Integer.parseInt(yytext(1,0),8); appendToString(val); }
 
   \\{LineTerminator}             { /* escape new line */ }
-  
+
   /* error cases */
-  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getLine(), getColumn()); }
+  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
 }
 
 <RAW_STRING> {
@@ -550,7 +566,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 
 <TEMPLATE_STRING> {
   "`"                             { yybegin(YYSTATEMENT); this.templateStringFlag = false; return symbol(Tokens.TEMPLATE_STRING_END, stringLine, stringColumn, popAsString()); }
-  
+
   "${"                             { yybegin(YYSTATEMENT); return symbol(Tokens.TEMPLATE_STRING_INTERPOLATION_START, stringLine, stringColumn, popAsString()); }
 
   /* escape sequences */
@@ -569,12 +585,12 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   .|\r|\n                       { appendToString(yyTextChar()); }
 
   /* error cases */
-  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getLine(), getColumn()); }
+  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
 }
 
 <CHARLITERAL> {
   {CharCharacter}\'            { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, yyTextChar()); }
-  
+
   /* escape sequences */
   "\\b"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\b');}
   "\\t"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\t');}
@@ -586,13 +602,13 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   "\\/"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '/');}
   "\\\\"\'                       { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\\');}
   \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, (char) yyInt(1, -1 ,8));}
-  
+
   /* error cases */
-  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getLine(), getColumn()); }
-  {LineTerminator}               { throw new ParseException("Unterminated character literal at end of line", getLine(), getColumn()); }
+  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
+  {LineTerminator}               { throw new ParseException("Unterminated character literal at end of line", getPosition()); }
 }
 
 /* error fallback */
-[^]                              { throw new ParseException("Illegal character \""+yytext()+"\" at line "+yyline+", column "+yycolumn, getLine(), getColumn()); }
+[^]                              { throw new ParseException("Illegal character \""+yytext()+"\" at line "+yyline+", column "+yycolumn, getPosition()); }
 <<EOF>>                          { return symbol(Tokens.EOF); }
 

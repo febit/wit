@@ -2,8 +2,9 @@
 package org.febit.wit.core.text.impl;
 
 import org.febit.wit.Template;
-import org.febit.wit.core.ast.Statement;
 import org.febit.wit.core.text.TextStatementFactory;
+import org.febit.wit.lang.Position;
+import org.febit.wit.lang.ast.Statement;
 
 /**
  * @author zqq90
@@ -21,7 +22,7 @@ public class CharArrayTextStatementFactory implements TextStatementFactory {
     }
 
     @Override
-    public Statement getTextStatement(Template template, char[] text, int line, int column) {
-        return new CharArrayTextStatement(text, line, column);
+    public Statement getTextStatement(Template template, char[] text, Position position) {
+        return new CharArrayTextStatement(text, position);
     }
 }
