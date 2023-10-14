@@ -4,6 +4,6 @@ ext {
 }
 
 dependencies {
-  compile project(':wit-core')
+  api project(':wit-core')
   compileOnly 'net.sf.ehcache:ehcache-core:2.6.6'
 }

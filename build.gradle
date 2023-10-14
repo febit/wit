@@ -1,103 +1,62 @@
 plugins {
-  id "io.freefair.lombok" version "3.8.0"
-  id "io.spring.dependency-management" version "1.0.7.RELEASE"
+  id 'org.febit.standard-java' version '1.1.0'
+  id 'org.febit.standard-maven-publish' version '1.1.0'
 }
 
 group 'org.febit.wit'
-version '2.8.0-SNAPSHOT'
+version '3.0.0-SNAPSHOT'
 
 ext {
-  versions = [
-      slf4j         : '1.7.25',
+  v = [
+      febitCommons  : '3.0.0-SNAPSHOT',
       commonsLogging: '1.1',
-      servletApi    : '2.5',
-      junitJupiter  : '5.5.0',
-      mockito       : '3.0.0'
+      servletApi    : '2.5'
   ]
 }
 
-subprojects {
+configure(subprojects.findAll {
+  !it.name.endsWith('-bom')
+}) {
+  apply plugin: 'java-library'
+  apply plugin: 'jacoco'
 
   group rootProject.group
   version rootProject.version
 
-  apply plugin: 'java'
-  apply plugin: 'jacoco'
-  apply plugin: 'idea'
-  apply plugin: 'eclipse'
-  apply plugin: "io.freefair.lombok"
-  apply plugin: 'io.spring.dependency-management'
+  java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
-  apply from: "${rootDir}/gradle/publish-maven.gradle"
-
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
-
-  repositories {
-    mavenCentral()
-  }
-
-  tasks.withType(Test) {
-    testLogging.events = ["FAILED", "PASSED", "SKIPPED", "STANDARD_OUT", "STANDARD_ERROR"]
-  }
-
-  tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-    options.debug = true
-    options.compilerArgs << "-Xlint:unchecked"
-    options.compilerArgs << "-Xlint:deprecation"
-  }
-
-  tasks.withType(Javadoc) {
-    options.encoding = 'UTF-8'
-    options.addStringOption('Xdoclint:none', '-quiet')
+    withJavadocJar()
+    withSourcesJar()
   }
 
   test {
     useJUnitPlatform()
   }
 
-  jar {
-    manifest {
-      attributes(
-          'Implementation-Title': project.name,
-          'Implementation-Vendor': 'febit.org',
-          'Implementation-Vendor-Id': project.group,
-          'Implementation-Version': version.toString(),
-          'Created-By': "Gradle ${project.getGradle().getGradleVersion()}",
-          'Build-Jdk': System.getProperty('java.version'),
-          'Build-Time': "${Instant.now()}"
-      )
-    }
+  repositories {
+    maven { url "https://repo.huaweicloud.com/repository/maven" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
   }
 
   dependencyManagement {
+    imports {
+      mavenBom "org.febit:febit-commons-dependencies:${v.febitCommons}"
+    }
     dependencies {
-      dependencySet(group: 'org.slf4j', version: "${versions.slf4j}") {
-        entry 'slf4j-api'
-        entry 'slf4j-simple'
-      }
-      dependencySet(group: 'org.junit.jupiter', version: "${versions.junitJupiter}") {
-        entry 'junit-jupiter-api'
-        entry 'junit-jupiter-engine'
-      }
-      dependency "commons-logging:commons-logging-api:${versions.commonsLogging}"
-      dependency "javax.servlet:servlet-api:${versions.servletApi}"
-      dependency "junit:junit:${versions.junit}"
-      dependency "org.mockito:mockito-junit-jupiter:${versions.mockito}"
+      dependency "commons-logging:commons-logging-api:${v.commonsLogging}"
+      dependency "javax.servlet:servlet-api:${v.servletApi}"
     }
   }
 
   dependencies {
-    testCompile 'org.slf4j:slf4j-api'
-    testCompile 'org.junit.jupiter:junit-jupiter-api'
-    testCompile 'org.mockito:mockito-junit-jupiter'
+    compileOnly 'org.febit:febit-annotations-optional'
+    testCompileOnly 'org.febit:febit-annotations-optional'
 
-    testRuntime 'org.junit.jupiter:junit-jupiter-engine'
-    testRuntime 'org.slf4j:slf4j-simple'
+    testImplementation 'org.febit:febit-commons-test'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
   }
-}
-
-wrapper {
-  gradleVersion = '5.5.1'
 }

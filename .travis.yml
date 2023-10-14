@@ -7,7 +7,4 @@ script:
   - ./gradlew check --stacktrace
 
 jdk:
-  - oraclejdk8
-  - openjdk8
-  - openjdk9
   - openjdk11

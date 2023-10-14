@@ -1,6 +1,7 @@
+description = 'Wit Core'
+
 ext {
   moduleName = 'Wit Core'
-  moduleDescription = 'Wit Core'
 
   parserSrcDir = file("${buildDir}/generated/sources/parser")
   parserResDir = file("${buildDir}/generated/resources/parser")
@@ -19,7 +20,7 @@ dependencies {
   compileOnly 'org.slf4j:slf4j-api'
   compileOnly 'commons-logging:commons-logging-api'
 
-  testCompile 'commons-io:commons-io:2.6'
+  testImplementation 'commons-io:commons-io:2.6'
 
   javaCup files('src/main/cup/java_cup_wit-20171014.jar')
   jflex 'de.jflex:jflex:1.6.1'

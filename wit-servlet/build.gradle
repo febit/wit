@@ -1,9 +1,6 @@
-ext {
-  moduleName = 'Wit Servlet'
-  moduleDescription = 'Wit Support for javax-servlet'
-}
+description = 'Wit Support for javax-servlet'
 
 dependencies {
-  compile project(':wit-core')
+  api project(':wit-core')
   compileOnly 'javax.servlet:servlet-api'
 }
