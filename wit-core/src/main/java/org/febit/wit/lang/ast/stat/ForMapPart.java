@@ -3,10 +3,10 @@ package org.febit.wit.lang.ast.stat;
 
 import org.febit.wit.core.VariantManager;
 import org.febit.wit.lang.Position;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.expr.FunctionDeclare;
-import org.febit.wit.util.StatementUtil;
 
 /**
  * @author zqq90
@@ -47,7 +47,7 @@ public class ForMapPart extends AbstractForInPart {
         if (bodyStatement.hasLoops()) {
             return new ForMap(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(),
                     iterIndex, keyIndex, valueIndex, bodyStatement.getStatements(),
-                    StatementUtil.collectPossibleLoopsForWhile(bodyStatement, elseStatement, label),
+                    AstUtils.collectPossibleLoopsForWhile(bodyStatement, elseStatement, label),
                     elseStatement, label, position);
         } else {
             return new ForMapNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(),

@@ -6,11 +6,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.JavaNativeUtil;
-import org.febit.wit.util.StatementUtil;
 
 import java.lang.reflect.Method;
 
@@ -38,9 +38,9 @@ public final class DynamicNativeMethodExecute implements Expression {
     @Override
     @Nullable
     public Object getConstValue() {
-        Object me = StatementUtil.calcConst(thisExpr);
+        Object me = AstUtils.calcConst(thisExpr);
         Method[] methods = getMethods(me);
-        Object[] params = StatementUtil.calcConstArray(paramExprs);
+        Object[] params = AstUtils.calcConstArray(paramExprs);
         return invokeProperMethod(me, methods, params);
     }
 

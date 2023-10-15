@@ -8,10 +8,10 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.Loopable;
 import org.febit.wit.lang.Position;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.util.ALU;
-import org.febit.wit.util.StatementUtil;
+import org.febit.wit.lang.ALU;
 
 import java.util.List;
 
@@ -37,6 +37,6 @@ public final class If implements Statement, Loopable {
 
     @Override
     public List<LoopMeta> collectPossibleLoops() {
-        return StatementUtil.collectPossibleLoops(thenStatement);
+        return AstUtils.collectPossibleLoops(thenStatement);
     }
 }

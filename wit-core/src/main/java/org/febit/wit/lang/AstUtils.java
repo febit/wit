@@ -1,11 +1,9 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
-package org.febit.wit.util;
+package org.febit.wit.lang;
 
 import jakarta.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.lang.LoopMeta;
-import org.febit.wit.lang.Loopable;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.expr.DirectValue;
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
  * @author zqq90
  */
 @UtilityClass
-public class StatementUtil {
+public class AstUtils {
 
     private static final Statement[] EMPTY_STATEMENTS = new Statement[0];
     private static final Expression[] EMPTY_EXPRESSIONS = new Expression[0];
@@ -35,7 +33,7 @@ public class StatementUtil {
 
     @Nullable
     public static Object calcConst(Expression expr) {
-        return StatementUtil.optimize(expr)
+        return optimize(expr)
                 .getConstValue();
     }
 
@@ -43,7 +41,7 @@ public class StatementUtil {
         final int len = expressions.length;
         final Object[] results = new Object[len];
         for (int i = 0; i < len; i++) {
-            results[i] = StatementUtil.calcConst(expressions[i]);
+            results[i] = AstUtils.calcConst(expressions[i]);
         }
         return results;
     }
@@ -99,13 +97,13 @@ public class StatementUtil {
     }
 
     public static LoopMeta[] collectPossibleLoopsForWhile(Statement bodyStatement, Statement elseStatement, int label) {
-        List<LoopMeta> list = StatementUtil.collectPossibleLoops(bodyStatement)
+        List<LoopMeta> list = AstUtils.collectPossibleLoops(bodyStatement)
                 .stream()
                 .filter(loop -> !(loop.matchLabel(label)
                         && (loop.type == LoopMeta.BREAK || loop.type == LoopMeta.CONTINUE)))
                 .collect(Collectors.toList());
 
-        list.addAll(StatementUtil.collectPossibleLoops(elseStatement));
+        list.addAll(AstUtils.collectPossibleLoops(elseStatement));
         return list.isEmpty() ? EMPTY_LOOPS
                 : list.toArray(new LoopMeta[0]);
     }
@@ -135,7 +133,7 @@ public class StatementUtil {
                 temp.addAll(Arrays.asList(((StatementGroup) stat).getList()));
                 continue;
             }
-            stat = StatementUtil.optimize(stat);
+            stat = AstUtils.optimize(stat);
             if (!(stat instanceof NoopStatement)) {
                 temp.add(stat);
             }

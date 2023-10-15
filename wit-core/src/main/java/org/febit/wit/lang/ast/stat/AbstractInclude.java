@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.Context;
 import org.febit.wit.InternalContext;
-import org.febit.wit.Template;
 import org.febit.wit.Vars;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
@@ -46,15 +45,18 @@ public abstract class AbstractInclude implements Statement {
 
     @Nullable
     protected Map<String, Object> mergeTemplate(final InternalContext context, boolean export) {
-        final Object templatePath = pathExpr.execute(context);
+        var templatePath = pathExpr.execute(context);
         if (templatePath == null) {
             throw new ScriptRuntimeException("Template name should not be null.", pathExpr);
         }
         try {
-            Template template = context.getEngine().getTemplate(refer, String.valueOf(templatePath));
-            Context newContext = template.mergeToContext(context, prepareParams(context));
+            var newContext = context.mergeTemplate(
+                    refer,
+                    String.valueOf(templatePath),
+                    prepareParams(context)
+            );
             if (export) {
-                Map<String, Object> result = new HashMap<>();
+                var result = new HashMap<String, Object>();
                 newContext.exportTo(result);
                 return result;
             }

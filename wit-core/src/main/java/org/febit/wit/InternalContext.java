@@ -3,7 +3,10 @@ package org.febit.wit;
 
 import jakarta.annotation.Nullable;
 import lombok.Getter;
+import org.febit.wit.lang.BreakpointListener;
 import org.febit.wit.exceptions.NotFunctionException;
+import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.Out;
 import org.febit.wit.lang.InternedEncoding;
@@ -36,6 +39,9 @@ public final class InternalContext implements Context {
 
     @Getter
     private final Template template;
+
+    @Nullable
+    private final BreakpointListener breakpointListener;
 
     /**
      * params for this context.
@@ -104,8 +110,15 @@ public final class InternalContext implements Context {
     private final ClassMap<GetResolver> getters;
     private final ClassMap<SetResolver> setters;
 
-    public InternalContext(final Template template, final Out out, final Vars rootParams,
-                           final VariantIndexer[] indexers, final int varSize, final Object[][] parentScopes) {
+    public InternalContext(
+            final Template template,
+            final Out out,
+            final Vars rootParams,
+            final VariantIndexer[] indexers,
+            final int varSize,
+            final Object[][] parentScopes,
+            @Nullable BreakpointListener breakpointListener
+    ) {
         this.template = template;
         this.rootParams = rootParams;
 
@@ -127,8 +140,21 @@ public final class InternalContext implements Context {
         this.vars = new Object[varSize];
         this.parentScopes = parentScopes;
 
+        this.breakpointListener = breakpointListener;
         //import params
         rootParams.exportTo(this::set);
+    }
+
+    public void onBreakpoint(@Nullable Object label, Statement statement, @Nullable Object result) {
+        if (this.breakpointListener != null) {
+            this.breakpointListener.onBreakpoint(label, this, statement, result);
+        }
+    }
+
+    public Context mergeTemplate(String refer, String path, Vars vars)
+            throws ResourceNotFoundException, ScriptRuntimeException, ParseException {
+        var template = getEngine().getTemplate(refer, path);
+        return template.mergeToContext(this, vars);
     }
 
     public Object[] execute(Expression[] exprs) {
@@ -177,7 +203,7 @@ public final class InternalContext implements Context {
         }
 
         var newContext = new InternalContext(template, localContext.out, Vars.EMPTY,
-                indexers, varSize, scopes);
+                indexers, varSize, scopes, breakpointListener);
         newContext.localContext = localContext;
         return newContext;
     }
@@ -195,7 +221,7 @@ public final class InternalContext implements Context {
      */
     public InternalContext createPeerContext(Template template, VariantIndexer[] indexers, int varSize, Vars rootParams) {
         var newContext = new InternalContext(template, this.out, rootParams,
-                indexers, varSize, null);
+                indexers, varSize, null, breakpointListener);
         newContext.localContext = this;
         return newContext;
     }

@@ -5,7 +5,6 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
-import org.febit.wit.debug.BreakpointListener;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Statement;
 
@@ -15,7 +14,6 @@ import org.febit.wit.lang.ast.Statement;
 @RequiredArgsConstructor
 public class BreakpointStatement implements Statement {
 
-    private final BreakpointListener listener;
     private final Object label;
     private final Statement statement;
     @Getter
@@ -27,7 +25,7 @@ public class BreakpointStatement implements Statement {
         if (statement != null) {
             statement.execute(context);
         }
-        listener.onBreakpoint(label, context, this, null);
+        context.onBreakpoint(label, this, null);
         return null;
     }
 }

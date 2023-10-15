@@ -8,7 +8,7 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.util.ALU;
+import org.febit.wit.lang.ALU;
 import org.febit.wit.util.ExceptionUtil;
 
 /**

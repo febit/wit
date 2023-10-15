@@ -8,12 +8,12 @@ import org.febit.wit.lang.Iter;
 import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.Loopable;
 import org.febit.wit.lang.Position;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.expr.FunctionDeclare;
 import org.febit.wit.lang.iter.IterMethodFilter;
 import org.febit.wit.util.CollectionUtil;
-import org.febit.wit.util.StatementUtil;
 
 import java.util.List;
 
@@ -87,6 +87,6 @@ public class ForIn implements Statement, Loopable {
 
     @Override
     public List<LoopMeta> collectPossibleLoops() {
-        return StatementUtil.asList(possibleLoops);
+        return AstUtils.asList(possibleLoops);
     }
 }

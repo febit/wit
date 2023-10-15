@@ -6,7 +6,7 @@ import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.expr.FunctionDeclare;
-import org.febit.wit.util.StatementUtil;
+import org.febit.wit.lang.AstUtils;
 
 /**
  * @author zqq90
@@ -40,7 +40,7 @@ public class ForInPart extends AbstractForInPart {
         if (bodyStatement.hasLoops()) {
             return new ForIn(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(),
                     iterIndex, itemIndex, bodyStatement.getStatements(),
-                    StatementUtil.collectPossibleLoopsForWhile(bodyStatement, elseStatement, label),
+                    AstUtils.collectPossibleLoopsForWhile(bodyStatement, elseStatement, label),
                     elseStatement, label, position);
         } else {
             return new ForInNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(),

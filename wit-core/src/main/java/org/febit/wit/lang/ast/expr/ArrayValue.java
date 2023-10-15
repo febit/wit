@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.Position;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.util.StatementUtil;
 
 /**
  * @author zqq90
@@ -25,6 +25,6 @@ public final class ArrayValue implements Expression {
 
     @Override
     public Object getConstValue() {
-        return StatementUtil.calcConstArray(this.valueExprs);
+        return AstUtils.calcConstArray(this.valueExprs);
     }
 }

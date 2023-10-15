@@ -5,7 +5,6 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
-import org.febit.wit.debug.BreakpointListener;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 
@@ -15,7 +14,6 @@ import org.febit.wit.lang.ast.Expression;
 @RequiredArgsConstructor
 public class BreakpointExpression implements Expression {
 
-    private final BreakpointListener listener;
     @Nullable
     private final Object label;
     @Getter
@@ -27,7 +25,7 @@ public class BreakpointExpression implements Expression {
     @Nullable
     public Object execute(InternalContext context) {
         Object result = expression.execute(context);
-        listener.onBreakpoint(label, context, this, result);
+        context.onBreakpoint(label, this, result);
         return result;
     }
 

@@ -5,11 +5,11 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.expr.DirectValue;
 import org.febit.wit.util.ExceptionUtil;
-import org.febit.wit.util.StatementUtil;
 
 import java.util.function.BiFunction;
 
@@ -38,8 +38,8 @@ public class ConstableBiOperator implements Expression {
 
     @Override
     public Expression optimize() {
-        if (StatementUtil.isImmutableDirectValue(leftExpr)
-                && StatementUtil.isImmutableDirectValue(rightExpr)) {
+        if (AstUtils.isImmutableDirectValue(leftExpr)
+                && AstUtils.isImmutableDirectValue(rightExpr)) {
             return new DirectValue(
                     op.apply(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value),
                     position
@@ -52,8 +52,8 @@ public class ConstableBiOperator implements Expression {
     @Nullable
     public Object getConstValue() {
         return op.apply(
-                StatementUtil.calcConst(leftExpr),
-                StatementUtil.calcConst(rightExpr)
+                AstUtils.calcConst(leftExpr),
+                AstUtils.calcConst(rightExpr)
         );
     }
 }

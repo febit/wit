@@ -4,9 +4,9 @@ package org.febit.wit.lang.ast.expr;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.util.StatementUtil;
 
 import java.util.HashMap;
 
@@ -42,8 +42,8 @@ public final class MapValue implements Expression {
         var initialCapacity = Math.max((len + 1) * 4 / 3, 4);
         var result = new HashMap<>(initialCapacity, 0.75f);
         for (int i = 0; i < len; i++) {
-            result.put(StatementUtil.calcConst(keys[i]),
-                    StatementUtil.calcConst(values[i]));
+            result.put(AstUtils.calcConst(keys[i]),
+                    AstUtils.calcConst(values[i]));
         }
         return result;
     }

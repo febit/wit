@@ -5,11 +5,11 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.Loopable;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.util.StatementUtil;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public final class Block implements IBlock, Loopable {
 
     @Override
     public List<LoopMeta> collectPossibleLoops() {
-        return StatementUtil.asList(possibleLoops);
+        return AstUtils.asList(possibleLoops);
     }
 
     @Override

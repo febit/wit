@@ -4,7 +4,7 @@ package org.febit.wit.lang.iter;
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.KeyIter;
 import org.febit.wit.lang.MethodDeclare;
-import org.febit.wit.util.ALU;
+import org.febit.wit.lang.ALU;
 
 /**
  * @author zqq90

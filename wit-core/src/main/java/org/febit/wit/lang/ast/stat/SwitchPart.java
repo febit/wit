@@ -3,9 +3,9 @@ package org.febit.wit.lang.ast.stat;
 
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.lang.Position;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.util.StatementUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class SwitchPart {
     }
 
     public SwitchPart appendCase(Object key, Statement body, Position position) {
-        body = StatementUtil.optimize(body);
+        body = AstUtils.optimize(body);
         Switch.CaseEntry current = currentCaseStatement;
         if (body != null) {
             current = currentCaseStatement = new Switch.CaseEntry(body, current);
@@ -55,6 +55,6 @@ public class SwitchPart {
     public Statement pop(int label) {
         Map<Object, Switch.CaseEntry> newCaseMap = new HashMap<>((caseMap.size() + 1) * 4 / 3, 0.75f);
         newCaseMap.putAll(caseMap);
-        return StatementUtil.optimize(new Switch(switchExpr, defaultStatement, newCaseMap, label, position));
+        return AstUtils.optimize(new Switch(switchExpr, defaultStatement, newCaseMap, label, position));
     }
 }

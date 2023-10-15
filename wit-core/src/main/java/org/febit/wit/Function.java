@@ -43,7 +43,7 @@ public class Function {
     }
 
     protected InternalContext createContext(Out out) {
-        return new InternalContext(template, out, Vars.EMPTY, EMPTY_INDEXERS, 0, null);
+        return new InternalContext(template, out, Vars.EMPTY, EMPTY_INDEXERS, 0, null, null);
     }
 
     protected InternalContext createContext() {

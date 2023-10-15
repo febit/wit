@@ -6,7 +6,7 @@ import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.Resolver;
 import org.febit.wit.resolvers.ResolverManager;
 import org.febit.wit.resolvers.SetResolver;
-import org.febit.wit.util.ALU;
+import org.febit.wit.lang.ALU;
 import org.febit.wit.util.CollectionUtil;
 import org.febit.wit.util.StringUtil;
 

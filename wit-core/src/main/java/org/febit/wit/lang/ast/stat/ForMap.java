@@ -4,6 +4,7 @@ package org.febit.wit.lang.ast.stat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.KeyIter;
 import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.Loopable;
@@ -13,7 +14,6 @@ import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.expr.FunctionDeclare;
 import org.febit.wit.lang.iter.KeyIterMethodFilter;
 import org.febit.wit.util.CollectionUtil;
-import org.febit.wit.util.StatementUtil;
 
 import java.util.List;
 
@@ -89,6 +89,6 @@ public final class ForMap implements Statement, Loopable {
 
     @Override
     public List<LoopMeta> collectPossibleLoops() {
-        return StatementUtil.asList(possibleLoops);
+        return AstUtils.asList(possibleLoops);
     }
 }

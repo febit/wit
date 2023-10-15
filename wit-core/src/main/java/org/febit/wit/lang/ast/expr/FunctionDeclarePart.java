@@ -10,7 +10,7 @@ import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.oper.Assign;
 import org.febit.wit.lang.ast.stat.Return;
-import org.febit.wit.util.StatementUtil;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.util.StringUtil;
 
 import java.util.ArrayList;
@@ -105,7 +105,7 @@ public class FunctionDeclarePart {
     }
 
     public FunctionDeclare popFunctionDeclare(List<Statement> list) {
-        return popFunctionDeclare(StatementUtil.toStatementArray(list));
+        return popFunctionDeclare(AstUtils.toStatementArray(list));
     }
 
     protected FunctionDeclare popFunctionDeclare(Statement[] statements) {
@@ -116,7 +116,7 @@ public class FunctionDeclarePart {
         boolean hasReturnLoops = false;
 
         List<LoopMeta> overflowLoops = new ArrayList<>();
-        for (LoopMeta loop : StatementUtil.collectPossibleLoops(statements)) {
+        for (LoopMeta loop : AstUtils.collectPossibleLoops(statements)) {
             if (loop.type == LoopMeta.RETURN) {
                 hasReturnLoops = true;
             } else {

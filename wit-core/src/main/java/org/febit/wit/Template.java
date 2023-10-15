@@ -1,8 +1,9 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
+import jakarta.annotation.Nullable;
 import org.febit.wit.core.Parser;
-import org.febit.wit.debug.BreakpointListener;
+import org.febit.wit.lang.BreakpointListener;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.exceptions.TemplateException;
@@ -38,7 +39,7 @@ public class Template {
     /**
      * Reload this template.
      *
-     * @throws ParseException
+     * @throws ParseException when unable to parse
      * @since 1.4.0
      */
     public void reload() {
@@ -70,189 +71,211 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Debug this template.
      *
-     * @param outputStream
+     * @param vars     vars
+     * @param out      out
+     * @param listener listener
      * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     * @since 3.0.0
      */
-    public Context merge(final OutputStream outputStream) {
-        return merge(Vars.EMPTY, new OutputStreamOut(outputStream, engine));
-    }
-
-    /**
-     * Merge this template.
-     *
-     * @param out
-     * @param encoding
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final OutputStream out, final String encoding) {
-        return merge(Vars.EMPTY, new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
-    }
-
-    /**
-     * Merge this template.
-     *
-     * @param writer
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final Writer writer) {
-        return merge(Vars.EMPTY, new WriterOut(writer, engine));
-    }
-
-    /**
-     * Merge this template.
-     *
-     * @param vars
-     * @param outputStream
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final Map<String, Object> vars, final OutputStream outputStream) {
-        return merge(Vars.of(vars), new OutputStreamOut(outputStream, engine));
-    }
-
-    /**
-     * Merge this template.
-     *
-     * @param vars
-     * @param out
-     * @param encoding
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final Map<String, Object> vars, final OutputStream out, final String encoding) {
-        return merge(Vars.of(vars), new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
-    }
-
-    /**
-     * Merge this template.
-     *
-     * @param vars
-     * @param writer
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final Map<String, Object> vars, final Writer writer) {
-        return merge(Vars.of(vars), new WriterOut(writer, engine));
-    }
-
-    /**
-     * Merge this template.
-     *
-     * @param vars
-     * @param out
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final Vars vars, final OutputStream out) {
-        return merge(vars, new OutputStreamOut(out, engine));
-    }
-
-    /**
-     * Merge this template.
-     *
-     * @param vars
-     * @param out
-     * @param encoding
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final Vars vars, final OutputStream out, final String encoding) {
-        return merge(vars, new OutputStreamOut(out, InternedEncoding.intern(encoding), engine));
-    }
-
-    /**
-     * Merge this template.
-     *
-     * @param vars
-     * @param writer
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final Vars vars, final Writer writer) {
-        return merge(vars, new WriterOut(writer, engine));
-    }
-
-    /**
-     * Merge this template.
-     *
-     * @param out
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     * @since 1.4.0
-     */
-    public Context merge(final Out out) {
-        return merge(Vars.EMPTY, out);
-    }
-
-    /**
-     * Merge this template, and discard outputs.
-     *
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     * @since 2.4.0
-     */
-    public Context merge() {
-        return merge(Vars.EMPTY);
-    }
-
-    /**
-     * Merge this template, and discard outputs.
-     *
-     * @param vars
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     * @since 2.4.0
-     */
-    public Context merge(final Map<String, Object> vars) {
-        return merge(Vars.of(vars));
-    }
-
-    /**
-     * Merge this template, and discard outputs.
-     *
-     * @param vars
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     * @since 2.4.0
-     */
-    public Context merge(final Vars vars) {
-        return merge(vars, DiscardOut.INSTANCE);
-    }
-
-    /**
-     * Merge this template.
-     *
-     * @param vars
-     * @param out
-     * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
-     */
-    public Context merge(final Vars vars, final Out out) {
+    protected Context merge0(@Nullable Vars vars, @Nullable Out out, @Nullable BreakpointListener listener) {
+        if (vars == null) {
+            vars = Vars.EMPTY;
+        }
+        if (out == null) {
+            out = DiscardOut.INSTANCE;
+        }
         try {
-            return prepareAst()
-                    .execute(this, out, vars);
+            return Parser.parse(this)
+                    .execute(this, out, vars, listener);
         } catch (Exception e) {
             throw completeException(e);
         }
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param outputStream out
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     */
+    public Context merge(final OutputStream outputStream) {
+        return merge0(null, new OutputStreamOut(outputStream, engine), null);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param output out
+     * @param encoding encoding
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     */
+    public Context merge(final OutputStream output, final String encoding) {
+        var out = new OutputStreamOut(output, InternedEncoding.intern(encoding), engine);
+        return merge0(null, out, null);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param writer writer
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     */
+    public Context merge(final Writer writer) {
+        return merge0(null, new WriterOut(writer, engine), null);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param vars vars
+     * @param outputStream outputStream
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     */
+    public Context merge(final Map<String, Object> vars, final OutputStream outputStream) {
+        return merge0(Vars.of(vars), new OutputStreamOut(outputStream, engine), null);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param vars vars
+     * @param out out
+     * @param encoding encoding
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     */
+    public Context merge(final Map<String, Object> vars, final OutputStream out, final String encoding) {
+        return merge0(Vars.of(vars), new OutputStreamOut(out, InternedEncoding.intern(encoding), engine), null);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param vars vars
+     * @param writer writer
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     */
+    public Context merge(final Map<String, Object> vars, final Writer writer) {
+        return merge0(Vars.of(vars), new WriterOut(writer, engine), null);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param vars vars
+     * @param out out
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     */
+    public Context merge(final Vars vars, final OutputStream out) {
+        return merge0(vars, new OutputStreamOut(out, engine), null);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param vars vars
+     * @param out out
+     * @param encoding encoding
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     */
+    public Context merge(final Vars vars, final OutputStream out, final String encoding) {
+        return merge0(vars, new OutputStreamOut(out, InternedEncoding.intern(encoding), engine), null);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param vars vars
+     * @param writer writer
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     */
+    public Context merge(final Vars vars, final Writer writer) {
+        return merge0(vars, new WriterOut(writer, engine), null);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param out out
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     * @since 1.4.0
+     */
+    public Context merge(final Out out) {
+        return merge0(null, out, null);
+    }
+
+    /**
+     * Merge this template, and discard outputs.
+     *
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     * @since 2.4.0
+     */
+    public Context merge() {
+        return merge0(null, null, null);
+    }
+
+    /**
+     * Merge this template, and discard outputs.
+     *
+     * @param vars vars
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     * @since 2.4.0
+     */
+    public Context merge(final Map<String, Object> vars) {
+        return merge0(Vars.of(vars), null, null);
+    }
+
+    /**
+     * Merge this template, and discard outputs.
+     *
+     * @param vars vars
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     * @since 2.4.0
+     */
+    public Context merge(final Vars vars) {
+        return merge0(vars,  null, null);
+    }
+
+    /**
+     * Merge this template.
+     *
+     * @param vars vars
+     * @param out out
+     * @return Context
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
+     */
+    public Context merge(final Vars vars, final Out out) {
+       return merge0(vars, out, null);
     }
 
     public Context mergeToContext(final InternalContext context, final Vars vars) {
@@ -267,61 +290,56 @@ public class Template {
     /**
      * Debug this template.
      *
-     * @param vars
-     * @param out
-     * @param listener
+     * @param vars vars
+     * @param  out out
+     * @param listener listener
      * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
      */
     public Context debug(final Vars vars, final Out out, final BreakpointListener listener) {
-        try {
-            return Parser.parse(this, listener)
-                    .execute(this, out, vars);
-        } catch (Exception e) {
-            throw completeException(e);
-        }
+        return merge0(vars, out, listener);
     }
 
     /**
      * Debug this template, and discard outputs.
      *
-     * @param vars
-     * @param listener
+     * @param vars vars
+     * @param listener breakpoint listener
      * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
      * @since 2.4.0
      */
     public Context debug(final Vars vars, final BreakpointListener listener) {
-        return debug(vars, DiscardOut.INSTANCE, listener);
+        return merge0(vars, null, listener);
     }
 
     /**
      * Debug this template, and discard outputs.
      *
-     * @param out
-     * @param listener
+     * @param out out
+     * @param listener breakpoint listener
      * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
      * @since 2.5.0
      */
     public Context debug(final Out out, final BreakpointListener listener) {
-        return debug(Vars.EMPTY, out, listener);
+        return merge0(null, out, listener);
     }
 
     /**
      * Debug this template, and discard outputs.
      *
-     * @param listener
+     * @param listener breakpoint listener
      * @return Context
-     * @throws ScriptRuntimeException
-     * @throws ParseException
+     * @throws ScriptRuntimeException when script runtime exception
+     * @throws ParseException         when unable to parse
      * @since 2.5.0
      */
     public Context debug(final BreakpointListener listener) {
-        return debug(Vars.EMPTY, DiscardOut.INSTANCE, listener);
+        return merge0(null, null, listener);
     }
 
     public void reset() {

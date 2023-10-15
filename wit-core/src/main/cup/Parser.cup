@@ -1,15 +1,16 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
+import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.lang.ast.*;
 import org.febit.wit.lang.ast.expr.*;
 import org.febit.wit.lang.ast.oper.*;
 import org.febit.wit.lang.ast.stat.*;
-import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.util.ALU;
+import org.febit.wit.lang.ALU;
+import org.febit.wit.lang.AstFactory;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.util.ClassNameBand;
 import org.febit.wit.util.Stack;
-import org.febit.wit.util.StatementUtil;
 
 import static org.febit.wit.lang.ast.expr.FunctionDeclarePart.ArgumentInfo;
 
@@ -356,7 +357,7 @@ expression_statementable ::=
                     {: return createAssign(castToAssignableExpression(%lexpr%), %expr%, %sym.symbol%.pos); :}
 
                     |LBRACK expression[COMMA]:list COMMA? RBRACK EQ:sym expression:expr
-                    {: return createGroupAssign(StatementUtil.toExpressionArray(%list%), %expr%, %sym.symbol%.pos); :}
+                    {: return createGroupAssign(AstUtils.toExpressionArray(%list%), %expr%, %sym.symbol%.pos); :}
 
                     //plusPlusOp ++
                     |PLUSPLUS:sym expression:expr
@@ -486,9 +487,9 @@ expression      ::= expression_statementable:$
 
                     //arrayValue
                     |LBRACK:sym RBRACK
-                    {: return new ArrayValue(StatementUtil.emptyExpressions(), %sym.symbol%.pos); :}
+                    {: return AstFactory.emptyArrayValue(%sym.symbol%.pos); :}
                     |LBRACK:sym expression[COMMA]:list COMMA? RBRACK
-                    {: return new ArrayValue(StatementUtil.toExpressionArray(%list%), %sym.symbol%.pos); :}
+                    {: return AstFactory.arrayValue(%list%, %sym.symbol%.pos); :}
 
                     //NativeNewArrayDeclareExpression
                     |NATIVE:sym LBRACK RBRACK javaClass:javaClass
@@ -574,7 +575,7 @@ templateStringExprPart  ::= TEMPLATE_STRING_START:sym
 funcArg             ::= IDENTIFIER:ident
                         {: return new ArgumentInfo(%ident%, null); :}
                         | IDENTIFIER:ident EQ expression:expr
-                        {: return new ArgumentInfo(%ident%, StatementUtil.calcConst(%expr%)); :}
+                        {: return new ArgumentInfo(%ident%, AstUtils.calcConst(%expr%)); :}
                         ;
 
 
@@ -591,13 +592,13 @@ funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
-                        {: return createMethodExecute(%funcExpr%, StatementUtil.emptyExpressions(), %funcExpr.symbol%.pos); :}
+                        {: return createMethodExecute(%funcExpr%, AstUtils.emptyExpressions(), %funcExpr.symbol%.pos); :}
                         |expression:funcExpr LPAREN expression[COMMA]:list COMMA? RPAREN
-                        {: return createMethodExecute(%funcExpr%, StatementUtil.toExpressionArray(%list%), %funcExpr.symbol%.pos); :}
+                        {: return createMethodExecute(%funcExpr%, AstUtils.toExpressionArray(%list%), %funcExpr.symbol%.pos); :}
                         |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN RPAREN
-                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.emptyExpressions(), %ident.symbol%.pos); :}
+                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, AstUtils.emptyExpressions(), %ident.symbol%.pos); :}
                         |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expression[COMMA]:list COMMA? RPAREN
-                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, StatementUtil.toExpressionArray(%list%), %ident.symbol%.pos); :}
+                        {: return createDynamicNativeMethodExecute(%param0%, %ident%, AstUtils.toExpressionArray(%list%), %ident.symbol%.pos); :}
                         ;
 
 

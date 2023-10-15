@@ -6,11 +6,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.UnConstableMethodDeclare;
 import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.util.StatementUtil;
 
 /**
  * @author zqq90
@@ -37,14 +37,14 @@ public final class MethodExecute implements Expression {
     @Override
     @Nullable
     public Object getConstValue() {
-        var func = StatementUtil.calcConst(funcExpr);
+        var func = AstUtils.calcConst(funcExpr);
         if (!(func instanceof MethodDeclare)) {
             throw new ScriptRuntimeException("not a function", this);
         }
         if (func instanceof UnConstableMethodDeclare) {
             return InternalContext.VOID;
         }
-        var params = StatementUtil.calcConstArray(paramExprs);
+        var params = AstUtils.calcConstArray(paramExprs);
         return ((MethodDeclare) func).invoke(null, params);
     }
 }

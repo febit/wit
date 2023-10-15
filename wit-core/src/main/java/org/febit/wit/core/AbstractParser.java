@@ -6,9 +6,10 @@ import org.febit.wit.Engine;
 import org.febit.wit.Template;
 import org.febit.wit.core.VariantManager.VarAddress;
 import org.febit.wit.core.text.TextStatementFactory;
-import org.febit.wit.debug.BreakpointListener;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.UncheckedException;
+import org.febit.wit.lang.AstFactory;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.lang.Position;
@@ -48,12 +49,11 @@ import org.febit.wit.lang.ast.stat.TryPart;
 import org.febit.wit.loaders.Resource;
 import org.febit.wit.loaders.ResourceOffset;
 import org.febit.wit.security.NativeSecurityManager;
-import org.febit.wit.util.ALU;
+import org.febit.wit.lang.ALU;
 import org.febit.wit.util.ClassNameBand;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.ExceptionUtil;
 import org.febit.wit.util.Stack;
-import org.febit.wit.util.StatementUtil;
 import org.febit.wit.util.StringUtil;
 
 import java.io.IOException;
@@ -186,7 +186,6 @@ abstract class AbstractParser {
 
     private TextStatementFactory textStatementFactory;
     private NativeSecurityManager nativeSecurityManager;
-    private BreakpointListener breakpointListener;
     private Engine engine;
     private NativeFactory nativeFactory;
     private boolean locateVarForce;
@@ -316,13 +315,8 @@ abstract class AbstractParser {
         return "UNKNOWN";
     }
 
-    public static TemplateAST parse(final Template template,
-                                    @Nullable BreakpointListener breakpointListener) throws ParseException {
-        return new Parser().doParse(template, breakpointListener);
-    }
-
     public static TemplateAST parse(final Template template) throws ParseException {
-        return parse(template, null);
+        return new Parser().doParse(template);
     }
 
     abstract Object doAction(int actionId) throws ParseException;
@@ -464,14 +458,12 @@ abstract class AbstractParser {
      * @throws ParseException ParseException
      */
     protected TemplateAST doParse(
-            final Template template,
-            @Nullable final BreakpointListener breakpointListener
+            final Template template
     ) throws ParseException {
         final Engine myEngine = template.getEngine();
         final Resource resource = template.getResource();
         this.textStatementFactory = myEngine.get(TextStatementFactory.class);
         this.nativeSecurityManager = myEngine.get(NativeSecurityManager.class);
-        this.breakpointListener = breakpointListener;
         this.template = template;
         this.engine = myEngine;
         this.locateVarForce = !myEngine.isLooseVar();
@@ -604,19 +596,15 @@ abstract class AbstractParser {
     }
 
     Expression createBreakpointExpression(@Nullable Expression labelExpr, Expression expr, Position position) {
-        final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr);
-        if (breakpointListener == null) {
-            return expr;
-        }
-        return new BreakpointExpression(breakpointListener, label, expr, position);
+        final Object label = labelExpr == null ? null : AstUtils.calcConst(labelExpr);
+
+        return new BreakpointExpression(label, expr, position);
     }
 
     Statement createBreakpointStatement(@Nullable Expression labelExpr, Statement statement, Position position) {
-        final Object label = labelExpr == null ? null : StatementUtil.calcConst(labelExpr);
-        if (breakpointListener == null) {
-            return statement;
-        }
-        return new BreakpointStatement(breakpointListener, label, statement, position);
+        final Object label = labelExpr == null ? null : AstUtils.calcConst(labelExpr);
+
+        return new BreakpointStatement(label, statement, position);
     }
 
     Statement createTextStatement(@Nullable char[] text, Position position) {
@@ -640,7 +628,7 @@ abstract class AbstractParser {
 
     MapValue createMapValue(@Nullable List<Expression[]> propertyDefList, Position position) {
         if (propertyDefList == null || propertyDefList.isEmpty()) {
-            return new MapValue(StatementUtil.emptyExpressions(), StatementUtil.emptyExpressions(), position);
+            return new MapValue(AstUtils.emptyExpressions(), AstUtils.emptyExpressions(), position);
         }
         int size = propertyDefList.size();
         Expression[] keys = new Expression[size];
@@ -655,7 +643,7 @@ abstract class AbstractParser {
     }
 
     DirectValue createDirectValue(Symbol sym) {
-        return new DirectValue(sym.value, sym.pos);
+        return AstFactory.directValue(sym.value, sym.pos);
     }
 
     Expression createContextValue(VarAddress addr, Position position) {
@@ -681,7 +669,7 @@ abstract class AbstractParser {
     }
 
     void assignConst(String name, Expression expr, Position position) {
-        varmgr.assignConst(name, StatementUtil.calcConst(expr), position);
+        varmgr.assignConst(name, AstUtils.calcConst(expr), position);
     }
 
     Statement createInterpolation(final Expression expr) {
@@ -765,8 +753,8 @@ abstract class AbstractParser {
 
     Statement createIfStatement(Expression ifExpr, Statement thenStatement,
                                 Statement elseStatement, Position position) {
-        thenStatement = StatementUtil.optimize(thenStatement);
-        elseStatement = StatementUtil.optimize(elseStatement);
+        thenStatement = AstUtils.optimize(thenStatement);
+        elseStatement = AstUtils.optimize(elseStatement);
         if (!(thenStatement instanceof NoopStatement)) {
             if (elseStatement instanceof NoopStatement) {
                 return new If(ifExpr, thenStatement, position);
@@ -781,25 +769,25 @@ abstract class AbstractParser {
     }
 
     Statement createStatementGroup(List<Statement> list, Position position) {
-        return new StatementGroup(StatementUtil.toStatementArray(list), position);
+        return new StatementGroup(AstUtils.toStatementArray(list), position);
     }
 
     Expression createMethodExecute(Expression funcExpr, Expression[] paramExprs, Position position) {
-        StatementUtil.optimize(paramExprs);
-        funcExpr = StatementUtil.optimize(funcExpr);
+        AstUtils.optimize(paramExprs);
+        funcExpr = AstUtils.optimize(funcExpr);
         return new MethodExecute(funcExpr, paramExprs, position);
     }
 
     Expression createDynamicNativeMethodExecute(Expression thisExpr, String func,
                                                 Expression[] paramExprs, Position position) {
-        StatementUtil.optimize(paramExprs);
-        thisExpr = StatementUtil.optimize(thisExpr);
+        AstUtils.optimize(paramExprs);
+        thisExpr = AstUtils.optimize(thisExpr);
         return new DynamicNativeMethodExecute(thisExpr, func, paramExprs, position);
     }
 
     TemplateAST createTemplateAST(List<Statement> list) {
-        Statement[] statements = StatementUtil.toStatementArray(list);
-        List<LoopMeta> loops = StatementUtil.collectPossibleLoops(statements);
+        Statement[] statements = AstUtils.toStatementArray(list);
+        List<LoopMeta> loops = AstUtils.collectPossibleLoops(statements);
         if (!loops.isEmpty()) {
             throw new ParseException("loop overflow: " + StringUtil.join(loops, ','));
         }
@@ -807,8 +795,8 @@ abstract class AbstractParser {
     }
 
     IBlock createIBlock(@Nullable List<Statement> list, int varIndexer, Position position) {
-        var statements = StatementUtil.toStatementArray(list);
-        var loops = StatementUtil.collectPossibleLoops(statements);
+        var statements = AstUtils.toStatementArray(list);
+        var loops = AstUtils.collectPossibleLoops(statements);
         return loops.isEmpty()
                 ? new BlockNoLoops(varIndexer, statements, position)
                 : new Block(varIndexer, statements, loops.toArray(new LoopMeta[0]), position);
@@ -831,7 +819,7 @@ abstract class AbstractParser {
         if (biFunc == null) {
             throw unsupportedOperator(position);
         }
-        return StatementUtil.optimize(new SelfOperator(leftExpr, rightExpr, biFunc, position));
+        return AstUtils.optimize(new SelfOperator(leftExpr, rightExpr, biFunc, position));
     }
 
     @Nullable
@@ -902,7 +890,7 @@ abstract class AbstractParser {
             default:
                 throw unsupportedOperator(sym.pos);
         }
-        return StatementUtil.optimize(new ConstableUnaryOperator(expr, func, sym.pos));
+        return AstUtils.optimize(new ConstableUnaryOperator(expr, func, sym.pos));
     }
 
     Expression createBiOperator(Expression leftExpr, Symbol sym, Expression rightExpr) {
@@ -924,7 +912,7 @@ abstract class AbstractParser {
                 }
                 op = new ConstableBiOperator(leftExpr, rightExpr, biFunc, sym.pos);
         }
-        return StatementUtil.optimize(op);
+        return AstUtils.optimize(op);
     }
 
 }

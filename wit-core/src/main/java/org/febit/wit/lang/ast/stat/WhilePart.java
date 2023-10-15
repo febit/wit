@@ -1,11 +1,11 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.stat;
 
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.util.StatementUtil;
 
 /**
  * @author zqq90
@@ -26,7 +26,7 @@ public class WhilePart {
 
     public Statement pop(int label) {
         if (bodyStatement.hasLoops()) {
-            LoopMeta[] loops = StatementUtil.collectPossibleLoopsForWhile(bodyStatement, null, label);
+            LoopMeta[] loops = AstUtils.collectPossibleLoopsForWhile(bodyStatement, null, label);
             return doWhileAtFirst
                     ? new While(whileExpr, bodyStatement.getVarIndexer(), bodyStatement.getStatements(),
                     loops, label, position)

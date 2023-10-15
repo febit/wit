@@ -5,11 +5,11 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.expr.DirectValue;
-import org.febit.wit.util.ALU;
-import org.febit.wit.util.StatementUtil;
+import org.febit.wit.lang.ALU;
 
 /**
  * @author zqq90
@@ -34,10 +34,10 @@ public final class Or implements Expression {
 
     @Override
     public Expression optimize() {
-        if (!StatementUtil.isImmutableDirectValue(leftExpr)) {
+        if (!AstUtils.isImmutableDirectValue(leftExpr)) {
             return this;
         }
-        if (StatementUtil.isImmutableDirectValue(rightExpr)) {
+        if (AstUtils.isImmutableDirectValue(rightExpr)) {
             return new DirectValue(
                     ALU.or(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value),
                     position);

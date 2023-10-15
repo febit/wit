@@ -6,7 +6,7 @@ import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.expr.FunctionDeclare;
-import org.febit.wit.util.StatementUtil;
+import org.febit.wit.lang.AstUtils;
 
 /**
  * @author zqq90
@@ -35,7 +35,7 @@ public abstract class AbstractForInPart {
 
     public AbstractForInPart setBodies(IBlock thenStatement, Statement elseStatement) {
         this.bodyStatement = thenStatement;
-        this.elseStatement = StatementUtil.optimize(elseStatement);
+        this.elseStatement = AstUtils.optimize(elseStatement);
         return this;
     }
 

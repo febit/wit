@@ -9,9 +9,9 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.Loopable;
 import org.febit.wit.lang.Position;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.util.StatementUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -71,7 +71,7 @@ public final class Switch implements Statement, Loopable {
         }
 
         List<LoopMeta> collectPossibleLoops() {
-            return StatementUtil.collectPossibleLoops(body);
+            return AstUtils.collectPossibleLoops(body);
         }
     }
 }

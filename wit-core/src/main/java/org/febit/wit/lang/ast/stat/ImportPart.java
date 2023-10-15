@@ -3,10 +3,10 @@ package org.febit.wit.lang.ast.stat;
 
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.util.StatementUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +24,14 @@ public class ImportPart {
 
     public ImportPart(Expression expr, Expression paramsExpr, Position position) {
         this.position = position;
-        this.expr = StatementUtil.optimize(expr);
-        this.paramsExpr = StatementUtil.optimize(paramsExpr);
+        this.expr = AstUtils.optimize(expr);
+        this.paramsExpr = AstUtils.optimize(paramsExpr);
         this.exportNameList = new ArrayList<>();
         this.toResetableValueList = new ArrayList<>();
     }
 
     public ImportPart append(String name, Expression to) {
-        to = StatementUtil.optimize(to);
+        to = AstUtils.optimize(to);
         if (!(to instanceof AssignableExpression)) {
             throw new ParseException("Need a assignable expression.", to.getPosition());
         }

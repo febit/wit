@@ -1,9 +1,9 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.stat;
 
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.util.StatementUtil;
 
 /**
  * @author zqq90
@@ -19,17 +19,17 @@ public class TryPart {
 
     public TryPart(Statement tryStat, Position position) {
         this.position = position;
-        this.tryStat = StatementUtil.optimize(tryStat);
+        this.tryStat = AstUtils.optimize(tryStat);
     }
 
     public TryPart setCatchStat(int exceptionVarIndex, Statement catchStat) {
         this.exceptionVarIndex = exceptionVarIndex;
-        this.catchStat = StatementUtil.optimize(catchStat);
+        this.catchStat = AstUtils.optimize(catchStat);
         return this;
     }
 
     public TryPart setFinalStat(Statement finalStat) {
-        this.finalStat = StatementUtil.optimize(finalStat);
+        this.finalStat = AstUtils.optimize(finalStat);
         return this;
     }
 

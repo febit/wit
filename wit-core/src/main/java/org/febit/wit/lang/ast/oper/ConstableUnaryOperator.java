@@ -5,11 +5,11 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.expr.DirectValue;
 import org.febit.wit.util.ExceptionUtil;
-import org.febit.wit.util.StatementUtil;
 
 import java.util.function.Function;
 
@@ -36,7 +36,7 @@ public class ConstableUnaryOperator implements Expression {
 
     @Override
     public Expression optimize() {
-        if (StatementUtil.isImmutableDirectValue(expr)) {
+        if (AstUtils.isImmutableDirectValue(expr)) {
             return new DirectValue(op.apply(((DirectValue) expr).value), position);
         }
         return this;
@@ -45,6 +45,6 @@ public class ConstableUnaryOperator implements Expression {
     @Override
     @Nullable
     public Object getConstValue() {
-        return op.apply(StatementUtil.calcConst(expr));
+        return op.apply(AstUtils.calcConst(expr));
     }
 }
