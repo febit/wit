@@ -25,13 +25,17 @@ public final class WhileNoLoops implements Statement {
     @Override
     @Nullable
     public Object execute(final InternalContext context) {
-        final int preIndex = context.indexer;
-        context.indexer = indexer;
-        final Statement[] stats = this.statements;
-        while (ALU.isTrue(whileExpr.execute(context))) {
-            context.execute(stats);
+        return context.pushIndexer(indexer, this::execute0);
+    }
+
+    @Nullable
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    private Object execute0(final InternalContext context) {
+        var stats = this.statements;
+        var condition = this.whileExpr;
+        while (ALU.isTrue(condition.execute(context))) {
+            context.visit(stats);
         }
-        context.indexer = preIndex;
         return null;
     }
 }

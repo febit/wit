@@ -21,8 +21,8 @@ public class StatementGroup implements Statement {
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
-        context.execute(this.list);
+    public Object execute(final InternalContext context) {
+        context.visit(this.list);
         return null;
     }
 

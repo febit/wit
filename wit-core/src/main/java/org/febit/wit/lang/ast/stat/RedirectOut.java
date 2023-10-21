@@ -28,16 +28,17 @@ public class RedirectOut implements Statement {
     @Override
     @Nullable
     public Object execute(final InternalContext context) {
-        if (context.preferBytes) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream(256);
-            context.temporaryOut(new OutputStreamOut(out, context.encoding, context.getEngine()),
+        var out = context.getOut();
+        if (out.preferBytes()) {
+            var buffer = new ByteArrayOutputStream(256);
+            context.redirectOut(new OutputStreamOut(buffer, out.getEncoding(), context.getEngine()),
                     srcStatement::execute);
-            target.setValue(context, out.toByteArray());
+            target.setValue(context, buffer.toByteArray());
         } else {
-            CharArrayWriter writer = new CharArrayWriter(256);
-            context.temporaryOut(new WriterOut(writer, context.encoding, context.getEngine()),
+            var buffer = new CharArrayWriter(256);
+            context.redirectOut(new WriterOut(buffer, out.getEncoding(), context.getEngine()),
                     srcStatement::execute);
-            target.setValue(context, writer.toCharArray());
+            target.setValue(context, buffer.toCharArray());
         }
         return null;
     }

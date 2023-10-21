@@ -33,16 +33,16 @@ public final class TemplateAST {
             @Nullable BreakpointListener listener
     ) {
         var context = new InternalContext(template, out, rootParams, indexers, varSize, null, listener);
-        rootParams.exportTo(context::set);
-        context.execute(this.statements);
+        rootParams.exportTo(context::setVar);
+        context.visit(this.statements);
         //assert context.indexer = 0
         return context;
     }
 
     public InternalContext execute(Template template, final InternalContext context, Vars rootParams) {
         var newContext = context.createPeerContext(template, indexers, varSize, rootParams);
-        rootParams.exportTo(newContext::set);
-        newContext.execute(this.statements);
+        rootParams.exportTo(newContext::setVar);
+        newContext.visit(this.statements);
         //assert context.indexer = 0
         return newContext;
     }

@@ -7,16 +7,16 @@ import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.AstUtils;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.Position;
-import org.febit.wit.lang.UnConstableMethodDeclare;
+import org.febit.wit.lang.UnConstableFunctionDeclare;
 import org.febit.wit.lang.ast.Expression;
 
 /**
  * @author zqq90
  */
 @RequiredArgsConstructor
-public final class MethodExecute implements Expression {
+public final class FunctionCallExpr implements Expression {
 
     private final Expression funcExpr;
     private final Expression[] paramExprs;
@@ -27,24 +27,24 @@ public final class MethodExecute implements Expression {
     @Nullable
     public Object execute(final InternalContext context) {
         var func = funcExpr.execute(context);
-        if (!(func instanceof MethodDeclare)) {
+        if (!(func instanceof FunctionDeclare)) {
             throw new ScriptRuntimeException("not a function", this);
         }
-        var results = context.execute(this.paramExprs);
-        return ((MethodDeclare) func).invoke(context, results);
+        var results = context.visit(this.paramExprs);
+        return ((FunctionDeclare) func).invoke(context, results);
     }
 
     @Override
     @Nullable
     public Object getConstValue() {
         var func = AstUtils.calcConst(funcExpr);
-        if (!(func instanceof MethodDeclare)) {
+        if (!(func instanceof FunctionDeclare)) {
             throw new ScriptRuntimeException("not a function", this);
         }
-        if (func instanceof UnConstableMethodDeclare) {
+        if (func instanceof UnConstableFunctionDeclare) {
             return InternalContext.VOID;
         }
         var params = AstUtils.calcConstArray(paramExprs);
-        return ((MethodDeclare) func).invoke(null, params);
+        return ((FunctionDeclare) func).invoke(null, params);
     }
 }

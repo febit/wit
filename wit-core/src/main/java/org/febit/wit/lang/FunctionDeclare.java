@@ -8,7 +8,7 @@ import org.febit.wit.InternalContext;
  * @author zqq90
  */
 @FunctionalInterface
-public interface MethodDeclare {
+public interface FunctionDeclare {
 
     @Nullable
     Object invoke(InternalContext context, Object[] args);

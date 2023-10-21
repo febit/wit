@@ -22,7 +22,7 @@ public class Throw implements Statement {
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(final InternalContext context) {
         Object exception = this.expr.execute(context);
         if (exception instanceof RuntimeException) {
             throw (RuntimeException) exception;

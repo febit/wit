@@ -28,9 +28,9 @@ class ContextTest {
 
         Map<String, Object> map = new HashMap<>();
 
-        assertEquals("a", context.get("a"));
+        assertEquals("a", context.getVar("a"));
 
-        context.exportTo(map);
+        context.exportVars(map);
         assertTrue(map.containsKey("a"));
         assertTrue(map.containsKey("b"));
         assertFalse(map.containsKey("c"));

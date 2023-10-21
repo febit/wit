@@ -5,14 +5,14 @@ import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.Out;
 import org.febit.wit.lang.InternalVoid;
 import org.febit.wit.resolvers.GetResolver;
-import org.febit.wit.resolvers.OutResolver;
+import org.febit.wit.resolvers.Serializer;
 import org.febit.wit.resolvers.SetResolver;
 
 /**
  * @author zqq90
  */
-public class InternalVoidResolver implements GetResolver<InternalVoid>,
-        SetResolver<InternalVoid>, OutResolver<InternalVoid> {
+public class InternalVoidSerializer implements GetResolver<InternalVoid>,
+        SetResolver<InternalVoid>, Serializer<InternalVoid> {
 
     @Override
     public Object get(InternalVoid object, Object property) {

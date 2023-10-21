@@ -86,7 +86,7 @@ public class FunctionDeclarePart {
         return pop(toStatementList(expr));
     }
 
-    public FunctionDeclare popFunctionDeclare(Expression expr) {
+    public FunctionDeclareExpr popFunctionDeclare(Expression expr) {
         return popFunctionDeclare(toStatementList(expr));
     }
 
@@ -99,16 +99,16 @@ public class FunctionDeclarePart {
     public Expression pop(List<Statement> list) {
         final Expression expr = popFunctionDeclare(list);
         if (this.assignToIndex >= 0) {
-            return new Assign(new ContextValue(this.assignToIndex, position), expr, position);
+            return new Assign(new ContextVar(this.assignToIndex, position), expr, position);
         }
         return expr;
     }
 
-    public FunctionDeclare popFunctionDeclare(List<Statement> list) {
+    public FunctionDeclareExpr popFunctionDeclare(List<Statement> list) {
         return popFunctionDeclare(AstUtils.toStatementArray(list));
     }
 
-    protected FunctionDeclare popFunctionDeclare(Statement[] statements) {
+    protected FunctionDeclareExpr popFunctionDeclare(Statement[] statements) {
 
         VariantIndexer[] indexers = varmgr.getIndexers();
         int varSize = varmgr.getVarCount();
@@ -133,7 +133,7 @@ public class FunctionDeclarePart {
             argDefaults[i] = this.args.get(i).defaultValue;
         }
 
-        return new FunctionDeclare(argDefaults,
+        return new FunctionDeclareExpr(argDefaults,
                 varSize,
                 indexers,
                 statements,

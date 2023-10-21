@@ -29,6 +29,28 @@ import java.util.NoSuchElementException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CollectionUtil {
 
+    private static final KeyIter EMPTY_KEY_ITER = new KeyIter() {
+        @Override
+        public Object value() {
+            throw new NoSuchElementException("no more next");
+        }
+
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public Object next() {
+            throw new NoSuchElementException("no more next");
+        }
+
+        @Override
+        public int index() {
+            return 0;
+        }
+    };
+
     public static int getSize(@Nullable final Object object) {
         if (object == null) {
             return 0;
@@ -70,8 +92,7 @@ public class CollectionUtil {
 
     public static KeyIter toKeyIter(@Nullable final Object o1, Statement statement) {
         if (o1 == null) {
-            // FIXME: NPE
-            return null;
+            return EMPTY_KEY_ITER;
         }
         if (o1 instanceof Map) {
             return new MapKeyIter((Map<?, ?>) o1);
@@ -84,8 +105,7 @@ public class CollectionUtil {
     })
     public static Iter toIter(@Nullable final Object o1, Statement statement) {
         if (o1 == null) {
-            // FIXME: empty iter
-            return createIter(Collections.emptyIterator());
+            return EMPTY_KEY_ITER;
         }
         final Class<?> clazz = o1.getClass();
         if (clazz.isArray()) {

@@ -22,7 +22,7 @@ public final class Echo implements Statement {
     @Override
     @Nullable
     public Object execute(final InternalContext context) {
-        context.write(expr.execute(context));
+        context.out(expr.execute(context));
         return null;
     }
 }

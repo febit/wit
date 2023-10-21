@@ -2,7 +2,7 @@
 package org.febit.wit.global;
 
 import org.febit.wit.Context;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 
 import java.util.Map;
 
@@ -16,9 +16,9 @@ public class ConstMethods {
     /**
      * A empty function, do nothing.
      */
-    public static final MethodDeclare noop = (context, args) -> Context.VOID;
+    public static final FunctionDeclare noop = (context, args) -> Context.VOID;
 
-    public static final MethodDeclare CONST_METHOD = (context, args) -> "CONST_METHOD";
+    public static final FunctionDeclare CONST_METHOD = (context, args) -> "CONST_METHOD";
 
     public static String constEmpty() {
         return "constEmpty";
@@ -27,7 +27,7 @@ public class ConstMethods {
     public static void constVoid() {
     }
 
-    public static MethodDeclare constMethod() {
+    public static FunctionDeclare constMethod() {
         return CONST_METHOD;
     }
 

@@ -3,14 +3,14 @@ package org.febit.wit.core;
 
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.TextPosition;
-import org.febit.wit.lang.method.MixedMultiNativeMethodDeclare;
+import org.febit.wit.lang.method.MixedMultiNativeFunctionDeclare;
 import org.febit.wit.lang.method.MultiNativeConstructorDeclare;
-import org.febit.wit.lang.method.MultiNativeMethodDeclare;
+import org.febit.wit.lang.method.MultiNativeFunctionDeclare;
 import org.febit.wit.lang.method.NativeConstructorDeclare;
-import org.febit.wit.lang.method.NativeMethodDeclare;
+import org.febit.wit.lang.method.NativeFunctionDeclare;
 import org.febit.wit.lang.method.NativeNewArrayDeclare;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.security.NativeSecurityManager;
@@ -27,20 +27,20 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class NativeFactory {
 
-    protected final ConcurrentMap<Object, MethodDeclare> methodCaching = new ConcurrentHashMap<>();
+    protected final ConcurrentMap<Object, FunctionDeclare> methodCaching = new ConcurrentHashMap<>();
 
     protected Logger logger;
     protected NativeSecurityManager nativeSecurityManager;
 
-    public MethodDeclare getNativeNewArrayMethodDeclare(Class<?> componentType) {
+    public FunctionDeclare getNativeNewArrayMethodDeclare(Class<?> componentType) {
         return getNativeNewArrayMethodDeclare(componentType, TextPosition.UNKNOWN, true);
     }
 
-    public MethodDeclare getNativeNewArrayMethodDeclare(Class<?> componentType, boolean checkAccess) {
+    public FunctionDeclare getNativeNewArrayMethodDeclare(Class<?> componentType, boolean checkAccess) {
         return getNativeNewArrayMethodDeclare(componentType, TextPosition.UNKNOWN, checkAccess);
     }
 
-    public MethodDeclare getNativeNewArrayMethodDeclare(Class<?> componentType, Position pos, boolean checkAccess) {
+    public FunctionDeclare getNativeNewArrayMethodDeclare(Class<?> componentType, Position pos, boolean checkAccess) {
         Class<?> classForCheck = componentType;
         while (classForCheck.isArray()) {
             classForCheck = classForCheck.getComponentType();
@@ -57,25 +57,25 @@ public class NativeFactory {
         return new NativeNewArrayDeclare(componentType);
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName) {
+    public FunctionDeclare getNativeMethodDeclare(Class<?> clazz, String methodName) {
         return getNativeMethodDeclare(clazz, methodName, TextPosition.UNKNOWN, true);
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, boolean checkAccess) {
+    public FunctionDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, boolean checkAccess) {
         return getNativeMethodDeclare(clazz, methodName, TextPosition.UNKNOWN, checkAccess);
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, Class<?>[] paramTypes) {
+    public FunctionDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, Class<?>[] paramTypes) {
         return getNativeMethodDeclare(clazz, methodName, paramTypes, TextPosition.UNKNOWN, true);
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName,
-                                                Class<?>[] paramTypes, boolean checkAccess) {
+    public FunctionDeclare getNativeMethodDeclare(Class<?> clazz, String methodName,
+                                                  Class<?>[] paramTypes, boolean checkAccess) {
         return getNativeMethodDeclare(clazz, methodName, paramTypes, TextPosition.UNKNOWN, checkAccess);
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, Class<?>[] paramTypes,
-                                                Position position, boolean checkAccess) {
+    public FunctionDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, Class<?>[] paramTypes,
+                                                  Position position, boolean checkAccess) {
         if (checkAccess) {
             final String path = clazz.getName() + '.' + methodName;
             if (!this.nativeSecurityManager.access(path)) {
@@ -89,7 +89,7 @@ public class NativeFactory {
         }
     }
 
-    public MethodDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, Position pos, boolean checkAccess) {
+    public FunctionDeclare getNativeMethodDeclare(Class<?> clazz, String methodName, Position pos, boolean checkAccess) {
         if (checkAccess) {
             final String path = clazz.getName() + '.' + methodName;
             if (!this.nativeSecurityManager.access(path)) {
@@ -99,24 +99,24 @@ public class NativeFactory {
         return createNativeMethodDeclare(clazz, methodName);
     }
 
-    public MethodDeclare getNativeConstructorDeclare(Class<?> clazz) {
+    public FunctionDeclare getNativeConstructorDeclare(Class<?> clazz) {
         return getNativeConstructorDeclare(clazz, TextPosition.UNKNOWN, true);
     }
 
-    public MethodDeclare getNativeConstructorDeclare(Class<?> clazz, boolean checkAccess) {
+    public FunctionDeclare getNativeConstructorDeclare(Class<?> clazz, boolean checkAccess) {
         return getNativeConstructorDeclare(clazz, TextPosition.UNKNOWN, checkAccess);
     }
 
-    public MethodDeclare getNativeConstructorDeclare(Class<?> clazz, Class<?>[] paramTypes) {
+    public FunctionDeclare getNativeConstructorDeclare(Class<?> clazz, Class<?>[] paramTypes) {
         return getNativeConstructorDeclare(clazz, paramTypes, TextPosition.UNKNOWN, true);
     }
 
-    public MethodDeclare getNativeConstructorDeclare(Class<?> clazz, Class<?>[] paramTypes, boolean checkAccess) {
+    public FunctionDeclare getNativeConstructorDeclare(Class<?> clazz, Class<?>[] paramTypes, boolean checkAccess) {
         return getNativeConstructorDeclare(clazz, paramTypes, TextPosition.UNKNOWN, checkAccess);
     }
 
-    public MethodDeclare getNativeConstructorDeclare(Class<?> clazz, Class<?>[] paramTypes,
-                                                     Position position, boolean checkAccess) {
+    public FunctionDeclare getNativeConstructorDeclare(Class<?> clazz, Class<?>[] paramTypes,
+                                                       Position position, boolean checkAccess) {
         if (checkAccess) {
             final String path = clazz.getName().concat(".<init>");
             if (!this.nativeSecurityManager.access(path)) {
@@ -130,7 +130,7 @@ public class NativeFactory {
         }
     }
 
-    public MethodDeclare getNativeConstructorDeclare(Class<?> clazz, Position pos, boolean checkAccess) {
+    public FunctionDeclare getNativeConstructorDeclare(Class<?> clazz, Position pos, boolean checkAccess) {
         if (checkAccess) {
             final String path = clazz.getName().concat(".<init>");
             if (!this.nativeSecurityManager.access(path)) {
@@ -140,11 +140,11 @@ public class NativeFactory {
         return createNativeConstructorDeclare(clazz);
     }
 
-    public MethodDeclare getNativeMethodDeclare(Method method) {
-        MethodDeclare declare = methodCaching.get(method);
+    public FunctionDeclare getNativeMethodDeclare(Method method) {
+        FunctionDeclare declare = methodCaching.get(method);
         if (declare == null) {
             declare = createNativeMethodDeclare(method);
-            MethodDeclare old = methodCaching.putIfAbsent(method, declare);
+            FunctionDeclare old = methodCaching.putIfAbsent(method, declare);
             if (old != null) {
                 return old;
             }
@@ -152,11 +152,11 @@ public class NativeFactory {
         return declare;
     }
 
-    public MethodDeclare getNativeConstructorDeclare(Constructor constructor) {
-        MethodDeclare declare = methodCaching.get(constructor);
+    public FunctionDeclare getNativeConstructorDeclare(Constructor constructor) {
+        FunctionDeclare declare = methodCaching.get(constructor);
         if (declare == null) {
             declare = createNativeConstructorDeclare(constructor);
-            MethodDeclare old = methodCaching.putIfAbsent(constructor, declare);
+            FunctionDeclare old = methodCaching.putIfAbsent(constructor, declare);
             if (old != null) {
                 return old;
             }
@@ -164,7 +164,7 @@ public class NativeFactory {
         return declare;
     }
 
-    public MethodDeclare createNativeConstructorDeclare(Class<?> clazz) {
+    public FunctionDeclare createNativeConstructorDeclare(Class<?> clazz) {
         Constructor[] constructors = clazz.getConstructors();
         if (constructors.length == 0) {
             throw new ScriptRuntimeException("Not found public constructor for class： " + clazz.getName());
@@ -176,7 +176,7 @@ public class NativeFactory {
         return new MultiNativeConstructorDeclare(constructors);
     }
 
-    public MethodDeclare createNativeMethodDeclare(Class<?> clazz, String methodName) {
+    public FunctionDeclare createNativeMethodDeclare(Class<?> clazz, String methodName) {
         Method[] methods = ClassUtil.getPublicMethods(clazz, methodName);
         if (methods.length == 0) {
             throw new ScriptRuntimeException("Method not found： " + clazz.getName() + '#' + methodName);
@@ -187,12 +187,12 @@ public class NativeFactory {
         return createMultiNativeMethodDeclare(methods);
     }
 
-    public MethodDeclare createNativeMethodDeclare(Method method) {
+    public FunctionDeclare createNativeMethodDeclare(Method method) {
         ClassUtil.setAccessible(method);
-        return new NativeMethodDeclare(method);
+        return new NativeFunctionDeclare(method);
     }
 
-    public MethodDeclare createNativeMethodDeclare(List<Method> methods) {
+    public FunctionDeclare createNativeMethodDeclare(List<Method> methods) {
         if (methods == null || methods.isEmpty()) {
             throw new IllegalArgumentException("methods must mot empty");
         }
@@ -203,7 +203,7 @@ public class NativeFactory {
         return createMultiNativeMethodDeclare(methods.toArray(new Method[size]));
     }
 
-    public MethodDeclare createMultiNativeMethodDeclare(Method[] methods) {
+    public FunctionDeclare createMultiNativeMethodDeclare(Method[] methods) {
         if (methods == null || methods.length == 0) {
             throw new IllegalArgumentException("methods must mot empty");
         }
@@ -216,11 +216,11 @@ public class NativeFactory {
                 break;
             }
         }
-        return mix ? new MixedMultiNativeMethodDeclare(methods)
-                : new MultiNativeMethodDeclare(methods, isStatic);
+        return mix ? new MixedMultiNativeFunctionDeclare(methods)
+                : new MultiNativeFunctionDeclare(methods, isStatic);
     }
 
-    protected MethodDeclare createNativeConstructorDeclare(Constructor<?> constructor) {
+    protected FunctionDeclare createNativeConstructorDeclare(Constructor<?> constructor) {
         ClassUtil.setAccessible(constructor);
         return new NativeConstructorDeclare(constructor);
     }

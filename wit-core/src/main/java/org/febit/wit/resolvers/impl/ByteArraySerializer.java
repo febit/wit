@@ -2,12 +2,12 @@
 package org.febit.wit.resolvers.impl;
 
 import org.febit.wit.io.Out;
-import org.febit.wit.resolvers.OutResolver;
+import org.febit.wit.resolvers.Serializer;
 
 /**
  * @author zqq90
  */
-public class ByteArrayOutResolver implements OutResolver<byte[]> {
+public class ByteArraySerializer implements Serializer<byte[]> {
 
     @Override
     public void render(Out out, byte[] bean) {

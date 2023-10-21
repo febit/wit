@@ -12,7 +12,7 @@ import org.febit.wit.lang.ast.AssignableExpression;
  * @author zqq90
  */
 @RequiredArgsConstructor
-public final class ContextValue implements AssignableExpression {
+public final class ContextVar implements AssignableExpression {
 
     private final int index;
     @Getter

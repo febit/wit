@@ -3,7 +3,7 @@ package org.febit.wit.lang.iter;
 
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.Iter;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.ALU;
 
 /**
@@ -12,9 +12,9 @@ import org.febit.wit.lang.ALU;
 public final class IterMethodFilter extends IterFilter {
 
     private final InternalContext context;
-    private final MethodDeclare method;
+    private final FunctionDeclare method;
 
-    public IterMethodFilter(InternalContext context, MethodDeclare method, Iter iter) {
+    public IterMethodFilter(InternalContext context, FunctionDeclare method, Iter iter) {
         super(iter);
         this.context = context;
         this.method = method;

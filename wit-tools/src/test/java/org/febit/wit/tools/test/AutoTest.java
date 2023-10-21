@@ -71,7 +71,7 @@ class AutoTest {
                     out.reset();
                     mergeTemplate(templatePath, out);
 
-                    //read outNotNull 
+                    //read outNotNull
                     InputStream in;
                     if ((in = classLoader.getResourceAsStream(AUTO_TEST_PATH.concat(outPath))) != null) {
                         int read;
@@ -108,6 +108,6 @@ class AutoTest {
         Template template = EngineManager.getEngine().getTemplate(templatePath);
         Context context = template.merge(out);
         System.out.println("\tassert count: "
-                + context.getLocal(org.febit.wit.tools.testunit.AssertGlobalRegister.ASSERT_COUNT_KEY));
+                + context.getLocalVar(org.febit.wit.tools.testunit.AssertGlobalRegister.ASSERT_COUNT_KEY));
     }
 }

@@ -3,7 +3,7 @@ package org.febit.wit.asm;
 
 import org.febit.wit.Context;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -24,16 +24,16 @@ class AsmNativeFactoryTest {
     @SuppressWarnings("unchecked")
     void test() throws Exception {
 
-        MethodDeclare str_toString = AsmNativeFactory.createAccessor(String.class.getMethod("toString"));
+        FunctionDeclare str_toString = AsmNativeFactory.createAccessor(String.class.getMethod("toString"));
 
-        MethodDeclare currentTimeMillis = AsmNativeFactory.createAccessor(System.class.getMethod("currentTimeMillis"));
-        MethodDeclare newList = AsmNativeFactory.createAccessor(ArrayList.class.getConstructor());
-        MethodDeclare listSize = AsmNativeFactory.createAccessor(ArrayList.class.getMethod("size"));
+        FunctionDeclare currentTimeMillis = AsmNativeFactory.createAccessor(System.class.getMethod("currentTimeMillis"));
+        FunctionDeclare newList = AsmNativeFactory.createAccessor(ArrayList.class.getConstructor());
+        FunctionDeclare listSize = AsmNativeFactory.createAccessor(ArrayList.class.getMethod("size"));
 
-        MethodDeclare listAdd = AsmNativeFactory.createAccessor(List.class.getMethod("add", Object.class));
-        MethodDeclare newListWithInitSize = AsmNativeFactory.createAccessor(ArrayList.class.getConstructor(int.class));
-        MethodDeclare listAddToIndex = AsmNativeFactory.createAccessor(List.class.getMethod("add", int.class, Object.class));
-        MethodDeclare arraycopy = AsmNativeFactory.createAccessor(System.class.getMethod("arraycopy", Object.class, int.class, Object.class, int.class, int.class));
+        FunctionDeclare listAdd = AsmNativeFactory.createAccessor(List.class.getMethod("add", Object.class));
+        FunctionDeclare newListWithInitSize = AsmNativeFactory.createAccessor(ArrayList.class.getConstructor(int.class));
+        FunctionDeclare listAddToIndex = AsmNativeFactory.createAccessor(List.class.getMethod("add", int.class, Object.class));
+        FunctionDeclare arraycopy = AsmNativeFactory.createAccessor(System.class.getMethod("arraycopy", Object.class, int.class, Object.class, int.class, int.class));
 
         assertEquals("aaa", str_toString.invoke(null, new Object[]{"aaa"}));
 

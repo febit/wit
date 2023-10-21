@@ -7,7 +7,7 @@ import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.util.ArrayUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -30,20 +30,20 @@ public class CacheGlobalRegister implements GlobalRegister {
 
     @Override
     public void register(GlobalManager manager) {
-        manager.setConst(name, new CacheMethodDeclare(cacheProvider));
+        manager.setConst(name, new CacheFunctionDeclare(cacheProvider));
         if (registCacheRemove) {
-            manager.setConst(name + "_remove", new CacheRemoveMethodDeclare(cacheProvider));
+            manager.setConst(name + "_remove", new CacheRemoveFunctionDeclare(cacheProvider));
         }
         if (registCacheClear) {
-            manager.setConst(name + "_clear", new CacheClearMethodDeclare(cacheProvider));
+            manager.setConst(name + "_clear", new CacheClearFunctionDeclare(cacheProvider));
         }
     }
 
-    protected static class CacheClearMethodDeclare implements MethodDeclare {
+    protected static class CacheClearFunctionDeclare implements FunctionDeclare {
 
         protected final CacheProvider cacheProvider;
 
-        public CacheClearMethodDeclare(CacheProvider cacheProvider) {
+        public CacheClearFunctionDeclare(CacheProvider cacheProvider) {
             this.cacheProvider = cacheProvider;
         }
 
@@ -54,11 +54,11 @@ public class CacheGlobalRegister implements GlobalRegister {
         }
     }
 
-    protected static class CacheRemoveMethodDeclare implements MethodDeclare {
+    protected static class CacheRemoveFunctionDeclare implements FunctionDeclare {
 
         protected final CacheProvider cacheProvider;
 
-        public CacheRemoveMethodDeclare(CacheProvider cacheProvider) {
+        public CacheRemoveFunctionDeclare(CacheProvider cacheProvider) {
             this.cacheProvider = cacheProvider;
         }
 
@@ -69,11 +69,11 @@ public class CacheGlobalRegister implements GlobalRegister {
         }
     }
 
-    protected static class CacheMethodDeclare implements MethodDeclare {
+    protected static class CacheFunctionDeclare implements FunctionDeclare {
 
         protected final CacheProvider cacheProvider;
 
-        public CacheMethodDeclare(CacheProvider cacheProvider) {
+        public CacheFunctionDeclare(CacheProvider cacheProvider) {
             this.cacheProvider = cacheProvider;
         }
 
@@ -85,25 +85,25 @@ public class CacheGlobalRegister implements GlobalRegister {
             }
             final CachingEntry cachingEntry;
             final Object firstArgument = args[0];
-            if (firstArgument instanceof MethodDeclare) {
-                cachingEntry = buildIfAbsent(context, firstArgument, (MethodDeclare) firstArgument, args, 1);
+            if (firstArgument instanceof FunctionDeclare) {
+                cachingEntry = buildIfAbsent(context, firstArgument, (FunctionDeclare) firstArgument, args, 1);
             } else if (len > 1) {
                 final Object secondArgument = args[1];
-                if (secondArgument instanceof MethodDeclare) {
-                    cachingEntry = buildIfAbsent(context, firstArgument, (MethodDeclare) secondArgument, args, 2);
+                if (secondArgument instanceof FunctionDeclare) {
+                    cachingEntry = buildIfAbsent(context, firstArgument, (FunctionDeclare) secondArgument, args, 2);
                 } else {
                     throw new ScriptRuntimeException("This method need a function argument at index 0 or 1.");
                 }
             } else {
                 throw new ScriptRuntimeException("This method need a function argument.");
             }
-            context.write(cachingEntry.outed);
+            context.out(cachingEntry.outed);
             return cachingEntry.returned;
         }
 
         protected CachingEntry buildIfAbsent(final InternalContext context,
                                              final Object key,
-                                             final MethodDeclare methodDeclare,
+                                             final FunctionDeclare functionDeclare,
                                              final Object[] args,
                                              final int argsStart) {
 
@@ -118,15 +118,16 @@ public class CacheGlobalRegister implements GlobalRegister {
                     ? Arrays.copyOfRange(args, argsStart, args.length)
                     : ArrayUtil.emptyObjects();
 
-            if (context.preferBytes) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream(256);
-                returned = context.temporaryOut(new OutputStreamOut(out, context.encoding, context.getEngine()),
-                        c -> methodDeclare.invoke(c, methodArgs));
-                outted = out.toByteArray();
+            var out = context.getOut();
+            if (out.preferBytes()) {
+                var buffer = new ByteArrayOutputStream(256);
+                returned = context.redirectOut(new OutputStreamOut(buffer, out.getEncoding(), context.getEngine()),
+                        c -> functionDeclare.invoke(c, methodArgs));
+                outted = buffer.toByteArray();
             } else {
-                CharArrayWriter writer = new CharArrayWriter(256);
-                returned = context.temporaryOut(new WriterOut(writer, context.encoding, context.getEngine()),
-                        c -> methodDeclare.invoke(c, methodArgs));
+                var writer = new CharArrayWriter(256);
+                returned = context.redirectOut(new WriterOut(writer, out.getEncoding(), context.getEngine()),
+                        c -> functionDeclare.invoke(c, methodArgs));
                 outted = writer.toCharArray();
             }
             result = new CachingEntry(returned, outted);

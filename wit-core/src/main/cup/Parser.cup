@@ -7,12 +7,13 @@ import org.febit.wit.lang.ast.expr.*;
 import org.febit.wit.lang.ast.oper.*;
 import org.febit.wit.lang.ast.stat.*;
 import org.febit.wit.lang.ALU;
-import org.febit.wit.lang.AstFactory;
+import org.febit.wit.lang.Ast;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.util.ClassNameBand;
 import org.febit.wit.util.Stack;
 
 import static org.febit.wit.lang.ast.expr.FunctionDeclarePart.ArgumentInfo;
+import static org.febit.wit.lang.Ast.*;
 
 /* Terminals */
 terminal Integer    VAR,
@@ -79,7 +80,7 @@ nonterminal TryPart tryPart, catchPart, finallyPart;
 nonterminal Expression expression, expression_statementable;
 nonterminal Expression[] mapPropertyDef;
 nonterminal MapValue mapValue;
-nonterminal TemplateStringExpressionPart templateStringExprPart;
+nonterminal TemplateStringBuilder templateStringBuilder;
 nonterminal Integer superCount;
 nonterminal Expression contextValueExpr;
 
@@ -476,7 +477,7 @@ expression      ::= expression_statementable:$
 
                     //
                     |DIRECT_VALUE:sym
-                    {: return createDirectValue(%sym.symbol%); :}
+                    {: return toDirectValue(%sym.symbol%); :}
 
                     // ()
                     |LPAREN expression:$ RPAREN
@@ -487,9 +488,9 @@ expression      ::= expression_statementable:$
 
                     //arrayValue
                     |LBRACK:sym RBRACK
-                    {: return AstFactory.emptyArrayValue(%sym.symbol%.pos); :}
+                    {: return Ast.emptyArray(%sym.symbol%.pos); :}
                     |LBRACK:sym expression[COMMA]:list COMMA? RBRACK
-                    {: return AstFactory.arrayValue(%list%, %sym.symbol%.pos); :}
+                    {: return Ast.newArray(%sym.symbol%.pos, %list%); :}
 
                     //NativeNewArrayDeclareExpression
                     |NATIVE:sym LBRACK RBRACK javaClass:javaClass
@@ -517,8 +518,8 @@ expression      ::= expression_statementable:$
                     |lambdaExpr:$
 
                     // template string
-                    |templateStringExprPart:part TEMPLATE_STRING_END:end
-                    {: return (%part%).add(createDirectValue(%end.symbol%)).pop(); :}
+                    |templateStringBuilder:part TEMPLATE_STRING_END:end
+                    {: return (%part%).expr(toDirectValue(%end.symbol%)).build(); :}
                     ;
 
 // super
@@ -544,15 +545,15 @@ contextValueExpr    ::= IDENTIFIER:ident
 // map {key:expr, ...}
 
 mapPropertyDef        ::= DIRECT_VALUE:key COLON expression:expr
-                        {: return new Expression[]{createDirectValue(%key.symbol%), %expr%}; :}
+                        {: return new Expression[]{toDirectValue(%key.symbol%), %expr%}; :}
                         |MINUS:sym DIRECT_VALUE:key COLON expression:expr
-                        {: return new Expression[]{new DirectValue(ALU.negative(%key%), %key.symbol%.pos), %expr%}; :}
+                        {: return new Expression[]{directValue(%key.symbol%.pos, ALU.negative(%key%)), %expr%}; :}
                         |IDENTIFIER:ident
-                        {: return new Expression[]{createDirectValue(%ident.symbol%), createContextValue(0, %ident%, %ident.symbol%.pos)}; :}
+                        {: return new Expression[]{toDirectValue(%ident.symbol%), createContextValue(0, %ident%, %ident.symbol%.pos)}; :}
                         |IDENTIFIER:ident COLON expression:expr
-                        {: return new Expression[]{createDirectValue(%ident.symbol%), %expr%}; :}
+                        {: return new Expression[]{toDirectValue(%ident.symbol%), %expr%}; :}
                        // |IDENTIFIER:ident mapPropertyFuncHead:part LBRACE statement[]:list? RBRACE
-                       // {: return new Expression[]{createDirectValue(%ident.symbol%), (%part%).pop(%list%)}; :}
+                       // {: return new Expression[]{toDirectValue(%ident.symbol%), (%part%).pop(%list%)}; :}
                         |LBRACK expression:key RBRACK COLON expression:expr
                         {: return new Expression[]{%key%, %expr%}; :}
                         ;
@@ -565,10 +566,10 @@ mapValue            ::= LBRACE:sym RBRACE
                         ;
 
 
-templateStringExprPart  ::= TEMPLATE_STRING_START:sym
-                            {: return new TemplateStringExpressionPart(%sym.symbol%.pos); :}
-                            | templateStringExprPart:part TEMPLATE_STRING_INTERPOLATION_START:start expression:expr TEMPLATE_STRING_INTERPOLATION_END
-                            {: return (%part%).add(createDirectValue(%start.symbol%)).add(%expr%); :}
+templateStringBuilder  ::= TEMPLATE_STRING_START:sym
+                            {: return Ast.templateStringBuilder().pos(%sym.symbol%.pos); :}
+                            | templateStringBuilder:part TEMPLATE_STRING_INTERPOLATION_START:start expression:expr TEMPLATE_STRING_INTERPOLATION_END
+                            {: return (%part%).expr(toDirectValue(%start.symbol%)).expr(%expr%); :}
                             ;
 
 /* function  */

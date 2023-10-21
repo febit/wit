@@ -25,9 +25,9 @@ public class ContextLocalRegister implements GlobalRegister {
             throw new ScriptRuntimeException("This function need at least 1 arg: ");
         }
         if (len == 1) {
-            return context.getLocal(args[0]);
+            return context.getLocalVar(args[0]);
         }
-        context.setLocal(args[0], args[1]);
+        context.setLocalVar(args[0], args[1]);
         return args[1];
     }
 }

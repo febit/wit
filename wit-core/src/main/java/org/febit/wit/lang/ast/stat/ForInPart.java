@@ -5,7 +5,7 @@ import org.febit.wit.core.VariantManager;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ast.expr.FunctionDeclare;
+import org.febit.wit.lang.ast.expr.FunctionDeclareExpr;
 import org.febit.wit.lang.AstUtils;
 
 /**
@@ -22,7 +22,7 @@ public class ForInPart extends AbstractForInPart {
         setCollectionExpr(collectionExpr);
     }
 
-    public ForInPart(String item, FunctionDeclare functionDeclareExpr, VariantManager varmgr, Position position) {
+    public ForInPart(String item, FunctionDeclareExpr functionDeclareExpr, VariantManager varmgr, Position position) {
         super(varmgr, position);
         this.itemVarName = item;
         this.functionDeclareExpr = functionDeclareExpr;

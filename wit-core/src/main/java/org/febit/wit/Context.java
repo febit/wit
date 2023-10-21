@@ -28,7 +28,7 @@ public interface Context {
      * @return variable value
      * @throws ScriptRuntimeException if not found variable by given name
      */
-    Object get(String name) throws ScriptRuntimeException;
+    Object getVar(String name) throws ScriptRuntimeException;
 
     /**
      * Get a variable by name.
@@ -38,7 +38,7 @@ public interface Context {
      * @return variable value
      * @throws ScriptRuntimeException In force mode, if not found variable by given name
      */
-    Object get(String name, boolean force) throws ScriptRuntimeException;
+    Object getVar(String name, boolean force) throws ScriptRuntimeException;
 
     /**
      * Set a variable by name.
@@ -46,7 +46,7 @@ public interface Context {
      * @param name  variable name
      * @param value variable value
      */
-    void set(String name, Object value);
+    void setVar(String name, Object value);
 
     /**
      * Get a local variable by name.
@@ -54,7 +54,7 @@ public interface Context {
      * @param name variable name
      * @return variable value
      */
-    Object getLocal(Object name);
+    Object getLocalVar(Object name);
 
     /**
      * Set a local variable by name.
@@ -62,7 +62,7 @@ public interface Context {
      * @param name  variable name
      * @param value value
      */
-    void setLocal(Object name, Object value);
+    void setLocalVar(Object name, Object value);
 
     /**
      * Export a function by name.
@@ -79,7 +79,7 @@ public interface Context {
      *
      * @param map target map
      */
-    void exportTo(final Map<? super String, Object> map);
+    void exportVars(final Map<? super String, Object> map);
 
     /**
      * @param consumer consumer

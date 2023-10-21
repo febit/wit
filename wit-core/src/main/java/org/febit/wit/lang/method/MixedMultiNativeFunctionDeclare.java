@@ -3,7 +3,7 @@ package org.febit.wit.lang.method;
 
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.util.JavaNativeUtil;
 
 import java.lang.reflect.Method;
@@ -11,11 +11,11 @@ import java.lang.reflect.Method;
 /**
  * @author zqq90
  */
-public class MixedMultiNativeMethodDeclare implements MethodDeclare {
+public class MixedMultiNativeFunctionDeclare implements FunctionDeclare {
 
     private final Method[] methods;
 
-    public MixedMultiNativeMethodDeclare(Method[] methods) {
+    public MixedMultiNativeFunctionDeclare(Method[] methods) {
         this.methods = methods;
     }
 

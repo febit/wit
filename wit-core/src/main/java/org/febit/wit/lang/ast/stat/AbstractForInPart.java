@@ -5,7 +5,7 @@ import org.febit.wit.core.VariantManager;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ast.expr.FunctionDeclare;
+import org.febit.wit.lang.ast.expr.FunctionDeclareExpr;
 import org.febit.wit.lang.AstUtils;
 
 /**
@@ -18,7 +18,7 @@ public abstract class AbstractForInPart {
     protected IBlock bodyStatement;
     protected Statement elseStatement;
     protected Expression collectionExpr;
-    protected FunctionDeclare functionDeclareExpr;
+    protected FunctionDeclareExpr functionDeclareExpr;
     protected int iterIndex;
 
     public AbstractForInPart(VariantManager vars, Position position) {

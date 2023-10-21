@@ -1,10 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.resolvers;
 
+import jakarta.annotation.Nullable;
 import org.febit.wit.Init;
 import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.io.Out;
 import org.febit.wit.loggers.Logger;
-import org.febit.wit.resolvers.impl.CommonResolver;
+import org.febit.wit.resolvers.impl.CommonSerializer;
 import org.febit.wit.util.ClassMap;
 
 import java.lang.reflect.Modifier;
@@ -20,32 +22,32 @@ public class ResolverManager {
     protected boolean ignoreNullPointer = true;
     protected Resolver[] resolvers;
 
-    public final ClassMap<GetResolver> getters;
-    public final ClassMap<SetResolver> setters;
-    public final ClassMap<OutResolver> outers;
+    protected final ClassMap<GetResolver> getterMapping;
+    protected final ClassMap<SetResolver> setterMapping;
+    protected final ClassMap<Serializer> serializerMapping;
 
     protected final ArrayList<GetResolver> getResolvers;
     protected final ArrayList<SetResolver> setResolvers;
-    protected final ArrayList<OutResolver> outResolvers;
+    protected final ArrayList<Serializer> serializers;
     protected final ArrayList<Class> getResolverTypes;
     protected final ArrayList<Class> setResolverTypes;
     protected final ArrayList<Class> outResolverTypes;
-    protected final CommonResolver commonResolver;
+    protected final CommonSerializer commonResolver;
 
     public ResolverManager() {
 
-        getters = new ClassMap<>();
-        setters = new ClassMap<>();
-        outers = new ClassMap<>();
+        getterMapping = new ClassMap<>();
+        setterMapping = new ClassMap<>();
+        serializerMapping = new ClassMap<>();
 
         getResolvers = new ArrayList<>();
         setResolvers = new ArrayList<>();
-        outResolvers = new ArrayList<>();
+        serializers = new ArrayList<>();
         getResolverTypes = new ArrayList<>();
         setResolverTypes = new ArrayList<>();
         outResolverTypes = new ArrayList<>();
 
-        commonResolver = new CommonResolver();
+        commonResolver = new CommonSerializer();
     }
 
     @SuppressWarnings("unchecked")
@@ -61,7 +63,7 @@ public class ResolverManager {
     }
 
     protected GetResolver resolveGetResolverIfAbsent(final Class<?> type) {
-        GetResolver resolver = getters.get(type);
+        var resolver = getterMapping.get(type);
         if (resolver != null) {
             return resolver;
         }
@@ -69,7 +71,7 @@ public class ResolverManager {
         resolver = index >= 0
                 ? getResolvers.get(index)
                 : resolveGetResolver(type);
-        return getters.putIfAbsent(type, resolver);
+        return getterMapping.putIfAbsent(type, resolver);
     }
 
     protected GetResolver resolveGetResolver(final Class<?> type) {
@@ -78,7 +80,7 @@ public class ResolverManager {
 
     protected SetResolver resolveSetResolverIfAbsent(final Class<?> type) {
         SetResolver resolver;
-        resolver = setters.get(type);
+        resolver = setterMapping.get(type);
         if (resolver != null) {
             return resolver;
         }
@@ -86,35 +88,52 @@ public class ResolverManager {
         resolver = index >= 0
                 ? setResolvers.get(index)
                 : resolveSetResolver(type);
-        return setters.putIfAbsent(type, resolver);
+        return setterMapping.putIfAbsent(type, resolver);
     }
 
     protected SetResolver resolveSetResolver(final Class<?> type) {
         return commonResolver;
     }
 
-    public OutResolver resolveOutResolver(final Class<?> type) {
-        OutResolver resolver;
-        resolver = outers.get(type);
+    public void write(Out out, @Nullable Object obj) {
+        if (obj == null) {
+            return;
+        }
+        var type = obj.getClass();
+        if (type == String.class) {
+            out.write((String) obj);
+            return;
+        }
+        var resolver = this.serializerMapping.unsafeGet(type);
+        if (resolver != null) {
+            resolver.render(out, obj);
+            return;
+        }
+        resolveOutResolver(type).render(out, obj);
+    }
+
+    public Serializer resolveOutResolver(final Class<?> type) {
+        Serializer resolver;
+        resolver = serializerMapping.get(type);
         if (resolver != null) {
             return resolver;
         }
         final int index = lookup(outResolverTypes, type);
         resolver = index >= 0
-                ? outResolvers.get(index)
+                ? serializers.get(index)
                 : commonResolver;
-        return outers.putIfAbsent(type, resolver);
+        return serializerMapping.putIfAbsent(type, resolver);
     }
 
     @Init
     public void init() {
         if (resolvers != null) {
-            for (Resolver resolver : resolvers) {
+            for (var resolver : resolvers) {
                 resolver.register(this);
             }
             getResolvers.trimToSize();
             setResolvers.trimToSize();
-            outResolvers.trimToSize();
+            serializers.trimToSize();
             getResolverTypes.trimToSize();
             setResolverTypes.trimToSize();
             outResolverTypes.trimToSize();
@@ -139,7 +158,7 @@ public class ResolverManager {
                 getResolvers.add((GetResolver) resolver);
             }
             if (notAbstract) {
-                getters.putIfAbsent(type, (GetResolver) resolver);
+                getterMapping.putIfAbsent(type, (GetResolver) resolver);
             }
         }
         if (resolver instanceof SetResolver) {
@@ -148,35 +167,44 @@ public class ResolverManager {
                 setResolvers.add((SetResolver) resolver);
             }
             if (notAbstract) {
-                setters.putIfAbsent(type, (SetResolver) resolver);
+                setterMapping.putIfAbsent(type, (SetResolver) resolver);
             }
         }
-        if (resolver instanceof OutResolver) {
+        if (resolver instanceof Serializer) {
             if (notFinal) {
                 outResolverTypes.add(type);
-                outResolvers.add((OutResolver) resolver);
+                serializers.add((Serializer) resolver);
             }
             if (notAbstract) {
-                outers.putIfAbsent(type, (OutResolver) resolver);
+                serializerMapping.putIfAbsent(type, (Serializer) resolver);
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    public final Object get(Object bean, Object property) {
-        if (bean != null) {
-            return resolveGetResolverIfAbsent(bean.getClass()).get(bean, property);
+    public final Object get(@Nullable Object bean, Object property) {
+        if (bean == null) {
+            return handleNullPointer();
         }
-        return handleNullPointer();
+        var resolver = this.getterMapping.unsafeGet(bean.getClass());
+        if (resolver != null) {
+            return resolver.get(bean, property);
+        }
+        return resolveGetResolverIfAbsent(bean.getClass()).get(bean, property);
     }
 
     @SuppressWarnings("unchecked")
-    public final void set(Object bean, Object property, Object value) {
-        if (bean != null) {
-            resolveSetResolverIfAbsent(bean.getClass()).set(bean, property, value);
+    public final void set(@Nullable Object bean, Object property, Object value) {
+        if (bean == null) {
+            handleNullPointer();
             return;
         }
-        handleNullPointer();
+        var resolver = this.setterMapping.unsafeGet(bean.getClass());
+        if (resolver != null) {
+            resolver.set(bean, property, value);
+            return;
+        }
+        resolveSetResolverIfAbsent(bean.getClass()).set(bean, property, value);
     }
 
     protected final Object handleNullPointer() {

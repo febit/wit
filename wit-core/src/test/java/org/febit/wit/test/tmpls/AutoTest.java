@@ -8,7 +8,7 @@ import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ast.expr.BreakpointExpression;
+import org.febit.wit.lang.ast.expr.BreakpointExpr;
 import org.febit.wit.lang.ast.expr.DirectValue;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
@@ -81,13 +81,13 @@ class AutoTest {
         }
         Out out = new OutputStreamOut(output, EngineManager.getEngine());
         Context context = template.debug(out, this::onBreakpoint);
-        System.out.println("\tassert count: " + context.getLocal(AssertGlobalRegister.ASSERT_COUNT_KEY));
+        System.out.println("\tassert count: " + context.getLocalVar(AssertGlobalRegister.ASSERT_COUNT_KEY));
     }
 
     private void onBreakpoint(Object label, InternalContext context, Statement statement, Object result) {
         breakpointCount.increment();
-        Expression innerExpr = statement instanceof BreakpointExpression
-                ? ((BreakpointExpression) statement).getExpression()
+        Expression innerExpr = statement instanceof BreakpointExpr
+                ? ((BreakpointExpr) statement).getExpression()
                 : null;
 
         if ("assert:DirectValue".equals(label)) {

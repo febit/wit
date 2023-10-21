@@ -3,23 +3,18 @@ package org.febit.wit;
 
 import jakarta.annotation.Nullable;
 import lombok.Getter;
-import org.febit.wit.lang.BreakpointListener;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.Out;
-import org.febit.wit.lang.InternedEncoding;
+import org.febit.wit.lang.BreakpointListener;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.LoopMeta;
-import org.febit.wit.lang.MethodDeclare;
 import org.febit.wit.lang.VariantIndexer;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.resolvers.GetResolver;
-import org.febit.wit.resolvers.OutResolver;
 import org.febit.wit.resolvers.ResolverManager;
-import org.febit.wit.resolvers.SetResolver;
-import org.febit.wit.util.ClassMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +49,7 @@ public final class InternalContext implements Context {
      */
     public final Object[] vars;
     /**
-     * Parent scopes's variables, if this's a sub-context.
+     * Parent scopes's variables, if this is a sub-context.
      */
     private final Object[][] parentScopes;
     /**
@@ -62,24 +57,14 @@ public final class InternalContext implements Context {
      */
     private final VariantIndexer[] indexers;
     /**
-     * If this.write is prefer bytes.
-     */
-    public final boolean preferBytes;
-    /**
-     * Output's charset.
-     */
-    public final InternedEncoding encoding;
-    /**
      * Index of current indexer.
      */
-    @SuppressWarnings({
-            "squid:ClassVariableVisibilityCheck"
-    })
-    public int indexer;
+    private int indexer;
 
     /**
      * Output, stream or writer.
      */
+    @Getter
     private Out out;
 
     /**
@@ -106,9 +91,6 @@ public final class InternalContext implements Context {
     private InternalContext localContext;
 
     private final ResolverManager resolverManager;
-    private final ClassMap<OutResolver> outers;
-    private final ClassMap<GetResolver> getters;
-    private final ClassMap<SetResolver> setters;
 
     public InternalContext(
             final Template template,
@@ -121,18 +103,9 @@ public final class InternalContext implements Context {
     ) {
         this.template = template;
         this.rootParams = rootParams;
-
-        //output
         this.out = out;
-        this.encoding = out.getEncoding();
-        this.preferBytes = out.preferBytes();
 
-        //resolvers
-        var resolverMgr = template.getEngine().getResolverManager();
-        this.resolverManager = resolverMgr;
-        this.outers = resolverMgr.outers;
-        this.getters = resolverMgr.getters;
-        this.setters = resolverMgr.setters;
+        this.resolverManager = template.getEngine().getResolverManager();
 
         //variables & indexers
         this.indexers = indexers;
@@ -142,7 +115,7 @@ public final class InternalContext implements Context {
 
         this.breakpointListener = breakpointListener;
         //import params
-        rootParams.exportTo(this::set);
+        rootParams.exportTo(this::setVar);
     }
 
     public void onBreakpoint(@Nullable Object label, Statement statement, @Nullable Object result) {
@@ -157,7 +130,7 @@ public final class InternalContext implements Context {
         return template.mergeToContext(this, vars);
     }
 
-    public Object[] execute(Expression[] exprs) {
+    public Object[] visit(Expression[] exprs) {
         var len = exprs.length;
         var results = new Object[len];
         for (int i = 0; i < len; i++) {
@@ -166,7 +139,7 @@ public final class InternalContext implements Context {
         return results;
     }
 
-    public void execute(final Statement[] stats) {
+    public void visit(final Statement[] stats) {
         var i = 0;
         var len = stats.length;
         while (i < len) {
@@ -174,7 +147,7 @@ public final class InternalContext implements Context {
         }
     }
 
-    public void executeWithLoop(final Statement[] stats) {
+    public void visitAndCheckLoop(final Statement[] stats) {
         var i = 0;
         var len = stats.length;
         while (i < len && noLoop()) {
@@ -318,13 +291,6 @@ public final class InternalContext implements Context {
      * @return value
      */
     public <T> Object getBeanProperty(final T bean, final Object property) {
-        if (bean != null) {
-            @SuppressWarnings("unchecked")
-            GetResolver<T> resolver = this.getters.unsafeGet(bean.getClass());
-            if (resolver != null) {
-                return resolver.get(bean, property);
-            }
-        }
         return this.resolverManager.get(bean, property);
     }
 
@@ -336,26 +302,10 @@ public final class InternalContext implements Context {
      * @param value    value
      */
     public <T> void setBeanProperty(final T bean, final Object property, final Object value) {
-        if (bean != null) {
-            @SuppressWarnings("unchecked")
-            SetResolver<T> resolver = this.setters.unsafeGet(bean.getClass());
-            if (resolver != null) {
-                resolver.set(bean, property, value);
-                return;
-            }
-        }
         this.resolverManager.set(bean, property, value);
     }
 
-    public void outNotNull(final byte[] bytes) {
-        this.out.write(bytes);
-    }
-
-    public void outNotNull(final char[] chars) {
-        this.out.write(chars);
-    }
-
-    public Object temporaryOut(Out newOut, java.util.function.Function<InternalContext, Object> action) {
+    public Object redirectOut(Out newOut, java.util.function.Function<InternalContext, Object> action) {
         Out prevOut = this.out;
         this.out = newOut;
         try {
@@ -365,38 +315,23 @@ public final class InternalContext implements Context {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> void write(final T obj) {
-        if (obj == null) {
-            return;
-        }
-        var type = obj.getClass();
-        if (type == String.class) {
-            this.out.write((String) obj);
-            return;
-        }
-        var resolver = this.outers.unsafeGet(type);
-        if (resolver != null) {
-            resolver.render(this.out, obj);
-            return;
-        }
-        this.resolverManager.resolveOutResolver(type)
-                .render(this.out, obj);
+    public <T> void out(@Nullable final T obj) {
+        this.resolverManager.write(this.out, obj);
     }
 
     @Override
-    public Object getLocal(final Object name) {
+    public Object getLocalVar(final Object name) {
         if (localContext != null) {
-            return localContext.getLocal(name);
+            return localContext.getLocalVar(name);
         }
         var map = this.locals;
         return map != null ? map.get(name) : null;
     }
 
     @Override
-    public void setLocal(final Object name, final Object value) {
+    public void setLocalVar(final Object name, final Object value) {
         if (this.localContext != null) {
-            this.localContext.setLocal(name, value);
+            this.localContext.setLocalVar(name, value);
             return;
         }
         if (this.locals == null) {
@@ -405,8 +340,19 @@ public final class InternalContext implements Context {
         this.locals.put(name, value);
     }
 
+    @Nullable
+    public <T> T pushIndexer(int indexer, java.util.function.Function<InternalContext, T> action) {
+        var prev = this.indexer;
+        this.indexer = indexer;
+        try {
+            return action.apply(this);
+        } finally {
+            this.indexer = prev;
+        }
+    }
+
     @Override
-    public void set(final String name, final Object value) {
+    public void setVar(final String name, final Object value) {
         int index = this.indexers[this.indexer].getIndex(name);
         if (index >= 0) {
             this.vars[index] = value;
@@ -414,12 +360,12 @@ public final class InternalContext implements Context {
     }
 
     @Override
-    public Object get(final String name) throws ScriptRuntimeException {
-        return get(name, true);
+    public Object getVar(final String name) throws ScriptRuntimeException {
+        return getVar(name, true);
     }
 
     @Override
-    public Object get(final String name, boolean force) throws ScriptRuntimeException {
+    public Object getVar(final String name, boolean force) throws ScriptRuntimeException {
         int index = getCurrentIndexer().getIndex(name);
         if (index >= 0) {
             return this.vars[index];
@@ -445,23 +391,23 @@ public final class InternalContext implements Context {
     @Override
     public void forEachVar(BiConsumer<? super String, Object> action) {
         var myVars = this.vars;
-        getCurrentIndexer()
-                .forEach((name, index)
-                        -> action.accept(name, myVars[index]));
+        getCurrentIndexer().forEach(
+                (name, index) -> action.accept(name, myVars[index])
+        );
     }
 
     @Override
-    public void exportTo(final Map<? super String, Object> map) {
+    public void exportVars(final Map<? super String, Object> map) {
         forEachVar(map::put);
     }
 
     @Override
     public Function exportFunction(String name) throws NotFunctionException {
-        var func = get(name, false);
-        if (!(func instanceof MethodDeclare)) {
+        var func = getVar(name, false);
+        if (!(func instanceof FunctionDeclare)) {
             throw new NotFunctionException(func);
         }
-        return new Function(this.template, (MethodDeclare) func, this.encoding, this.preferBytes);
+        return new Function(this.template, (FunctionDeclare) func, this.out.getEncoding(), this.out.preferBytes());
     }
 
     public Engine getEngine() {

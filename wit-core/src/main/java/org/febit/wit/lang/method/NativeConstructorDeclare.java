@@ -2,7 +2,7 @@
 package org.febit.wit.lang.method;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.util.JavaNativeUtil;
 
 import java.lang.reflect.Constructor;
@@ -10,7 +10,7 @@ import java.lang.reflect.Constructor;
 /**
  * @author zqq90
  */
-public class NativeConstructorDeclare implements MethodDeclare {
+public class NativeConstructorDeclare implements FunctionDeclare {
 
     private final Constructor constructor;
 

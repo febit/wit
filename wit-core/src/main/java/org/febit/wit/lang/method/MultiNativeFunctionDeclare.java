@@ -3,7 +3,7 @@ package org.febit.wit.lang.method;
 
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.util.JavaNativeUtil;
 
 import java.lang.reflect.Method;
@@ -12,12 +12,12 @@ import java.util.Arrays;
 /**
  * @author zqq90
  */
-public class MultiNativeMethodDeclare implements MethodDeclare {
+public class MultiNativeFunctionDeclare implements FunctionDeclare {
 
     private final Method[] methods;
     private final boolean isStatic;
 
-    public MultiNativeMethodDeclare(Method[] methods, boolean isStatic) {
+    public MultiNativeFunctionDeclare(Method[] methods, boolean isStatic) {
         this.methods = methods;
         this.isStatic = isStatic;
     }

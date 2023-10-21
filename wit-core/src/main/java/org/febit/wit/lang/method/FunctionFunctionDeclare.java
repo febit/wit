@@ -2,24 +2,24 @@
 package org.febit.wit.lang.method;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.lang.MethodDeclare;
-import org.febit.wit.lang.UnConstableMethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
+import org.febit.wit.lang.UnConstableFunctionDeclare;
 import org.febit.wit.lang.VariantIndexer;
-import org.febit.wit.lang.ast.expr.FunctionDeclare;
+import org.febit.wit.lang.ast.expr.FunctionDeclareExpr;
 import org.febit.wit.util.ExceptionUtil;
 
 /**
  * @author zqq90
  */
-public final class FunctionMethodDeclare implements MethodDeclare, UnConstableMethodDeclare {
+public final class FunctionFunctionDeclare implements FunctionDeclare, UnConstableFunctionDeclare {
 
-    private final FunctionDeclare function;
+    private final FunctionDeclareExpr function;
     private final InternalContext scopeContext;
     private final VariantIndexer[] indexers;
     private final int varSize;
 
-    public FunctionMethodDeclare(FunctionDeclare function, InternalContext scopeContext,
-                                 VariantIndexer[] indexers, int varSize) {
+    public FunctionFunctionDeclare(FunctionDeclareExpr function, InternalContext scopeContext,
+                                   VariantIndexer[] indexers, int varSize) {
         this.function = function;
         this.scopeContext = scopeContext;
         this.indexers = indexers;

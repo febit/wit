@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
  * @author zqq90
  */
 @RequiredArgsConstructor
-public class NativeStaticValue implements AssignableExpression {
+public class JavaStaticFieldExpr implements AssignableExpression {
 
     private final Field field;
     @Getter

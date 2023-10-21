@@ -8,25 +8,25 @@ import org.febit.wit.core.VariantManager.VarAddress;
 import org.febit.wit.core.text.TextStatementFactory;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.UncheckedException;
-import org.febit.wit.lang.AstFactory;
+import org.febit.wit.lang.Ast;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.LoopMeta;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.TextPosition;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.TemplateAST;
-import org.febit.wit.lang.ast.expr.BreakpointExpression;
-import org.febit.wit.lang.ast.expr.ContextScopeValue;
-import org.febit.wit.lang.ast.expr.ContextValue;
+import org.febit.wit.lang.ast.expr.BreakpointExpr;
+import org.febit.wit.lang.ast.expr.ScopedContextVar;
+import org.febit.wit.lang.ast.expr.ContextVar;
 import org.febit.wit.lang.ast.expr.DirectValue;
 import org.febit.wit.lang.ast.expr.DynamicNativeMethodExecute;
-import org.febit.wit.lang.ast.expr.GlobalValue;
+import org.febit.wit.lang.ast.expr.AssignableSupplierValue;
 import org.febit.wit.lang.ast.expr.MapValue;
-import org.febit.wit.lang.ast.expr.MethodExecute;
-import org.febit.wit.lang.ast.expr.NativeStaticValue;
+import org.febit.wit.lang.ast.expr.FunctionCallExpr;
+import org.febit.wit.lang.ast.expr.JavaStaticFieldExpr;
 import org.febit.wit.lang.ast.oper.And;
 import org.febit.wit.lang.ast.oper.Assign;
 import org.febit.wit.lang.ast.oper.ConstableBiOperator;
@@ -598,7 +598,7 @@ abstract class AbstractParser {
     Expression createBreakpointExpression(@Nullable Expression labelExpr, Expression expr, Position position) {
         final Object label = labelExpr == null ? null : AstUtils.calcConst(labelExpr);
 
-        return new BreakpointExpression(label, expr, position);
+        return new BreakpointExpr(label, expr, position);
     }
 
     Statement createBreakpointStatement(@Nullable Expression labelExpr, Statement statement, Position position) {
@@ -614,16 +614,16 @@ abstract class AbstractParser {
         return this.textStatementFactory.getTextStatement(template, text, position);
     }
 
-    ContextValue declareVarAndCreateContextValue(String name, Position position) {
-        return new ContextValue(varmgr.assignVariant(name, position), position);
+    ContextVar declareVarAndCreateContextValue(String name, Position position) {
+        return new ContextVar(varmgr.assignVariant(name, position), position);
     }
 
-    ContextValue[] declareVarAndCreateContextValues(List<String> names, Position position) {
-        ContextValue[] contextValues = new ContextValue[names.size()];
+    ContextVar[] declareVarAndCreateContextValues(List<String> names, Position position) {
+        ContextVar[] contextVars = new ContextVar[names.size()];
         for (int i = 0; i < names.size(); i++) {
-            contextValues[i] = declareVarAndCreateContextValue(names.get(i), position);
+            contextVars[i] = declareVarAndCreateContextValue(names.get(i), position);
         }
-        return contextValues;
+        return contextVars;
     }
 
     MapValue createMapValue(@Nullable List<Expression[]> propertyDefList, Position position) {
@@ -642,21 +642,26 @@ abstract class AbstractParser {
         return new MapValue(keys, values, position);
     }
 
-    DirectValue createDirectValue(Symbol sym) {
-        return AstFactory.directValue(sym.value, sym.pos);
+    DirectValue toDirectValue(Symbol sym) {
+        return Ast.directValue(sym.pos, sym.value);
+    }
+
+    AssignableSupplierValue createSupplierVarExpr(String name, Position position) {
+        var mgr = this.engine.getGlobalManager();
+        return new AssignableSupplierValue(() -> mgr.getGlobal(name), (v) -> mgr.setGlobal(name, v), position);
     }
 
     Expression createContextValue(VarAddress addr, Position position) {
         switch (addr.type) {
             case VarAddress.GLOBAL:
-                return new GlobalValue(this.engine.getGlobalManager(), addr.constValue.toString(), position);
+                return createSupplierVarExpr(addr.constValue.toString(), position);
             case VarAddress.CONST:
                 return new DirectValue(addr.constValue, position);
             case VarAddress.SCOPE:
-                return new ContextScopeValue(addr.scopeOffset, addr.index, position);
+                return new ScopedContextVar(addr.scopeOffset, addr.index, position);
             default:
                 //VarAddress.CONTEXT
-                return new ContextValue(addr.index, position);
+                return new ContextVar(addr.index, position);
         }
     }
 
@@ -701,7 +706,7 @@ abstract class AbstractParser {
                     throw new ParseException("Failed to get static field value: ".concat(path), ex, position);
                 }
             } else {
-                return new NativeStaticValue(field, position);
+                return new JavaStaticFieldExpr(field, position);
             }
         } else {
             throw new ParseException("No a static field: ".concat(path), position);
@@ -724,19 +729,19 @@ abstract class AbstractParser {
         int split = ref.indexOf("::");
         String className = ref.substring(0, split).trim();
         String method = ref.substring(split + 2).trim();
-        MethodDeclare methodDeclare;
+        FunctionDeclare functionDeclare;
         Class<?> cls = toClass(className);
         if ("new".equals(method)) {
             if (cls.isArray()) {
-                methodDeclare = this.nativeFactory.getNativeNewArrayMethodDeclare(cls.getComponentType(),
+                functionDeclare = this.nativeFactory.getNativeNewArrayMethodDeclare(cls.getComponentType(),
                         position, true);
             } else {
-                methodDeclare = this.nativeFactory.getNativeConstructorDeclare(cls, position, true);
+                functionDeclare = this.nativeFactory.getNativeConstructorDeclare(cls, position, true);
             }
         } else {
-            methodDeclare = this.nativeFactory.getNativeMethodDeclare(cls, method, position, true);
+            functionDeclare = this.nativeFactory.getNativeMethodDeclare(cls, method, position, true);
         }
-        return new DirectValue(methodDeclare, position);
+        return new DirectValue(functionDeclare, position);
     }
 
     Expression createNativeConstructorDeclareExpression(Class<?> clazz, List<Class> list, Position position) {
@@ -775,7 +780,7 @@ abstract class AbstractParser {
     Expression createMethodExecute(Expression funcExpr, Expression[] paramExprs, Position position) {
         AstUtils.optimize(paramExprs);
         funcExpr = AstUtils.optimize(funcExpr);
-        return new MethodExecute(funcExpr, paramExprs, position);
+        return new FunctionCallExpr(funcExpr, paramExprs, position);
     }
 
     Expression createDynamicNativeMethodExecute(Expression thisExpr, String func,

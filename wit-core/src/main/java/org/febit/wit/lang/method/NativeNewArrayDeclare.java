@@ -3,7 +3,7 @@ package org.febit.wit.lang.method;
 
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.StringUtil;
 
@@ -12,7 +12,7 @@ import java.lang.reflect.Array;
 /**
  * @author zqq90
  */
-public class NativeNewArrayDeclare implements MethodDeclare {
+public class NativeNewArrayDeclare implements FunctionDeclare {
 
     private final Class<?> componentType;
 

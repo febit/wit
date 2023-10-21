@@ -119,10 +119,10 @@ registers ='''
 [resolverManager]
 # ignoreNullPointer=true
 resolvers='''
-  org.febit.wit.resolvers.impl.InternalVoidResolver
+  org.febit.wit.resolvers.impl.InternalVoidSerializer
   org.febit.wit.resolvers.impl.CharSequenceResolver
-  org.febit.wit.resolvers.impl.ByteArrayOutResolver
-  org.febit.wit.resolvers.impl.CharArrayOutResolver
+  org.febit.wit.resolvers.impl.ByteArraySerializer
+  org.febit.wit.resolvers.impl.CharArraySerializer
   org.febit.wit.resolvers.impl.PrimitiveArrayResolver
   org.febit.wit.resolvers.impl.BagResolver
   org.febit.wit.resolvers.impl.IterGetResolver

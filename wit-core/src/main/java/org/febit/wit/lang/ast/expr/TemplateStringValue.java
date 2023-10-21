@@ -11,7 +11,7 @@ import org.febit.wit.lang.ast.Expression;
  * @author zqq90
  */
 @RequiredArgsConstructor
-public class TemplateStringExpression implements Expression {
+public class TemplateStringValue implements Expression {
 
     private final Expression[] exprs;
     @Getter

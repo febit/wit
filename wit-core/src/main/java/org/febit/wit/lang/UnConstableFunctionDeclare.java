@@ -7,6 +7,6 @@ package org.febit.wit.lang;
  * @author zqq90
  */
 @FunctionalInterface
-public interface UnConstableMethodDeclare extends MethodDeclare {
+public interface UnConstableFunctionDeclare extends FunctionDeclare {
 
 }

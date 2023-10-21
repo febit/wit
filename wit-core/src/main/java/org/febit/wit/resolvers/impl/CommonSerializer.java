@@ -4,14 +4,14 @@ package org.febit.wit.resolvers.impl;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.Out;
 import org.febit.wit.resolvers.GetResolver;
-import org.febit.wit.resolvers.OutResolver;
+import org.febit.wit.resolvers.Serializer;
 import org.febit.wit.resolvers.SetResolver;
 import org.febit.wit.util.bean.BeanUtil;
 
 /**
  * @author zqq90
  */
-public class CommonResolver implements GetResolver<Object>, SetResolver<Object>, OutResolver<Object> {
+public class CommonSerializer implements GetResolver<Object>, SetResolver<Object>, Serializer<Object> {
 
     @Override
     public Object get(final Object object, final Object property) {

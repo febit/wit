@@ -22,10 +22,11 @@ public final class SimpleTextStatement implements Statement {
 
     @Override
     public Object execute(final InternalContext context) {
-        if (context.preferBytes && encoding == context.encoding) {
-            context.outNotNull(textBytes);
+        var out = context.getOut();
+        if (out.preferBytes() && encoding == out.getEncoding()) {
+            out.write(textBytes);
         } else {
-            context.outNotNull(text);
+            out.write(text);
         }
         return null;
     }

@@ -22,17 +22,19 @@ public final class DoWhileNoLoops implements Statement {
     @Getter
     private final Position position;
 
-
     @Override
     @Nullable
     public Object execute(final InternalContext context) {
-        final Statement[] stats = this.statements;
-        final int preIndex = context.indexer;
-        context.indexer = indexer;
+        return context.pushIndexer(indexer, this::execute0);
+    }
+
+    @Nullable
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    private Object execute0(final InternalContext context) {
+        var stats = this.statements;
         do {
-            context.execute(stats);
+            context.visit(stats);
         } while (ALU.isTrue(whileExpr.execute(context)));
-        context.indexer = preIndex;
         return null;
     }
 }

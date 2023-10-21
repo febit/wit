@@ -9,7 +9,7 @@ import org.febit.wit.lang.Iter;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ast.expr.FunctionDeclare;
+import org.febit.wit.lang.ast.expr.FunctionDeclareExpr;
 import org.febit.wit.lang.iter.IterMethodFilter;
 import org.febit.wit.util.CollectionUtil;
 
@@ -19,7 +19,7 @@ import org.febit.wit.util.CollectionUtil;
 @RequiredArgsConstructor
 public final class ForInNoLoops implements Statement {
 
-    private final FunctionDeclare functionDeclareExpr;
+    private final FunctionDeclareExpr filterFuncDeclare;
     private final Expression collectionExpr;
     private final int indexer;
     private final int iterIndex;
@@ -32,27 +32,38 @@ public final class ForInNoLoops implements Statement {
     @Override
     @Nullable
     public Object execute(final InternalContext context) {
-        Iter iter = CollectionUtil.toIter(collectionExpr.execute(context), this);
-        if (iter != null && functionDeclareExpr != null) {
-            iter = new IterMethodFilter(context, functionDeclareExpr.execute(context), iter);
+        Iter iter = iter(context);
+        if (iter.hasNext()) {
+            return context.pushIndexer(indexer, c -> this.execute0(c, iter));
         }
-        if (iter != null
-                && iter.hasNext()) {
-            final int preIndex = context.indexer;
-            context.indexer = indexer;
-            final Statement[] stats = this.statements;
-            final int i = this.itemIndex;
-            final Object[] vars = context.vars;
-            vars[iterIndex] = iter;
-            do {
-                vars[i] = iter.next();
-                context.execute(stats);
-            } while (iter.hasNext());
-            context.indexer = preIndex;
-            return null;
-        } else if (elseStatement != null) {
+        if (elseStatement != null) {
             elseStatement.execute(context);
         }
+        return null;
+    }
+
+    private Iter iter(InternalContext context) {
+        var iter = CollectionUtil.toIter(collectionExpr.execute(context), this);
+        if (filterFuncDeclare == null) {
+            return iter;
+        }
+        return new IterMethodFilter(context, filterFuncDeclare.execute(context), iter);
+    }
+
+    @Nullable
+    @SuppressWarnings({
+            "UnnecessaryLocalVariable",
+            "squid:S3776", // Cognitive Complexity of methods should not be too high
+    })
+    private Object execute0(InternalContext context, Iter iter) {
+        var stats = this.statements;
+        var itemIdx = this.itemIndex;
+        var vars = context.vars;
+        vars[iterIndex] = iter;
+        do {
+            vars[itemIdx] = iter.next();
+            context.visit(stats);
+        } while (iter.hasNext());
         return null;
     }
 }

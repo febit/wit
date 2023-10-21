@@ -4,7 +4,7 @@ package org.febit.wit.global;
 import jakarta.annotation.Nullable;
 import org.febit.wit.Init;
 import org.febit.wit.lang.Bag;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -95,7 +95,7 @@ public class GlobalManager {
      * @param method
      * @since 2.5.0
      */
-    public void setConstMethod(String key, MethodDeclare method) {
+    public void setConstMethod(String key, FunctionDeclare method) {
         setConst(key, method);
     }
 

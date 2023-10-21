@@ -28,10 +28,12 @@ public final class Block implements IBlock, Loopable {
     @Override
     @Nullable
     public Object execute(final InternalContext context) {
-        final int preIndex = context.indexer;
-        context.indexer = indexer;
-        context.executeWithLoop(statements);
-        context.indexer = preIndex;
+        return context.pushIndexer(indexer, this::execute0);
+    }
+
+    @Nullable
+    private Object execute0(final InternalContext context) {
+        context.visitAndCheckLoop(statements);
         return null;
     }
 

@@ -32,13 +32,18 @@ public final class DoWhile implements Statement, Loopable {
     @Override
     @Nullable
     public Object execute(final InternalContext context) {
-        final Statement[] stats = this.statements;
-        final int myLabel = this.label;
-        final int preIndex = context.indexer;
-        context.indexer = indexer;
+        return context.pushIndexer(indexer, this::execute0);
+    }
+
+    @Nullable
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    private Object execute0(final InternalContext context) {
+        var stats = this.statements;
+        var myLabel = this.label;
+        var condition = this.whileExpr;
         label:
         do {
-            context.executeWithLoop(stats);
+            context.visitAndCheckLoop(stats);
             if (context.noLoop()) {
                 continue;
             }
@@ -58,8 +63,7 @@ public final class DoWhile implements Statement, Loopable {
                 default:
                     break label; //while
             }
-        } while (ALU.isTrue(whileExpr.execute(context)));
-        context.indexer = preIndex;
+        } while (ALU.isTrue(condition.execute(context)));
         return null;
     }
 

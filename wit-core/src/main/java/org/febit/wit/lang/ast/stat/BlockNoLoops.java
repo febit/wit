@@ -22,10 +22,12 @@ public class BlockNoLoops implements IBlock {
     @Override
     @Nullable
     public Object execute(final InternalContext context) {
-        final int preIndexer = context.indexer;
-        context.indexer = indexer;
-        context.execute(statements);
-        context.indexer = preIndexer;
+        return context.pushIndexer(indexer, this::execute0);
+    }
+
+    @Nullable
+    private Object execute0(final InternalContext context) {
+        context.visit(statements);
         return null;
     }
 

@@ -6,7 +6,7 @@ import org.febit.wit.lang.Position;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ast.expr.FunctionDeclare;
+import org.febit.wit.lang.ast.expr.FunctionDeclareExpr;
 
 /**
  * @author zqq90
@@ -26,7 +26,7 @@ public class ForMapPart extends AbstractForInPart {
         setCollectionExpr(collectionExpr);
     }
 
-    public ForMapPart(String key, String value, FunctionDeclare functionDeclareExpr,
+    public ForMapPart(String key, String value, FunctionDeclareExpr functionDeclareExpr,
                       VariantManager varmgr, Position position) {
         super(varmgr, position);
         this.keyVarName = key;

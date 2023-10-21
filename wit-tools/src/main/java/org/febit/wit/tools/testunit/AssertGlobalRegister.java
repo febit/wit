@@ -31,10 +31,10 @@ public class AssertGlobalRegister implements GlobalRegister {
     }
 
     private static void plusAssertCount(InternalContext context) {
-        LongAdder count = (LongAdder) context.getLocal(ASSERT_COUNT_KEY);
+        LongAdder count = (LongAdder) context.getLocalVar(ASSERT_COUNT_KEY);
         if (count == null) {
             count = new LongAdder();
-            context.setLocal(ASSERT_COUNT_KEY, count);
+            context.setLocalVar(ASSERT_COUNT_KEY, count);
         }
         count.increment();
     }

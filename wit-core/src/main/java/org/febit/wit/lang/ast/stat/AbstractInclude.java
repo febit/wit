@@ -4,7 +4,6 @@ package org.febit.wit.lang.ast.stat;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.Context;
 import org.febit.wit.InternalContext;
 import org.febit.wit.Vars;
 import org.febit.wit.exceptions.ParseException;
@@ -57,7 +56,7 @@ public abstract class AbstractInclude implements Statement {
             );
             if (export) {
                 var result = new HashMap<String, Object>();
-                newContext.exportTo(result);
+                newContext.exportVars(result);
                 return result;
             }
             return null;

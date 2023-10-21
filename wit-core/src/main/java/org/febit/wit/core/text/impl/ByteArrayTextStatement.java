@@ -21,7 +21,7 @@ public final class ByteArrayTextStatement implements Statement {
     @Override
     @Nullable
     public Object execute(final InternalContext context) {
-        context.outNotNull(bytes);
+        context.getOut().write(bytes);
         return null;
     }
 }

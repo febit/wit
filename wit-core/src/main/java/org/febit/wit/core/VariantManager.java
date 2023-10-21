@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
+import jakarta.annotation.Nullable;
 import org.febit.wit.Engine;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.global.GlobalManager;
@@ -98,7 +99,7 @@ public class VariantManager {
         return stairStack.peek().assignVar(name, position);
     }
 
-    public void assignConst(String name, Object value, Position position) {
+    public void assignConst(String name, @Nullable Object value, Position position) {
         stairStack.peek().assignConst(name, value, position);
     }
 
@@ -210,7 +211,7 @@ public class VariantManager {
             return index;
         }
 
-        void assignConst(final String name, final Object value, Position position) {
+        void assignConst(final String name, @Nullable final Object value, Position position) {
             checkDuplicate(name, position);
             if (this.constMap == null) {
                 this.constMap = new HashMap<>(16);

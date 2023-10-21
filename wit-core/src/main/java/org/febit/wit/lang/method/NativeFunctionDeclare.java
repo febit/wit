@@ -2,7 +2,7 @@
 package org.febit.wit.lang.method;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.util.JavaNativeUtil;
 
 import java.lang.reflect.Method;
@@ -10,11 +10,11 @@ import java.lang.reflect.Method;
 /**
  * @author zqq90
  */
-public final class NativeMethodDeclare implements MethodDeclare {
+public final class NativeFunctionDeclare implements FunctionDeclare {
 
     private final Method method;
 
-    public NativeMethodDeclare(Method method) {
+    public NativeFunctionDeclare(Method method) {
         this.method = method;
     }
 

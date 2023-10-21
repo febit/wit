@@ -21,7 +21,7 @@ public class BreakpointStatement implements Statement {
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(final InternalContext context) {
         if (statement != null) {
             statement.execute(context);
         }

@@ -4,7 +4,7 @@ package org.febit.wit.tools.type;
 import org.febit.wit.Context;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 
 import static org.febit.wit.util.ArrayUtil.get;
 
@@ -28,7 +28,7 @@ public class TypeGlobalRegister implements GlobalRegister {
     }
 
     private static boolean is_function(Context context, Object[] args) {
-        return get(args, 0) instanceof MethodDeclare;
+        return get(args, 0) instanceof FunctionDeclare;
     }
 
     private static boolean is_number(Context context, Object[] args) {

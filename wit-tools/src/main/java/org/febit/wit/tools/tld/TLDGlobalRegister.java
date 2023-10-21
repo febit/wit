@@ -5,7 +5,7 @@ import org.febit.wit.Engine;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
-import org.febit.wit.lang.MethodDeclare;
+import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.util.ClassUtil;
 import org.febit.wit.util.FileNameUtil;
@@ -52,7 +52,7 @@ public class TLDGlobalRegister implements GlobalRegister {
         }
     }
 
-    protected MethodDeclare createMethodDeclare(TLDFunction func) throws ClassNotFoundException {
+    protected FunctionDeclare createMethodDeclare(TLDFunction func) throws ClassNotFoundException {
 
         final Class[] parameterTypes;
         final String[] parameterTypeNames = func.parameterTypes;

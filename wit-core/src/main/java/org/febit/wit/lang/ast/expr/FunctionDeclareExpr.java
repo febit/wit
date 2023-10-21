@@ -9,13 +9,13 @@ import org.febit.wit.lang.Position;
 import org.febit.wit.lang.VariantIndexer;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.method.FunctionMethodDeclare;
+import org.febit.wit.lang.method.FunctionFunctionDeclare;
 
 /**
  * @author zqq90
  */
 @RequiredArgsConstructor
-public final class FunctionDeclare implements Expression {
+public final class FunctionDeclareExpr implements Expression {
 
     private final Object[] argDefaults;
     private final int varSize;
@@ -27,8 +27,8 @@ public final class FunctionDeclare implements Expression {
     private final Position position;
 
     @Override
-    public FunctionMethodDeclare execute(final InternalContext context) {
-        return new FunctionMethodDeclare(this, context, indexers, this.varSize);
+    public FunctionFunctionDeclare execute(final InternalContext context) {
+        return new FunctionFunctionDeclare(this, context, indexers, this.varSize);
     }
 
     @Nullable
@@ -51,10 +51,10 @@ public final class FunctionDeclare implements Expression {
             }
         }
         if (hasReturnLoops) {
-            context.executeWithLoop(statements);
+            context.visitAndCheckLoop(statements);
             return context.resetReturnLoop();
         } else {
-            context.execute(statements);
+            context.visit(statements);
             return InternalContext.VOID;
         }
     }

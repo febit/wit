@@ -26,10 +26,9 @@ public class TryCatchFinally implements Statement, Loopable {
     @Getter
     private final Position position;
 
-
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(final InternalContext context) {
         try {
             tryStat.execute(context);
         } catch (Exception e) {

@@ -31,7 +31,7 @@ public final class DynamicNativeMethodExecute implements Expression {
     public Object execute(final InternalContext context) {
         Object me = this.thisExpr.execute(context);
         Method[] methods = getMethods(me);
-        Object[] params = context.execute(this.paramExprs);
+        Object[] params = context.visit(this.paramExprs);
         return invokeProperMethod(me, methods, params);
     }
 

@@ -26,7 +26,7 @@ public class TryFinally implements Statement, Loopable {
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(final InternalContext context) {
         try {
             tryStat.execute(context);
         } finally {

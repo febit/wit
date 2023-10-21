@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.stat;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
@@ -29,18 +30,20 @@ public final class While implements Statement, Loopable {
     private final Position position;
 
     @Override
-    @SuppressWarnings({
-            "squid:LabelsShouldNotBeUsedCheck",
-            "squid:S135" // Loops should not contain more than a single "break" or "continue" statement
-    })
+    @Nullable
     public Object execute(final InternalContext context) {
+        return context.pushIndexer(indexer, this::execute0);
+    }
+
+    @Nullable
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    private Object execute0(final InternalContext context) {
         var stats = this.statements;
-        final int myLabel = this.label;
-        final int preIndex = context.indexer;
-        context.indexer = indexer;
+        var myLabel = this.label;
+        var condition = this.whileExpr;
         label:
-        while (ALU.isTrue(whileExpr.execute(context))) {
-            context.executeWithLoop(stats);
+        while (ALU.isTrue(condition.execute(context))) {
+            context.visitAndCheckLoop(stats);
             if (context.noLoop()) {
                 continue;
             }
@@ -61,7 +64,6 @@ public final class While implements Statement, Loopable {
                     break label; //while
             }
         }
-        context.indexer = preIndex;
         return null;
     }
 
