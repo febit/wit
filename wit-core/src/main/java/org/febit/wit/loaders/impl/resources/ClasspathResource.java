@@ -3,7 +3,7 @@ package org.febit.wit.loaders.impl.resources;
 
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.lang.InternedEncoding;
-import org.febit.wit.loaders.Resource;
+import org.febit.wit.lang.Resource;
 import org.febit.wit.util.ClassUtil;
 
 import java.io.IOException;

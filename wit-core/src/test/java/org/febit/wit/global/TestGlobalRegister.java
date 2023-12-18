@@ -32,7 +32,7 @@ public class TestGlobalRegister implements GlobalRegister {
         manager.setConst("list_add", this.nativeFactory.getNativeMethodDeclare(List.class, "add", new Class[]{Object.class}));
         manager.setConst("substring", this.nativeFactory.getNativeMethodDeclare(String.class, "substring", new Class[]{int.class, int.class}));
 
-        JavaNativeUtil.addConstFields(manager, nativeFactory, ConstMethods.class);
+        JavaNativeUtil.addConstFields(manager, ConstMethods.class);
         JavaNativeUtil.addStaticMethods(manager, nativeFactory, ConstMethods.class);
 
         manager.setConst("new_ConstMethods2", this.nativeFactory.getNativeConstructorDeclare(ConstMethods2.class, null));

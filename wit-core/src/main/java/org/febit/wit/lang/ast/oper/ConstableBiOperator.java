@@ -5,11 +5,11 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
+import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.expr.DirectValue;
-import org.febit.wit.util.ExceptionUtil;
 
 import java.util.function.BiFunction;
 
@@ -32,7 +32,7 @@ public class ConstableBiOperator implements Expression {
         try {
             return op.apply(leftExpr.execute(context), rightExpr.execute(context));
         } catch (Exception e) {
-            throw ExceptionUtil.toScriptRuntimeException(e, this);
+            throw ScriptRuntimeException.from(e, this);
         }
     }
 

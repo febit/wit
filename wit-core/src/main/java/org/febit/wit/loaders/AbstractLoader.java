@@ -16,7 +16,7 @@ public abstract class AbstractLoader implements Loader {
     protected String root;
     protected boolean appendLostSuffix;
     protected String suffix;
-    protected String[] assistantSuffixs;
+    protected String[] assistantSuffixes;
     protected boolean enableCache = true;
     protected boolean codeFirst;
 
@@ -98,7 +98,7 @@ public abstract class AbstractLoader implements Loader {
                 || name.charAt(name.length() - 1) == '/') {
             return name;
         } else {
-            for (String item : this.assistantSuffixs) {
+            for (String item : this.assistantSuffixes) {
                 if (name.endsWith(item)) {
                     return name;
                 }

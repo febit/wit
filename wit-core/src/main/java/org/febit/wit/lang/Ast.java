@@ -8,7 +8,7 @@ import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.expr.DirectValue;
 import org.febit.wit.lang.ast.expr.NewArrayExpr;
 import org.febit.wit.lang.ast.expr.NewListExpr;
-import org.febit.wit.lang.ast.expr.SupplierValue;
+import org.febit.wit.lang.ast.expr.SuppliedValue;
 import org.febit.wit.lang.ast.expr.TemplateStringValue;
 
 import java.util.ArrayList;
@@ -24,16 +24,16 @@ public class Ast {
         return new DirectValue(value, pos);
     }
 
-    public static SupplierValue emptyArray(Position pos) {
-        return new SupplierValue(() -> new Object[0], pos);
+    public static SuppliedValue emptyArray(Position pos) {
+        return new SuppliedValue(() -> new Object[0], pos);
     }
 
-    public static SupplierValue emptyMap(Position pos) {
-        return new SupplierValue(HashMap::new, pos);
+    public static SuppliedValue emptyMap(Position pos) {
+        return new SuppliedValue(HashMap::new, pos);
     }
 
-    public static SupplierValue emptyList(Position pos) {
-        return new SupplierValue(ArrayList::new, pos);
+    public static SuppliedValue emptyList(Position pos) {
+        return new SuppliedValue(ArrayList::new, pos);
     }
 
     @Builder(

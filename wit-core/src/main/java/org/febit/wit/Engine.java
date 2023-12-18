@@ -10,7 +10,7 @@ import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.lang.InternedEncoding;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loggers.Logger;
-import org.febit.wit.resolvers.ResolverManager;
+import org.febit.wit.resolvers.Accessor;
 import org.febit.wit.util.Petite;
 import org.febit.wit.util.Props;
 import org.febit.wit.util.PropsUtil;
@@ -60,7 +60,7 @@ public class Engine {
     @Getter
     protected NativeFactory nativeFactory;
     @Getter
-    protected ResolverManager resolverManager;
+    protected Accessor resolverManager;
 
     protected void executeInits() throws ResourceNotFoundException {
         if (this.inits == null) {

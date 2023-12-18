@@ -2,7 +2,7 @@
 package org.febit.wit.servlet.loaders;
 
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.loaders.Resource;
+import org.febit.wit.lang.Resource;
 
 import javax.servlet.ServletContext;
 import java.io.IOException;

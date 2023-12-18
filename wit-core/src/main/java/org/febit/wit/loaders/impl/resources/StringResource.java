@@ -1,8 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl.resources;
 
-import org.febit.wit.loaders.Resource;
-import org.febit.wit.loaders.ResourceOffset;
+import org.febit.wit.lang.Resource;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -14,7 +13,7 @@ import java.io.StringReader;
 @SuppressWarnings({
         "WeakerAccess"
 })
-public class StringResource implements Resource, ResourceOffset {
+public class StringResource implements Resource {
 
     protected final String text;
     protected final boolean codeFirst;

@@ -68,7 +68,7 @@ plugins +='''
 
 [pathLoader]
 encoding=${DEFAULT_ENCODING}
-assistantSuffixs+=.wit
+assistantSuffixes+=.wit
 suffix=.wit
 # appendLostSuffix=false
 # root=your/template/path

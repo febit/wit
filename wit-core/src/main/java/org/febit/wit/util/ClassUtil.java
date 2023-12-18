@@ -270,7 +270,7 @@ public class ClassUtil {
         try {
             accessible.setAccessible(true);
         } catch (SecurityException ex) {
-            ExceptionUtil.ignore(ex);
+            ExceptionUtils.ignore(ex);
         }
     }
 

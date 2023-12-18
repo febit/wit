@@ -1,5 +1,5 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
-package org.febit.wit.loaders;
+package org.febit.wit.lang;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -31,4 +31,18 @@ public interface Resource {
      * @since 2.7.0
      */
     long version();
+
+    /**
+     * @since 3.0.0
+     */
+    default int getOffsetLine() {
+        return 0;
+    }
+
+    /**
+     * @since 3.0.0
+     */
+    default int getOffsetColumnOfFirstLine() {
+        return 0;
+    }
 }

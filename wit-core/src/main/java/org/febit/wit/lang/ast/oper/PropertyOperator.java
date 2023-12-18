@@ -5,10 +5,10 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
+import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.util.ExceptionUtil;
 
 /**
  * @author zqq90
@@ -30,7 +30,7 @@ public final class PropertyOperator implements AssignableExpression {
                     expr.execute(context),
                     property);
         } catch (Exception e) {
-            throw ExceptionUtil.toScriptRuntimeException(e, this);
+            throw ScriptRuntimeException.from(e, this);
         }
     }
 
@@ -43,7 +43,7 @@ public final class PropertyOperator implements AssignableExpression {
                     property, value);
             return value;
         } catch (Exception e) {
-            throw ExceptionUtil.toScriptRuntimeException(e, this);
+            throw ScriptRuntimeException.from(e, this);
         }
     }
 }

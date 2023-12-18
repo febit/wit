@@ -9,6 +9,8 @@ import org.febit.wit.lang.ast.stat.*;
 import org.febit.wit.lang.ALU;
 import org.febit.wit.lang.Ast;
 import org.febit.wit.lang.AstUtils;
+import org.febit.wit.lang.extra.ast.ImportPart;
+import org.febit.wit.lang.extra.ast.RedirectOut;
 import org.febit.wit.util.ClassNameBand;
 import org.febit.wit.util.Stack;
 
@@ -79,7 +81,7 @@ nonterminal TryPart tryPart, catchPart, finallyPart;
 /* Expression */
 nonterminal Expression expression, expression_statementable;
 nonterminal Expression[] mapPropertyDef;
-nonterminal MapValue mapValue;
+nonterminal NewMapExpr newMapExpr;
 nonterminal TemplateStringBuilder templateStringBuilder;
 nonterminal Integer superCount;
 nonterminal Expression contextValueExpr;
@@ -218,7 +220,7 @@ statement       ::= expression_statementable:$ SEMICOLON
                     {: return (%part%).pop(this.template); :}
 
                     //includeStat
-                    |INCLUDE:sym expression:expr mapValue:paramsExpr? SEMICOLON
+                    |INCLUDE:sym expression:expr newMapExpr:paramsExpr? SEMICOLON
                     {: return new Include(%expr%, %paramsExpr%, this.template.getName(), %sym.symbol%.pos); :}
 
                     //funcStatement
@@ -247,7 +249,7 @@ varPart         ::= varAssign:$
                     ;
 
 
-importPart1     ::= IMPORT:sym expression:expr mapValue:paramsExpr?
+importPart1     ::= IMPORT:sym expression:expr newMapExpr:paramsExpr?
                     {: return new ImportPart(%expr%, %paramsExpr%, %sym.symbol%.pos); :}
                     ;
 
@@ -512,7 +514,7 @@ expression      ::= expression_statementable:$
                     {: return createMethodReference(%ref%, %ref.symbol%.pos); :}
 
                     |contextValueExpr:$
-                    |mapValue:$
+                    |newMapExpr:$
 
                     //Lambda
                     |lambdaExpr:$
@@ -559,7 +561,7 @@ mapPropertyDef        ::= DIRECT_VALUE:key COLON expression:expr
                         ;
 
 
-mapValue            ::= LBRACE:sym RBRACE
+newMapExpr            ::= LBRACE:sym RBRACE
                         {: return createMapValue(null, %sym.symbol%.pos); :}
                         |LBRACE:sym mapPropertyDef[COMMA]:list COMMA? RBRACE
                         {: return createMapValue(%list%, %sym.symbol%.pos); :}

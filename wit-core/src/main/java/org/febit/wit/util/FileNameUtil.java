@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import jakarta.annotation.Nullable;
+import lombok.experimental.UtilityClass;
 
 /**
  * refer to the
  * <a href="https://github.com/oblac/jodd">Jodd</a> project.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class FileNameUtil {
 
     private static final char UNIX_SEPARATOR = '/';
@@ -18,7 +18,8 @@ public class FileNameUtil {
         return (ch == UNIX_SEPARATOR) || (ch == WINDOWS_SEPARATOR);
     }
 
-    public static String getPath(String filename) {
+    @Nullable
+    public static String getPath(@Nullable String filename) {
         if (filename == null) {
             return null;
         }
@@ -29,7 +30,8 @@ public class FileNameUtil {
         return filename.substring(0, index + 1);
     }
 
-    public static String concat(String basePath, String fullFilenameToAdd) {
+    @Nullable
+    public static String concat(@Nullable String basePath, String fullFilenameToAdd) {
         if (basePath == null) {
             return null;
         }
@@ -53,12 +55,13 @@ public class FileNameUtil {
      * @param filename file name
      * @return normalized filename
      */
+    @Nullable
     @SuppressWarnings({
             "squid:S3776", // Cognitive Complexity of methods should not be too high
             "squid:ForLoopCounterChangedCheck",
             "squid:LabelsShouldNotBeUsedCheck"
     })
-    public static String normalize(String filename) {
+    public static String normalize(@Nullable String filename) {
         if (filename == null) {
             return null;
         }
@@ -174,7 +177,7 @@ public class FileNameUtil {
     @SuppressWarnings({
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    private static int getPrefixLength(String filename) {
+    private static int getPrefixLength(@Nullable String filename) {
         if (filename == null) {
             return -1;
         }

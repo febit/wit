@@ -4,8 +4,8 @@ package org.febit.wit.loaders.impl;
 import org.febit.wit.Engine;
 import org.febit.wit.Init;
 import org.febit.wit.exceptions.IllegalConfigException;
+import org.febit.wit.lang.Resource;
 import org.febit.wit.loaders.Loader;
-import org.febit.wit.loaders.Resource;
 import org.febit.wit.util.StringUtil;
 
 import java.util.Arrays;

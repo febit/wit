@@ -5,11 +5,11 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
+import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.lang.ALU;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.lang.ALU;
-import org.febit.wit.util.ExceptionUtil;
 
 /**
  * @author zqq90
@@ -31,7 +31,7 @@ public final class PlusPlusAfter implements Expression {
             assignable.setValue(context, ALU.plusOne(value));
             return value;
         } catch (Exception e) {
-            throw ExceptionUtil.toScriptRuntimeException(e, this);
+            throw ScriptRuntimeException.from(e, this);
         }
     }
 }

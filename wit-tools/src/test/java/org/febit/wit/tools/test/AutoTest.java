@@ -6,9 +6,9 @@ import org.febit.wit.Template;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.io.Out;
 import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.io.impl.OutputStreamOut;
+import org.febit.wit.lang.Out;
 import org.febit.wit.tools.EngineManager;
 import org.febit.wit.util.ClassUtil;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author zqq90

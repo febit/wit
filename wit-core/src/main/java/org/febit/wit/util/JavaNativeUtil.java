@@ -3,7 +3,6 @@ package org.febit.wit.util;
 
 import jakarta.annotation.Nullable;
 import lombok.experimental.UtilityClass;
-import org.febit.wit.Engine;
 import org.febit.wit.InternalContext;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exceptions.AmbiguousMethodException;
@@ -39,14 +38,6 @@ public class JavaNativeUtil {
 
     private static final Class<?>[] EMPTY_CLASSES = new Class<?>[0];
 
-    public static int addStaticMethods(Engine engine, Class<?> type) {
-        return addStaticMethods(engine.getGlobalManager(), engine.getNativeFactory(), type, false);
-    }
-
-    public static int addStaticMethods(Engine engine, Class<?> type, boolean skipConflict) {
-        return addStaticMethods(engine.getGlobalManager(), engine.getNativeFactory(), type, skipConflict);
-    }
-
     @SuppressWarnings("UnusedReturnValue")
     public static int addStaticMethods(GlobalManager manager,
                                        NativeFactory nativeFactory,
@@ -70,26 +61,16 @@ public class JavaNativeUtil {
         return methodMap.size();
     }
 
-    public static int addConstFields(Engine engine, Class<?> type) {
-        return addConstFields(engine.getGlobalManager(), engine.getNativeFactory(), type, false);
-    }
-
-    public static int addConstFields(Engine engine, Class<?> type, boolean skipConflict) {
-        return addConstFields(engine.getGlobalManager(), engine.getNativeFactory(), type, skipConflict);
-    }
-
     @SuppressWarnings("UnusedReturnValue")
     public static int addConstFields(
             GlobalManager manager,
-            NativeFactory nativeFactory,
             Class<?> type
     ) {
-        return addConstFields(manager, nativeFactory, type, false);
+        return addConstFields(manager, type, false);
     }
 
     public static int addConstFields(
             GlobalManager manager,
-            NativeFactory nativeFactory,
             Class<?> type,
             boolean skipConflict
     ) {
@@ -392,6 +373,7 @@ public class JavaNativeUtil {
         return result;
     }
 
+    @Nullable
     public static Object invokeMethod(
             final Method method,
             @Nullable final Object me,

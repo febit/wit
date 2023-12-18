@@ -2,7 +2,7 @@
 package org.febit.wit.resolvers.impl;
 
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.io.Out;
+import org.febit.wit.lang.Out;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.Serializer;
 import org.febit.wit.resolvers.SetResolver;

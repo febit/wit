@@ -4,7 +4,7 @@ package org.febit.wit.resolvers;
 import jakarta.annotation.Nullable;
 import org.febit.wit.Init;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.io.Out;
+import org.febit.wit.lang.Out;
 import org.febit.wit.loggers.Logger;
 import org.febit.wit.resolvers.impl.CommonSerializer;
 import org.febit.wit.util.ClassMap;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 /**
  * @author zqq90
  */
-public class ResolverManager {
+public class ResolverManager implements Accessor {
 
     protected Logger logger;
 
@@ -95,6 +95,7 @@ public class ResolverManager {
         return commonResolver;
     }
 
+    @Override
     public void write(Out out, @Nullable Object obj) {
         if (obj == null) {
             return;
@@ -181,6 +182,7 @@ public class ResolverManager {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public final Object get(@Nullable Object bean, Object property) {
         if (bean == null) {
@@ -193,6 +195,7 @@ public class ResolverManager {
         return resolveGetResolverIfAbsent(bean.getClass()).get(bean, property);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public final void set(@Nullable Object bean, Object property, Object value) {
         if (bean == null) {

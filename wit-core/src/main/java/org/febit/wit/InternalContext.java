@@ -7,14 +7,14 @@ import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.io.Out;
 import org.febit.wit.lang.BreakpointListener;
 import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.LoopMeta;
+import org.febit.wit.lang.Out;
 import org.febit.wit.lang.VariantIndexer;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.resolvers.ResolverManager;
+import org.febit.wit.resolvers.Accessor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -90,7 +90,7 @@ public final class InternalContext implements Context {
      */
     private InternalContext localContext;
 
-    private final ResolverManager resolverManager;
+    private final Accessor accessor;
 
     public InternalContext(
             final Template template,
@@ -105,7 +105,7 @@ public final class InternalContext implements Context {
         this.rootParams = rootParams;
         this.out = out;
 
-        this.resolverManager = template.getEngine().getResolverManager();
+        this.accessor = template.getEngine().getResolverManager();
 
         //variables & indexers
         this.indexers = indexers;
@@ -291,7 +291,7 @@ public final class InternalContext implements Context {
      * @return value
      */
     public <T> Object getBeanProperty(final T bean, final Object property) {
-        return this.resolverManager.get(bean, property);
+        return this.accessor.get(bean, property);
     }
 
     /**
@@ -302,7 +302,7 @@ public final class InternalContext implements Context {
      * @param value    value
      */
     public <T> void setBeanProperty(final T bean, final Object property, final Object value) {
-        this.resolverManager.set(bean, property, value);
+        this.accessor.set(bean, property, value);
     }
 
     public Object redirectOut(Out newOut, java.util.function.Function<InternalContext, Object> action) {
@@ -316,7 +316,7 @@ public final class InternalContext implements Context {
     }
 
     public <T> void out(@Nullable final T obj) {
-        this.resolverManager.write(this.out, obj);
+        this.accessor.write(this.out, obj);
     }
 
     @Override

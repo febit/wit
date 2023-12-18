@@ -2,7 +2,7 @@
 package org.febit.wit.exceptions;
 
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
+import org.febit.wit.util.ExceptionUtils.PrintStreamOrWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +42,15 @@ public class ScriptRuntimeException extends TemplateException {
         addStatement(statement);
     }
 
+    public static ScriptRuntimeException from(final Exception ex, final Statement statement) {
+        if (ex instanceof ScriptRuntimeException) {
+            var sre = (ScriptRuntimeException) ex;
+            sre.addStatement(statement);
+            return sre;
+        }
+        return new ScriptRuntimeException(ex.toString(), ex, statement);
+    }
+
     public final void addStatement(Statement statement) {
         statementStack.add(statement);
     }
@@ -52,12 +61,12 @@ public class ScriptRuntimeException extends TemplateException {
 
     @Override
     protected void printBody(PrintStreamOrWriter out, String prefix) {
-        for (Statement statement : statementStack) {
+        for (var stat : statementStack) {
             out.print(prefix)
                     .print("\tat ")
-                    .print(statement.getPosition())
+                    .print(stat.getPosition())
                     .print(" ")
-                    .print(statement.getClass().getSimpleName())
+                    .print(stat.getClass().getSimpleName())
                     .print('\n');
         }
     }

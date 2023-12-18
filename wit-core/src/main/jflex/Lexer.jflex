@@ -4,7 +4,7 @@ package org.febit.wit.core;
 import jakarta.annotation.Nullable;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.lang.TextPosition;
-import org.febit.wit.loaders.ResourceOffset;
+import org.febit.wit.lang.Resource;
 import org.febit.wit.util.LexerCharArrayWriter;
 
 import java.util.ArrayDeque;
@@ -109,8 +109,8 @@ import java.util.Deque;
         this.offsetColumnOfFirstLine = 1 - offsetColumnOfFirstLine;
     }
 
-    public void setOffset(ResourceOffset offset) {
-        setOffset(offset.getOffsetLine(), offset.getOffsetColumnOfFirstLine());
+    public void setOffset(Resource res) {
+        setOffset(res.getOffsetLine(), res.getOffsetColumnOfFirstLine());
     }
 
     public int getColumn() {

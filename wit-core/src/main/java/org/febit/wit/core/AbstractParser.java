@@ -8,25 +8,26 @@ import org.febit.wit.core.VariantManager.VarAddress;
 import org.febit.wit.core.text.TextStatementFactory;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.UncheckedException;
+import org.febit.wit.lang.ALU;
 import org.febit.wit.lang.Ast;
 import org.febit.wit.lang.AstUtils;
-import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.FunctionDeclare;
+import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.Position;
+import org.febit.wit.lang.Resource;
 import org.febit.wit.lang.TextPosition;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.TemplateAST;
+import org.febit.wit.lang.ast.expr.AssignableSuppliedValue;
 import org.febit.wit.lang.ast.expr.BreakpointExpr;
-import org.febit.wit.lang.ast.expr.ScopedContextVar;
 import org.febit.wit.lang.ast.expr.ContextVar;
 import org.febit.wit.lang.ast.expr.DirectValue;
-import org.febit.wit.lang.ast.expr.DynamicNativeMethodExecute;
-import org.febit.wit.lang.ast.expr.AssignableSupplierValue;
-import org.febit.wit.lang.ast.expr.MapValue;
 import org.febit.wit.lang.ast.expr.FunctionCallExpr;
 import org.febit.wit.lang.ast.expr.JavaStaticFieldExpr;
+import org.febit.wit.lang.ast.expr.NewMapExpr;
+import org.febit.wit.lang.ast.expr.ScopedContextVar;
 import org.febit.wit.lang.ast.oper.And;
 import org.febit.wit.lang.ast.oper.Assign;
 import org.febit.wit.lang.ast.oper.ConstableBiOperator;
@@ -46,13 +47,11 @@ import org.febit.wit.lang.ast.stat.Interpolation;
 import org.febit.wit.lang.ast.stat.NoopStatement;
 import org.febit.wit.lang.ast.stat.StatementGroup;
 import org.febit.wit.lang.ast.stat.TryPart;
-import org.febit.wit.loaders.Resource;
-import org.febit.wit.loaders.ResourceOffset;
+import org.febit.wit.lang.extra.ast.DynamicNativeMethodCallExpr;
 import org.febit.wit.security.NativeSecurityManager;
-import org.febit.wit.lang.ALU;
 import org.febit.wit.util.ClassNameBand;
 import org.febit.wit.util.ClassUtil;
-import org.febit.wit.util.ExceptionUtil;
+import org.febit.wit.util.ExceptionUtils;
 import org.febit.wit.util.Stack;
 import org.febit.wit.util.StringUtil;
 
@@ -481,11 +480,7 @@ abstract class AbstractParser {
             if (resource.isCodeFirst()) {
                 lexer.codeFirst();
             }
-            if (resource instanceof ResourceOffset) {
-                lexer.setOffset((ResourceOffset) resource);
-            } else {
-                lexer.setOffset(0, 0);
-            }
+            lexer.setOffset(resource);
             this.textStatementFactory.startTemplateParser(template);
             return (TemplateAST) this.process(lexer).value;
         } catch (ParseException e) {
@@ -548,7 +543,7 @@ abstract class AbstractParser {
         try {
             cls = ClassUtil.getClass("java.lang.".concat(className));
         } catch (Exception ex) {
-            ExceptionUtil.ignore(ex);
+            ExceptionUtils.ignore(ex);
         }
         if (cls != null) {
             return cls.getName();
@@ -626,9 +621,9 @@ abstract class AbstractParser {
         return contextVars;
     }
 
-    MapValue createMapValue(@Nullable List<Expression[]> propertyDefList, Position position) {
+    NewMapExpr createMapValue(@Nullable List<Expression[]> propertyDefList, Position position) {
         if (propertyDefList == null || propertyDefList.isEmpty()) {
-            return new MapValue(AstUtils.emptyExpressions(), AstUtils.emptyExpressions(), position);
+            return new NewMapExpr(AstUtils.emptyExpressions(), AstUtils.emptyExpressions(), position);
         }
         int size = propertyDefList.size();
         Expression[] keys = new Expression[size];
@@ -639,16 +634,16 @@ abstract class AbstractParser {
             keys[i] = def[0];
             values[i] = def[1];
         }
-        return new MapValue(keys, values, position);
+        return new NewMapExpr(keys, values, position);
     }
 
     DirectValue toDirectValue(Symbol sym) {
         return Ast.directValue(sym.pos, sym.value);
     }
 
-    AssignableSupplierValue createSupplierVarExpr(String name, Position position) {
+    AssignableSuppliedValue createSupplierVarExpr(String name, Position position) {
         var mgr = this.engine.getGlobalManager();
-        return new AssignableSupplierValue(() -> mgr.getGlobal(name), (v) -> mgr.setGlobal(name, v), position);
+        return new AssignableSuppliedValue(() -> mgr.getGlobal(name), (v) -> mgr.setGlobal(name, v), position);
     }
 
     Expression createContextValue(VarAddress addr, Position position) {
@@ -787,7 +782,7 @@ abstract class AbstractParser {
                                                 Expression[] paramExprs, Position position) {
         AstUtils.optimize(paramExprs);
         thisExpr = AstUtils.optimize(thisExpr);
-        return new DynamicNativeMethodExecute(thisExpr, func, paramExprs, position);
+        return new DynamicNativeMethodCallExpr(thisExpr, func, paramExprs, position);
     }
 
     TemplateAST createTemplateAST(List<Statement> list) {

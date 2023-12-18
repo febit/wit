@@ -1,11 +1,12 @@
 package org.febit.wit.loaders;
 
+import org.febit.wit.lang.Resource;
 import org.febit.wit.loaders.impl.resources.LazyResource;
 import org.junit.jupiter.api.Test;
 
 import java.io.Reader;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author zqq

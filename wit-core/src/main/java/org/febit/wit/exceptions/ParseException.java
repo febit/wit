@@ -4,7 +4,7 @@ package org.febit.wit.exceptions;
 import lombok.Getter;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.TextPosition;
-import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
+import org.febit.wit.util.ExceptionUtils.PrintStreamOrWriter;
 
 /**
  * @author zqq90

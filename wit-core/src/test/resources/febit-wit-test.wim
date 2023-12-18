@@ -23,7 +23,7 @@ plugins+='''
 '''
 
 [pathLoader]
-assistantSuffixs+=.whtml, .wit2
+assistantSuffixes+=.whtml, .wit2
 appendLostSuffix=true
 
 [classpathLoader]

@@ -3,8 +3,8 @@ package org.febit.wit.exceptions;
 
 import lombok.Getter;
 import org.febit.wit.Template;
-import org.febit.wit.util.ExceptionUtil;
-import org.febit.wit.util.ExceptionUtil.PrintStreamOrWriter;
+import org.febit.wit.util.ExceptionUtils;
+import org.febit.wit.util.ExceptionUtils.PrintStreamOrWriter;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -46,14 +46,14 @@ public abstract class TemplateException extends RuntimeException {
     @Override
     public void printStackTrace(PrintStream out) {
         synchronized (out) {
-            printStackTrace(ExceptionUtil.wrap(out));
+            printStackTrace(ExceptionUtils.wrap(out));
         }
     }
 
     @Override
     public void printStackTrace(PrintWriter out) {
         synchronized (out) {
-            printStackTrace(ExceptionUtil.wrap(out));
+            printStackTrace(ExceptionUtils.wrap(out));
         }
     }
 

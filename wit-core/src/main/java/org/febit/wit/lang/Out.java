@@ -1,7 +1,5 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
-package org.febit.wit.io;
-
-import org.febit.wit.lang.InternedEncoding;
+package org.febit.wit.lang;
 
 /**
  * @author zqq90

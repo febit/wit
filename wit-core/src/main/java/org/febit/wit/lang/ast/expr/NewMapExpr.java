@@ -14,7 +14,7 @@ import java.util.HashMap;
  * @author zqq90
  */
 @RequiredArgsConstructor
-public final class MapValue implements Expression {
+public final class NewMapExpr implements Expression {
 
     private final Expression[] keyExprs;
     private final Expression[] valueExprs;
@@ -22,6 +22,7 @@ public final class MapValue implements Expression {
     private final Position position;
 
     @Override
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public Object execute(final InternalContext context) {
         var keys = this.keyExprs;
         var values = this.valueExprs;
@@ -35,6 +36,7 @@ public final class MapValue implements Expression {
     }
 
     @Override
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public Object getConstValue() {
         var keys = this.keyExprs;
         var values = this.valueExprs;

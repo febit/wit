@@ -6,17 +6,19 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.Position;
-import org.febit.wit.lang.ast.Expression;
+import org.febit.wit.lang.ast.AssignableExpression;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
  * @author zqq90
  */
 @RequiredArgsConstructor
-public final class SupplierValue implements Expression {
+public final class AssignableSuppliedValue implements AssignableExpression {
 
     private final Supplier<?> supplier;
+    private final Consumer<Object> consumer;
 
     @Getter
     private final Position position;
@@ -25,5 +27,12 @@ public final class SupplierValue implements Expression {
     @Nullable
     public Object execute(final InternalContext context) {
         return this.supplier.get();
+    }
+
+    @Override
+    @Nullable
+    public Object setValue(final InternalContext context, @Nullable final Object value) {
+        this.consumer.accept(value);
+        return value;
     }
 }

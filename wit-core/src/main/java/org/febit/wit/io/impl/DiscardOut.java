@@ -2,8 +2,8 @@
 package org.febit.wit.io.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.io.Out;
 import org.febit.wit.lang.InternedEncoding;
+import org.febit.wit.lang.Out;
 
 /**
  * @author zqq90

@@ -2,11 +2,11 @@
 package org.febit.wit.lang.method;
 
 import org.febit.wit.InternalContext;
+import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.UnConstableFunctionDeclare;
 import org.febit.wit.lang.VariantIndexer;
 import org.febit.wit.lang.ast.expr.FunctionDeclareExpr;
-import org.febit.wit.util.ExceptionUtil;
 
 /**
  * @author zqq90
@@ -31,7 +31,7 @@ public final class FunctionFunctionDeclare implements FunctionDeclare, UnConstab
         try {
             return function.invoke(this.scopeContext.createSubContext(this.indexers, context, this.varSize), args);
         } catch (Exception e) {
-            var runtimeException = ExceptionUtil.toScriptRuntimeException(e, function);
+            var runtimeException = ScriptRuntimeException.from(e, function);
             if (context != this.scopeContext) {
                 throw runtimeException.setTemplate(this.scopeContext.getTemplate());
             }

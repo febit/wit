@@ -3,10 +3,10 @@ package org.febit.wit.io.impl;
 
 import org.febit.wit.Engine;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.io.Out;
 import org.febit.wit.io.charset.CoderFactory;
 import org.febit.wit.io.charset.Encoder;
 import org.febit.wit.lang.InternedEncoding;
+import org.febit.wit.lang.Out;
 
 import java.io.IOException;
 import java.io.OutputStream;

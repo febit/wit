@@ -1,5 +1,5 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
-package org.febit.wit.lang.ast.expr;
+package org.febit.wit.lang.extra.ast;
 
 import jakarta.annotation.Nullable;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
  * @author zqq90
  */
 @RequiredArgsConstructor
-public final class DynamicNativeMethodExecute implements Expression {
+public final class DynamicNativeMethodCallExpr implements Expression {
 
     private final Expression thisExpr;
     private final String func;
@@ -55,6 +55,7 @@ public final class DynamicNativeMethodExecute implements Expression {
         return methods;
     }
 
+    @Nullable
     private Object invokeProperMethod(Object me, Method[] methods, Object[] params) {
         Method method = JavaNativeUtil.getMatchMethod(methods, params);
         if (method == null) {

@@ -17,7 +17,6 @@ public final class CharArrayTextStatement implements Statement {
     @Getter
     private final Position position;
 
-
     @Override
     public Object execute(final InternalContext context) {
         context.getOut().write(chars);

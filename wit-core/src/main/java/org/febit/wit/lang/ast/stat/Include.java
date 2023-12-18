@@ -5,6 +5,7 @@ import jakarta.annotation.Nullable;
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
+import org.febit.wit.lang.extra.ast.AbstractInclude;
 
 /**
  * @author zqq90

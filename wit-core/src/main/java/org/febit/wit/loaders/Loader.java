@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders;
 
+import org.febit.wit.lang.Resource;
+
 public interface Loader {
 
     /**

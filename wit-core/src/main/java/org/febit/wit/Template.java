@@ -3,17 +3,17 @@ package org.febit.wit;
 
 import jakarta.annotation.Nullable;
 import org.febit.wit.core.Parser;
-import org.febit.wit.lang.BreakpointListener;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.exceptions.TemplateException;
-import org.febit.wit.io.Out;
 import org.febit.wit.io.impl.DiscardOut;
 import org.febit.wit.io.impl.OutputStreamOut;
 import org.febit.wit.io.impl.WriterOut;
+import org.febit.wit.lang.BreakpointListener;
 import org.febit.wit.lang.InternedEncoding;
+import org.febit.wit.lang.Out;
+import org.febit.wit.lang.Resource;
 import org.febit.wit.lang.ast.TemplateAST;
-import org.febit.wit.loaders.Resource;
 
 import java.io.OutputStream;
 import java.io.Writer;

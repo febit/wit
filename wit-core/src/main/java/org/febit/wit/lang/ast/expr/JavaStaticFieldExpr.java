@@ -27,7 +27,7 @@ public class JavaStaticFieldExpr implements AssignableExpression {
         try {
             return field.get(null);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            return new ScriptRuntimeException("Failed to get static field value: ".concat(field.toString()), ex, this);
+            return new ScriptRuntimeException("Cannot get value from static field: " + field, ex, this);
         }
     }
 
@@ -38,7 +38,7 @@ public class JavaStaticFieldExpr implements AssignableExpression {
             field.set(null, value);
             return value;
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            return new ScriptRuntimeException("Failed to set static field value: ".concat(field.toString()), ex, this);
+            return new ScriptRuntimeException("Cannot set value to static field: " + field, ex, this);
         }
     }
 }
