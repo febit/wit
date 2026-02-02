@@ -1,16 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.expr;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class DirectValue implements Expression {
 
@@ -21,13 +20,13 @@ public final class DirectValue implements Expression {
 
     @Override
     @Nullable
-    public Object execute(final InternalContext context) {
+    public Object execute(InternalContext context) {
         return value;
     }
 
     @Override
     @Nullable
-    public Object getConstValue() {
+    public Object calcAsConst() {
         return value;
     }
 }

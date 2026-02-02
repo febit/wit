@@ -1,0 +1,26 @@
+// Copyright (c) 2013-present, febit.org. All Rights Reserved.
+package org.febit.wit.loaders.impl;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
+import org.febit.wit.lang.Resource;
+import org.febit.wit.loaders.Loader;
+import org.febit.wit.loaders.LoaderDecorator;
+
+@Accessors(fluent = true)
+@RequiredArgsConstructor(staticName = "of")
+public class DebouncedLoaderDecorator implements LoaderDecorator {
+
+    @Getter
+    private final Loader delegate;
+    private final long delayMillis;
+
+    @Override
+    public Resource get(String path) {
+        var inner = this.delegate.get(path);
+        return this.delayMillis > 0L
+                ? new DebouncedResource(inner, this.delayMillis)
+                : inner;
+    }
+}

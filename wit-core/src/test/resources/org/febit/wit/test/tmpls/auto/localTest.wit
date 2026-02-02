@@ -1,29 +1,29 @@
 <%
 
-assertNull(LOCAL("a"));
+assertNull($LOCAL("a"));
 
 {
     //TEST: General
 
-    LOCAL("a","abc");
-    assertEquals("abc", LOCAL("a"));
+    $LOCAL("a","abc");
+    assertEquals("abc", $LOCAL("a"));
 }
 
 {
     //TEST: include
 
-    LOCAL("a","abc");
-    include "etc/localTest.include.wit";
-    assertEquals("def", LOCAL("a"));
+    $LOCAL("a","abc");
+    include "lib/localTest.include.wit";
+    assertEquals("def", $LOCAL("a"));
 }
 
 {
     //TEST: Global function
 
-    LOCAL("a","xxx");
+    $LOCAL("a","xxx");
     localTestInGlobal("a","xxx");
     localTestInGlobal_set("a", "yyy");
-    assertEquals("yyy", LOCAL("a"));
+    assertEquals("yyy", $LOCAL("a"));
 }
 
 %>

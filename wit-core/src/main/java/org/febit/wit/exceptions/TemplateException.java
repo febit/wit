@@ -3,36 +3,30 @@ package org.febit.wit.exceptions;
 
 import lombok.Getter;
 import org.febit.wit.Template;
-import org.febit.wit.util.ExceptionUtils;
-import org.febit.wit.util.ExceptionUtils.PrintStreamOrWriter;
+import org.jspecify.annotations.Nullable;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-/**
- * @author zqq90
- */
-@SuppressWarnings({
-        "WeakerAccess"
-})
 public abstract class TemplateException extends RuntimeException {
 
     protected boolean isCaused;
     @Getter
+    @Nullable
     protected Template template;
 
-    public TemplateException(String message) {
+    protected TemplateException(String message) {
         this(message, null);
     }
 
-    public TemplateException(Throwable cause) {
+    protected TemplateException(Throwable cause) {
         this(cause.getMessage(), cause);
     }
 
-    public TemplateException(String message, Throwable cause) {
+    protected TemplateException(String message, @Nullable Throwable cause) {
         super(message, cause, true, false);
-        if (cause instanceof TemplateException) {
-            ((TemplateException) cause).isCaused = true;
+        if (cause instanceof TemplateException ex) {
+            ex.isCaused = true;
         }
     }
 
@@ -46,14 +40,14 @@ public abstract class TemplateException extends RuntimeException {
     @Override
     public void printStackTrace(PrintStream out) {
         synchronized (out) {
-            printStackTrace(ExceptionUtils.wrap(out));
+            printStackTrace(wrap(out));
         }
     }
 
     @Override
     public void printStackTrace(PrintWriter out) {
         synchronized (out) {
-            printStackTrace(ExceptionUtils.wrap(out));
+            printStackTrace(wrap(out));
         }
     }
 
@@ -63,7 +57,7 @@ public abstract class TemplateException extends RuntimeException {
         if (this.template != null) {
             out.print(prefix)
                     .print("template: ")
-                    .print(this.template.getName())
+                    .print(this.template.path())
                     .print('\n');
         }
         printBody(out, prefix);
@@ -74,4 +68,40 @@ public abstract class TemplateException extends RuntimeException {
         }
     }
 
+    private static PrintStreamOrWriter wrap(PrintStream out) {
+        return new PrintStreamOrWriter() {
+            @Override
+            public PrintStreamOrWriter print(Object o) {
+                out.print(o);
+                return this;
+            }
+
+            @Override
+            public void printTrace(Throwable cause) {
+                cause.printStackTrace(out);
+            }
+        };
+    }
+
+    private static PrintStreamOrWriter wrap(PrintWriter out) {
+        return new PrintStreamOrWriter() {
+            @Override
+            public PrintStreamOrWriter print(Object o) {
+                out.print(o);
+                return this;
+            }
+
+            @Override
+            public void printTrace(Throwable cause) {
+                cause.printStackTrace(out);
+            }
+        };
+    }
+
+    public interface PrintStreamOrWriter {
+
+        PrintStreamOrWriter print(Object o);
+
+        void printTrace(Throwable cause);
+    }
 }

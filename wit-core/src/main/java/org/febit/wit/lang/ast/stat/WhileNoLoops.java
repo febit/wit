@@ -1,18 +1,17 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.stat;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
+import org.febit.wit.lang.ALU;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ALU;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class WhileNoLoops implements Statement {
 
@@ -24,16 +23,16 @@ public final class WhileNoLoops implements Statement {
 
     @Override
     @Nullable
-    public Object execute(final InternalContext context) {
+    public Object execute(InternalContext context) {
         return context.pushIndexer(indexer, this::execute0);
     }
 
     @Nullable
     @SuppressWarnings("UnnecessaryLocalVariable")
-    private Object execute0(final InternalContext context) {
+    private Object execute0(InternalContext context) {
         var stats = this.statements;
         var condition = this.whileExpr;
-        while (ALU.isTrue(condition.execute(context))) {
+        while (ALU.isTruly(condition.execute(context))) {
             context.visit(stats);
         }
         return null;

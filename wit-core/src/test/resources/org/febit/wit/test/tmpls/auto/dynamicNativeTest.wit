@@ -52,10 +52,10 @@ const b = "bbb";
     assertEquals(List::get(list, 1), 2);
     assertEquals(list[3], "a");
     assertEquals(List::get(list, 4), "b");
-    
+
 }
 {
-  @import org.febit.wit.util.StringUtil;
+  @import org.febit.wit.util.StringUtils;
 
   var max = Math::max;
 
@@ -69,8 +69,8 @@ const b = "bbb";
   assertEquals(Integer::parseInt("1234"), 1234);
   assertEquals(Long::parseLong("1234"), 1234L);
 
-  assertEquals(StringUtil::format("[0]={}, [1]={}, [2]:{}", ["aaaa", "bbb", 2]), "[0]=aaaa, [1]=bbb, [2]:2");
-  
+  assertEquals(StringUtils::format("[0]={}, [1]={}, [2]:{}", ["aaaa", "bbb", 2]), "[0]=aaaa, [1]=bbb, [2]:2");
+
 }
 {
     var new_stringBuilder = native new StringBuilder();
@@ -115,7 +115,7 @@ const b = "bbb";
     arr.~hashCode()
     Map[][][][]::hashCode(arr)
     Map [ ] []   [   ] [
-         ] 
+         ]
         ::
         toString(arr)
 }

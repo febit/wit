@@ -3,37 +3,34 @@ package org.febit.wit.loaders.impl;
 
 import org.febit.wit.lang.Resource;
 import org.febit.wit.loaders.Loader;
-import org.febit.wit.loaders.impl.resources.StringResource;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
-@SuppressWarnings({
-        "WeakerAccess"
-})
+@lombok.Builder(
+        builderClassName = "Builder"
+)
 public class StringLoader implements Loader {
 
-    protected boolean enableCache;
-    protected boolean codeFirst;
+    private final boolean cacheEnabled;
+    private final boolean codeFirst;
 
     @Override
-    public Resource get(String name) {
-        return new StringResource(name, codeFirst);
+    public Resource get(String path) {
+        return new StringResource(path, codeFirst);
     }
 
     @Override
-    public String concat(String parent, String name) {
-        // ignore parent
-        return name;
+    public String sibling(@Nullable String refer, String path) {
+        return path;
+    }
+
+    @Nullable
+    @Override
+    public String normalize(@Nullable String path) {
+        return path;
     }
 
     @Override
-    public String normalize(String name) {
-        return name;
-    }
-
-    @Override
-    public boolean isEnableCache(String name) {
-        return enableCache;
+    public boolean isCacheEnabled(String path) {
+        return cacheEnabled;
     }
 }

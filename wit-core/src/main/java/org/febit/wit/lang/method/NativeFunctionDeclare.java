@@ -3,13 +3,11 @@ package org.febit.wit.lang.method;
 
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.FunctionDeclare;
-import org.febit.wit.util.JavaNativeUtil;
+import org.febit.wit.util.JavaNativeUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
-/**
- * @author zqq90
- */
 public final class NativeFunctionDeclare implements FunctionDeclare {
 
     private final Method method;
@@ -18,8 +16,9 @@ public final class NativeFunctionDeclare implements FunctionDeclare {
         this.method = method;
     }
 
+    @Nullable
     @Override
-    public Object invoke(final InternalContext context, final Object[] args) {
-        return JavaNativeUtil.invokeMethod(method, args);
+    public Object invoke(InternalContext context, @Nullable Object @Nullable [] args) {
+        return JavaNativeUtils.invokeMethod(method, args);
     }
 }

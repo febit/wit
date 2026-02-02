@@ -1,22 +1,21 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.extra.ast;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.util.ClassUtil;
-import org.febit.wit.util.JavaNativeUtil;
+import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.JavaNativeUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class DynamicNativeMethodCallExpr implements Expression {
 
@@ -28,19 +27,19 @@ public final class DynamicNativeMethodCallExpr implements Expression {
 
     @Override
     @Nullable
-    public Object execute(final InternalContext context) {
-        Object me = this.thisExpr.execute(context);
-        Method[] methods = getMethods(me);
-        Object[] params = context.visit(this.paramExprs);
+    public Object execute(InternalContext context) {
+        var me = this.thisExpr.execute(context);
+        var methods = getMethods(me);
+        var params = context.visit(this.paramExprs);
         return invokeProperMethod(me, methods, params);
     }
 
     @Override
     @Nullable
-    public Object getConstValue() {
-        Object me = AstUtils.calcConst(thisExpr);
-        Method[] methods = getMethods(me);
-        Object[] params = AstUtils.calcConstArray(paramExprs);
+    public Object calcAsConst() {
+        var me = AstUtils.calcConst(thisExpr);
+        var methods = getMethods(me);
+        var params = AstUtils.calcConstArray(paramExprs);
         return invokeProperMethod(me, methods, params);
     }
 
@@ -48,7 +47,7 @@ public final class DynamicNativeMethodCallExpr implements Expression {
         if (me == null) {
             throw new ScriptRuntimeException("not a function (NPE)", this);
         }
-        Method[] methods = ClassUtil.getPublicMemberMethods(me.getClass(), func);
+        var methods = ClassUtils.getPublicMemberMethods(me.getClass(), func);
         if (methods.length == 0) {
             throw new ScriptRuntimeException("not found match native method: " + me.getClass() + '#' + func);
         }
@@ -57,11 +56,11 @@ public final class DynamicNativeMethodCallExpr implements Expression {
 
     @Nullable
     private Object invokeProperMethod(Object me, Method[] methods, Object[] params) {
-        Method method = JavaNativeUtil.getMatchMethod(methods, params);
+        var method = JavaNativeUtils.getMatchMethod(methods, params);
         if (method == null) {
             throw new ScriptRuntimeException("not found match native method: " + me.getClass() + '#' + func);
         }
-        return JavaNativeUtil.invokeMethod(method, me, params);
+        return JavaNativeUtils.invokeMethod(method, me, params);
     }
 
 }

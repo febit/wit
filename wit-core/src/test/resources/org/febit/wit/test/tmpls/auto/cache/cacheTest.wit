@@ -1,0 +1,17 @@
+<%
+
+var count = 0;
+
+var func = function(){
+%>Hello Cache-${count}
+<%
+    return count++;
+};
+
+assertEquals(0, cache(func));
+assertEquals(0, cache(func));
+cache_clear();
+assertEquals(1, cache(func));
+assertEquals(1, cache(func));
+
+%>

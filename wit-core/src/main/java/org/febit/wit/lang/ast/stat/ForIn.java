@@ -1,9 +1,9 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.stat;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Iter;
@@ -14,31 +14,34 @@ import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.expr.FunctionDeclareExpr;
 import org.febit.wit.lang.iter.IterMethodFilter;
-import org.febit.wit.util.CollectionUtil;
+import org.febit.wit.util.Iters;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public class ForIn implements Statement, Loopable {
 
-    protected final FunctionDeclareExpr functionDeclareExpr;
-    protected final Expression collectionExpr;
-    protected final int indexer;
-    protected final int iterIndex;
-    protected final int itemIndex;
-    protected final Statement[] statements;
-    protected final LoopMeta[] possibleLoops;
-    protected final Statement elseStatement;
-    protected final int label;
+    @Nullable
+    private final FunctionDeclareExpr functionDeclareExpr;
+
+    private final Expression collectionExpr;
+    private final int indexer;
+    private final int iterIndex;
+    private final int itemIndex;
+    private final Statement[] statements;
+    private final LoopMeta[] possibleLoops;
+
+    @Nullable
+    private final Statement elseStatement;
+    private final int label;
     @Getter
     private final Position position;
 
     @Override
     @Nullable
-    public Object execute(final InternalContext context) {
+    public Object execute(InternalContext context) {
         Iter iter = iter(context);
         if (iter.hasNext()) {
             return context.pushIndexer(indexer, c -> this.execute0(c, iter));
@@ -50,7 +53,7 @@ public class ForIn implements Statement, Loopable {
     }
 
     private Iter iter(InternalContext context) {
-        var iter = CollectionUtil.toIter(collectionExpr.execute(context), this);
+        var iter = Iters.toIter(collectionExpr.execute(context), this);
         if (functionDeclareExpr == null) {
             return iter;
         }
@@ -72,20 +75,20 @@ public class ForIn implements Statement, Loopable {
         do {
             vars[itemIdx] = iter.next();
             context.visitAndCheckLoop(stats);
-            if (context.noLoop()) {
+            if (context.loopKind().isNoop()) {
                 continue;
             }
             if (!context.matchLabel(myLabel)) {
                 break; //while
             }
-            switch (context.getLoopType()) {
-                case LoopMeta.BREAK:
+            switch (context.loopKind()) {
+                case BREAK:
                     context.resetLoop();
                     break label; // while
-                case LoopMeta.RETURN:
+                case RETURN:
                     //can't deal
                     break label; //while
-                case LoopMeta.CONTINUE:
+                case CONTINUE:
                     context.resetLoop();
                     break; //switch
                 default:

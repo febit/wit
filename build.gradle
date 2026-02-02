@@ -38,8 +38,10 @@ configure(subprojects.findAll {
   }
 
   dependencies {
-    compileOnly 'org.febit:febit-annotations-optional'
-    testCompileOnly 'org.febit:febit-annotations-optional'
+    compileOnly 'org.jspecify:jspecify'
+    compileOnly 'com.github.spotbugs:spotbugs-annotations'
+    testCompileOnly 'org.jspecify:jspecify'
+    testCompileOnly 'com.github.spotbugs:spotbugs-annotations'
 
     testImplementation 'org.febit:febit-commons-test'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

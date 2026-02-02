@@ -5,9 +5,6 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
-/**
- * @author zqq90
- */
 @EqualsAndHashCode
 public final class InternalVoid implements Serializable {
 

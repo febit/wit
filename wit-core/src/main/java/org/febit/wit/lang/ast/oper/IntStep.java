@@ -1,18 +1,17 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.oper;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
+import org.febit.wit.lang.ALU;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.lang.ALU;
-import org.febit.wit.util.CollectionUtil;
+import org.febit.wit.util.Iters;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public class IntStep implements Expression {
 
@@ -24,13 +23,11 @@ public class IntStep implements Expression {
 
     @Override
     @Nullable
-    public Object execute(final InternalContext context) {
-        final int left = ALU.requireNumber(leftExpr.execute(context)).intValue();
-        final int right = ALU.requireNumber(rightExpr.execute(context)).intValue();
-        if (left < right) {
-            return CollectionUtil.createIntAscIter(left, right);
-        } else {
-            return CollectionUtil.createIntDescIter(left, right);
-        }
+    public Object execute(InternalContext context) {
+        var left = ALU.requireNumber(leftExpr.execute(context)).intValue();
+        var right = ALU.requireNumber(rightExpr.execute(context)).intValue();
+        return left < right
+                ? Iters.asc(left, right)
+                : Iters.desc(left, right);
     }
 }

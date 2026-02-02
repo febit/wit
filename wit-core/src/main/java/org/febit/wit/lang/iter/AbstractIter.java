@@ -2,10 +2,8 @@
 package org.febit.wit.lang.iter;
 
 import org.febit.wit.lang.Iter;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
 public abstract class AbstractIter implements Iter {
 
     protected int cursor;
@@ -14,8 +12,10 @@ public abstract class AbstractIter implements Iter {
         this.cursor = -1;
     }
 
+    @Nullable
     protected abstract Object _next();
 
+    @Nullable
     @Override
     public final Object next() {
         ++cursor;

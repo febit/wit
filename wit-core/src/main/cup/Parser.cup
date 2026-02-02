@@ -11,7 +11,7 @@ import org.febit.wit.lang.Ast;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.extra.ast.ImportPart;
 import org.febit.wit.lang.extra.ast.RedirectOut;
-import org.febit.wit.util.ClassNameBand;
+import org.febit.wit.util.ClassNameRope;
 import org.febit.wit.util.Stack;
 
 import static org.febit.wit.lang.ast.expr.FunctionDeclarePart.ArgumentInfo;
@@ -64,8 +64,8 @@ terminal Object     DIRECT_VALUE;
 terminal Integer    CONST;
 
 /* nonterminal */
-nonterminal ClassNameBand classPureName, className;
-nonterminal Class javaClass;
+nonterminal ClassNameRope classPureName, className;
+nonterminal Class<?> javaClass;
 nonterminal TemplateAST templateAST;
 
 /* Statement */
@@ -125,7 +125,7 @@ templateAST     ::= statement[]:list ?
 
 
 classPureName   ::= IDENTIFIER:ident
-                    {: return new ClassNameBand(%ident%); :}
+                    {: return new ClassNameRope(%ident%); :}
                     |classPureName:part DOT IDENTIFIER:ident
                     {: return (%part%).append(%ident%); :}
                     ;
@@ -133,12 +133,12 @@ classPureName   ::= IDENTIFIER:ident
 className       ::= classPureName:part
                     {: return %part%; :}
                     |className:part LBRACK RBRACK
-                    {: return (%part%).plusArrayDepth(); :}
+                    {: return (%part%).increaseArrayDepth(); :}
                     ;
 
 
-javaClass       ::= className:nameBand
-                    {: return toClass(%nameBand%, %nameBand.symbol%.pos); :}
+javaClass       ::= className:nameRope
+                    {: return toClass(%nameRope%, %nameRope.symbol%.pos); :}
                     ;
 
 
@@ -198,8 +198,8 @@ statement       ::= expression_statementable:$ SEMICOLON
                     {: return new Echo(%expr%, %sym.symbol%.pos); :}
 
                     //@import
-                    |NATIVE_IMPORT:sym classPureName:nameBand SEMICOLON
-                    {: registerClass(%nameBand%, %sym.symbol%.pos); return NoopStatement.INSTANCE; :}
+                    |NATIVE_IMPORT:sym classPureName:nameRope SEMICOLON
+                    {: registerClass(%nameRope%, %sym.symbol%.pos); return NoopStatement.INSTANCE; :}
 
                     //BREAK
                     |BREAK:sym IDENTIFIER:label? SEMICOLON
@@ -221,7 +221,7 @@ statement       ::= expression_statementable:$ SEMICOLON
 
                     //includeStat
                     |INCLUDE:sym expression:expr newMapExpr:paramsExpr? SEMICOLON
-                    {: return new Include(%expr%, %paramsExpr%, this.template.getName(), %sym.symbol%.pos); :}
+                    {: return new Include(%expr%, %paramsExpr%, this.template.path(), %sym.symbol%.pos); :}
 
                     //funcStatement
                     |funcStatementHead:part LBRACE statement[]:list? RBRACE
@@ -499,16 +499,16 @@ expression      ::= expression_statementable:$
                     {: return createNativeNewArrayDeclareExpression(%javaClass%, %sym.symbol%.pos); :}
 
                     //nativeMethodExpr
-                    |NATIVE:sym classPureName:nameBand DOT IDENTIFIER:ident LPAREN javaClass[COMMA]:list? RPAREN
-                    {: return createNativeMethodDeclareExpression(toClass(%nameBand%, %nameBand.symbol%.pos), %ident%, %list%, %sym.symbol%.pos); :}
+                    |NATIVE:sym classPureName:nameRope DOT IDENTIFIER:ident LPAREN javaClass[COMMA]:list? RPAREN
+                    {: return createNativeMethodDeclareExpression(toClass(%nameRope%, %nameRope.symbol%.pos), %ident%, %list%, %sym.symbol%.pos); :}
 
                     //native static field
-                    |NATIVE classPureName:nameBand
-                    {: return createNativeStaticValue(%nameBand%, %nameBand.symbol%.pos); :}
+                    |NATIVE classPureName:nameRope
+                    {: return createNativeStaticValue(%nameRope%, %nameRope.symbol%.pos); :}
 
                     //nativeConstructorExpr
-                    |NATIVE:sym NEW classPureName:nameBand LPAREN javaClass[COMMA]:list? RPAREN
-                    {: return createNativeConstructorDeclareExpression(toClass(%nameBand%, %nameBand.symbol%.pos), %list%, %sym.symbol%.pos); :}
+                    |NATIVE:sym NEW classPureName:nameRope LPAREN javaClass[COMMA]:list? RPAREN
+                    {: return createNativeConstructorDeclareExpression(toClass(%nameRope%, %nameRope.symbol%.pos), %list%, %sym.symbol%.pos); :}
 
                     |METHOD_REFERENCE:ref
                     {: return createMethodReference(%ref%, %ref.symbol%.pos); :}

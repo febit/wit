@@ -1,18 +1,15 @@
 package org.febit.wit.lang;
 
-import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.experimental.UtilityClass;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.expr.DirectValue;
 import org.febit.wit.lang.ast.expr.NewArrayExpr;
-import org.febit.wit.lang.ast.expr.NewListExpr;
 import org.febit.wit.lang.ast.expr.SuppliedValue;
 import org.febit.wit.lang.ast.expr.TemplateStringValue;
+import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.febit.wit.lang.AstUtils.toExpressionArray;
@@ -28,34 +25,11 @@ public class Ast {
         return new SuppliedValue(() -> new Object[0], pos);
     }
 
-    public static SuppliedValue emptyMap(Position pos) {
-        return new SuppliedValue(HashMap::new, pos);
-    }
-
-    public static SuppliedValue emptyList(Position pos) {
-        return new SuppliedValue(ArrayList::new, pos);
-    }
-
-    @Builder(
-            builderMethodName = "newArrayBuilder",
-            builderClassName = "NewArrayBuilder"
-    )
     public static NewArrayExpr newArray(
             Position pos,
             @Singular List<Expression> exprs
     ) {
         return new NewArrayExpr(toExpressionArray(exprs), pos);
-    }
-
-    @Builder(
-            builderMethodName = "newListBuilder",
-            builderClassName = "NewListBuilder"
-    )
-    public static NewListExpr newList(
-            Position pos,
-            @Singular List<Expression> exprs
-    ) {
-        return new NewListExpr(toExpressionArray(exprs), pos);
     }
 
     @Builder(
@@ -67,15 +41,6 @@ public class Ast {
             @Singular List<Expression> exprs
     ) {
         return new TemplateStringValue(toExpressionArray(exprs), pos);
-    }
-
-    public static class NewArrayBuilder {
-    }
-
-    public static class NewListBuilder {
-    }
-
-    public static class TemplateStringBuilder {
     }
 
 }

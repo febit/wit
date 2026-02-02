@@ -1,20 +1,19 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.stat;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.Loopable;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Statement;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class Continue implements Statement, Loopable {
 
@@ -24,7 +23,7 @@ public final class Continue implements Statement, Loopable {
 
     @Override
     @Nullable
-    public Object execute(final InternalContext context) {
+    public Object execute(InternalContext context) {
         context.continueLoop(label);
         return null;
     }
@@ -32,7 +31,7 @@ public final class Continue implements Statement, Loopable {
     @Override
     public List<LoopMeta> collectPossibleLoops() {
         return List.of(
-                new LoopMeta(LoopMeta.CONTINUE, label, position)
+                new LoopMeta(LoopMeta.Kind.CONTINUE, label, position)
         );
     }
 }

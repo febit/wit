@@ -1,6 +1,0 @@
-description = 'Wit Support for javax-servlet'
-
-dependencies {
-  api project(':wit-core')
-  compileOnly libs.jakarta.servlet.api
-}

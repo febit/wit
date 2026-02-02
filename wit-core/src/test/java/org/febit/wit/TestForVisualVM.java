@@ -5,9 +5,6 @@ import org.febit.wit.exceptions.ResourceNotFoundException;
 
 import java.io.IOException;
 
-/**
- * @author zqq90
- */
 public class TestForVisualVM {
 
     public static class Start {
@@ -19,9 +16,9 @@ public class TestForVisualVM {
     //@Test
     public void test() throws ResourceNotFoundException, IOException {
         int times = 10000;
-        Engine engine = EngineManager.getEngine();
+        Engine engine = EngineManager.engine();
 
-        Template template = engine.getTemplate("/helloTest.wit");
+        Template template = engine.template("/helloTest.wit");
 
         TestForVisualVM.Start.start();
         for (int i = 0; i < times; i++) {

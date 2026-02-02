@@ -10,7 +10,6 @@ public interface Resource {
      * if exists this resource.
      *
      * @return boolean
-     * @since 1.4.1
      */
     boolean exists();
 
@@ -18,9 +17,8 @@ public interface Resource {
      * if this resource is begin with code.
      *
      * @return boolean
-     * @since 2.0.0
      */
-    boolean isCodeFirst();
+    boolean codeFirst();
 
     Reader openReader() throws IOException;
 
@@ -28,20 +26,13 @@ public interface Resource {
      * Return current resource version.
      *
      * @return current resource version.
-     * @since 2.7.0
      */
     long version();
 
-    /**
-     * @since 3.0.0
-     */
     default int getOffsetLine() {
         return 0;
     }
 
-    /**
-     * @since 3.0.0
-     */
     default int getOffsetColumnOfFirstLine() {
         return 0;
     }

@@ -4,13 +4,11 @@ package org.febit.wit.lang.method;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.FunctionDeclare;
-import org.febit.wit.util.JavaNativeUtil;
+import org.febit.wit.util.JavaNativeUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
-/**
- * @author zqq90
- */
 public class MixedMultiNativeFunctionDeclare implements FunctionDeclare {
 
     private final Method[] methods;
@@ -19,12 +17,13 @@ public class MixedMultiNativeFunctionDeclare implements FunctionDeclare {
         this.methods = methods;
     }
 
+    @Nullable
     @Override
-    public Object invoke(final InternalContext context, final Object[] args) {
-        Method method = JavaNativeUtil.getMatchMethod(methods, args, true);
+    public Object invoke(InternalContext context, @Nullable Object @Nullable [] args) {
+        Method method = JavaNativeUtils.getMatchMethod(methods, args, true);
         if (method == null) {
             throw new ScriptRuntimeException("not found match native method");
         }
-        return JavaNativeUtil.invokeMethod(method, context, args);
+        return JavaNativeUtils.invokeMethod(method, context, args);
     }
 }

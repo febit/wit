@@ -1,15 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import jakarta.annotation.Nullable;
+import lombok.Getter;
 import org.febit.wit.Engine;
 import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.global.GlobalManager;
+import org.febit.wit.global.GlobalHeap;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.TextPosition;
 import org.febit.wit.lang.VariantIndexer;
-import org.febit.wit.util.ArrayUtil;
+import org.febit.wit.util.ArrayUtils;
 import org.febit.wit.util.Stack;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,30 +18,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author zqq90
- */
 public class VariantManager {
 
+    @Getter
     private int varCount;
     private int scopeLevelCount;
     private final Stack<Integer> varCountStack;
     private final Stack<VarStair> stairStack;
     private final List<VarStair> stairs;
     private final VarStair root;
-    private final GlobalManager globalManager;
+    private final GlobalHeap globalHeap;
 
     VariantManager(Engine engine) {
-        this.globalManager = engine.getGlobalManager();
+        this.globalHeap = engine.globalHeap();
         this.stairs = new ArrayList<>();
         this.stairStack = new Stack<>();
         this.varCountStack = new Stack<>();
         this.root = push(-1);
-        this.root.assignVarsIfAbsent(engine.getVars());
+        this.root.assignVarsIfAbsent(engine.predefinedVars());
     }
 
     private VarStair push(int parentId) {
-        final VarStair stair = new VarStair(this.stairs.size(), parentId);
+        var stair = new VarStair(this.stairs.size(), parentId);
         this.stairs.add(stair);
         this.stairStack.push(stair);
         return stair;
@@ -63,18 +62,14 @@ public class VariantManager {
         pop();
     }
 
-    public int getVarCount() {
-        return varCount;
-    }
-
     public int pop() {
         return stairStack.pop().id;
     }
 
     public VariantIndexer[] getIndexers() {
-        final List<VarStair> varStairs = this.stairs;
-        final int size = varStairs.size();
-        final VariantIndexer[] result = new VariantIndexer[size];
+        var varStairs = this.stairs;
+        var size = varStairs.size();
+        var result = new VariantIndexer[size];
         int i = 0;
         for (; i < size; i++) {
             if (varStairs.get(i).scopeLevel == this.scopeLevelCount) {
@@ -83,13 +78,11 @@ public class VariantManager {
         }
         final int start = i;
         for (; i < size; i++) {
-            VarStair stair = varStairs.get(i);
+            var stair = varStairs.get(i);
             // assert i == stair.id
             // exclude const vars
-            final Map<String, Integer> indexerMap = stair.values;
-            if (stair.constMap != null) {
-                stair.constMap.keySet().forEach(indexerMap::remove);
-            }
+            var indexerMap = stair.values;
+            stair.constMap.keySet().forEach(indexerMap::remove);
             result[i] = getVariantIndexer(stair.parentId >= 0 ? result[stair.parentId] : null, indexerMap);
         }
         return Arrays.copyOfRange(result, start, size);
@@ -108,7 +101,7 @@ public class VariantManager {
         if (address != null) {
             return address;
         }
-        throw new ParseException("Can't locate vars: ".concat(name), position);
+        throw new ParseException("Can't locate vars: " + name, position);
     }
 
     public VarAddress locate(String name, int fromUpstair, boolean force, Position position) {
@@ -122,34 +115,34 @@ public class VariantManager {
         }
 
         //global var/const
-        final GlobalManager globalMgr = this.globalManager;
-        if (globalMgr.hasGlobal(name)) {
+        var myGlobalHeap = this.globalHeap;
+        if (myGlobalHeap.hasGlobal(name)) {
             return globalAddress(name);
         }
-        if (globalMgr.hasConst(name)) {
-            return constAddress(globalMgr.getConst(name));
+        if (myGlobalHeap.hasConst(name)) {
+            return constAddress(myGlobalHeap.getConst(name));
         }
 
         //failed
         if (force) {
-            throw new ParseException("Can't locate vars: ".concat(name), position);
+            throw new ParseException("Can't locate vars: " + name, position);
         }
         //assign at root
         return contextAddress(root.scopeLevel, root.assignVar(name, position));
     }
 
-    private static VariantIndexer getVariantIndexer(final VariantIndexer parent, final Map<String, Integer> map) {
+    private static VariantIndexer getVariantIndexer(@Nullable VariantIndexer parent, Map<String, Integer> map) {
         if (map.isEmpty()) {
             if (parent != null) {
                 return parent;
             }
-            return new VariantIndexer(null, ArrayUtil.emptyStrings(), new int[0]);
+            return new VariantIndexer(null, ArrayUtils.emptyStrings(), new int[0]);
         }
-        final int size = map.size();
-        final String[] names = new String[size];
-        final int[] indexes = new int[size];
+        var size = map.size();
+        var names = new String[size];
+        var indexes = new int[size];
         int i = 0;
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+        for (var entry : map.entrySet()) {
             names[i] = entry.getKey();
             indexes[i] = entry.getValue();
             i++;
@@ -167,7 +160,7 @@ public class VariantManager {
         return new VarAddress(VarAddress.GLOBAL, -1, name);
     }
 
-    VarAddress constAddress(Object value) {
+    VarAddress constAddress(@Nullable Object value) {
         return new VarAddress(VarAddress.CONST, -1, value);
     }
 
@@ -176,16 +169,16 @@ public class VariantManager {
         final int scopeLevel;
         final int id;
         final int parentId;
-        final Map<String, Integer> values;
-        Map<String, Object> constMap;
+        final Map<String, Integer> values = new HashMap<>();
+        final Map<String, @Nullable Object> constMap = new HashMap<>(16);
 
         VarStair(int id, int parentId) {
             this.id = id;
             this.parentId = parentId;
-            this.values = new HashMap<>();
             this.scopeLevel = VariantManager.this.scopeLevelCount;
         }
 
+        @Nullable
         VarAddress locate(String name) {
             Integer index = this.values.get(name);
             if (index == null) {
@@ -197,13 +190,13 @@ public class VariantManager {
             return contextAddress(this.scopeLevel, index);
         }
 
-        void checkDuplicate(final String name, Position position) {
+        void checkDuplicate(String name, Position position) {
             if (this.values.containsKey(name)) {
-                throw new ParseException("Duplicate Variant declare: ".concat(name), position);
+                throw new ParseException("Duplicate Variant declare: " + name, position);
             }
         }
 
-        Integer assignVar(final String name, Position position) {
+        Integer assignVar(String name, Position position) {
             checkDuplicate(name, position);
             //XXX: rewrite
             int index = VariantManager.this.varCount++;
@@ -211,19 +204,16 @@ public class VariantManager {
             return index;
         }
 
-        void assignConst(final String name, @Nullable final Object value, Position position) {
+        void assignConst(final String name, @Nullable Object value, Position position) {
             checkDuplicate(name, position);
-            if (this.constMap == null) {
-                this.constMap = new HashMap<>(16);
-            }
             this.values.put(name, -1);
             this.constMap.put(name, value);
         }
 
-        void assignVarsIfAbsent(String[] vars) {
-            for (String var : vars) {
-                if (!this.values.containsKey(var)) {
-                    assignVar(var, TextPosition.UNKNOWN);
+        void assignVarsIfAbsent(List<String> vars) {
+            for (var v : vars) {
+                if (!this.values.containsKey(v)) {
+                    assignVar(v, TextPosition.UNKNOWN);
                 }
             }
         }
@@ -239,16 +229,17 @@ public class VariantManager {
         public final int type;
         public final int index;
         public final int scopeOffset;
+        @Nullable
         public final Object constValue;
 
-        VarAddress(int type, int offset, int index, Object constValue) {
+        VarAddress(int type, int offset, int index, @Nullable Object constValue) {
             this.type = type;
             this.scopeOffset = offset;
             this.index = index;
             this.constValue = constValue;
         }
 
-        VarAddress(int type, int index, Object constValue) {
+        VarAddress(int type, int index, @Nullable Object constValue) {
             this(type, 0, index, constValue);
         }
     }

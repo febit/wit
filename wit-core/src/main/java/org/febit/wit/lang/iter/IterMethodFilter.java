@@ -2,13 +2,11 @@
 package org.febit.wit.lang.iter;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.lang.Iter;
-import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.ALU;
+import org.febit.wit.lang.FunctionDeclare;
+import org.febit.wit.lang.Iter;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
 public final class IterMethodFilter extends IterFilter {
 
     private final InternalContext context;
@@ -21,7 +19,7 @@ public final class IterMethodFilter extends IterFilter {
     }
 
     @Override
-    protected boolean valid(Object item) {
-        return ALU.isTrue(method.invoke(context, new Object[]{item}));
+    protected boolean valid(@Nullable Object item) {
+        return ALU.isTruly(method.invoke(context, new @Nullable Object[]{item}));
     }
 }

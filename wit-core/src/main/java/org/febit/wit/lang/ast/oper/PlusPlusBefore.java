@@ -3,16 +3,16 @@ package org.febit.wit.lang.ast.oper;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.ALU;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class PlusPlusBefore implements Expression {
 
@@ -22,9 +22,10 @@ public final class PlusPlusBefore implements Expression {
     private final Position position;
 
     @Override
-    public Object execute(final InternalContext context) {
+    @Nullable
+    public Object execute(InternalContext context) {
+        var assignable = this.expr;
         try {
-            var assignable = this.expr;
             return assignable.setValue(context, ALU.plusOne(
                     assignable.execute(context))
             );

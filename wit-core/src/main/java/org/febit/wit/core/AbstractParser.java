@@ -1,11 +1,11 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import jakarta.annotation.Nullable;
+import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Engine;
+import org.febit.wit.Feature;
 import org.febit.wit.Template;
 import org.febit.wit.core.VariantManager.VarAddress;
-import org.febit.wit.core.text.TextStatementFactory;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.lang.ALU;
@@ -14,10 +14,10 @@ import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.Position;
-import org.febit.wit.lang.Resource;
 import org.febit.wit.lang.TextPosition;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
+import org.febit.wit.lang.ast.IBlock;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.TemplateAST;
 import org.febit.wit.lang.ast.expr.AssignableSuppliedValue;
@@ -39,7 +39,6 @@ import org.febit.wit.lang.ast.oper.SelfOperator;
 import org.febit.wit.lang.ast.stat.Block;
 import org.febit.wit.lang.ast.stat.BlockNoLoops;
 import org.febit.wit.lang.ast.stat.BreakpointStatement;
-import org.febit.wit.lang.ast.stat.IBlock;
 import org.febit.wit.lang.ast.stat.If;
 import org.febit.wit.lang.ast.stat.IfElse;
 import org.febit.wit.lang.ast.stat.IfNot;
@@ -48,12 +47,11 @@ import org.febit.wit.lang.ast.stat.NoopStatement;
 import org.febit.wit.lang.ast.stat.StatementGroup;
 import org.febit.wit.lang.ast.stat.TryPart;
 import org.febit.wit.lang.extra.ast.DynamicNativeMethodCallExpr;
-import org.febit.wit.security.NativeSecurityManager;
-import org.febit.wit.util.ClassNameBand;
-import org.febit.wit.util.ClassUtil;
-import org.febit.wit.util.ExceptionUtils;
+import org.febit.wit.util.ClassNameRope;
+import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.Stack;
-import org.febit.wit.util.StringUtil;
+import org.febit.wit.util.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -61,16 +59,12 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.BinaryOperator;
+import java.util.function.UnaryOperator;
 
-/**
- * @author zqq90
- */
-@SuppressWarnings({
-        "WeakerAccess"
-})
+@Slf4j
 abstract class AbstractParser {
 
     //Self Operators
@@ -180,14 +174,12 @@ abstract class AbstractParser {
     };
 
     private final Map<String, String> importedClasses = new HashMap<>();
-    private final Map<String, Integer> labelIndexMap = new HashMap<>();
+    private final Map<@Nullable String, Integer> labelIndexMap = new HashMap<>();
     private final AtomicInteger nextLabelIndex = new AtomicInteger();
 
     private TextStatementFactory textStatementFactory;
-    private NativeSecurityManager nativeSecurityManager;
     private Engine engine;
     private NativeFactory nativeFactory;
-    private boolean locateVarForce;
 
     protected final Stack<Symbol> symbolStack = new Stack<>(24);
     protected Template template;
@@ -206,7 +198,7 @@ abstract class AbstractParser {
     AbstractParser() {
     }
 
-    private static short getAction(final short[] row, final int sym) {
+    private static short getAction(short[] row, final int sym) {
         final int len = row.length;
         int probe;
         /* linear search if we are < 10 entries, otherwise binary search */
@@ -239,7 +231,7 @@ abstract class AbstractParser {
     @SuppressWarnings({
             "squid:ForLoopCounterChangedCheck"
     })
-    private static short getReduce(@Nullable final short[] row, int sym) {
+    private static short getReduce(short @Nullable [] row, int sym) {
         if (row != null) {
             for (int probe = 0, len = row.length; probe < len; probe++) {
                 if (row[probe++] == sym) {
@@ -253,7 +245,7 @@ abstract class AbstractParser {
 
     private static short[][] loadData(String name) {
         try (ObjectInputStream in = new ObjectInputStream(
-                ClassUtil.getDefaultClassLoader().getResourceAsStream("org/febit/wit/core/Parser$" + name + ".data")
+                ClassUtils.getDefaultClassLoader().getResourceAsStream("org/febit/wit/core/Parser$" + name + ".data")
         )) {
             return (short[][]) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -292,32 +284,32 @@ abstract class AbstractParser {
     }
 
     private static boolean isHintLevelOne(short sym) {
-        switch (sym) {
-            case Tokens.COLON: //":"
-            case Tokens.SEMICOLON: //";"
-            case Tokens.RBRACE: //"}"
-            case Tokens.INTERPOLATION_END: //"}"
-            case Tokens.RPAREN: //")"
-            case Tokens.RBRACK: //"]"
-            case Tokens.IDENTIFIER: //"IDENTIFIER"
-            case Tokens.DIRECT_VALUE: //"DIRECT_VALUE"
-                return true;
-            default:
-                return false;
-        }
+        return switch (sym) {
+            case Tokens.COLON, //":"
+                 Tokens.SEMICOLON,  //";"
+                 Tokens.RBRACE, //"}"
+                 Tokens.INTERPOLATION_END,  //"}"
+                 Tokens.RPAREN,  //")"
+                 Tokens.RBRACK,  //"]"
+                 Tokens.IDENTIFIER, //"IDENTIFIER"
+                 Tokens.DIRECT_VALUE  //"DIRECT_VALUE"
+                    -> true;
+            default -> false;
+        };
     }
 
-    private static String symbolToString(final short sym) {
+    private static String symbolToString(short sym) {
         if (sym >= 0 && sym < SYMBOL_STRS.length) {
             return SYMBOL_STRS[sym];
         }
         return "UNKNOWN";
     }
 
-    public static TemplateAST parse(final Template template) throws ParseException {
+    public static TemplateAST parse(Template template) throws ParseException {
         return new Parser().doParse(template);
     }
 
+    @Nullable
     abstract Object doAction(int actionId) throws ParseException;
 
     static ParseException unsupportedOperator(Position position) {
@@ -326,9 +318,10 @@ abstract class AbstractParser {
 
     @SuppressWarnings({
             "squid:S135", // Loops should not contain more than a single "break" or "continue" statement
+            "java:S6541", // Methods should not perform too many tasks (aka Brain method)
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    private Symbol process(final Lexer lexer) throws IOException {
+    private Symbol process(Lexer lexer) throws IOException {
 
         int act;
         Symbol pending;
@@ -341,7 +334,7 @@ abstract class AbstractParser {
         currentSymbol.state = 0;
         stack.push(currentSymbol);
 
-        final boolean looseSemicolon = this.engine.isLooseSemicolon();
+        var looseSemicolon = this.engine.isEnabled(Feature.LOOSE_SEMICOLON);
 
         Symbol pendingPending = null;
         pending = lexer.nextToken();
@@ -390,13 +383,12 @@ abstract class AbstractParser {
                         && pendingPending == null
                         && pending.isOnEdgeOfNewLine) {
                     switch (pending.id) {
-                        case Tokens.RETURN:
-                        case Tokens.BREAK:
-                        case Tokens.CONTINUE:
-                            pendingPending = createLooseSemicolonSymbol(pending);
-                            break;
-                        default:
+                        case Tokens.RETURN,
+                             Tokens.BREAK,
+                             Tokens.CONTINUE -> pendingPending = createLooseSemicolonSymbol(pending);
+                        default -> {
                             // Do nothing
+                        }
                     }
                 }
                 continue;
@@ -417,8 +409,9 @@ abstract class AbstractParser {
                 }
             }
             if (act == 0) {
-                throw new ParseException(StringUtil.format("Syntax error at line {} column {}, Hints: {}",
-                        lexer.getLine(), lexer.getColumn(), getSimpleHintMessage(currentSymbol)),
+                throw new ParseException("Syntax error at line " + lexer.getLine()
+                        + " column " + lexer.getColumn()
+                        + ", Hints: " + getSimpleHintMessage(currentSymbol),
                         TextPosition.of(lexer.getLine(), lexer.getColumn())
                 );
             }
@@ -457,16 +450,16 @@ abstract class AbstractParser {
      * @throws ParseException ParseException
      */
     protected TemplateAST doParse(
-            final Template template
+            Template template
     ) throws ParseException {
-        final Engine myEngine = template.getEngine();
-        final Resource resource = template.getResource();
-        this.textStatementFactory = myEngine.get(TextStatementFactory.class);
-        this.nativeSecurityManager = myEngine.get(NativeSecurityManager.class);
+        var myEngine = template.engine();
+        var resource = template.resource();
         this.template = template;
         this.engine = myEngine;
-        this.locateVarForce = !myEngine.isLooseVar();
-        this.nativeFactory = myEngine.getNativeFactory();
+
+        this.textStatementFactory = myEngine.textStatementFactory();
+        this.nativeFactory = myEngine.nativeFactory();
+
         this.varmgr = new VariantManager(myEngine);
         this.labelIndexMap.put(null, 0);
         this.nextLabelIndex.set(1);
@@ -476,24 +469,27 @@ abstract class AbstractParser {
             this.lastResourceVersion = resource.version();
             //ISSUE: LexerProvider
             lexer = new Lexer(resource.openReader());
-            lexer.setTrimCodeBlockBlankLine(myEngine.isTrimCodeBlockBlankLine());
-            if (resource.isCodeFirst()) {
+            lexer.setTrimCodeBlockBlankLine(myEngine.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE));
+            if (resource.codeFirst()) {
                 lexer.codeFirst();
             }
             lexer.setOffset(resource);
-            this.textStatementFactory.startTemplateParser(template);
-            return (TemplateAST) this.process(lexer).value;
+            this.textStatementFactory.onParserStarted(template);
+
+            var ast = this.process(lexer).value;
+            Objects.requireNonNull(ast, "Parser result is null.");
+            return (TemplateAST) ast;
         } catch (ParseException e) {
             throw e;
         } catch (Exception e) {
             throw new ParseException(e);
         } finally {
-            this.textStatementFactory.finishTemplateParser(template);
+            this.textStatementFactory.onParserCompleted(template);
             if (lexer != null) {
                 try {
                     lexer.close();
                 } catch (IOException ex) {
-                    this.engine.getLogger().warn("Failed to close lexer.", ex);
+                    log.warn("Failed to close lexer.", ex);
                 }
             }
         }
@@ -513,9 +509,9 @@ abstract class AbstractParser {
         }
         String classFullName = resolveClassFullName(className);
         try {
-            return ClassUtil.getClass(classFullName, arrayDept);
+            return ClassUtils.loadByName(classFullName, arrayDept);
         } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class<?> not found:".concat(classFullName), ex);
+            throw new ParseException("Class<?> not found:" + classFullName, ex);
         }
     }
 
@@ -534,16 +530,16 @@ abstract class AbstractParser {
         Class<?> cls;
 
         // 2. find as primitive type
-        cls = ClassUtil.getPrimitiveClass(className);
+        cls = ClassUtils.findPrimitiveClass(className);
         if (cls != null) {
             return className;
         }
 
         // 3. find as java.lang.*
         try {
-            cls = ClassUtil.getClass("java.lang.".concat(className));
-        } catch (Exception ex) {
-            ExceptionUtils.ignore(ex);
+            cls = ClassUtils.loadByName("java.lang.".concat(className));
+        } catch (Exception ignore) {
+            // Ignore
         }
         if (cls != null) {
             return cls.getName();
@@ -553,15 +549,25 @@ abstract class AbstractParser {
         return className;
     }
 
-    void registerClass(ClassNameBand classNameBand, Position position) throws ParseException {
-        final String className = classNameBand.getClassSimpleName();
-        if (ClassUtil.getPrimitiveClass(className) != null) {
-            throw new ParseException("Duplicate class simple name:" + classNameBand.getClassPureName(), position);
+    void registerClass(ClassNameRope rope, Position position) throws ParseException {
+        var simpleName = rope.simpleName();
+        var componentName = rope.componentName();
+        if (simpleName == null || componentName == null) {
+            // Ignore empty class name
+            return;
         }
-        if (importedClasses.containsKey(className)) {
-            throw new ParseException("Duplicate class register:" + classNameBand.getClassPureName(), position);
+        if (ClassUtils.findPrimitiveClass(simpleName) != null) {
+            throw new ParseException("Cannot import primitive type:" + simpleName, position);
         }
-        importedClasses.put(className, classNameBand.getClassPureName());
+        var existing = importedClasses.get(simpleName);
+        if (existing != null) {
+            if (existing.equals(componentName)) {
+                return;
+            }
+            throw new ParseException("Ambiguous import for class name: " + simpleName
+                    + ", exists: " + existing + ", new: " + componentName, position);
+        }
+        importedClasses.put(simpleName, componentName);
     }
 
     int getLabelIndex(String label) {
@@ -569,12 +575,16 @@ abstract class AbstractParser {
                 l -> nextLabelIndex.getAndIncrement());
     }
 
-    Class<?> toClass(ClassNameBand classNameBand, Position position) throws ParseException {
-        String classFullName = resolveClassFullName(classNameBand.getClassPureName());
+    Class<?> toClass(ClassNameRope rope, Position position) throws ParseException {
+        var compName = rope.componentName();
+        if (compName == null) {
+            throw new ParseException("Empty class name.", position);
+        }
+        var classFullName = resolveClassFullName(compName);
         try {
-            return ClassUtil.getClass(classFullName, classNameBand.getArrayDepth());
+            return ClassUtils.loadByName(classFullName, rope.arrayDepth());
         } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class<?> not found:".concat(classFullName), ex, position);
+            throw new ParseException("Class<?> not found:" + classFullName, ex, position);
         }
     }
 
@@ -583,30 +593,28 @@ abstract class AbstractParser {
     }
 
     Expression createGroupAssign(Expression[] lexprs, Expression rexpr, Position position) {
-        AssignableExpression[] resetableExprs = new AssignableExpression[lexprs.length];
+        var assignables = new AssignableExpression[lexprs.length];
         for (int i = 0; i < lexprs.length; i++) {
-            resetableExprs[i] = castToAssignableExpression(lexprs[i]);
+            assignables[i] = castToAssignableExpression(lexprs[i]);
         }
-        return new GroupAssign(resetableExprs, rexpr, position);
+        return new GroupAssign(assignables, rexpr, position);
     }
 
     Expression createBreakpointExpression(@Nullable Expression labelExpr, Expression expr, Position position) {
-        final Object label = labelExpr == null ? null : AstUtils.calcConst(labelExpr);
-
+        var label = labelExpr == null ? null : AstUtils.calcConst(labelExpr);
         return new BreakpointExpr(label, expr, position);
     }
 
-    Statement createBreakpointStatement(@Nullable Expression labelExpr, Statement statement, Position position) {
-        final Object label = labelExpr == null ? null : AstUtils.calcConst(labelExpr);
-
+    Statement createBreakpointStatement(@Nullable Expression labelExpr, @Nullable Statement statement, Position position) {
+        var label = labelExpr == null ? null : AstUtils.calcConst(labelExpr);
         return new BreakpointStatement(label, statement, position);
     }
 
-    Statement createTextStatement(@Nullable char[] text, Position position) {
+    Statement createTextStatement(char @Nullable [] text, Position position) {
         if (text == null || text.length == 0) {
             return NoopStatement.INSTANCE;
         }
-        return this.textStatementFactory.getTextStatement(template, text, position);
+        return this.textStatementFactory.create(template, text, position);
     }
 
     ContextVar declareVarAndCreateContextValue(String name, Position position) {
@@ -614,7 +622,7 @@ abstract class AbstractParser {
     }
 
     ContextVar[] declareVarAndCreateContextValues(List<String> names, Position position) {
-        ContextVar[] contextVars = new ContextVar[names.size()];
+        var contextVars = new ContextVar[names.size()];
         for (int i = 0; i < names.size(); i++) {
             contextVars[i] = declareVarAndCreateContextValue(names.get(i), position);
         }
@@ -626,10 +634,10 @@ abstract class AbstractParser {
             return new NewMapExpr(AstUtils.emptyExpressions(), AstUtils.emptyExpressions(), position);
         }
         int size = propertyDefList.size();
-        Expression[] keys = new Expression[size];
-        Expression[] values = new Expression[size];
+        var keys = new Expression[size];
+        var values = new Expression[size];
         for (int i = 0; i < propertyDefList.size(); i++) {
-            Expression[] def = propertyDefList.get(i);
+            var def = propertyDefList.get(i);
             // assert def.length == 2
             keys[i] = def[0];
             values[i] = def[1];
@@ -642,22 +650,18 @@ abstract class AbstractParser {
     }
 
     AssignableSuppliedValue createSupplierVarExpr(String name, Position position) {
-        var mgr = this.engine.getGlobalManager();
-        return new AssignableSuppliedValue(() -> mgr.getGlobal(name), (v) -> mgr.setGlobal(name, v), position);
+        var mgr = this.engine.globalHeap();
+        return new AssignableSuppliedValue(() -> mgr.getGlobal(name), v -> mgr.setGlobal(name, v), position);
     }
 
     Expression createContextValue(VarAddress addr, Position position) {
-        switch (addr.type) {
-            case VarAddress.GLOBAL:
-                return createSupplierVarExpr(addr.constValue.toString(), position);
-            case VarAddress.CONST:
-                return new DirectValue(addr.constValue, position);
-            case VarAddress.SCOPE:
-                return new ScopedContextVar(addr.scopeOffset, addr.index, position);
-            default:
-                //VarAddress.CONTEXT
-                return new ContextVar(addr.index, position);
-        }
+        return switch (addr.type) {
+            case VarAddress.GLOBAL -> createSupplierVarExpr(addr.constValue.toString(), position);
+            case VarAddress.CONST -> new DirectValue(addr.constValue, position);
+            case VarAddress.SCOPE -> new ScopedContextVar(addr.scopeOffset, addr.index, position);
+            case VarAddress.CONTEXT -> new ContextVar(addr.index, position);
+            default -> throw new IllegalStateException("Unknown VarAddress type: " + addr.type);
+        };
     }
 
     Expression createContextValueAtUpstair(int upstair, String name, Position position) {
@@ -665,7 +669,8 @@ abstract class AbstractParser {
     }
 
     Expression createContextValue(int upstair, String name, Position position) {
-        return createContextValue(varmgr.locate(name, upstair, this.locateVarForce, position), position);
+        var addr = varmgr.locate(name, upstair, !engine.isEnabled(Feature.LOOSE_VAR), position);
+        return createContextValue(addr, position);
     }
 
     void assignConst(String name, Expression expr, Position position) {
@@ -676,35 +681,35 @@ abstract class AbstractParser {
         return new Interpolation(expr);
     }
 
-    Expression createNativeStaticValue(ClassNameBand classNameBand, Position position) {
-        if (classNameBand.size() <= 1) {
+    Expression createNativeStaticValue(ClassNameRope rope, Position position) {
+        if (rope.size() <= 1) {
             throw new ParseException("native static need a field name.", position);
         }
-        final String fieldName = classNameBand.pop();
-        final Class<?> clazz = toClass(classNameBand, position);
-        final String path = clazz.getName() + '.' + fieldName;
-        if (!this.nativeSecurityManager.access(path)) {
-            throw new ParseException("Inaccessible native path: ".concat(path), position);
+        var fieldName = rope.pop();
+        var clazz = toClass(rope, position);
+        var path = clazz.getName() + '.' + fieldName;
+        if (!this.nativeFactory.security().allowed(path)) {
+            throw new ParseException("Inaccessible native path: " + path, position);
         }
         final Field field;
         try {
             field = clazz.getField(fieldName);
         } catch (NoSuchFieldException ex) {
-            throw new ParseException("No such field: ".concat(path), ex, position);
+            throw new ParseException("No such field: " + path, ex, position);
         }
-        if (ClassUtil.isStatic(field)) {
-            ClassUtil.setAccessible(field);
-            if (ClassUtil.isFinal(field)) {
+        if (ClassUtils.isStatic(field)) {
+            ClassUtils.setAccessible(field);
+            if (ClassUtils.isFinal(field)) {
                 try {
                     return new DirectValue(field.get(null), position);
                 } catch (IllegalArgumentException | IllegalAccessException ex) {
-                    throw new ParseException("Failed to get static field value: ".concat(path), ex, position);
+                    throw new ParseException("Failed to get static field value: " + path, ex, position);
                 }
             } else {
                 return new JavaStaticFieldExpr(field, position);
             }
         } else {
-            throw new ParseException("No a static field: ".concat(path), position);
+            throw new ParseException("No a static field: " + path, position);
         }
     }
 
@@ -713,8 +718,8 @@ abstract class AbstractParser {
                 position);
     }
 
-    Expression createNativeMethodDeclareExpression(Class<?> clazz, String methodName,
-                                                   @Nullable List<Class> list, Position position) {
+    Expression createNativeMethodDeclareExpression(
+            Class<?> clazz, String methodName, @Nullable List<Class<?>> list, Position position) {
         return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName,
                 list == null ? new Class[0] : list.toArray(new Class[0]),
                 position, true), position);
@@ -739,7 +744,8 @@ abstract class AbstractParser {
         return new DirectValue(functionDeclare, position);
     }
 
-    Expression createNativeConstructorDeclareExpression(Class<?> clazz, List<Class> list, Position position) {
+    Expression createNativeConstructorDeclareExpression(
+            Class<?> clazz, @Nullable List<Class<?>> list, Position position) {
         return new DirectValue(this.nativeFactory.getNativeConstructorDeclare(clazz,
                 list == null ? new Class[0] : list.toArray(new Class[0]),
                 position, true), position);
@@ -786,10 +792,10 @@ abstract class AbstractParser {
     }
 
     TemplateAST createTemplateAST(List<Statement> list) {
-        Statement[] statements = AstUtils.toStatementArray(list);
-        List<LoopMeta> loops = AstUtils.collectPossibleLoops(statements);
+        var statements = AstUtils.toStatementArray(list);
+        var loops = AstUtils.collectPossibleLoops(statements);
         if (!loops.isEmpty()) {
-            throw new ParseException("loop overflow: " + StringUtil.join(loops, ','));
+            throw new ParseException("loop overflow: " + StringUtils.join(loops, ','));
         }
         return new TemplateAST(varmgr.getIndexers(), statements, varmgr.getVarCount(), this.lastResourceVersion);
     }
@@ -803,10 +809,10 @@ abstract class AbstractParser {
     }
 
     AssignableExpression castToAssignableExpression(Expression expr) {
-        if (expr instanceof AssignableExpression) {
-            return (AssignableExpression) expr;
+        if (expr instanceof AssignableExpression assign) {
+            return assign;
         }
-        throw new ParseException("expression is not assignable", expr.getPosition());
+        throw new ParseException("expression is not assignable", expr.position());
     }
 
     TryPart createTryPart(List<Statement> list, int varIndexer, Position position) {
@@ -814,105 +820,78 @@ abstract class AbstractParser {
     }
 
     Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, Position position) {
-        AssignableExpression leftExpr = castToAssignableExpression(lexpr);
-        var biFunc = getBiFunctionForBiOperator(sym);
+        var leftExpr = castToAssignableExpression(lexpr);
+        var biFunc = getBinaryOperator(sym);
         if (biFunc == null) {
             throw unsupportedOperator(position);
         }
-        return AstUtils.optimize(new SelfOperator(leftExpr, rightExpr, biFunc, position));
+        var optimized = AstUtils.optimize(
+                new SelfOperator(leftExpr, rightExpr, biFunc, position)
+        );
+        Objects.requireNonNull(optimized);
+        return optimized;
     }
 
     @Nullable
-    BiFunction<Object, Object, Object> getBiFunctionForBiOperator(int op) {
-        switch (op) {
-            case OP_PLUSEQ:
-            case Tokens.PLUS:
-                return ALU::plus;
-            case OP_MINUSEQ:
-            case Tokens.MINUS:
-                return ALU::minus;
-            case OP_MULTEQ:
-            case Tokens.MULT:
-                return ALU::mult;
-            case OP_DIVEQ:
-            case Tokens.DIV:
-                return ALU::div;
-            case OP_MODEQ:
-            case Tokens.MOD:
-                return ALU::mod;
-            case OP_LSHIFTEQ:
-            case Tokens.LSHIFT:
-                return ALU::lshift;
-            case OP_RSHIFTEQ:
-            case Tokens.RSHIFT:
-                return ALU::rshift;
-            case OP_URSHIFTEQ:
-            case Tokens.URSHIFT:
-                return ALU::urshift;
-            case Tokens.LT:
-                return ALU::less;
-            case Tokens.GT:
-                return ALU::greater;
-            case Tokens.LTEQ:
-                return ALU::lessEqual;
-            case Tokens.GTEQ:
-                return ALU::greaterEqual;
-            case Tokens.EQEQ:
-                return ALU::isEqual;
-            case Tokens.NOTEQ:
-                return ALU::notEqual;
-            case OP_ANDEQ:
-            case Tokens.AND:
-                return ALU::bitAnd;
-            case OP_XOREQ:
-            case Tokens.XOR:
-                return ALU::bitXor;
-            case OP_OREQ:
-            case Tokens.OR:
-                return ALU::bitOr;
-            default:
-                return null;
-        }
+    BinaryOperator<@Nullable Object> getBinaryOperator(int op) {
+        return switch (op) {
+            case OP_PLUSEQ, Tokens.PLUS -> ALU::plus;
+            case OP_MINUSEQ, Tokens.MINUS -> ALU::minus;
+            case OP_MULTEQ, Tokens.MULT -> ALU::mult;
+            case OP_DIVEQ, Tokens.DIV -> ALU::div;
+            case OP_MODEQ, Tokens.MOD -> ALU::mod;
+            case OP_LSHIFTEQ, Tokens.LSHIFT -> ALU::lshift;
+            case OP_RSHIFTEQ, Tokens.RSHIFT -> ALU::rshift;
+            case OP_URSHIFTEQ, Tokens.URSHIFT -> ALU::urshift;
+            case Tokens.LT -> ALU::less;
+            case Tokens.GT -> ALU::greater;
+            case Tokens.LTEQ -> ALU::lessEqual;
+            case Tokens.GTEQ -> ALU::greaterEqual;
+            case Tokens.EQEQ -> ALU::isEqual;
+            case Tokens.NOTEQ -> ALU::notEqual;
+            case OP_ANDEQ, Tokens.AND -> ALU::bitAnd;
+            case OP_XOREQ, Tokens.XOR -> ALU::bitXor;
+            case OP_OREQ, Tokens.OR -> ALU::bitOr;
+            default -> null;
+        };
     }
 
     Expression createOperator(Expression expr, Symbol sym) {
-        Function<Object, Object> func;
-        switch ((Integer) sym.value) {
-            case Tokens.COMP:
-                func = ALU::bitNot;
-                break;
-            case Tokens.MINUS:
-                func = ALU::negative;
-                break;
-            case Tokens.NOT:
-                func = ALU::not;
-                break;
-            default:
-                throw unsupportedOperator(sym.pos);
+        if (!(sym.value instanceof Integer token)) {
+            throw unsupportedOperator(sym.pos);
         }
-        return AstUtils.optimize(new ConstableUnaryOperator(expr, func, sym.pos));
+        UnaryOperator<@Nullable Object> func = switch (token) {
+            case Tokens.COMP -> ALU::bitNot;
+            case Tokens.MINUS -> ALU::negative;
+            case Tokens.NOT -> ALU::not;
+            default -> throw unsupportedOperator(sym.pos);
+        };
+        var optimized = AstUtils.optimize(
+                new ConstableUnaryOperator(expr, func, sym.pos)
+        );
+        Objects.requireNonNull(optimized);
+        return optimized;
     }
 
     Expression createBiOperator(Expression leftExpr, Symbol sym, Expression rightExpr) {
-        Expression op;
-        switch ((Integer) sym.value) {
-            case Tokens.ANDAND:
-                op = new And(leftExpr, rightExpr, sym.pos);
-                break;
-            case Tokens.OROR:
-                op = new Or(leftExpr, rightExpr, sym.pos);
-                break;
-            case Tokens.DOTDOT:
-                op = new IntStep(leftExpr, rightExpr, sym.pos);
-                break;
-            default:
-                var biFunc = getBiFunctionForBiOperator((Integer) sym.value);
+        if (!(sym.value instanceof Integer token)) {
+            throw unsupportedOperator(sym.pos);
+        }
+        var op = switch (token) {
+            case Tokens.ANDAND -> new And(leftExpr, rightExpr, sym.pos);
+            case Tokens.OROR -> new Or(leftExpr, rightExpr, sym.pos);
+            case Tokens.DOTDOT -> new IntStep(leftExpr, rightExpr, sym.pos);
+            default -> {
+                var biFunc = getBinaryOperator(token);
                 if (biFunc == null) {
                     throw unsupportedOperator(sym.pos);
                 }
-                op = new ConstableBiOperator(leftExpr, rightExpr, biFunc, sym.pos);
-        }
-        return AstUtils.optimize(op);
+                yield new ConstableBiOperator(leftExpr, rightExpr, biFunc, sym.pos);
+            }
+        };
+        var optimized = AstUtils.optimize(op);
+        Objects.requireNonNull(optimized);
+        return optimized;
     }
 
 }

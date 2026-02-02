@@ -3,6 +3,7 @@ package org.febit.wit.lang.ast.expr;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
@@ -10,9 +11,7 @@ import org.febit.wit.lang.ast.Expression;
 
 import java.util.HashMap;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class NewMapExpr implements Expression {
 
@@ -23,7 +22,7 @@ public final class NewMapExpr implements Expression {
 
     @Override
     @SuppressWarnings("UnnecessaryLocalVariable")
-    public Object execute(final InternalContext context) {
+    public Object execute(InternalContext context) {
         var keys = this.keyExprs;
         var values = this.valueExprs;
         var len = values.length;
@@ -37,15 +36,17 @@ public final class NewMapExpr implements Expression {
 
     @Override
     @SuppressWarnings("UnnecessaryLocalVariable")
-    public Object getConstValue() {
+    public Object calcAsConst() {
         var keys = this.keyExprs;
         var values = this.valueExprs;
         var len = keys.length;
         var initialCapacity = Math.max((len + 1) * 4 / 3, 4);
         var result = new HashMap<>(initialCapacity, 0.75f);
         for (int i = 0; i < len; i++) {
-            result.put(AstUtils.calcConst(keys[i]),
-                    AstUtils.calcConst(values[i]));
+            result.put(
+                    AstUtils.calcConst(keys[i]),
+                    AstUtils.calcConst(values[i])
+            );
         }
         return result;
     }

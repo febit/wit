@@ -1,12 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang;
 
-/**
- * @author zqq90
- */
+import java.nio.charset.Charset;
+
 public interface Out {
 
     boolean preferBytes();
+
+    Charset charset();
 
     void write(byte[] bytes, int offset, int length);
 
@@ -26,5 +27,4 @@ public interface Out {
         write(string, 0, string.length());
     }
 
-    InternedEncoding getEncoding();
 }

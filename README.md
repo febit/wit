@@ -69,15 +69,6 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
 
 > [More examples][tests]
 
-## Official Support
-
-+ Jodd Madvoc
-+ Spring MVC
-+ Servlet & Filter
-
-> [Demo][mvc-demo]
-
-
 ## License
  
 **Febit Wit** is released under the BSD License. See the bundled [LICENSE file][license] for

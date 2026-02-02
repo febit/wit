@@ -1,19 +1,18 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.oper;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
+import org.febit.wit.lang.ALU;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.expr.DirectValue;
-import org.febit.wit.lang.ALU;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class Or implements Expression {
 
@@ -25,9 +24,9 @@ public final class Or implements Expression {
 
     @Override
     @Nullable
-    public Object execute(final InternalContext context) {
+    public Object execute(InternalContext context) {
         Object left = leftExpr.execute(context);
-        return ALU.isTrue(left)
+        return ALU.isTruly(left)
                 ? left
                 : rightExpr.execute(context);
     }
@@ -42,7 +41,7 @@ public final class Or implements Expression {
                     ALU.or(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value),
                     position);
         } else {
-            return ALU.isTrue(((DirectValue) leftExpr).value)
+            return ALU.isTruly(((DirectValue) leftExpr).value)
                     ? leftExpr : rightExpr;
         }
     }

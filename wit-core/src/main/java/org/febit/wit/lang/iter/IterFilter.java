@@ -2,16 +2,15 @@
 package org.febit.wit.lang.iter;
 
 import org.febit.wit.lang.Iter;
+import org.jspecify.annotations.Nullable;
 
 import java.util.NoSuchElementException;
 
-/**
- * @author zqq90
- */
 public abstract class IterFilter implements Iter {
 
     protected final Iter iter;
     protected boolean gotPending;
+    @Nullable
     protected Object pending;
     protected int cursor;
 
@@ -20,8 +19,9 @@ public abstract class IterFilter implements Iter {
         this.cursor = -1;
     }
 
-    protected abstract boolean valid(Object item);
+    protected abstract boolean valid(@Nullable Object item);
 
+    @Nullable
     @Override
     public final Object next() {
         if (!hasNext()) {

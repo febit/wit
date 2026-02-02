@@ -2,13 +2,11 @@
 package org.febit.wit.lang.iter;
 
 import org.febit.wit.InternalContext;
-import org.febit.wit.lang.KeyIter;
-import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.ALU;
+import org.febit.wit.lang.FunctionDeclare;
+import org.febit.wit.lang.KeyIter;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
 public final class KeyIterMethodFilter extends IterFilter implements KeyIter {
 
     private final InternalContext context;
@@ -23,8 +21,8 @@ public final class KeyIterMethodFilter extends IterFilter implements KeyIter {
     }
 
     @Override
-    protected boolean valid(Object key) {
-        return ALU.isTrue(method.invoke(context, new Object[]{key, keyIter.value()}));
+    protected boolean valid(@Nullable Object key) {
+        return ALU.isTruly(method.invoke(context, new @Nullable Object[]{key, keyIter.value()}));
     }
 
     @Override

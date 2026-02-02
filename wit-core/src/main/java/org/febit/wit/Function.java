@@ -1,80 +1,91 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import org.febit.wit.io.impl.DiscardOut;
-import org.febit.wit.io.impl.OutputStreamOut;
-import org.febit.wit.io.impl.WriterOut;
+import lombok.RequiredArgsConstructor;
+import org.febit.wit.io.DiscardOut;
+import org.febit.wit.io.OutputStreamOut;
+import org.febit.wit.io.WriterOut;
 import org.febit.wit.lang.FunctionDeclare;
-import org.febit.wit.lang.InternedEncoding;
 import org.febit.wit.lang.Out;
 import org.febit.wit.lang.VariantIndexer;
+import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.charset.Charset;
+
+import static org.febit.wit.util.Defaults.nvl;
 
 /**
  * Exported function.
- *
- * @author zqq90
  */
-@SuppressWarnings({
-        "WeakerAccess"
-})
-public class Function {
+@RequiredArgsConstructor
+@SuppressWarnings("UnusedReturnValue")
+public final class Function {
 
     private static final VariantIndexer[] EMPTY_INDEXERS = {VariantIndexer.EMPTY};
 
-    protected final Template template;
-    protected final FunctionDeclare functionDeclare;
-    protected final Out defaultOut;
+    private final Template template;
+    private final FunctionDeclare functionDeclare;
+    private final Out defaultOut;
 
     public Function(Template container, FunctionDeclare functionDeclare) {
         this(container, functionDeclare, DiscardOut.INSTANCE);
     }
 
-    public Function(Template container, FunctionDeclare functionDeclare, InternedEncoding encoding, boolean isByteStream) {
-        this(container, functionDeclare, new DiscardOut(encoding, isByteStream));
+    public Function(
+            Template container,
+            FunctionDeclare functionDeclare,
+            Charset charset,
+            boolean isByteStream
+    ) {
+        this(container, functionDeclare, new DiscardOut(charset, isByteStream));
     }
 
-    public Function(Template template, FunctionDeclare functionDeclare, Out defaultOut) {
-        this.functionDeclare = functionDeclare;
-        this.template = template;
-        this.defaultOut = defaultOut;
+    private InternalContext createContext(Out out) {
+        return new InternalContext(template, out, Vars.empty(), EMPTY_INDEXERS, 0, null, null);
     }
 
-    protected InternalContext createContext(Out out) {
-        return new InternalContext(template, out, Vars.EMPTY, EMPTY_INDEXERS, 0, null, null);
-    }
-
-    protected InternalContext createContext() {
+    private InternalContext createContext() {
         return createContext(defaultOut);
     }
 
-    protected Object doInvoke(InternalContext context, Object... args) {
+    @Nullable
+    private Object doInvoke(
+            InternalContext context,
+            @Nullable Object @Nullable ... args
+    ) {
         return this.functionDeclare.invoke(context, args);
     }
 
-    public Object invoke(Object... args) {
+    @Nullable
+    public Object invoke(@Nullable Object @Nullable ... args) {
         return doInvoke(createContext(), args);
     }
 
-    public Object invokeWithOut(Out out, Object... args) {
+    @Nullable
+    public Object invokeWithOut(Out out, @Nullable Object @Nullable ... args) {
         return doInvoke(createContext(out), args);
     }
 
-    public Object invokeWithOut(Writer writer, Object... args) {
-        return invokeWithOut(new WriterOut(writer, template.getEngine()), args);
+    @Nullable
+    public Object invokeWithOut(Writer writer, @Nullable Object @Nullable ... args) {
+        var engine = template.engine();
+        return invokeWithOut(new WriterOut(writer, engine.charset(), engine.codecFactory()), args);
     }
 
-    public Object invokeWithOut(final OutputStream out, Object... args) {
-        return invokeWithOut(new OutputStreamOut(out, template.getEngine()), args);
+    @Nullable
+    public Object invokeWithOut(
+            OutputStream out, @Nullable Object @Nullable ... args) {
+        var engine = template.engine();
+        return invokeWithOut(new OutputStreamOut(out, engine.charset(), engine.codecFactory()), args);
     }
 
-    public Object invokeWithOut(final String encoding, final OutputStream out, Object... args) {
-        return invokeWithOut(InternedEncoding.intern(encoding), out, args);
-    }
 
-    public Object invokeWithOut(final InternedEncoding encoding, final OutputStream out, Object... args) {
-        return invokeWithOut(new OutputStreamOut(out, encoding, template.getEngine()), args);
+    @Nullable
+    public Object invokeWithOut(
+            Charset charset, OutputStream out, @Nullable Object @Nullable ... args) {
+        var engine = template.engine();
+        return invokeWithOut(new OutputStreamOut(out, nvl(charset, engine.charset()), engine.codecFactory()), args);
     }
 }

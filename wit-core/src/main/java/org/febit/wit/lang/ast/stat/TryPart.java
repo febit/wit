@@ -4,48 +4,43 @@ package org.febit.wit.lang.ast.stat;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Statement;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
 public class TryPart {
 
     private final Position position;
 
-    protected final Statement tryStat;
-    protected int exceptionVarIndex;
-    protected Statement catchStat;
-    protected Statement finalStat;
+    private final Statement tryBlock;
+    private int exceptionVarIndex;
 
-    public TryPart(Statement tryStat, Position position) {
+    @Nullable
+    private Statement catchBlock;
+    @Nullable
+    private Statement finalBlock;
+
+    public TryPart(Statement tryBlock, Position position) {
         this.position = position;
-        this.tryStat = AstUtils.optimize(tryStat);
+        this.tryBlock = AstUtils.optimize(tryBlock);
     }
 
     public TryPart setCatchStat(int exceptionVarIndex, Statement catchStat) {
         this.exceptionVarIndex = exceptionVarIndex;
-        this.catchStat = AstUtils.optimize(catchStat);
+        this.catchBlock = AstUtils.optimize(catchStat);
         return this;
     }
 
-    public TryPart setFinalStat(Statement finalStat) {
-        this.finalStat = AstUtils.optimize(finalStat);
+    public TryPart setFinalStat(Statement finalBlock) {
+        this.finalBlock = AstUtils.optimize(finalBlock);
         return this;
     }
 
     public Statement pop() {
-        if (tryStat == null) {
-            return this.finalStat != null
-                    ? this.finalStat
-                    : NoopStatement.INSTANCE;
+        if (catchBlock == null) {
+            return this.finalBlock != null
+                    ? new TryFinally(tryBlock, finalBlock, position)
+                    : this.tryBlock;
         }
 
-        if (catchStat == null) {
-            return this.finalStat != null
-                    ? new TryFinally(tryStat, finalStat, position)
-                    : this.tryStat;
-        }
-
-        return new TryCatchFinally(tryStat, exceptionVarIndex, catchStat, finalStat, position);
+        return new TryCatchFinally(tryBlock, exceptionVarIndex, catchBlock, finalBlock, position);
     }
 }

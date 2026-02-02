@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.core;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.lang.TextPosition;
 import org.febit.wit.lang.Resource;
@@ -11,7 +11,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 
-@jakarta.annotation.Generated("jflex")
+@javax.annotation.processing.Generated("jflex")
 %%
 %class Lexer
 %function _parseNextToken

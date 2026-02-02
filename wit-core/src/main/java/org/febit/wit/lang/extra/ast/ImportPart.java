@@ -7,33 +7,31 @@ import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author zqq90
- */
 public class ImportPart {
 
     protected final Position position;
-    private Expression expr;
-    private Expression paramsExpr;
-    private List<String> exportNameList;
-    private List<AssignableExpression> toResetableValueList;
+    private final Expression expr;
+    @Nullable
+    private final Expression paramsExpr;
+    private final List<String> exportNameList = new ArrayList<>();
+    private final List<AssignableExpression> toResetableValueList = new ArrayList<>();
 
-    public ImportPart(Expression expr, Expression paramsExpr, Position position) {
+    public ImportPart(Expression expr, @Nullable Expression paramsExpr, Position position) {
         this.position = position;
         this.expr = AstUtils.optimize(expr);
-        this.paramsExpr = AstUtils.optimize(paramsExpr);
-        this.exportNameList = new ArrayList<>();
-        this.toResetableValueList = new ArrayList<>();
+        this.paramsExpr = paramsExpr == null
+                ? null : AstUtils.optimize(paramsExpr);
     }
 
     public ImportPart append(String name, Expression to) {
         to = AstUtils.optimize(to);
         if (!(to instanceof AssignableExpression)) {
-            throw new ParseException("Need a assignable expression.", to.getPosition());
+            throw new ParseException("Need a assignable expression.", to.position());
         }
         this.exportNameList.add(name);
         this.toResetableValueList.add((AssignableExpression) to);
@@ -41,7 +39,7 @@ public class ImportPart {
     }
 
     public Import pop(Template template) {
-        final String refer = template.getName();
+        final String refer = template.path();
         final int len = exportNameList.size();
         return len == 0
                 ? new Import(expr, paramsExpr, null, null, refer, position)

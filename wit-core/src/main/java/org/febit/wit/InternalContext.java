@@ -1,8 +1,11 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import jakarta.annotation.Nullable;
-import lombok.Getter;
+import lombok.experimental.Accessors;
+import org.febit.wit.accessor.AccessorFactory;
+import org.febit.wit.accessor.Getter;
+import org.febit.wit.accessor.Render;
+import org.febit.wit.accessor.Setter;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
@@ -14,7 +17,7 @@ import org.febit.wit.lang.Out;
 import org.febit.wit.lang.VariantIndexer;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.resolvers.Accessor;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,15 +28,17 @@ import java.util.function.BiConsumer;
  * <p>
  * store variables and access global components for AST-nodes
  *
- * @author zqq90
  */
+@Accessors(fluent = true)
 @SuppressWarnings({
         "squid:RedundantThrowsDeclarationCheck"
 })
 public final class InternalContext implements Context {
 
-    @Getter
+    @lombok.Getter
     private final Template template;
+
+    private final int features;
 
     @Nullable
     private final BreakpointListener breakpointListener;
@@ -41,17 +46,17 @@ public final class InternalContext implements Context {
     /**
      * params for this context.
      */
-    @Getter
+    @lombok.Getter
     private final Vars rootParams;
 
     /**
      * Variables in this scope.
      */
-    public final Object[] vars;
+    public final @Nullable Object[] vars;
     /**
      * Parent scopes's variables, if this is a sub-context.
      */
-    private final Object[][] parentScopes;
+    private final @Nullable Object @Nullable [][] parentScopes;
     /**
      * Variables indexers.
      */
@@ -64,33 +69,36 @@ public final class InternalContext implements Context {
     /**
      * Output, stream or writer.
      */
-    @Getter
+    @lombok.Getter
     private Out out;
 
     /**
      * Used by functions, store value to be returned.
      */
+    @Nullable
     private Object returned;
     /**
      * Current goto label, if looped.
      */
     private int label;
     /**
-     * Current loop type, ==0 if no loop.
+     * Current loop kind, ==0 if no loop.
      */
-    @Getter
-    private int loopType;
+    @lombok.Getter
+    private LoopMeta.Kind loopKind = LoopMeta.Kind.NOOP;
 
     /**
      * Store local variables, only the root context need this.
      */
-    private Map<Object, Object> locals;
+    @Nullable
+    private Map<Object, @Nullable Object> locals;
     /**
      * context to get locals, may not the root context.
      */
+    @Nullable
     private InternalContext localContext;
 
-    private final Accessor accessor;
+    private final AccessorFactory accessors;
 
     public InternalContext(
             final Template template,
@@ -98,14 +106,16 @@ public final class InternalContext implements Context {
             final Vars rootParams,
             final VariantIndexer[] indexers,
             final int varSize,
-            final Object[][] parentScopes,
+            @Nullable Object @Nullable [][] parentScopes,
             @Nullable BreakpointListener breakpointListener
     ) {
         this.template = template;
         this.rootParams = rootParams;
         this.out = out;
 
-        this.accessor = template.getEngine().getResolverManager();
+        var engine = template.engine();
+        this.features = engine.features();
+        this.accessors = engine.accessors();
 
         //variables & indexers
         this.indexers = indexers;
@@ -115,10 +125,10 @@ public final class InternalContext implements Context {
 
         this.breakpointListener = breakpointListener;
         //import params
-        rootParams.exportTo(this::setVar);
+        rootParams.sink(this::setVar);
     }
 
-    public void onBreakpoint(@Nullable Object label, Statement statement, @Nullable Object result) {
+    public void handleBreakpoint(@Nullable Object label, Statement statement, @Nullable Object result) {
         if (this.breakpointListener != null) {
             this.breakpointListener.onBreakpoint(label, this, statement, result);
         }
@@ -126,8 +136,8 @@ public final class InternalContext implements Context {
 
     public Context mergeTemplate(String refer, String path, Vars vars)
             throws ResourceNotFoundException, ScriptRuntimeException, ParseException {
-        var template = getEngine().getTemplate(refer, path);
-        return template.mergeToContext(this, vars);
+        var tmpl = this.template.engine().template(refer, path);
+        return tmpl.mergeToContext(this, vars);
     }
 
     public Object[] visit(Expression[] exprs) {
@@ -139,7 +149,7 @@ public final class InternalContext implements Context {
         return results;
     }
 
-    public void visit(final Statement[] stats) {
+    public void visit(Statement[] stats) {
         var i = 0;
         var len = stats.length;
         while (i < len) {
@@ -147,10 +157,10 @@ public final class InternalContext implements Context {
         }
     }
 
-    public void visitAndCheckLoop(final Statement[] stats) {
+    public void visitAndCheckLoop(Statement[] stats) {
         var i = 0;
         var len = stats.length;
-        while (i < len && noLoop()) {
+        while (i < len && this.loopKind().isNoop()) {
             stats[i++].execute(this);
         }
     }
@@ -166,7 +176,7 @@ public final class InternalContext implements Context {
     public InternalContext createSubContext(VariantIndexer[] indexers, InternalContext localContext, int varSize) {
         var myParentScopes = this.parentScopes;
         //cal the new-context's parent-scopes
-        Object[][] scopes;
+        @Nullable Object[][] scopes;
         if (myParentScopes == null) {
             scopes = new Object[][]{this.vars};
         } else {
@@ -175,7 +185,7 @@ public final class InternalContext implements Context {
             System.arraycopy(myParentScopes, 0, scopes, 1, myParentScopes.length);
         }
 
-        var newContext = new InternalContext(template, localContext.out, Vars.EMPTY,
+        var newContext = new InternalContext(template, localContext.out, Vars.empty(),
                 indexers, varSize, scopes, breakpointListener);
         newContext.localContext = localContext;
         return newContext;
@@ -219,7 +229,7 @@ public final class InternalContext implements Context {
      */
     public void breakLoop(int label) {
         this.label = label;
-        this.loopType = LoopMeta.BREAK;
+        this.loopKind = LoopMeta.Kind.BREAK;
     }
 
     /**
@@ -229,7 +239,7 @@ public final class InternalContext implements Context {
      */
     public void continueLoop(int label) {
         this.label = label;
-        this.loopType = LoopMeta.CONTINUE;
+        this.loopKind = LoopMeta.Kind.CONTINUE;
     }
 
     /**
@@ -237,10 +247,10 @@ public final class InternalContext implements Context {
      *
      * @param value the returned.
      */
-    public void returnLoop(Object value) {
+    public void returnLoop(@Nullable Object value) {
         this.returned = value;
         this.label = 0;
-        this.loopType = LoopMeta.RETURN;
+        this.loopKind = LoopMeta.Kind.RETURN;
     }
 
     /**
@@ -249,7 +259,7 @@ public final class InternalContext implements Context {
     public void resetLoop() {
         this.returned = null;
         this.label = 0;
-        this.loopType = 0;
+        this.loopKind = LoopMeta.Kind.NOOP;
     }
 
     /**
@@ -258,7 +268,7 @@ public final class InternalContext implements Context {
      * @param label label id
      */
     public void resetBreakLoopIfMatch(int label) {
-        if (this.loopType == LoopMeta.BREAK
+        if (this.loopKind.isBreak()
                 && (this.label == 0 || this.label == label)) {
             this.resetLoop();
         }
@@ -271,41 +281,62 @@ public final class InternalContext implements Context {
      */
     @Nullable
     public Object resetReturnLoop() {
-        var result = this.loopType == LoopMeta.RETURN
+        var result = this.loopKind.isReturn()
                 ? this.returned
                 : VOID;
         resetLoop();
         return result;
     }
 
-    public boolean noLoop() {
-        return this.loopType == 0;
-    }
-
     /**
      * Get a bean's property.
      *
      * @param <T>      bean type
-     * @param bean     bean
+     * @param obj      bean
      * @param property property
      * @return value
      */
-    public <T> Object getBeanProperty(final T bean, final Object property) {
-        return this.accessor.get(bean, property);
+    @Nullable
+    public <T> Object getBeanProperty(@Nullable T obj, @Nullable Object property) {
+        if (obj == null) {
+            return handleAccessorNullPointer();
+        }
+        @SuppressWarnings("unchecked")
+        var getter = (Getter<Object>) this.accessors.getter(obj.getClass());
+        return getter.get(obj, property);
     }
 
     /**
      * Set a bean's property.
      *
-     * @param bean     bean
+     * @param obj      bean
      * @param property property
      * @param value    value
      */
-    public <T> void setBeanProperty(final T bean, final Object property, final Object value) {
-        this.accessor.set(bean, property, value);
+    public <T> void setBeanProperty(@Nullable T obj, @Nullable Object property, @Nullable Object value) {
+        if (obj == null) {
+            handleAccessorNullPointer();
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        var setter = (Setter<Object>) this.accessors.setter(obj.getClass());
+        setter.set(obj, property, value);
     }
 
-    public Object redirectOut(Out newOut, java.util.function.Function<InternalContext, Object> action) {
+    @Nullable
+    private Object handleAccessorNullPointer() {
+        if (isEnabled(Feature.IGNORE_ACCESSOR_NULL_POINTER)) {
+            return null;
+        }
+        throw new ScriptRuntimeException("Null pointer.");
+    }
+
+    public boolean isEnabled(Feature feature) {
+        return feature.isEnabled(this.features);
+    }
+
+    @Nullable
+    public Object redirectOut(Out newOut, java.util.function.Function<InternalContext, @Nullable Object> action) {
         Out prevOut = this.out;
         this.out = newOut;
         try {
@@ -315,12 +346,23 @@ public final class InternalContext implements Context {
         }
     }
 
-    public <T> void out(@Nullable final T obj) {
-        this.accessor.write(this.out, obj);
+    public <T> void out(@Nullable T obj) {
+        if (obj == null) {
+            return;
+        }
+        var type = obj.getClass();
+        if (type == String.class) {
+            out.write((String) obj);
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        var render = (Render<Object>) this.accessors.render(type);
+        render.render(out, obj);
     }
 
+    @Nullable
     @Override
-    public Object getLocalVar(final Object name) {
+    public Object getLocalVar(Object name) {
         if (localContext != null) {
             return localContext.getLocalVar(name);
         }
@@ -329,7 +371,7 @@ public final class InternalContext implements Context {
     }
 
     @Override
-    public void setLocalVar(final Object name, final Object value) {
+    public void setLocalVar(Object name, @Nullable Object value) {
         if (this.localContext != null) {
             this.localContext.setLocalVar(name, value);
             return;
@@ -341,7 +383,10 @@ public final class InternalContext implements Context {
     }
 
     @Nullable
-    public <T> T pushIndexer(int indexer, java.util.function.Function<InternalContext, T> action) {
+    public <T extends @Nullable Object> T pushIndexer(
+            int indexer,
+            java.util.function.Function<InternalContext, T> action
+    ) {
         var prev = this.indexer;
         this.indexer = indexer;
         try {
@@ -352,36 +397,47 @@ public final class InternalContext implements Context {
     }
 
     @Override
-    public void setVar(final String name, final Object value) {
+    public void setVar(String name, @Nullable Object value) {
         int index = this.indexers[this.indexer].getIndex(name);
         if (index >= 0) {
             this.vars[index] = value;
         }
     }
 
+    @Nullable
     @Override
-    public Object getVar(final String name) throws ScriptRuntimeException {
+    public Object getVar(String name) throws ScriptRuntimeException {
         return getVar(name, true);
     }
 
+    @Nullable
     @Override
-    public Object getVar(final String name, boolean force) throws ScriptRuntimeException {
+    public Object getVar(String name, boolean force) throws ScriptRuntimeException {
         int index = getCurrentIndexer().getIndex(name);
         if (index >= 0) {
             return this.vars[index];
         }
         if (force) {
-            throw new ScriptRuntimeException("Not found variant named:".concat(name));
+            throw new ScriptRuntimeException("Not found variant named:" + name);
         }
         return null;
     }
 
+    @Nullable
     public Object getParentScopeValue(int scope, int index) {
-        return this.parentScopes[scope][index];
+        var scopes = this.parentScopes;
+        if (scopes == null) {
+            throw new IllegalStateException("No parent scopes.");
+        }
+        return scopes[scope][index];
     }
 
-    public void setParentScopeValue(int scope, int index, Object value) {
-        this.parentScopes[scope][index] = value;
+    public void setParentScopeValue(int scope, int index, @Nullable Object value) {
+        var scopes = this.parentScopes;
+        if (scopes == null) {
+            throw new IllegalStateException("No parent scopes.");
+        }
+        scopes[scope][index] = value;
     }
 
     public VariantIndexer getCurrentIndexer() {
@@ -389,7 +445,7 @@ public final class InternalContext implements Context {
     }
 
     @Override
-    public void forEachVar(BiConsumer<? super String, Object> action) {
+    public void forEachVar(BiConsumer<? super String, @Nullable Object> action) {
         var myVars = this.vars;
         getCurrentIndexer().forEach(
                 (name, index) -> action.accept(name, myVars[index])
@@ -397,7 +453,7 @@ public final class InternalContext implements Context {
     }
 
     @Override
-    public void exportVars(final Map<? super String, Object> map) {
+    public void exportVars(Map<? super String, @Nullable Object> map) {
         forEachVar(map::put);
     }
 
@@ -407,10 +463,10 @@ public final class InternalContext implements Context {
         if (!(func instanceof FunctionDeclare)) {
             throw new NotFunctionException(func);
         }
-        return new Function(this.template, (FunctionDeclare) func, this.out.getEncoding(), this.out.preferBytes());
+        return new Function(this.template, (FunctionDeclare) func, this.out.charset(), this.out.preferBytes());
     }
 
-    public Engine getEngine() {
-        return this.template.getEngine();
+    public Engine engine() {
+        return this.template.engine();
     }
 }

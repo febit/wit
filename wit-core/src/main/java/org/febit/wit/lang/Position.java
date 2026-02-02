@@ -1,5 +1,7 @@
 package org.febit.wit.lang;
 
-public interface Position {
+import java.io.Serializable;
+
+public interface Position extends Serializable {
 
 }

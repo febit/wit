@@ -1,19 +1,19 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.expr;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
+import org.febit.wit.Context;
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.VariantIndexer;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.method.FunctionFunctionDeclare;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class FunctionDeclareExpr implements Expression {
 
@@ -27,35 +27,46 @@ public final class FunctionDeclareExpr implements Expression {
     private final Position position;
 
     @Override
-    public FunctionFunctionDeclare execute(final InternalContext context) {
+    public FunctionFunctionDeclare execute(InternalContext context) {
         return new FunctionFunctionDeclare(this, context, indexers, this.varSize);
     }
 
     @Nullable
-    public Object invoke(final InternalContext context, @Nullable final Object[] args) {
-        var defaults = this.argDefaults;
-        var argsTotalCount = defaults.length;
-        var vars = context.vars;
-        var argsStart = this.start;
-        var len = args != null ? args.length : 0;
-        vars[argsStart++] = args;
-        if (argsTotalCount != 0) {
-            int passedLen = Math.min(argsTotalCount, len);
-            int i = 0;
-            for (; i < passedLen; i++) {
-                Object arg = args[i];
-                vars[argsStart++] = arg != null ? arg : defaults[i];
-            }
-            for (; i < argsTotalCount; i++) {
-                vars[argsStart++] = defaults[i];
-            }
-        }
+    public Object invoke(InternalContext context, @Nullable Object @Nullable [] args) {
+        fillArgs(context, args);
         if (hasReturnLoops) {
             context.visitAndCheckLoop(statements);
             return context.resetReturnLoop();
         } else {
             context.visit(statements);
-            return InternalContext.VOID;
+            return Context.VOID;
+        }
+    }
+
+    private void fillArgs(InternalContext context, @Nullable Object @Nullable [] args) {
+        var vars = context.vars;
+
+        var copyIdx = this.start;
+        vars[copyIdx++] = args;
+
+        var defaults = this.argDefaults;
+        var total = defaults.length;
+        if (total == 0) {
+            return;
+        }
+
+        int i = 0;
+        // Fill passed args
+        if (args != null) {
+            int len = Math.min(total, args.length);
+            for (; i < len; i++) {
+                var arg = args[i];
+                vars[copyIdx++] = arg != null ? arg : defaults[i];
+            }
+        }
+        // Fill defaults
+        for (; i < total; i++) {
+            vars[copyIdx++] = defaults[i];
         }
     }
 }

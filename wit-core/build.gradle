@@ -19,11 +19,9 @@ tasks.withType(Javadoc).configureEach {
 def cupRuntime = configurations.create('cup')
 
 dependencies {
-  compileOnly 'org.slf4j:slf4j-api'
-  compileOnly libs.commons.logging
-
+  api 'org.slf4j:slf4j-api'
+  compileOnly libs.jakarta.servlet.api
   testImplementation 'commons-io:commons-io'
-
   cup files('src/main/cup/java_cup_wit-20171014.jar')
 }
 

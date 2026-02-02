@@ -1,12 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang;
 
-/**
- * @author zqq90
- */
+import org.jspecify.annotations.Nullable;
+
 public interface Bag {
 
-    Object get(Object key);
+    @Nullable
+    Object get(@Nullable Object key);
 
-    void set(Object key, Object value);
+    void set(@Nullable Object key, @Nullable Object value);
 }

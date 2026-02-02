@@ -1,32 +1,31 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.oper;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.expr.DirectValue;
+import org.jspecify.annotations.Nullable;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public class ConstableUnaryOperator implements Expression {
 
-    protected final Expression expr;
-    protected final Function<Object, Object> op;
+    private final Expression expr;
+    private final UnaryOperator<@Nullable Object> op;
     @Getter
     private final Position position;
 
     @Override
     @Nullable
-    public Object execute(final InternalContext context) {
+    public Object execute(InternalContext context) {
         try {
             return op.apply(expr.execute(context));
         } catch (Exception e) {
@@ -44,7 +43,7 @@ public class ConstableUnaryOperator implements Expression {
 
     @Override
     @Nullable
-    public Object getConstValue() {
+    public Object calcAsConst() {
         return op.apply(AstUtils.calcConst(expr));
     }
 }

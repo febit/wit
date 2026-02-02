@@ -1,17 +1,21 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.febit.wit.lang.Resource;
-import org.febit.wit.loaders.AbstractLoader;
-import org.febit.wit.loaders.impl.resources.ClasspathResource;
+import org.febit.wit.loaders.BasicPathLoader;
 
-/**
- * @author zqq90
- */
-public class ClasspathLoader extends AbstractLoader {
+import java.nio.charset.Charset;
+
+@RequiredArgsConstructor(staticName = "of")
+public class ClasspathLoader implements BasicPathLoader {
+
+    private final Charset charset;
+    private final boolean codeFirst;
 
     @Override
-    public Resource get(String name) {
-        return new ClasspathResource(getRealPath(name), encoding, codeFirst);
+    public Resource get(String path) {
+        return new ClasspathResource(path, charset, codeFirst);
     }
+
 }

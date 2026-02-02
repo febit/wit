@@ -1,19 +1,17 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang;
 
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.util.ArrayUtil;
+import org.febit.wit.util.ArrayUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.ObjIntConsumer;
 
-/**
- * @author zqq90
- */
 @RequiredArgsConstructor
 public final class VariantIndexer {
 
-    public static final VariantIndexer EMPTY = new VariantIndexer(null, ArrayUtil.emptyStrings(), new int[0]);
+    public static final VariantIndexer EMPTY = new VariantIndexer(
+            null, ArrayUtils.emptyStrings(), new int[0]);
 
     @Nullable
     private final VariantIndexer parent;

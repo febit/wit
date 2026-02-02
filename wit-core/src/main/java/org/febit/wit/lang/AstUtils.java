@@ -1,7 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang;
 
-import jakarta.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.lang.ast.Expression;
@@ -9,6 +8,7 @@ import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.expr.DirectValue;
 import org.febit.wit.lang.ast.stat.NoopStatement;
 import org.febit.wit.lang.ast.stat.StatementGroup;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,9 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author zqq90
- */
 @UtilityClass
 public class AstUtils {
 
@@ -27,30 +24,27 @@ public class AstUtils {
     private static final LoopMeta[] EMPTY_LOOPS = new LoopMeta[0];
 
     public static boolean isImmutableDirectValue(Expression expr) {
-        return (expr instanceof DirectValue)
-                && ALU.isKnownBaseImmutable(((DirectValue) expr).value);
+        return (expr instanceof DirectValue direct)
+                && ALU.isKnownBaseImmutable(direct.value);
     }
 
     @Nullable
     public static Object calcConst(Expression expr) {
         return optimize(expr)
-                .getConstValue();
+                .calcAsConst();
     }
 
-    public static Object[] calcConstArray(Expression[] expressions) {
+    public static @Nullable Object[] calcConstArray(Expression[] expressions) {
         final int len = expressions.length;
-        final Object[] results = new Object[len];
+        @Nullable
+        Object[] results = new Object[len];
         for (int i = 0; i < len; i++) {
             results[i] = AstUtils.calcConst(expressions[i]);
         }
         return results;
     }
 
-    @Nullable
-    public static Expression optimize(@Nullable Expression expression) {
-        if (expression == null) {
-            return null;
-        }
+    public static Expression optimize(Expression expression) {
         return expression.optimize();
     }
 
@@ -67,7 +61,7 @@ public class AstUtils {
         try {
             return statement.optimize();
         } catch (Exception e) {
-            throw new ParseException("Exception occur when do optimization", e, statement.getPosition());
+            throw new ParseException("Exception occur when do optimization", e, statement.position());
         }
     }
 
@@ -79,28 +73,29 @@ public class AstUtils {
     }
 
     public static List<LoopMeta> collectPossibleLoops(@Nullable Statement statement) {
-        if (statement instanceof Loopable) {
-            return ((Loopable) statement).collectPossibleLoops();
+        if (statement instanceof Loopable loopable) {
+            return loopable.collectPossibleLoops();
         }
         return Collections.emptyList();
     }
 
-    public static List<LoopMeta> collectPossibleLoops(Statement... statements) {
+    public static List<LoopMeta> collectPossibleLoops(@Nullable Statement... statements) {
         if (statements.length == 0) {
             return Collections.emptyList();
         }
         List<LoopMeta> loops = new ArrayList<>();
-        for (Statement statement : statements) {
+        for (var statement : statements) {
             loops.addAll(collectPossibleLoops(statement));
         }
         return loops;
     }
 
-    public static LoopMeta[] collectPossibleLoopsForWhile(Statement bodyStatement, Statement elseStatement, int label) {
-        List<LoopMeta> list = AstUtils.collectPossibleLoops(bodyStatement)
+    public static LoopMeta[] collectPossibleLoopsForWhile(
+            @Nullable Statement bodyStatement, @Nullable Statement elseStatement, int label) {
+        var list = AstUtils.collectPossibleLoops(bodyStatement)
                 .stream()
                 .filter(loop -> !(loop.matchLabel(label)
-                        && (loop.type == LoopMeta.BREAK || loop.type == LoopMeta.CONTINUE)))
+                        && loop.kind().isBreakOrContinue()))
                 .collect(Collectors.toList());
 
         list.addAll(AstUtils.collectPossibleLoops(elseStatement));
@@ -128,9 +123,9 @@ public class AstUtils {
             return EMPTY_STATEMENTS;
         }
         List<Statement> temp = new ArrayList<>(list.size());
-        for (Statement stat : list) {
-            if (stat instanceof StatementGroup) {
-                temp.addAll(Arrays.asList(((StatementGroup) stat).getList()));
+        for (var stat : list) {
+            if (stat instanceof StatementGroup group) {
+                temp.addAll(group.list());
                 continue;
             }
             stat = AstUtils.optimize(stat);

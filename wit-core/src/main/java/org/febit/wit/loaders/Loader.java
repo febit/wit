@@ -2,39 +2,42 @@
 package org.febit.wit.loaders;
 
 import org.febit.wit.lang.Resource;
+import org.jspecify.annotations.Nullable;
 
 public interface Loader {
 
     /**
-     * get template's Resource by it's name.
+     * Get resource by path.
      *
-     * @param name template's name
-     * @return Resource
+     * @param path resource path
+     * @return resource
      */
-    Resource get(String name);
+    Resource get(String path);
 
     /**
-     * get child template name by parent template name and relative name.
+     * Get path by reference and relative path.
      *
-     * @param parent parent template's name
-     * @param name   relative name
-     * @return child template's name
+     * @param refer path to refence
+     * @param path  path to relative
+     * @return path
      */
-    String concat(String parent, String name);
+    @Nullable
+    String sibling(@Nullable String refer, String path);
 
     /**
-     * normalize a template's name.
+     * Normalize path.
      *
-     * @param name template's name
-     * @return normalized name
+     * @param path path to normalize
+     * @return normalized path
      */
-    String normalize(String name);
+    @Nullable
+    String normalize(@Nullable String path);
 
     /**
-     * if this template need to be cached.
+     * Whether cache enabled for path.
      *
-     * @param name template's name
-     * @return boolean
+     * @param path resource path
+     * @return true if cache enabled for path, otherwise false
      */
-    boolean isEnableCache(String name);
+    boolean isCacheEnabled(String path);
 }

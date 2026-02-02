@@ -3,36 +3,22 @@ package org.febit.wit.lang.ast.expr;
 
 import org.febit.wit.core.VariantManager;
 import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.LoopMeta;
 import org.febit.wit.lang.Position;
-import org.febit.wit.lang.VariantIndexer;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.oper.Assign;
 import org.febit.wit.lang.ast.stat.Return;
-import org.febit.wit.lang.AstUtils;
-import org.febit.wit.util.StringUtil;
+import org.febit.wit.util.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author zqq90
- */
 public class FunctionDeclarePart {
 
-    public static class ArgumentInfo {
-
-        public final String name;
-        public final Object defaultValue;
-
-        public ArgumentInfo(String name, Object defaultValue) {
-            this.name = name;
-            this.defaultValue = defaultValue;
-        }
-    }
-
-    protected final Position position;
+    private final Position position;
     private final int assignToIndex;
     private final int assignVariantStart;
     private final VariantManager varmgr;
@@ -55,7 +41,13 @@ public class FunctionDeclarePart {
         assignVariantStart = varmgr.assignVariant("arguments", position);
     }
 
-    public FunctionDeclarePart appendArgs(List<ArgumentInfo> infos) {
+    public record ArgumentInfo(
+            String name,
+            @Nullable Object defaultValue
+    ) {
+    }
+
+    public FunctionDeclarePart appendArgs(@Nullable List<ArgumentInfo> infos) {
         if (infos != null) {
             infos.forEach(this::appendArg);
         }
@@ -66,7 +58,7 @@ public class FunctionDeclarePart {
         return appendArg(name, null);
     }
 
-    public FunctionDeclarePart appendArg(String name, Object defaultValue) {
+    public FunctionDeclarePart appendArg(String name, @Nullable Object defaultValue) {
         return appendArg(new ArgumentInfo(name, defaultValue));
     }
 
@@ -92,7 +84,7 @@ public class FunctionDeclarePart {
 
     private static List<Statement> toStatementList(Expression expr) {
         List<Statement> list = new ArrayList<>(1);
-        list.add(new Return(expr, expr.getPosition()));
+        list.add(new Return(expr, expr.position()));
         return list;
     }
 
@@ -109,15 +101,14 @@ public class FunctionDeclarePart {
     }
 
     protected FunctionDeclareExpr popFunctionDeclare(Statement[] statements) {
-
-        VariantIndexer[] indexers = varmgr.getIndexers();
+        var indexers = varmgr.getIndexers();
         int varSize = varmgr.getVarCount();
         varmgr.popScope();
         boolean hasReturnLoops = false;
 
         List<LoopMeta> overflowLoops = new ArrayList<>();
-        for (LoopMeta loop : AstUtils.collectPossibleLoops(statements)) {
-            if (loop.type == LoopMeta.RETURN) {
+        for (var loop : AstUtils.collectPossibleLoops(statements)) {
+            if (loop.kind().isReturn()) {
                 hasReturnLoops = true;
             } else {
                 overflowLoops.add(loop);
@@ -125,9 +116,10 @@ public class FunctionDeclarePart {
         }
         if (!overflowLoops.isEmpty()) {
             throw new ParseException("Loops overflow in function body: "
-                    + StringUtil.join(overflowLoops, ','));
+                    + StringUtils.join(overflowLoops, ','));
         }
 
+        @Nullable
         Object[] argDefaults = new Object[this.args.size()];
         for (int i = 0; i < argDefaults.length; i++) {
             argDefaults[i] = this.args.get(i).defaultValue;

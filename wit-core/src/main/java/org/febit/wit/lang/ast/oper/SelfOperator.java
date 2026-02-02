@@ -1,33 +1,32 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.ast.oper;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
+import org.jspecify.annotations.Nullable;
 
-import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public class SelfOperator implements Expression {
 
-    protected final AssignableExpression leftExpr;
-    protected final Expression rightExpr;
-    protected final BiFunction<Object, Object, Object> op;
+    private final AssignableExpression leftExpr;
+    private final Expression rightExpr;
+    private final BinaryOperator<@Nullable Object> op;
 
     @Getter
     private final Position position;
 
     @Override
     @Nullable
-    public final Object execute(final InternalContext context) {
+    public final Object execute(InternalContext context) {
         try {
             var assignable = this.leftExpr;
             // Must execute right expr first!

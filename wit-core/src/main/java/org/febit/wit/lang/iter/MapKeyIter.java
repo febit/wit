@@ -1,26 +1,28 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.lang.iter;
 
+import lombok.RequiredArgsConstructor;
 import org.febit.wit.lang.KeyIter;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
-/**
- * @author zqq90
- */
-public final class MapKeyIter extends AbstractIter implements KeyIter {
+@RequiredArgsConstructor
+public final class MapKeyIter<K, V> extends AbstractIter implements KeyIter {
 
-    private final Iterator<Map.Entry> iterator;
-    private Map.Entry current;
+    private final Iterator<Map.Entry<K, V>> iterator;
 
-    @SuppressWarnings("unchecked")
-    public MapKeyIter(Map map) {
+    private Map.@Nullable Entry<K, V> current;
+
+    public MapKeyIter(Map<K, V> map) {
         this.iterator = map.entrySet().iterator();
     }
 
     @Override
     public Object value() {
+        Objects.requireNonNull(this.current);
         return this.current.getValue();
     }
 

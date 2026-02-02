@@ -7,10 +7,8 @@ import org.febit.wit.lang.FunctionDeclare;
 import org.febit.wit.lang.UnConstableFunctionDeclare;
 import org.febit.wit.lang.VariantIndexer;
 import org.febit.wit.lang.ast.expr.FunctionDeclareExpr;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
 public final class FunctionFunctionDeclare implements FunctionDeclare, UnConstableFunctionDeclare {
 
     private final FunctionDeclareExpr function;
@@ -18,22 +16,26 @@ public final class FunctionFunctionDeclare implements FunctionDeclare, UnConstab
     private final VariantIndexer[] indexers;
     private final int varSize;
 
-    public FunctionFunctionDeclare(FunctionDeclareExpr function, InternalContext scopeContext,
-                                   VariantIndexer[] indexers, int varSize) {
+    public FunctionFunctionDeclare(
+            FunctionDeclareExpr function, InternalContext scopeContext,
+            VariantIndexer[] indexers, int varSize
+    ) {
         this.function = function;
         this.scopeContext = scopeContext;
         this.indexers = indexers;
         this.varSize = varSize;
     }
 
+    @Nullable
     @Override
-    public Object invoke(final InternalContext context, final Object[] args) {
+    public Object invoke(InternalContext context, @Nullable Object @Nullable [] args) {
         try {
-            return function.invoke(this.scopeContext.createSubContext(this.indexers, context, this.varSize), args);
+            var sub = this.scopeContext.createSubContext(this.indexers, context, this.varSize);
+            return function.invoke(sub, args);
         } catch (Exception e) {
             var runtimeException = ScriptRuntimeException.from(e, function);
             if (context != this.scopeContext) {
-                throw runtimeException.setTemplate(this.scopeContext.getTemplate());
+                throw runtimeException.setTemplate(this.scopeContext.template());
             }
             throw runtimeException;
         }

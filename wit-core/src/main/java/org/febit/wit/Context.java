@@ -4,6 +4,7 @@ package org.febit.wit;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.lang.InternalVoid;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -11,7 +12,6 @@ import java.util.function.BiConsumer;
 /**
  * Runtime context.
  *
- * @author zqq90
  */
 @SuppressWarnings({
         "squid:S1214", //Constants should not be defined in interfaces
@@ -28,6 +28,7 @@ public interface Context {
      * @return variable value
      * @throws ScriptRuntimeException if not found variable by given name
      */
+    @Nullable
     Object getVar(String name) throws ScriptRuntimeException;
 
     /**
@@ -38,6 +39,7 @@ public interface Context {
      * @return variable value
      * @throws ScriptRuntimeException In force mode, if not found variable by given name
      */
+    @Nullable
     Object getVar(String name, boolean force) throws ScriptRuntimeException;
 
     /**
@@ -46,7 +48,7 @@ public interface Context {
      * @param name  variable name
      * @param value variable value
      */
-    void setVar(String name, Object value);
+    void setVar(String name, @Nullable Object value);
 
     /**
      * Get a local variable by name.
@@ -54,6 +56,7 @@ public interface Context {
      * @param name variable name
      * @return variable value
      */
+    @Nullable
     Object getLocalVar(Object name);
 
     /**
@@ -62,15 +65,14 @@ public interface Context {
      * @param name  variable name
      * @param value value
      */
-    void setLocalVar(Object name, Object value);
+    void setLocalVar(Object name, @Nullable Object value);
 
     /**
      * Export a function by name.
      *
      * @param name function name
      * @return function
-     * @throws NotFunctionException if not found function by given name
-     * @since 1.5.0
+     * @throws NotFunctionException if not a function by given name, or not found
      */
     Function exportFunction(String name) throws NotFunctionException;
 
@@ -79,11 +81,10 @@ public interface Context {
      *
      * @param map target map
      */
-    void exportVars(final Map<? super String, Object> map);
+    void exportVars(final Map<? super String, @Nullable Object> map);
 
     /**
      * @param consumer consumer
-     * @since 2.6.0
      */
-    void forEachVar(BiConsumer<? super String, Object> consumer);
+    void forEachVar(BiConsumer<? super String, @Nullable Object> consumer);
 }

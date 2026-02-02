@@ -2,15 +2,14 @@
 package org.febit.wit.lang.ast.stat;
 
 import org.febit.wit.core.VariantManager;
+import org.febit.wit.lang.AstUtils;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.Expression;
 import org.febit.wit.lang.ast.Statement;
 import org.febit.wit.lang.ast.expr.FunctionDeclareExpr;
-import org.febit.wit.lang.AstUtils;
 
-/**
- * @author zqq90
- */
+import java.util.Objects;
+
 public class ForInPart extends AbstractForInPart {
 
     protected final String itemVarName;
@@ -37,14 +36,17 @@ public class ForInPart extends AbstractForInPart {
 
     @Override
     public Statement pop(int label) {
-        if (bodyStatement.hasLoops()) {
-            return new ForIn(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(),
-                    iterIndex, itemIndex, bodyStatement.getStatements(),
-                    AstUtils.collectPossibleLoopsForWhile(bodyStatement, elseStatement, label),
-                    elseStatement, label, position);
+        Objects.requireNonNull(bodyBlock);
+        Objects.requireNonNull(targetExpr);
+        if (bodyBlock.hasLoops()) {
+            return new ForIn(functionDeclareExpr, targetExpr, bodyBlock.varIndexer(),
+                    iterIndex, itemIndex, bodyBlock.statements(),
+                    AstUtils.collectPossibleLoopsForWhile(bodyBlock, elseBlock, label),
+                    elseBlock, label, position
+            );
         } else {
-            return new ForInNoLoops(functionDeclareExpr, collectionExpr, bodyStatement.getVarIndexer(),
-                    iterIndex, itemIndex, bodyStatement.getStatements(), elseStatement, position);
+            return new ForInNoLoops(functionDeclareExpr, targetExpr, bodyBlock.varIndexer(),
+                    iterIndex, itemIndex, bodyBlock.statements(), elseBlock, position);
         }
     }
 }

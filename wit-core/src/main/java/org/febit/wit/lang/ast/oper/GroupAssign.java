@@ -3,30 +3,32 @@ package org.febit.wit.lang.ast.oper;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.InternalContext;
 import org.febit.wit.lang.Position;
 import org.febit.wit.lang.ast.AssignableExpression;
 import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.util.CollectionUtil;
+import org.febit.wit.util.Iters;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author zqq90
- */
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class GroupAssign implements Expression {
 
-    private final AssignableExpression[] lexpres;
-    private final Expression rexpr;
+    private final AssignableExpression[] lefts;
+    private final Expression right;
     @Getter
     private final Position position;
 
     @Override
-    public Object execute(final InternalContext context) {
-        var values = rexpr.execute(context);
-        var iter = CollectionUtil.toIter(values, this);
-        var assignables = this.lexpres;
+    public Object execute(InternalContext context) {
+        var values = right.execute(context);
+        var iter = Iters.toIter(values, this);
+        var assignables = this.lefts;
+
         final int resultLength = assignables.length;
-        final Object[] result = new Object[resultLength];
+        @Nullable
+        Object[] result = new Object[resultLength];
         int current = 0;
         while (iter.hasNext() && current < resultLength) {
             Object next = iter.next();

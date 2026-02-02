@@ -3,9 +3,6 @@ package org.febit.wit.lang;
 
 import java.util.List;
 
-/**
- * @author zqq90
- */
 public interface Loopable {
 
     /**

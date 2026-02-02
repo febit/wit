@@ -1,0 +1,122 @@
+// Copyright (c) 2013-present, febit.org. All Rights Reserved.
+package org.febit.wit.extern.lib.cache;
+
+import org.febit.wit.Context;
+import org.febit.wit.InternalContext;
+import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.global.GlobalHeap;
+import org.febit.wit.global.GlobalHeapRegister;
+import org.febit.wit.io.OutputStreamOut;
+import org.febit.wit.io.WriterOut;
+import org.febit.wit.lang.FunctionDeclare;
+import org.febit.wit.util.ArrayUtils;
+import org.jspecify.annotations.Nullable;
+
+import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
+import java.io.Serializable;
+import java.util.Arrays;
+
+@lombok.Builder(
+        builderClassName = "Builder"
+)
+public class CachingModule implements GlobalHeapRegister {
+
+    public static final String DEFAULT_NAME = "cache";
+
+    @lombok.Builder.Default
+    private final String name = DEFAULT_NAME;
+    @lombok.Builder.Default
+    private final boolean withClear = false;
+    @lombok.Builder.Default
+    private final boolean withRemove = true;
+
+    @lombok.NonNull
+    @SuppressWarnings("NullableProblems")
+    private final Cache<Object, CachingEntry> using;
+
+    @Override
+    public void register(GlobalHeap heap) {
+        heap.setConstMethod(name, this::doPut);
+        if (withRemove) {
+            heap.setConstMethod(name + "_remove", this::doRemove);
+        }
+        if (withClear) {
+            heap.setConstMethod(name + "_clear", this::doClear);
+        }
+    }
+
+    private Object doClear(InternalContext context, @Nullable Object @Nullable [] args) {
+        this.using.clear();
+        return Context.VOID;
+    }
+
+    private Object doRemove(InternalContext context, @Nullable Object @Nullable [] args) {
+        var key = ArrayUtils.get(args, 0);
+        this.using.remove(key);
+        return Context.VOID;
+    }
+
+    @Nullable
+    public Object doPut(InternalContext context, @Nullable Object @Nullable [] args) {
+        if (args == null || args.length < 1) {
+            throw new ScriptRuntimeException("At least one argument is required for cache function:"
+                    + " put(key?, factory, ...args?).");
+        }
+        var arg0 = args[0];
+        var arg1 = ArrayUtils.get(args, 1);
+
+        CachingEntry entry;
+        if (arg0 instanceof FunctionDeclare func) {
+            entry = this.using.computeIfAbsent(arg0,
+                    () -> compute(context, func, args, 1)
+            );
+        } else if (arg1 instanceof FunctionDeclare func) {
+            entry = this.using.computeIfAbsent(arg0,
+                    () -> compute(context, func, args, 2)
+            );
+        } else {
+            throw new ScriptRuntimeException("Invalid arguments for cache function: put(key?, factory, ...args?)."
+                    + " The first or second argument must be a factory function.");
+        }
+        context.out(entry.rendered);
+        return entry.returned;
+    }
+
+    protected static CachingEntry compute(
+            InternalContext context,
+            FunctionDeclare func,
+            @Nullable Object[] args,
+            int paramsStartedAt
+    ) {
+        var methodArgs = args.length > paramsStartedAt
+                ? Arrays.copyOfRange(args, paramsStartedAt, args.length)
+                : ArrayUtils.emptyObjects();
+
+        var out = context.out();
+        var charset = out.charset();
+        var codec = context.engine().codecFactory();
+
+        Object returned;
+        Object outed;
+        if (out.preferBytes()) {
+            var buffer = new ByteArrayOutputStream(256);
+            returned = context.redirectOut(new OutputStreamOut(buffer, charset, codec),
+                    c -> func.invoke(c, methodArgs));
+            outed = buffer.toByteArray();
+        } else {
+            var writer = new CharArrayWriter(256);
+            returned = context.redirectOut(new WriterOut(writer, charset, codec),
+                    c -> func.invoke(c, methodArgs));
+            outed = writer.toCharArray();
+        }
+        return new CachingEntry(returned, outed);
+    }
+
+    protected record CachingEntry(
+            @Nullable Object returned,
+            Object rendered
+    ) implements Serializable {
+
+    }
+}

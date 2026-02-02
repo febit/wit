@@ -1,0 +1,17 @@
+<%
+
+var v1,v2;
+{
+    var back1;
+    var back2;
+
+    assertEquals(v1, "V1");
+    assertEquals(v2, "V2");
+
+    import "./shareRootParams.include.wit" {"a1":"A1","a2":"A2"};
+
+    assertEquals("BACK1", back1);
+    assertEquals("BACK2", back2);
+}
+
+%>

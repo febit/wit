@@ -1,38 +1,47 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import jakarta.annotation.Nullable;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.febit.wit.core.Parser;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.exceptions.TemplateException;
-import org.febit.wit.io.impl.DiscardOut;
-import org.febit.wit.io.impl.OutputStreamOut;
-import org.febit.wit.io.impl.WriterOut;
+import org.febit.wit.io.DiscardOut;
+import org.febit.wit.io.OutputStreamOut;
+import org.febit.wit.io.WriterOut;
 import org.febit.wit.lang.BreakpointListener;
-import org.febit.wit.lang.InternedEncoding;
 import org.febit.wit.lang.Out;
 import org.febit.wit.lang.Resource;
 import org.febit.wit.lang.ast.TemplateAST;
+import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.Map;
 
-/**
- * @author zqq90
- */
+import static org.febit.wit.util.Defaults.nvl;
+
+@SuppressWarnings({
+        "UnusedReturnValue"
+})
+@Accessors(fluent = true)
 public class Template {
 
+    @Getter
     private final Engine engine;
-    private final String name;
+    @Getter
+    private final String path;
+    @Getter
     private final Resource resource;
 
+    @Nullable
     private volatile TemplateAST ast;
 
-    Template(Engine engine, String name, Resource resource) {
+    Template(Engine engine, String path, Resource resource) {
         this.engine = engine;
-        this.name = name;
+        this.path = path;
         this.resource = resource;
     }
 
@@ -40,7 +49,6 @@ public class Template {
      * Reload this template.
      *
      * @throws ParseException when unable to parse
-     * @since 1.4.0
      */
     public void reload() {
         prepareAst(true);
@@ -54,16 +62,16 @@ public class Template {
         return prepareAst(false);
     }
 
-    private synchronized TemplateAST prepareAst(boolean forceRebuild) {
-        TemplateAST myAst = this.ast;
-        if (forceRebuild || isAstExpired(myAst)) {
+    private synchronized TemplateAST prepareAst(boolean renew) {
+        var myAst = this.ast;
+        if (renew || isAstExpired(myAst)) {
             myAst = Parser.parse(this);
             this.ast = myAst;
         }
         return myAst;
     }
 
-    private boolean isAstExpired(TemplateAST myAst) {
+    private boolean isAstExpired(@Nullable TemplateAST myAst) {
         if (myAst == null) {
             return true;
         }
@@ -79,11 +87,10 @@ public class Template {
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
-     * @since 3.0.0
      */
     protected Context merge0(@Nullable Vars vars, @Nullable Out out, @Nullable BreakpointListener listener) {
         if (vars == null) {
-            vars = Vars.EMPTY;
+            vars = Vars.empty();
         }
         if (out == null) {
             out = DiscardOut.INSTANCE;
@@ -99,26 +106,26 @@ public class Template {
     /**
      * Merge this template.
      *
-     * @param outputStream out
+     * @param output out
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context merge(final OutputStream outputStream) {
-        return merge0(null, new OutputStreamOut(outputStream, engine), null);
+    public Context merge(OutputStream output) {
+        return merge0(null, new OutputStreamOut(output, engine.charset(), engine.codecFactory()), null);
     }
 
     /**
      * Merge this template.
      *
-     * @param output out
-     * @param encoding encoding
+     * @param output  out
+     * @param charset charset
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context merge(final OutputStream output, final String encoding) {
-        var out = new OutputStreamOut(output, InternedEncoding.intern(encoding), engine);
+    public Context merge(OutputStream output, @Nullable Charset charset) {
+        var out = new OutputStreamOut(output, nvl(charset, engine.charset()), engine.codecFactory());
         return merge0(null, out, null);
     }
 
@@ -130,88 +137,96 @@ public class Template {
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context merge(final Writer writer) {
-        return merge0(null, new WriterOut(writer, engine), null);
+    public Context merge(Writer writer) {
+        return merge0(null, new WriterOut(writer, engine.charset(), engine.codecFactory()), null);
     }
 
     /**
      * Merge this template.
      *
-     * @param vars vars
-     * @param outputStream outputStream
+     * @param vars   vars
+     * @param output output
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context merge(final Map<String, Object> vars, final OutputStream outputStream) {
-        return merge0(Vars.of(vars), new OutputStreamOut(outputStream, engine), null);
+    public Context merge(Map<String, Object> vars, OutputStream output) {
+        return merge0(Vars.of(vars), new OutputStreamOut(output, engine.charset(), engine.codecFactory()), null);
     }
 
     /**
      * Merge this template.
      *
-     * @param vars vars
-     * @param out out
-     * @param encoding encoding
+     * @param vars    vars
+     * @param out     out
+     * @param charset charset
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context merge(final Map<String, Object> vars, final OutputStream out, final String encoding) {
-        return merge0(Vars.of(vars), new OutputStreamOut(out, InternedEncoding.intern(encoding), engine), null);
+    public Context merge(Map<String, Object> vars, OutputStream out, @Nullable Charset charset) {
+        return merge0(
+                Vars.of(vars),
+                new OutputStreamOut(out, nvl(charset, engine.charset()), engine.codecFactory()),
+                null
+        );
     }
 
     /**
      * Merge this template.
      *
-     * @param vars vars
+     * @param vars   vars
      * @param writer writer
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context merge(final Map<String, Object> vars, final Writer writer) {
-        return merge0(Vars.of(vars), new WriterOut(writer, engine), null);
+    public Context merge(Map<String, Object> vars, Writer writer) {
+        return merge0(
+                Vars.of(vars),
+                new WriterOut(writer, engine.charset(), engine.codecFactory()),
+                null
+        );
     }
 
     /**
      * Merge this template.
      *
      * @param vars vars
-     * @param out out
+     * @param out  out
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context merge(final Vars vars, final OutputStream out) {
-        return merge0(vars, new OutputStreamOut(out, engine), null);
+    public Context merge(Vars vars, OutputStream out) {
+        return merge0(vars, new OutputStreamOut(out, engine.charset(), engine.codecFactory()), null);
     }
 
     /**
      * Merge this template.
      *
-     * @param vars vars
-     * @param out out
-     * @param encoding encoding
+     * @param vars    vars
+     * @param out     out
+     * @param charset charset
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context merge(final Vars vars, final OutputStream out, final String encoding) {
-        return merge0(vars, new OutputStreamOut(out, InternedEncoding.intern(encoding), engine), null);
+    public Context merge(Vars vars, OutputStream out, @Nullable Charset charset) {
+        return merge0(vars, new OutputStreamOut(out, nvl(charset, engine.charset()), engine.codecFactory()), null);
     }
 
     /**
      * Merge this template.
      *
-     * @param vars vars
+     * @param vars   vars
      * @param writer writer
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context merge(final Vars vars, final Writer writer) {
-        return merge0(vars, new WriterOut(writer, engine), null);
+    public Context merge(Vars vars, Writer writer) {
+        return merge0(vars, new WriterOut(writer, engine.charset(), engine.codecFactory()), null);
     }
 
     /**
@@ -221,9 +236,8 @@ public class Template {
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
-     * @since 1.4.0
      */
-    public Context merge(final Out out) {
+    public Context merge(Out out) {
         return merge0(null, out, null);
     }
 
@@ -233,7 +247,6 @@ public class Template {
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
-     * @since 2.4.0
      */
     public Context merge() {
         return merge0(null, null, null);
@@ -246,9 +259,8 @@ public class Template {
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
-     * @since 2.4.0
      */
-    public Context merge(final Map<String, Object> vars) {
+    public Context merge(Map<?, ?> vars) {
         return merge0(Vars.of(vars), null, null);
     }
 
@@ -259,26 +271,25 @@ public class Template {
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
-     * @since 2.4.0
      */
-    public Context merge(final Vars vars) {
-        return merge0(vars,  null, null);
+    public Context merge(Vars vars) {
+        return merge0(vars, null, null);
     }
 
     /**
      * Merge this template.
      *
      * @param vars vars
-     * @param out out
+     * @param out  out
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context merge(final Vars vars, final Out out) {
-       return merge0(vars, out, null);
+    public Context merge(Vars vars, Out out) {
+        return merge0(vars, out, null);
     }
 
-    public Context mergeToContext(final InternalContext context, final Vars vars) {
+    public Context mergeToContext(InternalContext context, Vars vars) {
         try {
             return prepareAst()
                     .execute(this, context, vars);
@@ -290,42 +301,40 @@ public class Template {
     /**
      * Debug this template.
      *
-     * @param vars vars
-     * @param  out out
+     * @param vars     vars
+     * @param out      out
      * @param listener listener
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context debug(final Vars vars, final Out out, final BreakpointListener listener) {
+    public Context debug(Vars vars, Out out, BreakpointListener listener) {
         return merge0(vars, out, listener);
     }
 
     /**
      * Debug this template, and discard outputs.
      *
-     * @param vars vars
+     * @param vars     vars
      * @param listener breakpoint listener
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
-     * @since 2.4.0
      */
-    public Context debug(final Vars vars, final BreakpointListener listener) {
+    public Context debug(Vars vars, BreakpointListener listener) {
         return merge0(vars, null, listener);
     }
 
     /**
      * Debug this template, and discard outputs.
      *
-     * @param out out
+     * @param out      out
      * @param listener breakpoint listener
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
-     * @since 2.5.0
      */
-    public Context debug(final Out out, final BreakpointListener listener) {
+    public Context debug(Out out, BreakpointListener listener) {
         return merge0(null, out, listener);
     }
 
@@ -336,9 +345,8 @@ public class Template {
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
      * @throws ParseException         when unable to parse
-     * @since 2.5.0
      */
-    public Context debug(final BreakpointListener listener) {
+    public Context debug(BreakpointListener listener) {
         return merge0(null, null, listener);
     }
 
@@ -351,44 +359,14 @@ public class Template {
      *
      * @return the last modified time, measured in milliseconds
      */
-    public long getLastModified() {
+    public long lastModified() {
         var myAst = this.ast;
         return myAst != null ? myAst.getCreatedAt() : -1L;
     }
 
-    /**
-     * Get engine.
-     *
-     * @return template engine
-     * @since 2.5.0
-     */
-    public Engine getEngine() {
-        return engine;
-    }
-
-    /**
-     * Get template name.
-     *
-     * @return template name
-     * @since 2.5.0
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Get resource for this template.
-     *
-     * @return resource
-     * @since 2.5.0
-     */
-    public Resource getResource() {
-        return resource;
-    }
-
     @Override
     public int hashCode() {
-        return this.name.hashCode();
+        return this.path.hashCode();
     }
 
     @Override
@@ -396,17 +374,15 @@ public class Template {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof Template)) {
+        if (!(obj instanceof Template other)) {
             return false;
         }
-        var other = (Template) obj;
         return this.engine == other.engine
-                && this.name.equals(other.name);
+                && this.path.equals(other.path);
     }
 
-    private TemplateException completeException(final Exception exception) {
-        return ((exception instanceof TemplateException)
-                ? ((TemplateException) exception)
+    private TemplateException completeException(Exception exception) {
+        return ((exception instanceof TemplateException ex) ? ex
                 : new ScriptRuntimeException(exception)).setTemplate(this);
     }
 }
