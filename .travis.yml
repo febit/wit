@@ -7,4 +7,4 @@ script:
   - ./gradlew check --stacktrace
 
 jdk:
-  - openjdk11
+  - openjdk17

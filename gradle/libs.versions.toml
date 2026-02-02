@@ -1,0 +1,23 @@
+[versions]
+hierynomus-license = '0.16.1'
+
+commons-logging='1.3.5'
+febit-commons = '3.4.0'
+febit-devkit = '1.5.0'
+jakarta-servlet-api='6.1.0'
+slf4j = '2.0.17'
+xbib-jflex = "3.0.2"
+
+[libraries]
+commons-logging= { module = 'commons-logging:commons-logging', version.ref = 'commons-logging' }
+febit-commons-deps = { module = 'org.febit:febit-commons-dependencies', version.ref = 'febit-commons' }
+jakarta-servlet-api= { module = 'jakarta.servlet:jakarta.servlet-api', version.ref = 'jakarta-servlet-api' }
+
+
+[plugins]
+febit-bom = { id = 'org.febit.standard-bom', version.ref = 'febit-devkit' }
+febit-codegen-module = { id = 'org.febit.codegen-module', version.ref = 'febit-devkit' }
+febit-java = { id = 'org.febit.standard-java', version.ref = 'febit-devkit' }
+febit-maven-publish = { id = 'org.febit.standard-maven-publish', version.ref = 'febit-devkit' }
+license = { id = 'com.github.hierynomus.license', version.ref = 'hierynomus-license' }
+xbib-jflex = { id = "org.xbib.gradle.plugin.jflex", version.ref = "xbib-jflex" }

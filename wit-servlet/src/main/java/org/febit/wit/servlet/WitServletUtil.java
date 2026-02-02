@@ -4,7 +4,7 @@ package org.febit.wit.servlet;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author zqq90

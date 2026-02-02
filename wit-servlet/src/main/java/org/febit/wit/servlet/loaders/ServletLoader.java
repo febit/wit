@@ -5,7 +5,7 @@ import org.febit.wit.lang.Resource;
 import org.febit.wit.loaders.AbstractLoader;
 import org.febit.wit.loaders.impl.resources.FileResource;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * @author zqq90

@@ -3,9 +3,8 @@ Febit Wit
 
  [![BSD License](http://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/febit/wit/blob/master/LICENSE)
  [![Build Status](https://api.travis-ci.org/febit/wit.png)](https://travis-ci.org/febit/wit)
- [![QQ Group: 302505483](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=7be9d8a59a8533b7c2837bdc22295b4b47c65384eda323971cf5f3b9943ad9db)
 
-This is a template engine, all written in Java, **support Java 8+**.
+This is a template engine, all written in Java, **support Java 17+**.
 
 ## How to use
 

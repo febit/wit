@@ -1,23 +1,26 @@
 .DS_Store
+*.log
 
-dist/
-out/
-target/
-build/
+.m2
+target
+build
+dist
+dist-ssr
+node_modules
 
-!**/src/**/dist/
-!**/src/**/out/
-!**/src/**/target/
-!**/src/**/build/
+!**/src/**/target
+!**/src/**/build
+!**/src/**/dist
+!**/src/**/dist-ssr
 
-.gradle
-gradle.properties
+/.gradle
+/gradle.properties
 
 *.iml
 .idea
 .project
 .classpath
 .settings
-nbproject
-nb-configuration.xml
-nbactions.xml
+
+.vscode/*
+!.vscode/extensions.json

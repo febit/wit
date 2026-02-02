@@ -1,59 +1,54 @@
+plugins {
+  alias libs.plugins.xbib.jflex
+}
+
 description = 'Wit Core'
 
 ext {
   moduleName = 'Wit Core'
-
-  parserSrcDir = file("${buildDir}/generated/sources/parser")
-  parserResDir = file("${buildDir}/generated/resources/parser")
-  parserCorePackageDir = file("${parserSrcDir}/org/febit/wit/core")
-  parserCorePackageResDir = file("${parserResDir}/org/febit/wit/core")
-  javaCupRuntime = getConfigurations().create('javaCup')
-  jflexRuntime = getConfigurations().create('jflex')
 }
 
-tasks.withType(Javadoc) {
+tasks.named("sourcesJar") {
+  mustRunAfter 'generateJflex'
+}
+
+tasks.withType(Javadoc).configureEach {
   exclude 'org/febit/wit_shaded/**'
 }
 
+def cupRuntime = configurations.create('cup')
+
 dependencies {
-
   compileOnly 'org.slf4j:slf4j-api'
-  compileOnly 'commons-logging:commons-logging-api'
+  compileOnly libs.commons.logging
 
-  testImplementation 'commons-io:commons-io:2.6'
+  testImplementation 'commons-io:commons-io'
 
-  javaCup files('src/main/cup/java_cup_wit-20171014.jar')
-  jflex 'de.jflex:jflex:1.6.1'
+  cup files('src/main/cup/java_cup_wit-20171014.jar')
 }
 
-task generateParser() {
+def PKG_CORE = 'org/febit/wit/core'
+def parserSrcDir = layout.buildDirectory.dir("generated/sources/parser")
+def parserResDir = layout.buildDirectory.dir("generated/resources/parser")
+
+sourceSets.main {
+  java.srcDir parserSrcDir
+  resources.srcDir parserResDir
+}
+
+tasks.register('generateParser') {
   doLast {
-    javaexec({ JavaExecSpec exec ->
-      exec.setMain('java_cup.Main')
-          .setClasspath(javaCupRuntime)
-          .args(
-              '-exception', 'ParseException',
-              '-destdir', parserCorePackageDir.absolutePath,
-              '-destresdir', parserCorePackageResDir.absolutePath,
-              file('src/main/cup/Parser.cup').absolutePath
-          )
-    })
+    providers.javaexec({ JavaExecSpec exec ->
+      exec.setClasspath(cupRuntime)
+      exec.mainClass.set("java_cup.Main")
+      exec.args(
+          '-exception', 'ParseException',
+          '-destdir', parserSrcDir.get().dir(PKG_CORE).getAsFile().absolutePath,
+          '-destresdir', parserResDir.get().dir(PKG_CORE).getAsFile().absolutePath,
+          file('src/main/cup/Parser.cup').absolutePath
+      )
+    }).result.get()
   }
 }
 
-task generateLexer() {
-  doLast {
-    javaexec({ JavaExecSpec exec ->
-      exec.setMain('jflex.Main')
-          .setClasspath(jflexRuntime)
-          .args(
-              '-d', parserCorePackageDir.absolutePath,
-              '-q', file('src/main/jflex/Lexer.jflex').absolutePath
-          )
-    })
-  }
-}
-
-compileJava.dependsOn(generateParser, generateLexer)
-sourceSets.main.java.srcDir "${parserSrcDir}"
-sourceSets.main.resources.srcDir "${parserResDir}"
+compileJava.dependsOn(generateParser)

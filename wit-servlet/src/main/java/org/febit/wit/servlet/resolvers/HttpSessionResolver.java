@@ -4,7 +4,7 @@ package org.febit.wit.servlet.resolvers;
 import org.febit.wit.resolvers.GetResolver;
 import org.febit.wit.resolvers.SetResolver;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * @author zqq90

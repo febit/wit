@@ -7,7 +7,7 @@ import org.febit.wit.Engine;
 import org.febit.wit.util.Props;
 import org.febit.wit.util.PropsUtil;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;

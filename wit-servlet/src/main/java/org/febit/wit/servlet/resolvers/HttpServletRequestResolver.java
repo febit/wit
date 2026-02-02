@@ -7,7 +7,7 @@ import org.febit.wit.servlet.HttpServletRequestHeader;
 import org.febit.wit.servlet.HttpServletRequestHeaders;
 import org.febit.wit.servlet.HttpServletRequestParameters;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author zqq90

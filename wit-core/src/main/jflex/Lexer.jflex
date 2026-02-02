@@ -11,16 +11,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 
-@SuppressWarnings({
-        "unused",
-        "CStyleArrayDeclaration",
-        "DuplicateBranchesInSwitch",
-        "FieldCanBeLocal",
-        "JavadocBlankLines",
-        "SameParameterValue",
-        "UnnecessaryUnicodeEscape",
-        "UnnecessaryLocalVariable",
-})
+@jakarta.annotation.Generated("jflex")
 %%
 %class Lexer
 %function _parseNextToken

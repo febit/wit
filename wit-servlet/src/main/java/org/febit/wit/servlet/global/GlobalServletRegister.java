@@ -4,7 +4,7 @@ package org.febit.wit.servlet.global;
 import org.febit.wit.global.GlobalManager;
 import org.febit.wit.global.GlobalRegister;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * @author zqq90
