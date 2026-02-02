@@ -1,0 +1,9 @@
+<%
+
+assertEquals(3, tld_plus(1, 2));
+assertEquals(10, tld_plus(4, 6));
+
+assertEquals(2, tld_multi(1, 2));
+assertEquals(24, tld_multi(4, 6));
+
+%>

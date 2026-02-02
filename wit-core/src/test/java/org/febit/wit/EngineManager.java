@@ -1,35 +1,159 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import org.febit.wit.exceptions.ResourceNotFoundException;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
+import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.extern.lib.cache.CachingModule;
+import org.febit.wit.extern.lib.cache.impl.SimpleCache;
+import org.febit.wit.extern.lib.context.GlobalContextRegister;
+import org.febit.wit.extern.lib.context.LocalContextRegister;
+import org.febit.wit.extern.lib.test.AssertionModule;
+import org.febit.wit.extern.lib.tld.TldModule;
+import org.febit.wit.loader.Loader;
+import org.febit.wit.loader.Loaders;
+import org.febit.wit.loader.impl.StringLoader;
+import org.febit.wit.parser.NativeFactory;
+import org.febit.wit.parser.security.RuleBasedNativeSecurity;
+import org.febit.wit.runtime.Source;
+import org.febit.wit.test.component.TestCasesModule;
+import org.febit.wit.test.component.TestConfigFlagEngineModule;
+import org.febit.wit.test.component.TestSpiFlagEngineModule;
 import org.junit.jupiter.api.function.Executable;
 
-/**
- * @author zqq90
- */
+import java.time.Duration;
+import java.util.List;
+
+@Slf4j
 public class EngineManager {
 
-    private static final Engine engine;
+    private static final String EXT_WIT = ".wit";
+    private static final List<String> EXT_DEPUTIES = List.of(EXT_WIT, ".whtml", ".wit2");
 
-    static {
-        try {
-            engine = Engine.create("/febit-wit-test.wim", null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+    private static final NativeFactory NATIVE_FACTORY = new NativeFactory(
+            RuleBasedNativeSecurity.builder()
+                    .allow(
+                            "boolean",
+                            "byte",
+                            "char",
+                            "short",
+                            "int",
+                            "long",
+                            "float",
+                            "double"
+                    )
+                    .allow(
+                            "java.lang.Object",
+                            "java.lang.Boolean",
+                            "java.lang.Character",
+                            "java.lang.Byte",
+                            "java.lang.Short",
+                            "java.lang.Integer",
+                            "java.lang.Long",
+                            "java.lang.Float",
+                            "java.lang.Double",
+                            "java.lang.String",
+                            "java.lang.Number",
+                            "java.lang.System.currentTimeMillis",
+                            "org.febit.wit.test"
+                    )
+                    .build()
+    );
+
+    @Getter
+    @Accessors(fluent = true)
+    public static final Engine engine = Engine.builder()
+            .loader(loader())
+            // .nativeFactory(NATIVE_FACTORY)
+            .predefinedVars(
+                    "request", "request2",
+                    "session", "session2"
+            )
+            .module(new AssertionModule())
+            .modules(
+                    GlobalContextRegister.create(),
+                    LocalContextRegister.create()
+            )
+            .module(new TestCasesModule())
+            .module(new TestSpiFlagEngineModule())
+            .module(new TestConfigFlagEngineModule())
+            .module(CachingModule.builder()
+                    .using(SimpleCache.ofLru(100))
+                    .withClear(true)
+                    .withRemove(true)
+                    .build()
+            )
+            .module(TldModule.builder()
+                    .path("tld-test.tld")
+                    .prefix("tld_")
+                    .build())
+            .initScripts(
+                    "/inits/moduleTest-a-1.init.wit",
+
+                    "/inits/moduleTest-a-1.init.wit",
+                    "/inits/moduleTest-a-2.init.wit",
+
+                    "/inits/moduleTest-a.init.wit",
+                    "/inits/moduleTest-b.init.wit",
+
+                    "/inits/moduleTest-a-1.init.wit",
+                    "/inits/moduleTest-a-2.init.wit",
+
+                    "/auto/lib/initTest.init.wit",
+                    "/auto/lib/initTest.init2.wit",
+                    "/auto/lib/localTest.init.wit"
+            )
+            .build();
+
+    static Loader loader() {
+        var code = StringLoader.builder()
+                .beginWith(Source.BeginWith.SCRIPT)
+                .build();
+
+        var string = StringLoader.builder()
+                .beginWith(Source.BeginWith.TEMPLATE)
+                .build();
+
+        var classpath = Loaders.classpath()
+                .root("org/febit/wit/test/tmpls")
+                .beginWith(Source.BeginWith.TEMPLATE)
+                .deputySuffixes(EXT_DEPUTIES)
+                .missingSuffix(EXT_WIT)
+                .build();
+
+        var lib = Loaders.classpath()
+                .root("org/febit/wit/test/lib")
+                .beginWith(Source.BeginWith.TEMPLATE)
+                .deputySuffixes(EXT_DEPUTIES)
+                .missingSuffix(EXT_WIT)
+                .build();
+
+        var libSub = Loaders.classpath()
+                .root("org/febit/wit/test/lib-sub")
+                .beginWith(Source.BeginWith.TEMPLATE)
+                .deputySuffixes(EXT_DEPUTIES)
+                .missingSuffix(EXT_WIT)
+                .build();
+
+        var lazyLoader = Loaders.debounce(classpath, Duration.ofSeconds(10));
+        return Loaders.dispatcher()
+                .rule("code:", code)
+                .rule("string:", string)
+                .rule("classpath:", classpath)
+                .rule("lib-test:", lazyLoader)
+                .rule("lib:", lib)
+                .rule("lib:sub:", libSub)
+                .fallback(lazyLoader)
+                .build();
     }
 
-    public static Engine getEngine() {
-        return engine;
-    }
-
-    public static Template getTemplate(String name) throws ResourceNotFoundException {
-        return engine.getTemplate(name);
+    public static Script script(String name) throws SourceNotFoundException {
+        return engine().script(name);
     }
 
     public static Executable tmplChecker(String tmpl) {
-        return () -> getTemplate(tmpl)
+        return () -> script(tmpl)
                 .reload();
     }
 

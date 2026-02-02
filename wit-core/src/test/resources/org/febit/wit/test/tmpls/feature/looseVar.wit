@@ -1,0 +1,19 @@
+<%
+
+a=0;
+
+{
+    b = "b"; //loose var
+
+    assertSame(b,super.b);
+
+    var func = function(){
+        c = "C";
+    };
+
+    func();
+
+}
+assertEquals(c, "C");
+
+%>

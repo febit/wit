@@ -1,9 +1,0 @@
-ext {
-  moduleName = 'Wit Tools'
-  moduleDescription = 'Wit extra tools'
-}
-
-dependencies {
-  api project(':wit-core')
-  compileOnly 'net.sf.ehcache:ehcache-core:2.6.6'
-}

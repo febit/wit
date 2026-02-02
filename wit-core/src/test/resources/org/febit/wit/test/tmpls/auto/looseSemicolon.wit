@@ -2,7 +2,7 @@
 
 var b,c,d
 
-var a 
+var a
   = 111
   + 222
   + 333
@@ -46,8 +46,6 @@ a=b
 
 assertEquals(a, b)
 
-
-// FIXME: Unexpected
 a=1
 var arr = [1,2,3]
 c = arr

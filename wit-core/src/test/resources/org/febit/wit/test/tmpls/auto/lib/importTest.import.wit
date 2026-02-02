@@ -1,0 +1,15 @@
+<%
+
+var a;
+var b;
+var func;
+
+{
+    a = "a";
+    b = "b";
+    func = function(obj){
+        return obj;
+    };
+}
+
+%>

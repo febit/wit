@@ -1,16 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
-@SuppressWarnings({
-        "WeakerAccess"
-})
 public final class ClassMap<V> {
 
     private static final int MAXIMUM_CAPACITY = 1 << 29;
 
-    private Entry<V>[] table;
+    private @Nullable Entry<V>[] table;
     private int threshold;
     private int size;
 
@@ -38,10 +35,9 @@ public final class ClassMap<V> {
     }
 
     @Nullable
-    public V unsafeGet(final Class<?> key) {
-        Entry<V> e;
-        final Entry<V>[] tab = table;
-        e = tab[key.hashCode() & (tab.length - 1)];
+    public V unsafeGet(Class<?> key) {
+        var tab = table;
+        var e = tab[key.hashCode() & (tab.length - 1)];
         while (e != null) {
             if (key == e.key) {
                 return e.value;
@@ -67,10 +63,10 @@ public final class ClassMap<V> {
             if (size < threshold) {
                 return;
             }
-            final Entry<V>[] oldTable = table;
-            final int oldCapacity = oldTable.length;
 
-            final int newCapacity = oldCapacity << 1;
+            var oldTable = table;
+            int oldCapacity = oldTable.length;
+            int newCapacity = oldCapacity << 1;
             if (newCapacity > MAXIMUM_CAPACITY) {
                 if (threshold == MAXIMUM_CAPACITY - 1) {
                     throw new IllegalStateException("Capacity exhausted.");
@@ -78,16 +74,16 @@ public final class ClassMap<V> {
                 threshold = MAXIMUM_CAPACITY - 1;
                 return;
             }
-            final int newMark = newCapacity - 1;
-            final Entry<V>[] newTable = new Entry[newCapacity];
 
+            int newMark = newCapacity - 1;
+            var newTable = new Entry[newCapacity];
             for (int i = oldCapacity; i-- > 0; ) {
                 int index;
                 for (Entry<V> old = oldTable[i], e; old != null; ) {
                     e = old;
                     old = old.next;
 
-                    index = e.id & newMark;
+                    index = e.hash & newMark;
                     e.next = newTable[index];
                     newTable[index] = e;
                 }
@@ -100,16 +96,15 @@ public final class ClassMap<V> {
     }
 
     @SuppressWarnings({
-            "unchecked",
             "squid:ForLoopCounterChangedCheck"
     })
     public V putIfAbsent(Class<?> key, V value) {
         synchronized (this) {
-            final int id = key.hashCode();
-            Entry<V>[] tab = table;
-            int index = id & (tab.length - 1);
+            var hash = key.hashCode();
+            var tab = table;
+            int index = hash & (tab.length - 1);
 
-            Entry<V> e = tab[index];
+            var e = tab[index];
             for (; e != null; e = e.next) {
                 if (key == e.key) {
                     return e.value;
@@ -119,11 +114,11 @@ public final class ClassMap<V> {
             if (size >= threshold) {
                 resize();
                 tab = table;
-                index = id & (tab.length - 1);
+                index = hash & (tab.length - 1);
             }
 
             // creates the new entry.
-            tab[index] = new Entry(id, key, value, tab[index]);
+            tab[index] = new Entry<>(hash, key, value, tab[index]);
             size++;
             return value;
         }
@@ -131,15 +126,15 @@ public final class ClassMap<V> {
 
     private static final class Entry<V> {
 
-        final int id;
+        final int hash;
         final Class<?> key;
         V value;
         Entry<V> next;
 
-        Entry(int id, Class<?> key, V value, Entry<V> next) {
-            this.value = value;
-            this.id = id;
+        Entry(int hash, Class<?> key, V value, Entry<V> next) {
+            this.hash = hash;
             this.key = key;
+            this.value = value;
             this.next = next;
         }
     }

@@ -1,91 +1,73 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Map;
 
-/**
- * @author zqq90
- * @since 2.4.0
- */
-@SuppressWarnings({
-        "squid:S1214" //Constants should not be defined in interfaces
-})
 @FunctionalInterface
 public interface Vars {
 
-    Vars EMPTY = accepter -> {
-        // Do nothing
-    };
-
     @FunctionalInterface
-    interface Accepter {
+    interface Acceptor {
 
-        default void set(Object key, Object value) {
+        default void set(Object key, @Nullable Object value) {
             set(String.valueOf(key), value);
         }
 
-        void set(String key, Object value);
+        void set(String key, @Nullable Object value);
     }
 
-    /**
-     * @since 2.5.0
-     */
-    static Vars of(final Vars v1, final Vars v2) {
-        return accepter -> {
-            v1.exportTo(accepter);
-            v2.exportTo(accepter);
+    static Vars empty() {
+        return acceptor -> {
+            // Do nothing
         };
     }
 
-    /**
-     * @since 2.5.0
-     */
-    static Vars of(final Vars... values) {
+    static Vars of(Vars v1, Vars v2) {
+        return acceptor -> {
+            v1.sink(acceptor);
+            v2.sink(acceptor);
+        };
+    }
+
+    static Vars of(Vars @Nullable ... values) {
         if (values == null || values.length == 0) {
-            return Vars.EMPTY;
+            return Vars.empty();
         }
-        return accepter -> {
+        return acceptor -> {
             for (Vars item : values) {
-                item.exportTo(accepter);
+                item.sink(acceptor);
             }
         };
     }
 
-    /**
-     * @since 2.5.0
-     */
-    static Vars of(final String key, final Object value) {
-        return accepter -> accepter.set(key, value);
+    static Vars of(String key, @Nullable Object value) {
+        return acceptor -> acceptor.set(key, value);
     }
 
-    /**
-     * @since 2.5.0
-     */
-    static Vars of(final String[] keys, final Object[] values) {
+    static Vars of(String @Nullable [] keys, @Nullable Object @Nullable [] values) {
         if (keys == null || values == null) {
-            return Vars.EMPTY;
+            return Vars.empty();
         }
         final int size = Math.min(keys.length, values.length);
         if (size == 0) {
-            return Vars.EMPTY;
+            return Vars.empty();
         }
-        return accepter -> {
+        return acceptor -> {
             for (int i = 0; i < size; i++) {
-                accepter.set(keys[i], values[i]);
+                acceptor.set(keys[i], values[i]);
             }
         };
     }
 
-    /**
-     * @since 2.5.0
-     */
-    static Vars of(final Map<?, ?> map) {
+    static Vars of(@Nullable Map<?, ?> map) {
         if (map == null || map.isEmpty()) {
-            return Vars.EMPTY;
+            return Vars.empty();
         }
-        return accepter -> map.forEach(accepter::set);
+        return acceptor -> map.forEach(acceptor::set);
     }
 
-    void exportTo(Accepter accepter);
+    void sink(Acceptor acceptor);
 
 }

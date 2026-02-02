@@ -3,13 +3,7 @@ package org.febit.wit.util;
 
 import java.util.ArrayList;
 
-/**
- * @param <T>
- * @author zqq90
- */
 public class Stack<T> extends ArrayList<T> {
-
-    private static final long serialVersionUID = 1L;
 
     public Stack() {
         super();

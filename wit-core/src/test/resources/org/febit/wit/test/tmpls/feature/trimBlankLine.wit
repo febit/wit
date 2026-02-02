@@ -1,0 +1,40 @@
+<%
+
+var trimBlankLine;
+
+var out, out2, out3;
+
+{
+    assertNotNull(trimBlankLine);
+}
+
+{
+    { %>aa <% } => out;
+    assertEquals(3, out.size);
+}
+
+{
+    { %>
+ aa
+   ${null}<% } => out;
+    { %>
+ aa
+   <% } => out2;
+    { %>
+ aa
+<% } => out3;
+    if(trimBlankLine){
+        // assertEquals(7, out.size);
+        // assertEquals(4, out2.size);
+        assertEquals(' ', out2[0]);
+        assertEquals('a', out2[1]);
+        assertEquals('\n', out2[3]);
+        assertArrayEquals(out2, out3);
+    }else{
+        assertEquals(8, out.size); // \r\n
+        assertArrayEquals(out, out2);
+    }
+}
+
+
+%>

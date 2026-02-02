@@ -57,7 +57,7 @@
     assertEquals(97 * 2 , a * 2);
     assertEquals(97 >> 2 , a >> 2);
     assertEquals(97 % 2 , a % 2);
-    
+
     //Compare Floating point numbers.
     assertTrue(0.1f == 0.1f);
     assertTrue(0.1F == 0.1D);
@@ -66,13 +66,13 @@
 
     assertTrue(0.1f >= 0.1D);
     assertTrue(0.1f <= 0.1D);
-    
+
     assertFalse(0.1f > 0.1D);
     assertFalse(0.1f < 0.1D);
 
-    //FIXME: failed case
-    //assertTrue((0.1F+0D) == 0.1F);
-    
+    // XXX: failed case
+    // assertTrue((0.1F + 0D) == 0.1F);
+
     // ?:
     assertEquals(1, true?1:2);
 
@@ -80,7 +80,7 @@
     assertEquals(1, 1 || 2);
     assertEquals(2, null || 2);
 
-    
+
     assertEquals("11", 1 +"1");
 
     assertEquals("c1", "c" + '1');
@@ -102,7 +102,7 @@
 
     //asc
     var one = 1;
-    var tree = 3; 
+    var tree = 3;
     var i = 1;
     for(num : i .. tree){
         assertEquals(i, num);

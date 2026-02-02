@@ -1,9 +1,0 @@
-
-# [global]
-# registers += tld-demo
-
-
-# [tld-demo: org.febit.wit.tools.tld.TLDGlobalRegister]
-# checkAccess=false
-# tld=
-# prefix=
