@@ -5,9 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.febit.wit.io.DiscardOut;
 import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.io.WriterOut;
-import org.febit.wit.lang.FunctionDeclare;
-import org.febit.wit.lang.Out;
-import org.febit.wit.lang.VariantIndexer;
+import org.febit.wit.runtime.FunctionDeclare;
+import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.heap.LocalHeap;
+import org.febit.wit.runtime.heap.VariantHeap;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
@@ -22,8 +23,6 @@ import static org.febit.wit.util.Defaults.nvl;
 @RequiredArgsConstructor
 @SuppressWarnings("UnusedReturnValue")
 public final class Function {
-
-    private static final VariantIndexer[] EMPTY_INDEXERS = {VariantIndexer.EMPTY};
 
     private final Template template;
     private final FunctionDeclare functionDeclare;
@@ -43,7 +42,9 @@ public final class Function {
     }
 
     private InternalContext createContext(Out out) {
-        return new InternalContext(template, out, Vars.empty(), EMPTY_INDEXERS, 0, null, null);
+        var heap = VariantHeap.empty();
+        var local = LocalHeap.create();
+        return new InternalContext(template, out, Vars.empty(), heap, local, null);
     }
 
     private InternalContext createContext() {
@@ -51,41 +52,40 @@ public final class Function {
     }
 
     @Nullable
-    private Object doInvoke(
+    private Object doApply(
             InternalContext context,
             @Nullable Object @Nullable ... args
     ) {
-        return this.functionDeclare.invoke(context, args);
+        return this.functionDeclare.apply(context, args);
     }
 
     @Nullable
-    public Object invoke(@Nullable Object @Nullable ... args) {
-        return doInvoke(createContext(), args);
+    public Object apply(@Nullable Object @Nullable ... args) {
+        return doApply(createContext(), args);
     }
 
     @Nullable
-    public Object invokeWithOut(Out out, @Nullable Object @Nullable ... args) {
-        return doInvoke(createContext(out), args);
+    public Object applyWithOut(Out out, @Nullable Object @Nullable ... args) {
+        return doApply(createContext(out), args);
     }
 
     @Nullable
-    public Object invokeWithOut(Writer writer, @Nullable Object @Nullable ... args) {
+    public Object applyWithOut(Writer writer, @Nullable Object @Nullable ... args) {
         var engine = template.engine();
-        return invokeWithOut(new WriterOut(writer, engine.charset(), engine.codecFactory()), args);
+        return applyWithOut(new WriterOut(writer, engine.charset(), engine.codecFactory()), args);
     }
 
     @Nullable
-    public Object invokeWithOut(
+    public Object applyWithOut(
             OutputStream out, @Nullable Object @Nullable ... args) {
         var engine = template.engine();
-        return invokeWithOut(new OutputStreamOut(out, engine.charset(), engine.codecFactory()), args);
+        return applyWithOut(new OutputStreamOut(out, engine.charset(), engine.codecFactory()), args);
     }
 
-
     @Nullable
-    public Object invokeWithOut(
+    public Object applyWithOut(
             Charset charset, OutputStream out, @Nullable Object @Nullable ... args) {
         var engine = template.engine();
-        return invokeWithOut(new OutputStreamOut(out, nvl(charset, engine.charset()), engine.codecFactory()), args);
+        return applyWithOut(new OutputStreamOut(out, nvl(charset, engine.charset()), engine.codecFactory()), args);
     }
 }

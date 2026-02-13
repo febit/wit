@@ -2,12 +2,12 @@ package org.febit.wit.util;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.Iter;
-import org.febit.wit.lang.KeyIter;
-import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.iter.AbstractArrayIter;
-import org.febit.wit.lang.iter.AbstractIter;
-import org.febit.wit.lang.iter.MapKeyIter;
+import org.febit.wit.runtime.Iter;
+import org.febit.wit.runtime.KeyIter;
+import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.iter.AbstractArrayIter;
+import org.febit.wit.runtime.iter.AbstractIter;
+import org.febit.wit.runtime.iter.MapKeyIter;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Array;
@@ -97,7 +97,7 @@ public class Iters {
     private static Iter of(Iterator<?> iterator) {
         return new AbstractIter() {
             @Override
-            protected Object _next() {
+            protected Object next0() {
                 return iterator.next();
             }
 
@@ -111,7 +111,7 @@ public class Iters {
     private static Iter of(Enumeration<?> enumeration) {
         return new AbstractIter() {
             @Override
-            protected Object _next() {
+            protected Object next0() {
                 return enumeration.nextElement();
             }
 
@@ -142,7 +142,7 @@ public class Iters {
 
     public static Iter asc(int from, int to) {
         if (from > to) {
-            return asc(to, from);
+            return asc(to, from); // NOSONAR
         }
         return new Iter() {
             private int current = from - 1;
@@ -169,7 +169,7 @@ public class Iters {
 
     public static Iter desc(int from, int to) {
         if (from < to) {
-            return desc(to, from);
+            return desc(to, from); // NOSONAR
         }
         return new Iter() {
             private int current = from + 1;

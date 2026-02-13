@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.extern.lib.cache;
 
-import org.febit.wit.Context;
-import org.febit.wit.InternalContext;
+import org.febit.wit.GlobalHeapRegister;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.global.GlobalHeap;
-import org.febit.wit.global.GlobalHeapRegister;
 import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.io.WriterOut;
-import org.febit.wit.lang.FunctionDeclare;
+import org.febit.wit.runtime.FunctionDeclare;
+import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.Undefined;
+import org.febit.wit.runtime.heap.GlobalHeap;
 import org.febit.wit.util.ArrayUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -48,13 +48,13 @@ public class CachingModule implements GlobalHeapRegister {
 
     private Object doClear(InternalContext context, @Nullable Object @Nullable [] args) {
         this.using.clear();
-        return Context.VOID;
+        return Undefined.UNDEFINED;
     }
 
     private Object doRemove(InternalContext context, @Nullable Object @Nullable [] args) {
         var key = ArrayUtils.get(args, 0);
         this.using.remove(key);
-        return Context.VOID;
+        return Undefined.UNDEFINED;
     }
 
     @Nullable
@@ -102,12 +102,12 @@ public class CachingModule implements GlobalHeapRegister {
         if (out.preferBytes()) {
             var buffer = new ByteArrayOutputStream(256);
             returned = context.redirectOut(new OutputStreamOut(buffer, charset, codec),
-                    c -> func.invoke(c, methodArgs));
+                    c -> func.apply(c, methodArgs));
             outed = buffer.toByteArray();
         } else {
             var writer = new CharArrayWriter(256);
             returned = context.redirectOut(new WriterOut(writer, charset, codec),
-                    c -> func.invoke(c, methodArgs));
+                    c -> func.apply(c, methodArgs));
             outed = writer.toCharArray();
         }
         return new CachingEntry(returned, outed);

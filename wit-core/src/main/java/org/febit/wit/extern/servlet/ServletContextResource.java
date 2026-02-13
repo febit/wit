@@ -3,7 +3,7 @@ package org.febit.wit.extern.servlet;
 
 import jakarta.servlet.ServletContext;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.lang.Resource;
+import org.febit.wit.runtime.Resource;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -1,8 +1,8 @@
 package org.febit.wit.loaders.impl;
 
-import org.febit.wit.lang.Resource;
 import org.febit.wit.loaders.BasicPathLoader;
 import org.febit.wit.loaders.Loader;
+import org.febit.wit.runtime.Resource;
 import org.febit.wit.util.PathUtils;
 import org.jspecify.annotations.Nullable;
 

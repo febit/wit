@@ -1,15 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.extern.lib.test;
 
-import org.febit.wit.InternalContext;
-import org.febit.wit.global.GlobalHeap;
-import org.febit.wit.global.GlobalHeapRegister;
+import org.febit.wit.GlobalHeapRegister;
+import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.Undefined;
+import org.febit.wit.runtime.heap.GlobalHeap;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.util.concurrent.atomic.LongAdder;
 
-import static org.febit.wit.Context.VOID;
 import static org.febit.wit.util.ArrayUtils.get;
 
 public class AssertionModule implements GlobalHeapRegister {
@@ -29,10 +29,10 @@ public class AssertionModule implements GlobalHeapRegister {
     }
 
     private static void plusAssertCount(InternalContext context) {
-        LongAdder count = (LongAdder) context.getLocalVar(ASSERT_COUNT_KEY);
+        LongAdder count = (LongAdder) context.local().get(ASSERT_COUNT_KEY);
         if (count == null) {
             count = new LongAdder();
-            context.setLocalVar(ASSERT_COUNT_KEY, count);
+            context.local().set(ASSERT_COUNT_KEY, count);
         }
         count.increment();
     }
@@ -153,48 +153,48 @@ public class AssertionModule implements GlobalHeapRegister {
     private static Object assertTrue(InternalContext context, @Nullable Object @Nullable [] args) {
         plusAssertCount(context);
         assertObjectTrue(get(args, 0));
-        return VOID;
+        return Undefined.UNDEFINED;
     }
 
     private static Object assertFalse(InternalContext context, @Nullable Object @Nullable [] args) {
         plusAssertCount(context);
         assertObjectFalse(get(args, 0));
-        return VOID;
+        return Undefined.UNDEFINED;
     }
 
     private static Object assertNotNull(InternalContext context, @Nullable Object @Nullable [] args) {
         plusAssertCount(context);
         assertNotNull(get(args, 0));
-        return VOID;
+        return Undefined.UNDEFINED;
     }
 
     private static Object assertNull(InternalContext context, @Nullable Object @Nullable [] args) {
         plusAssertCount(context);
         assertNull(get(args, 0));
-        return VOID;
+        return Undefined.UNDEFINED;
     }
 
     private static Object assertEquals(InternalContext context, @Nullable Object @Nullable [] args) {
         plusAssertCount(context);
         assertEquals(get(args, 0), get(args, 1));
-        return VOID;
+        return Undefined.UNDEFINED;
     }
 
     private static Object assertSame(InternalContext context, @Nullable Object @Nullable [] args) {
         plusAssertCount(context);
         assertSame(get(args, 0), get(args, 1));
-        return VOID;
+        return Undefined.UNDEFINED;
     }
 
     private static Object assertNotSame(InternalContext context, @Nullable Object @Nullable [] args) {
         plusAssertCount(context);
         assertNotSame(get(args, 0), get(args, 1));
-        return VOID;
+        return Undefined.UNDEFINED;
     }
 
     private static Object assertArrayEquals(InternalContext context, @Nullable Object @Nullable [] args) {
         plusAssertCount(context);
         assertArrayEquals(get(args, 0), get(args, 1));
-        return VOID;
+        return Undefined.UNDEFINED;
     }
 }

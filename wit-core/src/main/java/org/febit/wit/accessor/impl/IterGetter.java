@@ -3,7 +3,7 @@ package org.febit.wit.accessor.impl;
 
 import org.febit.wit.accessor.Getter;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.lang.Iter;
+import org.febit.wit.runtime.Iter;
 import org.jspecify.annotations.Nullable;
 
 public class IterGetter implements Getter<Iter> {
@@ -22,7 +22,7 @@ public class IterGetter implements Getter<Iter> {
             case "isEven" -> (iter.index() & 1) != 0;  // Note: index starts from 0
             case "isOdd" -> (iter.index() & 1) == 0;  // Note: index starts from 0
             default -> throw new ScriptRuntimeException(
-                    "Invalid property or can't read: org.febit.wit.lang.Iter#" + property);
+                    "Invalid property or can't read: org.febit.wit.runtime.Iter#" + property);
         };
     }
 }

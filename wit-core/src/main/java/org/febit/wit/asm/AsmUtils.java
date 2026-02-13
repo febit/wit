@@ -81,7 +81,8 @@ class AsmUtils {
             return;
         }
         if (type == void.class) {
-            m.visitFieldInsn(Constants.GETSTATIC, "org/febit/wit/Context", "VOID", "Ljava/lang/Object;");
+            m.visitFieldInsn(Constants.GETSTATIC, "org/febit/wit/runtime/Undefined",
+                    "UNDEFINED", "Lorg/febit/wit/runtime/Undefined;");
             return;
         }
         String boxedType = getBoxedInternalName(type);

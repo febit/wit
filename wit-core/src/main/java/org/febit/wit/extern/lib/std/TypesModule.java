@@ -3,9 +3,9 @@ package org.febit.wit.extern.lib.std;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.Context;
-import org.febit.wit.global.GlobalHeap;
-import org.febit.wit.global.GlobalHeapRegister;
-import org.febit.wit.lang.FunctionDeclare;
+import org.febit.wit.GlobalHeapRegister;
+import org.febit.wit.runtime.FunctionDeclare;
+import org.febit.wit.runtime.heap.GlobalHeap;
 import org.jspecify.annotations.Nullable;
 
 import static org.febit.wit.util.ArrayUtils.get;

@@ -10,10 +10,10 @@ import org.febit.wit.exceptions.TemplateException;
 import org.febit.wit.io.DiscardOut;
 import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.io.WriterOut;
-import org.febit.wit.lang.BreakpointListener;
-import org.febit.wit.lang.Out;
-import org.febit.wit.lang.Resource;
-import org.febit.wit.lang.ast.TemplateAST;
+import org.febit.wit.runtime.BreakpointListener;
+import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.ast.TemplateAST;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;

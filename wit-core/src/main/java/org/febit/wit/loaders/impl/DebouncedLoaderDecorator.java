@@ -4,9 +4,9 @@ package org.febit.wit.loaders.impl;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.lang.Resource;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loaders.LoaderDecorator;
+import org.febit.wit.runtime.Resource;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor(staticName = "of")

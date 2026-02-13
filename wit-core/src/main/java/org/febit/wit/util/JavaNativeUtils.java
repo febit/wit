@@ -2,21 +2,18 @@
 package org.febit.wit.util;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.Context;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exceptions.AmbiguousMethodException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.exceptions.UncheckedException;
-import org.febit.wit.global.GlobalHeap;
+import org.febit.wit.runtime.Undefined;
+import org.febit.wit.runtime.heap.GlobalHeap;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({
@@ -48,7 +45,7 @@ public class JavaNativeUtils {
             Class<?> type,
             boolean skipConflict
     ) {
-        Map<String, List<Method>> methodMap = Arrays.stream(type.getMethods())
+        var methodMap = Arrays.stream(type.getMethods())
                 .filter(ClassUtils::isStatic)
                 .filter(m -> !(skipConflict && heap.hasConst(m.getName())))
                 .collect(Collectors.groupingBy(Method::getName));
@@ -72,8 +69,7 @@ public class JavaNativeUtils {
             boolean skipConflict
     ) {
         int count = 0;
-
-        for (Field field : type.getFields()) {
+        for (var field : type.getFields()) {
             if (!ClassUtils.isStatic(field)
                     || !ClassUtils.isFinal(field)) {
                 continue;
@@ -97,7 +93,8 @@ public class JavaNativeUtils {
             return EMPTY_CLASSES;
         }
 
-        @Nullable Class<?>[] argTypes = new Class[args.length];
+        @Nullable
+        Class<?>[] argTypes = new Class[args.length];
         for (int i = 0; i < argTypes.length; i++) {
             var arg = args[i];
             argTypes[i] = arg != null ? arg.getClass() : null;
@@ -385,7 +382,7 @@ public class JavaNativeUtils {
         try {
             Object result = method.invoke(me, methodArgs);
             return ClassUtils.isVoidType(method.getReturnType())
-                    ? Context.VOID
+                    ? Undefined.UNDEFINED
                     : result;
         } catch (IllegalAccessException ex) {
             throw new ScriptRuntimeException("this method is inaccessible: " + ex.getLocalizedMessage(), ex);

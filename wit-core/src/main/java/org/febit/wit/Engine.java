@@ -10,9 +10,9 @@ import org.febit.wit.accessor.AccessorFactory;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.core.TextStatementFactory;
 import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.global.GlobalHeap;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.loaders.Loader;
+import org.febit.wit.runtime.heap.GlobalHeap;
 import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.Charset;

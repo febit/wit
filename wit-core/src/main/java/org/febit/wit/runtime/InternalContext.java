@@ -1,0 +1,339 @@
+// Copyright (c) 2013-present, febit.org. All Rights Reserved.
+package org.febit.wit.runtime;
+
+import lombok.experimental.Accessors;
+import org.febit.wit.Context;
+import org.febit.wit.Engine;
+import org.febit.wit.Feature;
+import org.febit.wit.Function;
+import org.febit.wit.Out;
+import org.febit.wit.Template;
+import org.febit.wit.Vars;
+import org.febit.wit.accessor.AccessorFactory;
+import org.febit.wit.accessor.Getter;
+import org.febit.wit.accessor.Render;
+import org.febit.wit.accessor.Setter;
+import org.febit.wit.exceptions.NotFunctionException;
+import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.heap.LocalHeap;
+import org.febit.wit.runtime.heap.VariantHeap;
+import org.jspecify.annotations.Nullable;
+
+/**
+ * Internal Context.
+ * <p>
+ * store variables and access global components for AST-nodes
+ *
+ */
+@Accessors(fluent = true)
+@SuppressWarnings({
+        "squid:RedundantThrowsDeclarationCheck"
+})
+public final class InternalContext implements Context {
+
+    @lombok.Getter
+    private final Template template;
+
+    private final int features;
+
+    @Nullable
+    private final BreakpointListener breakpointListener;
+
+    /**
+     * Input parameters.
+     */
+    @lombok.Getter
+    private final Vars inputs;
+
+    @lombok.Getter
+    private final VariantHeap heap;
+
+    @lombok.Getter
+    private final LocalHeap local;
+
+    /**
+     * Output, stream or writer.
+     */
+    @lombok.Getter
+    private Out out;
+
+    /**
+     * Used by functions, store value to be returned.
+     */
+    @Nullable
+    private Object returned;
+    /**
+     * Current goto label, if looped.
+     */
+    private int label;
+    /**
+     * Current loop kind, ==0 if no loop.
+     */
+    @lombok.Getter
+    private LoopFlag.Kind loopKind = LoopFlag.Kind.NOOP;
+
+    private final AccessorFactory accessors;
+
+    public InternalContext(
+            final Template template,
+            final Out out,
+            final Vars inputs,
+            final VariantHeap heap,
+            final LocalHeap local,
+            @Nullable BreakpointListener breakpointListener
+    ) {
+        this.template = template;
+        this.inputs = inputs;
+        this.out = out;
+        this.heap = heap;
+        this.local = local;
+
+        var engine = template.engine();
+        this.features = engine.features();
+        this.accessors = engine.accessors();
+
+        this.breakpointListener = breakpointListener;
+        //import params
+        inputs.sink(heap::set);
+    }
+
+    public void handleBreakpoint(@Nullable Object label, Statement statement, @Nullable Object result) {
+        if (this.breakpointListener != null) {
+            this.breakpointListener.onBreakpoint(label, this, statement, result);
+        }
+    }
+
+    public Context mergeTemplate(String refer, String path, Vars vars)
+            throws ResourceNotFoundException, ScriptRuntimeException, ParseException {
+        var tmpl = this.template.engine().template(refer, path);
+        return tmpl.mergeToContext(this, vars);
+    }
+
+    public Object[] visit(Expression[] exprs) {
+        var len = exprs.length;
+        var results = new Object[len];
+        for (int i = 0; i < len; i++) {
+            results[i] = exprs[i].execute(this);
+        }
+        return results;
+    }
+
+    public void visit(Statement[] stats) {
+        var i = 0;
+        var len = stats.length;
+        while (i < len) {
+            stats[i++].execute(this);
+        }
+    }
+
+    public void visitAndCheckLoop(Statement[] stats) {
+        var i = 0;
+        var len = stats.length;
+        while (i < len && this.loopKind().isNoop()) {
+            stats[i++].execute(this);
+        }
+    }
+
+    /**
+     * Create a sub-context used by function call.
+     *
+     * @param callerContext local context
+     * @param indexers      indexers
+     * @param frameSize     var size
+     * @return a new sub context
+     */
+    public InternalContext createSubContext(InternalContext callerContext, FrameIndexer[] indexers, int frameSize) {
+        var subHeap = this.heap().shift(frameSize, indexers);
+        return new InternalContext(
+                template,
+                callerContext.out,
+                Vars.empty(),
+                subHeap,
+                callerContext.local(),
+                breakpointListener
+        );
+    }
+
+    /**
+     * Create a peer-context used by include/import.
+     * <p>
+     * Only share locals and out
+     *
+     * @return a new peer context
+     */
+    public InternalContext createPeerContext(Template template, VariantHeap heap, Vars inputs) {
+        return new InternalContext(
+                template, out(), inputs,
+                heap, local(), breakpointListener
+        );
+    }
+
+    /**
+     * if gaven loop label matched current loop.
+     *
+     * @param label label id
+     * @return true if match
+     */
+    @SuppressWarnings({
+            "BooleanMethodIsAlwaysInverted"
+    })
+    public boolean matchLabel(int label) {
+        return this.label == 0 || this.label == label;
+    }
+
+    /**
+     * Mark a break-loop.
+     *
+     * @param label label id
+     */
+    public void breakLoop(int label) {
+        this.label = label;
+        this.loopKind = LoopFlag.Kind.BREAK;
+    }
+
+    /**
+     * Mark a continue-loop.
+     *
+     * @param label label id
+     */
+    public void continueLoop(int label) {
+        this.label = label;
+        this.loopKind = LoopFlag.Kind.CONTINUE;
+    }
+
+    /**
+     * Mark a return-loop.
+     *
+     * @param value the returned.
+     */
+    public void returnLoop(@Nullable Object value) {
+        this.returned = value;
+        this.label = 0;
+        this.loopKind = LoopFlag.Kind.RETURN;
+    }
+
+    /**
+     * Unmark loops.
+     */
+    public void resetLoop() {
+        this.returned = null;
+        this.label = 0;
+        this.loopKind = LoopFlag.Kind.NOOP;
+    }
+
+    /**
+     * Unmark loops, is a break and match the label.
+     *
+     * @param label label id
+     */
+    public void resetBreakLoopIfMatch(int label) {
+        if (this.loopKind.isBreak()
+                && (this.label == 0 || this.label == label)) {
+            this.resetLoop();
+        }
+    }
+
+    /**
+     * Unmark loops, at the end of functions.
+     *
+     * @return the returned
+     */
+    @Nullable
+    public Object resetReturnLoop() {
+        var result = this.loopKind.isReturn()
+                ? this.returned
+                : Undefined.UNDEFINED;
+        resetLoop();
+        return result;
+    }
+
+    /**
+     * Get a bean's property.
+     *
+     * @param <T>      bean type
+     * @param obj      bean
+     * @param property property
+     * @return value
+     */
+    @Nullable
+    public <T> Object getBeanProperty(@Nullable T obj, @Nullable Object property) {
+        if (obj == null) {
+            return handleAccessorNullPointer();
+        }
+        @SuppressWarnings("unchecked")
+        var getter = (Getter<Object>) this.accessors.getter(obj.getClass());
+        return getter.get(obj, property);
+    }
+
+    /**
+     * Set a bean's property.
+     *
+     * @param obj      bean
+     * @param property property
+     * @param value    value
+     */
+    public <T> void setBeanProperty(@Nullable T obj, @Nullable Object property, @Nullable Object value) {
+        if (obj == null) {
+            handleAccessorNullPointer();
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        var setter = (Setter<Object>) this.accessors.setter(obj.getClass());
+        setter.set(obj, property, value);
+    }
+
+    @Nullable
+    private Object handleAccessorNullPointer() {
+        if (isEnabled(Feature.IGNORE_ACCESSOR_NULL_POINTER)) {
+            return null;
+        }
+        throw new ScriptRuntimeException("Null pointer.");
+    }
+
+    public boolean isEnabled(Feature feature) {
+        return feature.isEnabled(this.features);
+    }
+
+    @Nullable
+    public Object redirectOut(Out newOut, java.util.function.Function<InternalContext, @Nullable Object> action) {
+        Out prevOut = this.out;
+        this.out = newOut;
+        try {
+            return action.apply(this);
+        } finally {
+            this.out = prevOut;
+        }
+    }
+
+    public <T> void out(@Nullable T obj) {
+        if (obj == null) {
+            return;
+        }
+        var type = obj.getClass();
+        if (type == String.class) {
+            out.write((String) obj);
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        var render = (Render<Object>) this.accessors.render(type);
+        render.render(out, obj);
+    }
+
+
+    @Override
+    public Function exportFunction(String name) throws NotFunctionException {
+        var obj = this.heap().get(name, false);
+        if (!(obj instanceof FunctionDeclare func)) {
+            throw new NotFunctionException(obj);
+        }
+        return new Function(this.template, func, this.out.charset(), this.out.preferBytes());
+    }
+
+    public Engine engine() {
+        return this.template.engine();
+    }
+}

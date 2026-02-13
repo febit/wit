@@ -3,7 +3,7 @@ package org.febit.wit.accessor.impl;
 
 import org.febit.wit.accessor.Getter;
 import org.febit.wit.accessor.Setter;
-import org.febit.wit.lang.Bag;
+import org.febit.wit.runtime.Bag;
 import org.jspecify.annotations.Nullable;
 
 public class BagAccessor implements Getter<Bag>, Setter<Bag> {

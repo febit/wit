@@ -1,8 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.test.component.lib;
 
-import org.febit.wit.Context;
-import org.febit.wit.lang.FunctionDeclare;
+import org.febit.wit.runtime.FunctionDeclare;
+import org.febit.wit.runtime.Undefined;
 
 import java.util.Map;
 
@@ -14,7 +14,7 @@ public class ConstMethods {
     /**
      * A empty function, do nothing.
      */
-    public static final FunctionDeclare noop = (context, args) -> Context.VOID;
+    public static final FunctionDeclare noop = (context, args) -> Undefined.UNDEFINED;
 
     public static final FunctionDeclare CONST_METHOD = (context, args) -> "CONST_METHOD";
 

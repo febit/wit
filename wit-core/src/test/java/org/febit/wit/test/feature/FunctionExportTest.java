@@ -24,36 +24,36 @@ class FunctionExportTest {
 
         assertNotNull(plus);
 
-        assertEquals(1, plus.invoke(0, 1));
-        assertEquals(5, plus.invoke(2, 3));
-        assertEquals(1, plus.invoke(-2, 3));
+        assertEquals(1, plus.apply(0, 1));
+        assertEquals(5, plus.apply(2, 3));
+        assertEquals(1, plus.apply(-2, 3));
 
         //counter
         Function counter = context.exportFunction("counter");
 
         assertNotNull(counter);
 
-        assertEquals(0, counter.invoke());
-        assertEquals(1, counter.invoke());
-        assertEquals(2, counter.invoke());
+        assertEquals(0, counter.apply());
+        assertEquals(1, counter.apply());
+        assertEquals(2, counter.apply());
 
         //counter
         Function counter2 = context.exportFunction("counter2");
 
         assertNotNull(counter2);
 
-        assertEquals(0, counter2.invoke());
-        assertEquals(1, counter2.invoke());
-        assertEquals(2, counter2.invoke());
+        assertEquals(0, counter2.apply());
+        assertEquals(1, counter2.apply());
+        assertEquals(2, counter2.apply());
 
         //str_len
         Function str_len = context.exportFunction("str_len");
 
         assertNotNull(str_len);
 
-        assertEquals(0, str_len.invoke(""));
-        assertEquals(1, str_len.invoke("a"));
-        assertEquals(4, str_len.invoke("abcd"));
+        assertEquals(0, str_len.apply(""));
+        assertEquals(1, str_len.apply("a"));
+        assertEquals(4, str_len.apply("abcd"));
 
         //print
         Function print = context.exportFunction("print");
@@ -62,11 +62,11 @@ class FunctionExportTest {
         assertNotNull(print);
 
         writer = new StringWriter();
-        print.invokeWithOut(writer, "");
+        print.applyWithOut(writer, "");
         assertEquals("", writer.toString());
 
         writer = new StringWriter();
-        print.invokeWithOut(writer, "hello function");
+        print.applyWithOut(writer, "hello function");
         assertEquals("hello function", writer.toString());
 
         // Exception cases:

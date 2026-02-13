@@ -4,18 +4,17 @@ package org.febit.wit.test;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Strings;
 import org.febit.wit.EngineManager;
-import org.febit.wit.InternalContext;
 import org.febit.wit.Template;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.io.OutputStreamOut;
-import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ast.expr.BreakpointExpr;
-import org.febit.wit.lang.ast.expr.DirectValue;
+import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.expr.BreakpointExpr;
+import org.febit.wit.runtime.ast.expr.DirectValue;
 import org.febit.wit.util.ClassUtils;
-import org.febit.wit.util.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
@@ -87,7 +86,7 @@ class AutoTest {
         }
         var out = new OutputStreamOut(output, EngineManager.engine().charset(), EngineManager.engine().codecFactory());
         var context = template.debug(out, this::onBreakpoint);
-        System.out.println("\tassert count: " + context.getLocalVar(AssertionModule.ASSERT_COUNT_KEY));
+        System.out.println("\tassert count: " + context.local().get(AssertionModule.ASSERT_COUNT_KEY));
     }
 
     private void onBreakpoint(
@@ -103,27 +102,18 @@ class AutoTest {
 
         if ("assert:DirectValue".equals(label)) {
             if (!(innerExpr instanceof DirectValue)) {
-                throw newException(statement, "Required DirectValue, at {}",
-                        statement.pos());
+                throw new ScriptRuntimeException("Required DirectValue, at {}"
+                        + statement.position(), statement);
             }
         } else if ("assert:NotDirectValue".equals(label)) {
             if (innerExpr instanceof DirectValue) {
-                throw newException(statement, "Required No-DirectValue, at {}:{}",
-                        statement.pos()
-                );
+                throw new ScriptRuntimeException("Required No-DirectValue, at "
+                        + statement.position(), statement);
             }
         } else {
-            throw newException(statement, "Not handled break point: {}, at {}:{}", label,
-                    statement.pos()
-            );
+            throw new ScriptRuntimeException("Not handled break point: " + label + ", at "
+                    + statement.position(), statement);
         }
-    }
-
-    private static ScriptRuntimeException newException(
-            Statement statement, String message, @Nullable Object... args) {
-        return new ScriptRuntimeException(
-                StringUtils.format(message, args),
-                statement);
     }
 
 }

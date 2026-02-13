@@ -3,8 +3,8 @@ package org.febit.wit.core;
 
 import org.jspecify.annotations.Nullable;
 import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.lang.TextPosition;
-import org.febit.wit.lang.Resource;
+import org.febit.wit.runtime.TextPosition;
+import org.febit.wit.runtime.Resource;
 import org.febit.wit.util.LexerCharArrayWriter;
 
 import java.util.ArrayDeque;

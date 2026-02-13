@@ -1,6 +1,6 @@
 package org.febit.wit.loaders;
 
-import org.febit.wit.lang.Resource;
+import org.febit.wit.runtime.Resource;
 import org.jspecify.annotations.Nullable;
 
 public interface LoaderDecorator extends Loader {

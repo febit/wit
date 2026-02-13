@@ -3,9 +3,9 @@ package org.febit.wit.extern.servlet;
 
 import jakarta.servlet.ServletContext;
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.lang.Resource;
 import org.febit.wit.loaders.BasicPathLoader;
 import org.febit.wit.loaders.impl.FileSystemResource;
+import org.febit.wit.runtime.Resource;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;

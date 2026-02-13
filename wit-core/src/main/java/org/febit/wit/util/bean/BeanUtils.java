@@ -25,7 +25,7 @@ public class BeanUtils {
         if (getter != null) {
             return getter.get(bean);
         }
-        throw new BeanException("Unable to get getter for {}#{}", bean.getClass(), name);
+        throw new BeanException("Unable to get getter for " + bean.getClass() + "#" + name);
     }
 
     public static void set(Object bean, String name, @Nullable Object value) throws BeanException {
@@ -34,7 +34,7 @@ public class BeanUtils {
             setter.set(bean, value);
             return;
         }
-        throw new BeanException("Unable to get setter for {}#{}", bean.getClass(), name);
+        throw new BeanException("Unable to get setter for " + bean.getClass() + "#" + name);
     }
 
     private static Accessor getAccessor(Class<?> cls, String name) throws BeanException {
@@ -46,7 +46,7 @@ public class BeanUtils {
         if (accessor != null) {
             return accessor;
         }
-        throw new BeanException("Unable to get field: {}#{}", cls, name);
+        throw new BeanException("Unable to get field: " + cls + "#" + name);
     }
 
     private static Map<String, Accessor> resolveAccessors(Class<?> cls) {

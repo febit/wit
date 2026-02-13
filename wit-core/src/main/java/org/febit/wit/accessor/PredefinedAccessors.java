@@ -11,10 +11,10 @@ import org.febit.wit.accessor.impl.InternalVoidAccessor;
 import org.febit.wit.accessor.impl.IterGetter;
 import org.febit.wit.accessor.impl.MapAccessor;
 import org.febit.wit.accessor.impl.ObjectArrayAccessor;
-import org.febit.wit.lang.ALU;
-import org.febit.wit.lang.Bag;
-import org.febit.wit.lang.InternalVoid;
-import org.febit.wit.lang.Iter;
+import org.febit.wit.runtime.ALU;
+import org.febit.wit.runtime.Bag;
+import org.febit.wit.runtime.Iter;
+import org.febit.wit.runtime.Undefined;
 
 import java.util.Collection;
 import java.util.Map;
@@ -24,7 +24,7 @@ import java.util.Objects;
 public class PredefinedAccessors {
 
     public static void registerAll(AccessorConsumer consumer) {
-        consumer.accept(InternalVoid.class, new InternalVoidAccessor());
+        consumer.accept(Undefined.class, new InternalVoidAccessor());
         consumer.accept(CharSequence.class, new CharSequenceAccessor());
 
         forArrays(consumer);

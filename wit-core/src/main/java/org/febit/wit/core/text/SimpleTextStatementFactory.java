@@ -2,9 +2,9 @@
 package org.febit.wit.core.text;
 
 import org.febit.wit.Template;
-import org.febit.wit.lang.Position;
-import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ast.text.SimpleTextStatement;
+import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.text.SimpleTextStatement;
 
 public class SimpleTextStatementFactory extends ByteArrayTextStatementFactory {
 

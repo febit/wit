@@ -3,9 +3,9 @@ package org.febit.wit.core.text;
 
 import org.febit.wit.Template;
 import org.febit.wit.core.TextStatementFactory;
-import org.febit.wit.lang.Position;
-import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ast.text.CharArrayTextStatement;
+import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.text.CharArrayTextStatement;
 
 public class CharArrayTextStatementFactory implements TextStatementFactory {
 

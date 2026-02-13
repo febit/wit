@@ -3,7 +3,7 @@ package org.febit.wit.asm;
 
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.core.NativeFactory;
-import org.febit.wit.lang.FunctionDeclare;
+import org.febit.wit.runtime.FunctionDeclare;
 import org.febit.wit.security.NativeSecurity;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit_shaded.asm.ClassWriter;
@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 @Slf4j
 public class AsmNativeFactory extends NativeFactory {
 
-    private static final String[] FUNC_DECLARE = {"org/febit/wit/lang/FunctionDeclare"};
+    private static final String[] FUNC_DECLARE = {"org/febit/wit/runtime/FunctionDeclare"};
 
     public AsmNativeFactory(NativeSecurity security) {
         super(security);
@@ -108,8 +108,8 @@ public class AsmNativeFactory extends NativeFactory {
         }
 
         var paramTypesLen = paramTypes.length;
-        var m = classWriter.visitMethod(Constants.ACC_PUBLIC, "invoke",
-                "(Lorg/febit/wit/InternalContext;[Ljava/lang/Object;)Ljava/lang/Object;", null);
+        var m = classWriter.visitMethod(Constants.ACC_PUBLIC, "apply",
+                "(Lorg/febit/wit/runtime/InternalContext;[Ljava/lang/Object;)Ljava/lang/Object;", null);
 
         if (paramTypesLen == 0) {
             if (isStatic) {

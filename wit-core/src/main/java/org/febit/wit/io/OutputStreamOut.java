@@ -3,10 +3,10 @@ package org.febit.wit.io;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.febit.wit.Out;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.Encoder;
-import org.febit.wit.lang.Out;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -1,7 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.exceptions;
 
-import org.febit.wit.lang.ast.Statement;
+import org.febit.wit.runtime.ast.Statement;
 
 import java.util.ArrayList;
 import java.util.Collections;

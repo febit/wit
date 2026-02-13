@@ -5,48 +5,47 @@ import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Engine;
 import org.febit.wit.Feature;
 import org.febit.wit.Template;
-import org.febit.wit.core.VariantManager.VarAddress;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.UncheckedException;
-import org.febit.wit.lang.ALU;
-import org.febit.wit.lang.Ast;
-import org.febit.wit.lang.AstUtils;
-import org.febit.wit.lang.FunctionDeclare;
-import org.febit.wit.lang.LoopMeta;
-import org.febit.wit.lang.Position;
-import org.febit.wit.lang.TextPosition;
-import org.febit.wit.lang.ast.AssignableExpression;
-import org.febit.wit.lang.ast.Expression;
-import org.febit.wit.lang.ast.IBlock;
-import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ast.TemplateAST;
-import org.febit.wit.lang.ast.expr.AssignableSuppliedValue;
-import org.febit.wit.lang.ast.expr.BreakpointExpr;
-import org.febit.wit.lang.ast.expr.ContextVar;
-import org.febit.wit.lang.ast.expr.DirectValue;
-import org.febit.wit.lang.ast.expr.FunctionCallExpr;
-import org.febit.wit.lang.ast.expr.JavaStaticFieldExpr;
-import org.febit.wit.lang.ast.expr.NewMapExpr;
-import org.febit.wit.lang.ast.expr.ScopedContextVar;
-import org.febit.wit.lang.ast.oper.And;
-import org.febit.wit.lang.ast.oper.Assign;
-import org.febit.wit.lang.ast.oper.ConstableBiOperator;
-import org.febit.wit.lang.ast.oper.ConstableUnaryOperator;
-import org.febit.wit.lang.ast.oper.GroupAssign;
-import org.febit.wit.lang.ast.oper.IntStep;
-import org.febit.wit.lang.ast.oper.Or;
-import org.febit.wit.lang.ast.oper.SelfOperator;
-import org.febit.wit.lang.ast.stat.Block;
-import org.febit.wit.lang.ast.stat.BlockNoLoops;
-import org.febit.wit.lang.ast.stat.BreakpointStatement;
-import org.febit.wit.lang.ast.stat.If;
-import org.febit.wit.lang.ast.stat.IfElse;
-import org.febit.wit.lang.ast.stat.IfNot;
-import org.febit.wit.lang.ast.stat.Interpolation;
-import org.febit.wit.lang.ast.stat.NoopStatement;
-import org.febit.wit.lang.ast.stat.StatementGroup;
-import org.febit.wit.lang.ast.stat.TryPart;
-import org.febit.wit.lang.extra.ast.DynamicNativeMethodCallExpr;
+import org.febit.wit.runtime.ALU;
+import org.febit.wit.runtime.Ast;
+import org.febit.wit.runtime.AstUtils;
+import org.febit.wit.runtime.FunctionDeclare;
+import org.febit.wit.runtime.LoopFlag;
+import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.TextPosition;
+import org.febit.wit.runtime.ast.AssignableExpression;
+import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.IBlock;
+import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.TemplateAST;
+import org.febit.wit.runtime.ast.expr.AssignableSuppliedValue;
+import org.febit.wit.runtime.ast.expr.BreakpointExpr;
+import org.febit.wit.runtime.ast.expr.ContextUpstreamVar;
+import org.febit.wit.runtime.ast.expr.ContextVar;
+import org.febit.wit.runtime.ast.expr.DirectValue;
+import org.febit.wit.runtime.ast.expr.FunctionCallExpr;
+import org.febit.wit.runtime.ast.expr.JavaStaticFieldExpr;
+import org.febit.wit.runtime.ast.expr.NewMapExpr;
+import org.febit.wit.runtime.ast.oper.And;
+import org.febit.wit.runtime.ast.oper.Assign;
+import org.febit.wit.runtime.ast.oper.ConstableBiOperator;
+import org.febit.wit.runtime.ast.oper.ConstableUnaryOperator;
+import org.febit.wit.runtime.ast.oper.GroupAssign;
+import org.febit.wit.runtime.ast.oper.IntStep;
+import org.febit.wit.runtime.ast.oper.Or;
+import org.febit.wit.runtime.ast.oper.SelfOperator;
+import org.febit.wit.runtime.ast.stat.Block;
+import org.febit.wit.runtime.ast.stat.BlockWithoutLoops;
+import org.febit.wit.runtime.ast.stat.BreakpointStatement;
+import org.febit.wit.runtime.ast.stat.If;
+import org.febit.wit.runtime.ast.stat.IfElse;
+import org.febit.wit.runtime.ast.stat.IfNot;
+import org.febit.wit.runtime.ast.stat.Interpolation;
+import org.febit.wit.runtime.ast.stat.NoopStatement;
+import org.febit.wit.runtime.ast.stat.StatementGroup;
+import org.febit.wit.runtime.ast.stat.TryPart;
+import org.febit.wit.runtime.extra.ast.DynamicNativeMethodCallExpr;
 import org.febit.wit.util.ClassNameRope;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.Stack;
@@ -601,12 +600,12 @@ abstract class AbstractParser {
     }
 
     Expression createBreakpointExpression(@Nullable Expression labelExpr, Expression expr, Position position) {
-        var label = labelExpr == null ? null : AstUtils.calcConst(labelExpr);
+        var label = labelExpr == null ? null : AstUtils.evalConst(labelExpr);
         return new BreakpointExpr(label, expr, position);
     }
 
     Statement createBreakpointStatement(@Nullable Expression labelExpr, @Nullable Statement statement, Position position) {
-        var label = labelExpr == null ? null : AstUtils.calcConst(labelExpr);
+        var label = labelExpr == null ? null : AstUtils.evalConst(labelExpr);
         return new BreakpointStatement(label, statement, position);
     }
 
@@ -618,7 +617,7 @@ abstract class AbstractParser {
     }
 
     ContextVar declareVarAndCreateContextValue(String name, Position position) {
-        return new ContextVar(varmgr.assignVariant(name, position), position);
+        return new ContextVar(varmgr.assignVar(name, position), position);
     }
 
     ContextVar[] declareVarAndCreateContextValues(List<String> names, Position position) {
@@ -649,32 +648,29 @@ abstract class AbstractParser {
         return Ast.directValue(sym.pos, sym.value);
     }
 
-    AssignableSuppliedValue createSupplierVarExpr(String name, Position position) {
-        var mgr = this.engine.globalHeap();
-        return new AssignableSuppliedValue(() -> mgr.getGlobal(name), v -> mgr.setGlobal(name, v), position);
-    }
-
     Expression createContextValue(VarAddress addr, Position position) {
-        return switch (addr.type) {
-            case VarAddress.GLOBAL -> createSupplierVarExpr(addr.constValue.toString(), position);
-            case VarAddress.CONST -> new DirectValue(addr.constValue, position);
-            case VarAddress.SCOPE -> new ScopedContextVar(addr.scopeOffset, addr.index, position);
-            case VarAddress.CONTEXT -> new ContextVar(addr.index, position);
-            default -> throw new IllegalStateException("Unknown VarAddress type: " + addr.type);
+        return switch (addr.kind()) {
+            case CONST -> new DirectValue(addr.constValue(), position);
+            case UPSTREAM -> new ContextUpstreamVar(addr.pageOffset(), addr.index(), position);
+            case CONTEXT -> new ContextVar(addr.index(), position);
+            case GLOBAL -> {
+                if (!(addr.constValue() instanceof String name)) {
+                    throw new ParseException("Global variable name must be a string.", position);
+                }
+                yield AssignableSuppliedValue.ofGlobal(
+                        this.engine.globalHeap(), name, position
+                );
+            }
         };
     }
 
-    Expression createContextValueAtUpstair(int upstair, String name, Position position) {
-        return createContextValue(varmgr.locateAtUpstair(name, upstair, position), position);
-    }
-
-    Expression createContextValue(int upstair, String name, Position position) {
-        var addr = varmgr.locate(name, upstair, !engine.isEnabled(Feature.LOOSE_VAR), position);
+    Expression createContextValue(int frameOffset, String name, Position position) {
+        var addr = varmgr.locate(name, frameOffset, !engine.isEnabled(Feature.LOOSE_VAR), position);
         return createContextValue(addr, position);
     }
 
     void assignConst(String name, Expression expr, Position position) {
-        varmgr.assignConst(name, AstUtils.calcConst(expr), position);
+        varmgr.assignConst(name, AstUtils.evalConst(expr), position);
     }
 
     Statement createInterpolation(final Expression expr) {
@@ -753,7 +749,7 @@ abstract class AbstractParser {
 
     Statement declareVar(String ident, Position position) {
         //XXX: Should Check var used before init
-        varmgr.assignVariant(ident, position);
+        varmgr.assignVar(ident, position);
         return NoopStatement.INSTANCE;
     }
 
@@ -775,7 +771,7 @@ abstract class AbstractParser {
     }
 
     Statement createStatementGroup(List<Statement> list, Position position) {
-        return new StatementGroup(AstUtils.toStatementArray(list), position);
+        return new StatementGroup(AstUtils.flatStatements(list), position);
     }
 
     Expression createMethodExecute(Expression funcExpr, Expression[] paramExprs, Position position) {
@@ -784,28 +780,28 @@ abstract class AbstractParser {
         return new FunctionCallExpr(funcExpr, paramExprs, position);
     }
 
-    Expression createDynamicNativeMethodExecute(Expression thisExpr, String func,
-                                                Expression[] paramExprs, Position position) {
+    Expression createDynamicNativeMethodExecute(
+            Expression thisExpr, String func, Expression[] paramExprs, Position position) {
         AstUtils.optimize(paramExprs);
         thisExpr = AstUtils.optimize(thisExpr);
         return new DynamicNativeMethodCallExpr(thisExpr, func, paramExprs, position);
     }
 
     TemplateAST createTemplateAST(List<Statement> list) {
-        var statements = AstUtils.toStatementArray(list);
-        var loops = AstUtils.collectPossibleLoops(statements);
+        var statements = AstUtils.flatStatements(list);
+        var loops = AstUtils.collectLoopFlags(statements);
         if (!loops.isEmpty()) {
             throw new ParseException("loop overflow: " + StringUtils.join(loops, ','));
         }
-        return new TemplateAST(varmgr.getIndexers(), statements, varmgr.getVarCount(), this.lastResourceVersion);
+        return new TemplateAST(varmgr.constructIndexers(), statements, varmgr.varCounter(), this.lastResourceVersion);
     }
 
-    IBlock createIBlock(@Nullable List<Statement> list, int varIndexer, Position position) {
-        var statements = AstUtils.toStatementArray(list);
-        var loops = AstUtils.collectPossibleLoops(statements);
+    IBlock createBlock(@Nullable List<Statement> list, int varIndexer, Position position) {
+        var statements = AstUtils.flatStatements(list);
+        var loops = AstUtils.collectLoopFlags(statements);
         return loops.isEmpty()
-                ? new BlockNoLoops(varIndexer, statements, position)
-                : new Block(varIndexer, statements, loops.toArray(new LoopMeta[0]), position);
+                ? new BlockWithoutLoops(varIndexer, statements, position)
+                : new Block(varIndexer, statements, loops.toArray(new LoopFlag[0]), position);
     }
 
     AssignableExpression castToAssignableExpression(Expression expr) {
@@ -816,7 +812,7 @@ abstract class AbstractParser {
     }
 
     TryPart createTryPart(List<Statement> list, int varIndexer, Position position) {
-        return new TryPart(createIBlock(list, varIndexer, position), position);
+        return new TryPart(createBlock(list, varIndexer, position), position);
     }
 
     Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, Position position) {

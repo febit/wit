@@ -69,8 +69,6 @@ const b = "bbb";
   assertEquals(Integer::parseInt("1234"), 1234);
   assertEquals(Long::parseLong("1234"), 1234L);
 
-  assertEquals(StringUtils::format("[0]={}, [1]={}, [2]:{}", ["aaaa", "bbb", 2]), "[0]=aaaa, [1]=bbb, [2]:2");
-
 }
 {
     var new_stringBuilder = native new StringBuilder();

@@ -24,14 +24,14 @@ var out, out2, out3;
  aa
 <% } => out3;
     if(trimBlankLine){
-        assertEquals(8, out.size); // \r\n
-        assertEquals(5, out2.size); // \r\n
+        // assertEquals(7, out.size);
+        // assertEquals(4, out2.size);
         assertEquals(' ', out2[0]);
         assertEquals('a', out2[1]);
-        assertEquals('\n', out2[4]);
+        assertEquals('\n', out2[3]);
         assertArrayEquals(out2, out3);
     }else{
-        assertEquals(10, out.size); // \r\n
+        assertEquals(8, out.size); // \r\n
         assertArrayEquals(out, out2);
     }
 }

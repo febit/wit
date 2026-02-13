@@ -1,8 +1,8 @@
 package org.febit.wit.loaders;
 
 import lombok.Setter;
-import org.febit.wit.lang.Resource;
 import org.febit.wit.loaders.impl.DebouncedResource;
+import org.febit.wit.runtime.Resource;
 import org.junit.jupiter.api.Test;
 
 import java.io.Reader;

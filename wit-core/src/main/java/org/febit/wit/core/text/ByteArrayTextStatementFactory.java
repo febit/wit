@@ -5,9 +5,9 @@ import org.febit.wit.Template;
 import org.febit.wit.core.TextStatementFactory;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.codec.Encoder;
-import org.febit.wit.lang.Position;
-import org.febit.wit.lang.ast.Statement;
-import org.febit.wit.lang.ast.text.ByteArrayTextStatement;
+import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.text.ByteArrayTextStatement;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.util;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.febit.wit.util.bean.BeanUtils;
 import org.junit.jupiter.api.Test;
 
@@ -8,30 +10,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BeanUtilsTest {
 
+    @SuppressWarnings("unused")
     public class Foo {
 
         public String public0 = "public0";
         public final String public1 = "public1";
         public String public2 = "public2";
+        @Getter
+        @Setter
         private String private0 = "private0";
+        @Setter
         private Class<?> private1 = String.class;
+        @Setter
+        @Getter
         private boolean bool = false;
-
-        public String getPrivate0() {
-            return private0;
-        }
-
-        public void setPrivate0(String private0) {
-            this.private0 = private0;
-        }
-
-        public Class<?> getPrivate1() {
-            return private1;
-        }
-
-        public void setPrivate1(Class<?> private1) {
-            this.private1 = private1;
-        }
 
         public void setPublic2(String public2) {
             this.public2 = "set:" + public2;
@@ -41,13 +33,6 @@ class BeanUtilsTest {
             return "get:" + public2;
         }
 
-        public boolean isBool() {
-            return bool;
-        }
-
-        public void setBool(boolean bool) {
-            this.bool = bool;
-        }
     }
 
     @Test

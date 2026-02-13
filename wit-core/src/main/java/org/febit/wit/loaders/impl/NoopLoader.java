@@ -1,7 +1,7 @@
 package org.febit.wit.loaders.impl;
 
-import org.febit.wit.lang.Resource;
 import org.febit.wit.loaders.Loader;
+import org.febit.wit.runtime.Resource;
 import org.jspecify.annotations.Nullable;
 
 /**

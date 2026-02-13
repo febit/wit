@@ -6,7 +6,7 @@ import org.febit.wit.Engine;
 import org.febit.wit.EnginePlugin;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exceptions.UncheckedException;
-import org.febit.wit.lang.FunctionDeclare;
+import org.febit.wit.runtime.FunctionDeclare;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.PathUtils;
 

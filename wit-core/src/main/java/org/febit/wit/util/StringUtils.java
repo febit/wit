@@ -19,7 +19,7 @@ public class StringUtils {
                 || list.isEmpty()) {
             return "";
         }
-        final StringBuilder buf = new StringBuilder();
+        var buf = new StringBuilder();
         for (Object item : list) {
             buf.append(item)
                     .append(separator);
@@ -45,8 +45,8 @@ public class StringUtils {
             return ArrayUtils.emptyStrings();
         }
 
-        final char[] srcChars = src.toCharArray();
-        final int len = srcChars.length;
+        var srcChars = src.toCharArray();
+        var len = srcChars.length;
 
         List<String> list = new ArrayList<>(len > 1024 ? 64 : 16);
 
@@ -77,58 +77,5 @@ public class StringUtils {
         return list.isEmpty()
                 ? ArrayUtils.emptyStrings()
                 : list.toArray(new String[0]);
-    }
-
-    @SuppressWarnings({
-            "squid:S135", // Loops should not contain more than a single "break" or "continue" statement
-            "squid:S3776" // Cognitive Complexity of methods should not be too high
-    })
-    public static String format(String template, @Nullable Object @Nullable ... args) {
-        if (template.indexOf('{') < 0) {
-            return template;
-        }
-        var buf = new StringBuilder(template.length());
-        int len = template.length();
-        int argsSize = args != null ? args.length : 0;
-        int i = 0;
-        int currentIndex = 0;
-        int index;
-        while (i < len) {
-            int ndx = template.indexOf('{', i);
-            if (ndx == -1) {
-                buf.append(i == 0 ? template : template.substring(i));
-                break;
-            }
-            int j = ndx - 1;
-            while (j >= 0
-                    && template.charAt(j) == '\\') {
-                j--;
-            }
-            int escapeCharCount = ndx - 1 - j;
-            buf.append(template, i, escapeCharCount > 0
-                    ? ndx - ((escapeCharCount + 1) >> 1)
-                    : ndx);
-            if ((escapeCharCount & 1) == 1) {
-                buf.append('{');
-                i = ndx + 1;
-                continue;
-            }
-            ndx += 1;
-            int ndxEnd = template.indexOf('}', ndx);
-            if (ndxEnd == -1) {
-                throw new IllegalArgumentException("Invalid message, unclosed macro at: " + (ndx - 1));
-            }
-            index = ndx == ndxEnd
-                    ? currentIndex++
-                    : Integer.parseInt(template.substring(ndx, ndxEnd));
-
-            var arg = index < argsSize && index >= 0
-                    ? args[index] : null;
-            if (arg != null) {
-                buf.append(arg);
-            }
-            i = ndxEnd + 1;
-        }
-        return buf.toString();
     }
 }
