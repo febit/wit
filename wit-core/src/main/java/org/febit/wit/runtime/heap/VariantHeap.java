@@ -2,9 +2,9 @@ package org.febit.wit.runtime.heap;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.Context;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.runtime.FrameIndexer;
+import org.febit.wit.runtime.Heap;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiConsumer;
@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
  * Variables heap.
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class VariantHeap implements Context.Heap {
+public class VariantHeap implements Heap {
 
     private final @Nullable Object[] table;
     /**
@@ -90,12 +90,12 @@ public class VariantHeap implements Context.Heap {
 
     @Nullable
     @Override
-    public Object get(String name, boolean force) throws ScriptRuntimeException {
+    public Object get(String name, boolean strict) throws ScriptRuntimeException {
         int idx = currentIndexer().lookupUpstream(name);
         if (idx >= 0) {
             return this.table[idx];
         }
-        if (force) {
+        if (strict) {
             throw new ScriptRuntimeException("Not found variant named:" + name);
         }
         return null;

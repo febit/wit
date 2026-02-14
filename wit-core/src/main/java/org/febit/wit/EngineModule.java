@@ -2,7 +2,7 @@
 package org.febit.wit;
 
 @FunctionalInterface
-public interface EnginePlugin {
+public interface EngineModule {
 
     void apply(Engine engine);
 }

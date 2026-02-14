@@ -40,24 +40,25 @@ public final class DoWhile implements Statement, Loopable {
         var stats = this.statements;
         var myLabel = this.label;
         var condition = this.whileExpr;
+        var loop = context.loop();
         label:
         do {
             context.visitAndCheckLoop(stats);
-            if (context.loopKind().isNoop()) {
+            if (loop.isNoop()) {
                 continue;
             }
-            if (!context.matchLabel(myLabel)) {
+            if (!context.loop().isTargetLabel(myLabel)) {
                 break; //while
             }
-            switch (context.loopKind()) {
+            switch (loop.kind()) {
                 case BREAK:
-                    context.resetLoop();
+                    context.loop().reset();
                     break label; // while
                 case RETURN:
                     //can't deal
                     break label; //while
                 case CONTINUE:
-                    context.resetLoop();
+                    context.loop().reset();
                     break; //switch
                 default:
                     break label; //while

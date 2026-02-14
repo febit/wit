@@ -27,9 +27,10 @@ public final class Return implements Statement, Loopable {
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.returnLoop(expr != null
+        var result = expr != null
                 ? expr.execute(context)
-                : Undefined.UNDEFINED);
+                : Undefined.UNDEFINED;
+        context.loop().toReturn(result);
         return null;
     }
 

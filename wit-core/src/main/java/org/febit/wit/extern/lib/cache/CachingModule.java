@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.extern.lib.cache;
 
-import org.febit.wit.GlobalHeapRegister;
+import org.febit.wit.Engine;
+import org.febit.wit.EngineModule;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.io.WriterOut;
 import org.febit.wit.runtime.FunctionDeclare;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
-import org.febit.wit.runtime.heap.GlobalHeap;
 import org.febit.wit.util.ArrayUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -20,7 +20,7 @@ import java.util.Arrays;
 @lombok.Builder(
         builderClassName = "Builder"
 )
-public class CachingModule implements GlobalHeapRegister {
+public class CachingModule implements EngineModule {
 
     public static final String DEFAULT_NAME = "cache";
 
@@ -36,13 +36,14 @@ public class CachingModule implements GlobalHeapRegister {
     private final Cache<Object, CachingEntry> using;
 
     @Override
-    public void register(GlobalHeap heap) {
-        heap.setConstMethod(name, this::doPut);
+    public void apply(Engine engine) {
+        var heap = engine.staticHeaps().constant();
+        heap.setFunction(name, this::doPut);
         if (withRemove) {
-            heap.setConstMethod(name + "_remove", this::doRemove);
+            heap.setFunction(name + "_remove", this::doRemove);
         }
         if (withClear) {
-            heap.setConstMethod(name + "_clear", this::doClear);
+            heap.setFunction(name + "_clear", this::doClear);
         }
     }
 

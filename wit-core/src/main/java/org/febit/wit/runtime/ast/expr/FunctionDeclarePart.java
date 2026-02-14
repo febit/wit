@@ -21,24 +21,24 @@ public class FunctionDeclarePart {
     private final Position position;
     private final int assignToIndex;
     private final int assignVariantStart;
-    private final VariantManager varmgr;
+    private final VariantManager variants;
     private final List<ArgumentInfo> args;
 
-    public FunctionDeclarePart(String assignTo, VariantManager varmgr, Position position) {
-        this(varmgr.assignVar(assignTo, position), varmgr, position);
+    public FunctionDeclarePart(String assignTo, VariantManager variants, Position position) {
+        this(variants.assignVar(assignTo, position), variants, position);
     }
 
-    public FunctionDeclarePart(VariantManager varmgr, Position position) {
-        this(-1, varmgr, position);
+    public FunctionDeclarePart(VariantManager variants, Position position) {
+        this(-1, variants, position);
     }
 
-    protected FunctionDeclarePart(int assignToIndex, VariantManager varmgr, Position position) {
+    protected FunctionDeclarePart(int assignToIndex, VariantManager variants, Position position) {
         this.position = position;
-        this.varmgr = varmgr;
+        this.variants = variants;
         this.assignToIndex = assignToIndex;
         this.args = new ArrayList<>();
-        varmgr.shiftPage();
-        assignVariantStart = varmgr.assignVar("arguments", position);
+        variants.shiftPage();
+        assignVariantStart = variants.assignVar("arguments", position);
     }
 
     public record ArgumentInfo(
@@ -63,7 +63,7 @@ public class FunctionDeclarePart {
     }
 
     public FunctionDeclarePart appendArg(ArgumentInfo info) {
-        if (varmgr.assignVar(info.name, position) != (assignVariantStart + (this.args.size() + 1))) {
+        if (variants.assignVar(info.name, position) != (assignVariantStart + (this.args.size() + 1))) {
             throw new ParseException("Failed to assign vars!");
         }
         this.args.add(info);
@@ -101,9 +101,9 @@ public class FunctionDeclarePart {
     }
 
     protected FunctionDeclareExpr popFunctionDeclare(Statement[] statements) {
-        var indexers = varmgr.constructIndexers();
-        int varSize = varmgr.varCounter();
-        varmgr.unshiftPage();
+        var indexers = variants.constructIndexers();
+        int frameSize = variants.varCounter();
+        variants.unshiftPage();
         boolean hasReturnLoops = false;
 
         List<LoopFlag> overflowLoops = new ArrayList<>();
@@ -119,14 +119,13 @@ public class FunctionDeclarePart {
                     + StringUtils.join(overflowLoops, ','));
         }
 
-        @Nullable
-        Object[] argDefaults = new Object[this.args.size()];
+        var argDefaults = new Object[this.args.size()];
         for (int i = 0; i < argDefaults.length; i++) {
             argDefaults[i] = this.args.get(i).defaultValue;
         }
 
         return new FunctionDeclareExpr(argDefaults,
-                varSize,
+                frameSize,
                 indexers,
                 statements,
                 assignVariantStart,

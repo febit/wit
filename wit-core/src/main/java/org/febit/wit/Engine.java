@@ -12,7 +12,7 @@ import org.febit.wit.core.TextStatementFactory;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.loaders.Loader;
-import org.febit.wit.runtime.heap.GlobalHeap;
+import org.febit.wit.runtime.heap.StaticHeaps;
 import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.Charset;
@@ -36,7 +36,7 @@ public class Engine {
     private final ConcurrentMap<String, Template> cachedTemplates = new ConcurrentHashMap<>();
 
     @Getter
-    private final GlobalHeap globalHeap = new GlobalHeap();
+    private final StaticHeaps staticHeaps = new StaticHeaps();
 
     @Getter
     private final int features;

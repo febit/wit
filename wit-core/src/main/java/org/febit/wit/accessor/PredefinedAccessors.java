@@ -2,17 +2,17 @@
 package org.febit.wit.accessor;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.accessor.impl.BagAccessor;
 import org.febit.wit.accessor.impl.ByteArrayRender;
 import org.febit.wit.accessor.impl.CharArrayRender;
 import org.febit.wit.accessor.impl.CharSequenceAccessor;
 import org.febit.wit.accessor.impl.CollectionAccessor;
+import org.febit.wit.accessor.impl.HeapAccessor;
 import org.febit.wit.accessor.impl.InternalVoidAccessor;
 import org.febit.wit.accessor.impl.IterGetter;
 import org.febit.wit.accessor.impl.MapAccessor;
 import org.febit.wit.accessor.impl.ObjectArrayAccessor;
 import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.Bag;
+import org.febit.wit.runtime.Heap;
 import org.febit.wit.runtime.Iter;
 import org.febit.wit.runtime.Undefined;
 
@@ -29,7 +29,7 @@ public class PredefinedAccessors {
 
         forArrays(consumer);
 
-        consumer.accept(Bag.class, new BagAccessor());
+        consumer.accept(Heap.class, new HeapAccessor());
         consumer.accept(Iter.class, new IterGetter());
 
         consumer.accept(Collection.class, new CollectionAccessor<>());

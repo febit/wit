@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
 public final class FunctionDeclareExpr implements Expression {
 
     private final Object[] argDefaults;
-    private final int varSize;
+    private final int frameSize;
     private final FrameIndexer[] indexers;
     private final Statement[] statements;
     private final int start;
@@ -28,7 +28,7 @@ public final class FunctionDeclareExpr implements Expression {
 
     @Override
     public FunctionFunctionDeclare execute(InternalContext context) {
-        return new FunctionFunctionDeclare(this, context, indexers, this.varSize);
+        return new FunctionFunctionDeclare(this, context, indexers, this.frameSize);
     }
 
     @Nullable
@@ -36,7 +36,10 @@ public final class FunctionDeclareExpr implements Expression {
         fillArgs(context, args);
         if (hasReturnLoops) {
             context.visitAndCheckLoop(statements);
-            return context.resetReturnLoop();
+            var loop = context.loop();
+            var returned = loop.returned();
+            loop.reset();
+            return returned;
         } else {
             context.visit(statements);
             return Undefined.UNDEFINED;

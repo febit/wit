@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ScriptRuntimeException extends TemplateException {
 
-    protected final List<Statement> statementStack = new ArrayList<>(8);
+    private final List<Statement> statementStack = new ArrayList<>(8);
 
     public ScriptRuntimeException(String message) {
         super(message);

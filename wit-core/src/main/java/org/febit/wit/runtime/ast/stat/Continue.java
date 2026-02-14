@@ -24,7 +24,7 @@ public final class Continue implements Statement, Loopable {
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.continueLoop(label);
+        context.loop().toContinue(label);
         return null;
     }
 

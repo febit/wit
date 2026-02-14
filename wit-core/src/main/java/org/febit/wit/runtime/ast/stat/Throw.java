@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 @RequiredArgsConstructor
 public class Throw implements Statement {
 
-    protected final Expression expr;
+    private final Expression expr;
     @Getter
     private final Position position;
 

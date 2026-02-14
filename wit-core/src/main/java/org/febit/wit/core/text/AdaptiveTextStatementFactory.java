@@ -4,12 +4,12 @@ package org.febit.wit.core.text;
 import org.febit.wit.Template;
 import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.text.SimpleTextStatement;
+import org.febit.wit.runtime.ast.text.AdaptiveTextStatement;
 
-public class SimpleTextStatementFactory extends ByteArrayTextStatementFactory {
+public class AdaptiveTextStatementFactory extends ByteArrayTextStatementFactory {
 
     @Override
     public Statement create(Template template, char[] text, Position position) {
-        return new SimpleTextStatement(text, encode(text), template.engine().charset(), position);
+        return new AdaptiveTextStatement(text, encode(text), template.engine().charset(), position);
     }
 }

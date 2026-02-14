@@ -14,8 +14,8 @@ import java.io.IOException;
 
 public class ByteArrayTextStatementFactory implements TextStatementFactory {
 
-    protected final ThreadLocal<Encoder> encoders = new ThreadLocal<>();
-    protected final ThreadLocal<ByteArrayOutputStream> outputs = new ThreadLocal<>();
+    private final ThreadLocal<Encoder> encoders = new ThreadLocal<>();
+    private final ThreadLocal<ByteArrayOutputStream> outputs = new ThreadLocal<>();
 
     @Override
     public void onParserStarted(Template template) {

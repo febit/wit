@@ -21,7 +21,7 @@ public class ConstableBiOperator implements Expression {
     private final Expression leftExpr;
     private final Expression rightExpr;
 
-    protected final BinaryOperator<@Nullable Object> op;
+    private final BinaryOperator<@Nullable Object> op;
 
     @Getter
     private final Position position;

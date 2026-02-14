@@ -8,7 +8,7 @@ import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.runtime.FrameIndexer;
 import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.TextPosition;
-import org.febit.wit.runtime.heap.GlobalHeap;
+import org.febit.wit.runtime.heap.StaticHeaps;
 import org.febit.wit.util.ArrayUtils;
 import org.febit.wit.util.Stack;
 import org.jspecify.annotations.Nullable;
@@ -26,7 +26,7 @@ public class VariantManager {
     private final Stack<Frame> frameStack = new Stack<>();
     private final Stack<Integer> pageVarCounterStack = new Stack<>();
 
-    private final GlobalHeap global;
+    private final StaticHeaps staticHeaps;
     private final Frame root;
 
     @Getter
@@ -34,7 +34,7 @@ public class VariantManager {
     private int pageCounter;
 
     VariantManager(Engine engine) {
-        this.global = engine.globalHeap();
+        this.staticHeaps = engine.staticHeaps();
         this.root = shiftFrame(-1);
         this.root.assignVarsIfAbsent(engine.predefinedVars());
     }
@@ -106,12 +106,12 @@ public class VariantManager {
             }
         }
 
-        //global var/const
-        if (global.hasGlobal(name)) {
-            return VarAddress.ofGlobal(name);
+        // static var/const
+        if (staticHeaps.variant().has(name)) {
+            return VarAddress.ofStaticVar(name);
         }
-        if (global.hasConst(name)) {
-            return VarAddress.ofConst(global.getConst(name));
+        if (staticHeaps.constant().has(name)) {
+            return VarAddress.ofConst(staticHeaps.constant().get(name));
         }
 
         //failed

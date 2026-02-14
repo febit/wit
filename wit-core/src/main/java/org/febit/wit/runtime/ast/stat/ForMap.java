@@ -69,6 +69,7 @@ public final class ForMap implements Statement, Loopable {
         var myLabel = this.label;
         var keyIdx = this.keyIndex;
         var valIdx = this.valueIndex;
+        var loop = context.loop();
         var heap = context.heap();
         heap.set(iterIndex, iter);
         label:
@@ -78,21 +79,21 @@ public final class ForMap implements Statement, Loopable {
                     valIdx, iter.value()
             );
             context.visitAndCheckLoop(stats);
-            if (context.loopKind().isNoop()) {
+            if (loop.isNoop()) {
                 continue;
             }
-            if (!context.matchLabel(myLabel)) {
+            if (!context.loop().isTargetLabel(myLabel)) {
                 break; //while
             }
-            switch (context.loopKind()) {
+            switch (loop.kind()) {
                 case BREAK:
-                    context.resetLoop();
+                    context.loop().reset();
                     break label; // while
                 case RETURN:
                     //can't deal
                     break label; //while
                 case CONTINUE:
-                    context.resetLoop();
+                    context.loop().reset();
                     break; //switch
                 default:
                     break label; //while

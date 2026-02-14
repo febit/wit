@@ -3,7 +3,7 @@ package org.febit.wit.extern.lib.tld;
 
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Engine;
-import org.febit.wit.EnginePlugin;
+import org.febit.wit.EngineModule;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.runtime.FunctionDeclare;
@@ -18,7 +18,7 @@ import java.util.List;
 @lombok.Builder(
         builderClassName = "Builder"
 )
-public class TldModule implements EnginePlugin {
+public class TldModule implements EngineModule {
 
     @lombok.NonNull
     @SuppressWarnings("NullableProblems")
@@ -31,7 +31,7 @@ public class TldModule implements EnginePlugin {
 
     @Override
     public void apply(Engine engine) {
-        var heap = engine.globalHeap();
+        var heaps = engine.staticHeaps();
         var nativeFactory = engine.nativeFactory();
 
         log.info("Load TLD file: {}", path);
@@ -48,7 +48,10 @@ public class TldModule implements EnginePlugin {
             throw new UncheckedException(e);
         }
         for (var func : functions) {
-            heap.setConst(this.prefix + func.name(), createFunction(nativeFactory, func));
+            heaps.constant().set(
+                    this.prefix + func.name(),
+                    createFunction(nativeFactory, func)
+            );
         }
     }
 

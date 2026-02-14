@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.ast.AssignableExpression;
-import org.febit.wit.runtime.heap.GlobalHeap;
+import org.febit.wit.runtime.heap.StaticHeaps;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -36,10 +36,10 @@ public final class AssignableSuppliedValue implements AssignableExpression {
         return value;
     }
 
-    public static AssignableSuppliedValue ofGlobal(GlobalHeap global, String name, Position position) {
+    public static AssignableSuppliedValue ofStatic(StaticHeaps.StaticHeap heap, String name, Position position) {
         return new AssignableSuppliedValue(
-                () -> global.getGlobal(name),
-                v -> global.setGlobal(name, v),
+                () -> heap.get(name),
+                v -> heap.set(name, v),
                 position
         );
     }

@@ -17,8 +17,8 @@ import org.febit.wit.loaders.Loaders;
 import org.febit.wit.loaders.impl.StringLoader;
 import org.febit.wit.security.RuleBasedNativeSecurity;
 import org.febit.wit.test.component.TestCasesModule;
-import org.febit.wit.test.component.TestConfigFlagEnginePlugin;
-import org.febit.wit.test.component.TestSpiFlagEnginePlugin;
+import org.febit.wit.test.component.TestConfigFlagEngineModule;
+import org.febit.wit.test.component.TestSpiFlagEngineModule;
 import org.junit.jupiter.api.function.Executable;
 
 import java.time.Duration;
@@ -69,21 +69,21 @@ public class EngineManager {
                     "request", "request2",
                     "session", "session2"
             )
-            .plugin(new AssertionModule())
-            .plugins(
+            .module(new AssertionModule())
+            .modules(
                     GlobalContextRegister.create(),
                     LocalContextRegister.create()
             )
-            .plugin(new TestCasesModule())
-            .plugin(new TestSpiFlagEnginePlugin())
-            .plugin(new TestConfigFlagEnginePlugin())
-            .plugin(CachingModule.builder()
+            .module(new TestCasesModule())
+            .module(new TestSpiFlagEngineModule())
+            .module(new TestConfigFlagEngineModule())
+            .module(CachingModule.builder()
                     .using(SimpleCache.ofLru(100))
                     .withClear(true)
                     .withRemove(true)
                     .build()
             )
-            .plugin(TldModule.builder()
+            .module(TldModule.builder()
                     .path("tld-test.tld")
                     .prefix("tld_")
                     .build())

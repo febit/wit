@@ -5,7 +5,7 @@ import org.febit.wit.accessor.Accessor;
 import org.febit.wit.accessor.DefaultAccessorFactory;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.core.TextStatementFactory;
-import org.febit.wit.core.text.SimpleTextStatementFactory;
+import org.febit.wit.core.text.AdaptiveTextStatementFactory;
 import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.DefaultCodecFactory;
@@ -32,7 +32,7 @@ public class EngineBuilder {
 
     private static final int FEATURE_DEFAULTS = Feature.collectFeatureDefaults();
 
-    private final List<EnginePlugin> plugins = new ArrayList<>();
+    private final List<EngineModule> modules = new ArrayList<>();
     private final List<String> initScripts = new ArrayList<>();
     private final Set<String> predefinedVars = new HashSet<>();
     private final DefaultAccessorFactory.Builder accessorFactory = DefaultAccessorFactory.builder();
@@ -41,7 +41,7 @@ public class EngineBuilder {
 
     private Charset charset = StandardCharsets.UTF_8;
     private CodecFactory codecFactory = new DefaultCodecFactory();
-    private TextStatementFactory textStatementFactory = new SimpleTextStatementFactory();
+    private TextStatementFactory textStatementFactory = new AdaptiveTextStatementFactory();
     private NativeFactory nativeFactory = new NativeFactory(new NoneNativeSecurity());
 
     @Nullable
@@ -117,17 +117,17 @@ public class EngineBuilder {
         return this;
     }
 
-    public EngineBuilder plugins(List<EnginePlugin> plugins) {
-        this.plugins.addAll(plugins);
+    public EngineBuilder modules(List<EngineModule> plugins) {
+        this.modules.addAll(plugins);
         return this;
     }
 
-    public EngineBuilder plugins(EnginePlugin... plugins) {
-        return plugins(Arrays.asList(plugins));
+    public EngineBuilder modules(EngineModule... plugins) {
+        return modules(Arrays.asList(plugins));
     }
 
-    public EngineBuilder plugin(EnginePlugin plugin) {
-        this.plugins.add(plugin);
+    public EngineBuilder module(EngineModule plugin) {
+        this.modules.add(plugin);
         return this;
     }
 
@@ -152,7 +152,7 @@ public class EngineBuilder {
                 .nativeFactory(nativeFactory)
                 .build();
 
-        for (var plugin : plugins) {
+        for (var plugin : modules) {
             plugin.apply(engine);
         }
         try {
@@ -177,14 +177,14 @@ public class EngineBuilder {
         log.info("[INIT] applying init scripts: total={}", flatten.size());
 
         var total = flatten.size();
-        var globalManager = engine.globalHeap();
+        var staticHeaps = engine.staticHeaps();
 
         for (int i = 0; i < total; i++) {
             var tmpl = flatten.get(i);
             log.info("[INIT] applying init scripts [{}/{}]: {}", i + 1, total, tmpl);
             engine.template(tmpl).merge(acceptor -> {
-                acceptor.set("GLOBAL", globalManager.getGlobalBag());
-                acceptor.set("CONST", globalManager.getConstBag());
+                acceptor.set("GLOBAL", staticHeaps.variant());
+                acceptor.set("CONST", staticHeaps.constant());
             });
         }
     }

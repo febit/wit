@@ -1,10 +1,10 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.extern.lib.test;
 
-import org.febit.wit.GlobalHeapRegister;
+import org.febit.wit.Engine;
+import org.febit.wit.EngineModule;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
-import org.febit.wit.runtime.heap.GlobalHeap;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Array;
@@ -12,20 +12,21 @@ import java.util.concurrent.atomic.LongAdder;
 
 import static org.febit.wit.util.ArrayUtils.get;
 
-public class AssertionModule implements GlobalHeapRegister {
+public class AssertionModule implements EngineModule {
 
     public static final String ASSERT_COUNT_KEY = "$$LIB_ASSERT_COUNT";
 
     @Override
-    public void register(final GlobalHeap heap) {
-        heap.setConstMethod("assertTrue", AssertionModule::assertTrue);
-        heap.setConstMethod("assertFalse", AssertionModule::assertFalse);
-        heap.setConstMethod("assertNull", AssertionModule::assertNull);
-        heap.setConstMethod("assertNotNull", AssertionModule::assertNotNull);
-        heap.setConstMethod("assertSame", AssertionModule::assertSame);
-        heap.setConstMethod("assertNotSame", AssertionModule::assertNotSame);
-        heap.setConstMethod("assertEquals", AssertionModule::assertEquals);
-        heap.setConstMethod("assertArrayEquals", AssertionModule::assertArrayEquals);
+    public void apply(Engine engine) {
+        var heap = engine.staticHeaps().constant();
+        heap.setFunction("assertTrue", AssertionModule::assertTrue);
+        heap.setFunction("assertFalse", AssertionModule::assertFalse);
+        heap.setFunction("assertNull", AssertionModule::assertNull);
+        heap.setFunction("assertNotNull", AssertionModule::assertNotNull);
+        heap.setFunction("assertSame", AssertionModule::assertSame);
+        heap.setFunction("assertNotSame", AssertionModule::assertNotSame);
+        heap.setFunction("assertEquals", AssertionModule::assertEquals);
+        heap.setFunction("assertArrayEquals", AssertionModule::assertArrayEquals);
     }
 
     private static void plusAssertCount(InternalContext context) {

@@ -3,9 +3,9 @@ package org.febit.wit.extern.lib.std;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.Context;
-import org.febit.wit.GlobalHeapRegister;
+import org.febit.wit.Engine;
+import org.febit.wit.EngineModule;
 import org.febit.wit.runtime.FunctionDeclare;
-import org.febit.wit.runtime.heap.GlobalHeap;
 import org.jspecify.annotations.Nullable;
 
 import static org.febit.wit.util.ArrayUtils.get;
@@ -14,16 +14,17 @@ import static org.febit.wit.util.ArrayUtils.get;
         "squid:S1172", // Unused method parameters should be removed
         "squid:S00100" // Method names should comply with a naming convention
 })
-public class TypesModule implements GlobalHeapRegister {
+public class TypesModule implements EngineModule {
 
     @Override
-    public void register(GlobalHeap heap) {
-        heap.setConstMethod("is_array", Types::is_array);
-        heap.setConstMethod("is_bool", Types::is_bool);
-        heap.setConstMethod("is_function", Types::is_function);
-        heap.setConstMethod("is_callable", Types::is_function);
-        heap.setConstMethod("is_null", Types::is_null);
-        heap.setConstMethod("is_number", Types::is_number);
+    public void apply(Engine engine) {
+        var heap = engine.staticHeaps().constant();
+        heap.setFunction("is_array", Types::is_array);
+        heap.setFunction("is_bool", Types::is_bool);
+        heap.setFunction("is_function", Types::is_function);
+        heap.setFunction("is_callable", Types::is_function);
+        heap.setFunction("is_null", Types::is_null);
+        heap.setFunction("is_number", Types::is_number);
     }
 
     @UtilityClass

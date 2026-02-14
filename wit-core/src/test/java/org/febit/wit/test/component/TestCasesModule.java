@@ -2,7 +2,7 @@
 package org.febit.wit.test.component;
 
 import org.febit.wit.Engine;
-import org.febit.wit.EnginePlugin;
+import org.febit.wit.EngineModule;
 import org.febit.wit.test.component.lib.ConstMethods;
 import org.febit.wit.test.component.lib.ConstMethods2;
 import org.febit.wit.util.JavaNativeUtils;
@@ -11,39 +11,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TestCasesModule implements EnginePlugin {
+public class TestCasesModule implements EngineModule {
 
     @Override
     public void apply(Engine engine) {
 
-        var heap = engine.globalHeap();
+        var heaps = engine.staticHeaps();
         var nativeFactory = engine.nativeFactory();
 
-        //Globals
-        heap.setGlobal("MY_GLOBAL", "MY_GLOBAL");
-        heap.setGlobal("MY_GLOBAL_2", "MY_GLOBAL_2");
+        // Static
+        heaps.variant().set("MY_GLOBAL", "MY_GLOBAL");
+        heaps.variant().set("MY_GLOBAL_2", "MY_GLOBAL_2");
 
         //Const
-        heap.setConst("MY_CONST", "MY_CONST");
-        heap.setConst("MY_CONST_2", "MY_CONST_2");
+        heaps.constant().set("MY_CONST", "MY_CONST");
+        heaps.constant().set("MY_CONST_2", "MY_CONST_2");
 
         //Native
-        heap.setConst("new_list", nativeFactory.getNativeConstructorDeclare(ArrayList.class, null));
-        heap.setConst("list_size", nativeFactory.getNativeMethodDeclare(List.class, "size", null));
-        heap.setConst("list_add", nativeFactory.getNativeMethodDeclare(List.class, "add", new Class[]{Object.class}));
-        heap.setConst("substring", nativeFactory.getNativeMethodDeclare(String.class, "substring", new Class[]{int.class, int.class}));
+        heaps.constant().set("new_list", nativeFactory.getNativeConstructorDeclare(ArrayList.class, null));
+        heaps.constant().set("list_size", nativeFactory.getNativeMethodDeclare(List.class, "size", null));
+        heaps.constant().set("list_add", nativeFactory.getNativeMethodDeclare(List.class, "add", new Class[]{Object.class}));
+        heaps.constant().set("substring", nativeFactory.getNativeMethodDeclare(String.class, "substring", new Class[]{int.class, int.class}));
 
-        JavaNativeUtils.addConstFields(heap, ConstMethods.class);
-        JavaNativeUtils.addStaticMethods(heap, nativeFactory, ConstMethods.class);
+        JavaNativeUtils.addConstFields(heaps, ConstMethods.class);
+        JavaNativeUtils.addStaticMethods(heaps, nativeFactory, ConstMethods.class);
 
-        heap.setConst("new_ConstMethods2", nativeFactory.getNativeConstructorDeclare(ConstMethods2.class, null));
-        heap.setConst("const2Member", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Member"));
-        heap.setConst("const2Size", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Size"));
-        heap.setConst("const2Foo", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Foo"));
+        heaps.constant().set("new_ConstMethods2", nativeFactory.getNativeConstructorDeclare(ConstMethods2.class, null));
+        heaps.constant().set("const2Member", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Member"));
+        heaps.constant().set("const2Size", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Size"));
+        heaps.constant().set("const2Foo", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Foo"));
 
         // For optimize.wit
-        heap.setConst("CONST_STRING_BUILDER", new StringBuilder());
-        heap.setConst("CONST_ATOMIC_INT", new AtomicInteger());
+        heaps.constant().set("CONST_STRING_BUILDER", new StringBuilder());
+        heaps.constant().set("CONST_ATOMIC_INT", new AtomicInteger());
 
     }
 

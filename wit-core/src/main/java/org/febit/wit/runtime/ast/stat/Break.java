@@ -24,7 +24,7 @@ public final class Break implements Statement, Loopable {
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.breakLoop(label);
+        context.loop().toBreak(label);
         return null;
     }
 

@@ -12,22 +12,22 @@ import java.util.Objects;
 
 public class ForMapPart extends AbstractForInPart {
 
-    protected final String keyVarName;
-    protected final String valueVarName;
-    protected int keyIndex;
-    protected int valueIndex;
+    private final String keyVarName;
+    private final String valueVarName;
+    private int keyIndex;
+    private int valueIndex;
 
     public ForMapPart(String key, String value, Expression collectionExpr,
-                      VariantManager varmgr, Position position) {
-        super(varmgr, position);
+                      VariantManager variants, Position position) {
+        super(variants, position);
         this.keyVarName = key;
         this.valueVarName = value;
         setCollectionExpr(collectionExpr);
     }
 
     public ForMapPart(String key, String value, FunctionDeclareExpr functionDeclareExpr,
-                      VariantManager varmgr, Position position) {
-        super(varmgr, position);
+                      VariantManager variants, Position position) {
+        super(variants, position);
         this.keyVarName = key;
         this.valueVarName = value;
         this.functionDeclareExpr = functionDeclareExpr;

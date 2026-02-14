@@ -8,7 +8,7 @@ import org.febit.wit.runtime.TextPosition;
 public class ParseException extends TemplateException {
 
     @Getter
-    protected final Position position;
+    private final Position position;
 
     public ParseException(String message) {
         this(message, TextPosition.UNKNOWN);

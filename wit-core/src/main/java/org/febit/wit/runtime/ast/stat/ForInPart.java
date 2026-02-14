@@ -12,17 +12,17 @@ import java.util.Objects;
 
 public class ForInPart extends AbstractForInPart {
 
-    protected final String itemVarName;
-    protected int itemIndex;
+    private final String itemVarName;
+    private int itemIndex;
 
-    public ForInPart(String item, Expression collectionExpr, VariantManager varmgr, Position position) {
-        super(varmgr, position);
+    public ForInPart(String item, Expression collectionExpr, VariantManager variants, Position position) {
+        super(variants, position);
         this.itemVarName = item;
         setCollectionExpr(collectionExpr);
     }
 
-    public ForInPart(String item, FunctionDeclareExpr functionDeclareExpr, VariantManager varmgr, Position position) {
-        super(varmgr, position);
+    public ForInPart(String item, FunctionDeclareExpr functionDeclareExpr, VariantManager variants, Position position) {
+        super(variants, position);
         this.itemVarName = item;
         this.functionDeclareExpr = functionDeclareExpr;
     }

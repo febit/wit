@@ -10,10 +10,10 @@ import java.io.PrintWriter;
 
 public abstract class TemplateException extends RuntimeException {
 
-    protected boolean isCaused;
+    private boolean isCaused;
     @Getter
     @Nullable
-    protected Template template;
+    private Template template;
 
     protected TemplateException(String message) {
         this(message, null);

@@ -182,7 +182,7 @@ abstract class AbstractParser {
 
     protected final Stack<Symbol> symbolStack = new Stack<>(24);
     protected Template template;
-    protected VariantManager varmgr;
+    protected VariantManager variants;
 
     /**
      * Caching current resource version.
@@ -459,7 +459,7 @@ abstract class AbstractParser {
         this.textStatementFactory = myEngine.textStatementFactory();
         this.nativeFactory = myEngine.nativeFactory();
 
-        this.varmgr = new VariantManager(myEngine);
+        this.variants = new VariantManager(myEngine);
         this.labelIndexMap.put(null, 0);
         this.nextLabelIndex.set(1);
         Lexer lexer = null;
@@ -617,7 +617,7 @@ abstract class AbstractParser {
     }
 
     ContextVar declareVarAndCreateContextValue(String name, Position position) {
-        return new ContextVar(varmgr.assignVar(name, position), position);
+        return new ContextVar(variants.assignVar(name, position), position);
     }
 
     ContextVar[] declareVarAndCreateContextValues(List<String> names, Position position) {
@@ -653,24 +653,24 @@ abstract class AbstractParser {
             case CONST -> new DirectValue(addr.constValue(), position);
             case UPSTREAM -> new ContextUpstreamVar(addr.pageOffset(), addr.index(), position);
             case CONTEXT -> new ContextVar(addr.index(), position);
-            case GLOBAL -> {
+            case STATIC_VAR -> {
                 if (!(addr.constValue() instanceof String name)) {
-                    throw new ParseException("Global variable name must be a string.", position);
+                    throw new ParseException("Name of static variable must be a string.", position);
                 }
-                yield AssignableSuppliedValue.ofGlobal(
-                        this.engine.globalHeap(), name, position
+                yield AssignableSuppliedValue.ofStatic(
+                        this.engine.staticHeaps().variant(), name, position
                 );
             }
         };
     }
 
     Expression createContextValue(int frameOffset, String name, Position position) {
-        var addr = varmgr.locate(name, frameOffset, !engine.isEnabled(Feature.LOOSE_VAR), position);
+        var addr = variants.locate(name, frameOffset, !engine.isEnabled(Feature.LOOSE_VAR), position);
         return createContextValue(addr, position);
     }
 
     void assignConst(String name, Expression expr, Position position) {
-        varmgr.assignConst(name, AstUtils.evalConst(expr), position);
+        variants.assignConst(name, AstUtils.evalConst(expr), position);
     }
 
     Statement createInterpolation(final Expression expr) {
@@ -749,7 +749,7 @@ abstract class AbstractParser {
 
     Statement declareVar(String ident, Position position) {
         //XXX: Should Check var used before init
-        varmgr.assignVar(ident, position);
+        variants.assignVar(ident, position);
         return NoopStatement.INSTANCE;
     }
 
@@ -793,7 +793,7 @@ abstract class AbstractParser {
         if (!loops.isEmpty()) {
             throw new ParseException("loop overflow: " + StringUtils.join(loops, ','));
         }
-        return new TemplateAST(varmgr.constructIndexers(), statements, varmgr.varCounter(), this.lastResourceVersion);
+        return new TemplateAST(variants.constructIndexers(), statements, variants.varCounter(), this.lastResourceVersion);
     }
 
     IBlock createBlock(@Nullable List<Statement> list, int varIndexer, Position position) {

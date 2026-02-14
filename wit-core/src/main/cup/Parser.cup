@@ -265,21 +265,21 @@ importPart2     ::= importPart1:part IDENTIFIER:ident
                     ;
 
 
-block           ::= (LBRACE {: varmgr.shiftFrame(); return null; :}) statement[]:list? RBRACE
-                    {: return createBlock(%list%, varmgr.unshiftFrame(), %list.symbol%.pos); :}
+block           ::= (LBRACE {: variants.shiftFrame(); return null; :}) statement[]:list? RBRACE
+                    {: return createBlock(%list%, variants.unshiftFrame(), %list.symbol%.pos); :}
                     ;
 
 
-tryPart         ::= (TRY LBRACE {: varmgr.shiftFrame(); return null; :}) statement[]:list? RBRACE
-                    {: return createTryPart(%list%, varmgr.unshiftFrame(), %list.symbol%.pos); :}
+tryPart         ::= (TRY LBRACE {: variants.shiftFrame(); return null; :}) statement[]:list? RBRACE
+                    {: return createTryPart(%list%, variants.unshiftFrame(), %list.symbol%.pos); :}
                     ;
 
-catchPart       ::= tryPart:part (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: varmgr.shiftFrame(); return varmgr.assignVar(%ident%, %ident.symbol%.pos); :}):varIndex statement[]:list? RBRACE
-                    {: return (%part%).setCatchStat((Integer)(%varIndex%), createBlock(%list%, varmgr.unshiftFrame(), %list.symbol%.pos)); :}
+catchPart       ::= tryPart:part (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: variants.shiftFrame(); return variants.assignVar(%ident%, %ident.symbol%.pos); :}):varIndex statement[]:list? RBRACE
+                    {: return (%part%).setCatchStat((Integer)(%varIndex%), createBlock(%list%, variants.unshiftFrame(), %list.symbol%.pos)); :}
                     ;
 
-finallyPart     ::= (tryPart:$ | catchPart:$):part (FINALLY LBRACE {: varmgr.shiftFrame(); return null; :}) statement[]:list? RBRACE
-                    {: return (%part%).setFinalStat(createBlock(%list%, varmgr.unshiftFrame(), %list.symbol%.pos)); :}
+finallyPart     ::= (tryPart:$ | catchPart:$):part (FINALLY LBRACE {: variants.shiftFrame(); return null; :}) statement[]:list? RBRACE
+                    {: return (%part%).setFinalStat(createBlock(%list%, variants.unshiftFrame(), %list.symbol%.pos)); :}
                     ;
 
 
@@ -288,30 +288,30 @@ ifStat          ::= IF:sym LPAREN expression:expr RPAREN block:body (ELSE block:
                     ;
 
 forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
-                    {: return new ForInPart(%item%, %items%, this.varmgr, %sym.symbol%.pos); :}
+                    {: return new ForInPart(%item%, %items%, this.variants, %sym.symbol%.pos); :}
                     |FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COLON expression:map RPAREN
-                    {: return new ForMapPart(%key%, %value%, %map%, this.varmgr, %sym.symbol%.pos); :}
+                    {: return new ForMapPart(%key%, %value%, %map%, this.variants, %sym.symbol%.pos); :}
                     ;
 
 
 lambdaForHead1  ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
-                    {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArg(%ident%); :}
+                    {: return new FunctionDeclarePart(this.variants, %sym.symbol%.pos).appendArg(%ident%); :}
                     ;
 
 
 lambdaForMapHead1   ::= FOR LPAREN IDENTIFIER:key COMMA IDENTIFIER:value MINUSGT:sym
-                    {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArg(%key%).appendArg(%value%); :}
+                    {: return new FunctionDeclarePart(this.variants, %sym.symbol%.pos).appendArg(%key%).appendArg(%value%); :}
                     ;
 
 
 lambdaForHead2  ::= lambdaForHead1:part expression:expr COLON
-                    {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.symbol%.pos); :}
+                    {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%expr%), this.variants, %part.symbol%.pos); :}
                     |lambdaForHead1:part LBRACE statement[]:list RBRACE COLON
-                    {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.symbol%.pos); :}
+                    {: return new ForInPart((%part%).getArg(0), (%part%).popFunctionDeclare(%list%), this.variants, %part.symbol%.pos); :}
                     |lambdaForMapHead1:part expression:expr COLON
-                    {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%expr%), this.varmgr, %part.symbol%.pos); :}
+                    {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%expr%), this.variants, %part.symbol%.pos); :}
                     |lambdaForMapHead1:part LBRACE statement[]:list RBRACE COLON
-                    {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%list%), this.varmgr, %part.symbol%.pos); :}
+                    {: return new ForMapPart((%part%).getArg(0), (%part%).getArg(1), (%part%).popFunctionDeclare(%list%), this.variants, %part.symbol%.pos); :}
                     ;
 
 
@@ -321,7 +321,7 @@ lambdaForHead   ::= lambdaForHead2:part expression:items RPAREN
 
 
 forInPart       ::= (forInHead:$ | lambdaForHead:$):part LBRACE statement[]:list? RBRACE (ELSE block:$):elseBody?
-                    {: return (%part%).setBodies(createBlock(%list%, varmgr.unshiftFrame(), %list.symbol%.pos), %elseBody%); :}
+                    {: return (%part%).setBodies(createBlock(%list%, variants.unshiftFrame(), %list.symbol%.pos), %elseBody%); :}
                     ;
 
 
@@ -332,8 +332,8 @@ whilePart       ::= WHILE:sym LPAREN expression:whileExpr RPAREN block:body
                     ;
 
 
-caseBlockStat   ::= {: varmgr.shiftFrame(); return null; :} statement[]:list?
-                    {: return createBlock(%list%, varmgr.unshiftFrame(), %list.symbol%.pos); :}
+caseBlockStat   ::= {: variants.shiftFrame(); return null; :} statement[]:list?
+                    {: return createBlock(%list%, variants.unshiftFrame(), %list.symbol%.pos); :}
                     ;
 
 
@@ -583,15 +583,15 @@ funcArg             ::= IDENTIFIER:ident
 
 
 funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:args? RPAREN
-                        {: return new FunctionDeclarePart(%ident%, this.varmgr, %ident.symbol%.pos).appendArgs(%args%); :}
+                        {: return new FunctionDeclarePart(%ident%, this.variants, %ident.symbol%.pos).appendArgs(%args%); :}
                         ;
 
 // mapPropertyFuncHead ::= LPAREN:sym funcArg[COMMA]:args? RPAREN
-//                         {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArgs(%args%); :}
+//                         {: return new FunctionDeclarePart(this.variants, %sym.symbol%.pos).appendArgs(%args%); :}
 //                         ;
 
 funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArgs(%args%); :}
+                        {: return new FunctionDeclarePart(this.variants, %sym.symbol%.pos).appendArgs(%args%); :}
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
@@ -607,9 +607,9 @@ funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
 
 /* lambda */
 lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArg(%ident%); :}
+                        {: return new FunctionDeclarePart(this.variants, %sym.symbol%.pos).appendArg(%ident%); :}
                         |LPAREN funcArg[COMMA]:args? RPAREN_MINUSGT:sym
-                        {: return new FunctionDeclarePart(this.varmgr, %sym.symbol%.pos).appendArgs(%args%); :}
+                        {: return new FunctionDeclarePart(this.variants, %sym.symbol%.pos).appendArgs(%args%); :}
                         ;
 
 

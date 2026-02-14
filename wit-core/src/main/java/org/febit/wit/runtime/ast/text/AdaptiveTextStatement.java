@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class SimpleTextStatement implements Statement {
+public final class AdaptiveTextStatement implements Statement {
 
     private final char[] chars;
     private final byte[] encoded;

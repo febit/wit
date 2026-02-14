@@ -11,9 +11,9 @@ public record VarAddress(
 
     public enum Kind {
         CONTEXT,
-        GLOBAL,
-        CONST,
         UPSTREAM,
+        CONST,
+        STATIC_VAR,
         ;
     }
 
@@ -21,8 +21,8 @@ public record VarAddress(
         return new VarAddress(Kind.CONTEXT, 0, index, null);
     }
 
-    static VarAddress ofGlobal(String name) {
-        return new VarAddress(Kind.GLOBAL, -1, -1, name);
+    static VarAddress ofStaticVar(String name) {
+        return new VarAddress(Kind.STATIC_VAR, -1, -1, name);
     }
 
     static VarAddress ofConst(@Nullable Object value) {

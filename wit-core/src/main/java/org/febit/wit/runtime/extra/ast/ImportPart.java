@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ImportPart {
 
-    protected final Position position;
+    private final Position position;
     private final Expression expr;
     @Nullable
     private final Expression paramsExpr;

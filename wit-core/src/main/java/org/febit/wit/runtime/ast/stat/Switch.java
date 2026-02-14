@@ -39,7 +39,7 @@ public final class Switch implements Statement, Loopable {
         }
         if (caseBlock != null) {
             caseBlock.execute(context);
-            context.resetBreakLoopIfMatch(label);
+            context.loop().resetIfBreak(label);
         }
         return null;
     }
@@ -59,7 +59,7 @@ public final class Switch implements Statement, Loopable {
         @Nullable
         Object execute(InternalContext context) {
             body.execute(context);
-            if (context.loopKind().isNoop() && next != null) {
+            if (context.loop().isNoop() && next != null) {
                 return next.execute(context);
             }
             return null;

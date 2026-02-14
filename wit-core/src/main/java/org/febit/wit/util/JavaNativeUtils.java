@@ -7,7 +7,7 @@ import org.febit.wit.exceptions.AmbiguousMethodException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
 import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.runtime.Undefined;
-import org.febit.wit.runtime.heap.GlobalHeap;
+import org.febit.wit.runtime.heap.StaticHeaps;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -35,38 +35,36 @@ public class JavaNativeUtils {
 
     @SuppressWarnings("UnusedReturnValue")
     public static int addStaticMethods(
-            GlobalHeap heap, NativeFactory nativeFactory, Class<?> type) {
-        return addStaticMethods(heap, nativeFactory, type, false);
+            StaticHeaps heaps, NativeFactory nativeFactory, Class<?> type) {
+        return addStaticMethods(heaps, nativeFactory, type, false);
     }
 
     public static int addStaticMethods(
-            GlobalHeap heap,
+            StaticHeaps heaps,
             NativeFactory nativeFactory,
             Class<?> type,
             boolean skipConflict
     ) {
         var methodMap = Arrays.stream(type.getMethods())
                 .filter(ClassUtils::isStatic)
-                .filter(m -> !(skipConflict && heap.hasConst(m.getName())))
+                .filter(m -> !(skipConflict && heaps.constant().has(m.getName())))
                 .collect(Collectors.groupingBy(Method::getName));
 
-        methodMap.forEach((name, methods) -> heap.setConst(name,
-                nativeFactory.createNativeMethodDeclare(methods)));
+        methodMap.forEach((name, methods) ->
+                heaps.constant().set(name, nativeFactory.createNativeMethodDeclare(methods))
+        );
         return methodMap.size();
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public static int addConstFields(
-            GlobalHeap heap,
-            Class<?> type
-    ) {
-        return addConstFields(heap, type, false);
+    public static int addConstFields(StaticHeaps heaps, Class<?> type) {
+        return addConstFields(heaps, type, false);
     }
 
     public static int addConstFields(
-            GlobalHeap heap,
+            StaticHeaps heaps,
             Class<?> type,
-            boolean skipConflict
+            boolean ignoreIfConflict
     ) {
         int count = 0;
         for (var field : type.getFields()) {
@@ -75,12 +73,12 @@ public class JavaNativeUtils {
                 continue;
             }
             String name = field.getName();
-            if (skipConflict && heap.hasConst(name)) {
+            if (ignoreIfConflict && heaps.constant().has(name)) {
                 continue;
             }
             ClassUtils.setAccessible(field);
             try {
-                heap.setConst(name, field.get(null));
+                heaps.constant().set(name, field.get(null));
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 throw new UncheckedException(e);
             }

@@ -43,6 +43,11 @@ public final class InternalContext implements Context {
     @Nullable
     private final BreakpointListener breakpointListener;
 
+    private final AccessorFactory accessors;
+
+    @lombok.Getter
+    private final Loop loop = new Loop();
+
     /**
      * Input parameters.
      */
@@ -60,23 +65,6 @@ public final class InternalContext implements Context {
      */
     @lombok.Getter
     private Out out;
-
-    /**
-     * Used by functions, store value to be returned.
-     */
-    @Nullable
-    private Object returned;
-    /**
-     * Current goto label, if looped.
-     */
-    private int label;
-    /**
-     * Current loop kind, ==0 if no loop.
-     */
-    @lombok.Getter
-    private LoopFlag.Kind loopKind = LoopFlag.Kind.NOOP;
-
-    private final AccessorFactory accessors;
 
     public InternalContext(
             final Template template,
@@ -133,7 +121,8 @@ public final class InternalContext implements Context {
     public void visitAndCheckLoop(Statement[] stats) {
         var i = 0;
         var len = stats.length;
-        while (i < len && this.loopKind().isNoop()) {
+        var lp = this.loop();
+        while (i < len && lp.isNoop()) {
             stats[i++].execute(this);
         }
     }
@@ -170,85 +159,6 @@ public final class InternalContext implements Context {
                 template, out(), inputs,
                 heap, local(), breakpointListener
         );
-    }
-
-    /**
-     * if gaven loop label matched current loop.
-     *
-     * @param label label id
-     * @return true if match
-     */
-    @SuppressWarnings({
-            "BooleanMethodIsAlwaysInverted"
-    })
-    public boolean matchLabel(int label) {
-        return this.label == 0 || this.label == label;
-    }
-
-    /**
-     * Mark a break-loop.
-     *
-     * @param label label id
-     */
-    public void breakLoop(int label) {
-        this.label = label;
-        this.loopKind = LoopFlag.Kind.BREAK;
-    }
-
-    /**
-     * Mark a continue-loop.
-     *
-     * @param label label id
-     */
-    public void continueLoop(int label) {
-        this.label = label;
-        this.loopKind = LoopFlag.Kind.CONTINUE;
-    }
-
-    /**
-     * Mark a return-loop.
-     *
-     * @param value the returned.
-     */
-    public void returnLoop(@Nullable Object value) {
-        this.returned = value;
-        this.label = 0;
-        this.loopKind = LoopFlag.Kind.RETURN;
-    }
-
-    /**
-     * Unmark loops.
-     */
-    public void resetLoop() {
-        this.returned = null;
-        this.label = 0;
-        this.loopKind = LoopFlag.Kind.NOOP;
-    }
-
-    /**
-     * Unmark loops, is a break and match the label.
-     *
-     * @param label label id
-     */
-    public void resetBreakLoopIfMatch(int label) {
-        if (this.loopKind.isBreak()
-                && (this.label == 0 || this.label == label)) {
-            this.resetLoop();
-        }
-    }
-
-    /**
-     * Unmark loops, at the end of functions.
-     *
-     * @return the returned
-     */
-    @Nullable
-    public Object resetReturnLoop() {
-        var result = this.loopKind.isReturn()
-                ? this.returned
-                : Undefined.UNDEFINED;
-        resetLoop();
-        return result;
     }
 
     /**
@@ -322,7 +232,6 @@ public final class InternalContext implements Context {
         var render = (Render<Object>) this.accessors.render(type);
         render.render(out, obj);
     }
-
 
     @Override
     public Function exportFunction(String name) throws NotFunctionException {

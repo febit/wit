@@ -2,12 +2,12 @@
 package org.febit.wit.test.component;
 
 import org.febit.wit.Engine;
-import org.febit.wit.EnginePlugin;
+import org.febit.wit.EngineModule;
 
-public class TestConfigFlagEnginePlugin implements EnginePlugin {
+public class TestConfigFlagEngineModule implements EngineModule {
 
     @Override
     public void apply(Engine engine) {
-        engine.globalHeap().setConst("PLUGIN_CONFIG_FLAG", true);
+        engine.staticHeaps().constant().set("PLUGIN_CONFIG_FLAG", true);
     }
 }

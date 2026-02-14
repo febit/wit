@@ -4,20 +4,20 @@ package org.febit.wit.extern.lib.context;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.GlobalHeapRegister;
-import org.febit.wit.runtime.heap.GlobalHeap;
+import org.febit.wit.Engine;
+import org.febit.wit.EngineModule;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor(staticName = "create")
-public class GlobalContextRegister implements GlobalHeapRegister {
+public class GlobalContextRegister implements EngineModule {
 
     public static final String DEFAULT_NAME = "$GLOBAL";
 
     @Getter
-    private final Map<Object, Object> vars = new ConcurrentHashMap<>();
+    private final Map<Object, Object> table = new ConcurrentHashMap<>();
 
     @Getter
     private final String name;
@@ -27,7 +27,8 @@ public class GlobalContextRegister implements GlobalHeapRegister {
     }
 
     @Override
-    public void register(GlobalHeap heap) {
-        heap.setConst(this.name, this.vars);
+    public void apply(Engine engine) {
+        var heap = engine.staticHeaps().constant();
+        heap.set(this.name, this.table);
     }
 }
