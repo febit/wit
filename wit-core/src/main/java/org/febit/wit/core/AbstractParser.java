@@ -833,7 +833,7 @@ abstract class AbstractParser {
         return switch (op) {
             case OP_PLUSEQ, Tokens.PLUS -> ALU::plus;
             case OP_MINUSEQ, Tokens.MINUS -> ALU::minus;
-            case OP_MULTEQ, Tokens.MULT -> ALU::mult;
+            case OP_MULTEQ, Tokens.MULT -> ALU::multi;
             case OP_DIVEQ, Tokens.DIV -> ALU::div;
             case OP_MODEQ, Tokens.MOD -> ALU::mod;
             case OP_LSHIFTEQ, Tokens.LSHIFT -> ALU::lshift;
@@ -844,7 +844,7 @@ abstract class AbstractParser {
             case Tokens.LTEQ -> ALU::lessEqual;
             case Tokens.GTEQ -> ALU::greaterEqual;
             case Tokens.EQEQ -> ALU::isEqual;
-            case Tokens.NOTEQ -> ALU::notEqual;
+            case Tokens.NOTEQ -> ALU::isNotEqual;
             case OP_ANDEQ, Tokens.AND -> ALU::bitAnd;
             case OP_XOREQ, Tokens.XOR -> ALU::bitXor;
             case OP_OREQ, Tokens.OR -> ALU::bitOr;

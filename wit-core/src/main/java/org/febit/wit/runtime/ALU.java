@@ -160,10 +160,10 @@ public class ALU {
             case STRING, OBJECT -> o1.toString().concat(o2.toString());
             case INTEGER, SHORT, BYTE -> ((Number) o1).intValue() + ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() + ((Number) o2).longValue();
-            case DOUBLE -> ((Number) o1).doubleValue() + ((Number) o2).doubleValue();
-            case FLOAT -> ((Number) o1).floatValue() + ((Number) o2).floatValue();
+            case FLOAT -> toFloat(o1) + toFloat(o2);
+            case DOUBLE -> toDouble(o1) + toDouble(o2);
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).add(toBigInteger(o2));
                 }
                 // Note: else upgrade to BigDecimal
@@ -181,10 +181,10 @@ public class ALU {
         return switch (getTypeMark(o1, o2)) {
             case INTEGER, SHORT, BYTE -> ((Number) o1).intValue() - ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() - ((Number) o2).longValue();
-            case DOUBLE -> ((Number) o1).doubleValue() - ((Number) o2).doubleValue();
-            case FLOAT -> ((Number) o1).floatValue() - ((Number) o2).floatValue();
+            case FLOAT -> toFloat(o1) - toFloat(o2);
+            case DOUBLE -> toDouble(o1) - toDouble(o2);
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).subtract(toBigInteger(o2));
                 }
                 // Note: else upgrade to BigDecimal
@@ -213,22 +213,22 @@ public class ALU {
     }
 
     //*
-    public static Object mult(@Nullable Object o1, @Nullable Object o2) {
+    public static Object multi(@Nullable Object o1, @Nullable Object o2) {
         requireNonNull(o1, o2);
         return switch (getTypeMark(o1, o2)) {
             case INTEGER, SHORT, BYTE -> ((Number) o1).intValue() * ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() * ((Number) o2).longValue();
-            case DOUBLE -> ((Number) o1).doubleValue() * ((Number) o2).doubleValue();
-            case FLOAT -> ((Number) o1).floatValue() * ((Number) o2).floatValue();
+            case FLOAT -> toFloat(o1) * toFloat(o2);
+            case DOUBLE -> toDouble(o1) * toDouble(o2);
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).multiply(toBigInteger(o2));
                 }
                 // Note: else upgrade to BigDecimal
                 yield toBigDecimal(o1).multiply(toBigDecimal(o2));
             }
             case BIG_DECIMAL -> toBigDecimal(o1).multiply(toBigDecimal(o2));
-            case CHAR -> mult(charToInt(o1), charToInt(o2));
+            case CHAR -> multi(charToInt(o1), charToInt(o2));
             default -> throw unsupportedTypeException(o1, o2);
         };
     }
@@ -239,10 +239,10 @@ public class ALU {
         return switch (getTypeMark(o1, o2)) {
             case INTEGER, SHORT, BYTE -> ((Number) o1).intValue() / ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() / ((Number) o2).longValue();
-            case DOUBLE -> ((Number) o1).doubleValue() / ((Number) o2).doubleValue();
-            case FLOAT -> ((Number) o1).floatValue() / ((Number) o2).floatValue();
+            case FLOAT -> toFloat(o1) / toFloat(o2);
+            case DOUBLE -> toDouble(o1) / toDouble(o2);
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).divide(toBigInteger(o2));
                 }
                 // Note: else upgrade to BigDecimal
@@ -260,10 +260,10 @@ public class ALU {
         return switch (getTypeMark(o1, o2)) {
             case INTEGER, SHORT, BYTE -> ((Number) o1).intValue() % ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() % ((Number) o2).longValue();
-            case DOUBLE -> ((Number) o1).doubleValue() % ((Number) o2).doubleValue();
-            case FLOAT -> ((Number) o1).floatValue() % ((Number) o2).floatValue();
+            case FLOAT -> toFloat(o1) % toFloat(o2);
+            case DOUBLE -> toDouble(o1) % toDouble(o2);
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).remainder(toBigInteger(o2));
                 }
                 // Note: else upgrade to BigDecimal
@@ -293,6 +293,35 @@ public class ALU {
         return !isTruly(o1);
     }
 
+    public static boolean isTruly(@Nullable Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() == Boolean.class) {
+            return (Boolean) obj;
+        }
+        if (obj == Undefined.UNDEFINED) {
+            return false;
+        }
+
+        var size = CollectionUtils.size(obj);
+        if (size == 0) {
+            return false;
+        }
+        if (size > 0) {
+            return true;
+        }
+        if (obj instanceof Iterable<?> iter) {
+            return iter.iterator().hasNext();
+        }
+        if (obj instanceof Iterator<?> iter) {
+            return iter.hasNext();
+        }
+        if (obj instanceof Enumeration<?> e) {
+            return e.hasMoreElements();
+        }
+        return true;
+    }
     // ==
     public static boolean isEqual(@Nullable Object o1, @Nullable Object o2) {
         if (o1 == o2) {
@@ -308,21 +337,25 @@ public class ALU {
             case BYTE, SHORT, INTEGER -> ((Number) o1).intValue() == ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() == ((Number) o2).longValue();
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).compareTo(toBigInteger(o2)) == 0;
                 }
                 // Note: else upgrade to BigDecimal
                 yield toBigDecimal(o1).compareTo(toBigDecimal(o2)) == 0;
             }
+            case FLOAT -> Float.floatToIntBits(toFloat(o1))
+                    == Float.floatToIntBits(toFloat(o2));
+            case DOUBLE -> Double.doubleToLongBits(toDouble(o1))
+                    == Double.doubleToLongBits(toDouble(o2));
             // Note: Floating point numbers should not be tested for equality.
-            case DOUBLE, FLOAT, BIG_DECIMAL -> toBigDecimal(o1).compareTo(toBigDecimal(o2)) == 0;
+            case BIG_DECIMAL -> toBigDecimal(o1).compareTo(toBigDecimal(o2)) == 0;
             case CHAR -> isEqual(charToInt(o1), charToInt(o2));
             default -> false;
         };
     }
 
     // !=
-    public static boolean notEqual(@Nullable Object o1, @Nullable Object o2) {
+    public static boolean isNotEqual(@Nullable Object o1, @Nullable Object o2) {
         return !isEqual(o1, o2);
     }
 
@@ -333,7 +366,7 @@ public class ALU {
             case BYTE, SHORT, INTEGER -> ((Number) o1).intValue() > ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() > ((Number) o2).longValue();
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).compareTo(toBigInteger(o2)) > 0;
                 }
                 // Note: else upgrade to BigDecimal
@@ -360,7 +393,7 @@ public class ALU {
             case BYTE, SHORT, INTEGER -> ((Number) o1).intValue() < ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() < ((Number) o2).longValue();
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).compareTo(toBigInteger(o2)) < 0;
                 }
                 // Note: else upgrade to BigDecimal
@@ -387,7 +420,7 @@ public class ALU {
             case INTEGER -> ((Number) o1).intValue() & ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() & ((Number) o2).longValue();
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).and(toBigInteger(o2));
                 }
                 // Note: else unsupported
@@ -407,7 +440,7 @@ public class ALU {
             case INTEGER -> ((Number) o1).intValue() | ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() | ((Number) o2).longValue();
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).or(toBigInteger(o2));
                 }
                 // Note: else unsupported
@@ -427,7 +460,7 @@ public class ALU {
             case INTEGER -> ((Number) o1).intValue() ^ ((Number) o2).intValue();
             case LONG -> ((Number) o1).longValue() ^ ((Number) o2).longValue();
             case BIG_INTEGER -> {
-                if (notDoubleOrFloat(o1, o2)) {
+                if (isNotDoubleOrFloat(o1, o2)) {
                     yield toBigInteger(o1).xor(toBigInteger(o2));
                 }
                 // Note: else unsupported
@@ -495,6 +528,7 @@ public class ALU {
         };
     }
 
+
     private static Object charToInt(final Object o1) {
         if (o1 instanceof Character c) {
             return Integer.valueOf(c);
@@ -507,6 +541,38 @@ public class ALU {
                 || type == Long.class
                 || type == Short.class
                 || type == Byte.class;
+    }
+
+    private static float toFloat(@Nullable Object o1) {
+        if (o1 == null) {
+            return 0F;
+        }
+        if (o1 instanceof Float f) {
+            return f;
+        }
+        if (o1 instanceof Double d) {
+            return new BigDecimal(d.toString()).floatValue();
+        }
+        if (o1 instanceof Number number) {
+            return number.floatValue();
+        }
+        return toBigDecimal(o1).floatValue();
+    }
+
+    private static double toDouble(@Nullable Object o1) {
+        if (o1 == null) {
+            return 0D;
+        }
+        if (o1 instanceof Double d) {
+            return d;
+        }
+        if (o1 instanceof Float f) {
+            return new BigDecimal(f.toString()).doubleValue();
+        }
+        if (o1 instanceof Number number) {
+            return number.doubleValue();
+        }
+        return toBigDecimal(o1).doubleValue();
     }
 
     private static BigInteger toBigInteger(@Nullable Object o1) {
@@ -542,58 +608,28 @@ public class ALU {
         return new BigDecimal(o1.toString());
     }
 
-    public static boolean isTruly(@Nullable Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj.getClass() == Boolean.class) {
-            return (Boolean) obj;
-        }
-        if (obj == Undefined.UNDEFINED) {
-            return false;
-        }
-
-        var size = CollectionUtils.size(obj);
-        if (size == 0) {
-            return false;
-        }
-        if (size > 0) {
-            return true;
-        }
-        if (obj instanceof Iterable<?> iter) {
-            return iter.iterator().hasNext();
-        }
-        if (obj instanceof Iterator<?> iter) {
-            return iter.hasNext();
-        }
-        if (obj instanceof Enumeration<?> e) {
-            return e.hasMoreElements();
-        }
-        return true;
-    }
-
-    private static boolean notDoubleOrFloat(@Nullable Object o1) {
+    private static boolean isNotDoubleOrFloat(@Nullable Object o1) {
         Class<?> type = o1 == null ? null : o1.getClass();
         return type != Float.class
                 && type != Double.class;
     }
 
-    private static boolean notDoubleOrFloat(@Nullable Object o1, @Nullable Object o2) {
-        return notDoubleOrFloat(o1) && notDoubleOrFloat(o2);
+    private static boolean isNotDoubleOrFloat(@Nullable Object o1, @Nullable Object o2) {
+        return isNotDoubleOrFloat(o1) && isNotDoubleOrFloat(o2);
+    }
+
+    private static String toTypeString(@Nullable Object o1) {
+        return o1 == null ? "null" : o1.getClass().getCanonicalName();
     }
 
     private static ScriptRuntimeException unsupportedTypeException(@Nullable Object o1, @Nullable Object o2) {
         return new ScriptRuntimeException("Unsupported type: left ["
-                + typeString(o1) + "], right[" + typeString(o2) + "]"
+                + toTypeString(o1) + "], right[" + toTypeString(o2) + "]"
         );
     }
 
-    private static String typeString(@Nullable Object o1) {
-        return o1 == null ? "null" : o1.getClass().getCanonicalName();
-    }
-
     private static ScriptRuntimeException unsupportedTypeException(@Nullable Object o1) {
-        return new ScriptRuntimeException("Unsupported type: " + typeString(o1));
+        return new ScriptRuntimeException("Unsupported type: " + toTypeString(o1));
     }
 
     public static Number requireNumber(@Nullable Object val) {

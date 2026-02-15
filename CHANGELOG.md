@@ -11,6 +11,10 @@
 
 + 迁移至 jspecify, 标注 nullability。
 
+#### BUG FIXES:
+
++ 修复 ALU 计算 Double 与 Float 类型数值时类型转换导致的精度问题。
+
 ### BREAKING CHANGES:
 
 + 移除对 Java 8 的支持，要求最低 JDK 17，采用现代化的 Java 特性提升性能和可读性
