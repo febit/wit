@@ -26,6 +26,7 @@ public class VariantManager {
     private final Stack<Frame> frameStack = new Stack<>();
     private final Stack<Integer> pageVarCounterStack = new Stack<>();
 
+    @Getter
     private final StaticHeaps staticHeaps;
     private final Frame root;
 

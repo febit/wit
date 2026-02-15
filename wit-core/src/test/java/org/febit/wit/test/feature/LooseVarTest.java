@@ -14,9 +14,10 @@ class LooseVarTest {
     @Test
     void test() throws SourceNotFoundException {
 
+        var features = Feature.LOOSE_VAR.enable(Feature.collectFeatureDefaults());
+
         var engine = spy(EngineManager.engine());
-        when(engine.isEnabled(Feature.LOOSE_VAR))
-                .thenReturn(true);
+        when(engine.features()).thenReturn(features);
 
         var script = engine.script("/feature/looseVar.wit");
         script.eval();

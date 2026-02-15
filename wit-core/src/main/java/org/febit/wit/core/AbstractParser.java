@@ -2,7 +2,6 @@
 package org.febit.wit.core;
 
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.Engine;
 import org.febit.wit.Feature;
 import org.febit.wit.Script;
 import org.febit.wit.exception.ParseException;
@@ -135,8 +134,8 @@ abstract class AbstractParser {
     private final Map<@Nullable String, Integer> labelIndexMap = new HashMap<>();
     private final AtomicInteger nextLabelIndex = new AtomicInteger();
 
+    private int features;
     private TextStatementFactory textStatementFactory;
-    private Engine engine;
     private NativeFactory nativeFactory;
 
     protected final Stack<Symbol> symbolStack = new Stack<>(24);
@@ -288,7 +287,7 @@ abstract class AbstractParser {
         currentSymbol.state = 0;
         stack.push(currentSymbol);
 
-        var looseSemicolon = this.engine.isEnabled(Feature.LOOSE_SEMICOLON);
+        var looseSemicolon = Feature.LOOSE_SEMICOLON.isEnabled(this.features);
 
         Symbol pendingPending = null;
         pending = lexer.nextToken();
@@ -406,15 +405,15 @@ abstract class AbstractParser {
     protected ScriptAST doParse(
             Script script
     ) throws ParseException {
-        var myEngine = script.engine();
+        var engine = script.engine();
         var source = script.source();
+
         this.script = script;
-        this.engine = myEngine;
+        this.features = engine.features();
+        this.textStatementFactory = engine.textStatementFactory();
+        this.nativeFactory = engine.nativeFactory();
 
-        this.textStatementFactory = myEngine.textStatementFactory();
-        this.nativeFactory = myEngine.nativeFactory();
-
-        this.variants = new VariantManager(myEngine);
+        this.variants = new VariantManager(engine);
         this.labelIndexMap.put(null, 0);
         this.nextLabelIndex.set(1);
         Lexer lexer = null;
@@ -423,7 +422,7 @@ abstract class AbstractParser {
             this.lastSourceVersion = source.version();
             //ISSUE: LexerProvider
             lexer = new Lexer(source.openReader());
-            lexer.setTrimCodeBlockBlankLine(myEngine.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE));
+            lexer.setTrimCodeBlockBlankLine(engine.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE));
             if (source.codeFirst()) {
                 lexer.codeFirst();
             }
@@ -571,14 +570,14 @@ abstract class AbstractParser {
                     throw new ParseException("Name of static variable must be a string.", position);
                 }
                 yield AssignableSuppliedValue.ofStatic(
-                        this.engine.staticHeaps().variant(), name, position
+                        this.variants.staticHeaps().variant(), name, position
                 );
             }
         };
     }
 
     Expression createContextValue(int frameOffset, String name, Position position) {
-        var addr = variants.locate(name, frameOffset, !engine.isEnabled(Feature.LOOSE_VAR), position);
+        var addr = variants.locate(name, frameOffset, !Feature.LOOSE_VAR.isEnabled(this.features), position);
         return createContextValue(addr, position);
     }
 
