@@ -4,7 +4,7 @@ Febit Wit
  [![BSD License](http://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/febit/wit/blob/master/LICENSE)
  [![Build Status](https://api.travis-ci.org/febit/wit.png)](https://travis-ci.org/febit/wit)
 
-This is a template engine, all written in Java, **support Java 17+**.
+This is a script engine, all written in Java, **support Java 17+**.
 
 ## How to use
 
@@ -28,8 +28,8 @@ compile 'org.febit.wit:wit-core:2.6.0'
 
 ```java
 Engine engine = Engine.create();
-Template template = engine.getTemplate("/demo.wit");
-template.merge(params, out);
+Template script = engine.getTemplate("/demo.wit");
+script.merge(params, out);
 ```
 
 ## Hello Wit

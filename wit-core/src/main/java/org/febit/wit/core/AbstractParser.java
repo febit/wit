@@ -4,7 +4,7 @@ package org.febit.wit.core;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Engine;
 import org.febit.wit.Feature;
-import org.febit.wit.Template;
+import org.febit.wit.Script;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.exceptions.UncheckedException;
 import org.febit.wit.runtime.ALU;
@@ -17,8 +17,8 @@ import org.febit.wit.runtime.TextPosition;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.IBlock;
+import org.febit.wit.runtime.ast.ScriptAST;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.TemplateAST;
 import org.febit.wit.runtime.ast.expr.AssignableSuppliedValue;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
 import org.febit.wit.runtime.ast.expr.ContextUpstreamVar;
@@ -181,13 +181,13 @@ abstract class AbstractParser {
     private NativeFactory nativeFactory;
 
     protected final Stack<Symbol> symbolStack = new Stack<>(24);
-    protected Template template;
+    protected Script script;
     protected VariantManager variants;
 
     /**
-     * Caching current resource version.
+     * Current source version.
      */
-    private long lastResourceVersion;
+    private long lastSourceVersion;
 
     /**
      * flag to stop parser
@@ -304,8 +304,8 @@ abstract class AbstractParser {
         return "UNKNOWN";
     }
 
-    public static TemplateAST parse(Template template) throws ParseException {
-        return new Parser().doParse(template);
+    public static ScriptAST parse(Script script) throws ParseException {
+        return new Parser().doParse(script);
     }
 
     @Nullable
@@ -444,16 +444,16 @@ abstract class AbstractParser {
     }
 
     /**
-     * @param template Template
-     * @return TemplateAST
+     * @param script Script
+     * @return ScriptAST
      * @throws ParseException ParseException
      */
-    protected TemplateAST doParse(
-            Template template
+    protected ScriptAST doParse(
+            Script script
     ) throws ParseException {
-        var myEngine = template.engine();
-        var resource = template.resource();
-        this.template = template;
+        var myEngine = script.engine();
+        var source = script.source();
+        this.script = script;
         this.engine = myEngine;
 
         this.textStatementFactory = myEngine.textStatementFactory();
@@ -464,26 +464,26 @@ abstract class AbstractParser {
         this.nextLabelIndex.set(1);
         Lexer lexer = null;
         try {
-            // get resource version before open it, may less than actual value.
-            this.lastResourceVersion = resource.version();
+            // get source version before open it, may less than actual value.
+            this.lastSourceVersion = source.version();
             //ISSUE: LexerProvider
-            lexer = new Lexer(resource.openReader());
+            lexer = new Lexer(source.openReader());
             lexer.setTrimCodeBlockBlankLine(myEngine.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE));
-            if (resource.codeFirst()) {
+            if (source.codeFirst()) {
                 lexer.codeFirst();
             }
-            lexer.setOffset(resource);
-            this.textStatementFactory.onParserStarted(template);
+            lexer.setOffset(source);
+            this.textStatementFactory.onParserStarted(script);
 
             var ast = this.process(lexer).value;
             Objects.requireNonNull(ast, "Parser result is null.");
-            return (TemplateAST) ast;
+            return (ScriptAST) ast;
         } catch (ParseException e) {
             throw e;
         } catch (Exception e) {
             throw new ParseException(e);
         } finally {
-            this.textStatementFactory.onParserCompleted(template);
+            this.textStatementFactory.onParserCompleted(script);
             if (lexer != null) {
                 try {
                     lexer.close();
@@ -613,7 +613,7 @@ abstract class AbstractParser {
         if (text == null || text.length == 0) {
             return NoopStatement.INSTANCE;
         }
-        return this.textStatementFactory.create(template, text, position);
+        return this.textStatementFactory.create(script, text, position);
     }
 
     ContextVar declareVarAndCreateContextValue(String name, Position position) {
@@ -787,13 +787,13 @@ abstract class AbstractParser {
         return new DynamicNativeMethodCallExpr(thisExpr, func, paramExprs, position);
     }
 
-    TemplateAST createTemplateAST(List<Statement> list) {
+    ScriptAST createScriptAST(List<Statement> list) {
         var statements = AstUtils.flatStatements(list);
         var loops = AstUtils.collectLoopFlags(statements);
         if (!loops.isEmpty()) {
             throw new ParseException("loop overflow: " + StringUtils.join(loops, ','));
         }
-        return new TemplateAST(variants.constructIndexers(), statements, variants.varCounter(), this.lastResourceVersion);
+        return new ScriptAST(variants.constructIndexers(), statements, variants.varCounter(), this.lastSourceVersion);
     }
 
     IBlock createBlock(@Nullable List<Statement> list, int varIndexer, Position position) {

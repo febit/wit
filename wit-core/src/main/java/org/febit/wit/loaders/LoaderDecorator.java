@@ -1,6 +1,6 @@
 package org.febit.wit.loaders;
 
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 import org.jspecify.annotations.Nullable;
 
 public interface LoaderDecorator extends Loader {
@@ -8,7 +8,7 @@ public interface LoaderDecorator extends Loader {
     Loader delegate();
 
     @Override
-    default Resource get(String path) {
+    default Source get(String path) {
         return delegate().get(path);
     }
 

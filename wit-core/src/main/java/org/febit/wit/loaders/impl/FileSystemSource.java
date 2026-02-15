@@ -1,7 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl;
 
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,11 +13,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-public record FileSystemResource(
+public record FileSystemSource(
         Path path,
         Charset charset,
         boolean codeFirst
-) implements Resource {
+) implements Source {
 
     @Override
     public long version() {

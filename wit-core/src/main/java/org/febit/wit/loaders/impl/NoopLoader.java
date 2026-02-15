@@ -1,19 +1,19 @@
 package org.febit.wit.loaders.impl;
 
 import org.febit.wit.loaders.Loader;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A loader that without any resources.
+ * A loader that without any sources.
  */
 public class NoopLoader implements Loader {
 
     @Override
-    public Resource get(String path) {
-        return new NotExistResource(
+    public Source get(String path) {
+        return new NotExistSource(
                 path,
-                "Resource not found: " + path
+                "Source not found: " + path
         );
     }
 

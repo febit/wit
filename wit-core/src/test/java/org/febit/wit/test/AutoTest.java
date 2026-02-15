@@ -4,10 +4,10 @@ package org.febit.wit.test;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Strings;
 import org.febit.wit.EngineManager;
-import org.febit.wit.Template;
+import org.febit.wit.Script;
 import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exceptions.SourceNotFoundException;
 import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.runtime.InternalContext;
@@ -45,7 +45,7 @@ class AutoTest {
 
         var url = classLoader.getResource(AUTO_TEST_ROOT_FLAG);
         if (url == null) {
-            throw new IllegalStateException("Test resource not found: " + AUTO_TEST_ROOT_FLAG);
+            throw new IllegalStateException("Test source not found: " + AUTO_TEST_ROOT_FLAG);
         }
 
         var root = Path.of(url.toURI()).getParent().toAbsolutePath().normalize();
@@ -60,7 +60,7 @@ class AutoTest {
                     .map(p -> "/auto/" + p);
             cases.forEach(p -> {
                 out.reset();
-                mergeTemplate(p, out);
+                mergeScript(p, out);
                 var outInput = classLoader.getResourceAsStream(p + ".out");
                 if (outInput != null) {
                     try {
@@ -76,16 +76,16 @@ class AutoTest {
         System.out.println("Breakpoint count: " + breakpointCount);
     }
 
-    private void mergeTemplate(String path, OutputStream output) {
+    private void mergeScript(String path, OutputStream output) {
         System.out.println("Auto Test: " + path);
-        Template template;
+        Script script;
         try {
-            template = EngineManager.engine().template(path);
-        } catch (ResourceNotFoundException e) {
+            script = EngineManager.engine().script(path);
+        } catch (SourceNotFoundException e) {
             throw new UncheckedIOException(e);
         }
         var out = new OutputStreamOut(output, EngineManager.engine().charset(), EngineManager.engine().codecFactory());
-        var context = template.debug(out, this::onBreakpoint);
+        var context = script.debug(out, this::onBreakpoint);
         System.out.println("\tassert count: " + context.local().get(AssertionModule.ASSERT_COUNT_KEY));
     }
 

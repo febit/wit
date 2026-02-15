@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ScriptRuntimeException extends TemplateException {
+public class ScriptRuntimeException extends ScriptException {
 
     private final List<Statement> statementStack = new ArrayList<>(8);
 

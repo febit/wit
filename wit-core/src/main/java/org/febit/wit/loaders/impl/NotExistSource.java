@@ -1,16 +1,16 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl;
 
-import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.runtime.Source;
 
 import java.io.IOException;
 import java.io.Reader;
 
-public record NotExistResource(
+public record NotExistSource(
         String path,
         String message
-) implements Resource {
+) implements Source {
 
     @Override
     public boolean exists() {
@@ -19,7 +19,7 @@ public record NotExistResource(
 
     @Override
     public Reader openReader() throws IOException {
-        throw new ResourceNotFoundException(message);
+        throw new SourceNotFoundException(message);
     }
 
     @Override

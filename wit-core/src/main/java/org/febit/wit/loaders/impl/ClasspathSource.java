@@ -1,8 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl;
 
-import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.runtime.Source;
 import org.febit.wit.util.ClassUtils;
 
 import java.io.IOException;
@@ -10,11 +10,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 
-public record ClasspathResource(
+public record ClasspathSource(
         String path,
         Charset charset,
         boolean codeFirst
-) implements Resource {
+) implements Source {
 
     @Override
     public boolean exists() {
@@ -26,7 +26,7 @@ public record ClasspathResource(
         var in = ClassUtils.getDefaultClassLoader()
                 .getResourceAsStream(path);
         if (in == null) {
-            throw new ResourceNotFoundException("Resource Not Found: " + path);
+            throw new SourceNotFoundException("Source Not Found: " + path);
         }
         return new InputStreamReader(in, charset);
     }

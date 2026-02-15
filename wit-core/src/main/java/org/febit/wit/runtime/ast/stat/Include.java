@@ -16,7 +16,7 @@ public final class Include extends AbstractInclude {
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        mergeTemplate(context, false);
+        mergeScript(context, false);
         return null;
     }
 }

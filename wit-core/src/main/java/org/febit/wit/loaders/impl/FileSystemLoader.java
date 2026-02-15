@@ -3,7 +3,7 @@ package org.febit.wit.loaders.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.loaders.BasicPathLoader;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -15,8 +15,8 @@ public class FileSystemLoader implements BasicPathLoader {
     private final boolean codeFirst;
 
     @Override
-    public Resource get(String path) {
+    public Source get(String path) {
         var p = Path.of(path);
-        return new FileSystemResource(p, charset, codeFirst);
+        return new FileSystemSource(p, charset, codeFirst);
     }
 }

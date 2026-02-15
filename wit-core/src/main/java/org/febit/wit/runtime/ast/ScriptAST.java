@@ -4,7 +4,7 @@ package org.febit.wit.runtime.ast;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.Out;
-import org.febit.wit.Template;
+import org.febit.wit.Script;
 import org.febit.wit.Vars;
 import org.febit.wit.runtime.BreakpointListener;
 import org.febit.wit.runtime.FrameIndexer;
@@ -14,19 +14,19 @@ import org.febit.wit.runtime.heap.VariantHeap;
 import org.jspecify.annotations.Nullable;
 
 @RequiredArgsConstructor
-public final class TemplateAST {
+public final class ScriptAST {
 
     private final FrameIndexer[] indexers;
     private final Statement[] statements;
     private final int frameSize;
 
     @Getter
-    private final long resourceVersion;
+    private final long sourceVersion;
     @Getter
     private final long createdAt = System.currentTimeMillis();
 
     public InternalContext execute(
-            Template template,
+            Script script,
             Out out,
             Vars inputs,
             @Nullable BreakpointListener listener
@@ -34,17 +34,17 @@ public final class TemplateAST {
         var heap = new VariantHeap(frameSize, indexers);
         inputs.sink(heap::set);
         var local = LocalHeap.create();
-        var context = new InternalContext(template, out, inputs, heap, local, listener);
+        var context = new InternalContext(script, out, inputs, heap, local, listener);
         context.visit(this.statements);
         //assert context.indexer = 0
         return context;
     }
 
-    public InternalContext execute(Template template, InternalContext context, Vars inputs) {
+    public InternalContext execute(Script script, InternalContext context, Vars inputs) {
         var heap = new VariantHeap(frameSize, indexers);
         inputs.sink(heap::set);
 
-        var newContext = context.createPeerContext(template, heap, inputs);
+        var newContext = context.createPeerContext(script, heap, inputs);
         newContext.visit(this.statements);
         //assert context.indexer = 0
         return newContext;

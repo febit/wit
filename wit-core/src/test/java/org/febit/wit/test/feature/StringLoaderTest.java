@@ -2,7 +2,7 @@
 package org.febit.wit.test.feature;
 
 import org.febit.wit.EngineManager;
-import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.exceptions.SourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
@@ -12,21 +12,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class StringLoaderTest {
 
     @Test
-    void test() throws ResourceNotFoundException {
+    void test() throws SourceNotFoundException {
 
         final StringWriter writer = new StringWriter();
 
-        EngineManager.template("string:<% echo \"Hello Wit！\"; %>")
+        EngineManager.script("string:<% echo \"Hello Wit！\"; %>")
                 .merge(writer);
         assertEquals("Hello Wit！", writer.toString());
     }
 
     @Test
-    void testCodeFirst() throws ResourceNotFoundException {
+    void testCodeFirst() throws SourceNotFoundException {
 
         final StringWriter writer = new StringWriter();
 
-        EngineManager.template("code: echo \"Hello Wit！\";")
+        EngineManager.script("code: echo \"Hello Wit！\";")
                 .merge(writer);
         assertEquals("Hello Wit！", writer.toString());
     }

@@ -2,38 +2,38 @@
 package org.febit.wit.exceptions;
 
 import lombok.Getter;
-import org.febit.wit.Template;
+import org.febit.wit.Script;
 import org.jspecify.annotations.Nullable;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-public abstract class TemplateException extends RuntimeException {
+public abstract class ScriptException extends RuntimeException {
 
     private boolean isCaused;
     @Getter
     @Nullable
-    private Template template;
+    private Script script;
 
-    protected TemplateException(String message) {
+    protected ScriptException(String message) {
         this(message, null);
     }
 
-    protected TemplateException(Throwable cause) {
+    protected ScriptException(Throwable cause) {
         this(cause.getMessage(), cause);
     }
 
-    protected TemplateException(String message, @Nullable Throwable cause) {
+    protected ScriptException(String message, @Nullable Throwable cause) {
         super(message, cause, true, false);
-        if (cause instanceof TemplateException ex) {
+        if (cause instanceof ScriptException ex) {
             ex.isCaused = true;
         }
     }
 
     protected abstract void printBody(PrintStreamOrWriter out, String prefix);
 
-    public TemplateException setTemplate(Template template) {
-        this.template = template;
+    public ScriptException setScript(Script script) {
+        this.script = script;
         return this;
     }
 
@@ -54,10 +54,10 @@ public abstract class TemplateException extends RuntimeException {
     private void printStackTrace(PrintStreamOrWriter out) {
         String prefix = isCaused ? "\t" : "";
         out.print(prefix).print(this).print('\n');
-        if (this.template != null) {
+        if (this.script != null) {
             out.print(prefix)
-                    .print("template: ")
-                    .print(this.template.path())
+                    .print("script: ")
+                    .print(this.script.path())
                     .print('\n');
         }
         printBody(out, prefix);

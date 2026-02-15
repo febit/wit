@@ -2,7 +2,7 @@
 package org.febit.wit.loaders.impl;
 
 import org.febit.wit.loaders.Loader;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 import org.jspecify.annotations.Nullable;
 
 @lombok.Builder(
@@ -14,8 +14,8 @@ public class StringLoader implements Loader {
     private final boolean codeFirst;
 
     @Override
-    public Resource get(String path) {
-        return new StringResource(path, codeFirst);
+    public Source get(String path) {
+        return new StringSource(path, codeFirst);
     }
 
     @Override

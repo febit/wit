@@ -5,7 +5,7 @@ import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Function;
 import org.febit.wit.exceptions.NotFunctionException;
-import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.exceptions.SourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class FunctionExportTest {
 
     @Test
-    void test() throws ResourceNotFoundException {
+    void test() throws SourceNotFoundException {
 
-        Context context = EngineManager.template("/functionExportTest.wit").merge();
+        Context context = EngineManager.script("/functionExportTest.wit").merge();
 
         //plus
         Function plus = context.exportFunction("plus");

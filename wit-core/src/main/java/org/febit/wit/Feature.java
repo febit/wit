@@ -16,7 +16,7 @@ public enum Feature {
             "Trims blank lines around code blocks for cleaner output."
     ),
     SHARE_ROOT_PARAMS(true,
-            "When enabled, all templates share the same root parameters."
+            "When enabled, all scripts share the same root parameters."
     ),
     IGNORE_ACCESSOR_NULL_POINTER(true,
             "When enabled, accessor null pointer exceptions are ignored and return null instead."

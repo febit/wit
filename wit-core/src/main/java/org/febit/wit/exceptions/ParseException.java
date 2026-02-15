@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.TextPosition;
 
-public class ParseException extends TemplateException {
+public class ParseException extends ScriptException {
 
     @Getter
     private final Position position;

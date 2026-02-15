@@ -4,17 +4,17 @@ package org.febit.wit.runtime;
 import java.io.IOException;
 import java.io.Reader;
 
-public interface Resource {
+public interface Source {
 
     /**
-     * if exists this resource.
+     * if exists this source.
      *
      * @return boolean
      */
     boolean exists();
 
     /**
-     * if this resource is begin with code.
+     * if this source is begin with code.
      *
      * @return boolean
      */
@@ -23,9 +23,9 @@ public interface Resource {
     Reader openReader() throws IOException;
 
     /**
-     * Return current resource version.
+     * Return current source version.
      *
-     * @return current resource version.
+     * @return current source version.
      */
     long version();
 

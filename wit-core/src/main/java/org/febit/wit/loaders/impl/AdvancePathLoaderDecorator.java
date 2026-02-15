@@ -2,7 +2,7 @@ package org.febit.wit.loaders.impl;
 
 import org.febit.wit.loaders.BasicPathLoader;
 import org.febit.wit.loaders.Loader;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 import org.febit.wit.util.PathUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -74,7 +74,7 @@ public class AdvancePathLoaderDecorator implements Loader {
     }
 
     @Override
-    public Resource get(String path) {
+    public Source get(String path) {
         var mapped = mappingPath(path);
         return this.delegate.get(mapped);
     }

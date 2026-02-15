@@ -7,7 +7,7 @@ import org.febit.wit.Engine;
 import org.febit.wit.Feature;
 import org.febit.wit.Function;
 import org.febit.wit.Out;
-import org.febit.wit.Template;
+import org.febit.wit.Script;
 import org.febit.wit.Vars;
 import org.febit.wit.accessor.AccessorFactory;
 import org.febit.wit.accessor.Getter;
@@ -15,8 +15,8 @@ import org.febit.wit.accessor.Render;
 import org.febit.wit.accessor.Setter;
 import org.febit.wit.exceptions.NotFunctionException;
 import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exceptions.SourceNotFoundException;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.heap.LocalHeap;
@@ -36,7 +36,7 @@ import org.jspecify.annotations.Nullable;
 public final class InternalContext implements Context {
 
     @lombok.Getter
-    private final Template template;
+    private final Script script;
 
     private final int features;
 
@@ -67,20 +67,20 @@ public final class InternalContext implements Context {
     private Out out;
 
     public InternalContext(
-            final Template template,
+            final Script script,
             final Out out,
             final Vars inputs,
             final VariantHeap heap,
             final LocalHeap local,
             @Nullable BreakpointListener breakpointListener
     ) {
-        this.template = template;
+        this.script = script;
         this.inputs = inputs;
         this.out = out;
         this.heap = heap;
         this.local = local;
 
-        var engine = template.engine();
+        var engine = script.engine();
         this.features = engine.features();
         this.accessors = engine.accessors();
 
@@ -95,9 +95,9 @@ public final class InternalContext implements Context {
         }
     }
 
-    public Context mergeTemplate(String refer, String path, Vars vars)
-            throws ResourceNotFoundException, ScriptRuntimeException, ParseException {
-        var tmpl = this.template.engine().template(refer, path);
+    public Context mergeScript(String refer, String path, Vars vars)
+            throws SourceNotFoundException, ScriptRuntimeException, ParseException {
+        var tmpl = this.script.engine().script(refer, path);
         return tmpl.mergeToContext(this, vars);
     }
 
@@ -138,7 +138,7 @@ public final class InternalContext implements Context {
     public InternalContext createSubContext(InternalContext callerContext, FrameIndexer[] indexers, int frameSize) {
         var subHeap = this.heap().shift(frameSize, indexers);
         return new InternalContext(
-                template,
+                script,
                 callerContext.out,
                 Vars.empty(),
                 subHeap,
@@ -154,9 +154,9 @@ public final class InternalContext implements Context {
      *
      * @return a new peer context
      */
-    public InternalContext createPeerContext(Template template, VariantHeap heap, Vars inputs) {
+    public InternalContext createPeerContext(Script script, VariantHeap heap, Vars inputs) {
         return new InternalContext(
-                template, out(), inputs,
+                script, out(), inputs,
                 heap, local(), breakpointListener
         );
     }
@@ -239,10 +239,10 @@ public final class InternalContext implements Context {
         if (!(obj instanceof FunctionDeclare func)) {
             throw new NotFunctionException(obj);
         }
-        return new Function(this.template, func, this.out.charset(), this.out.preferBytes());
+        return new Function(this.script, func, this.out.charset(), this.out.preferBytes());
     }
 
     public Engine engine() {
-        return this.template.engine();
+        return this.script.engine();
     }
 }

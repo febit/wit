@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.core.NativeFactory;
-import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.exceptions.SourceNotFoundException;
 import org.febit.wit.extern.lib.cache.CachingModule;
 import org.febit.wit.extern.lib.cache.impl.SimpleCache;
 import org.febit.wit.extern.lib.context.GlobalContextRegister;
@@ -144,12 +144,12 @@ public class EngineManager {
                 .build();
     }
 
-    public static Template template(String name) throws ResourceNotFoundException {
-        return engine().template(name);
+    public static Script script(String name) throws SourceNotFoundException {
+        return engine().script(name);
     }
 
     public static Executable tmplChecker(String tmpl) {
-        return () -> template(tmpl)
+        return () -> script(tmpl)
                 .reload();
     }
 

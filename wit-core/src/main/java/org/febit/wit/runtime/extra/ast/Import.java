@@ -37,7 +37,7 @@ public final class Import extends AbstractInclude {
     @Nullable
     @SuppressWarnings("UnnecessaryLocalVariable")
     public Object execute(InternalContext context) {
-        var results = mergeTemplate(context, true);
+        var results = mergeScript(context, true);
         if (exportAll) {
             var targetIndexer = context.heap().currentIndexer();
             var targetHeap = context.heap();

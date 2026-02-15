@@ -1,18 +1,18 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders;
 
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 import org.jspecify.annotations.Nullable;
 
 public interface Loader {
 
     /**
-     * Get resource by path.
+     * Get source by path.
      *
-     * @param path resource path
-     * @return resource
+     * @param path source path
+     * @return source
      */
-    Resource get(String path);
+    Source get(String path);
 
     /**
      * Get path by reference and relative path.
@@ -36,7 +36,7 @@ public interface Loader {
     /**
      * Whether cache enabled for path.
      *
-     * @param path resource path
+     * @param path source path
      * @return true if cache enabled for path, otherwise false
      */
     boolean isCacheEnabled(String path);

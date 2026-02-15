@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loaders.Loaders;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class DispatcherLoader implements Loader {
     }
 
     @Override
-    public Resource get(String path) {
+    public Source get(String path) {
         var rule = lookup(path);
         if (rule != null) {
             return rule.get(path);
@@ -126,7 +126,7 @@ public class DispatcherLoader implements Loader {
             this.prefixLength = prefix.length();
         }
 
-        public Resource get(String path) {
+        public Source get(String path) {
             return this.loader.get(path.substring(this.prefixLength));
         }
 

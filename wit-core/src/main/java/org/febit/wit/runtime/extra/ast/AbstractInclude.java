@@ -7,8 +7,8 @@ import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
 import org.febit.wit.Vars;
 import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.exceptions.ResourceNotFoundException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exceptions.SourceNotFoundException;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.ast.Expression;
@@ -37,22 +37,22 @@ public abstract class AbstractInclude implements Statement {
         } else if (paramsRaw instanceof Map) {
             params = Vars.of((Map<?, ?>) paramsRaw);
         } else {
-            throw new ScriptRuntimeException("Template param must be a Map.", paramsExpr);
+            throw new ScriptRuntimeException("Script param must be a Map.", paramsExpr);
         }
         return context.isEnabled(Feature.SHARE_ROOT_PARAMS)
                 ? Vars.of(context.inputs(), params)
                 : params;
     }
 
-    protected Map<String, @Nullable Object> mergeTemplate(InternalContext context, boolean export) {
-        var templatePath = pathExpr.execute(context);
-        if (templatePath == null) {
-            throw new ScriptRuntimeException("Template name should not be null.", pathExpr);
+    protected Map<String, @Nullable Object> mergeScript(InternalContext context, boolean export) {
+        var scriptPath = pathExpr.execute(context);
+        if (scriptPath == null) {
+            throw new ScriptRuntimeException("Script name should not be null.", pathExpr);
         }
         try {
-            var newContext = context.mergeTemplate(
+            var newContext = context.mergeScript(
                     refer,
-                    String.valueOf(templatePath),
+                    String.valueOf(scriptPath),
                     prepareParams(context)
             );
             if (export) {
@@ -61,7 +61,7 @@ public abstract class AbstractInclude implements Statement {
                 return result;
             }
             return Map.of();
-        } catch (ResourceNotFoundException | ScriptRuntimeException | ParseException e) {
+        } catch (SourceNotFoundException | ScriptRuntimeException | ParseException e) {
             throw new ScriptRuntimeException(e, this);
         }
     }

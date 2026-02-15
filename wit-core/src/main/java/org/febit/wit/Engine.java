@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.accessor.AccessorFactory;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.core.TextStatementFactory;
-import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.exceptions.SourceNotFoundException;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.runtime.heap.StaticHeaps;
@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentMap;
 @RequiredArgsConstructor
 public class Engine {
 
-    private final ConcurrentMap<String, Template> cachedTemplates = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Script> cachedScripts = new ConcurrentHashMap<>();
 
     @Getter
     private final StaticHeaps staticHeaps = new StaticHeaps();
@@ -64,61 +64,61 @@ public class Engine {
     }
 
     /**
-     * Get template by refer and relative path.
+     * Get script by refer and relative path.
      *
-     * @param refer template's refer path
-     * @param path  template's relative path
-     * @return Template
-     * @throws ResourceNotFoundException if resource not found
+     * @param refer script's refer path
+     * @param path  script's relative path
+     * @return Script
+     * @throws SourceNotFoundException if source not found
      */
-    public Template template(@Nullable String refer, String path) throws ResourceNotFoundException {
+    public Script script(@Nullable String refer, String path) throws SourceNotFoundException {
         var finalPath = this.loader.sibling(refer, path);
         if (finalPath == null) {
-            throw new ResourceNotFoundException(
-                    "Illegal template path: sibling of "
+            throw new SourceNotFoundException(
+                    "Illegal script path: sibling of "
                             + refer + " and " + path
             );
         }
-        return template(finalPath);
+        return script(finalPath);
     }
 
     /**
-     * Get template by path.
+     * Get script by path.
      *
-     * @param path template's path
-     * @return Template
-     * @throws ResourceNotFoundException if resource not found
+     * @param path script's path
+     * @return Script
+     * @throws SourceNotFoundException if source not found
      */
-    public Template template(String path) throws ResourceNotFoundException {
-        var template = this.cachedTemplates.get(path);
-        if (template != null) {
-            return template;
+    public Script script(String path) throws SourceNotFoundException {
+        var script = this.cachedScripts.get(path);
+        if (script != null) {
+            return script;
         }
-        return createTemplateIfAbsent(path);
+        return loadScriptIfAbsent(path);
     }
 
-    private Template createTemplateIfAbsent(String path) throws ResourceNotFoundException {
+    private Script loadScriptIfAbsent(String path) throws SourceNotFoundException {
         var myLoader = this.loader;
         var normalized = myLoader.normalize(path);
         if (normalized == null) {
-            //if normalized-path is null means not found resource.
-            throw new ResourceNotFoundException("Illegal template path: " + path);
+            //if normalized-path is null means not found source.
+            throw new SourceNotFoundException("Illegal source path: " + path);
         }
-        Template template;
-        template = this.cachedTemplates.get(normalized);
-        if (template != null) {
-            return template;
+        Script script;
+        script = this.cachedScripts.get(normalized);
+        if (script != null) {
+            return script;
         }
-        // then create Template
-        template = new Template(this, normalized, myLoader.get(normalized));
+        // then create script
+        script = new Script(this, normalized, myLoader.get(normalized));
         if (myLoader.isCacheEnabled(normalized)) {
-            Template oldTemplate = this.cachedTemplates.putIfAbsent(normalized, template);
-            // if old Template exist, use the old one
-            if (oldTemplate != null) {
-                template = oldTemplate;
+            Script oldScript = this.cachedScripts.putIfAbsent(normalized, script);
+            // if old script exist, use the old one
+            if (oldScript != null) {
+                script = oldScript;
             }
         }
-        return template;
+        return script;
     }
 
 }

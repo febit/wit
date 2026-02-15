@@ -4,7 +4,7 @@ package org.febit.wit.core;
 import org.jspecify.annotations.Nullable;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.runtime.TextPosition;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 import org.febit.wit.util.LexerCharArrayWriter;
 
 import java.util.ArrayDeque;
@@ -100,8 +100,8 @@ import java.util.Deque;
         this.offsetColumnOfFirstLine = 1 - offsetColumnOfFirstLine;
     }
 
-    public void setOffset(Resource res) {
-        setOffset(res.getOffsetLine(), res.getOffsetColumnOfFirstLine());
+    public void setOffset(Source source) {
+        setOffset(source.getOffsetLine(), source.getOffsetColumnOfFirstLine());
     }
 
     public int getColumn() {
@@ -482,8 +482,8 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   /* character literal */
   \'                             { yybegin(CHARLITERAL); }
 
-  /* template string literal */
-  "`"                             { if(templateStringFlag){ throw new ParseException("Illegal character '`', not support nesting template string.", getPosition()); } yybegin(TEMPLATE_STRING); this.templateStringFlag = true; templateStringBraceClosingCounter = 0; return symbol(Tokens.TEMPLATE_STRING_START); }
+  /* script string literal */
+  "`"                             { if(templateStringFlag){ throw new ParseException("Illegal character '`', not support nesting script string.", getPosition()); } yybegin(TEMPLATE_STRING); this.templateStringFlag = true; templateStringBraceClosingCounter = 0; return symbol(Tokens.TEMPLATE_STRING_START); }
 
   /* numeric literals */
 

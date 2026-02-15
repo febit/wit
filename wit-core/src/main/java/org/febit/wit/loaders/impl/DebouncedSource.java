@@ -4,7 +4,7 @@ package org.febit.wit.loaders.impl;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -14,11 +14,11 @@ import java.util.concurrent.atomic.AtomicReference;
 @Getter
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public class DebouncedResource implements Resource {
+public class DebouncedSource implements Source {
 
     private final AtomicReference<@Nullable Stamp> stampRef = new AtomicReference<>();
 
-    private final Resource delegate;
+    private final Source delegate;
     private final long delayMillis;
 
     public long now() {

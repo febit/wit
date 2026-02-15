@@ -6,7 +6,7 @@ import org.febit.wit.accessor.DefaultAccessorFactory;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.core.TextStatementFactory;
 import org.febit.wit.core.text.AdaptiveTextStatementFactory;
-import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.exceptions.SourceNotFoundException;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.DefaultCodecFactory;
 import org.febit.wit.loaders.Loader;
@@ -157,13 +157,13 @@ public class EngineBuilder {
         }
         try {
             initScripts(engine, initScripts);
-        } catch (ResourceNotFoundException e) {
+        } catch (SourceNotFoundException e) {
             throw new UncheckedIOException(e.getMessage(), e);
         }
         return engine;
     }
 
-    private static void initScripts(Engine engine, List<String> scripts) throws ResourceNotFoundException {
+    private static void initScripts(Engine engine, List<String> scripts) throws SourceNotFoundException {
         var flatten = scripts.stream()
                 .flatMap(s -> Stream.of(StringUtils.toArray(s)))
                 .filter(StringUtils::isNonEmpty)
@@ -182,7 +182,7 @@ public class EngineBuilder {
         for (int i = 0; i < total; i++) {
             var tmpl = flatten.get(i);
             log.info("[INIT] applying init scripts [{}/{}]: {}", i + 1, total, tmpl);
-            engine.template(tmpl).merge(acceptor -> {
+            engine.script(tmpl).merge(acceptor -> {
                 acceptor.set("GLOBAL", staticHeaps.variant());
                 acceptor.set("CONST", staticHeaps.constant());
             });

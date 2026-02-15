@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loaders.LoaderDecorator;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 
 import java.util.List;
 
@@ -19,13 +19,13 @@ public class SecurityLoaderDecorator implements LoaderDecorator {
     private final List<String> allows;
 
     @Override
-    public Resource get(String path) {
+    public Source get(String path) {
         for (var allow : this.allows) {
             if (path.startsWith(allow)) {
                 return this.delegate.get(path);
             }
         }
-        return new NotExistResource(path, "Access denied.");
+        return new NotExistSource(path, "Access denied.");
     }
 
 }

@@ -24,16 +24,16 @@ import static org.febit.wit.util.Defaults.nvl;
 @SuppressWarnings("UnusedReturnValue")
 public final class Function {
 
-    private final Template template;
+    private final Script script;
     private final FunctionDeclare functionDeclare;
     private final Out defaultOut;
 
-    public Function(Template container, FunctionDeclare functionDeclare) {
+    public Function(Script container, FunctionDeclare functionDeclare) {
         this(container, functionDeclare, DiscardOut.INSTANCE);
     }
 
     public Function(
-            Template container,
+            Script container,
             FunctionDeclare functionDeclare,
             Charset charset,
             boolean isByteStream
@@ -44,7 +44,7 @@ public final class Function {
     private InternalContext createContext(Out out) {
         var heap = VariantHeap.empty();
         var local = LocalHeap.create();
-        return new InternalContext(template, out, Vars.empty(), heap, local, null);
+        return new InternalContext(script, out, Vars.empty(), heap, local, null);
     }
 
     private InternalContext createContext() {
@@ -71,21 +71,21 @@ public final class Function {
 
     @Nullable
     public Object applyWithOut(Writer writer, @Nullable Object @Nullable ... args) {
-        var engine = template.engine();
+        var engine = script.engine();
         return applyWithOut(new WriterOut(writer, engine.charset(), engine.codecFactory()), args);
     }
 
     @Nullable
     public Object applyWithOut(
             OutputStream out, @Nullable Object @Nullable ... args) {
-        var engine = template.engine();
+        var engine = script.engine();
         return applyWithOut(new OutputStreamOut(out, engine.charset(), engine.codecFactory()), args);
     }
 
     @Nullable
     public Object applyWithOut(
             Charset charset, OutputStream out, @Nullable Object @Nullable ... args) {
-        var engine = template.engine();
+        var engine = script.engine();
         return applyWithOut(new OutputStreamOut(out, nvl(charset, engine.charset()), engine.codecFactory()), args);
     }
 }

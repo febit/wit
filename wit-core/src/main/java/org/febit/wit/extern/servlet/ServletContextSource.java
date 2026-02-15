@@ -2,20 +2,20 @@
 package org.febit.wit.extern.servlet;
 
 import jakarta.servlet.ServletContext;
-import org.febit.wit.exceptions.ResourceNotFoundException;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.runtime.Source;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 
-public record ServletContextResource(
+public record ServletContextSource(
         String path,
         Charset charset,
         ServletContext servletContext,
         boolean codeFirst
-) implements Resource {
+) implements Source {
 
     @Override
     public Reader openReader() throws IOException {
@@ -23,7 +23,7 @@ public record ServletContextResource(
         if (in != null) {
             return new InputStreamReader(in, charset);
         }
-        throw new ResourceNotFoundException("Resource Not Found: " + path);
+        throw new SourceNotFoundException("Source Not Found: " + path);
     }
 
     @Override

@@ -1,15 +1,15 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl;
 
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 
 import java.io.Reader;
 import java.io.StringReader;
 
-public record StringResource(
+public record StringSource(
         String text,
         boolean codeFirst
-) implements Resource {
+) implements Source {
 
     @Override
     public Reader openReader() {

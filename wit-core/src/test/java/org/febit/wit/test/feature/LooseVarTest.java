@@ -3,7 +3,7 @@ package org.febit.wit.test.feature;
 
 import org.febit.wit.EngineManager;
 import org.febit.wit.Feature;
-import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.exceptions.SourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.spy;
@@ -12,13 +12,13 @@ import static org.mockito.Mockito.when;
 class LooseVarTest {
 
     @Test
-    void test() throws ResourceNotFoundException {
+    void test() throws SourceNotFoundException {
 
         var engine = spy(EngineManager.engine());
         when(engine.isEnabled(Feature.LOOSE_VAR))
                 .thenReturn(true);
 
-        var template = engine.template("/feature/looseVar.wit");
-        template.merge();
+        var script = engine.script("/feature/looseVar.wit");
+        script.merge();
     }
 }

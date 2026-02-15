@@ -37,7 +37,7 @@ public final class FunctionFunctionDeclare implements FunctionDeclare, UnConstab
         } catch (Exception e) {
             var runtimeException = ScriptRuntimeException.from(e, declareExpr);
             if (context != this.upstreamContext) {
-                throw runtimeException.setTemplate(this.upstreamContext.template());
+                throw runtimeException.setScript(this.upstreamContext.script());
             }
             throw runtimeException;
         }

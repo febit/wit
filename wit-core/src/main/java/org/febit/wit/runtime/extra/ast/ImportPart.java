@@ -1,7 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.extra.ast;
 
-import org.febit.wit.Template;
+import org.febit.wit.Script;
 import org.febit.wit.exceptions.ParseException;
 import org.febit.wit.runtime.AstUtils;
 import org.febit.wit.runtime.Position;
@@ -38,8 +38,8 @@ public class ImportPart {
         return this;
     }
 
-    public Import pop(Template template) {
-        var refer = template.path();
+    public Import pop(Script script) {
+        var refer = script.path();
         var len = exportNameList.size();
         return len == 0
                 ? new Import(expr, paramsExpr, null, null, refer, position)

@@ -25,7 +25,6 @@ public class TemplateStringValue implements Expression {
         for (var expr : exprs) {
             var piece = expr.execute(context);
             if (piece != null && piece != Undefined.UNDEFINED) {
-                // TODO: let template string append with OutResolver
                 buf.append(piece);
             }
         }

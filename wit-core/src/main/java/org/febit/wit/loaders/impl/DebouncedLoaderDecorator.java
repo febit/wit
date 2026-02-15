@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.loaders.Loader;
 import org.febit.wit.loaders.LoaderDecorator;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.runtime.Source;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor(staticName = "of")
@@ -17,10 +17,10 @@ public class DebouncedLoaderDecorator implements LoaderDecorator {
     private final long delayMillis;
 
     @Override
-    public Resource get(String path) {
+    public Source get(String path) {
         var inner = this.delegate.get(path);
         return this.delayMillis > 0L
-                ? new DebouncedResource(inner, this.delayMillis)
+                ? new DebouncedSource(inner, this.delayMillis)
                 : inner;
     }
 }

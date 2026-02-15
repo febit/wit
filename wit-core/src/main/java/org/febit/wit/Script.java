@@ -5,15 +5,15 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.core.Parser;
 import org.febit.wit.exceptions.ParseException;
+import org.febit.wit.exceptions.ScriptException;
 import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.exceptions.TemplateException;
 import org.febit.wit.io.DiscardOut;
 import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.io.WriterOut;
 import org.febit.wit.runtime.BreakpointListener;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Resource;
-import org.febit.wit.runtime.ast.TemplateAST;
+import org.febit.wit.runtime.Source;
+import org.febit.wit.runtime.ast.ScriptAST;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
@@ -27,26 +27,26 @@ import static org.febit.wit.util.Defaults.nvl;
         "UnusedReturnValue"
 })
 @Accessors(fluent = true)
-public class Template {
+public class Script {
 
     @Getter
     private final Engine engine;
     @Getter
     private final String path;
     @Getter
-    private final Resource resource;
+    private final Source source;
 
     @Nullable
-    private volatile TemplateAST ast;
+    private volatile ScriptAST ast;
 
-    Template(Engine engine, String path, Resource resource) {
+    Script(Engine engine, String path, Source source) {
         this.engine = engine;
         this.path = path;
-        this.resource = resource;
+        this.source = source;
     }
 
     /**
-     * Reload this template.
+     * Reload this script.
      *
      * @throws ParseException when unable to parse
      */
@@ -54,7 +54,7 @@ public class Template {
         prepareAst(true);
     }
 
-    private TemplateAST prepareAst() {
+    private ScriptAST prepareAst() {
         var myAst = this.ast;
         if (!isAstExpired(myAst)) {
             return myAst;
@@ -62,7 +62,7 @@ public class Template {
         return prepareAst(false);
     }
 
-    private synchronized TemplateAST prepareAst(boolean renew) {
+    private synchronized ScriptAST prepareAst(boolean renew) {
         var myAst = this.ast;
         if (renew || isAstExpired(myAst)) {
             myAst = Parser.parse(this);
@@ -71,15 +71,15 @@ public class Template {
         return myAst;
     }
 
-    private boolean isAstExpired(@Nullable TemplateAST myAst) {
+    private boolean isAstExpired(@Nullable ScriptAST myAst) {
         if (myAst == null) {
             return true;
         }
-        return myAst.getResourceVersion() != this.resource.version();
+        return myAst.getSourceVersion() != this.source.version();
     }
 
     /**
-     * Debug this template.
+     * Debug this script.
      *
      * @param vars     vars
      * @param out      out
@@ -104,7 +104,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param output out
      * @return Context
@@ -116,7 +116,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param output  out
      * @param charset charset
@@ -130,7 +130,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param writer writer
      * @return Context
@@ -142,7 +142,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param vars   vars
      * @param output output
@@ -155,7 +155,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param vars    vars
      * @param out     out
@@ -173,7 +173,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param vars   vars
      * @param writer writer
@@ -190,7 +190,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param vars vars
      * @param out  out
@@ -203,7 +203,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param vars    vars
      * @param out     out
@@ -217,7 +217,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param vars   vars
      * @param writer writer
@@ -230,7 +230,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param out out
      * @return Context
@@ -242,7 +242,7 @@ public class Template {
     }
 
     /**
-     * Merge this template, and discard outputs.
+     * Merge this script, and discard outputs.
      *
      * @return Context
      * @throws ScriptRuntimeException when script runtime exception
@@ -253,7 +253,7 @@ public class Template {
     }
 
     /**
-     * Merge this template, and discard outputs.
+     * Merge this script, and discard outputs.
      *
      * @param vars vars
      * @return Context
@@ -265,7 +265,7 @@ public class Template {
     }
 
     /**
-     * Merge this template, and discard outputs.
+     * Merge this script, and discard outputs.
      *
      * @param vars vars
      * @return Context
@@ -277,7 +277,7 @@ public class Template {
     }
 
     /**
-     * Merge this template.
+     * Merge this script.
      *
      * @param vars vars
      * @param out  out
@@ -299,7 +299,7 @@ public class Template {
     }
 
     /**
-     * Debug this template.
+     * Debug this script.
      *
      * @param vars     vars
      * @param out      out
@@ -313,7 +313,7 @@ public class Template {
     }
 
     /**
-     * Debug this template, and discard outputs.
+     * Debug this script, and discard outputs.
      *
      * @param vars     vars
      * @param listener breakpoint listener
@@ -326,7 +326,7 @@ public class Template {
     }
 
     /**
-     * Debug this template, and discard outputs.
+     * Debug this script, and discard outputs.
      *
      * @param out      out
      * @param listener breakpoint listener
@@ -339,7 +339,7 @@ public class Template {
     }
 
     /**
-     * Debug this template, and discard outputs.
+     * Debug this script, and discard outputs.
      *
      * @param listener breakpoint listener
      * @return Context
@@ -355,7 +355,7 @@ public class Template {
     }
 
     /**
-     * Get the time that the template AST was last modified.
+     * Get the time that the script AST was last modified.
      *
      * @return the last modified time, measured in milliseconds
      */
@@ -374,15 +374,15 @@ public class Template {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof Template other)) {
+        if (!(obj instanceof Script other)) {
             return false;
         }
         return this.engine == other.engine
                 && this.path.equals(other.path);
     }
 
-    private TemplateException completeException(Exception exception) {
-        return ((exception instanceof TemplateException ex) ? ex
-                : new ScriptRuntimeException(exception)).setTemplate(this);
+    private ScriptException completeException(Exception exception) {
+        return ((exception instanceof ScriptException ex) ? ex
+                : new ScriptRuntimeException(exception)).setScript(this);
     }
 }

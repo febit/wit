@@ -1,8 +1,8 @@
 package org.febit.wit.loaders;
 
 import lombok.Setter;
-import org.febit.wit.loaders.impl.DebouncedResource;
-import org.febit.wit.runtime.Resource;
+import org.febit.wit.loaders.impl.DebouncedSource;
+import org.febit.wit.runtime.Source;
 import org.junit.jupiter.api.Test;
 
 import java.io.Reader;
@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-class DebouncedResourceTest {
+class DebouncedSourceTest {
 
     @Setter
-    public static class InnerResource implements Resource {
+    public static class InnerSource implements Source {
 
         private long version;
 
@@ -42,10 +42,10 @@ class DebouncedResourceTest {
     @Test
     void test() {
         var timeout = 100;
-        var inner = new InnerResource();
+        var inner = new InnerSource();
         var startMs = 1000L;
 
-        var res = spy(new DebouncedResource(inner, timeout));
+        var res = spy(new DebouncedSource(inner, timeout));
 
         when(res.now()).thenReturn(startMs);
         inner.setVersion(100L);

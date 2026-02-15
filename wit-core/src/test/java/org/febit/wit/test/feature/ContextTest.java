@@ -3,8 +3,8 @@ package org.febit.wit.test.feature;
 
 import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
-import org.febit.wit.Template;
-import org.febit.wit.exceptions.ResourceNotFoundException;
+import org.febit.wit.Script;
+import org.febit.wit.exceptions.SourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class ContextTest {
 
     @Test
-    void test() throws ResourceNotFoundException {
+    void test() throws SourceNotFoundException {
 
-        Template template = EngineManager.template("contextTest.wit");
+        Script script = EngineManager.script("contextTest.wit");
 
-        Context context = template.merge();
+        Context context = script.merge();
 
         Map<String, Object> map = new HashMap<>();
 

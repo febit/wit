@@ -66,7 +66,7 @@ terminal Integer    CONST;
 /* nonterminal */
 nonterminal ClassNameRope classPureName, className;
 nonterminal Class<?> javaClass;
-nonterminal TemplateAST templateAST;
+nonterminal ScriptAST scriptAST;
 
 /* Statement */
 nonterminal Statement statement, ifStat, varPart;
@@ -119,8 +119,8 @@ precedence right    RPAREN_MINUSGT, MINUSGT; // ->
 precedence left     DOT, LBRACK, LBRACE, LPAREN, RPAREN, DYNAMIC_DOT; // . [ { ( ) @
 
 
-templateAST     ::= statement[]:list ?
-                    {: return createTemplateAST(%list%); :}
+scriptAST       ::= statement[]:list ?
+                    {: return createScriptAST(%list%); :}
                     ;
 
 
@@ -215,13 +215,13 @@ statement       ::= expression_statementable:$ SEMICOLON
 
                     //importStat
                     |importPart1:part SEMICOLON
-                    {: return (%part%).pop(this.template); :}
+                    {: return (%part%).pop(this.script); :}
                     |importPart2:part SEMICOLON
-                    {: return (%part%).pop(this.template); :}
+                    {: return (%part%).pop(this.script); :}
 
                     //includeStat
                     |INCLUDE:sym expression:expr newMapExpr:paramsExpr? SEMICOLON
-                    {: return new Include(%expr%, %paramsExpr%, this.template.path(), %sym.symbol%.pos); :}
+                    {: return new Include(%expr%, %paramsExpr%, this.script.path(), %sym.symbol%.pos); :}
 
                     //funcStatement
                     |funcStatementHead:part LBRACE statement[]:list? RBRACE
@@ -519,7 +519,7 @@ expression      ::= expression_statementable:$
                     //Lambda
                     |lambdaExpr:$
 
-                    // template string
+                    // script string
                     |templateStringBuilder:part TEMPLATE_STRING_END:end
                     {: return (%part%).expr(toDirectValue(%end.symbol%)).build(); :}
                     ;
