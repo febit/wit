@@ -3,9 +3,9 @@ package org.febit.wit.core.text;
 
 import org.febit.wit.Script;
 import org.febit.wit.core.TextStatementFactory;
-import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.codec.Encoder;
-import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.text.ByteArrayTextStatement;
 
@@ -38,7 +38,7 @@ public class ByteArrayTextStatementFactory implements TextStatementFactory {
             out.reset();
             return bytes;
         } catch (IOException ex) {
-            throw new ScriptRuntimeException(ex);
+            throw new ScriptEvaluateException(ex);
         }
     }
 

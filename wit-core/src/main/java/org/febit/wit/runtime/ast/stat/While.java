@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.AstUtils;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.LoopFlag;
-import org.febit.wit.runtime.Loopable;
-import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.LoopFlag;
+import org.febit.wit.runtime.ast.Loopable;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
@@ -23,7 +23,7 @@ public final class While implements Statement, Loopable {
     private final Expression whileExpr;
     private final int indexer;
     private final Statement[] statements;
-    private final LoopFlag[] possibleLoops;
+    private final LoopFlag[] loopFlags;
     private final int label;
     @Getter
     private final Position position;
@@ -68,6 +68,6 @@ public final class While implements Statement, Loopable {
 
     @Override
     public List<LoopFlag> collectLoopFlags() {
-        return AstUtils.asList(possibleLoops);
+        return AstUtils.asList(loopFlags);
     }
 }

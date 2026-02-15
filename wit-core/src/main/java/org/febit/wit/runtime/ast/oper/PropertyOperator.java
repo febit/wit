@@ -4,11 +4,11 @@ package org.febit.wit.runtime.ast.oper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
@@ -29,7 +29,7 @@ public final class PropertyOperator implements AssignableExpression {
                     expr.execute(context),
                     property);
         } catch (Exception e) {
-            throw ScriptRuntimeException.from(e, this);
+            throw ScriptEvaluateException.from(e, this);
         }
     }
 
@@ -42,7 +42,7 @@ public final class PropertyOperator implements AssignableExpression {
                     property, value);
             return value;
         } catch (Exception e) {
-            throw ScriptRuntimeException.from(e, this);
+            throw ScriptEvaluateException.from(e, this);
         }
     }
 }

@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Engine;
 import org.febit.wit.EngineModule;
 import org.febit.wit.core.NativeFactory;
-import org.febit.wit.exceptions.UncheckedException;
-import org.febit.wit.runtime.FunctionDeclare;
+import org.febit.wit.exception.UncheckedException;
+import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.PathUtils;
 

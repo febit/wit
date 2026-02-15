@@ -3,7 +3,7 @@ package org.febit.wit.test.feature;
 
 import org.febit.wit.EngineManager;
 import org.febit.wit.Feature;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.SourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.spy;
@@ -19,6 +19,6 @@ class LooseVarTest {
                 .thenReturn(true);
 
         var script = engine.script("/feature/looseVar.wit");
-        script.merge();
+        script.eval();
     }
 }

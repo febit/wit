@@ -2,8 +2,8 @@
 package org.febit.wit.core;
 
 import org.jspecify.annotations.Nullable;
-import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.runtime.TextPosition;
+import org.febit.wit.exception.ParseException;
+import org.febit.wit.runtime.ast.TextPosition;
 import org.febit.wit.runtime.Source;
 import org.febit.wit.util.LexerCharArrayWriter;
 
@@ -456,17 +456,17 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   "<<"                           { return symbol(Tokens.LSHIFT); }
   ">>"                           { return symbol(Tokens.RSHIFT); }
   ">>>"                          { return symbol(Tokens.URSHIFT); }
-  "+="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_PLUSEQ); }
-  "-="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_MINUSEQ); }
-  "*="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_MULTEQ); }
-  "/="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_DIVEQ); }
-  "&="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_ANDEQ); }
-  "|="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_OREQ); }
-  "^="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_XOREQ); }
-  "%="                           { return symbol(Tokens.SELFEQ, AbstractParser.OP_MODEQ); }
-  "<<="                          { return symbol(Tokens.SELFEQ, AbstractParser.OP_LSHIFTEQ); }
-  ">>="                          { return symbol(Tokens.SELFEQ, AbstractParser.OP_RSHIFTEQ); }
-  ">>>="                         { return symbol(Tokens.SELFEQ, AbstractParser.OP_URSHIFTEQ); }
+  "+="                           { return symbol(Tokens.SELFEQ, Tokens.PLUS); }
+  "-="                           { return symbol(Tokens.SELFEQ, Tokens.MINUS); }
+  "*="                           { return symbol(Tokens.SELFEQ, Tokens.MULT); }
+  "/="                           { return symbol(Tokens.SELFEQ, Tokens.DIV); }
+  "&="                           { return symbol(Tokens.SELFEQ, Tokens.AND); }
+  "|="                           { return symbol(Tokens.SELFEQ, Tokens.OR); }
+  "^="                           { return symbol(Tokens.SELFEQ, Tokens.XOR); }
+  "%="                           { return symbol(Tokens.SELFEQ, Tokens.MOD); }
+  "<<="                          { return symbol(Tokens.SELFEQ, Tokens.LSHIFT); }
+  ">>="                          { return symbol(Tokens.SELFEQ, Tokens.RSHIFT); }
+  ">>>="                         { return symbol(Tokens.SELFEQ, Tokens.URSHIFT); }
 
   ".~"                           { return symbol(Tokens.DYNAMIC_DOT); }
   "=>"                           { return symbol(Tokens.EQGT); }

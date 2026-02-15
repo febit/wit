@@ -2,7 +2,7 @@
 package org.febit.wit.runtime;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.CollectionUtils;
 import org.jspecify.annotations.Nullable;
@@ -622,14 +622,14 @@ public class ALU {
         return o1 == null ? "null" : o1.getClass().getCanonicalName();
     }
 
-    private static ScriptRuntimeException unsupportedTypeException(@Nullable Object o1, @Nullable Object o2) {
-        return new ScriptRuntimeException("Unsupported type: left ["
+    private static ScriptEvaluateException unsupportedTypeException(@Nullable Object o1, @Nullable Object o2) {
+        return new ScriptEvaluateException("Unsupported type: left ["
                 + toTypeString(o1) + "], right[" + toTypeString(o2) + "]"
         );
     }
 
-    private static ScriptRuntimeException unsupportedTypeException(@Nullable Object o1) {
-        return new ScriptRuntimeException("Unsupported type: " + toTypeString(o1));
+    private static ScriptEvaluateException unsupportedTypeException(@Nullable Object o1) {
+        return new ScriptEvaluateException("Unsupported type: " + toTypeString(o1));
     }
 
     public static Number requireNumber(@Nullable Object val) {
@@ -639,21 +639,21 @@ public class ALU {
         if (val instanceof Character c) {
             return Integer.valueOf(c);
         }
-        throw new ScriptRuntimeException("Number is required, not found: " + ClassUtils.name(val));
+        throw new ScriptEvaluateException("Number is required, not found: " + ClassUtils.name(val));
     }
 
     private static void requireNonNull(@Nullable Object obj) {
         if (obj == null) {
-            throw new ScriptRuntimeException("value is null");
+            throw new ScriptEvaluateException("value is null");
         }
     }
 
     private static void requireNonNull(@Nullable Object o1, @Nullable Object o2) {
         if (o1 == null || o2 == null) {
             if (o1 != null) {
-                throw new ScriptRuntimeException("right value is null");
+                throw new ScriptEvaluateException("right value is null");
             } else {
-                throw new ScriptRuntimeException(o2 != null
+                throw new ScriptEvaluateException(o2 != null
                         ? "left value is null"
                         : "left & right values are null");
             }

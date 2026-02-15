@@ -4,7 +4,8 @@ package org.febit.wit.test.feature;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Feature;
 import org.febit.wit.Vars;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.io.DiscardOut;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -22,10 +23,10 @@ class ShareRootParamsTest {
 
         var script = engine.script("/feature/shareRootParams.wit");
         script.reload();
-        script.merge(Vars.of(Map.of(
+        script.eval(Vars.of(Map.of(
                 "v1", "V1",
                 "v2", "V2"
-        )));
+        )), new DiscardOut());
 
     }
 }

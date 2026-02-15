@@ -2,7 +2,7 @@
 package org.febit.wit.core;
 
 import org.febit.wit.Script;
-import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 
 public interface TextStatementFactory {

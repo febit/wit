@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.febit.wit.Context;
 import org.febit.wit.Engine;
 import org.febit.wit.EngineModule;
-import org.febit.wit.runtime.FunctionDeclare;
+import org.febit.wit.runtime.function.FunctionDeclare;
 import org.jspecify.annotations.Nullable;
 
 import static org.febit.wit.util.ArrayUtils.get;

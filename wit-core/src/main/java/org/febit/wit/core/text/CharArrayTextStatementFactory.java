@@ -3,7 +3,7 @@ package org.febit.wit.core.text;
 
 import org.febit.wit.Script;
 import org.febit.wit.core.TextStatementFactory;
-import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.text.CharArrayTextStatement;
 

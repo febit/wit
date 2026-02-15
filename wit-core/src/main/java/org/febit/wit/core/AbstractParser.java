@@ -5,47 +5,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Engine;
 import org.febit.wit.Feature;
 import org.febit.wit.Script;
-import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.exceptions.UncheckedException;
-import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.Ast;
-import org.febit.wit.runtime.AstUtils;
-import org.febit.wit.runtime.FunctionDeclare;
-import org.febit.wit.runtime.LoopFlag;
-import org.febit.wit.runtime.Position;
-import org.febit.wit.runtime.TextPosition;
-import org.febit.wit.runtime.ast.AssignableExpression;
+import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.UncheckedException;
+import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.IBlock;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.ScriptAST;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.TextPosition;
 import org.febit.wit.runtime.ast.expr.AssignableSuppliedValue;
-import org.febit.wit.runtime.ast.expr.BreakpointExpr;
 import org.febit.wit.runtime.ast.expr.ContextUpstreamVar;
 import org.febit.wit.runtime.ast.expr.ContextVar;
 import org.febit.wit.runtime.ast.expr.DirectValue;
-import org.febit.wit.runtime.ast.expr.FunctionCallExpr;
 import org.febit.wit.runtime.ast.expr.JavaStaticFieldExpr;
-import org.febit.wit.runtime.ast.expr.NewMapExpr;
-import org.febit.wit.runtime.ast.oper.And;
-import org.febit.wit.runtime.ast.oper.Assign;
-import org.febit.wit.runtime.ast.oper.ConstableBiOperator;
-import org.febit.wit.runtime.ast.oper.ConstableUnaryOperator;
-import org.febit.wit.runtime.ast.oper.GroupAssign;
-import org.febit.wit.runtime.ast.oper.IntStep;
-import org.febit.wit.runtime.ast.oper.Or;
-import org.febit.wit.runtime.ast.oper.SelfOperator;
-import org.febit.wit.runtime.ast.stat.Block;
-import org.febit.wit.runtime.ast.stat.BlockWithoutLoops;
-import org.febit.wit.runtime.ast.stat.BreakpointStatement;
-import org.febit.wit.runtime.ast.stat.If;
-import org.febit.wit.runtime.ast.stat.IfElse;
-import org.febit.wit.runtime.ast.stat.IfNot;
-import org.febit.wit.runtime.ast.stat.Interpolation;
 import org.febit.wit.runtime.ast.stat.NoopStatement;
-import org.febit.wit.runtime.ast.stat.StatementGroup;
-import org.febit.wit.runtime.ast.stat.TryPart;
-import org.febit.wit.runtime.extra.ast.DynamicNativeMethodCallExpr;
+import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.util.ClassNameRope;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.Stack;
@@ -60,24 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BinaryOperator;
-import java.util.function.UnaryOperator;
 
 @Slf4j
 abstract class AbstractParser {
-
-    //Self Operators
-    static final int OP_PLUSEQ = 0;
-    static final int OP_MINUSEQ = 1;
-    static final int OP_MULTEQ = 2;
-    static final int OP_DIVEQ = 3;
-    static final int OP_MODEQ = 4;
-    static final int OP_LSHIFTEQ = 5;
-    static final int OP_RSHIFTEQ = 6;
-    static final int OP_URSHIFTEQ = 7;
-    static final int OP_ANDEQ = 8;
-    static final int OP_XOREQ = 9;
-    static final int OP_OREQ = 10;
 
     /* Base Parser */
     private static final short[][] PRODUCTION_TABLE = loadData("Production");
@@ -310,10 +269,6 @@ abstract class AbstractParser {
 
     @Nullable
     abstract Object doAction(int actionId) throws ParseException;
-
-    static ParseException unsupportedOperator(Position position) {
-        return new ParseException("Unsupported Operator", position);
-    }
 
     @SuppressWarnings({
             "squid:S135", // Loops should not contain more than a single "break" or "continue" statement
@@ -587,28 +542,6 @@ abstract class AbstractParser {
         }
     }
 
-    Expression createAssign(AssignableExpression lexpr, Expression rexpr, Position position) {
-        return new Assign(lexpr, rexpr, position);
-    }
-
-    Expression createGroupAssign(Expression[] lexprs, Expression rexpr, Position position) {
-        var assignables = new AssignableExpression[lexprs.length];
-        for (int i = 0; i < lexprs.length; i++) {
-            assignables[i] = castToAssignableExpression(lexprs[i]);
-        }
-        return new GroupAssign(assignables, rexpr, position);
-    }
-
-    Expression createBreakpointExpression(@Nullable Expression labelExpr, Expression expr, Position position) {
-        var label = labelExpr == null ? null : AstUtils.evalConst(labelExpr);
-        return new BreakpointExpr(label, expr, position);
-    }
-
-    Statement createBreakpointStatement(@Nullable Expression labelExpr, @Nullable Statement statement, Position position) {
-        var label = labelExpr == null ? null : AstUtils.evalConst(labelExpr);
-        return new BreakpointStatement(label, statement, position);
-    }
-
     Statement createTextStatement(char @Nullable [] text, Position position) {
         if (text == null || text.length == 0) {
             return NoopStatement.INSTANCE;
@@ -626,26 +559,6 @@ abstract class AbstractParser {
             contextVars[i] = declareVarAndCreateContextValue(names.get(i), position);
         }
         return contextVars;
-    }
-
-    NewMapExpr createMapValue(@Nullable List<Expression[]> propertyDefList, Position position) {
-        if (propertyDefList == null || propertyDefList.isEmpty()) {
-            return new NewMapExpr(AstUtils.emptyExpressions(), AstUtils.emptyExpressions(), position);
-        }
-        int size = propertyDefList.size();
-        var keys = new Expression[size];
-        var values = new Expression[size];
-        for (int i = 0; i < propertyDefList.size(); i++) {
-            var def = propertyDefList.get(i);
-            // assert def.length == 2
-            keys[i] = def[0];
-            values[i] = def[1];
-        }
-        return new NewMapExpr(keys, values, position);
-    }
-
-    DirectValue toDirectValue(Symbol sym) {
-        return Ast.directValue(sym.pos, sym.value);
     }
 
     Expression createContextValue(VarAddress addr, Position position) {
@@ -671,10 +584,6 @@ abstract class AbstractParser {
 
     void assignConst(String name, Expression expr, Position position) {
         variants.assignConst(name, AstUtils.evalConst(expr), position);
-    }
-
-    Statement createInterpolation(final Expression expr) {
-        return new Interpolation(expr);
     }
 
     Expression createNativeStaticValue(ClassNameRope rope, Position position) {
@@ -753,42 +662,8 @@ abstract class AbstractParser {
         return NoopStatement.INSTANCE;
     }
 
-    Statement createIfStatement(Expression ifExpr, Statement thenStatement,
-                                Statement elseStatement, Position position) {
-        thenStatement = AstUtils.optimize(thenStatement);
-        elseStatement = AstUtils.optimize(elseStatement);
-        if (!(thenStatement instanceof NoopStatement)) {
-            if (elseStatement instanceof NoopStatement) {
-                return new If(ifExpr, thenStatement, position);
-            } else {
-                return new IfElse(ifExpr, thenStatement, elseStatement, position);
-            }
-        } else if (!(elseStatement instanceof NoopStatement)) {
-            return new IfNot(ifExpr, elseStatement, position);
-        } else {
-            return NoopStatement.INSTANCE;
-        }
-    }
-
-    Statement createStatementGroup(List<Statement> list, Position position) {
-        return new StatementGroup(AstUtils.flatStatements(list), position);
-    }
-
-    Expression createMethodExecute(Expression funcExpr, Expression[] paramExprs, Position position) {
-        AstUtils.optimize(paramExprs);
-        funcExpr = AstUtils.optimize(funcExpr);
-        return new FunctionCallExpr(funcExpr, paramExprs, position);
-    }
-
-    Expression createDynamicNativeMethodExecute(
-            Expression thisExpr, String func, Expression[] paramExprs, Position position) {
-        AstUtils.optimize(paramExprs);
-        thisExpr = AstUtils.optimize(thisExpr);
-        return new DynamicNativeMethodCallExpr(thisExpr, func, paramExprs, position);
-    }
-
     ScriptAST createScriptAST(List<Statement> list) {
-        var statements = AstUtils.flatStatements(list);
+        var statements = Ast.flatStatements(list);
         var loops = AstUtils.collectLoopFlags(statements);
         if (!loops.isEmpty()) {
             throw new ParseException("loop overflow: " + StringUtils.join(loops, ','));
@@ -796,98 +671,8 @@ abstract class AbstractParser {
         return new ScriptAST(variants.constructIndexers(), statements, variants.varCounter(), this.lastSourceVersion);
     }
 
-    IBlock createBlock(@Nullable List<Statement> list, int varIndexer, Position position) {
-        var statements = AstUtils.flatStatements(list);
-        var loops = AstUtils.collectLoopFlags(statements);
-        return loops.isEmpty()
-                ? new BlockWithoutLoops(varIndexer, statements, position)
-                : new Block(varIndexer, statements, loops.toArray(new LoopFlag[0]), position);
-    }
-
-    AssignableExpression castToAssignableExpression(Expression expr) {
-        if (expr instanceof AssignableExpression assign) {
-            return assign;
-        }
-        throw new ParseException("expression is not assignable", expr.position());
-    }
-
     TryPart createTryPart(List<Statement> list, int varIndexer, Position position) {
-        return new TryPart(createBlock(list, varIndexer, position), position);
-    }
-
-    Expression createSelfOperator(Expression lexpr, int sym, Expression rightExpr, Position position) {
-        var leftExpr = castToAssignableExpression(lexpr);
-        var biFunc = getBinaryOperator(sym);
-        if (biFunc == null) {
-            throw unsupportedOperator(position);
-        }
-        var optimized = AstUtils.optimize(
-                new SelfOperator(leftExpr, rightExpr, biFunc, position)
-        );
-        Objects.requireNonNull(optimized);
-        return optimized;
-    }
-
-    @Nullable
-    BinaryOperator<@Nullable Object> getBinaryOperator(int op) {
-        return switch (op) {
-            case OP_PLUSEQ, Tokens.PLUS -> ALU::plus;
-            case OP_MINUSEQ, Tokens.MINUS -> ALU::minus;
-            case OP_MULTEQ, Tokens.MULT -> ALU::multi;
-            case OP_DIVEQ, Tokens.DIV -> ALU::div;
-            case OP_MODEQ, Tokens.MOD -> ALU::mod;
-            case OP_LSHIFTEQ, Tokens.LSHIFT -> ALU::lshift;
-            case OP_RSHIFTEQ, Tokens.RSHIFT -> ALU::rshift;
-            case OP_URSHIFTEQ, Tokens.URSHIFT -> ALU::urshift;
-            case Tokens.LT -> ALU::less;
-            case Tokens.GT -> ALU::greater;
-            case Tokens.LTEQ -> ALU::lessEqual;
-            case Tokens.GTEQ -> ALU::greaterEqual;
-            case Tokens.EQEQ -> ALU::isEqual;
-            case Tokens.NOTEQ -> ALU::isNotEqual;
-            case OP_ANDEQ, Tokens.AND -> ALU::bitAnd;
-            case OP_XOREQ, Tokens.XOR -> ALU::bitXor;
-            case OP_OREQ, Tokens.OR -> ALU::bitOr;
-            default -> null;
-        };
-    }
-
-    Expression createOperator(Expression expr, Symbol sym) {
-        if (!(sym.value instanceof Integer token)) {
-            throw unsupportedOperator(sym.pos);
-        }
-        UnaryOperator<@Nullable Object> func = switch (token) {
-            case Tokens.COMP -> ALU::bitNot;
-            case Tokens.MINUS -> ALU::negative;
-            case Tokens.NOT -> ALU::not;
-            default -> throw unsupportedOperator(sym.pos);
-        };
-        var optimized = AstUtils.optimize(
-                new ConstableUnaryOperator(expr, func, sym.pos)
-        );
-        Objects.requireNonNull(optimized);
-        return optimized;
-    }
-
-    Expression createBiOperator(Expression leftExpr, Symbol sym, Expression rightExpr) {
-        if (!(sym.value instanceof Integer token)) {
-            throw unsupportedOperator(sym.pos);
-        }
-        var op = switch (token) {
-            case Tokens.ANDAND -> new And(leftExpr, rightExpr, sym.pos);
-            case Tokens.OROR -> new Or(leftExpr, rightExpr, sym.pos);
-            case Tokens.DOTDOT -> new IntStep(leftExpr, rightExpr, sym.pos);
-            default -> {
-                var biFunc = getBinaryOperator(token);
-                if (biFunc == null) {
-                    throw unsupportedOperator(sym.pos);
-                }
-                yield new ConstableBiOperator(leftExpr, rightExpr, biFunc, sym.pos);
-            }
-        };
-        var optimized = AstUtils.optimize(op);
-        Objects.requireNonNull(optimized);
-        return optimized;
+        return new TryPart(Ast.block(list, varIndexer, position), position);
     }
 
 }

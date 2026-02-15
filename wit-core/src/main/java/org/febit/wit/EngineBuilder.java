@@ -1,16 +1,17 @@
 package org.febit.wit;
 
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.accessor.Accessor;
-import org.febit.wit.accessor.DefaultAccessorFactory;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.core.TextStatementFactory;
+import org.febit.wit.core.security.NoneNativeSecurity;
 import org.febit.wit.core.text.AdaptiveTextStatementFactory;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.io.DiscardOut;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.DefaultCodecFactory;
 import org.febit.wit.loaders.Loader;
-import org.febit.wit.security.NoneNativeSecurity;
+import org.febit.wit.runtime.accessor.Accessor;
+import org.febit.wit.runtime.accessor.DefaultAccessorFactory;
 import org.febit.wit.util.StringUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -117,17 +118,17 @@ public class EngineBuilder {
         return this;
     }
 
-    public EngineBuilder modules(List<EngineModule> plugins) {
-        this.modules.addAll(plugins);
+    public EngineBuilder modules(List<EngineModule> modules) {
+        this.modules.addAll(modules);
         return this;
     }
 
-    public EngineBuilder modules(EngineModule... plugins) {
-        return modules(Arrays.asList(plugins));
+    public EngineBuilder modules(EngineModule... modules) {
+        return modules(Arrays.asList(modules));
     }
 
-    public EngineBuilder module(EngineModule plugin) {
-        this.modules.add(plugin);
+    public EngineBuilder module(EngineModule module) {
+        this.modules.add(module);
         return this;
     }
 
@@ -152,8 +153,8 @@ public class EngineBuilder {
                 .nativeFactory(nativeFactory)
                 .build();
 
-        for (var plugin : modules) {
-            plugin.apply(engine);
+        for (var module : modules) {
+            module.apply(engine);
         }
         try {
             initScripts(engine, initScripts);
@@ -182,10 +183,10 @@ public class EngineBuilder {
         for (int i = 0; i < total; i++) {
             var tmpl = flatten.get(i);
             log.info("[INIT] applying init scripts [{}/{}]: {}", i + 1, total, tmpl);
-            engine.script(tmpl).merge(acceptor -> {
+            engine.script(tmpl).eval(acceptor -> {
                 acceptor.set("GLOBAL", staticHeaps.variant());
                 acceptor.set("CONST", staticHeaps.constant());
-            });
+            }, new DiscardOut());
         }
     }
 

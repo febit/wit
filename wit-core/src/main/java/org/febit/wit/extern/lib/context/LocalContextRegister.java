@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.Engine;
 import org.febit.wit.EngineModule;
-import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
 import org.jspecify.annotations.Nullable;
 
@@ -33,11 +33,11 @@ public class LocalContextRegister implements EngineModule {
     public static Object local(InternalContext context, @Nullable Object @Nullable [] args) {
         final int len = args == null ? 0 : args.length;
         if (args == null || len < 1) {
-            throw new ScriptRuntimeException("One more arguments expected for local context function");
+            throw new ScriptEvaluateException("One more arguments expected for local context function");
         }
         var key = args[0];
         if (key == null) {
-            throw new ScriptRuntimeException("Key of local context can not be null");
+            throw new ScriptEvaluateException("Key of local context can not be null");
         }
         if (len == 1) {
             return context.local().get(key);

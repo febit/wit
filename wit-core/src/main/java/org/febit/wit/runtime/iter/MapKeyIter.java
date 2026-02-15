@@ -2,7 +2,6 @@
 package org.febit.wit.runtime.iter;
 
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.runtime.KeyIter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Iterator;

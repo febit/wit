@@ -1,7 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loaders.impl;
 
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.runtime.Source;
 import org.febit.wit.util.ClassUtils;
 

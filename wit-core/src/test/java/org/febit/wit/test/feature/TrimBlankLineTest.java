@@ -4,7 +4,8 @@ package org.febit.wit.test.feature;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Feature;
 import org.febit.wit.Vars;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.io.DiscardOut;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -21,16 +22,16 @@ class TrimBlankLineTest {
         when(engine.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE))
                 .thenReturn(true);
         var script = engine.script("/feature/trimBlankLine.wit");
-        script.merge(Vars.of(Map.of(
+        script.eval(Vars.of(Map.of(
                 "trimBlankLine", true
-        )));
+        )), new DiscardOut());
 
         when(engine.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE))
                 .thenReturn(false);
         script.reset();
 
-        script.merge(Vars.of(Map.of(
+        script.eval(Vars.of(Map.of(
                 "trimBlankLine", false
-        )));
+        )), new DiscardOut());
     }
 }

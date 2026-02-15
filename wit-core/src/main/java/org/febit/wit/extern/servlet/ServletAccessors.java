@@ -3,12 +3,17 @@ package org.febit.wit.extern.servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.experimental.UtilityClass;
-import org.febit.wit.accessor.AccessorConsumer;
-import org.febit.wit.extern.servlet.accessor.*;
+import org.febit.wit.extern.servlet.accessor.HttpServletRequestAccessor;
+import org.febit.wit.extern.servlet.accessor.HttpServletRequestAttributesAccessor;
+import org.febit.wit.extern.servlet.accessor.HttpServletRequestHeaderAccessor;
+import org.febit.wit.extern.servlet.accessor.HttpServletRequestHeadersAccessor;
+import org.febit.wit.extern.servlet.accessor.HttpServletRequestParametersAccessor;
+import org.febit.wit.extern.servlet.accessor.HttpSessionAccessor;
 import org.febit.wit.extern.servlet.facade.HttpServletRequestAttributes;
 import org.febit.wit.extern.servlet.facade.HttpServletRequestHeader;
 import org.febit.wit.extern.servlet.facade.HttpServletRequestHeaders;
 import org.febit.wit.extern.servlet.facade.HttpServletRequestParameters;
+import org.febit.wit.runtime.accessor.AccessorConsumer;
 
 @UtilityClass
 public class ServletAccessors {

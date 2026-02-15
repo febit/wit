@@ -4,7 +4,7 @@ package org.febit.wit.io;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Out;
-import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.Encoder;
 
@@ -31,7 +31,7 @@ public final class OutputStreamOut implements Out {
         try {
             this.output.write(bytes, offset, length);
         } catch (IOException ex) {
-            throw new ScriptRuntimeException(ex);
+            throw new ScriptEvaluateException(ex);
         }
     }
 
@@ -40,7 +40,7 @@ public final class OutputStreamOut implements Out {
         try {
             this.output.write(bytes);
         } catch (IOException ex) {
-            throw new ScriptRuntimeException(ex);
+            throw new ScriptEvaluateException(ex);
         }
     }
 
@@ -49,7 +49,7 @@ public final class OutputStreamOut implements Out {
         try {
             this.encoder.write(chars, offset, length, this.output);
         } catch (IOException ex) {
-            throw new ScriptRuntimeException(ex);
+            throw new ScriptEvaluateException(ex);
         }
     }
 
@@ -63,7 +63,7 @@ public final class OutputStreamOut implements Out {
         try {
             this.encoder.write(string, offset, length, this.output);
         } catch (IOException ex) {
-            throw new ScriptRuntimeException(ex);
+            throw new ScriptEvaluateException(ex);
         }
     }
 

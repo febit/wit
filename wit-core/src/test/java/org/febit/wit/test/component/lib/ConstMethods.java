@@ -1,8 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.test.component.lib;
 
-import org.febit.wit.runtime.FunctionDeclare;
 import org.febit.wit.runtime.Undefined;
+import org.febit.wit.runtime.function.FunctionDeclare;
 
 import java.util.Map;
 

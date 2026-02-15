@@ -2,7 +2,7 @@
 package org.febit.wit.extern.servlet;
 
 import jakarta.servlet.ServletContext;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.runtime.Source;
 
 import java.io.IOException;

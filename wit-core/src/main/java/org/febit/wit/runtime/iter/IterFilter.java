@@ -1,7 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.iter;
 
-import org.febit.wit.runtime.Iter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.NoSuchElementException;

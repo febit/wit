@@ -3,12 +3,12 @@ package org.febit.wit.extern.lib.cache;
 
 import org.febit.wit.Engine;
 import org.febit.wit.EngineModule;
-import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.io.WriterOut;
-import org.febit.wit.runtime.FunctionDeclare;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
+import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.util.ArrayUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -61,7 +61,7 @@ public class CachingModule implements EngineModule {
     @Nullable
     public Object doPut(InternalContext context, @Nullable Object @Nullable [] args) {
         if (args == null || args.length < 1) {
-            throw new ScriptRuntimeException("At least one argument is required for cache function:"
+            throw new ScriptEvaluateException("At least one argument is required for cache function:"
                     + " put(key?, factory, ...args?).");
         }
         var arg0 = args[0];
@@ -77,7 +77,7 @@ public class CachingModule implements EngineModule {
                     () -> compute(context, func, args, 2)
             );
         } else {
-            throw new ScriptRuntimeException("Invalid arguments for cache function: put(key?, factory, ...args?)."
+            throw new ScriptEvaluateException("Invalid arguments for cache function: put(key?, factory, ...args?)."
                     + " The first or second argument must be a factory function.");
         }
         context.out(entry.rendered);

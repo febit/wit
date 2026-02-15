@@ -2,7 +2,7 @@
 package org.febit.wit.core;
 
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.runtime.TextPosition;
+import org.febit.wit.runtime.ast.TextPosition;
 import org.jspecify.annotations.Nullable;
 
 @RequiredArgsConstructor

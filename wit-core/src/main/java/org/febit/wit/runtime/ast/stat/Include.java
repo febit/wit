@@ -2,9 +2,9 @@
 package org.febit.wit.runtime.ast.stat;
 
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.extra.ast.AbstractInclude;
+import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.ast.extra.AbstractInclude;
 import org.jspecify.annotations.Nullable;
 
 public final class Include extends AbstractInclude {

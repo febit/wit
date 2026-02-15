@@ -2,9 +2,8 @@
 package org.febit.wit.runtime.iter;
 
 import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.FunctionDeclare;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.KeyIter;
+import org.febit.wit.runtime.function.FunctionDeclare;
 import org.jspecify.annotations.Nullable;
 
 public final class KeyIterMethodFilter extends IterFilter implements KeyIter {

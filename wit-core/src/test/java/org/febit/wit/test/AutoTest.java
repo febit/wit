@@ -5,9 +5,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Strings;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Script;
-import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.Vars;
+import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.runtime.InternalContext;
@@ -37,7 +38,7 @@ class AutoTest {
     private final LongAdder breakpointCount = new LongAdder();
 
     @Test
-    void test() throws ParseException, ScriptRuntimeException, URISyntaxException, IOException {
+    void test() throws ParseException, ScriptEvaluateException, URISyntaxException, IOException {
 
         breakpointCount.reset();
         var classLoader = ClassUtils.getDefaultClassLoader();
@@ -85,7 +86,7 @@ class AutoTest {
             throw new UncheckedIOException(e);
         }
         var out = new OutputStreamOut(output, EngineManager.engine().charset(), EngineManager.engine().codecFactory());
-        var context = script.debug(out, this::onBreakpoint);
+        var context = script.eval(Vars.empty(), out, this::onBreakpoint);
         System.out.println("\tassert count: " + context.local().get(AssertionModule.ASSERT_COUNT_KEY));
     }
 
@@ -102,16 +103,16 @@ class AutoTest {
 
         if ("assert:DirectValue".equals(label)) {
             if (!(innerExpr instanceof DirectValue)) {
-                throw new ScriptRuntimeException("Required DirectValue, at {}"
+                throw new ScriptEvaluateException("Required DirectValue, at {}"
                         + statement.position(), statement);
             }
         } else if ("assert:NotDirectValue".equals(label)) {
             if (innerExpr instanceof DirectValue) {
-                throw new ScriptRuntimeException("Required No-DirectValue, at "
+                throw new ScriptEvaluateException("Required No-DirectValue, at "
                         + statement.position(), statement);
             }
         } else {
-            throw new ScriptRuntimeException("Not handled break point: " + label + ", at "
+            throw new ScriptEvaluateException("Not handled break point: " + label + ", at "
                     + statement.position(), statement);
         }
     }

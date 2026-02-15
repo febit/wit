@@ -2,9 +2,8 @@ package org.febit.wit.runtime.heap;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.runtime.FrameIndexer;
-import org.febit.wit.runtime.Heap;
+import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.runtime.ast.FrameIndexer;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiConsumer;
@@ -90,13 +89,13 @@ public class VariantHeap implements Heap {
 
     @Nullable
     @Override
-    public Object get(String name, boolean strict) throws ScriptRuntimeException {
+    public Object get(String name, boolean strict) throws ScriptEvaluateException {
         int idx = currentIndexer().lookupUpstream(name);
         if (idx >= 0) {
             return this.table[idx];
         }
         if (strict) {
-            throw new ScriptRuntimeException("Not found variant named:" + name);
+            throw new ScriptEvaluateException("Not found variant named:" + name);
         }
         return null;
     }

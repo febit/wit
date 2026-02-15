@@ -4,8 +4,8 @@ package org.febit.wit.test.feature;
 import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Function;
-import org.febit.wit.exceptions.NotFunctionException;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.NotFunctionException;
+import org.febit.wit.exception.SourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
@@ -17,7 +17,7 @@ class FunctionExportTest {
     @Test
     void test() throws SourceNotFoundException {
 
-        Context context = EngineManager.script("/functionExportTest.wit").merge();
+        Context context = EngineManager.script("/functionExportTest.wit").eval();
 
         //plus
         Function plus = context.exportFunction("plus");

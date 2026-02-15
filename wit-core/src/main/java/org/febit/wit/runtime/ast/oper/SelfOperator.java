@@ -4,11 +4,11 @@ package org.febit.wit.runtime.ast.oper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BinaryOperator;
@@ -35,7 +35,7 @@ public class SelfOperator implements Expression {
                     op.apply(assignable.execute(context), rightResult)
             );
         } catch (Exception e) {
-            throw ScriptRuntimeException.from(e, this);
+            throw ScriptEvaluateException.from(e, this);
         }
     }
 

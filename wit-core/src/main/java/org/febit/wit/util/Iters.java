@@ -1,12 +1,12 @@
 package org.febit.wit.util;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.runtime.Iter;
-import org.febit.wit.runtime.KeyIter;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.iter.AbstractArrayIter;
 import org.febit.wit.runtime.iter.AbstractIter;
+import org.febit.wit.runtime.iter.Iter;
+import org.febit.wit.runtime.iter.KeyIter;
 import org.febit.wit.runtime.iter.MapKeyIter;
 import org.jspecify.annotations.Nullable;
 
@@ -48,7 +48,7 @@ public class Iters {
         if (o1 instanceof Map<?, ?> map) {
             return new MapKeyIter<>(map);
         }
-        throw new ScriptRuntimeException("Unsupported type to KeyIter: " + o1.getClass(), statement);
+        throw new ScriptEvaluateException("Unsupported type to KeyIter: " + o1.getClass(), statement);
     }
 
     @SuppressWarnings({
@@ -82,7 +82,7 @@ public class Iters {
                 return of(cs);
             }
         }
-        throw new ScriptRuntimeException("Unsupported type to Iter: " + o1.getClass(), statement);
+        throw new ScriptEvaluateException("Unsupported type to Iter: " + o1.getClass(), statement);
     }
 
     private static Iter of(Object[] array) {

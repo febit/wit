@@ -6,18 +6,18 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.runtime.FunctionDeclare;
-import org.febit.wit.runtime.Position;
-import org.febit.wit.runtime.TextPosition;
-import org.febit.wit.runtime.method.MixedMultiNativeFunctionDeclare;
-import org.febit.wit.runtime.method.MultiNativeConstructorDeclare;
-import org.febit.wit.runtime.method.MultiNativeFunctionDeclare;
-import org.febit.wit.runtime.method.NativeConstructorDeclare;
-import org.febit.wit.runtime.method.NativeFunctionDeclare;
-import org.febit.wit.runtime.method.NativeNewArrayDeclare;
-import org.febit.wit.security.NativeSecurity;
+import org.febit.wit.core.security.NativeSecurity;
+import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.ast.TextPosition;
+import org.febit.wit.runtime.function.FunctionDeclare;
+import org.febit.wit.runtime.function.MixedMultiNativeFunctionDeclare;
+import org.febit.wit.runtime.function.MultiNativeConstructorDeclare;
+import org.febit.wit.runtime.function.MultiNativeFunctionDeclare;
+import org.febit.wit.runtime.function.NativeConstructorDeclare;
+import org.febit.wit.runtime.function.NativeFunctionDeclare;
+import org.febit.wit.runtime.function.NativeNewArrayDeclare;
 import org.febit.wit.util.ClassUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -176,7 +176,7 @@ public class NativeFactory {
     public FunctionDeclare createNativeConstructorDeclare(Class<?> clazz) {
         var constructors = clazz.getConstructors();
         if (constructors.length == 0) {
-            throw new ScriptRuntimeException("Not found public constructor for class： " + clazz.getName());
+            throw new ScriptEvaluateException("Not found public constructor for class： " + clazz.getName());
         }
         if (constructors.length == 1) {
             return new NativeConstructorDeclare(constructors[0]);
@@ -188,7 +188,7 @@ public class NativeFactory {
     public FunctionDeclare createNativeMethodDeclare(Class<?> clazz, String methodName) {
         var methods = ClassUtils.getPublicMethods(clazz, methodName);
         if (methods.length == 0) {
-            throw new ScriptRuntimeException("Method not found： " + clazz.getName() + '#' + methodName);
+            throw new ScriptEvaluateException("Method not found： " + clazz.getName() + '#' + methodName);
         }
         if (methods.length == 1) {
             return createNativeMethodDeclare(methods[0]);

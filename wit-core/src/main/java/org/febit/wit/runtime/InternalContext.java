@@ -9,16 +9,18 @@ import org.febit.wit.Function;
 import org.febit.wit.Out;
 import org.febit.wit.Script;
 import org.febit.wit.Vars;
-import org.febit.wit.accessor.AccessorFactory;
-import org.febit.wit.accessor.Getter;
-import org.febit.wit.accessor.Render;
-import org.febit.wit.accessor.Setter;
-import org.febit.wit.exceptions.NotFunctionException;
-import org.febit.wit.exceptions.ParseException;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.NotFunctionException;
+import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.runtime.accessor.AccessorFactory;
+import org.febit.wit.runtime.accessor.Getter;
+import org.febit.wit.runtime.accessor.Render;
+import org.febit.wit.runtime.accessor.Setter;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.FrameIndexer;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.runtime.heap.LocalHeap;
 import org.febit.wit.runtime.heap.VariantHeap;
 import org.jspecify.annotations.Nullable;
@@ -41,7 +43,7 @@ public final class InternalContext implements Context {
     private final int features;
 
     @Nullable
-    private final BreakpointListener breakpointListener;
+    private final BreakpointHandler breakpointHandler;
 
     private final AccessorFactory accessors;
 
@@ -72,7 +74,7 @@ public final class InternalContext implements Context {
             final Vars inputs,
             final VariantHeap heap,
             final LocalHeap local,
-            @Nullable BreakpointListener breakpointListener
+            @Nullable BreakpointHandler breakpointHandler
     ) {
         this.script = script;
         this.inputs = inputs;
@@ -84,21 +86,21 @@ public final class InternalContext implements Context {
         this.features = engine.features();
         this.accessors = engine.accessors();
 
-        this.breakpointListener = breakpointListener;
+        this.breakpointHandler = breakpointHandler;
         //import params
         inputs.sink(heap::set);
     }
 
     public void handleBreakpoint(@Nullable Object label, Statement statement, @Nullable Object result) {
-        if (this.breakpointListener != null) {
-            this.breakpointListener.onBreakpoint(label, this, statement, result);
+        if (this.breakpointHandler != null) {
+            this.breakpointHandler.handle(label, this, statement, result);
         }
     }
 
     public Context mergeScript(String refer, String path, Vars vars)
-            throws SourceNotFoundException, ScriptRuntimeException, ParseException {
+            throws SourceNotFoundException, ScriptEvaluateException, ParseException {
         var tmpl = this.script.engine().script(refer, path);
-        return tmpl.mergeToContext(this, vars);
+        return tmpl.merge(this, vars);
     }
 
     public Object[] visit(Expression[] exprs) {
@@ -143,7 +145,7 @@ public final class InternalContext implements Context {
                 Vars.empty(),
                 subHeap,
                 callerContext.local(),
-                breakpointListener
+                breakpointHandler
         );
     }
 
@@ -157,7 +159,7 @@ public final class InternalContext implements Context {
     public InternalContext createPeerContext(Script script, VariantHeap heap, Vars inputs) {
         return new InternalContext(
                 script, out(), inputs,
-                heap, local(), breakpointListener
+                heap, local(), breakpointHandler
         );
     }
 
@@ -201,7 +203,7 @@ public final class InternalContext implements Context {
         if (isEnabled(Feature.IGNORE_ACCESSOR_NULL_POINTER)) {
             return null;
         }
-        throw new ScriptRuntimeException("Null pointer.");
+        throw new ScriptEvaluateException("Null pointer.");
     }
 
     public boolean isEnabled(Feature feature) {

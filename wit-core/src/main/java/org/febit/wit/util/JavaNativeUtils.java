@@ -3,9 +3,9 @@ package org.febit.wit.util;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.core.NativeFactory;
-import org.febit.wit.exceptions.AmbiguousMethodException;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.exceptions.UncheckedException;
+import org.febit.wit.exception.AmbiguousMethodException;
+import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.exception.UncheckedException;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.heap.StaticHeaps;
 import org.jspecify.annotations.Nullable;
@@ -349,7 +349,7 @@ public class JavaNativeUtils {
             return invokeMethod(method, null, args);
         }
         if (args == null || args.length == 0 || args[0] == null) {
-            throw new ScriptRuntimeException("this method need one argument at least");
+            throw new ScriptEvaluateException("this method need one argument at least");
         }
         var methodArgs = prepareArgs(method.getParameterCount(), args, 1);
         return invokeMethod(method, args[0], methodArgs);
@@ -383,11 +383,11 @@ public class JavaNativeUtils {
                     ? Undefined.UNDEFINED
                     : result;
         } catch (IllegalAccessException ex) {
-            throw new ScriptRuntimeException("this method is inaccessible: " + ex.getLocalizedMessage(), ex);
+            throw new ScriptEvaluateException("this method is inaccessible: " + ex.getLocalizedMessage(), ex);
         } catch (IllegalArgumentException ex) {
-            throw new ScriptRuntimeException("illegal argument: " + ex.getLocalizedMessage(), ex);
+            throw new ScriptEvaluateException("illegal argument: " + ex.getLocalizedMessage(), ex);
         } catch (InvocationTargetException ex) {
-            throw new ScriptRuntimeException("this method throws an exception", ex);
+            throw new ScriptEvaluateException("this method throws an exception", ex);
         }
     }
 
@@ -397,13 +397,13 @@ public class JavaNativeUtils {
         try {
             return constructor.newInstance(methodArgs);
         } catch (InstantiationException ex) {
-            throw new ScriptRuntimeException("Can't create new instance: " + ex.getLocalizedMessage(), ex);
+            throw new ScriptEvaluateException("Can't create new instance: " + ex.getLocalizedMessage(), ex);
         } catch (IllegalAccessException ex) {
-            throw new ScriptRuntimeException("Inaccessible method: " + ex.getLocalizedMessage(), ex);
+            throw new ScriptEvaluateException("Inaccessible method: " + ex.getLocalizedMessage(), ex);
         } catch (IllegalArgumentException ex) {
-            throw new ScriptRuntimeException("Illegal arguments: " + ex.getLocalizedMessage(), ex);
+            throw new ScriptEvaluateException("Illegal arguments: " + ex.getLocalizedMessage(), ex);
         } catch (InvocationTargetException ex) {
-            throw new ScriptRuntimeException("this method throws an exception", ex);
+            throw new ScriptEvaluateException("this method throws an exception", ex);
         }
     }
 

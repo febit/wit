@@ -4,15 +4,15 @@ package org.febit.wit.runtime.ast.stat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.runtime.AstUtils;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Iter;
-import org.febit.wit.runtime.LoopFlag;
-import org.febit.wit.runtime.Loopable;
-import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.LoopFlag;
+import org.febit.wit.runtime.ast.Loopable;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.expr.FunctionDeclareExpr;
+import org.febit.wit.runtime.iter.Iter;
 import org.febit.wit.runtime.iter.IterMethodFilter;
 import org.febit.wit.util.Iters;
 import org.jspecify.annotations.Nullable;
@@ -31,7 +31,7 @@ public class ForIn implements Statement, Loopable {
     private final int iterIndex;
     private final int itemIndex;
     private final Statement[] statements;
-    private final LoopFlag[] possibleLoops;
+    private final LoopFlag[] loopFlags;
 
     @Nullable
     private final Statement elseStatement;
@@ -100,6 +100,6 @@ public class ForIn implements Statement, Loopable {
 
     @Override
     public List<LoopFlag> collectLoopFlags() {
-        return AstUtils.asList(possibleLoops);
+        return AstUtils.asList(loopFlags);
     }
 }

@@ -1,8 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import org.febit.wit.exceptions.NotFunctionException;
-import org.febit.wit.runtime.Heap;
+import org.febit.wit.exception.NotFunctionException;
+import org.febit.wit.runtime.heap.Heap;
 import org.febit.wit.runtime.heap.LocalHeap;
 
 /**

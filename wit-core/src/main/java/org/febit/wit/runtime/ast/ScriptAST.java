@@ -6,8 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.febit.wit.Out;
 import org.febit.wit.Script;
 import org.febit.wit.Vars;
-import org.febit.wit.runtime.BreakpointListener;
-import org.febit.wit.runtime.FrameIndexer;
+import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.heap.LocalHeap;
 import org.febit.wit.runtime.heap.VariantHeap;
@@ -29,7 +28,7 @@ public final class ScriptAST {
             Script script,
             Out out,
             Vars inputs,
-            @Nullable BreakpointListener listener
+            @Nullable BreakpointHandler listener
     ) {
         var heap = new VariantHeap(frameSize, indexers);
         inputs.sink(heap::set);

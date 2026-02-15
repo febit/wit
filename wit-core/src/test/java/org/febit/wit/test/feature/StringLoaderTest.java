@@ -2,7 +2,8 @@
 package org.febit.wit.test.feature;
 
 import org.febit.wit.EngineManager;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.Vars;
+import org.febit.wit.exception.SourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
@@ -17,7 +18,7 @@ class StringLoaderTest {
         final StringWriter writer = new StringWriter();
 
         EngineManager.script("string:<% echo \"Hello Wit！\"; %>")
-                .merge(writer);
+                .eval(Vars.empty(), writer);
         assertEquals("Hello Wit！", writer.toString());
     }
 
@@ -27,7 +28,7 @@ class StringLoaderTest {
         final StringWriter writer = new StringWriter();
 
         EngineManager.script("code: echo \"Hello Wit！\";")
-                .merge(writer);
+                .eval(Vars.empty(), writer);
         assertEquals("Hello Wit！", writer.toString());
     }
 }

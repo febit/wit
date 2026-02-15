@@ -4,7 +4,7 @@ package org.febit.wit.test.feature;
 import org.febit.wit.Context;
 import org.febit.wit.EngineManager;
 import org.febit.wit.Script;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.SourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ class ContextTest {
 
         Script script = EngineManager.script("contextTest.wit");
 
-        Context context = script.merge();
+        Context context = script.eval();
 
         Map<String, Object> map = new HashMap<>();
 

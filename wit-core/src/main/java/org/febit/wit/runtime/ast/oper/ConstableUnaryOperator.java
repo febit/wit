@@ -4,11 +4,11 @@ package org.febit.wit.runtime.ast.oper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.runtime.AstUtils;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.expr.DirectValue;
 import org.jspecify.annotations.Nullable;
 
@@ -29,7 +29,7 @@ public class ConstableUnaryOperator implements Expression {
         try {
             return op.apply(expr.execute(context));
         } catch (Exception e) {
-            throw ScriptRuntimeException.from(e, this);
+            throw ScriptEvaluateException.from(e, this);
         }
     }
 

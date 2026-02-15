@@ -4,10 +4,10 @@ package org.febit.wit.runtime.ast.stat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.exceptions.ScriptRuntimeException;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
@@ -27,8 +27,8 @@ public class Throw implements Statement {
             throw ex;
         }
         if (exception instanceof Exception ex) {
-            throw new ScriptRuntimeException(ex);
+            throw new ScriptEvaluateException(ex);
         }
-        throw new ScriptRuntimeException(String.valueOf(exception));
+        throw new ScriptEvaluateException(String.valueOf(exception));
     }
 }

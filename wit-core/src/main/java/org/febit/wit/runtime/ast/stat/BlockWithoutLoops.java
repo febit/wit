@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.ast.IBlock;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 

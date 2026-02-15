@@ -1,6 +1,7 @@
 package org.febit.wit.runtime;
 
 import lombok.experimental.Accessors;
+import org.febit.wit.runtime.ast.LoopFlag;
 import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)

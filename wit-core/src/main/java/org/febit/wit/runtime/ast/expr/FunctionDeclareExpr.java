@@ -4,13 +4,13 @@ package org.febit.wit.runtime.ast.expr;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.runtime.FrameIndexer;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Position;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.FrameIndexer;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.method.FunctionFunctionDeclare;
+import org.febit.wit.runtime.function.FunctionFunctionDeclare;
 import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)

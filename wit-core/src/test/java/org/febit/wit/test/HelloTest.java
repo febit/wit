@@ -2,8 +2,7 @@
 package org.febit.wit.test;
 
 import org.febit.wit.EngineManager;
-import org.febit.wit.Script;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.SourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 class HelloTest {
@@ -11,9 +10,9 @@ class HelloTest {
     @Test
     void test() throws SourceNotFoundException {
 
-        Script script = EngineManager.script("/helloTest.wit");
+        var script = EngineManager.script("/helloTest.wit");
         script.reload();
-        script.merge();
-//        script.merge(System.out);
+        script.eval();
+//        script.eval(System.out);
     }
 }

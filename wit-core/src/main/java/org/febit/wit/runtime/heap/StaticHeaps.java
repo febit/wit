@@ -3,9 +3,8 @@ package org.febit.wit.runtime.heap;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.runtime.FunctionDeclare;
-import org.febit.wit.runtime.Heap;
+import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.runtime.function.FunctionDeclare;
 import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,7 +55,7 @@ public class StaticHeaps {
         }
 
         @Override
-        public @Nullable Object get(String name, boolean strict) throws ScriptRuntimeException {
+        public @Nullable Object get(String name, boolean strict) throws ScriptEvaluateException {
             return this.table.get(name);
         }
 

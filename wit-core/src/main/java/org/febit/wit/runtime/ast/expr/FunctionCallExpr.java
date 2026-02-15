@@ -4,14 +4,14 @@ package org.febit.wit.runtime.ast.expr;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.exceptions.ScriptRuntimeException;
-import org.febit.wit.runtime.AstUtils;
-import org.febit.wit.runtime.FunctionDeclare;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Position;
-import org.febit.wit.runtime.UnConstableFunctionDeclare;
 import org.febit.wit.runtime.Undefined;
+import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.function.FunctionDeclare;
+import org.febit.wit.runtime.function.UnConstableFunctionDeclare;
 import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
@@ -28,7 +28,7 @@ public final class FunctionCallExpr implements Expression {
     public Object execute(InternalContext context) {
         var func = funcExpr.execute(context);
         if (!(func instanceof FunctionDeclare)) {
-            throw new ScriptRuntimeException("not a function", this);
+            throw new ScriptEvaluateException("not a function", this);
         }
         var results = context.visit(this.paramExprs);
         return ((FunctionDeclare) func).apply(context, results);
@@ -39,7 +39,7 @@ public final class FunctionCallExpr implements Expression {
     public Object evalAsConst() {
         var func = AstUtils.evalConst(funcExpr);
         if (!(func instanceof FunctionDeclare)) {
-            throw new ScriptRuntimeException("not a function", this);
+            throw new ScriptEvaluateException("not a function", this);
         }
         if (func instanceof UnConstableFunctionDeclare) {
             return Undefined.UNDEFINED;

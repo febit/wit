@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.accessor.AccessorFactory;
 import org.febit.wit.core.NativeFactory;
 import org.febit.wit.core.TextStatementFactory;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.loaders.Loader;
+import org.febit.wit.runtime.ScriptImpl;
+import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.heap.StaticHeaps;
 import org.jspecify.annotations.Nullable;
 
@@ -104,15 +105,14 @@ public class Engine {
             //if normalized-path is null means not found source.
             throw new SourceNotFoundException("Illegal source path: " + path);
         }
-        Script script;
-        script = this.cachedScripts.get(normalized);
+        var script = this.cachedScripts.get(normalized);
         if (script != null) {
             return script;
         }
         // then create script
-        script = new Script(this, normalized, myLoader.get(normalized));
+        script = new ScriptImpl(this, normalized, myLoader.get(normalized));
         if (myLoader.isCacheEnabled(normalized)) {
-            Script oldScript = this.cachedScripts.putIfAbsent(normalized, script);
+            var oldScript = this.cachedScripts.putIfAbsent(normalized, script);
             // if old script exist, use the old one
             if (oldScript != null) {
                 script = oldScript;

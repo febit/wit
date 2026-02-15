@@ -3,8 +3,7 @@ package org.febit.wit.test.feature;
 
 import org.febit.wit.EngineManager;
 import org.febit.wit.Script;
-import org.febit.wit.Vars;
-import org.febit.wit.exceptions.SourceNotFoundException;
+import org.febit.wit.exception.SourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -21,14 +20,16 @@ class DebugTest {
     void test() throws SourceNotFoundException {
         Script script = EngineManager.script("/debug.wit");
 
-        script.merge();
+        script.eval();
 
         labelCache.clear();
         pointCount = 0;
-        script.debug(Vars.empty(), (label, context, statement, result) -> {
-            labelCache.add(label);
-            pointCount++;
-        });
+        script.evaluator()
+                .breakpointHandler((label, context, statement, result) -> {
+                    labelCache.add(label);
+                    pointCount++;
+                })
+                .eval();
 
         assertEquals(18, pointCount);
         assertTrue(labelCache.contains(null));

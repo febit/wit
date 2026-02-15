@@ -2,7 +2,7 @@
 package org.febit.wit.util;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.exceptions.UncheckedException;
+import org.febit.wit.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.AccessibleObject;

@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.AstUtils;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.LoopFlag;
-import org.febit.wit.runtime.Loopable;
-import org.febit.wit.runtime.Position;
+import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.LoopFlag;
+import org.febit.wit.runtime.ast.Loopable;
+import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
