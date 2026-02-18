@@ -14,11 +14,11 @@ public interface Source {
     boolean exists();
 
     /**
-     * if this source is begin with code.
+     * Source begin with script or template.
      *
-     * @return boolean
+     * @return BeginWith
      */
-    boolean codeFirst();
+    BeginWith beginWith();
 
     Reader openReader() throws IOException;
 
@@ -35,5 +35,10 @@ public interface Source {
 
     default int getOffsetColumnOfFirstLine() {
         return 0;
+    }
+
+    enum BeginWith {
+        SCRIPT,
+        TEMPLATE
     }
 }

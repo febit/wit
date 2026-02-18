@@ -59,7 +59,11 @@ public class ClassNameRope {
         if (segment.isEmpty()) {
             return null;
         }
-        return StringUtils.join(segment, '.');
+        var buf = new StringBuilder();
+        for (var s : segment) {
+            buf.append(s).append('.');
+        }
+        return buf.substring(0, buf.length() - 1);
     }
 
     @Override

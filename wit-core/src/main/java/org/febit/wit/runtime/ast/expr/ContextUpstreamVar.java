@@ -26,7 +26,7 @@ public final class ContextUpstreamVar implements AssignableExpression {
 
     @Override
     @Nullable
-    public Object setValue(InternalContext context, @Nullable final Object value) {
+    public Object set(InternalContext context, @Nullable final Object value) {
         context.heap().setUpstream(page, index, value);
         return value;
     }

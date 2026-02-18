@@ -4,8 +4,6 @@ package org.febit.wit.extern.lib.cache;
 import org.febit.wit.Engine;
 import org.febit.wit.EngineModule;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.io.OutputStreamOut;
-import org.febit.wit.io.WriterOut;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.function.FunctionDeclare;
@@ -94,22 +92,16 @@ public class CachingModule implements EngineModule {
                 ? Arrays.copyOfRange(args, paramsStartedAt, args.length)
                 : ArrayUtils.emptyObjects();
 
-        var out = context.out();
-        var charset = out.charset();
-        var codec = context.engine().codecFactory();
-
         Object returned;
         Object outed;
-        if (out.preferBytes()) {
+        if (context.out().preferBytes()) {
             var buffer = new ByteArrayOutputStream(256);
-            returned = context.redirectOut(new OutputStreamOut(buffer, charset, codec),
-                    c -> func.apply(c, methodArgs));
+            returned = context.redirect(buffer, c -> func.apply(c, methodArgs));
             outed = buffer.toByteArray();
         } else {
-            var writer = new CharArrayWriter(256);
-            returned = context.redirectOut(new WriterOut(writer, charset, codec),
-                    c -> func.apply(c, methodArgs));
-            outed = writer.toCharArray();
+            var buffer = new CharArrayWriter(256);
+            returned = context.redirect(buffer, c -> func.apply(c, methodArgs));
+            outed = buffer.toCharArray();
         }
         return new CachingEntry(returned, outed);
     }

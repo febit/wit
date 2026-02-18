@@ -35,10 +35,11 @@ public class LocalContextRegister implements EngineModule {
         if (args == null || len < 1) {
             throw new ScriptEvaluateException("One more arguments expected for local context function");
         }
-        var key = args[0];
-        if (key == null) {
+        var arg0 = args[0];
+        if (arg0 == null) {
             throw new ScriptEvaluateException("Key of local context can not be null");
         }
+        var key = arg0.toString();
         if (len == 1) {
             return context.local().get(key);
         }

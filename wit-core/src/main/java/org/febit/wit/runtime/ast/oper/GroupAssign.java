@@ -9,13 +9,12 @@ import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.util.Iters;
-import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class GroupAssign implements Expression {
 
-    private final AssignableExpression[] lefts;
+    private final AssignableExpression[] targets;
     private final Expression right;
     @Getter
     private final Position position;
@@ -24,19 +23,18 @@ public final class GroupAssign implements Expression {
     public Object execute(InternalContext context) {
         var values = right.execute(context);
         var iter = Iters.toIter(values, this);
-        var assignables = this.lefts;
+        var assignables = this.targets;
 
         final int resultLength = assignables.length;
-        @Nullable
-        Object[] result = new Object[resultLength];
+        var result = new Object[resultLength];
         int current = 0;
         while (iter.hasNext() && current < resultLength) {
             Object next = iter.next();
-            result[current] = assignables[current].setValue(context, next);
+            result[current] = assignables[current].set(context, next);
             current++;
         }
         for (; current < resultLength; current++) {
-            assignables[current].setValue(context, null);
+            assignables[current].set(context, null);
             result[current] = null;
         }
         return result;

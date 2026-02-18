@@ -2,7 +2,6 @@
 package org.febit.wit.extern.lib.tld;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.util.StringUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -52,7 +51,7 @@ public class TldFunctionsParser {
         String typesString =
                 signature.substring(lparenIdx + 1, signature.lastIndexOf(')')).trim();
         List<String> paramTypes = !typesString.isEmpty()
-                ? List.of(StringUtils.toArray(typesString))
+                ? List.of(typesString.split("\\s*,\\s*"))
                 : List.of();
 
         return TldFunction.builder()

@@ -8,7 +8,7 @@ public interface Expression extends Statement {
 
     @Nullable
     default Object evalAsConst() {
-        throw new ParseException("Can't calculate as const", position());
+        throw new ParseException("Cannot calculate as const", position());
     }
 
     @Override

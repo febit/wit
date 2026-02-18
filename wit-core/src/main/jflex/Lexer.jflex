@@ -16,7 +16,7 @@ import java.util.Deque;
 %class Lexer
 %function _parseNextToken
 %apiprivate
-%type Symbol
+%type Token
 %line
 %column
 %buffer 8192
@@ -26,7 +26,7 @@ import java.util.Deque;
 
     private static final int INTERPOLATION_START_LEN = 2;
     private static final int TEXT_BLOCK_END_LEN = 2;
-    private static final Symbol SYM_NEW_LINE = new Symbol(-1, TextPosition.UNKNOWN, '\n');
+    private static final Token SYM_NEW_LINE = new Token(-1, TextPosition.UNKNOWN, '\n');
 
     private boolean interpolationFlag = false;
     private boolean leftInterpolationFlag = true;
@@ -41,16 +41,16 @@ import java.util.Deque;
     private int offsetLine = 0;
     private int offsetColumnOfFirstLine = 0;
 
-    private final Deque<Symbol> pendingQueue = new ArrayDeque<>(8);
+    private final Deque<Token> pendingQueue = new ArrayDeque<>(8);
 
-    private void addPendingSymbols(Symbol... syms) {
+    private void addPendingSymbols(Token... syms) {
         this.pendingQueue.addAll(Arrays.asList(syms));
     }
 
-    private Symbol _nextToken() throws java.io.IOException {
+    private Token _nextToken() throws java.io.IOException {
         // check pending queue first
-        Deque<Symbol> pending = this.pendingQueue;
-        Symbol next = pending.pollFirst();
+        Deque<Token> pending = this.pendingQueue;
+        Token next = pending.pollFirst();
         if (next != null) {
             return next;
         }
@@ -63,8 +63,8 @@ import java.util.Deque;
         return _nextToken();
     }
 
-    public Symbol nextToken() throws java.io.IOException {
-        Symbol next;
+    public Token nextToken() throws java.io.IOException {
+        Token next;
 
         // skip new-line
         do {
@@ -72,16 +72,16 @@ import java.util.Deque;
         } while (next == SYM_NEW_LINE);
 
         // EOF or SEMICOLON
-        if (next.kind == Tokens.EOF
-                || next.kind == Tokens.SEMICOLON) {
+        if (next.kind == TokenKinds.EOF
+                || next.kind == TokenKinds.SEMICOLON) {
             return next;
         }
 
         // Others must check if next token is new-line or EOF
-        Symbol nextAfter = _nextToken();
+        Token nextAfter = _nextToken();
         // return back
         this.pendingQueue.addFirst(nextAfter);
-        if (nextAfter == SYM_NEW_LINE || nextAfter.kind == Tokens.EOF) {
+        if (nextAfter == SYM_NEW_LINE || nextAfter.kind == TokenKinds.EOF) {
             next.isOnEdgeOfNewLine = true;
         }
         return next;
@@ -168,25 +168,28 @@ import java.util.Deque;
         stringBuffer.write(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
     }
 
-    void codeFirst() {
-        yybegin(YYSTATEMENT);
+    void beginWith(Source.BeginWith with) {
+        switch (with) {
+            case SCRIPT -> yybegin(STATE_SCRIPT);
+            case TEMPLATE -> yybegin(STATE_TEMPLATE);
+        }
     }
 
-    private Symbol symbol(int sym) {
-        return symbol(sym, yyline + 1, yycolumn + 1, sym);
+    private Token token(int sym) {
+        return token(sym, yyline + 1, yycolumn + 1, sym);
     }
 
-    private Symbol symbol(int sym, @Nullable Object val) {
-        return symbol(sym, yyline + 1, yycolumn + 1, val);
+    private Token token(int sym, @Nullable Object val) {
+        return token(sym, yyline + 1, yycolumn + 1, val);
     }
 
-    private Symbol symbol(int sym, int line, int column, @Nullable Object val) {
-        return new Symbol(sym, TextPosition.of(line, column), val);
+    private Token token(int sym, int line, int column, @Nullable Object val) {
+        return new Token(sym, TextPosition.of(line, column), val);
     }
 
-    private Symbol popTextStatementSymbol(boolean interpolationFlag) {
+    private Token popTemplateTextSymbol(boolean interpolationFlag) {
         this.interpolationFlag = interpolationFlag;
-        yybegin(YYSTATEMENT);
+        yybegin(STATE_SCRIPT);
         final char[] chars;
         if (trimCodeBlockBlankLine) {
             if (!interpolationFlag) {
@@ -198,7 +201,7 @@ import java.util.Deque;
         } else {
             chars = popAsCharArray();
         }
-        return symbol(Tokens.TEXT_STATEMENT, stringLine, stringColumn, chars);
+        return token(TokenKinds.TEXT_STATEMENT, stringLine, stringColumn, chars);
     }
 
     public String yytext(int startOffset, int endOffset) {
@@ -343,192 +346,192 @@ lambdaArgsClosing = ")" {WhiteSpace}* "->"
 
 MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpace}* "]" {WhiteSpace}*)* {WhiteSpace}* "::" {WhiteSpace}* {Identifier}
 
-%state  YYSTATEMENT, STRING, RAW_STRING, TEMPLATE_STRING, CHARLITERAL, END_OF_FILE
+%state STATE_SCRIPT, STATE_TEMPLATE, STATE_STRING, STATE_RAW_STRING, STATE_TEMPLATE_STRING, STATE_CHAR_LITERAL, STATE_EOF
 
 %%
 
 /* text block */
-<YYINITIAL>{
+<STATE_TEMPLATE>{
 
-  /* if to YYSTATEMENT */
-  {DelimiterStatementStartMatch}        { int length = yylength() - TEXT_BLOCK_END_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(false);} else {appendToString('<', '%');} }
+  /* if to STATE_SCRIPT */
+  {DelimiterStatementStartMatch}        { int length = yylength() - TEXT_BLOCK_END_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTemplateTextSymbol(false);} else {appendToString('<', '%');} }
 
   /* if to INTERPOLATION */
-  {DelimiterInterpolationStartMatch}      { int length = yylength() - INTERPOLATION_START_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTextStatementSymbol(true);} else {appendToString('$', '{');} }
+  {DelimiterInterpolationStartMatch}      { int length = yylength() - INTERPOLATION_START_LEN; appendToString('\\',length/2); if((length & 1) == 0){return popTemplateTextSymbol(true);} else {appendToString('$', '{');} }
 
 
   [^]                                  { pullToString(); }
 
-  <<EOF>>                               { yybegin(END_OF_FILE); return symbol(Tokens.TEXT_STATEMENT, stringLine, stringColumn, (!trimCodeBlockBlankLine || this.leftInterpolationFlag) ? popAsCharArray() : popAsCharArrayOmitStartingLineSeparator());}
+  <<EOF>>                               { yybegin(STATE_EOF); return token(TokenKinds.TEXT_STATEMENT, stringLine, stringColumn, (!trimCodeBlockBlankLine || this.leftInterpolationFlag) ? popAsCharArray() : popAsCharArrayOmitStartingLineSeparator());}
 }
 
 
 /* code block */
-<YYSTATEMENT> {
+<STATE_SCRIPT> {
 
   /* keywords */
-  "break"                        { return symbol(Tokens.BREAK); }
-  "case"                         { return symbol(Tokens.CASE); }
-  "continue"                     { return symbol(Tokens.CONTINUE); }
-  "do"                           { return symbol(Tokens.DO); }
-  "else"                         { return symbol(Tokens.ELSE); }
-  "for"                          { return symbol(Tokens.FOR); }
-  "default"                      { return symbol(Tokens.DEFAULT); }
-  "instanceof"                   { return symbol(Tokens.INSTANCEOF); }
-  "new"                          { return symbol(Tokens.NEW); }
-  "if"                           { return symbol(Tokens.IF); }
-  "super"                        { return symbol(Tokens.SUPER); }
-  "switch"                       { return symbol(Tokens.SWITCH); }
-  "while"                        { return symbol(Tokens.WHILE); }
-  "var"                          { return symbol(Tokens.VAR); }
-  /* "in"                           { return symbol(Tokens.IN); } */
-  "function"                     { return symbol(Tokens.FUNCTION); }
-  "return"                       { return symbol(Tokens.RETURN); }
-  "this"                         { return symbol(Tokens.THIS); }
+  "break"                        { return token(TokenKinds.BREAK); }
+  "case"                         { return token(TokenKinds.CASE); }
+  "continue"                     { return token(TokenKinds.CONTINUE); }
+  "do"                           { return token(TokenKinds.DO); }
+  "else"                         { return token(TokenKinds.ELSE); }
+  "for"                          { return token(TokenKinds.FOR); }
+  "default"                      { return token(TokenKinds.DEFAULT); }
+  "instanceof"                   { return token(TokenKinds.INSTANCEOF); }
+  "new"                          { return token(TokenKinds.NEW); }
+  "if"                           { return token(TokenKinds.IF); }
+  "super"                        { return token(TokenKinds.SUPER); }
+  "switch"                       { return token(TokenKinds.SWITCH); }
+  "while"                        { return token(TokenKinds.WHILE); }
+  "var"                          { return token(TokenKinds.VAR); }
+  /* "in"                           { return token(TokenKinds.IN); } */
+  "function"                     { return token(TokenKinds.FUNCTION); }
+  "return"                       { return token(TokenKinds.RETURN); }
+  "this"                         { return token(TokenKinds.THIS); }
 
-  "throw"                        { return symbol(Tokens.THROW); }
-  "try"                          { return symbol(Tokens.TRY); }
-  "catch"                        { return symbol(Tokens.CATCH); }
-  "finally"                      { return symbol(Tokens.FINALLY); }
+  "throw"                        { return token(TokenKinds.THROW); }
+  "try"                          { return token(TokenKinds.TRY); }
+  "catch"                        { return token(TokenKinds.CATCH); }
+  "finally"                      { return token(TokenKinds.FINALLY); }
 
-  "native"                       { return symbol(Tokens.NATIVE); }
-  "static"                       { return symbol(Tokens.STATIC); }
+  "native"                       { return token(TokenKinds.NATIVE); }
+  "static"                       { return token(TokenKinds.STATIC); }
 
-  "import"                       { return symbol(Tokens.IMPORT); }
-  "include"                      { return symbol(Tokens.INCLUDE); }
+  "import"                       { return token(TokenKinds.IMPORT); }
+  "include"                      { return token(TokenKinds.INCLUDE); }
 
-  "echo"                         { return symbol(Tokens.ECHO); }
+  "echo"                         { return token(TokenKinds.ECHO); }
 
-  "@import"                      { return symbol(Tokens.NATIVE_IMPORT); }
+  "@import"                      { return token(TokenKinds.NATIVE_IMPORT); }
 
-  "const"                        { return symbol(Tokens.CONST); }
+  "const"                        { return token(TokenKinds.CONST); }
 
   /* boolean literals */
-  "true"                         { return symbol(Tokens.DIRECT_VALUE, Boolean.TRUE); }
-  "false"                        { return symbol(Tokens.DIRECT_VALUE, Boolean.FALSE); }
+  "true"                         { return token(TokenKinds.DIRECT_VALUE, Boolean.TRUE); }
+  "false"                        { return token(TokenKinds.DIRECT_VALUE, Boolean.FALSE); }
 
   /* null literal */
-  "null"                         { return symbol(Tokens.DIRECT_VALUE, null); }
+  "null"                         { return token(TokenKinds.DIRECT_VALUE, null); }
 
   /* separators */
 
-  "[?"                           { return symbol(Tokens.LDEBUG); }
-  "?]"                           { return symbol(Tokens.RDEBUG); }
-  "[?]"                          { return symbol(Tokens.LRDEBUG); }
+  "[?"                           { return token(TokenKinds.LDEBUG); }
+  "?]"                           { return token(TokenKinds.RDEBUG); }
+  "[?]"                          { return token(TokenKinds.LRDEBUG); }
 
-  "("                            { return symbol(Tokens.LPAREN); }
-  ")"                            { return symbol(Tokens.RPAREN); }
-  "{"                            { if(templateStringFlag){ templateStringBraceClosingCounter++; } return symbol(Tokens.LBRACE); }
-  "}"                            { if(templateStringFlag && templateStringBraceClosingCounter == 0){yybegin(TEMPLATE_STRING);return symbol(Tokens.TEMPLATE_STRING_INTERPOLATION_END);}else if(interpolationFlag){yybegin(YYINITIAL);leftInterpolationFlag = true;return symbol(Tokens.INTERPOLATION_END);}else{ if(templateStringFlag){templateStringBraceClosingCounter--;} return symbol(Tokens.RBRACE);} }
-  "["                            { return symbol(Tokens.LBRACK); }
-  "]"                            { return symbol(Tokens.RBRACK); }
-  ";"                            { return symbol(Tokens.SEMICOLON); }
-  ","                            { return symbol(Tokens.COMMA); }
-  "."                            { return symbol(Tokens.DOT); }
-  ".."                           { return symbol(Tokens.DOTDOT); }
+  "("                            { return token(TokenKinds.LPAREN); }
+  ")"                            { return token(TokenKinds.RPAREN); }
+  "{"                            { if(templateStringFlag){ templateStringBraceClosingCounter++; } return token(TokenKinds.LBRACE); }
+  "}"                            { if(templateStringFlag && templateStringBraceClosingCounter == 0){yybegin(STATE_TEMPLATE_STRING);return token(TokenKinds.TEMPLATE_STRING_INTERPOLATION_END);}else if(interpolationFlag){yybegin(STATE_TEMPLATE);leftInterpolationFlag = true;return token(TokenKinds.INTERPOLATION_END);}else{ if(templateStringFlag){templateStringBraceClosingCounter--;} return token(TokenKinds.RBRACE);} }
+  "["                            { return token(TokenKinds.LBRACK); }
+  "]"                            { return token(TokenKinds.RBRACK); }
+  ";"                            { return token(TokenKinds.SEMICOLON); }
+  ","                            { return token(TokenKinds.COMMA); }
+  "."                            { return token(TokenKinds.DOT); }
+  ".."                           { return token(TokenKinds.DOTDOT); }
 
   /* operators */
-  "="                            { return symbol(Tokens.EQ); }
-  ">"                            { return symbol(Tokens.GT); }
-  "<"                            { return symbol(Tokens.LT); }
-  "!"                            { return symbol(Tokens.NOT); }
-  "~"                            { return symbol(Tokens.COMP); }
-  "?"                            { return symbol(Tokens.QUESTION); }
-  "::"                           { return symbol(Tokens.COLONCOLON); }
-  ":"                            { return symbol(Tokens.COLON); }
-//  "?:"                           { return symbol(Tokens.QUESTION_COLON); }
-  "=="                           { return symbol(Tokens.EQEQ); }
-  "<="                           { return symbol(Tokens.LTEQ); }
-  ">="                           { return symbol(Tokens.GTEQ); }
-  "!="                           { return symbol(Tokens.NOTEQ); }
-  "&&"                           { return symbol(Tokens.ANDAND); }
-  "||"                           { return symbol(Tokens.OROR); }
-  "++"                           { return symbol(Tokens.PLUSPLUS); }
-  "--"                           { return symbol(Tokens.MINUSMINUS); }
-  "+"                            { return symbol(Tokens.PLUS); }
-  "-"                            { return symbol(Tokens.MINUS); }
-  "*"                            { return symbol(Tokens.MULT); }
-  "/"                            { return symbol(Tokens.DIV); }
-  "&"                            { return symbol(Tokens.AND); }
-  "|"                            { return symbol(Tokens.OR); }
-  "^"                            { return symbol(Tokens.XOR); }
-  "%"                            { return symbol(Tokens.MOD); }
-  "<<"                           { return symbol(Tokens.LSHIFT); }
-  ">>"                           { return symbol(Tokens.RSHIFT); }
-  ">>>"                          { return symbol(Tokens.URSHIFT); }
-  "+="                           { return symbol(Tokens.SELFEQ, Tokens.PLUS); }
-  "-="                           { return symbol(Tokens.SELFEQ, Tokens.MINUS); }
-  "*="                           { return symbol(Tokens.SELFEQ, Tokens.MULT); }
-  "/="                           { return symbol(Tokens.SELFEQ, Tokens.DIV); }
-  "&="                           { return symbol(Tokens.SELFEQ, Tokens.AND); }
-  "|="                           { return symbol(Tokens.SELFEQ, Tokens.OR); }
-  "^="                           { return symbol(Tokens.SELFEQ, Tokens.XOR); }
-  "%="                           { return symbol(Tokens.SELFEQ, Tokens.MOD); }
-  "<<="                          { return symbol(Tokens.SELFEQ, Tokens.LSHIFT); }
-  ">>="                          { return symbol(Tokens.SELFEQ, Tokens.RSHIFT); }
-  ">>>="                         { return symbol(Tokens.SELFEQ, Tokens.URSHIFT); }
+  "="                            { return token(TokenKinds.EQ); }
+  ">"                            { return token(TokenKinds.GT); }
+  "<"                            { return token(TokenKinds.LT); }
+  "!"                            { return token(TokenKinds.NOT); }
+  "~"                            { return token(TokenKinds.COMP); }
+  "?"                            { return token(TokenKinds.QUESTION); }
+  "::"                           { return token(TokenKinds.COLONCOLON); }
+  ":"                            { return token(TokenKinds.COLON); }
+//  "?:"                           { return token(TokenKinds.QUESTION_COLON); }
+  "=="                           { return token(TokenKinds.EQEQ); }
+  "<="                           { return token(TokenKinds.LTEQ); }
+  ">="                           { return token(TokenKinds.GTEQ); }
+  "!="                           { return token(TokenKinds.NOTEQ); }
+  "&&"                           { return token(TokenKinds.ANDAND); }
+  "||"                           { return token(TokenKinds.OROR); }
+  "++"                           { return token(TokenKinds.PLUSPLUS); }
+  "--"                           { return token(TokenKinds.MINUSMINUS); }
+  "+"                            { return token(TokenKinds.PLUS); }
+  "-"                            { return token(TokenKinds.MINUS); }
+  "*"                            { return token(TokenKinds.MULT); }
+  "/"                            { return token(TokenKinds.DIV); }
+  "&"                            { return token(TokenKinds.AND); }
+  "|"                            { return token(TokenKinds.OR); }
+  "^"                            { return token(TokenKinds.XOR); }
+  "%"                            { return token(TokenKinds.MOD); }
+  "<<"                           { return token(TokenKinds.LSHIFT); }
+  ">>"                           { return token(TokenKinds.RSHIFT); }
+  ">>>"                          { return token(TokenKinds.URSHIFT); }
+  "+="                           { return token(TokenKinds.SELFEQ, TokenKinds.PLUS); }
+  "-="                           { return token(TokenKinds.SELFEQ, TokenKinds.MINUS); }
+  "*="                           { return token(TokenKinds.SELFEQ, TokenKinds.MULT); }
+  "/="                           { return token(TokenKinds.SELFEQ, TokenKinds.DIV); }
+  "&="                           { return token(TokenKinds.SELFEQ, TokenKinds.AND); }
+  "|="                           { return token(TokenKinds.SELFEQ, TokenKinds.OR); }
+  "^="                           { return token(TokenKinds.SELFEQ, TokenKinds.XOR); }
+  "%="                           { return token(TokenKinds.SELFEQ, TokenKinds.MOD); }
+  "<<="                          { return token(TokenKinds.SELFEQ, TokenKinds.LSHIFT); }
+  ">>="                          { return token(TokenKinds.SELFEQ, TokenKinds.RSHIFT); }
+  ">>>="                         { return token(TokenKinds.SELFEQ, TokenKinds.URSHIFT); }
 
-  ".~"                           { return symbol(Tokens.DYNAMIC_DOT); }
-  "=>"                           { return symbol(Tokens.EQGT); }
-  "->"                           { return symbol(Tokens.MINUSGT); }
-  {lambdaArgsClosing}            { return symbol(Tokens.RPAREN_MINUSGT); }
+  ".~"                           { return token(TokenKinds.DYNAMIC_DOT); }
+  "=>"                           { return token(TokenKinds.EQGT); }
+  "->"                           { return token(TokenKinds.MINUSGT); }
+  {lambdaArgsClosing}            { return token(TokenKinds.RPAREN_MINUSGT); }
 
 
   /* string literal */
-  \"                             { yybegin(STRING); resetString(); }
+  \"                             { yybegin(STATE_STRING); resetString(); }
 
-  "r\""                          { yybegin(RAW_STRING); resetString(); }
+  "r\""                          { yybegin(STATE_RAW_STRING); resetString(); }
 
   /* character literal */
-  \'                             { yybegin(CHARLITERAL); }
+  \'                             { yybegin(STATE_CHAR_LITERAL); }
 
   /* script string literal */
-  "`"                             { if(templateStringFlag){ throw new ParseException("Illegal character '`', not support nesting script string.", getPosition()); } yybegin(TEMPLATE_STRING); this.templateStringFlag = true; templateStringBraceClosingCounter = 0; return symbol(Tokens.TEMPLATE_STRING_START); }
+  "`"                             { if(templateStringFlag){ throw new ParseException("Illegal character '`', not support nesting script string.", getPosition()); } yybegin(STATE_TEMPLATE_STRING); this.templateStringFlag = true; templateStringBraceClosingCounter = 0; return token(TokenKinds.TEMPLATE_STRING_START); }
 
   /* numeric literals */
 
   /* Note: This is matched together with the minus, because the number is too big to
      be represented by a positive integer/long. */
-  {IntegerMin}                   { return symbol(Tokens.DIRECT_VALUE, Integer.MIN_VALUE); }
-  {LongMin}                      { return symbol(Tokens.DIRECT_VALUE, Long.MIN_VALUE); }
+  {IntegerMin}                   { return token(TokenKinds.DIRECT_VALUE, Integer.MIN_VALUE); }
+  {LongMin}                      { return token(TokenKinds.DIRECT_VALUE, Long.MIN_VALUE); }
 
-  {BinIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyBinInteger(2, 0)); }
-  {BinLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyBinLong(2, -1)); }
+  {BinIntegerLiteral}            { return token(TokenKinds.DIRECT_VALUE, yyBinInteger(2, 0)); }
+  {BinLongLiteral}               { return token(TokenKinds.DIRECT_VALUE, yyBinLong(2, -1)); }
 
-  {DecIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyDecInt(0, 0)); }
-  {DecLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyDecLong(0, -1)); }
+  {DecIntegerLiteral}            { return token(TokenKinds.DIRECT_VALUE, yyDecInt(0, 0)); }
+  {DecLongLiteral}               { return token(TokenKinds.DIRECT_VALUE, yyDecLong(0, -1)); }
 
-  {HexIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(2, 0, 16)); }
-  {HexLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(2, -1, 16)); }
+  {HexIntegerLiteral}            { return token(TokenKinds.DIRECT_VALUE, yyInt(2, 0, 16)); }
+  {HexLongLiteral}               { return token(TokenKinds.DIRECT_VALUE, yyLong(2, -1, 16)); }
 
-  {OctIntegerLiteral}            { return symbol(Tokens.DIRECT_VALUE, yyInt(1, 0, 8)); }
-  {OctLongLiteral}               { return symbol(Tokens.DIRECT_VALUE, yyLong(1, -1, 8)); }
+  {OctIntegerLiteral}            { return token(TokenKinds.DIRECT_VALUE, yyInt(1, 0, 8)); }
+  {OctLongLiteral}               { return token(TokenKinds.DIRECT_VALUE, yyLong(1, -1, 8)); }
 
-  {FloatLiteral}                 { return symbol(Tokens.DIRECT_VALUE, Float.valueOf(yytext(0, -1))); }
-  {DoubleLiteralPart}            { return symbol(Tokens.DIRECT_VALUE, Double.valueOf(yytext())); }
-  {DoubleLiteral}                { return symbol(Tokens.DIRECT_VALUE, Double.valueOf(yytext(0, -1))); }
+  {FloatLiteral}                 { return token(TokenKinds.DIRECT_VALUE, Float.valueOf(yytext(0, -1))); }
+  {DoubleLiteralPart}            { return token(TokenKinds.DIRECT_VALUE, Double.valueOf(yytext())); }
+  {DoubleLiteral}                { return token(TokenKinds.DIRECT_VALUE, Double.valueOf(yytext(0, -1))); }
 
   /* comments */
   {Comment}                      { /* ignore */ }
 
   /* %> etc .. */
-  {DelimiterStatementEnd}        { leftInterpolationFlag = false; yybegin(YYINITIAL); }
+  {DelimiterStatementEnd}        { leftInterpolationFlag = false; yybegin(STATE_TEMPLATE); }
 
   /* identifiers */
-  {Identifier}                   { return symbol(Tokens.IDENTIFIER, yytext().intern()); }
+  {Identifier}                   { return token(TokenKinds.IDENTIFIER, yytext().intern()); }
 
-  {MethodReference}              { return symbol(Tokens.METHOD_REFERENCE, yytext()); }
+  {MethodReference}              { return token(TokenKinds.METHOD_REFERENCE, yytext()); }
 
   {LineTerminator}               { return SYM_NEW_LINE; }
   {Blanks}                       { /* ignore */ }
 }
 
-<END_OF_FILE>{
-  <<EOF>>                          { return symbol(Tokens.EOF); }
+<STATE_EOF>{
+  <<EOF>>                          { return token(TokenKinds.EOF); }
 }
 
-<STRING> {
-  \"                             { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, stringLine, stringColumn, popAsString()); }
+<STATE_STRING> {
+  \"                             { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, stringLine, stringColumn, popAsString()); }
 
   {StringCharacter}+             { pullToString(); }
 
@@ -550,15 +553,15 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
 }
 
-<RAW_STRING> {
-  \"                             { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, stringLine, stringColumn, popAsString()); }
+<STATE_RAW_STRING> {
+  \"                             { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, stringLine, stringColumn, popAsString()); }
   [^\"]+                         { pullToString(); }
 }
 
-<TEMPLATE_STRING> {
-  "`"                             { yybegin(YYSTATEMENT); this.templateStringFlag = false; return symbol(Tokens.TEMPLATE_STRING_END, stringLine, stringColumn, popAsString()); }
+<STATE_TEMPLATE_STRING> {
+  "`"                             { yybegin(STATE_SCRIPT); this.templateStringFlag = false; return token(TokenKinds.TEMPLATE_STRING_END, stringLine, stringColumn, popAsString()); }
 
-  "${"                             { yybegin(YYSTATEMENT); return symbol(Tokens.TEMPLATE_STRING_INTERPOLATION_START, stringLine, stringColumn, popAsString()); }
+  "${"                             { yybegin(STATE_SCRIPT); return token(TokenKinds.TEMPLATE_STRING_INTERPOLATION_START, stringLine, stringColumn, popAsString()); }
 
   /* escape sequences */
   "\\b"                          { appendToString('\b'); }
@@ -579,20 +582,20 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
 }
 
-<CHARLITERAL> {
-  {CharCharacter}\'            { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, yyTextChar()); }
+<STATE_CHAR_LITERAL> {
+  {CharCharacter}\'            { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, yyTextChar()); }
 
   /* escape sequences */
-  "\\b"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\b');}
-  "\\t"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\t');}
-  "\\n"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\n');}
-  "\\f"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\f');}
-  "\\r"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\r');}
-  "\\\""\'                       { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\"');}
-  "\\'"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\'');}
-  "\\/"\'                        { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '/');}
-  "\\\\"\'                       { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, '\\');}
-  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYSTATEMENT); return symbol(Tokens.DIRECT_VALUE, (char) yyInt(1, -1 ,8));}
+  "\\b"\'                        { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, '\b');}
+  "\\t"\'                        { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, '\t');}
+  "\\n"\'                        { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, '\n');}
+  "\\f"\'                        { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, '\f');}
+  "\\r"\'                        { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, '\r');}
+  "\\\""\'                       { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, '\"');}
+  "\\'"\'                        { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, '\'');}
+  "\\/"\'                        { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, '/');}
+  "\\\\"\'                       { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, '\\');}
+  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, (char) yyInt(1, -1 ,8));}
 
   /* error cases */
   \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
@@ -601,5 +604,5 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 
 /* error fallback */
 [^]                              { throw new ParseException("Illegal character \""+yytext()+"\" at line "+yyline+", column "+yycolumn, getPosition()); }
-<<EOF>>                          { return symbol(Tokens.EOF); }
+<<EOF>>                          { return token(TokenKinds.EOF); }
 

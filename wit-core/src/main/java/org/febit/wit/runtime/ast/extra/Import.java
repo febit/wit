@@ -52,7 +52,7 @@ public final class Import extends AbstractInclude {
             var len = names.length;
             var assignables = this.targetAssignables;
             for (int i = 0; i < len; i++) {
-                assignables[i].setValue(context, results.get(names[i]));
+                assignables[i].set(context, results.get(names[i]));
             }
         }
         return null;

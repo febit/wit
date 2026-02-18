@@ -22,7 +22,7 @@ dependencies {
   api 'org.slf4j:slf4j-api'
   compileOnly libs.jakarta.servlet.api
   testImplementation 'commons-io:commons-io'
-  cup files('src/main/cup/java_cup_wit-20171014.jar')
+  cup files('src/main/cup/java_cup_wit-20260218.jar')
 }
 
 def PKG_CORE = 'org/febit/wit/parser'
@@ -41,6 +41,7 @@ tasks.register('generateParser') {
       exec.mainClass.set("java_cup.Main")
       exec.args(
           '-exception', 'ParseException',
+          '-symbols', 'TokenKinds',
           '-destdir', parserSrcDir.get().dir(PKG_CORE).getAsFile().absolutePath,
           '-destresdir', parserResDir.get().dir(PKG_CORE).getAsFile().absolutePath,
           file('src/main/cup/Parser.cup').absolutePath

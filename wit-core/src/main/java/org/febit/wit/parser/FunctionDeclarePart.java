@@ -11,7 +11,6 @@ import org.febit.wit.runtime.ast.expr.ContextVar;
 import org.febit.wit.runtime.ast.expr.FunctionDeclareExpr;
 import org.febit.wit.runtime.ast.oper.Assign;
 import org.febit.wit.runtime.ast.stat.Return;
-import org.febit.wit.util.StringUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -116,8 +115,7 @@ public class FunctionDeclarePart {
             }
         }
         if (!overflowLoops.isEmpty()) {
-            throw new ParseException("Loops overflow in function body: "
-                    + StringUtils.join(overflowLoops, ','));
+            throw new ParseException("Loops overflow in function body: " + overflowLoops);
         }
 
         var argDefaults = new Object[this.args.size()];

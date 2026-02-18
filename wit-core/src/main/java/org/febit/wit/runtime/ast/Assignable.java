@@ -6,5 +6,5 @@ import org.jspecify.annotations.Nullable;
 public interface Assignable {
 
     @Nullable
-    Object setValue(InternalContext context, @Nullable Object value);
+    Object set(InternalContext context, @Nullable Object value);
 }

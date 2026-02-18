@@ -19,14 +19,17 @@ import org.febit.wit.runtime.ast.expr.FunctionCallExpr;
 import org.febit.wit.runtime.ast.expr.NewArrayExpr;
 import org.febit.wit.runtime.ast.expr.NewMapExpr;
 import org.febit.wit.runtime.ast.expr.SuppliedValue;
-import org.febit.wit.runtime.ast.expr.TemplateStringValue;
 import org.febit.wit.runtime.ast.oper.And;
 import org.febit.wit.runtime.ast.oper.Assign;
 import org.febit.wit.runtime.ast.oper.ConstableBiOperator;
 import org.febit.wit.runtime.ast.oper.ConstableUnaryOperator;
+import org.febit.wit.runtime.ast.oper.DecreaseAndGet;
 import org.febit.wit.runtime.ast.oper.FixedPropertyOperator;
+import org.febit.wit.runtime.ast.oper.GetAndDecrease;
+import org.febit.wit.runtime.ast.oper.GetAndIncrease;
 import org.febit.wit.runtime.ast.oper.GroupAssign;
 import org.febit.wit.runtime.ast.oper.IfOperator;
+import org.febit.wit.runtime.ast.oper.IncreaseAndGet;
 import org.febit.wit.runtime.ast.oper.IntStep;
 import org.febit.wit.runtime.ast.oper.Or;
 import org.febit.wit.runtime.ast.oper.PropertyOperator;
@@ -34,12 +37,16 @@ import org.febit.wit.runtime.ast.oper.SelfOperator;
 import org.febit.wit.runtime.ast.stat.Block;
 import org.febit.wit.runtime.ast.stat.BlockWithoutLoops;
 import org.febit.wit.runtime.ast.stat.BreakpointStatement;
+import org.febit.wit.runtime.ast.stat.Echo;
 import org.febit.wit.runtime.ast.stat.If;
 import org.febit.wit.runtime.ast.stat.IfElse;
 import org.febit.wit.runtime.ast.stat.IfNot;
 import org.febit.wit.runtime.ast.stat.Interpolation;
 import org.febit.wit.runtime.ast.stat.NoopStatement;
+import org.febit.wit.runtime.ast.stat.RenderRedirect;
+import org.febit.wit.runtime.ast.stat.Return;
 import org.febit.wit.runtime.ast.stat.StatementGroup;
+import org.febit.wit.runtime.ast.template.TemplateStringValue;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -58,6 +65,37 @@ public class Ast {
         return new IfOperator(ifExpr, leftValueExpr, rightValueExpr, position);
     }
 
+    public static Echo echo(Expression src, Position position) {
+        return new Echo(src, position);
+    }
+
+    public static Return returnWith(@Nullable Expression src, Position position) {
+        return new Return(src, position);
+    }
+
+    public static Return returnUndefined(Position position) {
+        return new Return(null, position);
+    }
+
+    public static RenderRedirect renderRedirect(Statement body, AssignableExpression sink, Position position) {
+        return new RenderRedirect(body, sink, position);
+    }
+
+    public static IncreaseAndGet increaseAndGet(AssignableExpression assignable, Position position) {
+        return new IncreaseAndGet(assignable, position);
+    }
+
+    public static DecreaseAndGet decreaseAndGet(AssignableExpression assignable, Position position) {
+        return new DecreaseAndGet(assignable, position);
+    }
+
+    public static GetAndIncrease getAndIncrease(AssignableExpression assignable, Position position) {
+        return new GetAndIncrease(assignable, position);
+    }
+
+    public static GetAndDecrease getAndDecrease(AssignableExpression assignable, Position position) {
+        return new GetAndDecrease(assignable, position);
+    }
 
     public static Expression assign(AssignableExpression lexpr, Expression rexpr, Position position) {
         return new Assign(lexpr, rexpr, position);
@@ -87,7 +125,7 @@ public class Ast {
         return new DirectValue(value, pos);
     }
 
-    public static DirectValue directValue(Symbol sym) {
+    public static DirectValue directValue(Token sym) {
         return directValue(sym.value, sym.pos);
     }
 
@@ -248,14 +286,14 @@ public class Ast {
         return optimized;
     }
 
-    public static Expression operator(Expression expr, Symbol sym) {
+    public static Expression operator(Expression expr, Token sym) {
         if (!(sym.value instanceof Integer token)) {
             throw unsupportedOperator(sym.pos);
         }
         UnaryOperator<@Nullable Object> func = switch (token) {
-            case Tokens.COMP -> ALU::bitNot;
-            case Tokens.MINUS -> ALU::negative;
-            case Tokens.NOT -> ALU::not;
+            case TokenKinds.COMP -> ALU::bitNot;
+            case TokenKinds.MINUS -> ALU::negative;
+            case TokenKinds.NOT -> ALU::not;
             default -> throw unsupportedOperator(sym.pos);
         };
         var optimized = AstUtils.optimize(
@@ -265,20 +303,20 @@ public class Ast {
         return optimized;
     }
 
-    public static Expression biOperator(Expression leftExpr, Symbol sym, Expression rightExpr) {
+    public static Expression binaryOperator(Expression left, Token sym, Expression right) {
         if (!(sym.value instanceof Integer token)) {
             throw unsupportedOperator(sym.pos);
         }
         var op = switch (token) {
-            case Tokens.ANDAND -> new And(leftExpr, rightExpr, sym.pos);
-            case Tokens.OROR -> new Or(leftExpr, rightExpr, sym.pos);
-            case Tokens.DOTDOT -> new IntStep(leftExpr, rightExpr, sym.pos);
+            case TokenKinds.ANDAND -> new And(left, right, sym.pos);
+            case TokenKinds.OROR -> new Or(left, right, sym.pos);
+            case TokenKinds.DOTDOT -> new IntStep(left, right, sym.pos);
             default -> {
                 var biFunc = binaryOperator(token);
                 if (biFunc == null) {
                     throw unsupportedOperator(sym.pos);
                 }
-                yield new ConstableBiOperator(leftExpr, rightExpr, biFunc, sym.pos);
+                yield new ConstableBiOperator(left, right, biFunc, sym.pos);
             }
         };
         var optimized = AstUtils.optimize(op);
@@ -289,23 +327,23 @@ public class Ast {
     @Nullable
     private static BinaryOperator<@Nullable Object> binaryOperator(int token) {
         return switch (token) {
-            case Tokens.PLUS -> ALU::plus;
-            case Tokens.MINUS -> ALU::minus;
-            case Tokens.MULT -> ALU::multi;
-            case Tokens.DIV -> ALU::div;
-            case Tokens.MOD -> ALU::mod;
-            case Tokens.LSHIFT -> ALU::lshift;
-            case Tokens.RSHIFT -> ALU::rshift;
-            case Tokens.URSHIFT -> ALU::urshift;
-            case Tokens.LT -> ALU::less;
-            case Tokens.GT -> ALU::greater;
-            case Tokens.LTEQ -> ALU::lessEqual;
-            case Tokens.GTEQ -> ALU::greaterEqual;
-            case Tokens.EQEQ -> ALU::isEqual;
-            case Tokens.NOTEQ -> ALU::isNotEqual;
-            case Tokens.AND -> ALU::bitAnd;
-            case Tokens.XOR -> ALU::bitXor;
-            case Tokens.OR -> ALU::bitOr;
+            case TokenKinds.PLUS -> ALU::plus;
+            case TokenKinds.MINUS -> ALU::minus;
+            case TokenKinds.MULT -> ALU::multi;
+            case TokenKinds.DIV -> ALU::div;
+            case TokenKinds.MOD -> ALU::mod;
+            case TokenKinds.LSHIFT -> ALU::lshift;
+            case TokenKinds.RSHIFT -> ALU::rshift;
+            case TokenKinds.URSHIFT -> ALU::urshift;
+            case TokenKinds.LT -> ALU::less;
+            case TokenKinds.GT -> ALU::greater;
+            case TokenKinds.LTEQ -> ALU::lessEqual;
+            case TokenKinds.GTEQ -> ALU::greaterEqual;
+            case TokenKinds.EQEQ -> ALU::isEqual;
+            case TokenKinds.NOTEQ -> ALU::isNotEqual;
+            case TokenKinds.AND -> ALU::bitAnd;
+            case TokenKinds.XOR -> ALU::bitXor;
+            case TokenKinds.OR -> ALU::bitOr;
             default -> null;
         };
     }

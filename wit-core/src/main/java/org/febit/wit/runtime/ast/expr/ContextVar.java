@@ -25,7 +25,7 @@ public final class ContextVar implements AssignableExpression {
 
     @Override
     @Nullable
-    public Object setValue(InternalContext context, @Nullable final Object value) {
+    public Object set(InternalContext context, @Nullable final Object value) {
         context.heap().set(index, value);
         return value;
     }

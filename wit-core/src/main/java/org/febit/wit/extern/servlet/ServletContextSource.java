@@ -14,7 +14,7 @@ public record ServletContextSource(
         String path,
         Charset charset,
         ServletContext servletContext,
-        boolean codeFirst
+        Source.BeginWith beginWith
 ) implements Source {
 
     @Override

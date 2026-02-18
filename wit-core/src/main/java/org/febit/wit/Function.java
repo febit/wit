@@ -7,7 +7,7 @@ import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.io.WriterOut;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.function.FunctionDeclare;
-import org.febit.wit.runtime.heap.LocalHeap;
+import org.febit.wit.runtime.heap.GenricHeap;
 import org.febit.wit.runtime.heap.VariantHeap;
 import org.jspecify.annotations.Nullable;
 
@@ -43,7 +43,7 @@ public final class Function {
 
     private InternalContext createContext(Out out) {
         var heap = VariantHeap.empty();
-        var local = LocalHeap.create();
+        var local = GenricHeap.local();
         return new InternalContext(script, out, Vars.empty(), heap, local, null);
     }
 

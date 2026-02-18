@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast.oper;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.AstUtils;
@@ -14,20 +11,17 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.UnaryOperator;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public class ConstableUnaryOperator implements Expression {
-
-    private final Expression expr;
-    private final UnaryOperator<@Nullable Object> op;
-    @Getter
-    private final Position position;
+public record ConstableUnaryOperator(
+        Expression target,
+        UnaryOperator<@Nullable Object> operator,
+        Position position
+) implements Expression {
 
     @Override
     @Nullable
     public Object execute(InternalContext context) {
         try {
-            return op.apply(expr.execute(context));
+            return operator.apply(target.execute(context));
         } catch (Exception e) {
             throw ScriptEvaluateException.from(e, this);
         }
@@ -35,8 +29,8 @@ public class ConstableUnaryOperator implements Expression {
 
     @Override
     public Expression optimize() {
-        if (AstUtils.isImmutableDirectValue(expr)) {
-            return new DirectValue(op.apply(((DirectValue) expr).value), position);
+        if (AstUtils.isImmutableDirectValue(target)) {
+            return new DirectValue(operator.apply(((DirectValue) target).value()), position);
         }
         return this;
     }
@@ -44,6 +38,6 @@ public class ConstableUnaryOperator implements Expression {
     @Override
     @Nullable
     public Object evalAsConst() {
-        return op.apply(AstUtils.evalConst(expr));
+        return operator.apply(AstUtils.evalConst(target));
     }
 }

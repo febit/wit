@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast.oper;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.AstUtils;
@@ -14,23 +11,21 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.BinaryOperator;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public class ConstableBiOperator implements Expression {
-
-    private final Expression leftExpr;
-    private final Expression rightExpr;
-
-    private final BinaryOperator<@Nullable Object> op;
-
-    @Getter
-    private final Position position;
+public record ConstableBiOperator(
+        Expression left,
+        Expression right,
+        BinaryOperator<@Nullable Object> operator,
+        Position position
+) implements Expression {
 
     @Override
     @Nullable
     public Object execute(InternalContext context) {
         try {
-            return op.apply(leftExpr.execute(context), rightExpr.execute(context));
+            return operator.apply(
+                    left.execute(context),
+                    right.execute(context)
+            );
         } catch (Exception e) {
             throw ScriptEvaluateException.from(e, this);
         }
@@ -38,10 +33,13 @@ public class ConstableBiOperator implements Expression {
 
     @Override
     public Expression optimize() {
-        if (AstUtils.isImmutableDirectValue(leftExpr)
-                && AstUtils.isImmutableDirectValue(rightExpr)) {
+        if (AstUtils.isImmutableDirectValue(left)
+                && AstUtils.isImmutableDirectValue(right)) {
             return new DirectValue(
-                    op.apply(((DirectValue) leftExpr).value, ((DirectValue) rightExpr).value),
+                    operator.apply(
+                            ((DirectValue) left).value(),
+                            ((DirectValue) right).value()
+                    ),
                     position
             );
         }
@@ -51,9 +49,9 @@ public class ConstableBiOperator implements Expression {
     @Override
     @Nullable
     public Object evalAsConst() {
-        return op.apply(
-                AstUtils.evalConst(leftExpr),
-                AstUtils.evalConst(rightExpr)
+        return operator.apply(
+                AstUtils.evalConst(left),
+                AstUtils.evalConst(right)
         );
     }
 }

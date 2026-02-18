@@ -13,6 +13,8 @@ import org.febit.wit.exception.NotFunctionException;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.io.OutputStreamOut;
+import org.febit.wit.io.WriterOut;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.Render;
@@ -21,9 +23,12 @@ import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.FrameIndexer;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.function.FunctionDeclare;
-import org.febit.wit.runtime.heap.LocalHeap;
+import org.febit.wit.runtime.heap.Heap;
 import org.febit.wit.runtime.heap.VariantHeap;
 import org.jspecify.annotations.Nullable;
+
+import java.io.OutputStream;
+import java.io.Writer;
 
 /**
  * Internal Context.
@@ -61,7 +66,7 @@ public final class InternalContext implements Context {
     private final VariantHeap heap;
 
     @lombok.Getter
-    private final LocalHeap local;
+    private final Heap local;
 
     /**
      * Output, stream or writer.
@@ -74,7 +79,7 @@ public final class InternalContext implements Context {
             Out out,
             Vars inputs,
             VariantHeap heap,
-            LocalHeap local,
+            Heap local,
             @Nullable BreakpointHandler breakpointHandler
     ) {
         this.script = script;
@@ -212,9 +217,24 @@ public final class InternalContext implements Context {
     }
 
     @Nullable
-    public Object redirectOut(Out newOut, java.util.function.Function<InternalContext, @Nullable Object> action) {
+    public Object redirect(
+            Writer writer, java.util.function.Function<InternalContext, @Nullable Object> action) {
+        var target = new WriterOut(writer, this.out.charset(), this.engine().codecFactory());
+        return redirect(target, action);
+    }
+
+    @Nullable
+    public Object redirect(
+            OutputStream output, java.util.function.Function<InternalContext, @Nullable Object> action) {
+        var target = new OutputStreamOut(output, this.out.charset(), this.engine().codecFactory());
+        return redirect(target, action);
+    }
+
+    @Nullable
+    public Object redirect(
+            Out target, java.util.function.Function<InternalContext, @Nullable Object> action) {
         Out prevOut = this.out;
-        this.out = newOut;
+        this.out = target;
         try {
             return action.apply(this);
         } finally {

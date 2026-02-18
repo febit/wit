@@ -22,7 +22,6 @@ import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.util.ClassNameRope;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.Stack;
-import org.febit.wit.util.StringUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -41,104 +40,17 @@ abstract class AbstractParser {
     private static final short[][] PRODUCTION_TABLE = loadData("Production");
     private static final short[][] ACTION_TABLE = loadData("Action");
     private static final short[][] REDUCE_TABLE = loadData("Reduce");
-    private static final String[] SYMBOL_NAMES = {
-            "EOF", //EOF
-            "ERROR", //ERROR
-            "var", //VAR
-            "if", //IF
-            "else", //ELSE
-            "for", //FOR
-            "this", //THIS
-            "super", //SUPER
-            "switch", //SWITCH
-            "case", //CASE
-            "default", //DEFAULT
-            "do", //DO
-            "while", //WHILE
-            "throw", //THROW
-            "try", //TRY
-            "catch", //CATCH
-            "finally", //FINALLY
-            "new", //NEW
-            "instanceof", //INSTANCEOF
-            "function", //FUNCTION
-            "echo", //ECHO
-            "static", //STATIC
-            "native", //NATIVE
-            "import", //IMPORT
-            "include", //INCLUDE
-            "@import", //NATIVE_IMPORT
-            "break", //BREAK
-            "continue", //CONTINUE
-            "return", //RETURN
-            "++", //PLUSPLUS
-            "--", //MINUSMINUS
-            "+", //PLUS
-            "-", //MINUS
-            "*", //MULT
-            "/", //DIV
-            "%", //MOD
-            "<<", //LSHIFT
-            ">>", //RSHIFT
-            ">>>", //URSHIFT
-            "<", //LT
-            ">", //GT
-            "<=", //LTEQ
-            ">=", //GTEQ
-            "==", //EQEQ
-            "!=", //NOTEQ
-            "&", //AND
-            "^", //XOR
-            "|", //OR
-            "~", //COMP
-            "&&", //ANDAND
-            "||", //OROR
-            "!", //NOT
-            "?", //QUESTION
-            "*=", //SELFEQ
-            "-", //UMINUS
-            ".", //DOT
-            ":", //COLON
-            "::", //COLONCOLON
-            ",", //COMMA
-            ";", //SEMICOLON
-            "{", //LBRACE
-            "}", //RBRACE
-            "}", //INTERPOLATION_END
-            "(", //LPAREN
-            ")", //RPAREN
-            "[", //LBRACK
-            "]", //RBRACK
-            "[?", //LDEBUG
-            "?]", //RDEBUG
-            "[?]", //LRDEBUG
-            "=>", //EQGT
-            ")->", //RPAREN_MINUSGT
-            "->", //MINUSGT
-            ".~", //DYNAMIC_DOT
-            "..", //DOTDOT
-            "=", //EQ
-            "`", //TEMPLATE_STRING_START
-            "}", //TEMPLATE_STRING_INTERPOLATION_END
-            "${", //TEMPLATE_STRING_INTERPOLATION_START
-            "`", //TEMPLATE_STRING_END
-            "IDENTIFIER", //IDENTIFIER
-            "::", //METHOD_REFERENCE
-            "TEXT", //TEXT_STATEMENT
-            "DIRECT_VALUE", // DIRECT_VALUE
-            "const", //CONST
-            "UNKNOWN"
-    };
 
     private final Map<String, String> importedClasses = new HashMap<>();
     private final Map<@Nullable String, Integer> labelIndexMap = new HashMap<>();
     private final AtomicInteger nextLabelIndex = new AtomicInteger();
 
+    protected final Stack<Token> tokenStack = new Stack<>(24);
+
     private int features;
-    private TextStatementFactory textStatementFactory;
+    private TemplateTextFactory templateTextFactory;
     private NativeFactory nativeFactory;
 
-    protected final Stack<Symbol> symbolStack = new Stack<>(24);
     protected Script script;
     protected VariantManager variants;
 
@@ -201,7 +113,7 @@ abstract class AbstractParser {
     }
 
     private static short[][] loadData(String name) {
-        try (ObjectInputStream in = new ObjectInputStream(
+        try (var in = new ObjectInputStream(
                 ClassUtils.getDefaultClassLoader().getResourceAsStream("org/febit/wit/parser/Parser$" + name + ".data")
         )) {
             return (short[][]) in.readObject();
@@ -210,17 +122,17 @@ abstract class AbstractParser {
         }
     }
 
-    private static String getSimpleHintMessage(Symbol symbol) {
-        final short[] row = ACTION_TABLE[symbol.state];
+    private static String getSimpleHintMessage(Token token) {
+        final short[] row = ACTION_TABLE[token.state];
         final int len = row.length;
         if (len == 0) {
             return "[no hints]";
         }
         final boolean higherLevel = len > 8;
-        if (higherLevel && getAction(row, Tokens.SEMICOLON) != 0) {
+        if (higherLevel && getAction(row, TokenKinds.SEMICOLON) != 0) {
             return "forget ';' ?";
         }
-        final StringBuilder sb = new StringBuilder();
+        var buf = new StringBuilder();
         boolean notFirst = false;
         short sym;
         for (int i = 0; i < len; i += 2) {
@@ -229,37 +141,125 @@ abstract class AbstractParser {
                 continue;
             }
             if (notFirst) {
-                sb.append(", ");
+                buf.append(", ");
             } else {
                 notFirst = true;
             }
-            sb.append('\'')
-                    .append(symbolToString(sym))
+            buf.append('\'')
+                    .append(nameOfToken(sym))
                     .append('\'');
         }
-        return sb.toString();
+        return buf.toString();
     }
 
     private static boolean isHintLevelOne(short sym) {
         return switch (sym) {
-            case Tokens.COLON, //":"
-                 Tokens.SEMICOLON,  //";"
-                 Tokens.RBRACE, //"}"
-                 Tokens.INTERPOLATION_END,  //"}"
-                 Tokens.RPAREN,  //")"
-                 Tokens.RBRACK,  //"]"
-                 Tokens.IDENTIFIER, //"IDENTIFIER"
-                 Tokens.DIRECT_VALUE  //"DIRECT_VALUE"
+            case TokenKinds.COLON, //":"
+                 TokenKinds.SEMICOLON,  //";"
+                 TokenKinds.RBRACE, //"}"
+                 TokenKinds.INTERPOLATION_END,  //"}"
+                 TokenKinds.RPAREN,  //")"
+                 TokenKinds.RBRACK,  //"]"
+                 TokenKinds.IDENTIFIER, //"IDENTIFIER"
+                 TokenKinds.DIRECT_VALUE  //"DIRECT_VALUE"
                     -> true;
             default -> false;
         };
     }
 
-    private static String symbolToString(short sym) {
-        if (sym >= 0 && sym < SYMBOL_NAMES.length) {
-            return SYMBOL_NAMES[sym];
-        }
-        return "UNKNOWN";
+    @SuppressWarnings({
+            "java:S1479" // too many case clauses
+    })
+    private static String nameOfToken(short sym) {
+        return switch (sym) {
+            case TokenKinds.EOF -> "EOF";
+            case TokenKinds.ERROR -> "ERROR";
+            case TokenKinds.VAR -> "var";
+            case TokenKinds.IF -> "if";
+            case TokenKinds.ELSE -> "else";
+            case TokenKinds.FOR -> "for";
+            case TokenKinds.THIS -> "this";
+            case TokenKinds.SUPER -> "super";
+            case TokenKinds.SWITCH -> "switch";
+            case TokenKinds.CASE -> "case";
+            case TokenKinds.DEFAULT -> "default";
+            case TokenKinds.DO -> "do";
+            case TokenKinds.WHILE -> "while";
+            case TokenKinds.THROW -> "throw";
+            case TokenKinds.TRY -> "try";
+            case TokenKinds.CATCH -> "catch";
+            case TokenKinds.FINALLY -> "finally";
+            case TokenKinds.NEW -> "new";
+            case TokenKinds.INSTANCEOF -> "instanceof";
+            case TokenKinds.FUNCTION -> "function";
+            case TokenKinds.ECHO -> "echo";
+            case TokenKinds.STATIC -> "static";
+            case TokenKinds.NATIVE -> "native";
+            case TokenKinds.IMPORT -> "import";
+            case TokenKinds.INCLUDE -> "include";
+            case TokenKinds.NATIVE_IMPORT -> "@import";
+            case TokenKinds.BREAK -> "break";
+            case TokenKinds.CONTINUE -> "continue";
+            case TokenKinds.RETURN -> "return";
+            case TokenKinds.PLUSPLUS -> "++";
+            case TokenKinds.MINUSMINUS -> "--";
+            case TokenKinds.PLUS -> "+";
+            case TokenKinds.MINUS -> "-";
+            case TokenKinds.MULT -> "*";
+            case TokenKinds.DIV -> "/";
+            case TokenKinds.MOD -> "%";
+            case TokenKinds.LSHIFT -> "<<";
+            case TokenKinds.RSHIFT -> ">>";
+            case TokenKinds.URSHIFT -> ">>>";
+            case TokenKinds.LT -> "<";
+            case TokenKinds.GT -> ">";
+            case TokenKinds.LTEQ -> "<=";
+            case TokenKinds.GTEQ -> ">=";
+            case TokenKinds.EQEQ -> "==";
+            case TokenKinds.NOTEQ -> "!=";
+            case TokenKinds.AND -> "&";
+            case TokenKinds.XOR -> "^";
+            case TokenKinds.OR -> "|";
+            case TokenKinds.COMP -> "~";
+            case TokenKinds.ANDAND -> "&&";
+            case TokenKinds.OROR -> "||";
+            case TokenKinds.NOT -> "!";
+            case TokenKinds.QUESTION -> "?";
+            case TokenKinds.SELFEQ -> "*=";
+            case TokenKinds.UMINUS -> "-";
+            case TokenKinds.DOT -> ".";
+            case TokenKinds.COLON -> ":";
+            case TokenKinds.COLONCOLON -> "::";
+            case TokenKinds.COMMA -> ",";
+            case TokenKinds.SEMICOLON -> ";";
+            case TokenKinds.LBRACE -> "{";
+            case TokenKinds.RBRACE -> "}";
+            case TokenKinds.INTERPOLATION_END -> "}";
+            case TokenKinds.LPAREN -> "(";
+            case TokenKinds.RPAREN -> ")";
+            case TokenKinds.LBRACK -> "[";
+            case TokenKinds.RBRACK -> "]";
+            case TokenKinds.LDEBUG -> "[?";
+            case TokenKinds.RDEBUG -> "?]";
+            case TokenKinds.LRDEBUG -> "[?]";
+            case TokenKinds.EQGT -> "=>";
+            case TokenKinds.RPAREN_MINUSGT -> ")->";
+            case TokenKinds.MINUSGT -> "->";
+            case TokenKinds.DYNAMIC_DOT -> ".~";
+            case TokenKinds.DOTDOT -> "..";
+            case TokenKinds.EQ -> "=";
+            case TokenKinds.TEMPLATE_STRING_START -> "`";
+            case TokenKinds.TEMPLATE_STRING_INTERPOLATION_END -> "}";
+            case TokenKinds.TEMPLATE_STRING_INTERPOLATION_START -> "${";
+            case TokenKinds.TEMPLATE_STRING_END -> "`";
+            case TokenKinds.IDENTIFIER -> "IDENTIFIER";
+            case TokenKinds.METHOD_REFERENCE -> "::";
+            case TokenKinds.TEXT_STATEMENT -> "TEXT";
+            case TokenKinds.DIRECT_VALUE -> "DIRECT_VALUE";
+            case TokenKinds.CONST -> "const";
+            default -> "UNKNOWN";
+        };
+
     }
 
     public static ScriptAST parse(Script script) throws ParseException {
@@ -274,37 +274,37 @@ abstract class AbstractParser {
             "java:S6541", // Methods should not perform too many tasks (aka Brain method)
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    private Symbol process(Lexer lexer) throws IOException {
+    private Token process(Lexer lexer) throws IOException {
 
         int act;
-        Symbol pending;
-        Symbol currentSymbol;
-        final Stack<Symbol> stack = this.symbolStack;
+        Token pending;
+        Token currentToken;
+        var stack = this.tokenStack;
         stack.clear();
 
-        //Start Symbol
-        currentSymbol = new Symbol(0, TextPosition.UNKNOWN, null);
-        currentSymbol.state = 0;
-        stack.push(currentSymbol);
+        //Start Token
+        currentToken = new Token(0, TextPosition.UNKNOWN, null);
+        currentToken.state = 0;
+        stack.push(currentToken);
 
         var looseSemicolon = Feature.LOOSE_SEMICOLON.isEnabled(this.features);
 
-        Symbol pendingPending = null;
+        Token pendingPending = null;
         pending = lexer.nextToken();
 
         goonParse = true;
         do {
 
             // look up action out of the current state with the current input
-            act = getAction(ACTION_TABLE[currentSymbol.state], pending.kind);
+            act = getAction(ACTION_TABLE[currentToken.state], pending.kind);
 
             // decode the action -- > 0 encodes shift
             if (act > 0) {
                 // shift to the encoded state by pushing it on the _stack
                 pending.state = act - 1;
                 stack.push(pending);
-                currentSymbol = pending;
-                // advance to the next Symbol
+                currentToken = pending;
+                // advance to the next Token
 
                 // next token
                 if (pendingPending != null) {
@@ -313,17 +313,17 @@ abstract class AbstractParser {
                 } else {
                     pending = lexer.nextToken();
                     if (looseSemicolon
-                            && currentSymbol.isOnEdgeOfNewLine) {
+                            && currentToken.isOnEdgeOfNewLine) {
                         switch (pending.kind) {
-                            case Tokens.LBRACK: // NOSONAR squid:S128 Switch cases should end with an unconditional "break" statement
-                                if (currentSymbol.kind == Tokens.COMMA
-                                        || currentSymbol.kind == Tokens.LBRACE) {
+                            case TokenKinds.LBRACK: // NOSONAR squid:S128 Switch cases should end with an unconditional "break" statement
+                                if (currentToken.kind == TokenKinds.COMMA
+                                        || currentToken.kind == TokenKinds.LBRACE) {
                                     break;
                                 }
-                            case Tokens.LBRACE:
-                            case Tokens.LPAREN:
-                            case Tokens.PLUSPLUS:
-                            case Tokens.MINUSMINUS:
+                            case TokenKinds.LBRACE:
+                            case TokenKinds.LPAREN:
+                            case TokenKinds.PLUSPLUS:
+                            case TokenKinds.MINUSMINUS:
                                 pendingPending = pending;
                                 pending = createLooseSemicolonSymbol(pendingPending);
                                 break;
@@ -336,9 +336,9 @@ abstract class AbstractParser {
                         && pendingPending == null
                         && pending.isOnEdgeOfNewLine) {
                     switch (pending.kind) {
-                        case Tokens.RETURN,
-                             Tokens.BREAK,
-                             Tokens.CONTINUE -> pendingPending = createLooseSemicolonSymbol(pending);
+                        case TokenKinds.RETURN,
+                             TokenKinds.BREAK,
+                             TokenKinds.CONTINUE -> pendingPending = createLooseSemicolonSymbol(pending);
                         default -> {
                             // Do nothing
                         }
@@ -349,9 +349,9 @@ abstract class AbstractParser {
             // assert act <=0
             if (act == 0
                     && looseSemicolon
-                    && pending.kind != Tokens.SEMICOLON
-                    && (currentSymbol.isOnEdgeOfNewLine || pending.kind == Tokens.RBRACE)) {
-                act = getAction(ACTION_TABLE[currentSymbol.state], Tokens.SEMICOLON);
+                    && pending.kind != TokenKinds.SEMICOLON
+                    && (currentToken.isOnEdgeOfNewLine || pending.kind == TokenKinds.RBRACE)) {
+                act = getAction(ACTION_TABLE[currentToken.state], TokenKinds.SEMICOLON);
                 if (act != 0) {
                     pendingPending = pending;
                     pending = createLooseSemicolonSymbol(pendingPending);
@@ -364,37 +364,37 @@ abstract class AbstractParser {
             if (act == 0) {
                 throw new ParseException("Syntax error at line " + lexer.getLine()
                         + " column " + lexer.getColumn()
-                        + ", Hints: " + getSimpleHintMessage(currentSymbol),
+                        + ", Hints: " + getSimpleHintMessage(currentToken),
                         TextPosition.of(lexer.getLine(), lexer.getColumn())
                 );
             }
-            boolean isLastSymbolOnEdgeOfNewLine = currentSymbol.isOnEdgeOfNewLine;
+            boolean isLastSymbolOnEdgeOfNewLine = currentToken.isOnEdgeOfNewLine;
             // if its less than zero, then it encodes a reduce action
             act = (-act) - 1;
             final Object result = doAction(act);
             final short[] row = PRODUCTION_TABLE[act];
-            final int symId = row[0];
+            final int tokenKind = row[0];
             final int handleSize = row[1];
             if (handleSize == 0) {
-                currentSymbol = new Symbol(symId, TextPosition.UNKNOWN, result);
+                currentToken = new Token(tokenKind, TextPosition.UNKNOWN, result);
             } else {
                 //position based on left
-                currentSymbol = new Symbol(symId, stack.peek(handleSize - 1).pos, result);
+                currentToken = new Token(tokenKind, stack.peek(handleSize - 1).pos, result);
                 //pop the handle
                 stack.pops(handleSize);
             }
 
             // look up the state to go to from the one popped back to shift to that state
-            currentSymbol.state = getReduce(REDUCE_TABLE[stack.peek().state], symId);
-            currentSymbol.isOnEdgeOfNewLine = isLastSymbolOnEdgeOfNewLine;
-            stack.push(currentSymbol);
+            currentToken.state = getReduce(REDUCE_TABLE[stack.peek().state], tokenKind);
+            currentToken.isOnEdgeOfNewLine = isLastSymbolOnEdgeOfNewLine;
+            stack.push(currentToken);
         } while (goonParse);
 
         return stack.peek();
     }
 
-    private Symbol createLooseSemicolonSymbol(Symbol refer) {
-        return new Symbol(Tokens.SEMICOLON, refer.pos, null);
+    private Token createLooseSemicolonSymbol(Token refer) {
+        return new Token(TokenKinds.SEMICOLON, refer.pos, null);
     }
 
     /**
@@ -410,7 +410,7 @@ abstract class AbstractParser {
 
         this.script = script;
         this.features = engine.features();
-        this.textStatementFactory = engine.textStatementFactory();
+        this.templateTextFactory = engine.templateTextFactory();
         this.nativeFactory = engine.nativeFactory();
 
         this.variants = new VariantManager(engine);
@@ -423,11 +423,9 @@ abstract class AbstractParser {
             //ISSUE: LexerProvider
             lexer = new Lexer(source.openReader());
             lexer.setTrimCodeBlockBlankLine(engine.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE));
-            if (source.codeFirst()) {
-                lexer.codeFirst();
-            }
+            lexer.beginWith(source.beginWith());
             lexer.setOffset(source);
-            this.textStatementFactory.onParserStarted(script);
+            this.templateTextFactory.onParserStarted(script);
 
             var ast = this.process(lexer).value;
             Objects.requireNonNull(ast, "Parser result is null.");
@@ -437,7 +435,7 @@ abstract class AbstractParser {
         } catch (Exception e) {
             throw new ParseException(e);
         } finally {
-            this.textStatementFactory.onParserCompleted(script);
+            this.templateTextFactory.onParserCompleted(script);
             if (lexer != null) {
                 try {
                     lexer.close();
@@ -541,11 +539,11 @@ abstract class AbstractParser {
         }
     }
 
-    Statement createTextStatement(char @Nullable [] text, Position position) {
+    Statement createTemplateText(char @Nullable [] text, Position position) {
         if (text == null || text.length == 0) {
             return NoopStatement.INSTANCE;
         }
-        return this.textStatementFactory.create(script, text, position);
+        return this.templateTextFactory.create(script, text, position);
     }
 
     ContextVar declareVarAndCreateContextValue(String name, Position position) {
@@ -569,7 +567,7 @@ abstract class AbstractParser {
                 if (!(addr.constValue() instanceof String name)) {
                     throw new ParseException("Name of static variable must be a string.", position);
                 }
-                yield AssignableSuppliedValue.ofStatic(
+                yield AssignableSuppliedValue.ofHeap(
                         this.variants.staticHeaps().variant(), name, position
                 );
             }
@@ -665,7 +663,7 @@ abstract class AbstractParser {
         var statements = Ast.flatStatements(list);
         var loops = AstUtils.collectLoopFlags(statements);
         if (!loops.isEmpty()) {
-            throw new ParseException("loop overflow: " + StringUtils.join(loops, ','));
+            throw new ParseException("loop overflow: " + loops);
         }
         return new ScriptAST(variants.constructIndexers(), statements, variants.varCounter(), this.lastSourceVersion);
     }

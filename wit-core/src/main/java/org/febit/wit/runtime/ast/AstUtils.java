@@ -21,7 +21,7 @@ public class AstUtils {
 
     public static boolean isImmutableDirectValue(Expression expr) {
         return (expr instanceof DirectValue direct)
-                && ALU.isKnownBaseImmutable(direct.value);
+                && ALU.isKnownBaseImmutable(direct.value());
     }
 
     @Nullable

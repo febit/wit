@@ -11,11 +11,12 @@ import org.febit.wit.extern.lib.context.GlobalContextRegister;
 import org.febit.wit.extern.lib.context.LocalContextRegister;
 import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.extern.lib.tld.TldModule;
-import org.febit.wit.loaders.Loader;
-import org.febit.wit.loaders.Loaders;
-import org.febit.wit.loaders.impl.StringLoader;
+import org.febit.wit.loader.Loader;
+import org.febit.wit.loader.Loaders;
+import org.febit.wit.loader.impl.StringLoader;
 import org.febit.wit.parser.NativeFactory;
 import org.febit.wit.parser.security.RuleBasedNativeSecurity;
+import org.febit.wit.runtime.Source;
 import org.febit.wit.test.component.TestCasesModule;
 import org.febit.wit.test.component.TestConfigFlagEngineModule;
 import org.febit.wit.test.component.TestSpiFlagEngineModule;
@@ -107,27 +108,30 @@ public class EngineManager {
 
     static Loader loader() {
         var code = StringLoader.builder()
-                .codeFirst(true)
+                .beginWith(Source.BeginWith.SCRIPT)
                 .build();
 
         var string = StringLoader.builder()
-                .codeFirst(false)
+                .beginWith(Source.BeginWith.TEMPLATE)
                 .build();
 
         var classpath = Loaders.classpath()
                 .root("org/febit/wit/test/tmpls")
+                .beginWith(Source.BeginWith.TEMPLATE)
                 .deputySuffixes(EXT_DEPUTIES)
                 .missingSuffix(EXT_WIT)
                 .build();
 
         var lib = Loaders.classpath()
                 .root("org/febit/wit/test/lib")
+                .beginWith(Source.BeginWith.TEMPLATE)
                 .deputySuffixes(EXT_DEPUTIES)
                 .missingSuffix(EXT_WIT)
                 .build();
 
         var libSub = Loaders.classpath()
                 .root("org/febit/wit/test/lib-sub")
+                .beginWith(Source.BeginWith.TEMPLATE)
                 .deputySuffixes(EXT_DEPUTIES)
                 .missingSuffix(EXT_WIT)
                 .build();

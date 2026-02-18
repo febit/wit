@@ -5,14 +5,13 @@ import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.io.DiscardOut;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.DefaultCodecFactory;
-import org.febit.wit.loaders.Loader;
+import org.febit.wit.loader.Loader;
 import org.febit.wit.parser.NativeFactory;
-import org.febit.wit.parser.TextStatementFactory;
+import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.parser.security.NoneNativeSecurity;
-import org.febit.wit.parser.text.AdaptiveTextStatementFactory;
+import org.febit.wit.parser.template.AdaptiveTemplateTextFactory;
 import org.febit.wit.runtime.accessor.Accessor;
 import org.febit.wit.runtime.accessor.ComposedAccessorFactory;
-import org.febit.wit.util.StringUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.io.UncheckedIOException;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 @Slf4j
 public class EngineBuilder {
@@ -44,7 +42,7 @@ public class EngineBuilder {
     private Charset charset = StandardCharsets.UTF_8;
     private CodecFactory codecFactory = new DefaultCodecFactory();
     private NativeFactory nativeFactory = new NativeFactory(new NoneNativeSecurity());
-    private TextStatementFactory textStatementFactory = new AdaptiveTextStatementFactory();
+    private TemplateTextFactory templateTextFactory = new AdaptiveTemplateTextFactory();
 
     @Nullable
     private Loader loader;
@@ -81,9 +79,9 @@ public class EngineBuilder {
         return this;
     }
 
-    public EngineBuilder textStatementFactory(TextStatementFactory factory) {
+    public EngineBuilder templateTextFactory(TemplateTextFactory factory) {
         Objects.requireNonNull(factory);
-        this.textStatementFactory = factory;
+        this.templateTextFactory = factory;
         return this;
     }
 
@@ -151,7 +149,7 @@ public class EngineBuilder {
                 .accessors(accessors)
                 .codecFactory(codecFactory)
                 .nativeFactory(nativeFactory)
-                .textStatementFactory(textStatementFactory)
+                .templateTextFactory(templateTextFactory)
                 .build();
 
         for (var module : modules) {
@@ -166,23 +164,21 @@ public class EngineBuilder {
     }
 
     private static void initScripts(Engine engine, List<String> scripts) throws SourceNotFoundException {
-        var flatten = scripts.stream()
-                .flatMap(s -> Stream.of(StringUtils.toArray(s)))
-                .filter(StringUtils::isNonEmpty)
+        var fixed = scripts.stream()
                 .distinct()
                 .toList();
 
-        if (flatten.isEmpty()) {
+        if (fixed.isEmpty()) {
             log.info("[INIT] no init scripts to apply.");
             return;
         }
-        log.info("[INIT] applying init scripts: total={}", flatten.size());
+        log.info("[INIT] applying init scripts: total={}", fixed.size());
 
-        var total = flatten.size();
+        var total = fixed.size();
         var staticHeaps = engine.staticHeaps();
 
         for (int i = 0; i < total; i++) {
-            var tmpl = flatten.get(i);
+            var tmpl = fixed.get(i);
             log.info("[INIT] applying init scripts [{}/{}]: {}", i + 1, total, tmpl);
             engine.script(tmpl).eval(acceptor -> {
                 acceptor.set("GLOBAL", staticHeaps.variant());

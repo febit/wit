@@ -6,6 +6,7 @@ import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.ast.FrameIndexer;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 /**
@@ -80,6 +81,11 @@ public class VariantHeap implements Heap {
     }
 
     @Override
+    public boolean has(String name) {
+        return currentIndexer().lookupUpstream(name) >= 0;
+    }
+
+    @Override
     public void set(String name, @Nullable Object value) {
         int idx = this.indexers[this.frame].lookupUpstream(name);
         if (idx >= 0) {
@@ -98,6 +104,11 @@ public class VariantHeap implements Heap {
             throw new ScriptEvaluateException("Not found variant named:" + name);
         }
         return null;
+    }
+
+    @Override
+    public void clear() {
+        Arrays.fill(this.table, null);
     }
 
     @Nullable

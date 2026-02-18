@@ -32,7 +32,7 @@ public class JavaStaticFieldExpr implements AssignableExpression {
 
     @Override
     @Nullable
-    public Object setValue(InternalContext context, @Nullable Object value) {
+    public Object set(InternalContext context, @Nullable Object value) {
         try {
             field.set(null, value);
             return value;

@@ -14,8 +14,7 @@ class StringLoaderTest {
 
     @Test
     void test() throws SourceNotFoundException {
-
-        final StringWriter writer = new StringWriter();
+        var writer = new StringWriter();
 
         EngineManager.script("string:<% echo \"Hello Wit！\"; %>")
                 .eval(Vars.empty(), writer);
@@ -24,8 +23,7 @@ class StringLoaderTest {
 
     @Test
     void testCodeFirst() throws SourceNotFoundException {
-
-        final StringWriter writer = new StringWriter();
+        var writer = new StringWriter();
 
         EngineManager.script("code: echo \"Hello Wit！\";")
                 .eval(Vars.empty(), writer);

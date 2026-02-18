@@ -8,10 +8,9 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.io.codec.CodecFactory;
-import org.febit.wit.loaders.Loader;
+import org.febit.wit.loader.Loader;
 import org.febit.wit.parser.NativeFactory;
-import org.febit.wit.parser.TextStatementFactory;
-import org.febit.wit.runtime.ScriptImpl;
+import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.heap.StaticHeaps;
 import org.jspecify.annotations.Nullable;
@@ -50,7 +49,7 @@ public class Engine {
     @Getter
     private final List<String> predefinedVars;
     @Getter
-    private final TextStatementFactory textStatementFactory;
+    private final TemplateTextFactory templateTextFactory;
     @Getter
     private final CodecFactory codecFactory;
     @Getter

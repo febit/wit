@@ -8,7 +8,7 @@ import org.febit.wit.Script;
 import org.febit.wit.Vars;
 import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.heap.LocalHeap;
+import org.febit.wit.runtime.heap.GenricHeap;
 import org.febit.wit.runtime.heap.VariantHeap;
 import org.jspecify.annotations.Nullable;
 
@@ -32,7 +32,7 @@ public final class ScriptAST {
     ) {
         var heap = new VariantHeap(frameSize, indexers);
         inputs.sink(heap::set);
-        var local = LocalHeap.create();
+        var local = GenricHeap.local();
         var context = new InternalContext(script, out, inputs, heap, local, listener);
         context.visit(this.statements);
         //assert context.indexer = 0
