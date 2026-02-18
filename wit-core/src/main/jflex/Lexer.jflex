@@ -1,5 +1,5 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
-package org.febit.wit.core;
+package org.febit.wit.parser;
 
 import org.jspecify.annotations.Nullable;
 import org.febit.wit.exception.ParseException;
@@ -72,8 +72,8 @@ import java.util.Deque;
         } while (next == SYM_NEW_LINE);
 
         // EOF or SEMICOLON
-        if (next.id == Tokens.EOF
-                || next.id == Tokens.SEMICOLON) {
+        if (next.kind == Tokens.EOF
+                || next.kind == Tokens.SEMICOLON) {
             return next;
         }
 
@@ -81,7 +81,7 @@ import java.util.Deque;
         Symbol nextAfter = _nextToken();
         // return back
         this.pendingQueue.addFirst(nextAfter);
-        if (nextAfter == SYM_NEW_LINE || nextAfter.id == Tokens.EOF) {
+        if (nextAfter == SYM_NEW_LINE || nextAfter.kind == Tokens.EOF) {
             next.isOnEdgeOfNewLine = true;
         }
         return next;

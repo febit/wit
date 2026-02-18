@@ -96,13 +96,13 @@ public class AdvancePathLoaderDecorator implements Loader {
      * </pre>
      *
      * @param refer path to refence
-     * @param path  path to relative
+     * @param relative  path to relative
      * @return path
      */
     @Nullable
     @Override
-    public String sibling(@Nullable final String refer, final String path) {
-        return PathUtils.sibling(refer, path);
+    public String sibling(@Nullable final String refer, final String relative) {
+        return PathUtils.sibling(refer, relative);
     }
 
     /**

@@ -32,13 +32,13 @@ public class Evaluator {
     private Vars vars;
 
     @Nullable
-    private BreakpointHandler breakpointHandler;
-
-    @Nullable
     private Charset charset;
 
     @Nullable
     private Supplier<Out> out;
+
+    @Nullable
+    private BreakpointHandler breakpointHandler;
 
     private Supplier<Out> discard() {
         return DiscardOut::new;

@@ -1,17 +1,17 @@
 package org.febit.wit;
 
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.core.NativeFactory;
-import org.febit.wit.core.TextStatementFactory;
-import org.febit.wit.core.security.NoneNativeSecurity;
-import org.febit.wit.core.text.AdaptiveTextStatementFactory;
 import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.io.DiscardOut;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.DefaultCodecFactory;
 import org.febit.wit.loaders.Loader;
+import org.febit.wit.parser.NativeFactory;
+import org.febit.wit.parser.TextStatementFactory;
+import org.febit.wit.parser.security.NoneNativeSecurity;
+import org.febit.wit.parser.text.AdaptiveTextStatementFactory;
 import org.febit.wit.runtime.accessor.Accessor;
-import org.febit.wit.runtime.accessor.DefaultAccessorFactory;
+import org.febit.wit.runtime.accessor.ComposedAccessorFactory;
 import org.febit.wit.util.StringUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -36,14 +36,15 @@ public class EngineBuilder {
     private final List<EngineModule> modules = new ArrayList<>();
     private final List<String> initScripts = new ArrayList<>();
     private final Set<String> predefinedVars = new HashSet<>();
-    private final DefaultAccessorFactory.Builder accessorFactory = DefaultAccessorFactory.builder();
+
+    private final ComposedAccessorFactory.Builder accessorFactory = ComposedAccessorFactory.builder();
 
     private int features = FEATURE_DEFAULTS;
 
     private Charset charset = StandardCharsets.UTF_8;
     private CodecFactory codecFactory = new DefaultCodecFactory();
-    private TextStatementFactory textStatementFactory = new AdaptiveTextStatementFactory();
     private NativeFactory nativeFactory = new NativeFactory(new NoneNativeSecurity());
+    private TextStatementFactory textStatementFactory = new AdaptiveTextStatementFactory();
 
     @Nullable
     private Loader loader;
@@ -68,7 +69,7 @@ public class EngineBuilder {
         return this;
     }
 
-    public EngineBuilder configureAccessors(Consumer<DefaultAccessorFactory.Builder> consumer) {
+    public EngineBuilder configureAccessors(Consumer<ComposedAccessorFactory.Builder> consumer) {
         Objects.requireNonNull(consumer);
         consumer.accept(this.accessorFactory);
         return this;
@@ -143,14 +144,14 @@ public class EngineBuilder {
         vars.sort(String::compareTo);
 
         var engine = Engine.internalBuilder()
+                .predefinedVars(List.copyOf(vars))
                 .features(features)
                 .charset(charset)
-                .predefinedVars(List.copyOf(vars))
-                .textStatementFactory(textStatementFactory)
                 .loader(loader)
                 .accessors(accessors)
                 .codecFactory(codecFactory)
                 .nativeFactory(nativeFactory)
+                .textStatementFactory(textStatementFactory)
                 .build();
 
         for (var module : modules) {

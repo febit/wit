@@ -43,6 +43,7 @@ public final class InternalContext implements Context {
     private final int features;
 
     @Nullable
+    @lombok.Getter
     private final BreakpointHandler breakpointHandler;
 
     private final AccessorFactory accessors;
@@ -69,11 +70,11 @@ public final class InternalContext implements Context {
     private Out out;
 
     public InternalContext(
-            final Script script,
-            final Out out,
-            final Vars inputs,
-            final VariantHeap heap,
-            final LocalHeap local,
+            Script script,
+            Out out,
+            Vars inputs,
+            VariantHeap heap,
+            LocalHeap local,
             @Nullable BreakpointHandler breakpointHandler
     ) {
         this.script = script;

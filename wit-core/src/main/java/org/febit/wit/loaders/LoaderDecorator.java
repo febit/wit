@@ -14,8 +14,8 @@ public interface LoaderDecorator extends Loader {
 
     @Nullable
     @Override
-    default String sibling(@Nullable String refer, String path) {
-        return delegate().sibling(refer, path);
+    default String sibling(@Nullable String refer, String relative) {
+        return delegate().sibling(refer, relative);
     }
 
     @Nullable

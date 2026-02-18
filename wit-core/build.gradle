@@ -25,7 +25,7 @@ dependencies {
   cup files('src/main/cup/java_cup_wit-20171014.jar')
 }
 
-def PKG_CORE = 'org/febit/wit/core'
+def PKG_CORE = 'org/febit/wit/parser'
 def parserSrcDir = layout.buildDirectory.dir("generated/sources/parser")
 def parserResDir = layout.buildDirectory.dir("generated/resources/parser")
 

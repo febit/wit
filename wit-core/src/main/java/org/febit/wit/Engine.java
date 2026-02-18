@@ -6,11 +6,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.core.NativeFactory;
-import org.febit.wit.core.TextStatementFactory;
 import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.loaders.Loader;
+import org.febit.wit.parser.NativeFactory;
+import org.febit.wit.parser.TextStatementFactory;
 import org.febit.wit.runtime.ScriptImpl;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.heap.StaticHeaps;
@@ -65,22 +65,22 @@ public class Engine {
     }
 
     /**
-     * Get script by refer and relative path.
+     * Get script by sibling path.
      *
      * @param refer script's refer path
-     * @param path  script's relative path
+     * @param relative  script's relative path
      * @return Script
      * @throws SourceNotFoundException if source not found
      */
-    public Script script(@Nullable String refer, String path) throws SourceNotFoundException {
-        var finalPath = this.loader.sibling(refer, path);
-        if (finalPath == null) {
+    public Script script(@Nullable String refer, String relative) throws SourceNotFoundException {
+        var path = this.loader.sibling(refer, relative);
+        if (path == null) {
             throw new SourceNotFoundException(
                     "Illegal script path: sibling of "
-                            + refer + " and " + path
+                            + refer + " and " + relative
             );
         }
-        return script(finalPath);
+        return script(path);
     }
 
     /**

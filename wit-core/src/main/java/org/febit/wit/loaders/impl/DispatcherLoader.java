@@ -79,18 +79,18 @@ public class DispatcherLoader implements Loader {
 
     @Nullable
     @Override
-    public String sibling(@Nullable String refer, String path) {
-        var rule = lookup(path);
+    public String sibling(@Nullable String refer, String relative) {
+        var rule = lookup(relative);
         if (rule != null) {
-            return rule.normalize(path);
+            return rule.normalize(relative);
         }
         if (refer != null) {
             var referRule = lookup(refer);
             if (referRule != null) {
-                return referRule.sibling(refer, path);
+                return referRule.sibling(refer, relative);
             }
         }
-        return this.fallback.sibling(refer, path);
+        return this.fallback.sibling(refer, relative);
     }
 
     @Nullable

@@ -31,9 +31,8 @@ public class AstUtils {
     }
 
     public static @Nullable Object[] evalConstArray(Expression[] expressions) {
-        final int len = expressions.length;
-        @Nullable
-        Object[] results = new Object[len];
+        var len = expressions.length;
+        var results = new Object[len];
         for (int i = 0; i < len; i++) {
             results[i] = AstUtils.evalConst(expressions[i]);
         }

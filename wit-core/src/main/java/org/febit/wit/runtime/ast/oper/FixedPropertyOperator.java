@@ -13,10 +13,10 @@ import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public class PropertyOperator implements AssignableExpression {
+public final class FixedPropertyOperator implements AssignableExpression {
 
-    private final Expression leftExpr;
-    private final Expression rightExpr;
+    private final Expression expr;
+    private final String property;
 
     @Getter
     private final Position position;
@@ -25,7 +25,9 @@ public class PropertyOperator implements AssignableExpression {
     @Nullable
     public Object execute(InternalContext context) {
         try {
-            return context.getBeanProperty(leftExpr.execute(context), rightExpr.execute(context));
+            return context.getBeanProperty(
+                    expr.execute(context),
+                    property);
         } catch (Exception e) {
             throw ScriptEvaluateException.from(e, this);
         }
@@ -36,9 +38,8 @@ public class PropertyOperator implements AssignableExpression {
     public Object setValue(InternalContext context, @Nullable final Object value) {
         try {
             context.setBeanProperty(
-                    leftExpr.execute(context),
-                    rightExpr.execute(context),
-                    value);
+                    expr.execute(context),
+                    property, value);
             return value;
         } catch (Exception e) {
             throw ScriptEvaluateException.from(e, this);

@@ -19,8 +19,8 @@ public class StringLoader implements Loader {
     }
 
     @Override
-    public String sibling(@Nullable String refer, String path) {
-        return path;
+    public String sibling(@Nullable String refer, String relative) {
+        return relative;
     }
 
     @Nullable

@@ -7,8 +7,8 @@ public interface BasicPathLoader extends Loader {
 
     @Nullable
     @Override
-    default String sibling(@Nullable String refer, String path) {
-        return PathUtils.sibling(refer, path);
+    default String sibling(@Nullable String refer, String relative) {
+        return PathUtils.sibling(refer, relative);
     }
 
     @Nullable

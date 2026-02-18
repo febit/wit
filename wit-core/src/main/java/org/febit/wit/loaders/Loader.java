@@ -18,11 +18,11 @@ public interface Loader {
      * Get path by reference and relative path.
      *
      * @param refer path to refence
-     * @param path  path to relative
+     * @param relative  path to relative
      * @return path
      */
     @Nullable
-    String sibling(@Nullable String refer, String path);
+    String sibling(@Nullable String refer, String relative);
 
     /**
      * Normalize path.

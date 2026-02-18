@@ -8,10 +8,10 @@ import org.febit.wit.Engine;
 import org.febit.wit.Out;
 import org.febit.wit.Script;
 import org.febit.wit.Vars;
-import org.febit.wit.core.Parser;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.ScriptException;
+import org.febit.wit.parser.Parser;
 import org.febit.wit.runtime.ast.ScriptAST;
 import org.jspecify.annotations.Nullable;
 

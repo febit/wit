@@ -2,10 +2,10 @@
 package org.febit.wit.util;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.core.NativeFactory;
 import org.febit.wit.exception.AmbiguousMethodException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.UncheckedException;
+import org.febit.wit.parser.NativeFactory;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.heap.StaticHeaps;
 import org.jspecify.annotations.Nullable;

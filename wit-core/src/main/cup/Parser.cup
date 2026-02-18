@@ -1,21 +1,20 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
-package org.febit.wit.core;
+package org.febit.wit.parser;
 
-import org.febit.wit.core.Ast;
-import org.febit.wit.core.ImportPart;
 import org.febit.wit.exception.ParseException;
+import org.febit.wit.parser.Ast.*;
+import org.febit.wit.parser.Ast;
+import org.febit.wit.parser.ImportPart;
 import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.*;
 import org.febit.wit.runtime.ast.expr.*;
-import org.febit.wit.runtime.ast.extra.RedirectOut;
+import org.febit.wit.runtime.ast.extra.*;
 import org.febit.wit.runtime.ast.oper.*;
 import org.febit.wit.runtime.ast.stat.*;
 import org.febit.wit.util.ClassNameRope;
 import org.febit.wit.util.Stack;
-import org.febit.wit.core.Ast.*;
 
-import static org.febit.wit.core.FunctionDeclarePart.ArgumentInfo;
+import static org.febit.wit.parser.FunctionDeclarePart.ArgumentInfo;
 
 /* Terminals */
 terminal Integer    VAR,
@@ -403,13 +402,13 @@ expression      ::= expression_statementable:$
                     |NOT:sym expression:expr
                     {: return Ast.operator(%expr%, %sym.symbol%); :}
 
-                    //propertyOp .
+                    // Fixed property .
                     |expression:expr DOT:sym IDENTIFIER:ident
-                    {: return new PropertyOperator(%expr%, %ident%, %sym.symbol%.pos); :}
+                    {: return Ast.property(%expr%, %ident%, %sym.symbol%.pos); :}
 
-                    //indexOp []
+                    // property []
                     |expression:lexpr LBRACK:sym expression:rexpr RBRACK
-                    {: return new IndexOperator(%lexpr%, %rexpr%, %sym.symbol%.pos); :}
+                    {: return Ast.property(%lexpr%, %rexpr%, %sym.symbol%.pos); :}
 
                     /***********  binaries *************/
                     //-- binary:  *
@@ -475,7 +474,7 @@ expression      ::= expression_statementable:$
 
                     // ? :
                     |expression:ifExpr QUESTION:sym expression:lexpr COLON expression:rexpr
-                    {: return new IfOperator(%ifExpr%, %lexpr%, %rexpr%, %sym.symbol%.pos); :}
+                    {: return Ast.ifOperator(%ifExpr%, %lexpr%, %rexpr%, %sym.symbol%.pos); :}
 
                     //
                     |DIRECT_VALUE:sym

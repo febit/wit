@@ -18,8 +18,8 @@ public class NoopLoader implements Loader {
     }
 
     @Override
-    public @Nullable String sibling(@Nullable String refer, String path) {
-        return path;
+    public @Nullable String sibling(@Nullable String refer, String relative) {
+        return relative;
     }
 
     @Override

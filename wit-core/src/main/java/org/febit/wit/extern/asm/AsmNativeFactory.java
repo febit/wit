@@ -2,8 +2,8 @@
 package org.febit.wit.extern.asm;
 
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.core.NativeFactory;
-import org.febit.wit.core.security.NativeSecurity;
+import org.febit.wit.parser.NativeFactory;
+import org.febit.wit.parser.security.NativeSecurity;
 import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit_shaded.asm.ClassWriter;
@@ -48,16 +48,16 @@ public class AsmNativeFactory extends NativeFactory {
         if (!ClassUtils.isPublic(member.getDeclaringClass()) || !ClassUtils.isPublic(member)) {
             return null;
         }
-        var declare = methodCaching.get(member);
+        var declare = cache.get(member);
         if (declare != null) {
             return declare;
         }
         synchronized (this) {
             try {
-                declare = methodCaching.get(member);
+                declare = cache.get(member);
                 if (declare == null) {
                     declare = createDeclare(member);
-                    methodCaching.put(member, declare);
+                    cache.put(member, declare);
                 }
             } catch (Exception | LinkageError e) {
                 log.error("Failed to create AsmNativeFunctionDeclare for '{}'.", member, e);
