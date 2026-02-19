@@ -20,7 +20,7 @@ import java.util.List;
 public final class Block implements IBlock, Loopable {
 
     @Getter
-    private final int varIndexer;
+    private final int frame;
     @Getter
     private final Statement[] statements;
     private final LoopFlag[] loopFlags;
@@ -30,7 +30,7 @@ public final class Block implements IBlock, Loopable {
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.heap().onFrame(varIndexer,
+        context.heap().onFrame(frame,
                 () -> context.visitAndCheckLoop(statements)
         );
         return null;

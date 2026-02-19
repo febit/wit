@@ -18,11 +18,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TryCatchFinally implements Statement, Loopable {
 
-    private final Statement tryBlock;
+    private final Statement body;
     private final int exceptionVarIndex;
-    private final Statement catchBlock;
+
+    private final Statement catchBody;
+
     @Nullable
-    private final Statement finalBlock;
+    private final Statement finallyBody;
+
     @Getter
     private final Position position;
 
@@ -30,13 +33,13 @@ public class TryCatchFinally implements Statement, Loopable {
     @Nullable
     public Object execute(InternalContext context) {
         try {
-            tryBlock.execute(context);
+            body.execute(context);
         } catch (Exception e) {
             context.heap().set(exceptionVarIndex, e);
-            catchBlock.execute(context);
+            catchBody.execute(context);
         } finally {
-            if (finalBlock != null) {
-                finalBlock.execute(context);
+            if (finallyBody != null) {
+                finallyBody.execute(context);
             }
         }
         return null;
@@ -44,6 +47,6 @@ public class TryCatchFinally implements Statement, Loopable {
 
     @Override
     public List<LoopFlag> collectLoopFlags() {
-        return AstUtils.collectLoopFlags(tryBlock, catchBlock, finalBlock);
+        return AstUtils.collectLoopFlags(body, catchBody, finallyBody);
     }
 }

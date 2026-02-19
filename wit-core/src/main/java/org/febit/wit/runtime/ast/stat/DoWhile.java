@@ -20,9 +20,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public final class DoWhile implements Statement, Loopable {
 
-    private final Expression whileExpr;
-    private final int indexer;
-    private final Statement[] statements;
+    private final Expression condition;
+    private final int frame;
+    private final Statement[] body;
     private final LoopFlag[] loopFlags;
     private final int label;
     @Getter
@@ -31,19 +31,19 @@ public final class DoWhile implements Statement, Loopable {
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.heap().onFrame(indexer, () -> execute0(context));
+        context.heap().onFrame(frame, () -> execute0(context));
         return null;
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     private void execute0(InternalContext context) {
-        var stats = this.statements;
+        var statements = this.body;
         var myLabel = this.label;
-        var condition = this.whileExpr;
+        var cond = this.condition;
         var loop = context.loop();
         label:
         do {
-            context.visitAndCheckLoop(stats);
+            context.visitAndCheckLoop(statements);
             if (loop.isNoop()) {
                 continue;
             }
@@ -63,7 +63,7 @@ public final class DoWhile implements Statement, Loopable {
                 default:
                     break label; //while
             }
-        } while (ALU.isTruly(condition.execute(context)));
+        } while (ALU.isTruly(cond.execute(context)));
     }
 
     @Override

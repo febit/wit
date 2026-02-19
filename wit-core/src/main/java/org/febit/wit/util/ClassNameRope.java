@@ -3,7 +3,6 @@ package org.febit.wit.util;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,17 +10,17 @@ import java.util.List;
 @Accessors(fluent = true)
 public class ClassNameRope {
 
-    private final List<String> segment = new ArrayList<>(12);
+    private final List<String> segments = new ArrayList<>(12);
 
     @Getter
     private int arrayDepth = 0;
 
     public ClassNameRope(String s) {
-        this.segment.add(s);
+        this.segments.add(s);
     }
 
     public ClassNameRope append(String s) {
-        segment.add(s);
+        segments.add(s);
         return this;
     }
 
@@ -30,8 +29,8 @@ public class ClassNameRope {
         return this;
     }
 
-    public String pop() {
-        return segment.remove(segment.size() - 1);
+    public String build() {
+        return segments.remove(segments.size() - 1);
     }
 
     public boolean isArray() {
@@ -39,28 +38,26 @@ public class ClassNameRope {
     }
 
     public boolean isSimpleName() {
-        return segment.size() == 1;
+        return segments.size() == 1;
     }
 
     public int size() {
-        return segment.size();
+        return segments.size();
     }
 
-    @Nullable
     public String simpleName() {
-        if (segment.isEmpty()) {
-            return null;
+        if (segments.isEmpty()) {
+            throw new IllegalStateException("Cannot happen, segments should not be empty");
         }
-        return segment.get(segment.size() - 1);
+        return segments.get(segments.size() - 1);
     }
 
-    @Nullable
     public String componentName() {
-        if (segment.isEmpty()) {
-            return null;
+        if (segments.isEmpty()) {
+            throw new IllegalStateException("Cannot happen, segments should not be empty");
         }
         var buf = new StringBuilder();
-        for (var s : segment) {
+        for (var s : segments) {
             buf.append(s).append('.');
         }
         return buf.substring(0, buf.length() - 1);
@@ -69,11 +66,11 @@ public class ClassNameRope {
     @Override
     public String toString() {
         var buf = new StringBuilder();
-        for (int i = 0; i < segment.size(); i++) {
+        for (int i = 0; i < segments.size(); i++) {
             if (i != 0) {
                 buf.append('.');
             }
-            buf.append(segment.get(i));
+            buf.append(segments.get(i));
         }
         for (int i = 0; i < arrayDepth; i++) {
             buf.append('[').append(']');

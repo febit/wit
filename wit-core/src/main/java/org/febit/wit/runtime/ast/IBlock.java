@@ -3,7 +3,7 @@ package org.febit.wit.runtime.ast;
 
 public interface IBlock extends Statement {
 
-    int varIndexer();
+    int frame();
 
     Statement[] statements();
 

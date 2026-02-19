@@ -15,25 +15,25 @@ import org.jspecify.annotations.Nullable;
 @RequiredArgsConstructor
 public final class WhileNoLoops implements Statement {
 
-    private final Expression whileExpr;
-    private final int indexer;
-    private final Statement[] statements;
+    private final Expression condition;
+    private final int frame;
+    private final Statement[] body;
     @Getter
     private final Position position;
 
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.heap().onFrame(indexer, () -> execute0(context));
+        context.heap().onFrame(frame, () -> execute0(context));
         return null;
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     private void execute0(InternalContext context) {
-        var stats = this.statements;
-        var condition = this.whileExpr;
-        while (ALU.isTruly(condition.execute(context))) {
-            context.visit(stats);
+        var statements = this.body;
+        var cond = this.condition;
+        while (ALU.isTruly(cond.execute(context))) {
+            context.visit(statements);
         }
     }
 }

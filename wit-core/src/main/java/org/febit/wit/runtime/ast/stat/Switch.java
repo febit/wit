@@ -21,10 +21,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class Switch implements Statement, Loopable {
 
-    private final Expression switchExpr;
+    private final Expression condition;
     @Nullable
-    private final CaseEntry defaultBlock;
-    private final Map<Object, CaseEntry> caseMap;  //Note: key == null will be default also
+    private final Branch defaultBranch;
+    private final Map<Object, Branch> branches;
     private final int label;
     @Getter
     private final Position position;
@@ -32,12 +32,15 @@ public final class Switch implements Statement, Loopable {
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        var caseBlock = caseMap.get(switchExpr.execute(context));
-        if (caseBlock == null) {
-            caseBlock = defaultBlock; //default
+        var key = condition.execute(context);
+        var branch = key != null
+                ? branches.get(key)
+                : defaultBranch;
+        if (branch == null) {
+            branch = defaultBranch;
         }
-        if (caseBlock != null) {
-            caseBlock.execute(context);
+        if (branch != null) {
+            branch.execute(context);
             context.loop().resetIfBreak(label);
         }
         return null;
@@ -47,13 +50,13 @@ public final class Switch implements Statement, Loopable {
     public List<LoopFlag> collectLoopFlags() {
         List<LoopFlag> loops = new LinkedList<>();
         //XXX: May have duplicated LoopInfo caused by duplicated CaseEntry
-        caseMap.values().forEach(entry -> loops.addAll(entry.collectPossibleLoops()));
+        branches.values().forEach(entry -> loops.addAll(entry.collectPossibleLoops()));
         //remove loops for this switch
         loops.removeIf(loop -> loop.matchLabel(this.label) && loop.kind().isBreak());
         return loops;
     }
 
-    public record CaseEntry(Statement body, @Nullable CaseEntry next) {
+    public record Branch(Statement body, @Nullable Branch next) {
 
         @Nullable
         Object execute(InternalContext context) {

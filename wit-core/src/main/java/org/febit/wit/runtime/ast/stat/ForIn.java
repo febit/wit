@@ -24,17 +24,17 @@ import java.util.List;
 public class ForIn implements Statement, Loopable {
 
     @Nullable
-    private final FunctionDeclareExpr functionDeclareExpr;
+    private final FunctionDeclareExpr filter;
 
-    private final Expression collectionExpr;
-    private final int indexer;
+    private final Expression collection;
+    private final int frame;
     private final int iterIndex;
     private final int itemIndex;
     private final Statement[] statements;
     private final LoopFlag[] loopFlags;
 
     @Nullable
-    private final Statement elseStatement;
+    private final Statement elseBody;
     private final int label;
     @Getter
     private final Position position;
@@ -44,21 +44,21 @@ public class ForIn implements Statement, Loopable {
     public Object execute(InternalContext context) {
         Iter iter = iter(context);
         if (iter.hasNext()) {
-            context.heap().onFrame(indexer, () -> execute0(context, iter));
+            context.heap().onFrame(frame, () -> execute0(context, iter));
             return null;
         }
-        if (elseStatement != null) {
-            elseStatement.execute(context);
+        if (elseBody != null) {
+            elseBody.execute(context);
         }
         return null;
     }
 
     private Iter iter(InternalContext context) {
-        var iter = Iters.toIter(collectionExpr.execute(context), this);
-        if (functionDeclareExpr == null) {
+        var iter = Iters.toIter(collection.execute(context), this);
+        if (filter == null) {
             return iter;
         }
-        return new IterMethodFilter(context, functionDeclareExpr.execute(context), iter);
+        return new IterMethodFilter(context, filter.execute(context), iter);
     }
 
     @SuppressWarnings({

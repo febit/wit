@@ -91,16 +91,16 @@ public class AstUtils {
      * Loops target to current while/for statement will be excluded.
      */
     public static LoopFlag[] collectLoopFlagsForWhile(
-            @Nullable Statement bodyBlock, @Nullable Statement elseBlock, int label) {
-        var list = AstUtils.collectLoopFlags(bodyBlock)
-                .stream()
+            List<Statement> body, @Nullable Statement elseBody, int label) {
+        var list = body.stream()
+                .flatMap(stat -> collectLoopFlags(stat).stream())
                 // Only accept loops that are not targeting to current while/for statement
                 .filter(loop -> !(loop.matchLabel(label)
                         && loop.kind().isBreakOrContinue()))
                 .collect(Collectors.toList());
 
         // Loops in else block are all exported
-        list.addAll(AstUtils.collectLoopFlags(elseBlock));
+        list.addAll(AstUtils.collectLoopFlags(elseBody));
         return list.isEmpty() ? EMPTY_LOOPS
                 : list.toArray(new LoopFlag[0]);
     }

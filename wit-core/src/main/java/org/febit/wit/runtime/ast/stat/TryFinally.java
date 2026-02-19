@@ -18,9 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TryFinally implements Statement, Loopable {
 
-    private final Statement tryBlock;
+    private final Statement body;
     @Nullable
-    private final Statement finalBlock;
+    private final Statement finalBody;
     @Getter
     private final Position position;
 
@@ -28,10 +28,10 @@ public class TryFinally implements Statement, Loopable {
     @Nullable
     public Object execute(InternalContext context) {
         try {
-            tryBlock.execute(context);
+            body.execute(context);
         } finally {
-            if (finalBlock != null) {
-                finalBlock.execute(context);
+            if (finalBody != null) {
+                finalBody.execute(context);
             }
         }
         return null;
@@ -39,7 +39,7 @@ public class TryFinally implements Statement, Loopable {
 
     @Override
     public List<LoopFlag> collectLoopFlags() {
-        return AstUtils.collectLoopFlags(tryBlock, finalBlock);
+        return AstUtils.collectLoopFlags(body, finalBody);
     }
 
 }

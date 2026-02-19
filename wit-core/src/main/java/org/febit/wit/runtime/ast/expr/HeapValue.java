@@ -4,23 +4,25 @@ package org.febit.wit.runtime.ast.expr;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.heap.Heap;
 import org.jspecify.annotations.Nullable;
 
-public record ContextVar(
-        int index,
+public record HeapValue(
+        Heap heap,
+        String name,
         Position position
 ) implements AssignableExpression {
 
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        return context.heap().get(index);
+        return this.heap.get(name);
     }
 
     @Override
     @Nullable
     public Object set(InternalContext context, @Nullable Object value) {
-        context.heap().set(index, value);
+        this.heap.set(name, value);
         return value;
     }
 }

@@ -22,7 +22,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public abstract class AbstractInclude implements Statement {
 
-    private final Expression pathExpr;
+    private final Expression path;
     @Nullable
     private final Expression paramsExpr;
     private final String refer;
@@ -45,9 +45,9 @@ public abstract class AbstractInclude implements Statement {
     }
 
     protected Map<String, @Nullable Object> mergeScript(InternalContext context, boolean export) {
-        var scriptPath = pathExpr.execute(context);
+        var scriptPath = path.execute(context);
         if (scriptPath == null) {
-            throw new ScriptEvaluateException("Script name should not be null.", pathExpr);
+            throw new ScriptEvaluateException("Script name should not be null.", path);
         }
         try {
             var newContext = context.mergeScript(

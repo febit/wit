@@ -98,7 +98,7 @@ class AutoTest {
     ) {
         breakpointCount.increment();
         var innerExpr = statement instanceof BreakpointExpr
-                ? ((BreakpointExpr) statement).expression()
+                ? ((BreakpointExpr) statement).supervised()
                 : null;
 
         if ("assert:DirectValue".equals(label)) {

@@ -112,11 +112,11 @@ public class VariantHeap implements Heap {
     }
 
     @Nullable
-    public Object getFromUpstream(int page, int index) {
+    public Object getAtPage(int page, int index) {
         return this.upstreams[page][index];
     }
 
-    public void setUpstream(int page, int index, @Nullable Object value) {
+    public void setAtPage(int page, int index, @Nullable Object value) {
         this.upstreams[page][index] = value;
     }
 

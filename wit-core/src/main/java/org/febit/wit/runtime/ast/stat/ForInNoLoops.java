@@ -19,14 +19,14 @@ import org.jspecify.annotations.Nullable;
 public final class ForInNoLoops implements Statement {
 
     @Nullable
-    private final FunctionDeclareExpr filterFuncDeclare;
-    private final Expression collectionExpr;
-    private final int indexer;
+    private final FunctionDeclareExpr filter;
+    private final Expression collection;
+    private final int frame;
     private final int iterIndex;
     private final int itemIndex;
     private final Statement[] statements;
     @Nullable
-    private final Statement elseStatement;
+    private final Statement elseBody;
     @Getter
     private final Position position;
 
@@ -35,21 +35,21 @@ public final class ForInNoLoops implements Statement {
     public Object execute(InternalContext context) {
         Iter iter = iter(context);
         if (iter.hasNext()) {
-            context.heap().onFrame(indexer, () -> execute0(context, iter));
+            context.heap().onFrame(frame, () -> execute0(context, iter));
             return null;
         }
-        if (elseStatement != null) {
-            elseStatement.execute(context);
+        if (elseBody != null) {
+            elseBody.execute(context);
         }
         return null;
     }
 
     private Iter iter(InternalContext context) {
-        var iter = Iters.toIter(collectionExpr.execute(context), this);
-        if (filterFuncDeclare == null) {
+        var iter = Iters.toIter(collection.execute(context), this);
+        if (filter == null) {
             return iter;
         }
-        return new IterMethodFilter(context, filterFuncDeclare.execute(context), iter);
+        return new IterMethodFilter(context, filter.execute(context), iter);
     }
 
     @SuppressWarnings({

@@ -22,17 +22,28 @@ import java.util.Map;
 @Accessors(fluent = true)
 public class VariantManager {
 
+    /**
+     * All frames.
+     */
     private final List<Frame> frames = new ArrayList<>();
-    private final Stack<Frame> frameStack = new Stack<>();
-    private final Stack<Integer> pageVarCounterStack = new Stack<>();
+
+    /**
+     * Staked frame view, used to assign/locate vars.
+     */
+    private final Stack<Frame> frameView = new Stack<>();
+
+    /**
+     * Frame size stack of each page, used to restore frame size when unshift page.
+     */
+    private final Stack<Integer> frameSizeStack = new Stack<>();
 
     @Getter
     private final StaticHeaps staticHeaps;
     private final Frame root;
 
     @Getter
-    private int varCounter;
-    private int pageCounter;
+    private int frameSize;
+    private int pageCursor;
 
     VariantManager(Engine engine) {
         this.staticHeaps = engine.staticHeaps();
@@ -43,37 +54,37 @@ public class VariantManager {
     private Frame shiftFrame(int upSeq) {
         var frame = new Frame(this.frames.size(), upSeq);
         this.frames.add(frame);
-        this.frameStack.push(frame);
+        this.frameView.push(frame);
         return frame;
     }
 
     public void shiftFrame() {
-        shiftFrame(frameStack.peek().seq);
+        shiftFrame(frameView.peek().seq);
     }
 
     public int unshiftFrame() {
-        return frameStack.pop().seq;
+        return frameView.pop().seq;
     }
 
     public void shiftPage() {
-        pageVarCounterStack.push(varCounter);
-        varCounter = 0;
-        pageCounter++;
+        frameSizeStack.push(frameSize);
+        frameSize = 0;
+        pageCursor++;
         shiftFrame();
     }
 
     public void unshiftPage() {
-        varCounter = pageVarCounterStack.pop();
-        pageCounter--;
+        frameSize = frameSizeStack.pop();
+        pageCursor--;
         unshiftFrame();
     }
 
-    public FrameIndexer[] constructIndexers() {
+    public FrameIndexer[] buildFrameIndexers() {
         var size = this.frames.size();
         var result = new FrameIndexer[size];
         int i = 0;
         for (; i < size; i++) {
-            if (this.frames.get(i).pageSeq == this.pageCounter) {
+            if (this.frames.get(i).pageSeq == this.pageCursor) {
                 break;
             }
         }
@@ -90,18 +101,18 @@ public class VariantManager {
     }
 
     public int assignVar(String name, Position position) {
-        return frameStack.peek().assignVar(name, position);
+        return frameView.peek().assignVar(name, position);
     }
 
     public void assignConst(String name, @Nullable Object value, Position position) {
-        frameStack.peek().assignConst(name, value, position);
+        frameView.peek().assignConst(name, value, position);
     }
 
     public VarAddress locate(String name, int frameOffset, boolean force, Position position) {
 
         //local var/const
-        for (; frameOffset < frameStack.size(); frameOffset++) {
-            var address = frameStack.peek(frameOffset).locate(name);
+        for (; frameOffset < frameView.size(); frameOffset++) {
+            var address = frameView.peek(frameOffset).locate(name);
             if (address != null) {
                 return address;
             }
@@ -109,7 +120,7 @@ public class VariantManager {
 
         // static var/const
         if (staticHeaps.variant().has(name)) {
-            return VarAddress.ofStaticVar(name);
+            return VarAddress.ofHeap(staticHeaps.variant(), name);
         }
         if (staticHeaps.constant().has(name)) {
             return VarAddress.ofConst(staticHeaps.constant().get(name));
@@ -124,9 +135,9 @@ public class VariantManager {
     }
 
     private VarAddress contextAddress(int pageId, int index) {
-        return pageId == this.pageCounter
+        return pageId == this.pageCursor
                 ? VarAddress.ofContext(index)
-                : VarAddress.ofUpstream(this.pageCounter - pageId - 1, index);
+                : VarAddress.ofUpstream(this.pageCursor - pageId - 1, index);
     }
 
     private static FrameIndexer createFrameIndexer(@Nullable FrameIndexer up, Map<String, Integer> map) {
@@ -160,7 +171,7 @@ public class VariantManager {
         Frame(int seq, int upSeq) {
             this.seq = seq;
             this.upSeq = upSeq;
-            this.pageSeq = VariantManager.this.pageCounter;
+            this.pageSeq = VariantManager.this.pageCursor;
         }
 
         @Nullable
@@ -183,7 +194,7 @@ public class VariantManager {
 
         Integer assignVar(String name, Position position) {
             shouldNotAssigned(name, position);
-            int index = VariantManager.this.varCounter++;
+            int index = VariantManager.this.frameSize++;
             this.table.put(name, index);
             return index;
         }

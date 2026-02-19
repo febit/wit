@@ -17,17 +17,18 @@ class TrimBlankLineTest {
 
     @Test
     void test() throws SourceNotFoundException {
-        var engine = spy(EngineManager.engine());
 
-        when(engine.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE))
-                .thenReturn(true);
+        var engine = spy(EngineManager.engine());
+        when(engine.features())
+                .thenReturn(Feature.TRIM_CODE_BLOCK_BLANK_LINE.enable(Feature.collectFeatureDefaults()));
+
         var script = engine.script("/feature/trimBlankLine.wit");
         script.eval(Vars.of(Map.of(
                 "trimBlankLine", true
         )), new DiscardOut());
 
-        when(engine.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE))
-                .thenReturn(false);
+        when(engine.features())
+                .thenReturn(Feature.TRIM_CODE_BLOCK_BLANK_LINE.disable(Feature.collectFeatureDefaults()));
         script.reset();
 
         script.eval(Vars.of(Map.of(

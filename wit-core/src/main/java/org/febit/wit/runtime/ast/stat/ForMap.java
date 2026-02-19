@@ -24,16 +24,16 @@ import java.util.List;
 public final class ForMap implements Statement, Loopable {
 
     @Nullable
-    private final FunctionDeclareExpr filterFuncDeclare;
-    private final Expression mapExpr;
-    private final int indexer;
+    private final FunctionDeclareExpr filter;
+    private final Expression collection;
+    private final int frame;
     private final int iterIndex;
     private final int keyIndex;
     private final int valueIndex;
     private final Statement[] statements;
     private final LoopFlag[] loopFlags;
     @Nullable
-    private final Statement elseBlock;
+    private final Statement elseBody;
     private final int label;
     @Getter
     private final Position position;
@@ -43,21 +43,21 @@ public final class ForMap implements Statement, Loopable {
     public Object execute(InternalContext context) {
         var iter = iter(context);
         if (iter.hasNext()) {
-            context.heap().onFrame(indexer, () -> execute0(context, iter));
+            context.heap().onFrame(frame, () -> execute0(context, iter));
             return null;
         }
-        if (elseBlock != null) {
-            elseBlock.execute(context);
+        if (elseBody != null) {
+            elseBody.execute(context);
         }
         return null;
     }
 
     private KeyIter iter(InternalContext context) {
-        var iter = Iters.toKeyIter(mapExpr.execute(context), this);
-        if (filterFuncDeclare == null) {
+        var iter = Iters.toKeyIter(collection.execute(context), this);
+        if (filter == null) {
             return iter;
         }
-        return new KeyIterMethodFilter(context, filterFuncDeclare.execute(context), iter);
+        return new KeyIterMethodFilter(context, filter.execute(context), iter);
     }
 
     @SuppressWarnings({

@@ -3,6 +3,7 @@ package org.febit.wit.parser;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.experimental.UtilityClass;
+import org.febit.wit.Script;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.ast.AssignableExpression;
@@ -13,12 +14,16 @@ import org.febit.wit.runtime.ast.LoopFlag;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
+import org.febit.wit.runtime.ast.expr.ContextPageVar;
+import org.febit.wit.runtime.ast.expr.ContextVar;
 import org.febit.wit.runtime.ast.expr.DirectValue;
 import org.febit.wit.runtime.ast.expr.DynamicNativeMethodCallExpr;
 import org.febit.wit.runtime.ast.expr.FunctionCallExpr;
+import org.febit.wit.runtime.ast.expr.HeapValue;
 import org.febit.wit.runtime.ast.expr.NewArrayExpr;
 import org.febit.wit.runtime.ast.expr.NewMapExpr;
 import org.febit.wit.runtime.ast.expr.SuppliedValue;
+import org.febit.wit.runtime.ast.extra.Import;
 import org.febit.wit.runtime.ast.oper.And;
 import org.febit.wit.runtime.ast.oper.Assign;
 import org.febit.wit.runtime.ast.oper.ConstableBiOperator;
@@ -37,6 +42,8 @@ import org.febit.wit.runtime.ast.oper.SelfOperator;
 import org.febit.wit.runtime.ast.stat.Block;
 import org.febit.wit.runtime.ast.stat.BlockWithoutLoops;
 import org.febit.wit.runtime.ast.stat.BreakpointStatement;
+import org.febit.wit.runtime.ast.stat.DoWhile;
+import org.febit.wit.runtime.ast.stat.DoWhileNoLoops;
 import org.febit.wit.runtime.ast.stat.Echo;
 import org.febit.wit.runtime.ast.stat.If;
 import org.febit.wit.runtime.ast.stat.IfElse;
@@ -46,6 +53,10 @@ import org.febit.wit.runtime.ast.stat.NoopStatement;
 import org.febit.wit.runtime.ast.stat.RenderRedirect;
 import org.febit.wit.runtime.ast.stat.Return;
 import org.febit.wit.runtime.ast.stat.StatementGroup;
+import org.febit.wit.runtime.ast.stat.TryCatchFinally;
+import org.febit.wit.runtime.ast.stat.TryFinally;
+import org.febit.wit.runtime.ast.stat.While;
+import org.febit.wit.runtime.ast.stat.WhileNoLoops;
 import org.febit.wit.runtime.ast.template.TemplateStringValue;
 import org.jspecify.annotations.Nullable;
 
@@ -175,15 +186,165 @@ public class Ast {
         return new NewMapExpr(keys, values, position);
     }
 
+    public static SwitchBuilder switchBuilder() {
+        return new SwitchBuilder();
+    }
+
     @Builder(
             builderMethodName = "templateStringBuilder",
             builderClassName = "TemplateStringBuilder"
     )
     public static TemplateStringValue templateString(
-            Position pos,
-            @Singular List<Expression> exprs
+            @Singular
+            List<Expression> segments,
+            Position position
     ) {
-        return new TemplateStringValue(toExpressionArray(exprs), pos);
+        Objects.requireNonNull(position, "position is required");
+        return new TemplateStringValue(toExpressionArray(segments), position);
+    }
+
+    @Builder(
+            builderMethodName = "whileBuilder",
+            builderClassName = "WhileBuilder"
+    )
+    private static Statement while0(
+            WhileKind kind,
+            Expression condition,
+            IBlock body,
+            @Nullable Integer label,
+            Position position
+    ) {
+        Objects.requireNonNull(kind, "kind is required");
+        Objects.requireNonNull(condition, "condition is required");
+        Objects.requireNonNull(body, "body is required");
+        Objects.requireNonNull(position, "position is required");
+
+        var frame = body.frame();
+        var statements = body.statements();
+
+        if (!body.hasLoopFlags()) {
+            return switch (kind) {
+                case WHILE -> new WhileNoLoops(condition, frame, statements, position);
+                case DO_WHILE -> new DoWhileNoLoops(condition, frame, statements, position);
+            };
+        }
+
+        if (label == null) {
+            label = 0;
+        }
+        var loops = AstUtils.collectLoopFlagsForWhile(List.of(body), null, label);
+        return switch (kind) {
+            case WHILE -> new While(condition, frame, statements, loops, label, position);
+            case DO_WHILE -> new DoWhile(condition, frame, statements, loops, label, position);
+        };
+    }
+
+    @Builder(
+            builderMethodName = "tryCatchBuilder",
+            builderClassName = "TryCatchBuilder"
+    )
+    private static Statement tryCatch(
+            Statement body,
+            @Nullable Statement catchBody,
+            @Nullable Statement finallyBody,
+            @Nullable Integer exceptionVarIndex,
+            Position position
+    ) {
+        Objects.requireNonNull(body, "tryBody is required");
+        Objects.requireNonNull(position, "position is required");
+
+        body = AstUtils.optimize(body);
+
+        if (catchBody != null) {
+            Objects.requireNonNull(exceptionVarIndex,
+                    "exceptionVarIndex is required when catchBody is provided");
+            catchBody = AstUtils.optimize(catchBody);
+        }
+
+        if (finallyBody != null) {
+            finallyBody = AstUtils.optimize(finallyBody);
+        }
+
+        if (catchBody == null) {
+            if (finallyBody == null) {
+                return body;
+            }
+            return new TryFinally(body, finallyBody, position);
+        }
+        return new TryCatchFinally(body, exceptionVarIndex, catchBody, finallyBody, position);
+    }
+
+    @Builder(
+            builderMethodName = "importBuilder",
+            builderClassName = "ImportBuilder"
+    )
+    private static Statement import0(
+            Script script,
+            Position position,
+            Expression path,
+            @Nullable Expression params,
+            @Singular("exportVar")
+            List<ImportVar> exportVars
+    ) {
+        Objects.requireNonNull(script, "script is required");
+        Objects.requireNonNull(path, "path is required");
+        Objects.requireNonNull(position, "position is required");
+
+        path = AstUtils.optimize(path);
+
+        if (params != null) {
+            params = AstUtils.optimize(params);
+        }
+
+        var refer = script.path();
+        if (exportVars.isEmpty()) {
+            return new Import(path, params, null, null, refer, position);
+        }
+
+        var vars = exportVars.stream()
+                .map(ImportVar::name)
+                .toArray(String[]::new);
+
+        var targets = exportVars.stream()
+                .map(ImportVar::target)
+                .map(AstUtils::optimize)
+                .map(AssignableExpression.class::cast)
+                .toArray(AssignableExpression[]::new);
+
+        return new Import(path, params, vars, targets, refer, position);
+    }
+
+    public record ImportVar(String name, AssignableExpression target) {
+    }
+
+    public static class ImportBuilder {
+
+        public ImportBuilder export(String name, Expression target) {
+            return export(name, castToAssignable(target));
+        }
+
+        public ImportBuilder export(String name, AssignableExpression target) {
+            return exportVar(new ImportVar(name, target));
+        }
+    }
+
+    public static Expression readVar(VarAddress addr, Position position) {
+        return switch (addr.kind()) {
+            case CONST -> new DirectValue(addr.value(), position);
+            case UPSTREAM -> new ContextPageVar(addr.pageOffset(), addr.index(), position);
+            case CONTEXT -> new ContextVar(addr.index(), position);
+            case STATIC_VAR -> {
+                var key = Objects.requireNonNull(addr.key());
+                var heap = Objects.requireNonNull(addr.heap());
+                yield new HeapValue(
+                        heap, key, position
+                );
+            }
+        };
+    }
+
+    public enum WhileKind {
+        WHILE, DO_WHILE
     }
 
     public static Expression[] toExpressionArray(@Nullable List<Expression> list) {
@@ -254,12 +415,12 @@ public class Ast {
         return NoopStatement.INSTANCE;
     }
 
-    public static IBlock block(@Nullable List<Statement> list, int varIndexer, Position position) {
+    public static IBlock block(@Nullable List<Statement> list, int frame, Position position) {
         var statements = flatStatements(list);
         var loops = AstUtils.collectLoopFlags(statements);
         return loops.isEmpty()
-                ? new BlockWithoutLoops(varIndexer, statements, position)
-                : new Block(varIndexer, statements, loops.toArray(new LoopFlag[0]), position);
+                ? new BlockWithoutLoops(frame, statements, position)
+                : new Block(frame, statements, loops.toArray(new LoopFlag[0]), position);
     }
 
     public static AssignableExpression castToAssignable(Expression expr) {

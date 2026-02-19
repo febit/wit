@@ -15,12 +15,13 @@ import org.jspecify.annotations.Nullable;
 @RequiredArgsConstructor
 public final class ScriptAST {
 
-    private final FrameIndexer[] indexers;
     private final Statement[] statements;
+    private final FrameIndexer[] indexers;
     private final int frameSize;
 
     @Getter
     private final long sourceVersion;
+
     @Getter
     private final long createdAt = System.currentTimeMillis();
 

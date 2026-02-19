@@ -21,7 +21,7 @@ public final class FunctionDeclareExpr implements Expression {
     private final int frameSize;
     private final FrameIndexer[] indexers;
     private final Statement[] statements;
-    private final int start;
+    private final int argsIndexStart;
     private final boolean hasReturnLoops;
     @Getter
     private final Position position;
@@ -49,7 +49,7 @@ public final class FunctionDeclareExpr implements Expression {
     private void fillArgs(InternalContext context, @Nullable Object @Nullable [] args) {
         var heap = context.heap();
 
-        var copyIdx = this.start;
+        var copyIdx = this.argsIndexStart;
         heap.set(copyIdx++, args);
 
         var defaults = this.argDefaults;

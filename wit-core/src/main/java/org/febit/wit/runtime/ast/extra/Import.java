@@ -9,26 +9,26 @@ import org.jspecify.annotations.Nullable;
 
 public final class Import extends AbstractInclude {
 
-    private final String[] exportNames;
-    private final AssignableExpression @Nullable [] targetAssignables;
+    private final String[] exportVars;
+    private final AssignableExpression @Nullable [] targets;
     private final boolean exportAll;
 
     public Import(
             Expression pathExpr,
             @Nullable Expression paramsExpr,
-            String @Nullable [] exportNames,
-            AssignableExpression @Nullable [] targetAssignables,
+            String @Nullable [] exportVars,
+            AssignableExpression @Nullable [] targets,
             String refer,
             Position position
     ) {
         super(pathExpr, paramsExpr, refer, position);
-        if (exportNames == null || exportNames.length == 0) {
-            this.exportNames = new String[0];
-            this.targetAssignables = null;
+        if (exportVars == null || exportVars.length == 0) {
+            this.exportVars = new String[0];
+            this.targets = null;
             this.exportAll = true;
         } else {
-            this.exportNames = exportNames;
-            this.targetAssignables = targetAssignables;
+            this.exportVars = exportVars;
+            this.targets = targets;
             this.exportAll = false;
         }
     }
@@ -39,18 +39,13 @@ public final class Import extends AbstractInclude {
     public Object execute(InternalContext context) {
         var results = mergeScript(context, true);
         if (exportAll) {
-            var targetIndexer = context.heap().currentIndexer();
-            var targetHeap = context.heap();
-            results.forEach((key, val) -> {
-                int index = targetIndexer.lookup(key);
-                if (index >= 0) {
-                    targetHeap.set(index, val);
-                }
-            });
-        } else if (this.targetAssignables != null) {
-            var names = this.exportNames;
+            results.forEach(context.heap()::set);
+            return null;
+        }
+        if (this.targets != null) {
+            var names = this.exportVars;
             var len = names.length;
-            var assignables = this.targetAssignables;
+            var assignables = this.targets;
             for (int i = 0; i < len; i++) {
                 assignables[i].set(context, results.get(names[i]));
             }
