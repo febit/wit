@@ -25,7 +25,7 @@ class TrimBlankLineTest {
         var script = engine.script("/feature/trimBlankLine.wit");
         script.eval(Vars.of(Map.of(
                 "trimBlankLine", true
-        )), new DiscardOut());
+        )), DiscardOut.get());
 
         when(engine.features())
                 .thenReturn(Feature.TRIM_CODE_BLOCK_BLANK_LINE.disable(Feature.collectFeatureDefaults()));
@@ -33,6 +33,6 @@ class TrimBlankLineTest {
 
         script.eval(Vars.of(Map.of(
                 "trimBlankLine", false
-        )), new DiscardOut());
+        )), DiscardOut.get());
     }
 }

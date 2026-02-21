@@ -13,6 +13,10 @@ public record DiscardOut(
 
     public static final DiscardOut INSTANCE = new DiscardOut();
 
+    public static DiscardOut get() {
+        return INSTANCE;
+    }
+
     public DiscardOut() {
         this(StandardCharsets.UTF_8, false);
     }

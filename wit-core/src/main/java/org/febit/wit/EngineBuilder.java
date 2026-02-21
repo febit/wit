@@ -183,7 +183,7 @@ public class EngineBuilder {
             engine.script(tmpl).eval(acceptor -> {
                 acceptor.set("GLOBAL", staticHeaps.variant());
                 acceptor.set("CONST", staticHeaps.constant());
-            }, new DiscardOut());
+            }, DiscardOut.get());
         }
     }
 

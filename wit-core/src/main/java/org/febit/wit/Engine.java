@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.io.OutputStreamOut;
+import org.febit.wit.io.WriterOut;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.loader.Loader;
 import org.febit.wit.parser.NativeFactory;
@@ -15,10 +17,14 @@ import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.heap.StaticHeaps;
 import org.jspecify.annotations.Nullable;
 
+import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import static org.febit.wit.util.Defaults.nvl;
 
 /**
  * Script engine.
@@ -66,8 +72,8 @@ public class Engine {
     /**
      * Get script by sibling path.
      *
-     * @param refer script's refer path
-     * @param relative  script's relative path
+     * @param refer    script's refer path
+     * @param relative script's relative path
      * @return Script
      * @throws SourceNotFoundException if source not found
      */
@@ -95,6 +101,22 @@ public class Engine {
             return script;
         }
         return loadScriptIfAbsent(path);
+    }
+
+    public Out asOut(Writer writer) {
+        return asOut(writer, null);
+    }
+
+    public Out asOut(Writer writer, @Nullable Charset charset) {
+        return new WriterOut(writer, nvl(charset, this.charset), codecFactory);
+    }
+
+    public Out asOut(OutputStream output) {
+        return asOut(output, null);
+    }
+
+    public Out asOut(OutputStream output, @Nullable Charset charset) {
+        return new OutputStreamOut(output, nvl(charset, this.charset), codecFactory);
     }
 
     private Script loadScriptIfAbsent(String path) throws SourceNotFoundException {

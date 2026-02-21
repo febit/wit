@@ -6,8 +6,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.Tolerate;
 import org.febit.wit.io.DiscardOut;
-import org.febit.wit.io.OutputStreamOut;
-import org.febit.wit.io.WriterOut;
 import org.febit.wit.runtime.BreakpointHandler;
 import org.jspecify.annotations.Nullable;
 
@@ -40,40 +38,20 @@ public class Evaluator {
     @Nullable
     private BreakpointHandler breakpointHandler;
 
-    private Supplier<Out> discard() {
-        return DiscardOut::new;
-    }
-
-    private Supplier<Out> wrap(Writer writer) {
-        var engine = script.engine();
-        return () -> new WriterOut(writer,
-                charset != null ? charset : engine.charset(),
-                engine.codecFactory()
-        );
-    }
-
-    private Supplier<Out> wrap(OutputStream output) {
-        var engine = script.engine();
-        return () -> new OutputStreamOut(output,
-                charset != null ? charset : engine.charset(),
-                engine.codecFactory()
-        );
-    }
-
     @Tolerate
     public Evaluator out(Writer writer) {
-        return this.out(wrap(writer));
+        return this.out(() -> script.engine().asOut(writer, charset));
     }
 
     @Tolerate
     public Evaluator out(OutputStream output) {
-        return this.out(wrap(output));
+        return this.out(() -> script.engine().asOut(output, charset));
     }
 
     public Context eval() {
         return script().eval(
                 nvl(vars, Vars::empty),
-                nvl(out, this::discard).get(),
+                nvl(out, (Supplier<Out>) DiscardOut::get).get(),
                 breakpointHandler
         );
     }

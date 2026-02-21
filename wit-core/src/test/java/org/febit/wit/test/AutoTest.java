@@ -10,7 +10,6 @@ import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.extern.lib.test.AssertionModule;
-import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
@@ -85,9 +84,9 @@ class AutoTest {
         } catch (SourceNotFoundException e) {
             throw new UncheckedIOException(e);
         }
-        var out = new OutputStreamOut(output, EngineManager.engine().charset(), EngineManager.engine().codecFactory());
+        var out = EngineManager.engine().asOut(output);
         var context = script.eval(Vars.empty(), out, this::onBreakpoint);
-        System.out.println("\tassert count: " + context.local().get(AssertionModule.ASSERT_COUNT_KEY));
+        System.out.println("\tAssertion count: " + context.local().get(AssertionModule.ASSERT_COUNT_KEY));
     }
 
     private void onBreakpoint(

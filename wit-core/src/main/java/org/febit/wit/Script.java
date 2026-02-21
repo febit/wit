@@ -3,8 +3,6 @@ package org.febit.wit;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.DiscardOut;
-import org.febit.wit.io.OutputStreamOut;
-import org.febit.wit.io.WriterOut;
 import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Source;
@@ -28,8 +26,8 @@ public interface Script {
     /**
      * Eval script.
      *
-     * @param vars     vars
-     * @param out      out
+     * @param vars              vars
+     * @param out               out
      * @param breakpointHandler breakpoint handler, may be null
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
@@ -47,10 +45,10 @@ public interface Script {
      *
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ParseException         when unable to parse
+     * @throws ParseException          when unable to parse
      */
     default Context eval() {
-        return eval(Vars.empty(), new DiscardOut(), null);
+        return eval(Vars.empty(), DiscardOut.get(), null);
     }
 
     /**
@@ -60,10 +58,10 @@ public interface Script {
      * @param output out
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ParseException         when unable to parse
+     * @throws ParseException          when unable to parse
      */
     default Context eval(Vars vars, OutputStream output) {
-        var out = new OutputStreamOut(output, engine().charset(), engine().codecFactory());
+        var out = engine().asOut(output);
         return eval(vars, out, null);
     }
 
@@ -74,10 +72,10 @@ public interface Script {
      * @param writer writer
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ParseException         when unable to parse
+     * @throws ParseException          when unable to parse
      */
     default Context eval(Vars vars, Writer writer) {
-        var out = new WriterOut(writer, engine().charset(), engine().codecFactory());
+        var out = engine().asOut(writer);
         return eval(vars, out, null);
     }
 
@@ -88,7 +86,7 @@ public interface Script {
      * @param out  out
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ParseException         when unable to parse
+     * @throws ParseException          when unable to parse
      */
     default Context eval(Vars vars, Out out) {
         return eval(vars, out, null);

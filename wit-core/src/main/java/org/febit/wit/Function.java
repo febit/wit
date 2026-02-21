@@ -3,8 +3,6 @@ package org.febit.wit;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.io.DiscardOut;
-import org.febit.wit.io.OutputStreamOut;
-import org.febit.wit.io.WriterOut;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.runtime.heap.GenricHeap;
@@ -14,8 +12,6 @@ import org.jspecify.annotations.Nullable;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.Charset;
-
-import static org.febit.wit.util.Defaults.nvl;
 
 /**
  * Exported function.
@@ -71,21 +67,12 @@ public final class Function {
 
     @Nullable
     public Object applyWithOut(Writer writer, @Nullable Object @Nullable ... args) {
-        var engine = script.engine();
-        return applyWithOut(new WriterOut(writer, engine.charset(), engine.codecFactory()), args);
+        return applyWithOut(script.engine().asOut(writer), args);
     }
 
     @Nullable
     public Object applyWithOut(
             OutputStream out, @Nullable Object @Nullable ... args) {
-        var engine = script.engine();
-        return applyWithOut(new OutputStreamOut(out, engine.charset(), engine.codecFactory()), args);
-    }
-
-    @Nullable
-    public Object applyWithOut(
-            Charset charset, OutputStream out, @Nullable Object @Nullable ... args) {
-        var engine = script.engine();
-        return applyWithOut(new OutputStreamOut(out, nvl(charset, engine.charset()), engine.codecFactory()), args);
+        return applyWithOut(script.engine().asOut(out), args);
     }
 }

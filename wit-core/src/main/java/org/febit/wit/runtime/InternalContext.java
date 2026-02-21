@@ -13,8 +13,6 @@ import org.febit.wit.exception.NotFunctionException;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.SourceNotFoundException;
-import org.febit.wit.io.OutputStreamOut;
-import org.febit.wit.io.WriterOut;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.Render;
@@ -219,14 +217,14 @@ public final class InternalContext implements Context {
     @Nullable
     public Object redirect(
             Writer writer, java.util.function.Function<InternalContext, @Nullable Object> action) {
-        var target = new WriterOut(writer, this.out.charset(), this.engine().codecFactory());
+        var target = engine().asOut(writer, this.out.charset());
         return redirect(target, action);
     }
 
     @Nullable
     public Object redirect(
             OutputStream output, java.util.function.Function<InternalContext, @Nullable Object> action) {
-        var target = new OutputStreamOut(output, this.out.charset(), this.engine().codecFactory());
+        var target = engine().asOut(output, this.out.charset());
         return redirect(target, action);
     }
 

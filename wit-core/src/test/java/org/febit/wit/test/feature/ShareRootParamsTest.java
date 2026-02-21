@@ -26,7 +26,7 @@ class ShareRootParamsTest {
         script.eval(Vars.of(Map.of(
                 "v1", "V1",
                 "v2", "V2"
-        )), new DiscardOut());
+        )), DiscardOut.get());
 
     }
 }
