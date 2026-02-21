@@ -20,11 +20,11 @@ public record PropertyInfo(
 
     public BeanUtils.@Nullable Getter getter() {
         if (getterMethod != null) {
-            ClassUtils.setAccessible(getterMethod);
+            getterMethod.trySetAccessible();
             return new BeanUtils.MethodGetter(getterMethod);
         }
         if (field != null) {
-            ClassUtils.setAccessible(field);
+            field.trySetAccessible();
             return new BeanUtils.FieldGetter(field);
         }
         return null;
@@ -32,12 +32,12 @@ public record PropertyInfo(
 
     public BeanUtils.@Nullable Setter setter() {
         if (setterMethod != null) {
-            ClassUtils.setAccessible(setterMethod);
+            setterMethod.trySetAccessible();
             var propertyType = setterMethod.getParameterTypes()[0];
             return new BeanUtils.MethodSetter(setterMethod, propertyType);
         }
         if (field != null && !isReadonlyField()) {
-            ClassUtils.setAccessible(field);
+            field.trySetAccessible();
             return new BeanUtils.FieldSetter(field, field.getType());
         }
         return null;

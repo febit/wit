@@ -76,7 +76,7 @@ public class JavaNativeUtils {
             if (ignoreIfConflict && heaps.constants().has(name)) {
                 continue;
             }
-            ClassUtils.setAccessible(field);
+            field.trySetAccessible();
             try {
                 heaps.constants().set(name, field.get(null));
             } catch (IllegalArgumentException | IllegalAccessException e) {

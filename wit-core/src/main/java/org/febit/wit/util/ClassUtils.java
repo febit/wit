@@ -206,18 +206,7 @@ public class ClassUtils {
 
     public static <T extends AccessibleObject> void setAccessible(T[] objects) {
         for (T obj : objects) {
-            setAccessible(obj);
-        }
-    }
-
-    public static void setAccessible(AccessibleObject obj) {
-        if (obj.isAccessible()) {
-            return;
-        }
-        try {
-            obj.setAccessible(true);
-        } catch (SecurityException ignore) {
-            // Ignore
+            obj.trySetAccessible();
         }
     }
 }

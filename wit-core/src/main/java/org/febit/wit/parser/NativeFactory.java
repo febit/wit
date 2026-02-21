@@ -197,7 +197,7 @@ public class NativeFactory {
     }
 
     public FunctionDeclare createNativeMethodDeclare(Method method) {
-        ClassUtils.setAccessible(method);
+        method.trySetAccessible();
         return new NativeFunctionDeclare(method);
     }
 
@@ -230,7 +230,7 @@ public class NativeFactory {
     }
 
     protected FunctionDeclare createNativeConstructorDeclare(Constructor<?> constructor) {
-        ClassUtils.setAccessible(constructor);
+        constructor.trySetAccessible();
         return new NativeConstructorDeclare(constructor);
     }
 

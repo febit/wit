@@ -206,7 +206,7 @@ public class Assembler {
             throw new ParseException("No such field: " + path, ex, position);
         }
         if (ClassUtils.isStatic(field)) {
-            ClassUtils.setAccessible(field);
+            field.trySetAccessible();
             if (ClassUtils.isFinal(field)) {
                 try {
                     return new DirectValue(field.get(null), position);
