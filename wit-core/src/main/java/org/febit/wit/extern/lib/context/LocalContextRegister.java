@@ -4,15 +4,15 @@ package org.febit.wit.extern.lib.context;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.Engine;
-import org.febit.wit.EngineModule;
+import org.febit.wit.Wit;
+import org.febit.wit.WitModule;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
 import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor(staticName = "create")
-public class LocalContextRegister implements EngineModule {
+public class LocalContextRegister implements WitModule {
 
     public static final String DEFAULT_NAME = "$LOCAL";
 
@@ -24,8 +24,8 @@ public class LocalContextRegister implements EngineModule {
     }
 
     @Override
-    public void apply(Engine engine) {
-        var heap = engine.staticHeaps().constant();
+    public void apply(Wit wit) {
+        var heap = wit.staticHeaps().constant();
         heap.setFunction(this.name, LocalContextRegister::local);
     }
 

@@ -48,14 +48,14 @@ public class Assembler {
     private final VariantManager variants;
 
     public Assembler(Script script) {
-        var engine = script.engine();
+        var wit = script.wit();
 
         this.script = script;
-        this.features = engine.features();
-        this.templateTextFactory = engine.templateTextFactory();
-        this.nativeFactory = engine.nativeFactory();
+        this.features = wit.features();
+        this.templateTextFactory = wit.templateTextFactory();
+        this.nativeFactory = wit.nativeFactory();
 
-        this.variants = new VariantManager(engine);
+        this.variants = new VariantManager(wit);
         this.labelIndexMap.put(null, 0);
         this.nextLabelIndex.set(1);
 

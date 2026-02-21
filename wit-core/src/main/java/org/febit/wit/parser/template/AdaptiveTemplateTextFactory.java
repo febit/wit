@@ -10,6 +10,6 @@ public class AdaptiveTemplateTextFactory extends ByteArrayTemplateTextFactory {
 
     @Override
     public Statement create(Script script, char[] text, Position position) {
-        return new AdaptiveTemplateText(text, encode(text), script.engine().charset(), position);
+        return new AdaptiveTemplateText(text, encode(text), script.wit().charset(), position);
     }
 }

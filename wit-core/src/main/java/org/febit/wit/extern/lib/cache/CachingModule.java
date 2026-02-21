@@ -1,8 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.extern.lib.cache;
 
-import org.febit.wit.Engine;
-import org.febit.wit.EngineModule;
+import org.febit.wit.Wit;
+import org.febit.wit.WitModule;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 @lombok.Builder(
         builderClassName = "Builder"
 )
-public class CachingModule implements EngineModule {
+public class CachingModule implements WitModule {
 
     public static final String DEFAULT_NAME = "cache";
 
@@ -34,8 +34,8 @@ public class CachingModule implements EngineModule {
     private final Cache<Object, CachingEntry> using;
 
     @Override
-    public void apply(Engine engine) {
-        var heap = engine.staticHeaps().constant();
+    public void apply(Wit wit) {
+        var heap = wit.staticHeaps().constant();
         heap.setFunction(name, this::doPut);
         if (withRemove) {
             heap.setFunction(name + "_remove", this::doRemove);

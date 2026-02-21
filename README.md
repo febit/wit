@@ -4,7 +4,7 @@ Febit Wit
  [![BSD License](http://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/febit/wit/blob/master/LICENSE)
  [![Build Status](https://api.travis-ci.org/febit/wit.png)](https://travis-ci.org/febit/wit)
 
-This is a script engine, all written in Java, **support Java 17+**.
+This is a script wit, all written in Java, **support Java 17+**.
 
 ## How to use
 
@@ -14,22 +14,24 @@ This is a script engine, all written in Java, **support Java 17+**.
 <dependency>
     <groupId>org.febit.wit</groupId>
     <artifactId>wit-core</artifactId>
-    <version>2.6.0</version>
+    <version>3.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
 + or Gradle
 
 ```
-compile 'org.febit.wit:wit-core:2.6.0'
+implementation 'org.febit.wit:wit-core:3.0.0-SNAPSHOT'
 ```
 
-+ demo:
++ Config Wit engine, load script and eval:
 
 ```java
-Engine engine = Engine.create();
-Template script = engine.getTemplate("/demo.wit");
-script.merge(params, out);
+Wit wit = Wit.builder()
+    .loader(Loaders.fileSystem() ... )
+    .build();
+Script script = wit.script("/demo.wit");
+script.eval(params, out);
 ```
 
 ## Hello Wit
@@ -76,18 +78,16 @@ details.
 
 ## Third-party Licenses
 
-+ **ASM**  under the BSD License.[License file][asm_license]
++ **ASM** under the BSD License.[License file][asm_license]
 
 ## Bug report
 
 > [github-issue][new_issue_github]
 
-[mvc-demo]: https://github.com/febit/wit-mvc-demo
 [tests]: https://github.com/febit/wit/tree/master/wit-core/src/test/resources/org/febit/wit/test/tmpls
 
 [new_issue_github]: https://github.com/febit/wit/issues/new
 
 [license]: https://github.com/febit/wit/blob/master/LICENSE
-[jodd_license]: http://jodd.org/license.html
 [asm_license]: http://asm.ow2.org/license.html
 

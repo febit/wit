@@ -1,8 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.extern.lib.test;
 
-import org.febit.wit.Engine;
-import org.febit.wit.EngineModule;
+import org.febit.wit.Wit;
+import org.febit.wit.WitModule;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
 import org.jspecify.annotations.Nullable;
@@ -12,13 +12,13 @@ import java.util.concurrent.atomic.LongAdder;
 
 import static org.febit.wit.util.ArrayUtils.get;
 
-public class AssertionModule implements EngineModule {
+public class AssertionModule implements WitModule {
 
     public static final String ASSERT_COUNT_KEY = "$$LIB_ASSERT_COUNT";
 
     @Override
-    public void apply(Engine engine) {
-        var heap = engine.staticHeaps().constant();
+    public void apply(Wit wit) {
+        var heap = wit.staticHeaps().constant();
         heap.setFunction("assertTrue", AssertionModule::assertTrue);
         heap.setFunction("assertFalse", AssertionModule::assertFalse);
         heap.setFunction("assertNull", AssertionModule::assertNull);

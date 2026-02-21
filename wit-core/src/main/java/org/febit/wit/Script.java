@@ -13,7 +13,7 @@ import java.io.Writer;
 
 public interface Script {
 
-    Engine engine();
+    Wit wit();
 
     String path();
 
@@ -61,7 +61,7 @@ public interface Script {
      * @throws ParseException          when unable to parse
      */
     default Context eval(Vars vars, OutputStream output) {
-        var out = engine().asOut(output);
+        var out = wit().asOut(output);
         return eval(vars, out, null);
     }
 
@@ -75,7 +75,7 @@ public interface Script {
      * @throws ParseException          when unable to parse
      */
     default Context eval(Vars vars, Writer writer) {
-        var out = engine().asOut(writer);
+        var out = wit().asOut(writer);
         return eval(vars, out, null);
     }
 

@@ -4,7 +4,7 @@ package org.febit.wit.test.feature;
 import org.febit.wit.exception.ParseException;
 import org.junit.jupiter.api.Test;
 
-import static org.febit.wit.EngineManager.tmplChecker;
+import static org.febit.wit.TestWit.tmplChecker;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FunctionLoopOverflowTest {

@@ -3,8 +3,8 @@ package org.febit.wit.extern.lib.std;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.Context;
-import org.febit.wit.Engine;
-import org.febit.wit.EngineModule;
+import org.febit.wit.Wit;
+import org.febit.wit.WitModule;
 import org.febit.wit.runtime.function.FunctionDeclare;
 import org.jspecify.annotations.Nullable;
 
@@ -14,11 +14,11 @@ import static org.febit.wit.util.ArrayUtils.get;
         "squid:S1172", // Unused method parameters should be removed
         "squid:S00100" // Method names should comply with a naming convention
 })
-public class TypesModule implements EngineModule {
+public class TypesModule implements WitModule {
 
     @Override
-    public void apply(Engine engine) {
-        var heap = engine.staticHeaps().constant();
+    public void apply(Wit wit) {
+        var heap = wit.staticHeaps().constant();
         heap.setFunction("is_array", Types::is_array);
         heap.setFunction("is_bool", Types::is_bool);
         heap.setFunction("is_function", Types::is_function);

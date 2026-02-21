@@ -3,12 +3,12 @@ package org.febit.wit.runtime;
 
 import lombok.experimental.Accessors;
 import org.febit.wit.Context;
-import org.febit.wit.Engine;
 import org.febit.wit.Feature;
 import org.febit.wit.Function;
 import org.febit.wit.Out;
 import org.febit.wit.Script;
 import org.febit.wit.Vars;
+import org.febit.wit.Wit;
 import org.febit.wit.exception.NotFunctionException;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
@@ -86,9 +86,9 @@ public final class InternalContext implements Context {
         this.heap = heap;
         this.local = local;
 
-        var engine = script.engine();
-        this.features = engine.features();
-        this.accessors = engine.accessors();
+        var wit = script.wit();
+        this.features = wit.features();
+        this.accessors = wit.accessors();
 
         this.breakpointHandler = breakpointHandler;
         //import params
@@ -103,7 +103,7 @@ public final class InternalContext implements Context {
 
     public Context mergeScript(String refer, String path, Vars vars)
             throws SourceNotFoundException, ScriptEvaluateException, ParseException {
-        var tmpl = this.script.engine().script(refer, path);
+        var tmpl = this.script.wit().script(refer, path);
         return tmpl.merge(this, vars);
     }
 
@@ -217,14 +217,14 @@ public final class InternalContext implements Context {
     @Nullable
     public Object redirect(
             Writer writer, java.util.function.Function<InternalContext, @Nullable Object> action) {
-        var target = engine().asOut(writer, this.out.charset());
+        var target = wit().asOut(writer, this.out.charset());
         return redirect(target, action);
     }
 
     @Nullable
     public Object redirect(
             OutputStream output, java.util.function.Function<InternalContext, @Nullable Object> action) {
-        var target = engine().asOut(output, this.out.charset());
+        var target = wit().asOut(output, this.out.charset());
         return redirect(target, action);
     }
 
@@ -263,7 +263,7 @@ public final class InternalContext implements Context {
         return new Function(this.script, func, this.out.charset(), this.out.preferBytes());
     }
 
-    public Engine engine() {
-        return this.script.engine();
+    public Wit wit() {
+        return this.script.wit();
     }
 }

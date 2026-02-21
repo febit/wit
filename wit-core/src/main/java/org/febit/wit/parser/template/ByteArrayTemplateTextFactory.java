@@ -19,8 +19,8 @@ public class ByteArrayTemplateTextFactory implements TemplateTextFactory {
 
     @Override
     public void onParserStarted(Script script) {
-        var engine = script.engine();
-        encoders.set(engine.codecFactory().encoder(engine.charset()));
+        var wit = script.wit();
+        encoders.set(wit.codecFactory().encoder(wit.charset()));
         outputs.set(new ByteArrayOutputStream(512));
     }
 

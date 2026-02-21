@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentMap;
 import static org.febit.wit.util.Defaults.nvl;
 
 /**
- * Script engine.
+ * Wit script engine.
  */
 @Slf4j
 @lombok.Builder(
@@ -37,7 +37,7 @@ import static org.febit.wit.util.Defaults.nvl;
 )
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public class Engine {
+public class Wit {
 
     private final ConcurrentMap<String, Script> cachedScripts = new ConcurrentHashMap<>();
 
@@ -61,8 +61,8 @@ public class Engine {
     @Getter
     private final NativeFactory nativeFactory;
 
-    public static EngineBuilder builder() {
-        return new EngineBuilder();
+    public static WitBuilder builder() {
+        return new WitBuilder();
     }
 
     public boolean isEnabled(final Feature feature) {

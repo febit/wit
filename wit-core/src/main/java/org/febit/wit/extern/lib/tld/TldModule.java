@@ -2,8 +2,8 @@
 package org.febit.wit.extern.lib.tld;
 
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.Engine;
-import org.febit.wit.EngineModule;
+import org.febit.wit.Wit;
+import org.febit.wit.WitModule;
 import org.febit.wit.exception.UncheckedException;
 import org.febit.wit.parser.NativeFactory;
 import org.febit.wit.runtime.function.FunctionDeclare;
@@ -18,7 +18,7 @@ import java.util.List;
 @lombok.Builder(
         builderClassName = "Builder"
 )
-public class TldModule implements EngineModule {
+public class TldModule implements WitModule {
 
     @lombok.NonNull
     @SuppressWarnings("NullableProblems")
@@ -30,9 +30,9 @@ public class TldModule implements EngineModule {
     private final boolean checkAccess = false;
 
     @Override
-    public void apply(Engine engine) {
-        var heaps = engine.staticHeaps();
-        var nativeFactory = engine.nativeFactory();
+    public void apply(Wit wit) {
+        var heaps = wit.staticHeaps();
+        var nativeFactory = wit.nativeFactory();
 
         log.info("Load TLD file: {}", path);
         var input = ClassUtils.getDefaultClassLoader()

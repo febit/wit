@@ -17,15 +17,15 @@ import org.febit.wit.parser.NativeFactory;
 import org.febit.wit.parser.security.RuleBasedNativeSecurity;
 import org.febit.wit.runtime.Source;
 import org.febit.wit.test.component.TestCasesModule;
-import org.febit.wit.test.component.TestConfigFlagEngineModule;
-import org.febit.wit.test.component.TestSpiFlagEngineModule;
+import org.febit.wit.test.component.TestConfigFlagModule;
+import org.febit.wit.test.component.TestSpiFlagModule;
 import org.junit.jupiter.api.function.Executable;
 
 import java.time.Duration;
 import java.util.List;
 
 @Slf4j
-public class EngineManager {
+public class TestWit {
 
     private static final String EXT_WIT = ".wit";
     private static final List<String> EXT_DEPUTIES = List.of(EXT_WIT, ".whtml", ".wit2");
@@ -62,7 +62,7 @@ public class EngineManager {
 
     @Getter
     @Accessors(fluent = true)
-    public static final Engine engine = Engine.builder()
+    public static final Wit WIT = Wit.builder()
             .loader(loader())
             // .nativeFactory(NATIVE_FACTORY)
             .predefinedVars(
@@ -75,8 +75,8 @@ public class EngineManager {
                     LocalContextRegister.create()
             )
             .module(new TestCasesModule())
-            .module(new TestSpiFlagEngineModule())
-            .module(new TestConfigFlagEngineModule())
+            .module(new TestSpiFlagModule())
+            .module(new TestConfigFlagModule())
             .module(CachingModule.builder()
                     .using(SimpleCache.ofLru(100))
                     .withClear(true)
@@ -148,7 +148,7 @@ public class EngineManager {
     }
 
     public static Script script(String name) throws SourceNotFoundException {
-        return engine().script(name);
+        return WIT().script(name);
     }
 
     public static Executable tmplChecker(String tmpl) {

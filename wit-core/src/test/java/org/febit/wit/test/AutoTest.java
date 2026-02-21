@@ -3,8 +3,8 @@ package org.febit.wit.test;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Strings;
-import org.febit.wit.EngineManager;
 import org.febit.wit.Script;
+import org.febit.wit.TestWit;
 import org.febit.wit.Vars;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
@@ -80,11 +80,11 @@ class AutoTest {
         System.out.println("Auto Test: " + path);
         Script script;
         try {
-            script = EngineManager.engine().script(path);
+            script = TestWit.WIT().script(path);
         } catch (SourceNotFoundException e) {
             throw new UncheckedIOException(e);
         }
-        var out = EngineManager.engine().asOut(output);
+        var out = TestWit.WIT().asOut(output);
         var context = script.eval(Vars.empty(), out, this::onBreakpoint);
         System.out.println("\tAssertion count: " + context.local().get(AssertionModule.ASSERT_COUNT_KEY));
     }

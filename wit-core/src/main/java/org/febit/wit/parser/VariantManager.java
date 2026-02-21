@@ -3,7 +3,7 @@ package org.febit.wit.parser;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.febit.wit.Engine;
+import org.febit.wit.Wit;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.runtime.ast.FrameIndexer;
 import org.febit.wit.runtime.ast.Position;
@@ -45,10 +45,10 @@ public class VariantManager {
     private int frameSize;
     private int pageCursor;
 
-    VariantManager(Engine engine) {
-        this.staticHeaps = engine.staticHeaps();
+    VariantManager(Wit wit) {
+        this.staticHeaps = wit.staticHeaps();
         this.root = shiftFrame(-1);
-        this.root.assignVarsIfAbsent(engine.predefinedVars());
+        this.root.assignVarsIfAbsent(wit.predefinedVars());
     }
 
     private Frame shiftFrame(int upSeq) {

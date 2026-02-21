@@ -1,8 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.test.component;
 
-import org.febit.wit.Engine;
-import org.febit.wit.EngineModule;
+import org.febit.wit.Wit;
+import org.febit.wit.WitModule;
 import org.febit.wit.test.component.lib.ConstMethods;
 import org.febit.wit.test.component.lib.ConstMethods2;
 import org.febit.wit.util.JavaNativeUtils;
@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TestCasesModule implements EngineModule {
+public class TestCasesModule implements WitModule {
 
     @Override
-    public void apply(Engine engine) {
+    public void apply(Wit wit) {
 
-        var heaps = engine.staticHeaps();
-        var nativeFactory = engine.nativeFactory();
+        var heaps = wit.staticHeaps();
+        var nativeFactory = wit.nativeFactory();
 
         // Static
         heaps.variant().set("MY_GLOBAL", "MY_GLOBAL");

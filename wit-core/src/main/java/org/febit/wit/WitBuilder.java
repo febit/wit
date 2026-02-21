@@ -27,11 +27,11 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 @Slf4j
-public class EngineBuilder {
+public class WitBuilder {
 
     private static final int FEATURE_DEFAULTS = Feature.collectFeatureDefaults();
 
-    private final List<EngineModule> modules = new ArrayList<>();
+    private final List<WitModule> modules = new ArrayList<>();
     private final List<String> initScripts = new ArrayList<>();
     private final Set<String> predefinedVars = new HashSet<>();
 
@@ -47,91 +47,91 @@ public class EngineBuilder {
     @Nullable
     private Loader loader;
 
-    public EngineBuilder predefinedVars(String... vars) {
+    public WitBuilder predefinedVars(String... vars) {
         this.predefinedVars.addAll(List.of(vars));
         return this;
     }
 
-    public EngineBuilder predefinedVars(Collection<String> vars) {
+    public WitBuilder predefinedVars(Collection<String> vars) {
         this.predefinedVars.addAll(vars);
         return this;
     }
 
-    public EngineBuilder initScripts(String... scripts) {
+    public WitBuilder initScripts(String... scripts) {
         this.initScripts.addAll(Arrays.asList(scripts));
         return this;
     }
 
-    public EngineBuilder initScripts(Collection<String> scripts) {
+    public WitBuilder initScripts(Collection<String> scripts) {
         this.initScripts.addAll(scripts);
         return this;
     }
 
-    public EngineBuilder configureAccessors(Consumer<ComposedAccessorFactory.Builder> consumer) {
+    public WitBuilder configureAccessors(Consumer<ComposedAccessorFactory.Builder> consumer) {
         Objects.requireNonNull(consumer);
         consumer.accept(this.accessorFactory);
         return this;
     }
 
-    public EngineBuilder loader(Loader loader) {
+    public WitBuilder loader(Loader loader) {
         Objects.requireNonNull(loader);
         this.loader = loader;
         return this;
     }
 
-    public EngineBuilder templateTextFactory(TemplateTextFactory factory) {
+    public WitBuilder templateTextFactory(TemplateTextFactory factory) {
         Objects.requireNonNull(factory);
         this.templateTextFactory = factory;
         return this;
     }
 
-    public EngineBuilder codecFactory(CodecFactory factory) {
+    public WitBuilder codecFactory(CodecFactory factory) {
         Objects.requireNonNull(factory);
         this.codecFactory = factory;
         return this;
     }
 
-    public EngineBuilder nativeFactory(NativeFactory factory) {
+    public WitBuilder nativeFactory(NativeFactory factory) {
         Objects.requireNonNull(factory);
         this.nativeFactory = factory;
         return this;
     }
 
-    public <T> EngineBuilder accessor(Class<T> type, Accessor<? extends T> accessor) {
+    public <T> WitBuilder accessor(Class<T> type, Accessor<? extends T> accessor) {
         this.accessorFactory.accessor(type, accessor);
         return this;
     }
 
-    public EngineBuilder enable(Feature feature) {
+    public WitBuilder enable(Feature feature) {
         this.features = feature.enable(this.features);
         return this;
     }
 
-    public EngineBuilder disable(Feature feature) {
+    public WitBuilder disable(Feature feature) {
         this.features = feature.disable(this.features);
         return this;
     }
 
-    public EngineBuilder charset(Charset charset) {
+    public WitBuilder charset(Charset charset) {
         this.charset = charset;
         return this;
     }
 
-    public EngineBuilder modules(List<EngineModule> modules) {
+    public WitBuilder modules(List<WitModule> modules) {
         this.modules.addAll(modules);
         return this;
     }
 
-    public EngineBuilder modules(EngineModule... modules) {
+    public WitBuilder modules(WitModule... modules) {
         return modules(Arrays.asList(modules));
     }
 
-    public EngineBuilder module(EngineModule module) {
+    public WitBuilder module(WitModule module) {
         this.modules.add(module);
         return this;
     }
 
-    public Engine build() {
+    public Wit build() {
         if (this.loader == null) {
             throw new IllegalArgumentException("Loader is not provided.");
         }
@@ -141,7 +141,7 @@ public class EngineBuilder {
         var vars = new ArrayList<>(predefinedVars);
         vars.sort(String::compareTo);
 
-        var engine = Engine.internalBuilder()
+        var wit = Wit.internalBuilder()
                 .predefinedVars(List.copyOf(vars))
                 .features(features)
                 .charset(charset)
@@ -153,17 +153,17 @@ public class EngineBuilder {
                 .build();
 
         for (var module : modules) {
-            module.apply(engine);
+            module.apply(wit);
         }
         try {
-            initScripts(engine, initScripts);
+            initScripts(wit, initScripts);
         } catch (SourceNotFoundException e) {
             throw new UncheckedIOException(e.getMessage(), e);
         }
-        return engine;
+        return wit;
     }
 
-    private static void initScripts(Engine engine, List<String> scripts) throws SourceNotFoundException {
+    private static void initScripts(Wit wit, List<String> scripts) throws SourceNotFoundException {
         var fixed = scripts.stream()
                 .distinct()
                 .toList();
@@ -175,12 +175,12 @@ public class EngineBuilder {
         log.info("[INIT] applying init scripts: total={}", fixed.size());
 
         var total = fixed.size();
-        var staticHeaps = engine.staticHeaps();
+        var staticHeaps = wit.staticHeaps();
 
         for (int i = 0; i < total; i++) {
             var tmpl = fixed.get(i);
             log.info("[INIT] applying init scripts [{}/{}]: {}", i + 1, total, tmpl);
-            engine.script(tmpl).eval(acceptor -> {
+            wit.script(tmpl).eval(acceptor -> {
                 acceptor.set("GLOBAL", staticHeaps.variant());
                 acceptor.set("CONST", staticHeaps.constant());
             }, DiscardOut.get());

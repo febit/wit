@@ -67,12 +67,12 @@ public final class Function {
 
     @Nullable
     public Object applyWithOut(Writer writer, @Nullable Object @Nullable ... args) {
-        return applyWithOut(script.engine().asOut(writer), args);
+        return applyWithOut(script.wit().asOut(writer), args);
     }
 
     @Nullable
     public Object applyWithOut(
             OutputStream out, @Nullable Object @Nullable ... args) {
-        return applyWithOut(script.engine().asOut(out), args);
+        return applyWithOut(script.wit().asOut(out), args);
     }
 }
