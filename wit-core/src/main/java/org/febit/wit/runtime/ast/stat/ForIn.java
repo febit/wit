@@ -44,7 +44,7 @@ public class ForIn implements Statement, Loopable {
     public Object execute(InternalContext context) {
         Iter iter = iter(context);
         if (iter.hasNext()) {
-            context.heap().onFrame(frame, () -> execute0(context, iter));
+            context.variables().onFrame(frame, () -> execute0(context, iter));
             return null;
         }
         if (elseBody != null) {
@@ -70,7 +70,7 @@ public class ForIn implements Statement, Loopable {
         var myLabel = this.label;
         var itemIdx = this.itemIndex;
         var loop = context.loop();
-        var heap = context.heap();
+        var heap = context.variables();
         heap.set(iterIndex, iter);
         label:
         do {

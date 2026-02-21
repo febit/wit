@@ -15,7 +15,7 @@ import java.util.List;
 @Accessors(fluent = true, chain = true)
 public abstract class BaseForInBuilder {
 
-    protected final VariantManager vars;
+    protected final VarLayout varLayout;
     protected final Position position;
 
     private boolean frameShifted = false;
@@ -39,9 +39,9 @@ public abstract class BaseForInBuilder {
 
     protected int iterIndex;
 
-    protected BaseForInBuilder(VariantManager vars, Position position) {
+    protected BaseForInBuilder(VarLayout varLayout, Position position) {
         this.position = position;
-        this.vars = vars;
+        this.varLayout = varLayout;
     }
 
     public abstract Statement build(int label);
@@ -51,8 +51,8 @@ public abstract class BaseForInBuilder {
             throw new IllegalStateException("frame already shifted");
         }
         this.frameShifted = true;
-        vars.shiftFrame();
-        iterIndex = vars.assignVar("for.iter", position);
+        varLayout.shiftFrame();
+        iterIndex = varLayout.assignVar("for.iter", position);
         return this;
     }
 
@@ -60,7 +60,7 @@ public abstract class BaseForInBuilder {
         if (!frameShifted) {
             throw new IllegalStateException("frame not shifted");
         }
-        this.frame = vars.unshiftFrame();
+        this.frame = varLayout.unshiftFrame();
         this.body = Ast.flatStatements(list);
         return this;
     }

@@ -82,7 +82,7 @@ import java.util.Deque;
         // return back
         this.pendingQueue.addFirst(nextAfter);
         if (nextAfter == SYM_NEW_LINE || nextAfter.kind == TokenKinds.EOF) {
-            next.isOnEdgeOfNewLine = true;
+            next.isAtEdgeOfNewLine = true;
         }
         return next;
     }

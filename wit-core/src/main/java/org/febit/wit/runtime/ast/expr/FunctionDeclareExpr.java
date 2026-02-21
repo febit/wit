@@ -47,7 +47,7 @@ public final class FunctionDeclareExpr implements Expression {
     }
 
     private void fillArgs(InternalContext context, @Nullable Object @Nullable [] args) {
-        var heap = context.heap();
+        var heap = context.variables();
 
         var copyIdx = this.argsIndexStart;
         heap.set(copyIdx++, args);

@@ -16,7 +16,7 @@ public record BlockWithoutLoops(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.heap().onFrame(frame,
+        context.variables().onFrame(frame,
                 () -> context.visit(statements)
         );
         return null;

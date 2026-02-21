@@ -21,33 +21,33 @@ public class FunctionDeclareBuilder {
     private final Position position;
     private final int assignTarget;
     private final int argsIndexStart;
-    private final VariantManager variants;
+    private final VarLayout varLayout;
 
     private final List<ArgumentInfo> args = new ArrayList<>();
 
-    public FunctionDeclareBuilder(String assignTarget, VariantManager variants, Position position) {
-        this(variants, variants.assignVar(assignTarget, position), position);
+    public FunctionDeclareBuilder(String assignTarget, VarLayout varLayout, Position position) {
+        this(varLayout, varLayout.assignVar(assignTarget, position), position);
     }
 
-    public FunctionDeclareBuilder(VariantManager variants, Position position) {
-        this(variants, -1, position);
+    public FunctionDeclareBuilder(VarLayout varLayout, Position position) {
+        this(varLayout, -1, position);
     }
 
-    public static FunctionDeclareBuilder create(VariantManager variants, Position position) {
-        return new FunctionDeclareBuilder(variants, -1, position);
+    public static FunctionDeclareBuilder create(VarLayout varLayout, Position position) {
+        return new FunctionDeclareBuilder(varLayout, -1, position);
     }
 
-    public static FunctionDeclareBuilder create(VariantManager variants, int assignTarget, Position position) {
-        return new FunctionDeclareBuilder(variants, assignTarget, position);
+    public static FunctionDeclareBuilder create(VarLayout varLayout, int assignTarget, Position position) {
+        return new FunctionDeclareBuilder(varLayout, assignTarget, position);
     }
 
-    private FunctionDeclareBuilder(VariantManager variants, int assignTarget, Position position) {
-        this.variants = variants;
+    private FunctionDeclareBuilder(VarLayout varLayout, int assignTarget, Position position) {
+        this.varLayout = varLayout;
         this.position = position;
         this.assignTarget = assignTarget;
 
-        variants.shiftPage();
-        argsIndexStart = variants.assignVar("arguments", position);
+        varLayout.shiftLayer();
+        argsIndexStart = varLayout.assignVar("arguments", position);
     }
 
     public record ArgumentInfo(
@@ -72,8 +72,8 @@ public class FunctionDeclareBuilder {
     }
 
     public FunctionDeclareBuilder arg(ArgumentInfo info) {
-        if (variants.assignVar(info.name, position) != (argsIndexStart + (this.args.size() + 1))) {
-            throw new ParseException("Failed to assign vars!");
+        if (varLayout.assignVar(info.name, position) != (argsIndexStart + (this.args.size() + 1))) {
+            throw new ParseException("Cannot assign argument variable: " + info.name);
         }
         this.args.add(info);
         return this;
@@ -107,9 +107,9 @@ public class FunctionDeclareBuilder {
 
     public FunctionDeclareExpr build(List<Statement> list) {
         var statements = Ast.flatStatements(list);
-        var indexers = variants.buildFrameIndexers();
-        int frameSize = variants.frameSize();
-        variants.unshiftPage();
+        var indexers = varLayout.buildFrameIndexers();
+        int frameSize = varLayout.frameSize();
+        varLayout.unshiftLayer();
         boolean hasReturnLoops = false;
 
         List<LoopFlag> overflowLoops = new ArrayList<>();

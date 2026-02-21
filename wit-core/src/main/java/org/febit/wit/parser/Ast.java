@@ -14,7 +14,7 @@ import org.febit.wit.runtime.ast.LoopFlag;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
-import org.febit.wit.runtime.ast.expr.ContextPageVar;
+import org.febit.wit.runtime.ast.expr.ContextLayerVar;
 import org.febit.wit.runtime.ast.expr.ContextVar;
 import org.febit.wit.runtime.ast.expr.DirectValue;
 import org.febit.wit.runtime.ast.expr.DynamicNativeMethodCallExpr;
@@ -331,7 +331,7 @@ public class Ast {
     public static Expression readVar(VarAddress addr, Position position) {
         return switch (addr.kind()) {
             case CONST -> new DirectValue(addr.value(), position);
-            case UPSTREAM -> new ContextPageVar(addr.pageOffset(), addr.index(), position);
+            case CONTEXT_LAYER -> new ContextLayerVar(addr.layerOffset(), addr.index(), position);
             case CONTEXT -> new ContextVar(addr.index(), position);
             case STATIC_VAR -> {
                 var key = Objects.requireNonNull(addr.key());

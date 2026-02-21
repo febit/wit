@@ -8,6 +8,6 @@ public class TestConfigFlagModule implements WitModule {
 
     @Override
     public void apply(Wit wit) {
-        wit.staticHeaps().constant().set("PLUGIN_CONFIG_FLAG", true);
+        wit.staticHeaps().constants().set("PLUGIN_CONFIG_FLAG", true);
     }
 }

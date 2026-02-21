@@ -6,8 +6,8 @@ import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;
 
-public record ContextPageVar(
-        int page,
+public record ContextLayerVar(
+        int layer,
         int index,
         Position position
 ) implements AssignableExpression {
@@ -15,13 +15,13 @@ public record ContextPageVar(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        return context.heap().getAtPage(page, index);
+        return context.variables().getAtLayer(layer, index);
     }
 
     @Override
     @Nullable
     public Object set(InternalContext context, @Nullable Object value) {
-        context.heap().setAtPage(page, index, value);
+        context.variables().setAtLayer(layer, index, value);
         return value;
     }
 }

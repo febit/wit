@@ -48,7 +48,7 @@ public class TldModule implements WitModule {
             throw new UncheckedException(e);
         }
         for (var func : functions) {
-            heaps.constant().set(
+            heaps.constants().set(
                     this.prefix + func.name(),
                     createFunction(nativeFactory, func)
             );

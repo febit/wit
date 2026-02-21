@@ -14,13 +14,13 @@ public record ContextVar(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        return context.heap().get(index);
+        return context.variables().get(index);
     }
 
     @Override
     @Nullable
     public Object set(InternalContext context, @Nullable Object value) {
-        context.heap().set(index, value);
+        context.variables().set(index, value);
         return value;
     }
 }

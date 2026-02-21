@@ -282,7 +282,7 @@ abstract class AbstractParser {
                 } else {
                     pending = lexer.nextToken();
                     if (looseSemicolon
-                            && currentToken.isOnEdgeOfNewLine) {
+                            && currentToken.isAtEdgeOfNewLine) {
                         switch (pending.kind) {
                             case TokenKinds.LBRACK: // NOSONAR squid:S128 Switch cases should end with an unconditional "break" statement
                                 if (currentToken.kind == TokenKinds.COMMA
@@ -303,7 +303,7 @@ abstract class AbstractParser {
                 }
                 if (looseSemicolon
                         && pendingPending == null
-                        && pending.isOnEdgeOfNewLine) {
+                        && pending.isAtEdgeOfNewLine) {
                     switch (pending.kind) {
                         case TokenKinds.RETURN,
                              TokenKinds.BREAK,
@@ -319,7 +319,7 @@ abstract class AbstractParser {
             if (act == 0
                     && looseSemicolon
                     && pending.kind != TokenKinds.SEMICOLON
-                    && (currentToken.isOnEdgeOfNewLine || pending.kind == TokenKinds.RBRACE)) {
+                    && (currentToken.isAtEdgeOfNewLine || pending.kind == TokenKinds.RBRACE)) {
                 act = getAction(ACTION_TABLE[currentToken.state], TokenKinds.SEMICOLON);
                 if (act != 0) {
                     pendingPending = pending;
@@ -337,7 +337,7 @@ abstract class AbstractParser {
                         TextPosition.of(lexer.getLine(), lexer.getColumn())
                 );
             }
-            boolean isLastSymbolOnEdgeOfNewLine = currentToken.isOnEdgeOfNewLine;
+            boolean isLastSymbolAtEdgeOfNewLine = currentToken.isAtEdgeOfNewLine;
             // if its less than zero, then it encodes a reduce action
             act = (-act) - 1;
             final Object result = doAction(act);
@@ -355,7 +355,7 @@ abstract class AbstractParser {
 
             // look up the state to go to from the one popped back to shift to that state
             currentToken.state = getReduce(REDUCE_TABLE[stack.peek().state], tokenKind);
-            currentToken.isOnEdgeOfNewLine = isLastSymbolOnEdgeOfNewLine;
+            currentToken.isAtEdgeOfNewLine = isLastSymbolAtEdgeOfNewLine;
             stack.push(currentToken);
         } while (goonParse);
 

@@ -6,7 +6,6 @@ import org.febit.wit.runtime.heap.Heap;
 
 /**
  * Runtime context.
- *
  */
 @SuppressWarnings({
         "squid:S1214", //Constants should not be defined in interfaces
@@ -14,7 +13,7 @@ import org.febit.wit.runtime.heap.Heap;
 })
 public interface Context {
 
-    Heap heap();
+    Heap variables();
 
     Heap local();
 

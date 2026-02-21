@@ -74,30 +74,30 @@ public class ScriptImpl implements Script {
     /**
      * Evaluate this script.
      *
-     * @param vars     vars
+     * @param inputs     vars
      * @param out      out
      * @param breakpointHandler listener
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
      * @throws ParseException         when unable to parse
      */
-    public Context eval(Vars vars, Out out, @Nullable BreakpointHandler breakpointHandler) {
-        Objects.requireNonNull(vars, "vars is required");
+    public Context eval(Vars inputs, Out out, @Nullable BreakpointHandler breakpointHandler) {
+        Objects.requireNonNull(inputs, "inputs is required");
         Objects.requireNonNull(out, "out is required");
 
         try {
             return Parser.parse(this)
-                    .execute(this, out, vars, breakpointHandler);
+                    .execute(this, out, inputs, breakpointHandler);
         } catch (Exception e) {
             throw completeException(e);
         }
     }
 
     @Override
-    public Context merge(InternalContext target, Vars vars) {
+    public Context merge(InternalContext target, Vars inputs) {
         try {
             return prepareAst()
-                    .execute(this, target, vars);
+                    .execute(this, target, inputs);
         } catch (Exception e) {
             throw completeException(e);
         }

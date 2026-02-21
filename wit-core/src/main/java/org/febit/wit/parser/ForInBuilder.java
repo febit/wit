@@ -15,15 +15,15 @@ public class ForInBuilder extends BaseForInBuilder {
     private final String itemVarName;
     private int itemIndex;
 
-    public ForInBuilder(String itemVarName, VariantManager variants, Position position) {
-        super(variants, position);
+    public ForInBuilder(String itemVarName, VarLayout varLayout, Position position) {
+        super(varLayout, position);
         this.itemVarName = itemVarName;
     }
 
     @Override
     public final ForInBuilder shiftFrame() {
         super.shiftFrame();
-        itemIndex = vars.assignVar(itemVarName, position);
+        itemIndex = varLayout.assignVar(itemVarName, position);
         return this;
     }
 

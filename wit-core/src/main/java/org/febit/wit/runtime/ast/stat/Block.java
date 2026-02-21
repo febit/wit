@@ -30,7 +30,7 @@ public final class Block implements IBlock, Loopable {
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.heap().onFrame(frame,
+        context.variables().onFrame(frame,
                 () -> context.visitAndCheckLoop(statements)
         );
         return null;

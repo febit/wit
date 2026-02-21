@@ -57,7 +57,7 @@ public abstract class AbstractInclude implements Statement {
             );
             if (export) {
                 var result = new HashMap<String, @Nullable Object>();
-                newContext.heap().exportTo(result);
+                newContext.variables().exportTo(result);
                 return result;
             }
             return Map.of();

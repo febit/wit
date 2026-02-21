@@ -20,30 +20,30 @@ public class TestCasesModule implements WitModule {
         var nativeFactory = wit.nativeFactory();
 
         // Static
-        heaps.variant().set("MY_GLOBAL", "MY_GLOBAL");
-        heaps.variant().set("MY_GLOBAL_2", "MY_GLOBAL_2");
+        heaps.variables().set("MY_GLOBAL", "MY_GLOBAL");
+        heaps.variables().set("MY_GLOBAL_2", "MY_GLOBAL_2");
 
         //Const
-        heaps.constant().set("MY_CONST", "MY_CONST");
-        heaps.constant().set("MY_CONST_2", "MY_CONST_2");
+        heaps.constants().set("MY_CONST", "MY_CONST");
+        heaps.constants().set("MY_CONST_2", "MY_CONST_2");
 
         //Native
-        heaps.constant().set("new_list", nativeFactory.getNativeConstructorDeclare(ArrayList.class, null));
-        heaps.constant().set("list_size", nativeFactory.getNativeMethodDeclare(List.class, "size", null));
-        heaps.constant().set("list_add", nativeFactory.getNativeMethodDeclare(List.class, "add", new Class[]{Object.class}));
-        heaps.constant().set("substring", nativeFactory.getNativeMethodDeclare(String.class, "substring", new Class[]{int.class, int.class}));
+        heaps.constants().set("new_list", nativeFactory.getNativeConstructorDeclare(ArrayList.class, null));
+        heaps.constants().set("list_size", nativeFactory.getNativeMethodDeclare(List.class, "size", null));
+        heaps.constants().set("list_add", nativeFactory.getNativeMethodDeclare(List.class, "add", new Class[]{Object.class}));
+        heaps.constants().set("substring", nativeFactory.getNativeMethodDeclare(String.class, "substring", new Class[]{int.class, int.class}));
 
         JavaNativeUtils.addConstFields(heaps, ConstMethods.class);
         JavaNativeUtils.addStaticMethods(heaps, nativeFactory, ConstMethods.class);
 
-        heaps.constant().set("new_ConstMethods2", nativeFactory.getNativeConstructorDeclare(ConstMethods2.class, null));
-        heaps.constant().set("const2Member", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Member"));
-        heaps.constant().set("const2Size", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Size"));
-        heaps.constant().set("const2Foo", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Foo"));
+        heaps.constants().set("new_ConstMethods2", nativeFactory.getNativeConstructorDeclare(ConstMethods2.class, null));
+        heaps.constants().set("const2Member", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Member"));
+        heaps.constants().set("const2Size", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Size"));
+        heaps.constants().set("const2Foo", nativeFactory.getNativeMethodDeclare(ConstMethods2.class, "const2Foo"));
 
         // For optimize.wit
-        heaps.constant().set("CONST_STRING_BUILDER", new StringBuilder());
-        heaps.constant().set("CONST_ATOMIC_INT", new AtomicInteger());
+        heaps.constants().set("CONST_STRING_BUILDER", new StringBuilder());
+        heaps.constants().set("CONST_ATOMIC_INT", new AtomicInteger());
 
     }
 

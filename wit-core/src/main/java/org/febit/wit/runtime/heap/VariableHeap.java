@@ -13,17 +13,17 @@ import java.util.function.BiConsumer;
  * Variables heap.
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class VariantHeap implements Heap {
+public class VariableHeap implements Heap {
 
     private final @Nullable Object[] table;
     /**
      * Upstream tables.
      * <p>
-     * Functions are run in different page tables, to avoid conflicts.
+     * Functions are run in different layer tables, to avoid conflicts.
      * <p>
-     * Format: [page][index] => value
+     * Format: [layer][index] => value
      */
-    private final @Nullable Object[][] upstreams;
+    private final @Nullable Object[][] uppers;
     /**
      * Variables indexers by frame.
      */
@@ -33,23 +33,23 @@ public class VariantHeap implements Heap {
      */
     private int frame;
 
-    public VariantHeap(int size, FrameIndexer[] indexers) {
+    public VariableHeap(int size, FrameIndexer[] indexers) {
         this.indexers = indexers;
         this.frame = 0;
         this.table = new Object[size];
-        this.upstreams = new Object[0][];
+        this.uppers = new Object[0][];
     }
 
-    public static VariantHeap empty() {
-        return new VariantHeap(0, new FrameIndexer[]{FrameIndexer.EMPTY});
+    public static VariableHeap empty() {
+        return new VariableHeap(0, new FrameIndexer[]{FrameIndexer.EMPTY});
     }
 
-    public VariantHeap shift(int size, FrameIndexer[] indexers) {
-        var up = this.upstreams;
-        var pages = new Object[up.length + 1][];
-        pages[0] = this.table;
-        System.arraycopy(up, 0, pages, 1, up.length);
-        return new VariantHeap(new Object[size], pages, indexers);
+    public VariableHeap shift(int size, FrameIndexer[] indexers) {
+        var up = this.uppers;
+        var layers = new Object[up.length + 1][];
+        layers[0] = this.table;
+        System.arraycopy(up, 0, layers, 1, up.length);
+        return new VariableHeap(new Object[size], layers, indexers);
     }
 
     public void onFrame(int frame, Runnable action) {
@@ -101,7 +101,7 @@ public class VariantHeap implements Heap {
             return this.table[idx];
         }
         if (strict) {
-            throw new ScriptEvaluateException("Not found variant named:" + name);
+            throw new ScriptEvaluateException("Not found variable named:" + name);
         }
         return null;
     }
@@ -112,12 +112,12 @@ public class VariantHeap implements Heap {
     }
 
     @Nullable
-    public Object getAtPage(int page, int index) {
-        return this.upstreams[page][index];
+    public Object getAtLayer(int layer, int index) {
+        return this.uppers[layer][index];
     }
 
-    public void setAtPage(int page, int index, @Nullable Object value) {
-        this.upstreams[page][index] = value;
+    public void setAtLayer(int layer, int index, @Nullable Object value) {
+        this.uppers[layer][index] = value;
     }
 
     public FrameIndexer currentIndexer() {

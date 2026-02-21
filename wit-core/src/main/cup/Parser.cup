@@ -262,21 +262,21 @@ importPart2     ::= importPart1:builder IDENTIFIER:ident
                     ;
 
 
-block           ::= (LBRACE {: assembler.variants().shiftFrame(); yield null; :}) statement[]:list? RBRACE
-                    {: yield Ast.block(%list%, assembler.variants().unshiftFrame(), %list.symbol%.pos); :}
+block           ::= (LBRACE {: assembler.varLayout().shiftFrame(); yield null; :}) statement[]:list? RBRACE
+                    {: yield Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos); :}
                     ;
 
 
-tryPart         ::= (TRY LBRACE {: assembler.variants().shiftFrame(); yield null; :}):sym statement[]:list? RBRACE
-                    {: yield Ast.tryCatchBuilder().body(Ast.block(%list%, assembler.variants().unshiftFrame(), %list.symbol%.pos)).position(%sym.symbol%.pos); :}
+tryPart         ::= (TRY LBRACE {: assembler.varLayout().shiftFrame(); yield null; :}):sym statement[]:list? RBRACE
+                    {: yield Ast.tryCatchBuilder().body(Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos)).position(%sym.symbol%.pos); :}
                     ;
 
-catchPart       ::= tryPart:builder (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: assembler.variants().shiftFrame(); yield assembler.variants().assignVar(%ident%, %ident.symbol%.pos); :}):varIndex statement[]:list? RBRACE
-                    {: yield (%builder%).exceptionVarIndex((Integer)(%varIndex%)).catchBody(Ast.block(%list%, assembler.variants().unshiftFrame(), %list.symbol%.pos)); :}
+catchPart       ::= tryPart:builder (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: assembler.varLayout().shiftFrame(); yield assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos); :}):varIndex statement[]:list? RBRACE
+                    {: yield (%builder%).exceptionVarIndex((Integer)(%varIndex%)).catchBody(Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos)); :}
                     ;
 
-finallyPart     ::= (tryPart:$ | catchPart:$):builder (FINALLY LBRACE {: assembler.variants().shiftFrame(); yield null; :}) statement[]:list? RBRACE
-                    {: yield (%builder%).finallyBody(Ast.block(%list%, assembler.variants().unshiftFrame(), %list.symbol%.pos)); :}
+finallyPart     ::= (tryPart:$ | catchPart:$):builder (FINALLY LBRACE {: assembler.varLayout().shiftFrame(); yield null; :}) statement[]:list? RBRACE
+                    {: yield (%builder%).finallyBody(Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos)); :}
                     ;
 
 
@@ -285,30 +285,30 @@ ifStat          ::= IF:sym LPAREN expression:expr RPAREN block:body (ELSE block:
                     ;
 
 forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
-                    {: yield new ForInBuilder(%item%, assembler.variants(), %sym.symbol%.pos).collection(%items%).shiftFrame(); :}
+                    {: yield new ForInBuilder(%item%, assembler.varLayout(), %sym.symbol%.pos).collection(%items%).shiftFrame(); :}
                     |FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COLON expression:map RPAREN
-                    {: yield new ForMapBuilder(%key%, %value%, assembler.variants(), %sym.symbol%.pos).collection(%map%).shiftFrame(); :}
+                    {: yield new ForMapBuilder(%key%, %value%, assembler.varLayout(), %sym.symbol%.pos).collection(%map%).shiftFrame(); :}
                     ;
 
 
 lambdaForHead1  ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
-                    {: yield FunctionDeclareBuilder.create(assembler.variants(), %sym.symbol%.pos).arg(%ident%); :}
+                    {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
                     ;
 
 
 lambdaForMapHead1   ::= FOR LPAREN IDENTIFIER:key COMMA IDENTIFIER:value MINUSGT:sym
-                    {: yield FunctionDeclareBuilder.create(assembler.variants(), %sym.symbol%.pos).arg(%key%).arg(%value%); :}
+                    {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%key%).arg(%value%); :}
                     ;
 
 
 lambdaForHead2  ::= lambdaForHead1:builder expression:expr COLON
-                    {: yield new ForInBuilder((%builder%).getArg(0), assembler.variants(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
+                    {: yield new ForInBuilder((%builder%).getArg(0), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
                     |lambdaForHead1:builder LBRACE statement[]:list RBRACE COLON
-                    {: yield new ForInBuilder((%builder%).getArg(0), assembler.variants(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
+                    {: yield new ForInBuilder((%builder%).getArg(0), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
                     |lambdaForMapHead1:builder expression:expr COLON
-                    {: yield new ForMapBuilder((%builder%).getArg(0), (%builder%).getArg(1), assembler.variants(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
+                    {: yield new ForMapBuilder((%builder%).getArg(0), (%builder%).getArg(1), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
                     |lambdaForMapHead1:builder LBRACE statement[]:list RBRACE COLON
-                    {: yield new ForMapBuilder((%builder%).getArg(0), (%builder%).getArg(1), assembler.variants(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
+                    {: yield new ForMapBuilder((%builder%).getArg(0), (%builder%).getArg(1), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
                     ;
 
 
@@ -329,8 +329,8 @@ whileBuilder       ::= WHILE:sym LPAREN expression:condition RPAREN block:body
                     ;
 
 
-caseBlockStat   ::= {: assembler.variants().shiftFrame(); yield null; :} statement[]:list?
-                    {: yield Ast.block(%list%, assembler.variants().unshiftFrame(), %list.symbol%.pos); :}
+caseBlockStat   ::= {: assembler.varLayout().shiftFrame(); yield null; :} statement[]:list?
+                    {: yield Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos); :}
                     ;
 
 
@@ -580,15 +580,15 @@ funcArg             ::= IDENTIFIER:ident
 
 
 funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:args? RPAREN
-                        {: yield FunctionDeclareBuilder.create(assembler.variants(), assembler.variants().assignVar(%ident%, %ident.symbol%.pos), %sym.symbol%.pos).args(%args%); :}
+                        {: yield FunctionDeclareBuilder.create(assembler.varLayout(), assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos), %sym.symbol%.pos).args(%args%); :}
                         ;
 
 // mapPropertyFuncHead ::= LPAREN:sym funcArg[COMMA]:args? RPAREN
-//                         {: yield FunctionDeclareBuilder.create(assembler.variants(), %sym.symbol%.pos).args(%args%); :}
+//                         {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
 //                         ;
 
 funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
-                        {: yield FunctionDeclareBuilder.create(assembler.variants(), %sym.symbol%.pos).args(%args%); :}
+                        {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
@@ -604,9 +604,9 @@ funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
 
 /* lambda */
 lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
-                        {: yield FunctionDeclareBuilder.create(assembler.variants(), %sym.symbol%.pos).arg(%ident%); :}
+                        {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
                         |LPAREN funcArg[COMMA]:args? RPAREN_MINUSGT:sym
-                        {: yield FunctionDeclareBuilder.create(assembler.variants(), %sym.symbol%.pos).args(%args%); :}
+                        {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
                         ;
 
 

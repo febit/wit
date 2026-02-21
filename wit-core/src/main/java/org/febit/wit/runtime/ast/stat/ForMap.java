@@ -43,7 +43,7 @@ public final class ForMap implements Statement, Loopable {
     public Object execute(InternalContext context) {
         var iter = iter(context);
         if (iter.hasNext()) {
-            context.heap().onFrame(frame, () -> execute0(context, iter));
+            context.variables().onFrame(frame, () -> execute0(context, iter));
             return null;
         }
         if (elseBody != null) {
@@ -70,7 +70,7 @@ public final class ForMap implements Statement, Loopable {
         var keyIdx = this.keyIndex;
         var valIdx = this.valueIndex;
         var loop = context.loop();
-        var heap = context.heap();
+        var heap = context.variables();
         heap.set(iterIndex, iter);
         label:
         do {

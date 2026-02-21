@@ -18,5 +18,5 @@ public final class Token {
      * The parse state.
      */
     int state;
-    boolean isOnEdgeOfNewLine = false;
+    boolean isAtEdgeOfNewLine = false;
 }

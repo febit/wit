@@ -37,7 +37,7 @@ public final class ForMapNoLoops implements Statement {
         var iter = iter(context);
         if (iter.hasNext()) {
 
-            context.heap().onFrame(frame, () -> execute0(context, iter));
+            context.variables().onFrame(frame, () -> execute0(context, iter));
             return null;
         }
         if (elseBody != null) {
@@ -62,7 +62,7 @@ public final class ForMapNoLoops implements Statement {
         var stats = this.statements;
         var keyIdx = this.keyIndex;
         var valIdx = this.valueIndex;
-        var heap = context.heap();
+        var heap = context.variables();
         heap.set(iterIndex, iter);
         do {
             heap.set(

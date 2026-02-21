@@ -35,7 +35,7 @@ public final class ForInNoLoops implements Statement {
     public Object execute(InternalContext context) {
         Iter iter = iter(context);
         if (iter.hasNext()) {
-            context.heap().onFrame(frame, () -> execute0(context, iter));
+            context.variables().onFrame(frame, () -> execute0(context, iter));
             return null;
         }
         if (elseBody != null) {
@@ -59,7 +59,7 @@ public final class ForInNoLoops implements Statement {
     private void execute0(InternalContext context, Iter iter) {
         var stats = this.statements;
         var itemIdx = this.itemIndex;
-        var heap = context.heap();
+        var heap = context.variables();
         heap.set(iterIndex, iter);
         do {
             heap.set(itemIdx, iter.next());

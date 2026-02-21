@@ -47,11 +47,11 @@ public class JavaNativeUtils {
     ) {
         var methodMap = Arrays.stream(type.getMethods())
                 .filter(ClassUtils::isStatic)
-                .filter(m -> !(skipConflict && heaps.constant().has(m.getName())))
+                .filter(m -> !(skipConflict && heaps.constants().has(m.getName())))
                 .collect(Collectors.groupingBy(Method::getName));
 
         methodMap.forEach((name, methods) ->
-                heaps.constant().set(name, nativeFactory.createNativeMethodDeclare(methods))
+                heaps.constants().set(name, nativeFactory.createNativeMethodDeclare(methods))
         );
         return methodMap.size();
     }
@@ -73,12 +73,12 @@ public class JavaNativeUtils {
                 continue;
             }
             String name = field.getName();
-            if (ignoreIfConflict && heaps.constant().has(name)) {
+            if (ignoreIfConflict && heaps.constants().has(name)) {
                 continue;
             }
             ClassUtils.setAccessible(field);
             try {
-                heaps.constant().set(name, field.get(null));
+                heaps.constants().set(name, field.get(null));
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 throw new UncheckedException(e);
             }

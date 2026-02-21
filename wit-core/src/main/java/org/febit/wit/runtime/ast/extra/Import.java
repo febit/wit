@@ -39,7 +39,7 @@ public final class Import extends AbstractInclude {
     public Object execute(InternalContext context) {
         var results = mergeScript(context, true);
         if (exportAll) {
-            results.forEach(context.heap()::set);
+            results.forEach(context.variables()::set);
             return null;
         }
         if (this.targets != null) {

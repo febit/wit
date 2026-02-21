@@ -45,7 +45,7 @@ public class Assembler {
     @Getter
     private final Script script;
     @Getter
-    private final VariantManager variants;
+    private final VarLayout varLayout;
 
     public Assembler(Script script) {
         var wit = script.wit();
@@ -55,7 +55,7 @@ public class Assembler {
         this.templateTextFactory = wit.templateTextFactory();
         this.nativeFactory = wit.nativeFactory();
 
-        this.variants = new VariantManager(wit);
+        this.varLayout = new VarLayout(wit);
         this.labelIndexMap.put(null, 0);
         this.nextLabelIndex.set(1);
 
@@ -169,7 +169,7 @@ public class Assembler {
     }
 
     public ContextVar declareVarAndCreateContextValue(String name, Position position) {
-        return new ContextVar(variants.assignVar(name, position), position);
+        return new ContextVar(varLayout.assignVar(name, position), position);
     }
 
     public ContextVar[] declareVarAndCreateContextValues(List<String> names, Position position) {
@@ -181,12 +181,12 @@ public class Assembler {
     }
 
     public Expression createContextValue(int frameOffset, String name, Position position) {
-        var addr = variants.locate(name, frameOffset, !Feature.LOOSE_VAR.isEnabled(this.features), position);
+        var addr = varLayout.locate(name, frameOffset, !Feature.LOOSE_VAR.isEnabled(this.features), position);
         return Ast.readVar(addr, position);
     }
 
     public void assignConst(String name, Expression expr, Position position) {
-        variants.assignConst(name, AstUtils.evalConst(expr), position);
+        varLayout.assignConst(name, AstUtils.evalConst(expr), position);
     }
 
     public Expression createNativeStaticValue(ClassNameRope rope, Position position) {
@@ -261,7 +261,7 @@ public class Assembler {
 
     public Statement declareVar(String name, Position position) {
         //XXX: Should Check var used before init
-        variants.assignVar(name, position);
+        varLayout.assignVar(name, position);
         return NoopStatement.INSTANCE;
     }
 
@@ -273,8 +273,8 @@ public class Assembler {
         }
         return new ScriptAST(
                 statements,
-                this.variants.buildFrameIndexers(),
-                this.variants.frameSize(),
+                this.varLayout.buildFrameIndexers(),
+                this.varLayout.frameSize(),
                 this.lastSourceVersion
         );
     }

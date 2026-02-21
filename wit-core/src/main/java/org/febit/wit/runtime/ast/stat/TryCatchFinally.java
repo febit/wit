@@ -35,7 +35,7 @@ public class TryCatchFinally implements Statement, Loopable {
         try {
             body.execute(context);
         } catch (Exception e) {
-            context.heap().set(exceptionVarIndex, e);
+            context.variables().set(exceptionVarIndex, e);
             catchBody.execute(context);
         } finally {
             if (finallyBody != null) {

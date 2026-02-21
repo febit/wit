@@ -9,7 +9,7 @@ import org.febit.wit.Vars;
 import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.heap.GenricHeap;
-import org.febit.wit.runtime.heap.VariantHeap;
+import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
 
 @RequiredArgsConstructor
@@ -31,7 +31,7 @@ public final class ScriptAST {
             Vars inputs,
             @Nullable BreakpointHandler handler
     ) {
-        var heap = new VariantHeap(frameSize, indexers);
+        var heap = new VariableHeap(frameSize, indexers);
         inputs.sink(heap::set);
         var local = GenricHeap.local();
         var context = new InternalContext(script, out, inputs, heap, local, handler);
@@ -41,7 +41,7 @@ public final class ScriptAST {
     }
 
     public InternalContext execute(Script script, InternalContext context, Vars inputs) {
-        var heap = new VariantHeap(frameSize, indexers);
+        var heap = new VariableHeap(frameSize, indexers);
         inputs.sink(heap::set);
 
         var newContext = context.createPeerContext(script, heap, inputs);

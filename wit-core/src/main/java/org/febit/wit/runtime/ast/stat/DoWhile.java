@@ -31,7 +31,7 @@ public final class DoWhile implements Statement, Loopable {
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.heap().onFrame(frame, () -> execute0(context));
+        context.variables().onFrame(frame, () -> execute0(context));
         return null;
     }
 

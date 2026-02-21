@@ -21,10 +21,10 @@ public class ForMapBuilder extends BaseForInBuilder {
     public ForMapBuilder(
             String keyVarName,
             String valueVarName,
-            VariantManager variants,
+            VarLayout varLayout,
             Position position
     ) {
-        super(variants, position);
+        super(varLayout, position);
         this.keyVarName = keyVarName;
         this.valueVarName = valueVarName;
     }
@@ -32,8 +32,8 @@ public class ForMapBuilder extends BaseForInBuilder {
     @Override
     public final ForMapBuilder shiftFrame() {
         super.shiftFrame();
-        this.keyIndex = vars.assignVar(keyVarName, position);
-        this.valueIndex = vars.assignVar(valueVarName, position);
+        this.keyIndex = varLayout.assignVar(keyVarName, position);
+        this.valueIndex = varLayout.assignVar(valueVarName, position);
         return this;
     }
 

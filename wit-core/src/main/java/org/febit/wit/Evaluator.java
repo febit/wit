@@ -27,7 +27,7 @@ public class Evaluator {
     private final Script script;
 
     @Nullable
-    private Vars vars;
+    private Vars inputs;
 
     @Nullable
     private Charset charset;
@@ -50,7 +50,7 @@ public class Evaluator {
 
     public Context eval() {
         return script().eval(
-                nvl(vars, Vars::empty),
+                nvl(inputs, Vars::empty),
                 nvl(out, (Supplier<Out>) DiscardOut::get).get(),
                 breakpointHandler
         );

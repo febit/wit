@@ -9,6 +9,6 @@ public class TestSpiFlagModule implements WitModule {
     @Override
     public void apply(Wit wit) {
         var heaps = wit.staticHeaps();
-        heaps.constant().set("PLUGIN_SPI_FLAG", true);
+        heaps.constants().set("PLUGIN_SPI_FLAG", true);
     }
 }

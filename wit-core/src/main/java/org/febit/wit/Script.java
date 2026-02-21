@@ -26,15 +26,15 @@ public interface Script {
     /**
      * Eval script.
      *
-     * @param vars              vars
+     * @param inputs            input vars
      * @param out               out
      * @param breakpointHandler breakpoint handler, may be null
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
      */
-    Context eval(Vars vars, Out out, @Nullable BreakpointHandler breakpointHandler);
+    Context eval(Vars inputs, Out out, @Nullable BreakpointHandler breakpointHandler);
 
-    Context merge(InternalContext target, Vars vars);
+    Context merge(InternalContext target, Vars inputs);
 
     default Evaluator evaluator() {
         return Evaluator.of(this);
@@ -54,42 +54,42 @@ public interface Script {
     /**
      * Eval script.
      *
-     * @param vars   vars
+     * @param inputs input vars
      * @param output out
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
      * @throws ParseException          when unable to parse
      */
-    default Context eval(Vars vars, OutputStream output) {
+    default Context eval(Vars inputs, OutputStream output) {
         var out = wit().asOut(output);
-        return eval(vars, out, null);
+        return eval(inputs, out, null);
     }
 
     /**
      * Eval script.
      *
-     * @param vars   vars
+     * @param inputs input vars
      * @param writer writer
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
      * @throws ParseException          when unable to parse
      */
-    default Context eval(Vars vars, Writer writer) {
+    default Context eval(Vars inputs, Writer writer) {
         var out = wit().asOut(writer);
-        return eval(vars, out, null);
+        return eval(inputs, out, null);
     }
 
     /**
      * Eval script.
      *
-     * @param vars vars
+     * @param inputs input vars
      * @param out  out
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
      * @throws ParseException          when unable to parse
      */
-    default Context eval(Vars vars, Out out) {
-        return eval(vars, out, null);
+    default Context eval(Vars inputs, Out out) {
+        return eval(inputs, out, null);
     }
 
 }

@@ -6,7 +6,7 @@ import org.febit.wit.io.DiscardOut;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.runtime.heap.GenricHeap;
-import org.febit.wit.runtime.heap.VariantHeap;
+import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
@@ -25,7 +25,7 @@ public final class Function {
     private final Out defaultOut;
 
     public Function(Script container, FunctionDeclare functionDeclare) {
-        this(container, functionDeclare, DiscardOut.INSTANCE);
+        this(container, functionDeclare, DiscardOut.get());
     }
 
     public Function(
@@ -38,9 +38,9 @@ public final class Function {
     }
 
     private InternalContext createContext(Out out) {
-        var heap = VariantHeap.empty();
+        var variables = VariableHeap.empty();
         var local = GenricHeap.local();
-        return new InternalContext(script, out, Vars.empty(), heap, local, null);
+        return new InternalContext(script, out, Vars.empty(), variables, local, null);
     }
 
     private InternalContext createContext() {

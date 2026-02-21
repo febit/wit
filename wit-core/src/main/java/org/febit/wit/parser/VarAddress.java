@@ -5,7 +5,7 @@ import org.jspecify.annotations.Nullable;
 
 public record VarAddress(
         Kind kind,
-        int pageOffset,
+        int layerOffset,
         int index,
         @Nullable Heap heap,
         @Nullable String key,
@@ -14,7 +14,7 @@ public record VarAddress(
 
     public enum Kind {
         CONTEXT,
-        UPSTREAM,
+        CONTEXT_LAYER,
         CONST,
         STATIC_VAR,
         ;
@@ -32,8 +32,8 @@ public record VarAddress(
         return new VarAddress(Kind.CONST, -1, -1, null, null, value);
     }
 
-    static VarAddress ofUpstream(int pageOffset, int index) {
-        return new VarAddress(Kind.UPSTREAM, pageOffset, index, null, null, null);
+    static VarAddress ofUpstream(int layerOffset, int index) {
+        return new VarAddress(Kind.CONTEXT_LAYER, layerOffset, index, null, null, null);
     }
 
 }

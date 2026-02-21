@@ -22,7 +22,7 @@ import org.febit.wit.runtime.ast.FrameIndexer;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.runtime.heap.Heap;
-import org.febit.wit.runtime.heap.VariantHeap;
+import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
@@ -61,7 +61,7 @@ public final class InternalContext implements Context {
     private final Vars inputs;
 
     @lombok.Getter
-    private final VariantHeap heap;
+    private final VariableHeap variables;
 
     @lombok.Getter
     private final Heap local;
@@ -76,14 +76,14 @@ public final class InternalContext implements Context {
             Script script,
             Out out,
             Vars inputs,
-            VariantHeap heap,
+            VariableHeap variables,
             Heap local,
             @Nullable BreakpointHandler breakpointHandler
     ) {
         this.script = script;
         this.inputs = inputs;
         this.out = out;
-        this.heap = heap;
+        this.variables = variables;
         this.local = local;
 
         var wit = script.wit();
@@ -92,7 +92,7 @@ public final class InternalContext implements Context {
 
         this.breakpointHandler = breakpointHandler;
         //import params
-        inputs.sink(heap::set);
+        inputs.sink(variables::set);
     }
 
     public void handleBreakpoint(@Nullable Object label, Statement statement, @Nullable Object result) {
@@ -101,10 +101,10 @@ public final class InternalContext implements Context {
         }
     }
 
-    public Context mergeScript(String refer, String path, Vars vars)
+    public Context mergeScript(String refer, String path, Vars inputs)
             throws SourceNotFoundException, ScriptEvaluateException, ParseException {
         var tmpl = this.script.wit().script(refer, path);
-        return tmpl.merge(this, vars);
+        return tmpl.merge(this, inputs);
     }
 
     public Object[] visit(Expression[] exprs) {
@@ -142,7 +142,7 @@ public final class InternalContext implements Context {
      * @return a new sub context
      */
     public InternalContext createSubContext(InternalContext callerContext, FrameIndexer[] indexers, int frameSize) {
-        var subHeap = this.heap().shift(frameSize, indexers);
+        var subHeap = this.variables().shift(frameSize, indexers);
         return new InternalContext(
                 script,
                 callerContext.out,
@@ -160,7 +160,7 @@ public final class InternalContext implements Context {
      *
      * @return a new peer context
      */
-    public InternalContext createPeerContext(Script script, VariantHeap heap, Vars inputs) {
+    public InternalContext createPeerContext(Script script, VariableHeap heap, Vars inputs) {
         return new InternalContext(
                 script, out(), inputs,
                 heap, local(), breakpointHandler
@@ -256,7 +256,7 @@ public final class InternalContext implements Context {
 
     @Override
     public Function exportFunction(String name) throws NotFunctionException {
-        var obj = this.heap().get(name, false);
+        var obj = this.variables().get(name, false);
         if (!(obj instanceof FunctionDeclare func)) {
             throw new NotFunctionException(obj);
         }

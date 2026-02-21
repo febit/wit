@@ -181,8 +181,8 @@ public class WitBuilder {
             var tmpl = fixed.get(i);
             log.info("[INIT] applying init scripts [{}/{}]: {}", i + 1, total, tmpl);
             wit.script(tmpl).eval(acceptor -> {
-                acceptor.set("GLOBAL", staticHeaps.variant());
-                acceptor.set("CONST", staticHeaps.constant());
+                acceptor.set("GLOBAL", staticHeaps.variables());
+                acceptor.set("CONST", staticHeaps.constants());
             }, DiscardOut.get());
         }
     }

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Accessors(fluent = true)
-public class VariantManager {
+public class VarLayout {
 
     /**
      * All frames.
@@ -33,7 +33,7 @@ public class VariantManager {
     private final Stack<Frame> frameView = new Stack<>();
 
     /**
-     * Frame size stack of each page, used to restore frame size when unshift page.
+     * Frame size stack of each layer, used to restore frame size when unshift layer.
      */
     private final Stack<Integer> frameSizeStack = new Stack<>();
 
@@ -43,9 +43,9 @@ public class VariantManager {
 
     @Getter
     private int frameSize;
-    private int pageCursor;
+    private int layerCursor;
 
-    VariantManager(Wit wit) {
+    VarLayout(Wit wit) {
         this.staticHeaps = wit.staticHeaps();
         this.root = shiftFrame(-1);
         this.root.assignVarsIfAbsent(wit.predefinedVars());
@@ -66,16 +66,16 @@ public class VariantManager {
         return frameView.pop().seq;
     }
 
-    public void shiftPage() {
+    public void shiftLayer() {
         frameSizeStack.push(frameSize);
         frameSize = 0;
-        pageCursor++;
+        layerCursor++;
         shiftFrame();
     }
 
-    public void unshiftPage() {
+    public void unshiftLayer() {
         frameSize = frameSizeStack.pop();
-        pageCursor--;
+        layerCursor--;
         unshiftFrame();
     }
 
@@ -84,7 +84,7 @@ public class VariantManager {
         var result = new FrameIndexer[size];
         int i = 0;
         for (; i < size; i++) {
-            if (this.frames.get(i).pageSeq == this.pageCursor) {
+            if (this.frames.get(i).layerSeq == this.layerCursor) {
                 break;
             }
         }
@@ -119,25 +119,25 @@ public class VariantManager {
         }
 
         // static var/const
-        if (staticHeaps.variant().has(name)) {
-            return VarAddress.ofHeap(staticHeaps.variant(), name);
+        if (staticHeaps.variables().has(name)) {
+            return VarAddress.ofHeap(staticHeaps.variables(), name);
         }
-        if (staticHeaps.constant().has(name)) {
-            return VarAddress.ofConst(staticHeaps.constant().get(name));
+        if (staticHeaps.constants().has(name)) {
+            return VarAddress.ofConst(staticHeaps.constants().get(name));
         }
 
         //failed
         if (force) {
-            throw new ParseException("Variant not found: " + name, position);
+            throw new ParseException("Variable not found: " + name, position);
         }
         //assign at root
-        return contextAddress(root.pageSeq, root.assignVar(name, position));
+        return contextAddress(root.layerSeq, root.assignVar(name, position));
     }
 
-    private VarAddress contextAddress(int pageId, int index) {
-        return pageId == this.pageCursor
+    private VarAddress contextAddress(int layerSeq, int index) {
+        return layerSeq == this.layerCursor
                 ? VarAddress.ofContext(index)
-                : VarAddress.ofUpstream(this.pageCursor - pageId - 1, index);
+                : VarAddress.ofUpstream(this.layerCursor - layerSeq - 1, index);
     }
 
     private static FrameIndexer createFrameIndexer(@Nullable FrameIndexer up, Map<String, Integer> map) {
@@ -163,7 +163,7 @@ public class VariantManager {
         final int seq;
         final int upSeq;
 
-        final int pageSeq;
+        final int layerSeq;
 
         final Map<String, Integer> table = new HashMap<>(16);
         final Map<String, @Nullable Object> constMap = new HashMap<>(16);
@@ -171,7 +171,7 @@ public class VariantManager {
         Frame(int seq, int upSeq) {
             this.seq = seq;
             this.upSeq = upSeq;
-            this.pageSeq = VariantManager.this.pageCursor;
+            this.layerSeq = VarLayout.this.layerCursor;
         }
 
         @Nullable
@@ -183,18 +183,18 @@ public class VariantManager {
             if (index < 0) {
                 return VarAddress.ofConst(this.constMap.get(name));
             }
-            return contextAddress(this.pageSeq, index);
+            return contextAddress(this.layerSeq, index);
         }
 
         void shouldNotAssigned(String name, Position position) {
             if (this.table.containsKey(name)) {
-                throw new ParseException("Variant already exists: " + name, position);
+                throw new ParseException("Variable already exists: " + name, position);
             }
         }
 
         Integer assignVar(String name, Position position) {
             shouldNotAssigned(name, position);
-            int index = VariantManager.this.frameSize++;
+            int index = VarLayout.this.frameSize++;
             this.table.put(name, index);
             return index;
         }
