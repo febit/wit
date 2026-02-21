@@ -13,7 +13,6 @@ import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.extern.lib.tld.TldModule;
 import org.febit.wit.loader.Loader;
 import org.febit.wit.loader.Loaders;
-import org.febit.wit.loader.impl.StringLoader;
 import org.febit.wit.parser.NativeFactory;
 import org.febit.wit.parser.security.RuleBasedNativeSecurity;
 import org.febit.wit.runtime.Source;
@@ -107,11 +106,11 @@ public class EngineManager {
             .build();
 
     static Loader loader() {
-        var code = StringLoader.builder()
+        var code = Loaders.string()
                 .beginWith(Source.BeginWith.SCRIPT)
                 .build();
 
-        var string = StringLoader.builder()
+        var string = Loaders.string()
                 .beginWith(Source.BeginWith.TEMPLATE)
                 .build();
 

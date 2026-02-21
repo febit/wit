@@ -9,6 +9,7 @@ import org.febit.wit.loader.impl.DispatcherLoader;
 import org.febit.wit.loader.impl.FileSystemLoader;
 import org.febit.wit.loader.impl.NoopLoader;
 import org.febit.wit.loader.impl.SecurityLoaderDecorator;
+import org.febit.wit.loader.impl.StringLoader;
 import org.febit.wit.runtime.Source;
 import org.jspecify.annotations.Nullable;
 
@@ -26,6 +27,10 @@ public class Loaders {
 
     public static DispatcherLoader.Builder dispatcher() {
         return DispatcherLoader.builder();
+    }
+
+    public static StringLoader.Builder string() {
+        return StringLoader.builder();
     }
 
     public static SecurityLoaderDecorator security(Loader delegate, List<String> allows) {

@@ -29,12 +29,12 @@ public final class ScriptAST {
             Script script,
             Out out,
             Vars inputs,
-            @Nullable BreakpointHandler listener
+            @Nullable BreakpointHandler handler
     ) {
         var heap = new VariantHeap(frameSize, indexers);
         inputs.sink(heap::set);
         var local = GenricHeap.local();
-        var context = new InternalContext(script, out, inputs, heap, local, listener);
+        var context = new InternalContext(script, out, inputs, heap, local, handler);
         context.visit(this.statements);
         //assert context.indexer = 0
         return context;
