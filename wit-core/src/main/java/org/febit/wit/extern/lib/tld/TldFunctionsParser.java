@@ -66,7 +66,7 @@ public class TldFunctionsParser {
     private static String requireChildValue(Element parent, String name) throws IOException {
         var list = parent.getElementsByTagName(name);
         if (list.getLength() == 0) {
-            throw new IOException("Not found child element named: " + name);
+            throw new IOException("No such child element named: " + name);
         }
         return list.item(0)
                 .getFirstChild()

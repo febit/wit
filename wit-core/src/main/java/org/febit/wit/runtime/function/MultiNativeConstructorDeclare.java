@@ -21,7 +21,7 @@ public class MultiNativeConstructorDeclare implements FunctionDeclare {
     public Object apply(InternalContext context, @Nullable Object @Nullable [] args) {
         var constructor = JavaNativeUtils.getMatchConstructor(constructors, args);
         if (constructor == null) {
-            throw new ScriptEvaluateException("not found matching native constructor");
+            throw new ScriptEvaluateException("no such native constructor");
         }
         return JavaNativeUtils.invokeConstructor(constructor, args);
     }

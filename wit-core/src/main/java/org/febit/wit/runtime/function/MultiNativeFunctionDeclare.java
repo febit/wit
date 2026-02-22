@@ -37,7 +37,7 @@ public class MultiNativeFunctionDeclare implements FunctionDeclare {
             method = JavaNativeUtils.getMatchMethod(methods, Arrays.copyOfRange(args, 1, args.length));
         }
         if (method == null) {
-            throw new ScriptEvaluateException("not found match native method");
+            throw new ScriptEvaluateException("no such native method");
         }
         return JavaNativeUtils.invokeMethod(method, args);
     }

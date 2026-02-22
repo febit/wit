@@ -6,9 +6,9 @@ import org.apache.commons.lang3.Strings;
 import org.febit.wit.Script;
 import org.febit.wit.TestWit;
 import org.febit.wit.Vars;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Statement;
@@ -81,7 +81,7 @@ class AutoTest {
         Script script;
         try {
             script = TestWit.WIT().script(path);
-        } catch (SourceNotFoundException e) {
+        } catch (NoSuchSourceException e) {
             throw new UncheckedIOException(e);
         }
         var out = TestWit.WIT().asOut(output);

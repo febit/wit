@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.io.WriterOut;
 import org.febit.wit.io.codec.CodecFactory;
@@ -75,12 +75,12 @@ public class Wit {
      * @param refer    script's refer path
      * @param relative script's relative path
      * @return Script
-     * @throws SourceNotFoundException if source not found
+     * @throws NoSuchSourceException if source not found
      */
-    public Script script(@Nullable String refer, String relative) throws SourceNotFoundException {
+    public Script script(@Nullable String refer, String relative) throws NoSuchSourceException {
         var path = this.loader.sibling(refer, relative);
         if (path == null) {
-            throw new SourceNotFoundException(
+            throw new NoSuchSourceException(
                     "Illegal script path: sibling of "
                             + refer + " and " + relative
             );
@@ -93,9 +93,9 @@ public class Wit {
      *
      * @param path script's path
      * @return Script
-     * @throws SourceNotFoundException if source not found
+     * @throws NoSuchSourceException if source not found
      */
-    public Script script(String path) throws SourceNotFoundException {
+    public Script script(String path) throws NoSuchSourceException {
         var script = this.cachedScripts.get(path);
         if (script != null) {
             return script;
@@ -119,12 +119,12 @@ public class Wit {
         return new OutputStreamOut(output, nvl(charset, this.charset), codecFactory);
     }
 
-    private Script loadScriptIfAbsent(String path) throws SourceNotFoundException {
+    private Script loadScriptIfAbsent(String path) throws NoSuchSourceException {
         var myLoader = this.loader;
         var normalized = myLoader.normalize(path);
         if (normalized == null) {
             //if normalized-path is null means not found source.
-            throw new SourceNotFoundException("Illegal source path: " + path);
+            throw new NoSuchSourceException("Illegal source path: " + path);
         }
         var script = this.cachedScripts.get(normalized);
         if (script != null) {

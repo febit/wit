@@ -21,7 +21,7 @@ public class MixedMultiNativeFunctionDeclare implements FunctionDeclare {
     public Object apply(InternalContext context, @Nullable Object @Nullable [] args) {
         Method method = JavaNativeUtils.getMatchMethod(methods, args, true);
         if (method == null) {
-            throw new ScriptEvaluateException("not found match native method");
+            throw new ScriptEvaluateException("no such native method");
         }
         return JavaNativeUtils.invokeMethod(method, context, args);
     }

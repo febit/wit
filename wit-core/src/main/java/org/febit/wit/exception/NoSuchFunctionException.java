@@ -4,9 +4,9 @@ package org.febit.wit.exception;
 import org.febit.wit.util.ClassUtils;
 import org.jspecify.annotations.Nullable;
 
-public class NotFunctionException extends RuntimeException {
+public class NoSuchFunctionException extends RuntimeException {
 
-    public NotFunctionException(@Nullable Object obj) {
-        super("Not function: " + ClassUtils.name(obj));
+    public NoSuchFunctionException(@Nullable Object obj) {
+        super("No such function: " + ClassUtils.name(obj));
     }
 }

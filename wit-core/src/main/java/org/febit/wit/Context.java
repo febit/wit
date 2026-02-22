@@ -1,7 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit;
 
-import org.febit.wit.exception.NotFunctionException;
+import org.febit.wit.exception.NoSuchFunctionException;
 import org.febit.wit.runtime.heap.Heap;
 
 /**
@@ -17,6 +17,6 @@ public interface Context {
 
     Heap local();
 
-    Function exportFunction(String name) throws NotFunctionException;
+    Function exportFunction(String name) throws NoSuchFunctionException;
 
 }

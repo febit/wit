@@ -25,7 +25,7 @@ public class SecurityLoaderDecorator implements LoaderDecorator {
                 return this.delegate.get(path);
             }
         }
-        return new NotExistSource(path, "Access denied.");
+        return new NoSuchSource(path, "Access denied.");
     }
 
 }

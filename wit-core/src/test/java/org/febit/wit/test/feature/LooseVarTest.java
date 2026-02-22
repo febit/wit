@@ -3,7 +3,7 @@ package org.febit.wit.test.feature;
 
 import org.febit.wit.Feature;
 import org.febit.wit.TestWit;
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.spy;
@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 class LooseVarTest {
 
     @Test
-    void test() throws SourceNotFoundException {
+    void test() throws NoSuchSourceException {
 
         var features = Feature.LOOSE_VAR.enable(Feature.collectFeatureDefaults());
 

@@ -11,10 +11,7 @@ public class NoopLoader implements Loader {
 
     @Override
     public Source get(String path) {
-        return new NotExistSource(
-                path,
-                "Source not found: " + path
-        );
+        return new NoSuchSource(path, "No such source: " + path);
     }
 
     @Override

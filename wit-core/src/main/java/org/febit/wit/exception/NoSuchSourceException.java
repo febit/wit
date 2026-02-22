@@ -3,9 +3,9 @@ package org.febit.wit.exception;
 
 import java.io.IOException;
 
-public class SourceNotFoundException extends IOException {
+public class NoSuchSourceException extends IOException {
 
-    public SourceNotFoundException(String message) {
+    public NoSuchSourceException(String message) {
         super(message);
     }
 }

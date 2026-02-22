@@ -4,8 +4,8 @@ package org.febit.wit.test.feature;
 import org.febit.wit.Context;
 import org.febit.wit.Function;
 import org.febit.wit.TestWit;
-import org.febit.wit.exception.NotFunctionException;
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchFunctionException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FunctionExportTest {
 
     @Test
-    void test() throws SourceNotFoundException {
+    void test() throws NoSuchSourceException {
 
         Context context = TestWit.script("/functionExportTest.wit").eval();
 
@@ -70,14 +70,14 @@ class FunctionExportTest {
         assertEquals("hello function", writer.toString());
 
         // Exception cases:
-        NotFunctionException exception;
+        NoSuchFunctionException exception;
 
-        exception = assertThrows(NotFunctionException.class,
-                () -> context.exportFunction("notExistFunction"));
-        assertEquals("Not function: null", exception.getMessage());
+        exception = assertThrows(NoSuchFunctionException.class,
+                () -> context.exportFunction("noSuchFunction"));
+        assertEquals("No such function: null", exception.getMessage());
 
-        exception = assertThrows(NotFunctionException.class,
+        exception = assertThrows(NoSuchFunctionException.class,
                 () -> context.exportFunction("count"));
-        assertEquals("Not function: java.lang.Integer", exception.getMessage());
+        assertEquals("No such function: java.lang.Integer", exception.getMessage());
     }
 }

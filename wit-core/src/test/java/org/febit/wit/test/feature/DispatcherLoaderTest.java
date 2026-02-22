@@ -2,13 +2,13 @@
 package org.febit.wit.test.feature;
 
 import org.febit.wit.TestWit;
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
 
 class DispatcherLoaderTest {
 
     @Test
-    void test() throws SourceNotFoundException {
+    void test() throws NoSuchSourceException {
         TestWit.script("lib:/lib.wit").eval();
         TestWit.script("lib:sub:/lib-sub.wit").eval();
     }

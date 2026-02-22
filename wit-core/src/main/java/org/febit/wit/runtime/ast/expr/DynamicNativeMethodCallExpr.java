@@ -49,7 +49,7 @@ public final class DynamicNativeMethodCallExpr implements Expression {
         }
         var methods = ClassUtils.getPublicMemberMethods(me.getClass(), func);
         if (methods.length == 0) {
-            throw new ScriptEvaluateException("not found match native method: " + me.getClass() + '#' + func);
+            throw new ScriptEvaluateException("no such native method: " + me.getClass() + '#' + func);
         }
         return methods;
     }
@@ -58,7 +58,7 @@ public final class DynamicNativeMethodCallExpr implements Expression {
     private Object invokeProperMethod(Object me, Method[] methods, Object[] params) {
         var method = JavaNativeUtils.getMatchMethod(methods, params);
         if (method == null) {
-            throw new ScriptEvaluateException("not found match native method: " + me.getClass() + '#' + func);
+            throw new ScriptEvaluateException("no such native method: " + me.getClass() + '#' + func);
         }
         return JavaNativeUtils.invokeMethod(method, me, params);
     }

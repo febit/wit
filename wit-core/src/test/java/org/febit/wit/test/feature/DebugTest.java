@@ -3,7 +3,7 @@ package org.febit.wit.test.feature;
 
 import org.febit.wit.Script;
 import org.febit.wit.TestWit;
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -17,7 +17,7 @@ class DebugTest {
     private int pointCount = 0;
 
     @Test
-    void test() throws SourceNotFoundException {
+    void test() throws NoSuchSourceException {
         Script script = TestWit.script("/debug.wit");
 
         script.eval();

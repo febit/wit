@@ -17,7 +17,7 @@ public class AmbiguousMethodException extends ScriptEvaluateException {
 
     protected static <T extends Member> String buildMessage(T[] methods, @Nullable Class<?>[] argTypes) {
         var buf = new StringBuilder();
-        buf.append("Ambiguous method for [");
+        buf.append("Ambiguous method for args [");
         for (int i = 0; i < argTypes.length; i++) {
             var argType = argTypes[i];
             if (i != 0) {
@@ -26,12 +26,12 @@ public class AmbiguousMethodException extends ScriptEvaluateException {
             buf.append(argType == null ? "null"
                     : argType.getName());
         }
-        buf.append("] with ");
+        buf.append("] in methods [");
         for (int i = 0; i < methods.length; i++) {
             if (i != 0) {
                 buf.append(',');
             }
-            buf.append(methods[i].toString());
+            buf.append(methods[i]);
         }
         return buf.toString();
     }

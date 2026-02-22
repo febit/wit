@@ -176,7 +176,7 @@ public class NativeFactory {
     public FunctionDeclare createNativeConstructorDeclare(Class<?> clazz) {
         var constructors = clazz.getConstructors();
         if (constructors.length == 0) {
-            throw new ScriptEvaluateException("Not found public constructor for class： " + clazz.getName());
+            throw new ScriptEvaluateException("No such public constructor for class: " + clazz.getName());
         }
         if (constructors.length == 1) {
             return new NativeConstructorDeclare(constructors[0]);
@@ -188,7 +188,7 @@ public class NativeFactory {
     public FunctionDeclare createNativeMethodDeclare(Class<?> clazz, String methodName) {
         var methods = ClassUtils.getPublicMethods(clazz, methodName);
         if (methods.length == 0) {
-            throw new ScriptEvaluateException("Method not found： " + clazz.getName() + '#' + methodName);
+            throw new ScriptEvaluateException("No such method: " + clazz.getName() + '#' + methodName);
         }
         if (methods.length == 1) {
             return createNativeMethodDeclare(methods[0]);

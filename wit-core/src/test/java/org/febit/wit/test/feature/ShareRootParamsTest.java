@@ -4,7 +4,7 @@ package org.febit.wit.test.feature;
 import org.febit.wit.Feature;
 import org.febit.wit.TestWit;
 import org.febit.wit.Vars;
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.io.DiscardOut;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 class ShareRootParamsTest {
 
     @Test
-    void test() throws SourceNotFoundException {
+    void test() throws NoSuchSourceException {
         var wit = spy(TestWit.WIT());
         when(wit.isEnabled(Feature.SHARE_ROOT_PARAMS))
                 .thenReturn(true);

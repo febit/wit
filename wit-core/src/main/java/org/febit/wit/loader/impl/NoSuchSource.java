@@ -1,13 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loader.impl;
 
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.runtime.Source;
 
 import java.io.IOException;
 import java.io.Reader;
 
-public record NotExistSource(
+public record NoSuchSource(
         String path,
         String message
 ) implements Source {
@@ -19,7 +19,7 @@ public record NotExistSource(
 
     @Override
     public Reader openReader() throws IOException {
-        throw new SourceNotFoundException(message);
+        throw new NoSuchSourceException(message);
     }
 
     @Override

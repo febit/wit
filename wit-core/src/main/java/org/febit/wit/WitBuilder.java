@@ -1,7 +1,7 @@
 package org.febit.wit;
 
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.io.DiscardOut;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.DefaultCodecFactory;
@@ -157,13 +157,13 @@ public class WitBuilder {
         }
         try {
             initScripts(wit, initScripts);
-        } catch (SourceNotFoundException e) {
+        } catch (NoSuchSourceException e) {
             throw new UncheckedIOException(e.getMessage(), e);
         }
         return wit;
     }
 
-    private static void initScripts(Wit wit, List<String> scripts) throws SourceNotFoundException {
+    private static void initScripts(Wit wit, List<String> scripts) throws NoSuchSourceException {
         var fixed = scripts.stream()
                 .distinct()
                 .toList();

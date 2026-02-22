@@ -9,10 +9,10 @@ import org.febit.wit.Out;
 import org.febit.wit.Script;
 import org.febit.wit.Vars;
 import org.febit.wit.Wit;
-import org.febit.wit.exception.NotFunctionException;
+import org.febit.wit.exception.NoSuchFunctionException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.exception.SourceNotFoundException;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.Render;
@@ -102,7 +102,7 @@ public final class InternalContext implements Context {
     }
 
     public Context mergeScript(String refer, String path, Vars inputs)
-            throws SourceNotFoundException, ScriptEvaluateException, ParseException {
+            throws NoSuchSourceException, ScriptEvaluateException, ParseException {
         var tmpl = this.script.wit().script(refer, path);
         return tmpl.merge(this, inputs);
     }
@@ -255,10 +255,10 @@ public final class InternalContext implements Context {
     }
 
     @Override
-    public Function exportFunction(String name) throws NotFunctionException {
+    public Function exportFunction(String name) throws NoSuchFunctionException {
         var obj = this.variables().get(name, false);
         if (!(obj instanceof FunctionDeclare func)) {
-            throw new NotFunctionException(obj);
+            throw new NoSuchFunctionException(obj);
         }
         return new Function(this.script, func, this.out.charset(), this.out.preferBytes());
     }

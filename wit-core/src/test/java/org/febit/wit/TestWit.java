@@ -4,7 +4,7 @@ package org.febit.wit;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.extern.lib.cache.CachingModule;
 import org.febit.wit.extern.lib.cache.impl.SimpleCache;
 import org.febit.wit.extern.lib.context.GlobalContextRegister;
@@ -147,7 +147,7 @@ public class TestWit {
                 .build();
     }
 
-    public static Script script(String name) throws SourceNotFoundException {
+    public static Script script(String name) throws NoSuchSourceException {
         return WIT().script(name);
     }
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.loader.impl;
 
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.runtime.Source;
 import org.febit.wit.util.ClassUtils;
 
@@ -26,7 +26,7 @@ public record ClasspathSource(
         var in = ClassUtils.getDefaultClassLoader()
                 .getResourceAsStream(path);
         if (in == null) {
-            throw new SourceNotFoundException("Source Not Found: " + path);
+            throw new NoSuchSourceException("No such resource: " + path);
         }
         return new InputStreamReader(in, charset);
     }

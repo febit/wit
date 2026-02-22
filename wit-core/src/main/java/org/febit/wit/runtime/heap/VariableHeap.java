@@ -101,7 +101,7 @@ public class VariableHeap implements Heap {
             return this.table[idx];
         }
         if (strict) {
-            throw new ScriptEvaluateException("Not found variable named:" + name);
+            throw new ScriptEvaluateException("No such variable: " + name);
         }
         return null;
     }

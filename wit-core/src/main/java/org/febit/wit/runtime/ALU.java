@@ -3,7 +3,6 @@ package org.febit.wit.runtime;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.CollectionUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -639,7 +638,7 @@ public class ALU {
         if (val instanceof Character c) {
             return Integer.valueOf(c);
         }
-        throw new ScriptEvaluateException("Number is required, not found: " + ClassUtils.name(val));
+        throw new ScriptEvaluateException("value is not a number: " + toTypeString(val));
     }
 
     private static void requireNonNull(@Nullable Object obj) {

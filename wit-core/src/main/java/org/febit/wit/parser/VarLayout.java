@@ -128,7 +128,7 @@ public class VarLayout {
 
         //failed
         if (force) {
-            throw new ParseException("Variable not found: " + name, position);
+            throw new ParseException("No such variable: " + name, position);
         }
         //assign at root
         return contextAddress(root.layerSeq, root.assignVar(name, position));

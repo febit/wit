@@ -3,7 +3,7 @@ package org.febit.wit.test.feature;
 
 import org.febit.wit.TestWit;
 import org.febit.wit.Vars;
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class StringLoaderTest {
 
     @Test
-    void test() throws SourceNotFoundException {
+    void test() throws NoSuchSourceException {
         var writer = new StringWriter();
 
         TestWit.script("string:<% echo \"Hello Wit！\"; %>")
@@ -22,7 +22,7 @@ class StringLoaderTest {
     }
 
     @Test
-    void testCodeFirst() throws SourceNotFoundException {
+    void testCodeFirst() throws NoSuchSourceException {
         var writer = new StringWriter();
 
         TestWit.script("code: echo \"Hello Wit！\";")

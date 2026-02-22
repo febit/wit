@@ -2,7 +2,7 @@
 package org.febit.wit.extern.servlet;
 
 import jakarta.servlet.ServletContext;
-import org.febit.wit.exception.SourceNotFoundException;
+import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.runtime.Source;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public record ServletContextSource(
         if (in != null) {
             return new InputStreamReader(in, charset);
         }
-        throw new SourceNotFoundException("Source Not Found: " + path);
+        throw new NoSuchSourceException("No such resource: " + path);
     }
 
     @Override
