@@ -178,9 +178,9 @@ public class WitBuilder {
         var staticHeaps = wit.staticHeaps();
 
         for (int i = 0; i < total; i++) {
-            var tmpl = fixed.get(i);
-            log.info("[INIT] applying init scripts [{}/{}]: {}", i + 1, total, tmpl);
-            wit.script(tmpl).eval(acceptor -> {
+            var path = fixed.get(i);
+            log.info("[INIT] applying init scripts [{}/{}]: {}", i + 1, total, path);
+            wit.script(path).eval(acceptor -> {
                 acceptor.set("GLOBAL", staticHeaps.variables());
                 acceptor.set("CONST", staticHeaps.constants());
             }, DiscardOut.get());

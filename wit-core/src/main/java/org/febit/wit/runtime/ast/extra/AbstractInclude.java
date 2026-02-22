@@ -50,11 +50,9 @@ public abstract class AbstractInclude implements Statement {
             throw new ScriptEvaluateException("Script name should not be null.", path);
         }
         try {
-            var newContext = context.mergeScript(
-                    refer,
-                    String.valueOf(scriptPath),
-                    prepareParams(context)
-            );
+            Vars inputs = prepareParams(context);
+            var script = context.script().wit().script(refer, String.valueOf(scriptPath));
+            var newContext = script.merge(context, inputs);
             if (export) {
                 var result = new HashMap<String, @Nullable Object>();
                 newContext.variables().exportTo(result);

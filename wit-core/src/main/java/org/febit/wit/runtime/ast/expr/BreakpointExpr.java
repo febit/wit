@@ -16,7 +16,10 @@ public record BreakpointExpr(
     @Nullable
     public Object execute(InternalContext context) {
         Object result = supervised.execute(context);
-        context.handleBreakpoint(label, this, result);
+        var handler = context.breakpointHandler();
+        if (handler != null) {
+            handler.handle(label, context, this, result);
+        }
         return result;
     }
 

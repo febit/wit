@@ -31,22 +31,28 @@ public final class ScriptAST {
             Vars inputs,
             @Nullable BreakpointHandler handler
     ) {
-        var heap = new VariableHeap(frameSize, indexers);
-        inputs.sink(heap::set);
+        var variables = new VariableHeap(frameSize, indexers);
+        inputs.sink(variables::set);
+
         var local = GenricHeap.local();
-        var context = new InternalContext(script, out, inputs, heap, local, handler);
+        var context = new InternalContext(script, variables, inputs, out, local, handler);
         context.visit(this.statements);
-        //assert context.indexer = 0
+        // assert context.indexer = 0
         return context;
     }
 
     public InternalContext execute(Script script, InternalContext context, Vars inputs) {
-        var heap = new VariableHeap(frameSize, indexers);
-        inputs.sink(heap::set);
-
-        var newContext = context.createPeerContext(script, heap, inputs);
+        var variables = new VariableHeap(frameSize, indexers);
+        var newContext = new InternalContext(
+                script,
+                variables,
+                inputs,
+                context.out(),
+                context.local(),
+                context.breakpointHandler()
+        );
         newContext.visit(this.statements);
-        //assert context.indexer = 0
+        // assert context.indexer = 0
         return newContext;
     }
 

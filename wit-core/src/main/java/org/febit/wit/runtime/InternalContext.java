@@ -10,15 +10,12 @@ import org.febit.wit.Script;
 import org.febit.wit.Vars;
 import org.febit.wit.Wit;
 import org.febit.wit.exception.NoSuchFunctionException;
-import org.febit.wit.exception.NoSuchSourceException;
-import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.Render;
 import org.febit.wit.runtime.accessor.Setter;
 import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.FrameIndexer;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.runtime.heap.Heap;
@@ -74,37 +71,32 @@ public final class InternalContext implements Context {
 
     public InternalContext(
             Script script,
-            Out out,
-            Vars inputs,
             VariableHeap variables,
+            Vars inputs,
+            Out out,
             Heap local,
             @Nullable BreakpointHandler breakpointHandler
     ) {
         this.script = script;
+        this.variables = variables;
         this.inputs = inputs;
         this.out = out;
-        this.variables = variables;
         this.local = local;
+        this.breakpointHandler = breakpointHandler;
 
         var wit = script.wit();
         this.features = wit.features();
         this.accessors = wit.accessors();
 
-        this.breakpointHandler = breakpointHandler;
-        //import params
         inputs.sink(variables::set);
     }
 
-    public void handleBreakpoint(@Nullable Object label, Statement statement, @Nullable Object result) {
-        if (this.breakpointHandler != null) {
-            this.breakpointHandler.handle(label, this, statement, result);
-        }
+    public boolean isEnabled(Feature feature) {
+        return feature.isEnabled(this.features);
     }
 
-    public Context mergeScript(String refer, String path, Vars inputs)
-            throws NoSuchSourceException, ScriptEvaluateException, ParseException {
-        var tmpl = this.script.wit().script(refer, path);
-        return tmpl.merge(this, inputs);
+    public Wit wit() {
+        return this.script.wit();
     }
 
     public Object[] visit(Expression[] exprs) {
@@ -131,40 +123,6 @@ public final class InternalContext implements Context {
         while (i < len && lp.isNoop()) {
             stats[i++].execute(this);
         }
-    }
-
-    /**
-     * Create a sub-context used by function call.
-     *
-     * @param callerContext local context
-     * @param indexers      indexers
-     * @param frameSize     var size
-     * @return a new sub context
-     */
-    public InternalContext createSubContext(InternalContext callerContext, FrameIndexer[] indexers, int frameSize) {
-        var subHeap = this.variables().shift(frameSize, indexers);
-        return new InternalContext(
-                script,
-                callerContext.out,
-                Vars.empty(),
-                subHeap,
-                callerContext.local(),
-                breakpointHandler
-        );
-    }
-
-    /**
-     * Create a peer-context used by include/import.
-     * <p>
-     * Only share locals and out
-     *
-     * @return a new peer context
-     */
-    public InternalContext createPeerContext(Script script, VariableHeap heap, Vars inputs) {
-        return new InternalContext(
-                script, out(), inputs,
-                heap, local(), breakpointHandler
-        );
     }
 
     /**
@@ -208,10 +166,6 @@ public final class InternalContext implements Context {
             return null;
         }
         throw new ScriptEvaluateException("Null pointer.");
-    }
-
-    public boolean isEnabled(Feature feature) {
-        return feature.isEnabled(this.features);
     }
 
     @Nullable
@@ -261,9 +215,5 @@ public final class InternalContext implements Context {
             throw new NoSuchFunctionException(obj);
         }
         return new Function(this.script, func, this.out.charset(), this.out.preferBytes());
-    }
-
-    public Wit wit() {
-        return this.script.wit();
     }
 }

@@ -18,7 +18,10 @@ public record BreakpointStatement(
         if (supervised != null) {
             supervised.execute(context);
         }
-        context.handleBreakpoint(label, this, null);
+        var handler = context.breakpointHandler();
+        if (handler != null) {
+            handler.handle(label, context, this, null);
+        }
         return null;
     }
 }

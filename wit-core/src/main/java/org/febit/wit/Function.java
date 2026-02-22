@@ -40,7 +40,7 @@ public final class Function {
     private InternalContext createContext(Out out) {
         var variables = VariableHeap.empty();
         var local = GenricHeap.local();
-        return new InternalContext(script, out, Vars.empty(), variables, local, null);
+        return new InternalContext(script, variables, Vars.empty(), out, local, null);
     }
 
     private InternalContext createContext() {
