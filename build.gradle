@@ -7,13 +7,15 @@ plugins {
 group 'org.febit.wit'
 version '3.0.0-SNAPSHOT'
 
+subprojects {
+  group = rootProject.group
+  version = rootProject.version
+}
+
 configure(subprojects.findAll {
   !it.name.endsWith('-bom')
 }) {
   apply plugin: 'java-library'
-
-  group rootProject.group
-  version rootProject.version
 
   java {
     sourceCompatibility = JavaVersion.VERSION_17
