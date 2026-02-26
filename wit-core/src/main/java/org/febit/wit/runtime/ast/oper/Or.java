@@ -18,9 +18,9 @@ public record Or(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        var lf = left.execute(context);
-        return ALU.isTruly(lf)
-                ? lf
+        var leftObj = left.execute(context);
+        return ALU.isTruly(leftObj)
+                ? leftObj
                 : right.execute(context);
     }
 

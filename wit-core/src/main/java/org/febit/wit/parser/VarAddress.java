@@ -13,27 +13,27 @@ public record VarAddress(
 ) {
 
     public enum Kind {
-        CONTEXT,
-        CONTEXT_LAYER,
-        CONST,
-        STATIC_VAR,
+        VAR,
+        VAR_UPPER,
+        DIRECT,
+        HEAP,
         ;
     }
 
-    static VarAddress ofContext(int index) {
-        return new VarAddress(Kind.CONTEXT, 0, index, null, null, null);
+    static VarAddress ofVariable(int index) {
+        return new VarAddress(Kind.VAR, 0, index, null, null, null);
+    }
+
+    static VarAddress ofUpper(int layerOffset, int index) {
+        return new VarAddress(Kind.VAR_UPPER, layerOffset, index, null, null, null);
     }
 
     static VarAddress ofHeap(Heap heap, String name) {
-        return new VarAddress(Kind.STATIC_VAR, -1, -1, heap, name, null);
+        return new VarAddress(Kind.HEAP, -1, -1, heap, name, null);
     }
 
-    static VarAddress ofConst(@Nullable Object value) {
-        return new VarAddress(Kind.CONST, -1, -1, null, null, value);
-    }
-
-    static VarAddress ofUpstream(int layerOffset, int index) {
-        return new VarAddress(Kind.CONTEXT_LAYER, layerOffset, index, null, null, null);
+    static VarAddress ofDirect(@Nullable Object value) {
+        return new VarAddress(Kind.DIRECT, -1, -1, null, null, value);
     }
 
 }

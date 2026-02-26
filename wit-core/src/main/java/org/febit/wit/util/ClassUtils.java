@@ -19,36 +19,31 @@ public class ClassUtils {
 
     private static final ClassMap<Map<String, Method[]>> PUBLIC_MEMBER_METHODS_CACHE = new ClassMap<>();
 
-    public static String name(@Nullable Object object) {
-        return object != null ? object.getClass().getName() : "null";
+    public static String name(@Nullable Object targetObj) {
+        return targetObj != null ? targetObj.getClass().getName() : "null";
     }
 
-    public static Method[] getPublicMemberMethods(Class<?> type, String name) {
-        var map = PUBLIC_MEMBER_METHODS_CACHE.get(type);
+    public static Method[] getPublicMemberMethods(Class<?> target, String name) {
+        var map = PUBLIC_MEMBER_METHODS_CACHE.get(target);
         if (map == null) {
-            map = PUBLIC_MEMBER_METHODS_CACHE.putIfAbsent(type, new HashMap<>());
+            map = PUBLIC_MEMBER_METHODS_CACHE.putIfAbsent(target, new HashMap<>());
         }
-        return map.computeIfAbsent(name,
-                n -> resolvePublicMemberMethods(type, n));
-    }
-
-    private static Method[] resolvePublicMemberMethods(Class<?> type, String name) {
-        return getMethods(type, method ->
+        return map.computeIfAbsent(name, n -> getMethods(target, method ->
                 !isPublic(method)
                         || isStatic(method)
-                        || !method.getName().equals(name));
+                        || !method.getName().equals(n))
+        );
     }
 
-    public static Method[] getPublicMethods(Class<?> type, String name) {
-        return getMethods(type, method ->
+    public static Method[] getPublicMethods(Class<?> target, String name) {
+        return getMethods(target, method ->
                 !isPublic(method)
                         || !method.getName().equals(name));
     }
 
     private static Method[] getMethods(Class<?> type, Predicate<Method> exclude) {
-        Method[] allMethods = type.getMethods();
-        Map<String, Method> result = new HashMap<>();
-        for (Method method : allMethods) {
+        var result = new HashMap<String, Method>();
+        for (var method : type.getMethods()) {
             if (exclude.test(method)) {
                 continue;
             }

@@ -40,12 +40,12 @@ public class Evaluator {
 
     @Tolerate
     public Evaluator out(Writer writer) {
-        return this.out(() -> script.wit().asOut(writer, charset));
+        return this.out(() -> script.engine().asOut(writer, charset));
     }
 
     @Tolerate
     public Evaluator out(OutputStream output) {
-        return this.out(() -> script.wit().asOut(output, charset));
+        return this.out(() -> script.engine().asOut(output, charset));
     }
 
     public Context eval() {

@@ -1,7 +1,7 @@
 package org.febit.wit.runtime.heap;
 
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.function.FunctionDeclare;
+import org.febit.wit.runtime.Function;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
@@ -25,7 +25,11 @@ public interface Heap {
 
     void each(BiConsumer<String, @Nullable Object> action);
 
-    default void setFunction(String key, FunctionDeclare method) {
+    default void setFunction(String key, Function method) {
+        set(key, method);
+    }
+
+    default void setFunction(String key, Function.Constable method) {
         set(key, method);
     }
 

@@ -36,14 +36,14 @@
     assertEquals(2, constSize({"name":"wit","say":"hi!"}));
 }
 {
-    var me = new_ConstMethods2();
-    assertEquals("const2Foo", const2Foo(me));
-    assertEquals("const2MemberString", const2Member(me,""));
-    assertEquals("const2MemberObject", const2Member(me,1));
+    var self = new_ConstMethods2();
+    assertEquals("const2Foo", const2Foo(self));
+    assertEquals("const2MemberString", const2Member(self, ""));
+    assertEquals("const2MemberObject", const2Member(self, 1));
 
-    assertEquals(3, const2Size(me,"wit"));
-    assertEquals(4, const2Size(me,["hello"," ","wit","!"]));
-    assertEquals(2, const2Size(me,{"name":"wit","say":"hi!"}));
+    assertEquals(3, const2Size(self, "wit"));
+    assertEquals(4, const2Size(self, ["hello"," ","wit","!"]));
+    assertEquals(2, const2Size(self, {"name":"wit","say":"hi!"}));
 }
 {
     // custom defined in "/init.wit"

@@ -51,7 +51,7 @@ public class JavaNativeUtils {
                 .collect(Collectors.groupingBy(Method::getName));
 
         methodMap.forEach((name, methods) ->
-                heaps.constants().set(name, nativeFactory.createNativeMethodDeclare(methods))
+                heaps.constants().set(name, nativeFactory.createMethodsFunction(methods))
         );
         return methodMap.size();
     }
@@ -373,12 +373,12 @@ public class JavaNativeUtils {
     @Nullable
     public static Object invokeMethod(
             final Method method,
-            @Nullable Object me,
+            @Nullable Object self,
             @Nullable Object @Nullable [] args
     ) {
         var methodArgs = prepareArgs(method.getParameterCount(), args, 0);
         try {
-            Object result = method.invoke(me, methodArgs);
+            Object result = method.invoke(self, methodArgs);
             return ClassUtils.isVoidType(method.getReturnType())
                     ? Undefined.UNDEFINED
                     : result;

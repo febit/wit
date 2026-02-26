@@ -4,7 +4,7 @@ package org.febit.wit.extern.asm;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.parser.NativeFactory;
 import org.febit.wit.parser.security.NativeSecurity;
-import org.febit.wit.runtime.function.FunctionDeclare;
+import org.febit.wit.runtime.Function;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
@@ -19,59 +19,51 @@ import java.lang.reflect.Method;
 @Slf4j
 public class AsmNativeFactory extends NativeFactory {
 
-    private static final String[] FUNC_DECLARE = {"org/febit/wit/runtime/function/FunctionDeclare"};
+    private static final String[] FUNC_DECLARE = {"org/febit/wit/runtime/Function"};
 
     public AsmNativeFactory(NativeSecurity security) {
         super(security);
     }
 
     @Override
-    protected FunctionDeclare createNativeConstructorDeclare(Constructor<?> constructor) {
-        var accessor = createMethodDeclare(constructor);
+    protected Function createConstructorFunction(Constructor<?> constructor) {
+        var accessor = createFunctionIfAbsent(constructor);
         if (accessor != null) {
             return accessor;
         }
-        return super.createNativeConstructorDeclare(constructor);
+        return super.createConstructorFunction(constructor);
     }
 
     @Override
-    public FunctionDeclare createNativeMethodDeclare(Method method) {
-        var accessor = createMethodDeclare(method);
+    public Function createMethodFunction(Method method) {
+        var accessor = createFunctionIfAbsent(method);
         if (accessor != null) {
             return accessor;
         }
-        return super.getNativeMethodDeclare(method);
+        return super.createMethodFunction(method);
     }
 
     @Nullable
-    protected FunctionDeclare createMethodDeclare(Member member) {
+    protected Function createFunctionIfAbsent(Member member) {
         if (!ClassUtils.isPublic(member.getDeclaringClass()) || !ClassUtils.isPublic(member)) {
             return null;
         }
-        var declare = cache.get(member);
-        if (declare != null) {
-            return declare;
-        }
-        synchronized (this) {
+        return cache.computeIfAbsent(member, m -> {
             try {
-                declare = cache.get(member);
-                if (declare == null) {
-                    declare = createDeclare(member);
-                    cache.put(member, declare);
-                }
+                return constructFunction((Member) m);
             } catch (Exception | LinkageError e) {
-                log.error("Failed to create AsmNativeFunctionDeclare for '{}'.", member, e);
+                log.error("Failed to create AsmFunction for '{}'.", member, e);
+                return null;
             }
-            return declare;
-        }
+        });
     }
 
     @SuppressWarnings({
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    static FunctionDeclare createDeclare(Member obj)
+    static Function constructFunction(Member obj)
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        var className = "org.febit.wit.extern.asm.AsmNativeFunctionDeclare" + AsmUtils.SEQ.getAndIncrement();
+        var className = "org.febit.wit.extern.asm.AsmFunction" + AsmUtils.SEQ.getAndIncrement();
         var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
                 AsmUtils.getInternalName(className), "java/lang/Object", FUNC_DECLARE);
 
@@ -191,7 +183,7 @@ public class AsmNativeFactory extends NativeFactory {
         }
         m.visitMaxs();
 
-        return (FunctionDeclare) AsmUtils.loadClass(className, classWriter)
+        return (Function) AsmUtils.loadClass(className, classWriter)
                 .getConstructor().newInstance();
     }
 }

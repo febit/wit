@@ -5,16 +5,16 @@ import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
 import org.febit.wit.Script;
 import org.febit.wit.exception.ParseException;
+import org.febit.wit.runtime.Function;
 import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.ScriptAST;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.expr.ContextVar;
 import org.febit.wit.runtime.ast.expr.DirectValue;
-import org.febit.wit.runtime.ast.expr.JavaStaticFieldExpr;
-import org.febit.wit.runtime.ast.stat.NoopStatement;
-import org.febit.wit.runtime.function.FunctionDeclare;
+import org.febit.wit.runtime.ast.expr.NativeStaticFieldValue;
+import org.febit.wit.runtime.ast.expr.VariableHeapValue;
+import org.febit.wit.runtime.ast.statement.NoopStatement;
 import org.febit.wit.util.ClassNameRope;
 import org.febit.wit.util.ClassUtils;
 import org.jspecify.annotations.Nullable;
@@ -48,7 +48,7 @@ public class Assembler {
     private final VarLayout varLayout;
 
     public Assembler(Script script) {
-        var wit = script.wit();
+        var wit = script.engine();
 
         this.script = script;
         this.features = wit.features();
@@ -168,12 +168,12 @@ public class Assembler {
         return this.templateTextFactory.create(script, text, position);
     }
 
-    public ContextVar declareVarAndCreateContextValue(String name, Position position) {
-        return new ContextVar(varLayout.assignVar(name, position), position);
+    public VariableHeapValue declareVarAndCreateContextValue(String name, Position position) {
+        return new VariableHeapValue(varLayout.assignVar(name, position), position);
     }
 
-    public ContextVar[] declareVarAndCreateContextValues(List<String> names, Position position) {
-        var contextVars = new ContextVar[names.size()];
+    public VariableHeapValue[] declareVarAndCreateContextValues(List<String> names, Position position) {
+        var contextVars = new VariableHeapValue[names.size()];
         for (int i = 0; i < names.size(); i++) {
             contextVars[i] = declareVarAndCreateContextValue(names.get(i), position);
         }
@@ -182,14 +182,14 @@ public class Assembler {
 
     public Expression createContextValue(int frameOffset, String name, Position position) {
         var addr = varLayout.locate(name, frameOffset, !Feature.LOOSE_VAR.isEnabled(this.features), position);
-        return Ast.readVar(addr, position);
+        return Ast.value(addr, position);
     }
 
     public void assignConst(String name, Expression expr, Position position) {
         varLayout.assignConst(name, AstUtils.evalConst(expr), position);
     }
 
-    public Expression createNativeStaticValue(ClassNameRope rope, Position position) {
+    public Expression createNativeStaticFieldValue(ClassNameRope rope, Position position) {
         if (rope.size() <= 1) {
             throw new ParseException("native static need a field name.", position);
         }
@@ -214,21 +214,21 @@ public class Assembler {
                     throw new ParseException("Failed to get static field value: " + path, ex, position);
                 }
             } else {
-                return new JavaStaticFieldExpr(field, position);
+                return new NativeStaticFieldValue(field, position);
             }
         } else {
             throw new ParseException("No a static field: " + path, position);
         }
     }
 
-    public Expression createNativeNewArrayDeclareExpression(Class<?> componentType, Position position) {
-        return new DirectValue(this.nativeFactory.getNativeNewArrayMethodDeclare(componentType, position, true),
+    public Expression createNewNativeArrayFunction(Class<?> componentType, Position position) {
+        return new DirectValue(this.nativeFactory.newArrayFunction(componentType, position, true),
                 position);
     }
 
     public Expression createNativeMethodDeclareExpression(
             Class<?> clazz, String methodName, @Nullable List<Class<?>> list, Position position) {
-        return new DirectValue(this.nativeFactory.getNativeMethodDeclare(clazz, methodName,
+        return new DirectValue(this.nativeFactory.methodFunction(clazz, methodName,
                 list == null ? new Class[0] : list.toArray(new Class[0]),
                 position, true), position);
     }
@@ -237,24 +237,24 @@ public class Assembler {
         int split = ref.indexOf("::");
         String className = ref.substring(0, split).trim();
         String method = ref.substring(split + 2).trim();
-        FunctionDeclare functionDeclare;
+        Function function;
         Class<?> cls = toClass(className);
         if ("new".equals(method)) {
             if (cls.isArray()) {
-                functionDeclare = this.nativeFactory.getNativeNewArrayMethodDeclare(cls.getComponentType(),
+                function = this.nativeFactory.newArrayFunction(cls.getComponentType(),
                         position, true);
             } else {
-                functionDeclare = this.nativeFactory.getNativeConstructorDeclare(cls, position, true);
+                function = this.nativeFactory.constructorFunction(cls, position, true);
             }
         } else {
-            functionDeclare = this.nativeFactory.getNativeMethodDeclare(cls, method, position, true);
+            function = this.nativeFactory.methodFunction(cls, method, position, true);
         }
-        return new DirectValue(functionDeclare, position);
+        return new DirectValue(function, position);
     }
 
     public Expression createNativeConstructorDeclareExpression(
             Class<?> clazz, @Nullable List<Class<?>> list, Position position) {
-        return new DirectValue(this.nativeFactory.getNativeConstructorDeclare(clazz,
+        return new DirectValue(this.nativeFactory.constructorFunction(clazz,
                 list == null ? new Class[0] : list.toArray(new Class[0]),
                 position, true), position);
     }

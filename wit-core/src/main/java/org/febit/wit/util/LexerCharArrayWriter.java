@@ -26,10 +26,8 @@ public class LexerCharArrayWriter extends CharArrayWriter {
         final int skip;
         final char[] source = this.buf;
         switch (source[0]) {
-            case '\n':
-                skip = 1;
-                break;
-            case '\r':
+            case '\n' -> skip = 1;
+            case '\r' -> {
                 if (size <= 1) {
                     return new char[0];
                 }
@@ -41,20 +39,21 @@ public class LexerCharArrayWriter extends CharArrayWriter {
                 } else {
                     skip = 1;
                 }
-                break;
-            default:
+            }
+            default -> {
                 return toCharArray();
+            }
         }
-        final char[] array = new char[size - skip];
-        System.arraycopy(source, skip, array, 0, count - skip);
-        return array;
+        var buf = new char[size - skip];
+        System.arraycopy(source, skip, buf, 0, count - skip);
+        return buf;
     }
 
     public void trimRightAfterLastLineSeparator() {
-        final char[] source = this.buf;
+        var source = this.buf;
         int pos = this.count - 1;
         char c;
-        // find unblank char pos 
+        // find unblank char pos
         while (pos >= 0) {
             c = source[pos];
             if (c != ' ' && c != '\t') {

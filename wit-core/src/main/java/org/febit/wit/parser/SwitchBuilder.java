@@ -6,8 +6,8 @@ import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.stat.Switch;
-import org.febit.wit.runtime.ast.stat.Switch.Branch;
+import org.febit.wit.runtime.ast.statement.Switch;
+import org.febit.wit.runtime.ast.statement.Switch.Branch;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;

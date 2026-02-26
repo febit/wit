@@ -2,16 +2,16 @@
 package org.febit.wit.runtime.iter;
 
 import org.febit.wit.runtime.ALU;
+import org.febit.wit.runtime.Function;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.function.FunctionDeclare;
 import org.jspecify.annotations.Nullable;
 
 public final class IterMethodFilter extends IterFilter {
 
     private final InternalContext context;
-    private final FunctionDeclare method;
+    private final Function method;
 
-    public IterMethodFilter(InternalContext context, FunctionDeclare method, Iter iter) {
+    public IterMethodFilter(InternalContext context, Function method, Iter iter) {
         super(iter);
         this.context = context;
         this.method = method;

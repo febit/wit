@@ -19,7 +19,7 @@ public class ByteArrayTemplateTextFactory implements TemplateTextFactory {
 
     @Override
     public void onParserStarted(Script script) {
-        var wit = script.wit();
+        var wit = script.engine();
         encoders.set(wit.codecFactory().encoder(wit.charset()));
         outputs.set(new ByteArrayOutputStream(512));
     }

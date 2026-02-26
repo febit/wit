@@ -15,10 +15,10 @@ public record IntStep(
 
     @Override
     public Object execute(InternalContext context) {
-        var left = ALU.requireNumber(from.execute(context)).intValue();
-        var right = ALU.requireNumber(to.execute(context)).intValue();
-        return left < right
-                ? Iters.asc(left, right)
-                : Iters.desc(left, right);
+        var fromObj = ALU.requireNumber(from.execute(context)).intValue();
+        var toObj = ALU.requireNumber(to.execute(context)).intValue();
+        return fromObj < toObj
+                ? Iters.asc(fromObj, toObj)
+                : Iters.desc(fromObj, toObj);
     }
 }

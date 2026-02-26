@@ -18,9 +18,9 @@ public record DecreaseAndGet(
     @Nullable
     public Object execute(InternalContext context) {
         try {
-            var assignable = this.target;
-            return assignable.set(context, ALU.minusOne(
-                    assignable.execute(context)));
+            var targetObj = this.target;
+            return targetObj.assign(context, ALU.minusOne(
+                    targetObj.execute(context)));
         } catch (Exception e) {
             throw ScriptEvaluateException.from(e, this);
         }

@@ -11,7 +11,7 @@ public class Loop {
      * Loop kind.
      */
     @lombok.Getter
-    private LoopFlag.Kind kind = LoopFlag.Kind.NOOP;
+    private LoopFlag.Kind kind = LoopFlag.Kind.NONE;
 
     /**
      * Target label.
@@ -24,8 +24,8 @@ public class Loop {
     @Nullable
     private Object returned;
 
-    public boolean isNoop() {
-        return kind.isNoop();
+    public boolean isNone() {
+        return kind.isNone();
     }
 
     /**
@@ -78,7 +78,7 @@ public class Loop {
     public void reset() {
         this.returned = null;
         this.label = 0;
-        this.kind = LoopFlag.Kind.NOOP;
+        this.kind = LoopFlag.Kind.NONE;
     }
 
     /**

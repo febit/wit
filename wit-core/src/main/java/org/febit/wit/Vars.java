@@ -24,14 +24,14 @@ public interface Vars {
         };
     }
 
-    static Vars of(Vars v1, Vars v2) {
+    static Vars concat(Vars v1, Vars v2) {
         return acceptor -> {
             v1.sink(acceptor);
             v2.sink(acceptor);
         };
     }
 
-    static Vars of(Vars @Nullable ... values) {
+    static Vars concat(Vars @Nullable ... values) {
         if (values == null || values.length == 0) {
             return Vars.empty();
         }

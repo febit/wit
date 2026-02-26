@@ -23,7 +23,7 @@ class AsmNativeFactoryTest {
     @Test
     void testToString() throws Exception {
         var context = mock(InternalContext.class);
-        var str_toString = AsmNativeFactory.createDeclare(String.class.getMethod("toString"));
+        var str_toString = AsmNativeFactory.constructFunction(String.class.getMethod("toString"));
         assertEquals(PKG_ASM, str_toString.getClass().getPackageName());
 
         assertEquals("aaa", str_toString.apply(context, new Object[]{"aaa"}));
@@ -32,7 +32,7 @@ class AsmNativeFactoryTest {
     @Test
     void currentTimeMillis() throws Exception {
         var context = mock(InternalContext.class);
-        var currentTimeMillis = AsmNativeFactory.createDeclare(System.class.getMethod("currentTimeMillis"));
+        var currentTimeMillis = AsmNativeFactory.constructFunction(System.class.getMethod("currentTimeMillis"));
 
         assertEquals(PKG_ASM, currentTimeMillis.getClass().getPackageName());
 
@@ -44,7 +44,7 @@ class AsmNativeFactoryTest {
     @Test
     void arraycopy() throws Exception {
         var context = mock(InternalContext.class);
-        var arraycopy = AsmNativeFactory.createDeclare(
+        var arraycopy = AsmNativeFactory.constructFunction(
                 System.class.getMethod("arraycopy", Object.class, int.class, Object.class, int.class, int.class));
 
         assertEquals(PKG_ASM, arraycopy.getClass().getPackageName());
@@ -61,12 +61,12 @@ class AsmNativeFactoryTest {
     void list() throws Exception {
         var context = mock(InternalContext.class);
 
-        var newList = AsmNativeFactory.createDeclare(ArrayList.class.getConstructor());
-        var newListWithInitSize = AsmNativeFactory.createDeclare(ArrayList.class.getConstructor(int.class));
+        var newList = AsmNativeFactory.constructFunction(ArrayList.class.getConstructor());
+        var newListWithInitSize = AsmNativeFactory.constructFunction(ArrayList.class.getConstructor(int.class));
 
-        var listAdd = AsmNativeFactory.createDeclare(List.class.getMethod("add", Object.class));
-        var listAddToIndex = AsmNativeFactory.createDeclare(List.class.getMethod("add", int.class, Object.class));
-        var listSize = AsmNativeFactory.createDeclare(ArrayList.class.getMethod("size"));
+        var listAdd = AsmNativeFactory.constructFunction(List.class.getMethod("add", Object.class));
+        var listAddToIndex = AsmNativeFactory.constructFunction(List.class.getMethod("add", int.class, Object.class));
+        var listSize = AsmNativeFactory.constructFunction(ArrayList.class.getMethod("size"));
 
         assertEquals(PKG_ASM, newList.getClass().getPackageName());
         assertEquals(PKG_ASM, newListWithInitSize.getClass().getPackageName());

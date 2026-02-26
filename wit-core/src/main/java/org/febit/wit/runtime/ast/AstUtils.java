@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.ast.expr.DirectValue;
-import org.febit.wit.runtime.ast.stat.NoopStatement;
+import org.febit.wit.runtime.ast.statement.NoopStatement;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;

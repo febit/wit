@@ -17,10 +17,10 @@ public record GetAndIncrease(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        var assignable = this.target;
+        var targetObj = this.target;
         try {
-            var value = assignable.execute(context);
-            assignable.set(context, ALU.plusOne(value));
+            var value = targetObj.execute(context);
+            targetObj.assign(context, ALU.plusOne(value));
             return value;
         } catch (Exception e) {
             throw ScriptEvaluateException.from(e, this);

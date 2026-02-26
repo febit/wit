@@ -24,24 +24,24 @@ public abstract class AbstractInclude implements Statement {
 
     private final Expression path;
     @Nullable
-    private final Expression paramsExpr;
+    private final Expression params;
     private final String refer;
     @Getter
     private final Position position;
 
     protected Vars prepareParams(InternalContext context) {
-        final Vars params;
-        final Object paramsRaw = paramsExpr == null ? null : paramsExpr.execute(context);
-        if (paramsRaw == null) {
-            params = Vars.empty();
-        } else if (paramsRaw instanceof Map) {
-            params = Vars.of((Map<?, ?>) paramsRaw);
+        final Vars inputs;
+        final Object paramsObj = this.params == null ? null : this.params.execute(context);
+        if (paramsObj == null) {
+            inputs = Vars.empty();
+        } else if (paramsObj instanceof Map) {
+            inputs = Vars.of((Map<?, ?>) paramsObj);
         } else {
-            throw new ScriptEvaluateException("Script param must be a Map.", paramsExpr);
+            throw new ScriptEvaluateException("Script param must be a Map.", this.params);
         }
         return context.isEnabled(Feature.SHARE_ROOT_PARAMS)
-                ? Vars.of(context.inputs(), params)
-                : params;
+                ? Vars.concat(context.inputs(), inputs)
+                : inputs;
     }
 
     protected Map<String, @Nullable Object> mergeScript(InternalContext context, boolean export) {
@@ -51,7 +51,7 @@ public abstract class AbstractInclude implements Statement {
         }
         try {
             Vars inputs = prepareParams(context);
-            var script = context.script().wit().script(refer, String.valueOf(scriptPath));
+            var script = context.script().engine().script(refer, String.valueOf(scriptPath));
             var newContext = script.merge(context, inputs);
             if (export) {
                 var result = new HashMap<String, @Nullable Object>();

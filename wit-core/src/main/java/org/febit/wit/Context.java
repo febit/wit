@@ -17,6 +17,6 @@ public interface Context {
 
     Heap local();
 
-    Function exportFunction(String name) throws NoSuchFunctionException;
+    ExportedFunction exportFunction(String name) throws NoSuchFunctionException;
 
 }

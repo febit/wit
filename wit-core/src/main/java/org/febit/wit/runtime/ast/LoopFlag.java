@@ -8,7 +8,7 @@ public record LoopFlag(
 ) {
 
     public enum Kind {
-        NOOP,
+        NONE,
         BREAK,
         CONTINUE,
         RETURN,
@@ -26,8 +26,8 @@ public record LoopFlag(
             return this == BREAK || this == CONTINUE;
         }
 
-        public boolean isNoop() {
-            return this == NOOP;
+        public boolean isNone() {
+            return this == NONE;
         }
     }
 

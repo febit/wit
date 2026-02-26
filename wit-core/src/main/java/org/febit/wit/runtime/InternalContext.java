@@ -3,8 +3,8 @@ package org.febit.wit.runtime;
 
 import lombok.experimental.Accessors;
 import org.febit.wit.Context;
+import org.febit.wit.ExportedFunction;
 import org.febit.wit.Feature;
-import org.febit.wit.Function;
 import org.febit.wit.Out;
 import org.febit.wit.Script;
 import org.febit.wit.Vars;
@@ -17,7 +17,6 @@ import org.febit.wit.runtime.accessor.Render;
 import org.febit.wit.runtime.accessor.Setter;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.function.FunctionDeclare;
 import org.febit.wit.runtime.heap.Heap;
 import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
@@ -84,7 +83,7 @@ public final class InternalContext implements Context {
         this.local = local;
         this.breakpointHandler = breakpointHandler;
 
-        var wit = script.wit();
+        var wit = script.engine();
         this.features = wit.features();
         this.accessors = wit.accessors();
 
@@ -95,8 +94,8 @@ public final class InternalContext implements Context {
         return feature.isEnabled(this.features);
     }
 
-    public Wit wit() {
-        return this.script.wit();
+    public Wit engine() {
+        return this.script.engine();
     }
 
     public Object[] visit(Expression[] exprs) {
@@ -120,7 +119,7 @@ public final class InternalContext implements Context {
         var i = 0;
         var len = stats.length;
         var lp = this.loop();
-        while (i < len && lp.isNoop()) {
+        while (i < len && lp.isNone()) {
             stats[i++].execute(this);
         }
     }
@@ -171,14 +170,14 @@ public final class InternalContext implements Context {
     @Nullable
     public Object redirect(
             Writer writer, java.util.function.Function<InternalContext, @Nullable Object> action) {
-        var target = wit().asOut(writer, this.out.charset());
+        var target = engine().asOut(writer, this.out.charset());
         return redirect(target, action);
     }
 
     @Nullable
     public Object redirect(
             OutputStream output, java.util.function.Function<InternalContext, @Nullable Object> action) {
-        var target = wit().asOut(output, this.out.charset());
+        var target = engine().asOut(output, this.out.charset());
         return redirect(target, action);
     }
 
@@ -209,11 +208,11 @@ public final class InternalContext implements Context {
     }
 
     @Override
-    public Function exportFunction(String name) throws NoSuchFunctionException {
+    public ExportedFunction exportFunction(String name) throws NoSuchFunctionException {
         var obj = this.variables().get(name, false);
-        if (!(obj instanceof FunctionDeclare func)) {
+        if (!(obj instanceof Function func)) {
             throw new NoSuchFunctionException(obj);
         }
-        return new Function(this.script, func, this.out.charset(), this.out.preferBytes());
+        return new ExportedFunction(this.script, func, this.out.charset(), this.out.preferBytes());
     }
 }

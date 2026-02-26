@@ -22,7 +22,7 @@ import java.util.Objects;
 public class ScriptImpl implements Script {
 
     @Getter
-    private final Wit wit;
+    private final Wit engine;
     @Getter
     private final String path;
     @Getter
@@ -31,8 +31,8 @@ public class ScriptImpl implements Script {
     @Nullable
     private volatile ScriptAST ast;
 
-    public ScriptImpl(Wit wit, String path, Source source) {
-        this.wit = wit;
+    public ScriptImpl(Wit engine, String path, Source source) {
+        this.engine = engine;
         this.path = path;
         this.source = source;
     }
@@ -121,7 +121,7 @@ public class ScriptImpl implements Script {
         if (!(obj instanceof ScriptImpl other)) {
             return false;
         }
-        return this.wit == other.wit
+        return this.engine == other.engine
                 && this.path.equals(other.path);
     }
 

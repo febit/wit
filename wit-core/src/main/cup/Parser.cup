@@ -3,16 +3,18 @@ package org.febit.wit.parser;
 
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.parser.Ast.*;
-import org.febit.wit.parser.Ast;
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.ast.*;
 import org.febit.wit.runtime.ast.expr.*;
+import org.febit.wit.runtime.ast.expr.NewMap.NewMapEntry;
 import org.febit.wit.runtime.ast.extra.*;
 import org.febit.wit.runtime.ast.oper.*;
-import org.febit.wit.runtime.ast.stat.*;
+import org.febit.wit.runtime.ast.statement.*;
 import org.febit.wit.util.ClassNameRope;
 
-import static org.febit.wit.parser.FunctionDeclareBuilder.ArgumentInfo;
+import java.util.List;
+
+import static org.febit.wit.parser.FunctionDeclarerBuilder.ArgumentInfo;
 
 /* Terminals */
 terminal Integer    VAR,
@@ -76,9 +78,9 @@ nonterminal WhileBuilder whileBuilder;
 nonterminal TryCatchBuilder tryPart, catchPart, finallyPart;
 
 /* Expression */
-nonterminal Expression expression, expression_statementable;
-nonterminal Expression[] mapPropertyDef;
-nonterminal NewMapExpr newMapExpr;
+nonterminal Expression expression, expressionStatementAble;
+nonterminal NewMapEntry newMapEntry;
+nonterminal NewMap newMapExpr;
 nonterminal TemplateStringBuilder templateStringBuilder;
 nonterminal Integer superCount;
 nonterminal Expression contextValueExpr;
@@ -86,10 +88,10 @@ nonterminal Expression contextValueExpr;
 /* function & Lambda */
 nonterminal ArgumentInfo funcArg;
 nonterminal Expression funcExecuteExpr;
-nonterminal FunctionDeclareBuilder funcHead, funcStatementHead, mapPropertyFuncHead;
+nonterminal FunctionDeclarerBuilder funcHead, funcStatementHead, mapPropertyFuncHead;
 nonterminal Expression lambdaExpr;
-nonterminal FunctionDeclareBuilder lambdaExprHead;
-nonterminal FunctionDeclareBuilder lambdaForHead1, lambdaForMapHead1;
+nonterminal FunctionDeclarerBuilder lambdaExprHead;
+nonterminal FunctionDeclarerBuilder lambdaForHead1, lambdaForMapHead1;
 
 /* precedence */
 precedence left     SEMICOLON; // ;
@@ -140,14 +142,14 @@ javaClass       ::= className:nameRope
 
 
 /* statements  */
-statement       ::= expression_statementable:$ SEMICOLON
+statement       ::= expressionStatementAble:$ SEMICOLON
                     |SEMICOLON
                     {: yield NoopStatement.INSTANCE; :}
 
                     |LRDEBUG:sym
                     {: yield Ast.breakpointStatement(null, null, %sym.symbol%.pos); :}
                     |LDEBUG:sym expression:label COLON RDEBUG
-                    {: yield Ast.breakpointStatement(%label%, null, %sym.symbol%.pos); :}
+                    {: yield Ast.breakpointStatement(null, %label%, %sym.symbol%.pos); :}
 
                     |expression:expr INTERPOLATION_END
                     {: yield Ast.interpolation(%expr%); :}
@@ -247,7 +249,7 @@ varPart         ::= varAssign:$
 
 
 importPart1     ::= IMPORT:sym expression:expr newMapExpr:paramsExpr?
-                    {: yield Ast.importBuilder().script(assembler.script()).path(%expr%).params(%paramsExpr%).position(%sym.symbol%.pos); :}
+                    {: yield Ast.importBuilder().script(assembler.script()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos); :}
                     ;
 
 
@@ -268,7 +270,7 @@ block           ::= (LBRACE {: assembler.varLayout().shiftFrame(); yield null; :
 
 
 tryPart         ::= (TRY LBRACE {: assembler.varLayout().shiftFrame(); yield null; :}):sym statement[]:list? RBRACE
-                    {: yield Ast.tryCatchBuilder().body(Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos)).position(%sym.symbol%.pos); :}
+                    {: yield Ast.tryCatchBuilder().body(Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos)).pos(%sym.symbol%.pos); :}
                     ;
 
 catchPart       ::= tryPart:builder (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: assembler.varLayout().shiftFrame(); yield assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos); :}):varIndex statement[]:list? RBRACE
@@ -292,12 +294,12 @@ forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
 
 
 lambdaForHead1  ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
-                    {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
+                    {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
                     ;
 
 
 lambdaForMapHead1   ::= FOR LPAREN IDENTIFIER:key COMMA IDENTIFIER:value MINUSGT:sym
-                    {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%key%).arg(%value%); :}
+                    {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%key%).arg(%value%); :}
                     ;
 
 
@@ -323,9 +325,9 @@ forInPart       ::= (forInHead:$ | lambdaForHead:$):builder LBRACE statement[]:l
 
 
 whileBuilder       ::= WHILE:sym LPAREN expression:condition RPAREN block:body
-                    {: yield Ast.whileBuilder().kind(WhileKind.WHILE).condition(%condition%).body(%body%).position(%sym.symbol%.pos); :}
+                    {: yield Ast.whileBuilder().kind(WhileKind.WHILE).condition(%condition%).body(%body%).pos(%sym.symbol%.pos); :}
                     |DO:sym block:body WHILE LPAREN expression:condition RPAREN SEMICOLON
-                    {: yield Ast.whileBuilder().kind(WhileKind.DO_WHILE).condition(%condition%).body(%body%).position(%sym.symbol%.pos); :}
+                    {: yield Ast.whileBuilder().kind(WhileKind.DO_WHILE).condition(%condition%).body(%body%).pos(%sym.symbol%.pos); :}
                     ;
 
 
@@ -351,7 +353,7 @@ switchPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE TEXT_S
 
 /* Expressions */
 
-expression_statementable ::=
+expressionStatementAble ::=
                     //assignOp =
                     expression:lexpr EQ:sym expression:expr
                     {: yield Ast.assign(Ast.castToAssignable(%lexpr%), %expr%, %sym.symbol%.pos); :}
@@ -373,20 +375,20 @@ expression_statementable ::=
 
                     //selfOp
                     |expression:lexpr SELFEQ:sym expression:rexpr
-                    {: yield Ast.selfOperator(%lexpr%, %sym%, %rexpr%, %sym.symbol%.pos); :}
+                    {: yield Ast.selfAssign(%lexpr%, %rexpr%, %sym%, %sym.symbol%.pos); :}
 
                     //
                     |funcExecuteExpr:$
                     ;
 
 
-expression      ::= expression_statementable:$
+expression      ::= expressionStatementAble:$
 
                     |LDEBUG:sym expression:expr RDEBUG
-                    {: yield Ast.breakpointExpr(null, %expr%, %sym.symbol%.pos); :}
+                    {: yield Ast.breakpointExpr(%expr%, null, %sym.symbol%.pos); :}
 
                     |LDEBUG:sym expression:label COLON expression:expr RDEBUG
-                    {: yield Ast.breakpointExpr(%label%, %expr%, %sym.symbol%.pos); :}
+                    {: yield Ast.breakpointExpr(%expr%, %label%, %sym.symbol%.pos); :}
 
                     //bitNotOp ~
                     |COMP:sym expression:expr
@@ -411,68 +413,68 @@ expression      ::= expression_statementable:$
                     /***********  binaries *************/
                     //-- binary:  *
                     |expression:lexpr MULT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  /
                     |expression:lexpr DIV:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  %
                     |expression:lexpr MOD:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  +
                     |expression:lexpr PLUS:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  -
                     |expression:lexpr MINUS:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  <<
                     |expression:lexpr LSHIFT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  >>
                     |expression:lexpr RSHIFT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  >>>
                     |expression:lexpr URSHIFT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  <
                     |expression:lexpr LT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  <=
                     |expression:lexpr LTEQ:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  >
                     |expression:lexpr GT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  >=
                     |expression:lexpr GTEQ:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  ==
                     |expression:lexpr EQEQ:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  !=
                     |expression:lexpr NOTEQ:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  &
                     |expression:lexpr AND:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  |
                     |expression:lexpr OR:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  ^
                     |expression:lexpr XOR:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  &&
                     |expression:lexpr ANDAND:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  ..
                     |expression:lexpr DOTDOT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  ||
                     |expression:lexpr OROR:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %sym.symbol%, %rexpr%); :}
+                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
 
                     // ? :
                     |expression:ifExpr QUESTION:sym expression:lexpr COLON expression:rexpr
-                    {: yield Ast.ifOperator(%ifExpr%, %lexpr%, %rexpr%, %sym.symbol%.pos); :}
+                    {: yield Ast.ifExpr(%ifExpr%, %lexpr%, %rexpr%, %sym.symbol%.pos); :}
 
                     //
                     |DIRECT_VALUE:sym
@@ -489,11 +491,11 @@ expression      ::= expression_statementable:$
                     |LBRACK:sym RBRACK
                     {: yield Ast.emptyArray(%sym.symbol%.pos); :}
                     |LBRACK:sym expression[COMMA]:list COMMA? RBRACK
-                    {: yield Ast.newArray(%sym.symbol%.pos, %list%); :}
+                    {: yield Ast.newArray(%list%, %sym.symbol%.pos); :}
 
                     //NativeNewArrayDeclareExpression
                     |NATIVE:sym LBRACK RBRACK javaClass:javaClass
-                    {: yield assembler.createNativeNewArrayDeclareExpression(%javaClass%, %sym.symbol%.pos); :}
+                    {: yield assembler.createNewNativeArrayFunction(%javaClass%, %sym.symbol%.pos); :}
 
                     //nativeMethodExpr
                     |NATIVE:sym classPureName:nameRope DOT IDENTIFIER:ident LPAREN javaClass[COMMA]:list? RPAREN
@@ -501,7 +503,7 @@ expression      ::= expression_statementable:$
 
                     //native static field
                     |NATIVE classPureName:nameRope
-                    {: yield assembler.createNativeStaticValue(%nameRope%, %nameRope.symbol%.pos); :}
+                    {: yield assembler.createNativeStaticFieldValue(%nameRope%, %nameRope.symbol%.pos); :}
 
                     //nativeConstructorExpr
                     |NATIVE:sym NEW classPureName:nameRope LPAREN javaClass[COMMA]:list? RPAREN
@@ -543,30 +545,30 @@ contextValueExpr    ::= IDENTIFIER:ident
 
 // map {key:expr, ...}
 
-mapPropertyDef        ::= DIRECT_VALUE:key COLON expression:expr
-                        {: yield new Expression[]{Ast.directValue(%key.symbol%), %expr%}; :}
+newMapEntry         ::= DIRECT_VALUE:key COLON expression:expr
+                        {: yield Ast.entryOfNewMap(Ast.directValue(%key.symbol%), %expr%); :}
                         |MINUS:sym DIRECT_VALUE:key COLON expression:expr
-                        {: yield new Expression[]{Ast.directValue(ALU.negative(%key%), %key.symbol%.pos), %expr%}; :}
+                        {: yield Ast.entryOfNewMap(Ast.directValue(ALU.negative(%key%), %key.symbol%.pos), %expr%); :}
                         |IDENTIFIER:ident
-                        {: yield new Expression[]{Ast.directValue(%ident.symbol%), assembler.createContextValue(0, %ident%, %ident.symbol%.pos)}; :}
+                        {: yield Ast.entryOfNewMap(Ast.directValue(%ident.symbol%), assembler.createContextValue(0, %ident%, %ident.symbol%.pos)); :}
                         |IDENTIFIER:ident COLON expression:expr
-                        {: yield new Expression[]{Ast.directValue(%ident.symbol%), %expr%}; :}
-                       // |IDENTIFIER:ident mapPropertyFuncHead:builder LBRACE statement[]:list? RBRACE
-                       // {: yield new Expression[]{Ast.directValue(%ident.symbol%), (%builder%).build(%list%)}; :}
+                        {: yield Ast.entryOfNewMap(Ast.directValue(%ident.symbol%), %expr%); :}
+                        // |IDENTIFIER:ident mapPropertyFuncHead:builder LBRACE statement[]:list? RBRACE
+                        // {: yield Ast.entryOfNewMap(Ast.directValue(%ident.symbol%), (%builder%).build(%list%)); :}
                         |LBRACK expression:key RBRACK COLON expression:expr
-                        {: yield new Expression[]{%key%, %expr%}; :}
+                        {: yield Ast.entryOfNewMap(%key%, %expr%); :}
                         ;
 
 
-newMapExpr            ::= LBRACE:sym RBRACE
-                        {: yield Ast.newMap(null, %sym.symbol%.pos); :}
-                        |LBRACE:sym mapPropertyDef[COMMA]:list COMMA? RBRACE
-                        {: yield Ast.newMap(%list%, %sym.symbol%.pos); :}
+newMapExpr          ::= LBRACE:sym RBRACE
+                        {: yield Ast.newMap(List.of(), %sym.symbol%.pos); :}
+                        |LBRACE:sym newMapEntry[COMMA]:entries COMMA? RBRACE
+                        {: yield Ast.newMap(%entries%, %sym.symbol%.pos); :}
                         ;
 
 
 templateStringBuilder  ::= TEMPLATE_STRING_START:sym
-                            {: yield Ast.templateStringBuilder().position(%sym.symbol%.pos); :}
+                            {: yield Ast.templateStringBuilder().pos(%sym.symbol%.pos); :}
                             | templateStringBuilder:builder TEMPLATE_STRING_INTERPOLATION_START:start expression:segment TEMPLATE_STRING_INTERPOLATION_END
                             {: yield (%builder%).segment(Ast.directValue(%start.symbol%)).segment(%segment%); :}
                             ;
@@ -580,15 +582,15 @@ funcArg             ::= IDENTIFIER:ident
 
 
 funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:args? RPAREN
-                        {: yield FunctionDeclareBuilder.create(assembler.varLayout(), assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos), %sym.symbol%.pos).args(%args%); :}
+                        {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos), %sym.symbol%.pos).args(%args%); :}
                         ;
 
 // mapPropertyFuncHead ::= LPAREN:sym funcArg[COMMA]:args? RPAREN
-//                         {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
+//                         {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
 //                         ;
 
 funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
-                        {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
+                        {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
@@ -604,9 +606,9 @@ funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
 
 /* lambda */
 lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
-                        {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
+                        {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
                         |LPAREN funcArg[COMMA]:args? RPAREN_MINUSGT:sym
-                        {: yield FunctionDeclareBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
+                        {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
                         ;
 
 

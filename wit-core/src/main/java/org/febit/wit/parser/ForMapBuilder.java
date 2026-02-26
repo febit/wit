@@ -4,8 +4,8 @@ package org.febit.wit.parser;
 import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.stat.ForMap;
-import org.febit.wit.runtime.ast.stat.ForMapNoLoops;
+import org.febit.wit.runtime.ast.statement.ForMap;
+import org.febit.wit.runtime.ast.statement.ForMapNoLoops;
 
 import java.util.Arrays;
 import java.util.Objects;

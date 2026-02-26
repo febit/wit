@@ -21,7 +21,7 @@ public record HeapValue(
 
     @Override
     @Nullable
-    public Object set(InternalContext context, @Nullable Object value) {
+    public Object assign(InternalContext context, @Nullable Object value) {
         this.heap.set(name, value);
         return value;
     }

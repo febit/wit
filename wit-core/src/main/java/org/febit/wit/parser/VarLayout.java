@@ -123,7 +123,7 @@ public class VarLayout {
             return VarAddress.ofHeap(staticHeaps.variables(), name);
         }
         if (staticHeaps.constants().has(name)) {
-            return VarAddress.ofConst(staticHeaps.constants().get(name));
+            return VarAddress.ofDirect(staticHeaps.constants().get(name));
         }
 
         //failed
@@ -136,8 +136,8 @@ public class VarLayout {
 
     private VarAddress contextAddress(int layerSeq, int index) {
         return layerSeq == this.layerCursor
-                ? VarAddress.ofContext(index)
-                : VarAddress.ofUpstream(this.layerCursor - layerSeq - 1, index);
+                ? VarAddress.ofVariable(index)
+                : VarAddress.ofUpper(this.layerCursor - layerSeq - 1, index);
     }
 
     private static FrameIndexer createFrameIndexer(@Nullable FrameIndexer up, Map<String, Integer> map) {
@@ -181,7 +181,7 @@ public class VarLayout {
                 return null;
             }
             if (index < 0) {
-                return VarAddress.ofConst(this.constMap.get(name));
+                return VarAddress.ofDirect(this.constMap.get(name));
             }
             return contextAddress(this.layerSeq, index);
         }

@@ -12,5 +12,4 @@ package org.febit.wit.runtime.accessor;
 @SuppressWarnings("unused")
 public sealed interface Accessor<T>
         permits Getter, Setter, Render {
-
 }

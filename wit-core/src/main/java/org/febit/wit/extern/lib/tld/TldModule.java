@@ -6,7 +6,7 @@ import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
 import org.febit.wit.exception.UncheckedException;
 import org.febit.wit.parser.NativeFactory;
-import org.febit.wit.runtime.function.FunctionDeclare;
+import org.febit.wit.runtime.Function;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.PathUtils;
 
@@ -55,12 +55,12 @@ public class TldModule implements WitModule {
         }
     }
 
-    protected FunctionDeclare createFunction(NativeFactory nativeFactory, TldFunction func) {
+    protected Function createFunction(NativeFactory nativeFactory, TldFunction func) {
         var parameterTypes = func.parameterTypes().stream()
                 .map(ClassUtils::loadByName)
                 .toArray(Class<?>[]::new);
 
-        return nativeFactory.getNativeMethodDeclare(
+        return nativeFactory.methodFunction(
                 ClassUtils.loadByName(func.declaredClass()),
                 func.methodName(),
                 parameterTypes,

@@ -281,23 +281,25 @@ abstract class AbstractParser {
                     pendingPending = null;
                 } else {
                     pending = lexer.nextToken();
-                    if (looseSemicolon
-                            && currentToken.isAtEdgeOfNewLine) {
+                    if (looseSemicolon && currentToken.isAtEdgeOfNewLine) {
                         switch (pending.kind) {
-                            case TokenKinds.LBRACK: // NOSONAR squid:S128 Switch cases should end with an unconditional "break" statement
-                                if (currentToken.kind == TokenKinds.COMMA
-                                        || currentToken.kind == TokenKinds.LBRACE) {
-                                    break;
+                            case TokenKinds.LBRACK -> {
+                                if (currentToken.kind != TokenKinds.COMMA
+                                        && currentToken.kind != TokenKinds.LBRACE) {
+                                    pendingPending = pending;
+                                    pending = createLooseSemicolonSymbol(pendingPending);
                                 }
-                            case TokenKinds.LBRACE:
-                            case TokenKinds.LPAREN:
-                            case TokenKinds.PLUSPLUS:
-                            case TokenKinds.MINUSMINUS:
+                            }
+                            case TokenKinds.LBRACE,
+                                 TokenKinds.LPAREN,
+                                 TokenKinds.PLUSPLUS,
+                                 TokenKinds.MINUSMINUS -> {
                                 pendingPending = pending;
                                 pending = createLooseSemicolonSymbol(pendingPending);
-                                break;
-                            default:
+                            }
+                            default -> {
                                 // Do nothing
+                            }
                         }
                     }
                 }

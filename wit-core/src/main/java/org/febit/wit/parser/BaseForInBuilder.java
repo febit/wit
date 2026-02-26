@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.expr.FunctionDeclareExpr;
+import org.febit.wit.runtime.ast.expr.FunctionDeclarer;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public abstract class BaseForInBuilder {
 
     @Setter
     @Nullable
-    protected FunctionDeclareExpr filter;
+    protected FunctionDeclarer filter;
 
     protected int iterIndex;
 

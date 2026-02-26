@@ -13,50 +13,50 @@ import org.febit.wit.runtime.ast.IBlock;
 import org.febit.wit.runtime.ast.LoopFlag;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.expr.Assign;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
-import org.febit.wit.runtime.ast.expr.ContextLayerVar;
-import org.febit.wit.runtime.ast.expr.ContextVar;
 import org.febit.wit.runtime.ast.expr.DirectValue;
-import org.febit.wit.runtime.ast.expr.DynamicNativeMethodCallExpr;
-import org.febit.wit.runtime.ast.expr.FunctionCallExpr;
+import org.febit.wit.runtime.ast.expr.DynamicNativeMethodCaller;
+import org.febit.wit.runtime.ast.expr.FixedPropertyAccess;
+import org.febit.wit.runtime.ast.expr.FunctionCaller;
+import org.febit.wit.runtime.ast.expr.GroupAssign;
 import org.febit.wit.runtime.ast.expr.HeapValue;
-import org.febit.wit.runtime.ast.expr.NewArrayExpr;
-import org.febit.wit.runtime.ast.expr.NewMapExpr;
+import org.febit.wit.runtime.ast.expr.IfExpr;
+import org.febit.wit.runtime.ast.expr.NewArray;
+import org.febit.wit.runtime.ast.expr.NewMap;
+import org.febit.wit.runtime.ast.expr.PropertyAccess;
 import org.febit.wit.runtime.ast.expr.SuppliedValue;
+import org.febit.wit.runtime.ast.expr.VariableHeapUpperValue;
+import org.febit.wit.runtime.ast.expr.VariableHeapValue;
 import org.febit.wit.runtime.ast.extra.Import;
 import org.febit.wit.runtime.ast.oper.And;
-import org.febit.wit.runtime.ast.oper.Assign;
 import org.febit.wit.runtime.ast.oper.ConstableBiOperator;
 import org.febit.wit.runtime.ast.oper.ConstableUnaryOperator;
 import org.febit.wit.runtime.ast.oper.DecreaseAndGet;
-import org.febit.wit.runtime.ast.oper.FixedPropertyOperator;
 import org.febit.wit.runtime.ast.oper.GetAndDecrease;
 import org.febit.wit.runtime.ast.oper.GetAndIncrease;
-import org.febit.wit.runtime.ast.oper.GroupAssign;
-import org.febit.wit.runtime.ast.oper.IfOperator;
 import org.febit.wit.runtime.ast.oper.IncreaseAndGet;
 import org.febit.wit.runtime.ast.oper.IntStep;
 import org.febit.wit.runtime.ast.oper.Or;
-import org.febit.wit.runtime.ast.oper.PropertyOperator;
-import org.febit.wit.runtime.ast.oper.SelfOperator;
-import org.febit.wit.runtime.ast.stat.Block;
-import org.febit.wit.runtime.ast.stat.BlockWithoutLoops;
-import org.febit.wit.runtime.ast.stat.BreakpointStatement;
-import org.febit.wit.runtime.ast.stat.DoWhile;
-import org.febit.wit.runtime.ast.stat.DoWhileNoLoops;
-import org.febit.wit.runtime.ast.stat.Echo;
-import org.febit.wit.runtime.ast.stat.If;
-import org.febit.wit.runtime.ast.stat.IfElse;
-import org.febit.wit.runtime.ast.stat.IfNot;
-import org.febit.wit.runtime.ast.stat.Interpolation;
-import org.febit.wit.runtime.ast.stat.NoopStatement;
-import org.febit.wit.runtime.ast.stat.RenderRedirect;
-import org.febit.wit.runtime.ast.stat.Return;
-import org.febit.wit.runtime.ast.stat.StatementGroup;
-import org.febit.wit.runtime.ast.stat.TryCatchFinally;
-import org.febit.wit.runtime.ast.stat.TryFinally;
-import org.febit.wit.runtime.ast.stat.While;
-import org.febit.wit.runtime.ast.stat.WhileNoLoops;
+import org.febit.wit.runtime.ast.oper.SelfCalcAndAssign;
+import org.febit.wit.runtime.ast.statement.Block;
+import org.febit.wit.runtime.ast.statement.BlockWithoutLoops;
+import org.febit.wit.runtime.ast.statement.BreakpointStatement;
+import org.febit.wit.runtime.ast.statement.DoWhile;
+import org.febit.wit.runtime.ast.statement.DoWhileNoLoops;
+import org.febit.wit.runtime.ast.statement.Echo;
+import org.febit.wit.runtime.ast.statement.If;
+import org.febit.wit.runtime.ast.statement.IfElse;
+import org.febit.wit.runtime.ast.statement.IfNot;
+import org.febit.wit.runtime.ast.statement.Interpolation;
+import org.febit.wit.runtime.ast.statement.NoopStatement;
+import org.febit.wit.runtime.ast.statement.RenderRedirect;
+import org.febit.wit.runtime.ast.statement.Return;
+import org.febit.wit.runtime.ast.statement.StatementGroup;
+import org.febit.wit.runtime.ast.statement.TryCatchFinally;
+import org.febit.wit.runtime.ast.statement.TryFinally;
+import org.febit.wit.runtime.ast.statement.While;
+import org.febit.wit.runtime.ast.statement.WhileNoLoops;
 import org.febit.wit.runtime.ast.template.TemplateStringValue;
 import org.jspecify.annotations.Nullable;
 
@@ -72,86 +72,91 @@ public class Ast {
     private static final Statement[] EMPTY_STATEMENTS = new Statement[0];
     private static final Expression[] EMPTY_EXPRESSIONS = new Expression[0];
 
-    public static IfOperator ifOperator(Expression ifExpr, Expression leftValueExpr, Expression rightValueExpr, Position position) {
-        return new IfOperator(ifExpr, leftValueExpr, rightValueExpr, position);
+    public static IfExpr ifExpr(
+            Expression condition,
+            Expression left,
+            Expression right,
+            Position pos
+    ) {
+        return new IfExpr(condition, left, right, pos);
     }
 
-    public static Echo echo(Expression src, Position position) {
-        return new Echo(src, position);
+    public static Echo echo(Expression value, Position pos) {
+        return new Echo(value, pos);
     }
 
-    public static Return returnWith(@Nullable Expression src, Position position) {
-        return new Return(src, position);
+    public static Return returnWith(@Nullable Expression value, Position pos) {
+        return new Return(value, pos);
     }
 
-    public static Return returnUndefined(Position position) {
-        return new Return(null, position);
+    public static Return returnUndefined(Position pos) {
+        return new Return(null, pos);
     }
 
-    public static RenderRedirect renderRedirect(Statement body, AssignableExpression sink, Position position) {
-        return new RenderRedirect(body, sink, position);
+    public static RenderRedirect renderRedirect(Statement body, AssignableExpression target, Position pos) {
+        return new RenderRedirect(body, target, pos);
     }
 
-    public static IncreaseAndGet increaseAndGet(AssignableExpression assignable, Position position) {
-        return new IncreaseAndGet(assignable, position);
+    public static IncreaseAndGet increaseAndGet(AssignableExpression target, Position pos) {
+        return new IncreaseAndGet(target, pos);
     }
 
-    public static DecreaseAndGet decreaseAndGet(AssignableExpression assignable, Position position) {
-        return new DecreaseAndGet(assignable, position);
+    public static DecreaseAndGet decreaseAndGet(AssignableExpression target, Position pos) {
+        return new DecreaseAndGet(target, pos);
     }
 
-    public static GetAndIncrease getAndIncrease(AssignableExpression assignable, Position position) {
-        return new GetAndIncrease(assignable, position);
+    public static GetAndIncrease getAndIncrease(AssignableExpression target, Position pos) {
+        return new GetAndIncrease(target, pos);
     }
 
-    public static GetAndDecrease getAndDecrease(AssignableExpression assignable, Position position) {
-        return new GetAndDecrease(assignable, position);
+    public static GetAndDecrease getAndDecrease(AssignableExpression target, Position pos) {
+        return new GetAndDecrease(target, pos);
     }
 
-    public static Expression assign(AssignableExpression lexpr, Expression rexpr, Position position) {
-        return new Assign(lexpr, rexpr, position);
+    public static Expression assign(AssignableExpression target, Expression value, Position pos) {
+        return new Assign(target, value, pos);
     }
 
-    public static Expression groupAssign(Expression[] lexprs, Expression rexpr, Position position) {
-        var assignables = new AssignableExpression[lexprs.length];
-        for (int i = 0; i < lexprs.length; i++) {
-            assignables[i] = castToAssignable(lexprs[i]);
+    public static Expression groupAssign(Expression[] targets, Expression value, Position pos) {
+        var assignables = new AssignableExpression[targets.length];
+        for (int i = 0; i < targets.length; i++) {
+            assignables[i] = castToAssignable(targets[i]);
         }
-        return new GroupAssign(assignables, rexpr, position);
+        return new GroupAssign(assignables, value, pos);
     }
 
-    public static PropertyOperator property(Expression leftExpr, Expression rightExpr, Position position) {
-        return new PropertyOperator(leftExpr, rightExpr, position);
+    public static PropertyAccess property(Expression target, Expression property, Position pos) {
+        return new PropertyAccess(target, property, pos);
     }
 
-    public static FixedPropertyOperator property(Expression leftExpr, String property, Position position) {
-        return new FixedPropertyOperator(leftExpr, property, position);
+    public static FixedPropertyAccess property(Expression target, String property, Position pos) {
+        return new FixedPropertyAccess(target, property, pos);
     }
 
-    public static Statement interpolation(Expression expr) {
-        return new Interpolation(expr);
+    public static Statement interpolation(Expression value) {
+        return new Interpolation(value, value.position());
     }
 
     public static DirectValue directValue(@Nullable Object value, Position pos) {
         return new DirectValue(value, pos);
     }
 
-    public static DirectValue directValue(Token sym) {
-        return directValue(sym.value, sym.pos);
+    public static DirectValue directValue(Token token) {
+        return directValue(token.value, token.pos);
     }
 
     public static Statement breakpointStatement(
-            @Nullable Expression labelExpr,
-            @Nullable Statement statement,
-            Position position
+            @Nullable Statement supervised,
+            @Nullable Expression label,
+            Position pos
     ) {
-        var label = labelExpr == null ? null : AstUtils.evalConst(labelExpr);
-        return new BreakpointStatement(label, statement, position);
+        var labelObj = label == null ? null : AstUtils.evalConst(label);
+        return new BreakpointStatement(supervised, labelObj, pos);
     }
 
-    public static Expression breakpointExpr(@Nullable Expression labelExpr, Expression expr, Position position) {
-        var label = labelExpr == null ? null : AstUtils.evalConst(labelExpr);
-        return new BreakpointExpr(label, expr, position);
+    public static Expression breakpointExpr(Expression supervised, @Nullable Expression label, Position pos) {
+        var labelObj = label == null ? null : AstUtils.evalConst(label);
+        return new BreakpointExpr(supervised, labelObj, pos);
     }
 
     public static SuppliedValue emptyArray(Position pos) {
@@ -162,28 +167,21 @@ public class Ast {
         return EMPTY_EXPRESSIONS;
     }
 
-    public static NewArrayExpr newArray(
-            Position pos,
-            @Singular List<Expression> exprs
+    public static NewArray newArray(
+            List<Expression> values,
+            Position pos
     ) {
-        return new NewArrayExpr(toExpressionArray(exprs), pos);
+        return new NewArray(toExpressionArray(values), pos);
     }
 
-    public static NewMapExpr newMap(
-            @Nullable List<Expression[]> propertyDefList, Position position) {
-        if (propertyDefList == null || propertyDefList.isEmpty()) {
-            return new NewMapExpr(emptyExpressions(), emptyExpressions(), position);
-        }
-        int size = propertyDefList.size();
-        var keys = new Expression[size];
-        var values = new Expression[size];
-        for (int i = 0; i < propertyDefList.size(); i++) {
-            var def = propertyDefList.get(i);
-            // assert def.length == 2
-            keys[i] = def[0];
-            values[i] = def[1];
-        }
-        return new NewMapExpr(keys, values, position);
+    public static NewMap newMap(List<NewMap.NewMapEntry> entries, Position pos) {
+        return new NewMap(List.copyOf(entries), pos);
+    }
+
+    public static NewMap.NewMapEntry entryOfNewMap(Expression key, Expression value) {
+        key = AstUtils.optimize(key);
+        value = AstUtils.optimize(value);
+        return new NewMap.NewMapEntry(key, value);
     }
 
     public static SwitchBuilder switchBuilder() {
@@ -197,10 +195,10 @@ public class Ast {
     public static TemplateStringValue templateString(
             @Singular
             List<Expression> segments,
-            Position position
+            Position pos
     ) {
-        Objects.requireNonNull(position, "position is required");
-        return new TemplateStringValue(toExpressionArray(segments), position);
+        Objects.requireNonNull(pos, "position is required");
+        return new TemplateStringValue(toExpressionArray(segments), pos);
     }
 
     @Builder(
@@ -212,20 +210,20 @@ public class Ast {
             Expression condition,
             IBlock body,
             @Nullable Integer label,
-            Position position
+            Position pos
     ) {
         Objects.requireNonNull(kind, "kind is required");
         Objects.requireNonNull(condition, "condition is required");
         Objects.requireNonNull(body, "body is required");
-        Objects.requireNonNull(position, "position is required");
+        Objects.requireNonNull(pos, "position is required");
 
         var frame = body.frame();
         var statements = body.statements();
 
         if (!body.hasLoopFlags()) {
             return switch (kind) {
-                case WHILE -> new WhileNoLoops(condition, frame, statements, position);
-                case DO_WHILE -> new DoWhileNoLoops(condition, frame, statements, position);
+                case WHILE -> new WhileNoLoops(condition, frame, statements, pos);
+                case DO_WHILE -> new DoWhileNoLoops(condition, frame, statements, pos);
             };
         }
 
@@ -234,8 +232,8 @@ public class Ast {
         }
         var loops = AstUtils.collectLoopFlagsForWhile(List.of(body), null, label);
         return switch (kind) {
-            case WHILE -> new While(condition, frame, statements, loops, label, position);
-            case DO_WHILE -> new DoWhile(condition, frame, statements, loops, label, position);
+            case WHILE -> new While(condition, frame, statements, loops, label, pos);
+            case DO_WHILE -> new DoWhile(condition, frame, statements, loops, label, pos);
         };
     }
 
@@ -248,10 +246,10 @@ public class Ast {
             @Nullable Statement catchBody,
             @Nullable Statement finallyBody,
             @Nullable Integer exceptionVarIndex,
-            Position position
+            Position pos
     ) {
         Objects.requireNonNull(body, "tryBody is required");
-        Objects.requireNonNull(position, "position is required");
+        Objects.requireNonNull(pos, "position is required");
 
         body = AstUtils.optimize(body);
 
@@ -269,9 +267,9 @@ public class Ast {
             if (finallyBody == null) {
                 return body;
             }
-            return new TryFinally(body, finallyBody, position);
+            return new TryFinally(body, finallyBody, pos);
         }
-        return new TryCatchFinally(body, exceptionVarIndex, catchBody, finallyBody, position);
+        return new TryCatchFinally(body, catchBody, finallyBody, exceptionVarIndex, pos);
     }
 
     @Builder(
@@ -280,7 +278,7 @@ public class Ast {
     )
     private static Statement import0(
             Script script,
-            Position position,
+            Position pos,
             Expression path,
             @Nullable Expression params,
             @Singular("exportVar")
@@ -288,7 +286,7 @@ public class Ast {
     ) {
         Objects.requireNonNull(script, "script is required");
         Objects.requireNonNull(path, "path is required");
-        Objects.requireNonNull(position, "position is required");
+        Objects.requireNonNull(pos, "position is required");
 
         path = AstUtils.optimize(path);
 
@@ -298,7 +296,7 @@ public class Ast {
 
         var refer = script.path();
         if (exportVars.isEmpty()) {
-            return new Import(path, params, null, null, refer, position);
+            return new Import(path, params, null, null, refer, pos);
         }
 
         var vars = exportVars.stream()
@@ -311,7 +309,7 @@ public class Ast {
                 .map(AssignableExpression.class::cast)
                 .toArray(AssignableExpression[]::new);
 
-        return new Import(path, params, vars, targets, refer, position);
+        return new Import(path, params, vars, targets, refer, pos);
     }
 
     public record ImportVar(String name, AssignableExpression target) {
@@ -328,16 +326,16 @@ public class Ast {
         }
     }
 
-    public static Expression readVar(VarAddress addr, Position position) {
+    public static Expression value(VarAddress addr, Position pos) {
         return switch (addr.kind()) {
-            case CONST -> new DirectValue(addr.value(), position);
-            case CONTEXT_LAYER -> new ContextLayerVar(addr.layerOffset(), addr.index(), position);
-            case CONTEXT -> new ContextVar(addr.index(), position);
-            case STATIC_VAR -> {
+            case VAR -> new VariableHeapValue(addr.index(), pos);
+            case VAR_UPPER -> new VariableHeapUpperValue(addr.layerOffset(), addr.index(), pos);
+            case DIRECT -> new DirectValue(addr.value(), pos);
+            case HEAP -> {
                 var key = Objects.requireNonNull(addr.key());
                 var heap = Objects.requireNonNull(addr.heap());
                 yield new HeapValue(
-                        heap, key, position
+                        heap, key, pos
                 );
             }
         };
@@ -378,49 +376,50 @@ public class Ast {
                 : temp.toArray(new Statement[0]);
     }
 
-    public static Statement statementGroup(List<Statement> list, Position position) {
-        return new StatementGroup(flatStatements(list), position);
+    public static Statement statementGroup(List<Statement> list, Position pos) {
+        return new StatementGroup(flatStatements(list), pos);
     }
 
-    public static Expression functionCall(Expression funcExpr, Expression[] paramExprs, Position position) {
-        AstUtils.optimize(paramExprs);
-        funcExpr = AstUtils.optimize(funcExpr);
-        return new FunctionCallExpr(funcExpr, paramExprs, position);
+    public static Expression functionCall(
+            Expression func, Expression[] params, Position pos) {
+        AstUtils.optimize(params);
+        func = AstUtils.optimize(func);
+        return new FunctionCaller(func, params, pos);
     }
 
     public static Expression dynamicNativeMethodCall(
-            Expression thisExpr, String func, Expression[] paramExprs, Position position) {
-        AstUtils.optimize(paramExprs);
-        thisExpr = AstUtils.optimize(thisExpr);
-        return new DynamicNativeMethodCallExpr(thisExpr, func, paramExprs, position);
+            Expression self, String method, Expression[] params, Position pos) {
+        AstUtils.optimize(params);
+        self = AstUtils.optimize(self);
+        return new DynamicNativeMethodCaller(method, self, params, pos);
     }
 
     public static Statement ifStatement(
             Expression ifExpr,
             @Nullable Statement thenBody,
             @Nullable Statement elseBody,
-            Position position
+            Position pos
     ) {
         thenBody = AstUtils.optimize(thenBody);
         elseBody = AstUtils.optimize(elseBody);
         if (!(thenBody instanceof NoopStatement)) {
             if (elseBody instanceof NoopStatement) {
-                return new If(ifExpr, thenBody, position);
+                return new If(ifExpr, thenBody, pos);
             }
-            return new IfElse(ifExpr, thenBody, elseBody, position);
+            return new IfElse(ifExpr, thenBody, elseBody, pos);
         }
         if (!(elseBody instanceof NoopStatement)) {
-            return new IfNot(ifExpr, elseBody, position);
+            return new IfNot(ifExpr, elseBody, pos);
         }
         return NoopStatement.INSTANCE;
     }
 
-    public static IBlock block(@Nullable List<Statement> list, int frame, Position position) {
+    public static IBlock block(@Nullable List<Statement> list, int frame, Position pos) {
         var statements = flatStatements(list);
         var loops = AstUtils.collectLoopFlags(statements);
         return loops.isEmpty()
-                ? new BlockWithoutLoops(frame, statements, position)
-                : new Block(frame, statements, loops.toArray(new LoopFlag[0]), position);
+                ? new BlockWithoutLoops(frame, statements, pos)
+                : new Block(frame, statements, loops.toArray(new LoopFlag[0]), pos);
     }
 
     public static AssignableExpression castToAssignable(Expression expr) {
@@ -430,54 +429,54 @@ public class Ast {
         throw new ParseException("expression is not assignable", expr.position());
     }
 
-    public static ParseException unsupportedOperator(Position position) {
-        return new ParseException("Unsupported Operator", position);
+    public static ParseException unsupportedOperator(Position pos) {
+        return new ParseException("Unsupported Operator", pos);
     }
 
-    public static Expression selfOperator(Expression lexpr, int sym, Expression rightExpr, Position position) {
-        var leftExpr = castToAssignable(lexpr);
-        var biFunc = binaryOperator(sym);
+    public static Expression selfAssign(Expression target, Expression delta, int tokenKind, Position pos) {
+        var assignable = castToAssignable(target);
+        var biFunc = binaryOperator(tokenKind);
         if (biFunc == null) {
-            throw unsupportedOperator(position);
+            throw unsupportedOperator(pos);
         }
         var optimized = AstUtils.optimize(
-                new SelfOperator(leftExpr, rightExpr, biFunc, position)
+                new SelfCalcAndAssign(assignable, delta, biFunc, pos)
         );
         Objects.requireNonNull(optimized);
         return optimized;
     }
 
-    public static Expression operator(Expression expr, Token sym) {
-        if (!(sym.value instanceof Integer token)) {
-            throw unsupportedOperator(sym.pos);
+    public static Expression operator(Expression target, Token token) {
+        if (!(token.value instanceof Integer kind)) {
+            throw unsupportedOperator(token.pos);
         }
-        UnaryOperator<@Nullable Object> func = switch (token) {
+        UnaryOperator<@Nullable Object> func = switch (kind) {
             case TokenKinds.COMP -> ALU::bitNot;
             case TokenKinds.MINUS -> ALU::negative;
             case TokenKinds.NOT -> ALU::not;
-            default -> throw unsupportedOperator(sym.pos);
+            default -> throw unsupportedOperator(token.pos);
         };
         var optimized = AstUtils.optimize(
-                new ConstableUnaryOperator(expr, func, sym.pos)
+                new ConstableUnaryOperator(target, func, token.pos)
         );
         Objects.requireNonNull(optimized);
         return optimized;
     }
 
-    public static Expression binaryOperator(Expression left, Token sym, Expression right) {
-        if (!(sym.value instanceof Integer token)) {
-            throw unsupportedOperator(sym.pos);
+    public static Expression binaryOperator(Expression left, Expression right, Token token) {
+        if (!(token.value instanceof Integer kind)) {
+            throw unsupportedOperator(token.pos);
         }
-        var op = switch (token) {
-            case TokenKinds.ANDAND -> new And(left, right, sym.pos);
-            case TokenKinds.OROR -> new Or(left, right, sym.pos);
-            case TokenKinds.DOTDOT -> new IntStep(left, right, sym.pos);
+        var op = switch (kind) {
+            case TokenKinds.ANDAND -> new And(left, right, token.pos);
+            case TokenKinds.OROR -> new Or(left, right, token.pos);
+            case TokenKinds.DOTDOT -> new IntStep(left, right, token.pos);
             default -> {
-                var biFunc = binaryOperator(token);
+                var biFunc = binaryOperator(kind);
                 if (biFunc == null) {
-                    throw unsupportedOperator(sym.pos);
+                    throw unsupportedOperator(token.pos);
                 }
-                yield new ConstableBiOperator(left, right, biFunc, sym.pos);
+                yield new ConstableBiOperator(left, right, biFunc, token.pos);
             }
         };
         var optimized = AstUtils.optimize(op);

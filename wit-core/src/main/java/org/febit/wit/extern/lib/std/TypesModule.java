@@ -2,10 +2,9 @@
 package org.febit.wit.extern.lib.std;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.Context;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
-import org.febit.wit.runtime.function.FunctionDeclare;
+import org.febit.wit.runtime.Function;
 import org.jspecify.annotations.Nullable;
 
 import static org.febit.wit.util.ArrayUtils.get;
@@ -29,25 +28,25 @@ public class TypesModule implements WitModule {
 
     @UtilityClass
     static class Types {
-        static boolean is_function(Context context, @Nullable Object @Nullable [] args) {
-            return get(args, 0) instanceof FunctionDeclare;
+        static boolean is_function(@Nullable Object @Nullable [] args) {
+            return get(args, 0) instanceof Function;
         }
 
-        static boolean is_number(Context context, @Nullable Object @Nullable [] args) {
+        static boolean is_number(@Nullable Object @Nullable [] args) {
             return get(args, 0) instanceof Number;
         }
 
-        static boolean is_bool(Context context, @Nullable Object @Nullable [] args) {
+        static boolean is_bool(@Nullable Object @Nullable [] args) {
             return get(args, 0) instanceof Boolean;
         }
 
-        static boolean is_null(Context context, @Nullable Object @Nullable [] args) {
+        static boolean is_null(@Nullable Object @Nullable [] args) {
             return args == null
                     || args.length == 0
                     || get(args, 0) == null;
         }
 
-        static boolean is_array(Context context, @Nullable Object @Nullable [] args) {
+        static boolean is_array(@Nullable Object @Nullable [] args) {
             final Object item = get(args, 0);
             return item != null
                     && item.getClass().isArray();
