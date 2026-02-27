@@ -5,7 +5,6 @@ import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
 import org.febit.wit.Script;
 import org.febit.wit.exception.ParseException;
-import org.febit.wit.runtime.Function;
 import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -19,7 +18,9 @@ import org.febit.wit.util.ClassNameRope;
 import org.febit.wit.util.ClassUtils;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class Assembler {
 
     @Getter
     private final TemplateTextFactory templateTextFactory;
-    private final NativeFactory nativeFactory;
+    private final NativeLayout nativeLayout;
     /**
      * Current source version.
      */
@@ -53,7 +54,7 @@ public class Assembler {
         this.script = script;
         this.features = wit.features();
         this.templateTextFactory = wit.templateTextFactory();
-        this.nativeFactory = wit.nativeFactory();
+        this.nativeLayout = wit.nativeLayout();
 
         this.varLayout = new VarLayout(wit);
         this.labelIndexMap.put(null, 0);
@@ -196,7 +197,7 @@ public class Assembler {
         var fieldName = rope.build();
         var clazz = toClass(rope, position);
         var path = clazz.getName() + '.' + fieldName;
-        if (!this.nativeFactory.security().allowed(path)) {
+        if (!this.nativeLayout.security().allowed(path)) {
             throw new ParseException("Inaccessible native path: " + path, position);
         }
         final Field field;
@@ -205,58 +206,104 @@ public class Assembler {
         } catch (NoSuchFieldException ex) {
             throw new ParseException("No such field: " + path, ex, position);
         }
-        if (ClassUtils.isStatic(field)) {
-            field.trySetAccessible();
-            if (ClassUtils.isFinal(field)) {
-                try {
-                    return new DirectValue(field.get(null), position);
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
-                    throw new ParseException("Failed to get static field value: " + path, ex, position);
-                }
-            } else {
-                return new NativeStaticFieldValue(field, position);
-            }
-        } else {
+        if (!ClassUtils.isStatic(field)) {
             throw new ParseException("No a static field: " + path, position);
+        }
+        field.trySetAccessible();
+        if (!ClassUtils.isFinal(field)) {
+            return new NativeStaticFieldValue(field, position);
+        }
+        try {
+            return new DirectValue(field.get(null), position);
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            throw new ParseException("Failed to get static field value: " + path, ex, position);
         }
     }
 
-    public Expression createNewNativeArrayFunction(Class<?> componentType, Position position) {
-        return new DirectValue(this.nativeFactory.newArrayFunction(componentType, position, true),
-                position);
+    public Expression createNewArrayNativeFunctionValue(Class<?> componentType, Position pos) {
+        Class<?> classForCheck = componentType;
+        while (classForCheck.isArray()) {
+            classForCheck = classForCheck.getComponentType();
+        }
+        if (ClassUtils.isVoidType(classForCheck)) {
+            throw new ParseException("ComponentType must not void", pos);
+        }
+        this.nativeLayout.securityCheck(classForCheck.getName() + ".[]", pos);
+
+        var function = this.nativeLayout.functions().array(componentType);
+        return new DirectValue(function, pos);
     }
 
-    public Expression createNativeMethodDeclareExpression(
-            Class<?> clazz, String methodName, @Nullable List<Class<?>> list, Position position) {
-        return new DirectValue(this.nativeFactory.methodFunction(clazz, methodName,
-                list == null ? new Class[0] : list.toArray(new Class[0]),
-                position, true), position);
+    public Expression createMethodNativeFunctionValue(
+            Class<?> clazz, String methodName, @Nullable List<Class<?>> paramTypes, Position position) {
+        this.nativeLayout.securityCheck(clazz.getName() + '.' + methodName, position);
+
+        Method method;
+        try {
+            method = clazz.getMethod(methodName,
+                    paramTypes == null ? new Class[0] : paramTypes.toArray(new Class[0])
+            );
+        } catch (NoSuchMethodException | SecurityException ex) {
+            throw new ParseException(ex.getMessage(), ex, position);
+        }
+
+        var func = this.nativeLayout.functions().method(method);
+        return new DirectValue(func, position);
+    }
+
+    public Expression createMethodNativeFunctionValue(
+            Class<?> clazz, String methodName, Position position) {
+        this.nativeLayout.securityCheck(clazz.getName() + '.' + methodName, position);
+
+        var methods = ClassUtils.methods(clazz, methodName)
+                .filter(ClassUtils::isPublic)
+                .toList();
+        if (methods.isEmpty()) {
+            throw new ParseException("No such method: " + clazz.getName() + '#' + methodName, position);
+        }
+
+        var func = this.nativeLayout.functions().method(methods);
+        return new DirectValue(func, position);
+    }
+
+    public Expression createConstructorNativeFunctionValue(
+            Class<?> clazz, @Nullable List<Class<?>> paramTypes, Position position) {
+        this.nativeLayout.securityCheck(clazz.getName() + ".new", position);
+
+        Constructor<?> constructor;
+        try {
+            constructor = clazz.getConstructor(
+                    paramTypes == null ? new Class[0] : paramTypes.toArray(new Class[0])
+            );
+        } catch (NoSuchMethodException | SecurityException ex) {
+            throw new ParseException(ex.getMessage(), ex, position);
+        }
+        var func = this.nativeLayout.functions().constructor(constructor);
+        return new DirectValue(func, position);
+    }
+
+    public Expression createConstructorNativeFunctionValue(
+            Class<?> clazz, Position position) {
+        this.nativeLayout.securityCheck(clazz.getName() + ".new", position);
+
+        var constructors = clazz.getConstructors();
+        var func = this.nativeLayout.functions().constructor(List.of(constructors));
+        return new DirectValue(func, position);
     }
 
     public Expression createMethodReference(String ref, Position position) {
         int split = ref.indexOf("::");
-        String className = ref.substring(0, split).trim();
-        String method = ref.substring(split + 2).trim();
-        Function function;
-        Class<?> cls = toClass(className);
-        if ("new".equals(method)) {
-            if (cls.isArray()) {
-                function = this.nativeFactory.newArrayFunction(cls.getComponentType(),
-                        position, true);
-            } else {
-                function = this.nativeFactory.constructorFunction(cls, position, true);
-            }
-        } else {
-            function = this.nativeFactory.methodFunction(cls, method, position, true);
-        }
-        return new DirectValue(function, position);
-    }
+        var className = ref.substring(0, split).trim();
+        var cls = toClass(className);
 
-    public Expression createNativeConstructorDeclareExpression(
-            Class<?> clazz, @Nullable List<Class<?>> list, Position position) {
-        return new DirectValue(this.nativeFactory.constructorFunction(clazz,
-                list == null ? new Class[0] : list.toArray(new Class[0]),
-                position, true), position);
+        var method = ref.substring(split + 2).trim();
+        if (!"new".equals(method)) {
+            return createMethodNativeFunctionValue(cls, method, position);
+        }
+        if (cls.isArray()) {
+            return createNewArrayNativeFunctionValue(cls.getComponentType(), position);
+        }
+        return createConstructorNativeFunctionValue(cls, position);
     }
 
     public Statement declareVar(String name, Position position) {

@@ -13,8 +13,6 @@ import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.extern.lib.tld.TldModule;
 import org.febit.wit.loader.Loader;
 import org.febit.wit.loader.Loaders;
-import org.febit.wit.parser.NativeFactory;
-import org.febit.wit.parser.security.RuleBasedNativeSecurity;
 import org.febit.wit.runtime.Source;
 import org.febit.wit.test.component.TestCasesModule;
 import org.febit.wit.test.component.TestConfigFlagModule;
@@ -30,41 +28,10 @@ public class TestWit {
     private static final String EXT_WIT = ".wit";
     private static final List<String> EXT_DEPUTIES = List.of(EXT_WIT, ".whtml", ".wit2");
 
-    private static final NativeFactory NATIVE_FACTORY = new NativeFactory(
-            RuleBasedNativeSecurity.builder()
-                    .allow(
-                            "boolean",
-                            "byte",
-                            "char",
-                            "short",
-                            "int",
-                            "long",
-                            "float",
-                            "double"
-                    )
-                    .allow(
-                            "java.lang.Object",
-                            "java.lang.Boolean",
-                            "java.lang.Character",
-                            "java.lang.Byte",
-                            "java.lang.Short",
-                            "java.lang.Integer",
-                            "java.lang.Long",
-                            "java.lang.Float",
-                            "java.lang.Double",
-                            "java.lang.String",
-                            "java.lang.Number",
-                            "java.lang.System.currentTimeMillis",
-                            "org.febit.wit.test"
-                    )
-                    .build()
-    );
-
     @Getter
     @Accessors(fluent = true)
     public static final Wit WIT = Wit.builder()
             .loader(loader())
-            // .nativeFactory(NATIVE_FACTORY)
             .predefinedVars(
                     "request", "request2",
                     "session", "session2"

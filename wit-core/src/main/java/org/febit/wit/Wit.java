@@ -11,7 +11,7 @@ import org.febit.wit.io.OutputStreamOut;
 import org.febit.wit.io.WriterOut;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.loader.Loader;
-import org.febit.wit.parser.NativeFactory;
+import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.heap.StaticHeaps;
@@ -59,7 +59,7 @@ public class Wit {
     @Getter
     private final CodecFactory codecFactory;
     @Getter
-    private final NativeFactory nativeFactory;
+    private final NativeLayout nativeLayout;
 
     public static WitBuilder builder() {
         return new WitBuilder();

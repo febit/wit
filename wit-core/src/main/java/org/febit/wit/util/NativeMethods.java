@@ -4,24 +4,21 @@ package org.febit.wit.util;
 import lombok.experimental.UtilityClass;
 import org.febit.wit.exception.AmbiguousMethodException;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.exception.UncheckedException;
-import org.febit.wit.parser.NativeFactory;
 import org.febit.wit.runtime.Undefined;
-import org.febit.wit.runtime.heap.StaticHeaps;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @SuppressWarnings({
         "java:S135", // Loops should not contain more than a single "break" or "continue" statement
         "java:S1452", // Generic wildcard types should not be used in return types
 })
 @UtilityClass
-public class JavaNativeUtils {
+public class NativeMethods {
 
     private static final int COST_NEVER = -1;
     private static final int COST_EXACT = 0;
@@ -33,60 +30,43 @@ public class JavaNativeUtils {
 
     private static final Class<?>[] EMPTY_CLASSES = new Class<?>[0];
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static int addStaticMethods(
-            StaticHeaps heaps, NativeFactory nativeFactory, Class<?> type) {
-        return addStaticMethods(heaps, nativeFactory, type, false);
-    }
-
-    public static int addStaticMethods(
-            StaticHeaps heaps,
-            NativeFactory nativeFactory,
-            Class<?> type,
-            boolean skipConflict
+    @Nullable
+    public static Object invoke(
+            final Method method, @Nullable Object self, @Nullable Object @Nullable [] args
     ) {
-        var methodMap = Arrays.stream(type.getMethods())
-                .filter(ClassUtils::isStatic)
-                .filter(m -> !(skipConflict && heaps.constants().has(m.getName())))
-                .collect(Collectors.groupingBy(Method::getName));
-
-        methodMap.forEach((name, methods) ->
-                heaps.constants().set(name, nativeFactory.createMethodsFunction(methods))
-        );
-        return methodMap.size();
-    }
-
-    @SuppressWarnings("UnusedReturnValue")
-    public static int addConstFields(StaticHeaps heaps, Class<?> type) {
-        return addConstFields(heaps, type, false);
-    }
-
-    public static int addConstFields(
-            StaticHeaps heaps,
-            Class<?> type,
-            boolean ignoreIfConflict
-    ) {
-        int count = 0;
-        for (var field : type.getFields()) {
-            if (!ClassUtils.isStatic(field)
-                    || !ClassUtils.isFinal(field)) {
-                continue;
-            }
-            String name = field.getName();
-            if (ignoreIfConflict && heaps.constants().has(name)) {
-                continue;
-            }
-            field.trySetAccessible();
-            try {
-                heaps.constants().set(name, field.get(null));
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                throw new UncheckedException(e);
-            }
+        var methodArgs = prepareArgs(method.getParameterCount(), args, 0);
+        try {
+            Object result = method.invoke(self, methodArgs);
+            return ClassUtils.isVoidType(method.getReturnType())
+                    ? Undefined.UNDEFINED
+                    : result;
+        } catch (IllegalAccessException ex) {
+            throw new ScriptEvaluateException("this method is inaccessible: " + ex.getLocalizedMessage(), ex);
+        } catch (IllegalArgumentException ex) {
+            throw new ScriptEvaluateException("illegal argument: " + ex.getLocalizedMessage(), ex);
+        } catch (InvocationTargetException ex) {
+            throw new ScriptEvaluateException("this method throws an exception", ex);
         }
-        return count;
     }
 
-    public static @Nullable Class<?>[] getArgTypes(@Nullable Object @Nullable [] args) {
+    public static Object invoke(
+            Constructor<?> constructor, @Nullable Object @Nullable [] args
+    ) {
+        var methodArgs = prepareArgs(constructor.getParameterCount(), args, 0);
+        try {
+            return constructor.newInstance(methodArgs);
+        } catch (InstantiationException ex) {
+            throw new ScriptEvaluateException("Can't create new instance: " + ex.getLocalizedMessage(), ex);
+        } catch (IllegalAccessException ex) {
+            throw new ScriptEvaluateException("Inaccessible method: " + ex.getLocalizedMessage(), ex);
+        } catch (IllegalArgumentException ex) {
+            throw new ScriptEvaluateException("Illegal arguments: " + ex.getLocalizedMessage(), ex);
+        } catch (InvocationTargetException ex) {
+            throw new ScriptEvaluateException("this method throws an exception", ex);
+        }
+    }
+
+    private static @Nullable Class<?>[] getArgTypes(@Nullable Object @Nullable [] args) {
         if (args == null || args.length == 0) {
             return EMPTY_CLASSES;
         }
@@ -100,14 +80,29 @@ public class JavaNativeUtils {
         return argTypes;
     }
 
+    private static @Nullable Object[] prepareArgs(
+            int acceptArgsCount, @Nullable Object @Nullable [] args, final int from) {
+        if (args == null) {
+            return acceptArgsCount == 0
+                    ? ArrayUtils.emptyObjects()
+                    : new Object[acceptArgsCount];
+        }
+        if (from == 0 && args.length == acceptArgsCount) {
+            return args;
+        }
+        final Object[] result = new Object[acceptArgsCount];
+        System.arraycopy(args, from, result, 0, Math.min(args.length - from, acceptArgsCount));
+        return result;
+    }
+
     /**
      * @param methods methods
      * @param args    args
      * @return null if not found
      */
     @Nullable
-    public static Method getMatchMethod(Method[] methods, @Nullable Object @Nullable [] args) {
-        return getMatchMethod(methods, getArgTypes(args));
+    public static Method chooseMethod(List<Method> methods, @Nullable Object @Nullable [] args) {
+        return chooseMethod(methods, getArgTypes(args));
     }
 
     /**
@@ -117,16 +112,16 @@ public class JavaNativeUtils {
      * @return null if not found
      */
     @Nullable
-    public static Method getMatchMethod(Method[] methods, @Nullable Object @Nullable [] args, boolean mix) {
-        return getMatchMethod(methods, getArgTypes(args), mix);
+    public static Method chooseMethod(List<Method> methods, @Nullable Object @Nullable [] args, boolean mix) {
+        return chooseMethod(methods, getArgTypes(args), mix);
     }
 
     /**
      * @return null if not found
      */
     @Nullable
-    public static Method getMatchMethod(Method[] methods, @Nullable Class<?>[] argTypes) {
-        return getMatchMethod(methods, argTypes, false);
+    public static Method chooseMethod(List<Method> methods, @Nullable Class<?>[] argTypes) {
+        return chooseMethod(methods, argTypes, false);
     }
 
     /**
@@ -139,17 +134,16 @@ public class JavaNativeUtils {
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
     @Nullable
-    public static Method getMatchMethod(Method @Nullable [] methods, @Nullable Class<?>[] argTypes, boolean mix) {
-        if (methods == null
-                || methods.length == 0) {
+    public static Method chooseMethod(List<Method> methods, @Nullable Class<?>[] argTypes, boolean mix) {
+        if (methods.isEmpty()) {
             return null;
         }
-        Method[] candidate = new Method[methods.length];
+        Method[] candidate = new Method[methods.size()];
         int candidateCount = 0;
         int leastCost = Integer.MAX_VALUE;
 
         @Nullable Class<?>[] argTypesForMemberMethods = null;
-        for (Method method : methods) {
+        for (var method : methods) {
             int cost;
             if (mix && !ClassUtils.isStatic(method)) {
                 if (argTypes.length == 0
@@ -176,7 +170,7 @@ public class JavaNativeUtils {
             }
         }
         if (candidateCount > 1) {
-            Method method = resolveAmbiguousMethods(argTypes, candidate, candidateCount, mix);
+            Method method = tryResolveAmbiguous(candidate, argTypes, candidateCount, mix);
             if (method != null) {
                 return method;
             }
@@ -188,19 +182,19 @@ public class JavaNativeUtils {
     }
 
     /**
-     * @param argTypes argTypes
      * @param methods  methods
+     * @param argTypes argTypes
      * @param count    count
      * @param mix      mix
      * @return null if can't resolve
      */
     @Nullable
-    static Method resolveAmbiguousMethods(@Nullable Class<?>[] argTypes, Method[] methods, int count, boolean mix) {
+    private static Method tryResolveAmbiguous(Method[] methods, @Nullable Class<?>[] argTypes, int count, boolean mix) {
         if (argTypes.length == 0) {
             return null;
         }
-        Method candidate = methods[0];
-        Class<?>[] candidateArgs = candidate.getParameterTypes();
+        var candidate = methods[0];
+        var candidateArgs = candidate.getParameterTypes();
         for (int i = 1; i < count; i++) {
             Method next = methods[i];
             if (mix && ClassUtils.isStatic(candidate) != ClassUtils.isStatic(next)) {
@@ -229,9 +223,9 @@ public class JavaNativeUtils {
      * @return null if not found
      */
     @Nullable
-    public static Constructor<?> getMatchConstructor(
-            Constructor<?> @Nullable [] constructors, @Nullable Object @Nullable [] args) {
-        return getMatchConstructor(constructors, getArgTypes(args));
+    public static Constructor<?> chooseConstructor(
+            List<Constructor<?>> constructors, @Nullable Object @Nullable [] args) {
+        return chooseConstructor(constructors, getArgTypes(args));
     }
 
     /**
@@ -240,13 +234,12 @@ public class JavaNativeUtils {
      * @return null if not found
      */
     @Nullable
-    public static Constructor<?> getMatchConstructor(
-            Constructor<?> @Nullable [] constructors, @Nullable Class<?>[] argTypes) {
-        if (constructors == null
-                || constructors.length == 0) {
+    public static Constructor<?> chooseConstructor(
+            List<Constructor<?>> constructors, @Nullable Class<?>[] argTypes) {
+        if (constructors.isEmpty()) {
             return null;
         }
-        var candidate = new Constructor[constructors.length];
+        var candidate = new Constructor[constructors.size()];
         int candidateCount = 0;
         int leastCost = Integer.MAX_VALUE;
         for (var constructor : constructors) {
@@ -263,7 +256,7 @@ public class JavaNativeUtils {
             }
         }
         if (candidateCount > 1) {
-            var constructor = resolveAmbiguousConstructors(argTypes, candidate, candidateCount);
+            var constructor = tryResolveAmbiguous(candidate, argTypes, candidateCount);
             if (constructor != null) {
                 return constructor;
             }
@@ -275,17 +268,16 @@ public class JavaNativeUtils {
     }
 
     @Nullable
-    static Constructor<?> resolveAmbiguousConstructors(
-            @Nullable Class<?>[] argTypes, Constructor<?> @Nullable [] constructors, int count) {
-        if (constructors == null
-                || constructors.length == 0) {
+    private static Constructor<?> tryResolveAmbiguous(
+            Constructor<?>[] constructors, @Nullable Class<?>[] argTypes, int count) {
+        if (constructors.length == 0) {
             return null;
         }
         if (argTypes.length == 0) {
             return null;
         }
         var candidate = constructors[0];
-        Class<?>[] candidateArgs = candidate.getParameterTypes();
+        var candidateArgs = candidate.getParameterTypes();
         for (int i = 1; i < count; i++) {
             var next = constructors[i];
             Class<?>[] nextArgs = next.getParameterTypes();
@@ -304,7 +296,7 @@ public class JavaNativeUtils {
         return candidate;
     }
 
-    static int getAssignCost(@Nullable Class<?>[] froms, Class<?>[] tos) {
+    private static int getAssignCost(@Nullable Class<?>[] froms, Class<?>[] tos) {
         if (froms.length > tos.length) {
             return COST_NEVER;
         }
@@ -319,7 +311,7 @@ public class JavaNativeUtils {
         return totalCost;
     }
 
-    static int getAssignCost(@Nullable Class<?> passedType, Class<?> acceptType) {
+    private static int getAssignCost(@Nullable Class<?> passedType, Class<?> acceptType) {
         if (passedType == null) {
             return acceptType.isPrimitive() ? COST_NEVER : COST_NULL;
         }
@@ -344,67 +336,15 @@ public class JavaNativeUtils {
     }
 
     @Nullable
-    public static Object invokeMethod(Method method, @Nullable Object @Nullable [] args) {
+    public static Object invoke(Method method, @Nullable Object @Nullable [] args) {
         if (ClassUtils.isStatic(method)) {
-            return invokeMethod(method, null, args);
+            return invoke(method, null, args);
         }
         if (args == null || args.length == 0 || args[0] == null) {
             throw new ScriptEvaluateException("this method need one argument at least");
         }
         var methodArgs = prepareArgs(method.getParameterCount(), args, 1);
-        return invokeMethod(method, args[0], methodArgs);
-    }
-
-    public static @Nullable Object[] prepareArgs(
-            int acceptArgsCount, @Nullable Object @Nullable [] args, final int from) {
-        if (args == null) {
-            return acceptArgsCount == 0
-                    ? ArrayUtils.emptyObjects()
-                    : new Object[acceptArgsCount];
-        }
-        if (from == 0 && args.length == acceptArgsCount) {
-            return args;
-        }
-        final Object[] result = new Object[acceptArgsCount];
-        System.arraycopy(args, from, result, 0, Math.min(args.length - from, acceptArgsCount));
-        return result;
-    }
-
-    @Nullable
-    public static Object invokeMethod(
-            final Method method,
-            @Nullable Object self,
-            @Nullable Object @Nullable [] args
-    ) {
-        var methodArgs = prepareArgs(method.getParameterCount(), args, 0);
-        try {
-            Object result = method.invoke(self, methodArgs);
-            return ClassUtils.isVoidType(method.getReturnType())
-                    ? Undefined.UNDEFINED
-                    : result;
-        } catch (IllegalAccessException ex) {
-            throw new ScriptEvaluateException("this method is inaccessible: " + ex.getLocalizedMessage(), ex);
-        } catch (IllegalArgumentException ex) {
-            throw new ScriptEvaluateException("illegal argument: " + ex.getLocalizedMessage(), ex);
-        } catch (InvocationTargetException ex) {
-            throw new ScriptEvaluateException("this method throws an exception", ex);
-        }
-    }
-
-    public static Object invokeConstructor(
-            Constructor<?> constructor, @Nullable Object @Nullable [] args) {
-        var methodArgs = prepareArgs(constructor.getParameterCount(), args, 0);
-        try {
-            return constructor.newInstance(methodArgs);
-        } catch (InstantiationException ex) {
-            throw new ScriptEvaluateException("Can't create new instance: " + ex.getLocalizedMessage(), ex);
-        } catch (IllegalAccessException ex) {
-            throw new ScriptEvaluateException("Inaccessible method: " + ex.getLocalizedMessage(), ex);
-        } catch (IllegalArgumentException ex) {
-            throw new ScriptEvaluateException("Illegal arguments: " + ex.getLocalizedMessage(), ex);
-        } catch (InvocationTargetException ex) {
-            throw new ScriptEvaluateException("this method throws an exception", ex);
-        }
+        return invoke(method, args[0], methodArgs);
     }
 
 }

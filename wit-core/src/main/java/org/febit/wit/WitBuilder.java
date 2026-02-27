@@ -6,9 +6,8 @@ import org.febit.wit.io.DiscardOut;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.DefaultCodecFactory;
 import org.febit.wit.loader.Loader;
-import org.febit.wit.parser.NativeFactory;
+import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.parser.TemplateTextFactory;
-import org.febit.wit.parser.security.NoneNativeSecurity;
 import org.febit.wit.parser.template.AdaptiveTemplateTextFactory;
 import org.febit.wit.runtime.accessor.Accessor;
 import org.febit.wit.runtime.accessor.ComposedAccessorFactory;
@@ -41,7 +40,7 @@ public class WitBuilder {
 
     private Charset charset = StandardCharsets.UTF_8;
     private CodecFactory codecFactory = new DefaultCodecFactory();
-    private NativeFactory nativeFactory = new NativeFactory(new NoneNativeSecurity());
+    private NativeLayout nativeLayout = NativeLayout.ofDefault();
     private TemplateTextFactory templateTextFactory = new AdaptiveTemplateTextFactory();
 
     @Nullable
@@ -91,9 +90,9 @@ public class WitBuilder {
         return this;
     }
 
-    public WitBuilder nativeFactory(NativeFactory factory) {
+    public WitBuilder nativeLayout(NativeLayout factory) {
         Objects.requireNonNull(factory);
-        this.nativeFactory = factory;
+        this.nativeLayout = factory;
         return this;
     }
 
@@ -148,7 +147,7 @@ public class WitBuilder {
                 .loader(loader)
                 .accessors(accessors)
                 .codecFactory(codecFactory)
-                .nativeFactory(nativeFactory)
+                .nativeLayout(nativeLayout)
                 .templateTextFactory(templateTextFactory)
                 .build();
 

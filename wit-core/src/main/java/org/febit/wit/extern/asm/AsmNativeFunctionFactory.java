@@ -1,9 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.extern.asm;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.parser.NativeFactory;
-import org.febit.wit.parser.security.NativeSecurity;
+import org.febit.wit.parser.NativeFunctionFactory;
+import org.febit.wit.parser.NativeFunctionFactoryDecorator;
+import org.febit.wit.parser.ReflectNativeFunctionFactory;
 import org.febit.wit.runtime.Function;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit_shaded.asm.ClassWriter;
@@ -17,51 +21,54 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 
 @Slf4j
-public class AsmNativeFactory extends NativeFactory {
+@Accessors(fluent = true)
+@RequiredArgsConstructor(staticName = "create")
+public class AsmNativeFunctionFactory implements NativeFunctionFactoryDecorator {
 
     private static final String[] FUNC_DECLARE = {"org/febit/wit/runtime/Function"};
 
-    public AsmNativeFactory(NativeSecurity security) {
-        super(security);
+    @Getter
+    private final NativeFunctionFactory delegate;
+
+    public static AsmNativeFunctionFactory create() {
+        return create(ReflectNativeFunctionFactory.INSTANCE);
     }
 
     @Override
-    protected Function createConstructorFunction(Constructor<?> constructor) {
-        var accessor = createFunctionIfAbsent(constructor);
-        if (accessor != null) {
-            return accessor;
+    public Function constructor(Constructor<?> constructor) {
+        var function = checkAndConstruct(constructor);
+        if (function != null) {
+            return function;
         }
-        return super.createConstructorFunction(constructor);
+        return delegate.constructor(constructor);
     }
 
     @Override
-    public Function createMethodFunction(Method method) {
-        var accessor = createFunctionIfAbsent(method);
-        if (accessor != null) {
-            return accessor;
+    public Function method(Method method) {
+        var function = checkAndConstruct(method);
+        if (function != null) {
+            return function;
         }
-        return super.createMethodFunction(method);
+        return delegate.method(method);
     }
 
     @Nullable
-    protected Function createFunctionIfAbsent(Member member) {
+    private Function checkAndConstruct(Member member) {
         if (!ClassUtils.isPublic(member.getDeclaringClass()) || !ClassUtils.isPublic(member)) {
             return null;
         }
-        return cache.computeIfAbsent(member, m -> {
-            try {
-                return constructFunction((Member) m);
-            } catch (Exception | LinkageError e) {
-                log.error("Failed to create AsmFunction for '{}'.", member, e);
-                return null;
-            }
-        });
+        try {
+            return construct(member);
+        } catch (Exception | LinkageError e) {
+            log.error("Cannot construct AsmFunction for '{}'.", member, e);
+            return null;
+        }
     }
 
     @SuppressWarnings({
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    static Function constructFunction(Member obj)
+    static Function construct(Member obj)
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         var className = "org.febit.wit.extern.asm.AsmFunction" + AsmUtils.SEQ.getAndIncrement();
         var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,

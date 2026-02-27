@@ -1,6 +1,5 @@
 package org.febit.wit.runtime.heap;
 
-import lombok.RequiredArgsConstructor;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.jspecify.annotations.Nullable;
 
@@ -9,10 +8,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
-@RequiredArgsConstructor(staticName = "of")
-public class GenricHeap implements Heap {
-
-    protected final Map<String, @Nullable Object> table;
+public record GenricHeap(
+        Map<String, @Nullable Object> table
+) implements Heap {
 
     public static GenricHeap local() {
         return new GenricHeap(new HashMap<>());

@@ -5,7 +5,8 @@ import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
 import org.febit.wit.test.component.lib.ConstMethods;
 import org.febit.wit.test.component.lib.ConstMethods2;
-import org.febit.wit.util.JavaNativeUtils;
+import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.HeapNativeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class TestCasesModule implements WitModule {
     public void apply(Wit wit) {
 
         var heaps = wit.staticHeaps();
-        var nativeFactory = wit.nativeFactory();
+        var functions = wit.nativeLayout().functions();
 
         // Static
         heaps.variables().set("MY_GLOBAL", "MY_GLOBAL");
@@ -28,19 +29,29 @@ public class TestCasesModule implements WitModule {
         heaps.constants().set("MY_CONST_2", "MY_CONST_2");
 
         //Native
-        heaps.constants().set("new_list", nativeFactory.constructorFunction(ArrayList.class, null));
-        heaps.constants().set("list_size", nativeFactory.methodFunction(List.class, "size", null));
-        heaps.constants().set("list_add", nativeFactory.methodFunction(List.class, "add", new Class[]{Object.class}));
-        heaps.constants().set("substring", nativeFactory.methodFunction(String.class, "substring", new Class[]{int.class, int.class}));
+        try {
+            heaps.constants().set("new_list", functions.constructor(ArrayList.class.getConstructor()));
+            heaps.constants().set("list_size", functions.method(List.class.getMethod("size")));
+            heaps.constants().set("list_add", functions.method(List.class.getMethod("add", Object.class)));
+            heaps.constants().set("substring", functions.method(String.class.getMethod("substring", int.class, int.class)));
 
-        JavaNativeUtils.addConstFields(heaps, ConstMethods.class);
-        JavaNativeUtils.addStaticMethods(heaps, nativeFactory, ConstMethods.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        HeapNativeUtils.addConstFields(heaps.constants(), ConstMethods.class);
+        HeapNativeUtils.addStaticMethods(heaps.constants(), functions, ConstMethods.class);
 
-        heaps.constants().set("new_ConstMethods2", nativeFactory.constructorFunction(ConstMethods2.class, null));
-        heaps.constants().set("const2Member", nativeFactory.methodFunction(ConstMethods2.class, "const2Member"));
-        heaps.constants().set("const2Size", nativeFactory.methodFunction(ConstMethods2.class, "const2Size"));
-        heaps.constants().set("const2Foo", nativeFactory.methodFunction(ConstMethods2.class, "const2Foo"));
-
+        try {
+            heaps.constants().set("new_ConstMethods2", functions.constructor(ConstMethods2.class.getConstructor()));
+            heaps.constants().set("const2Member", functions.method(ClassUtils.methods(ConstMethods2.class, "const2Member")
+                    .filter(ClassUtils::isPublic).toList()));
+            heaps.constants().set("const2Size", functions.method(ClassUtils.methods(ConstMethods2.class, "const2Size")
+                    .filter(ClassUtils::isPublic).toList()));
+            heaps.constants().set("const2Foo", functions.method(ClassUtils.methods(ConstMethods2.class, "const2Foo")
+                    .filter(ClassUtils::isPublic).toList()));
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
         // For optimize.wit
         heaps.constants().set("CONST_STRING_BUILDER", new StringBuilder());
         heaps.constants().set("CONST_ATOMIC_INT", new AtomicInteger());

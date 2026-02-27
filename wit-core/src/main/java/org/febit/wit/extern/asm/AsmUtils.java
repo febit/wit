@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.extern.asm;
 
+import lombok.experimental.UtilityClass;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
@@ -10,6 +11,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicLong;
 
+@UtilityClass
 class AsmUtils {
 
     static final String TYPE_STRING_NAME = "java/lang/String";
@@ -17,9 +19,6 @@ class AsmUtils {
     static final AtomicLong SEQ = new AtomicLong(1);
 
     private static final AsmClassLoader CLASS_LOADER = new AsmClassLoader();
-
-    private AsmUtils() {
-    }
 
     static Class<?> loadClass(String name, ClassWriter classWriter) {
         return CLASS_LOADER.loadClass(name, classWriter.toByteArray());

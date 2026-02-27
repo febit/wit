@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast.statement;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
@@ -17,17 +14,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public final class Switch implements Statement, Loopable {
-
-    private final Expression condition;
-    @Nullable
-    private final Branch defaultBranch;
-    private final Map<Object, Branch> branches;
-    private final int label;
-    @Getter
-    private final Position position;
+public record Switch(
+        Expression condition,
+        @Nullable Branch defaultBranch,
+        Map<Object, Branch> branches,
+        int label,
+        Position position
+) implements Statement, Loopable {
 
     @Override
     @Nullable

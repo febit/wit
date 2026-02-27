@@ -495,11 +495,11 @@ expression      ::= expressionStatementAble:$
 
                     //NativeNewArrayDeclareExpression
                     |NATIVE:sym LBRACK RBRACK javaClass:javaClass
-                    {: yield assembler.createNewNativeArrayFunction(%javaClass%, %sym.symbol%.pos); :}
+                    {: yield assembler.createNewArrayNativeFunctionValue(%javaClass%, %sym.symbol%.pos); :}
 
                     //nativeMethodExpr
                     |NATIVE:sym classPureName:nameRope DOT IDENTIFIER:ident LPAREN javaClass[COMMA]:list? RPAREN
-                    {: yield assembler.createNativeMethodDeclareExpression(assembler.toClass(%nameRope%, %nameRope.symbol%.pos), %ident%, %list%, %sym.symbol%.pos); :}
+                    {: yield assembler.createMethodNativeFunctionValue(assembler.toClass(%nameRope%, %nameRope.symbol%.pos), %ident%, %list%, %sym.symbol%.pos); :}
 
                     //native static field
                     |NATIVE classPureName:nameRope
@@ -507,7 +507,7 @@ expression      ::= expressionStatementAble:$
 
                     //nativeConstructorExpr
                     |NATIVE:sym NEW classPureName:nameRope LPAREN javaClass[COMMA]:list? RPAREN
-                    {: yield assembler.createNativeConstructorDeclareExpression(assembler.toClass(%nameRope%, %nameRope.symbol%.pos), %list%, %sym.symbol%.pos); :}
+                    {: yield assembler.createConstructorNativeFunctionValue(assembler.toClass(%nameRope%, %nameRope.symbol%.pos), %list%, %sym.symbol%.pos); :}
 
                     |METHOD_REFERENCE:ref
                     {: yield assembler.createMethodReference(%ref%, %ref.symbol%.pos); :}

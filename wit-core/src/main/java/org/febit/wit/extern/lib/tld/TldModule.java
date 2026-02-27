@@ -4,14 +4,17 @@ package org.febit.wit.extern.lib.tld;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
+import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.UncheckedException;
-import org.febit.wit.parser.NativeFactory;
+import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.runtime.Function;
+import org.febit.wit.runtime.ast.TextPosition;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.PathUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 @Slf4j
@@ -32,7 +35,7 @@ public class TldModule implements WitModule {
     @Override
     public void apply(Wit wit) {
         var heaps = wit.staticHeaps();
-        var nativeFactory = wit.nativeFactory();
+        var nativeLayout = wit.nativeLayout();
 
         log.info("Load TLD file: {}", path);
         var input = ClassUtils.getDefaultClassLoader()
@@ -50,20 +53,33 @@ public class TldModule implements WitModule {
         for (var func : functions) {
             heaps.constants().set(
                     this.prefix + func.name(),
-                    createFunction(nativeFactory, func)
+                    createFunction(nativeLayout, func)
             );
         }
     }
 
-    protected Function createFunction(NativeFactory nativeFactory, TldFunction func) {
-        var parameterTypes = func.parameterTypes().stream()
+    protected Function createFunction(NativeLayout nativeLayout, TldFunction func) {
+
+        if (checkAccess) {
+            nativeLayout.securityCheck(
+                    func.declaredClass() + '.' + func.methodName(),
+                    TextPosition.UNKNOWN
+            );
+        }
+
+        var paramTypes = func.parameterTypes().stream()
                 .map(ClassUtils::loadByName)
                 .toArray(Class<?>[]::new);
 
-        return nativeFactory.methodFunction(
-                ClassUtils.loadByName(func.declaredClass()),
-                func.methodName(),
-                parameterTypes,
-                checkAccess);
+        var clazz = ClassUtils.loadByName(func.declaredClass());
+
+        Method method;
+        try {
+            method = clazz.getMethod(func.methodName(), paramTypes);
+        } catch (NoSuchMethodException | SecurityException ex) {
+            throw new ParseException(ex.getMessage(), ex, TextPosition.UNKNOWN);
+        }
+
+        return nativeLayout.functions().method(method);
     }
 }

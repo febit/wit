@@ -2,7 +2,7 @@
 package org.febit.wit.runtime.function;
 
 import org.febit.wit.runtime.Function;
-import org.febit.wit.util.JavaNativeUtils;
+import org.febit.wit.util.NativeMethods;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
@@ -18,6 +18,6 @@ public final class MethodNativeFunction implements Function.Constable {
     @Nullable
     @Override
     public Object apply(@Nullable Object @Nullable [] args) {
-        return JavaNativeUtils.invokeMethod(method, args);
+        return NativeMethods.invoke(method, args);
     }
 }

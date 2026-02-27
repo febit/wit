@@ -11,59 +11,35 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @UtilityClass
 public class ClassUtils {
-
-    private static final ClassMap<Map<String, Method[]>> PUBLIC_MEMBER_METHODS_CACHE = new ClassMap<>();
 
     public static String name(@Nullable Object targetObj) {
         return targetObj != null ? targetObj.getClass().getName() : "null";
     }
 
-    public static Method[] getPublicMemberMethods(Class<?> target, String name) {
-        var map = PUBLIC_MEMBER_METHODS_CACHE.get(target);
-        if (map == null) {
-            map = PUBLIC_MEMBER_METHODS_CACHE.putIfAbsent(target, new HashMap<>());
-        }
-        return map.computeIfAbsent(name, n -> getMethods(target, method ->
-                !isPublic(method)
-                        || isStatic(method)
-                        || !method.getName().equals(n))
-        );
-    }
-
-    public static Method[] getPublicMethods(Class<?> target, String name) {
-        return getMethods(target, method ->
-                !isPublic(method)
-                        || !method.getName().equals(name));
-    }
-
-    private static Method[] getMethods(Class<?> type, Predicate<Method> exclude) {
+    public static Stream<Method> methods(Class<?> target, String name) {
         var result = new HashMap<String, Method>();
-        for (var method : type.getMethods()) {
-            if (exclude.test(method)) {
+        for (var method : target.getMethods()) {
+            if (!method.getName().equals(name)) {
                 continue;
             }
             var keyBuf = new StringBuilder();
-            for (Class<?> parameterType : method.getParameterTypes()) {
-                keyBuf.append(parameterType.getName())
+            for (var type : method.getParameterTypes()) {
+                keyBuf.append(type.getName())
                         .append(',');
             }
-            String key = keyBuf.toString();
-            Method old = result.get(key);
+            var key = keyBuf.toString();
+            var old = result.get(key);
             if (old == null
                     || old.getDeclaringClass()
                     .isAssignableFrom(method.getDeclaringClass())) {
                 result.put(key, method);
             }
         }
-        var methods = result.values()
-                .toArray(new Method[0]);
-        setAccessible(methods);
-        return methods;
+        return result.values().stream();
     }
 
     public static ClassLoader getDefaultClassLoader() {
@@ -175,6 +151,10 @@ public class ClassUtils {
 
     public static boolean isStatic(Member member) {
         return Modifier.isStatic(member.getModifiers());
+    }
+
+    public static boolean isNotStatic(Member member) {
+        return !isStatic(member);
     }
 
     public static boolean isFinal(Member member) {
