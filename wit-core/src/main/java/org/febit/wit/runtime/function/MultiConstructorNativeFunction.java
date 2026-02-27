@@ -2,7 +2,7 @@
 package org.febit.wit.runtime.function;
 
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.Function;
+import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.util.NativeMethods;
 import org.jspecify.annotations.Nullable;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 public record MultiConstructorNativeFunction(
         List<Constructor<?>> constructors
-) implements Function.Constable {
+) implements WitFunction.Constable {
 
     @Override
     public Object apply(@Nullable Object @Nullable [] args) {

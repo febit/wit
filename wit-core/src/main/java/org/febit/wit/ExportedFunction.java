@@ -3,8 +3,8 @@ package org.febit.wit;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.io.DiscardOut;
-import org.febit.wit.runtime.Function;
 import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.heap.GenricHeap;
 import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
@@ -21,16 +21,16 @@ import java.nio.charset.Charset;
 public final class ExportedFunction {
 
     private final Script script;
-    private final Function function;
+    private final WitFunction function;
     private final Out defaultOut;
 
-    public ExportedFunction(Script container, Function function) {
+    public ExportedFunction(Script container, WitFunction function) {
         this(container, function, DiscardOut.get());
     }
 
     public ExportedFunction(
             Script container,
-            Function function,
+            WitFunction function,
             Charset charset,
             boolean isByteStream
     ) {

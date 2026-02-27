@@ -4,7 +4,7 @@ package org.febit.wit.extern.lib.std;
 import lombok.experimental.UtilityClass;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
-import org.febit.wit.runtime.Function;
+import org.febit.wit.runtime.WitFunction;
 import org.jspecify.annotations.Nullable;
 
 import static org.febit.wit.util.ArrayUtils.get;
@@ -29,7 +29,7 @@ public class TypesModule implements WitModule {
     @UtilityClass
     static class Types {
         static boolean is_function(@Nullable Object @Nullable [] args) {
-            return get(args, 0) instanceof Function;
+            return get(args, 0) instanceof WitFunction;
         }
 
         static boolean is_number(@Nullable Object @Nullable [] args) {

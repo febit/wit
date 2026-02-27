@@ -23,6 +23,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.function.Function;
 
 /**
  * Internal Context.
@@ -169,21 +170,21 @@ public final class InternalContext implements Context {
 
     @Nullable
     public Object redirect(
-            Writer writer, java.util.function.Function<InternalContext, @Nullable Object> action) {
+            Writer writer, Function<InternalContext, @Nullable Object> action) {
         var target = engine().asOut(writer, this.out.charset());
         return redirect(target, action);
     }
 
     @Nullable
     public Object redirect(
-            OutputStream output, java.util.function.Function<InternalContext, @Nullable Object> action) {
+            OutputStream output, Function<InternalContext, @Nullable Object> action) {
         var target = engine().asOut(output, this.out.charset());
         return redirect(target, action);
     }
 
     @Nullable
     public Object redirect(
-            Out target, java.util.function.Function<InternalContext, @Nullable Object> action) {
+            Out target, Function<InternalContext, @Nullable Object> action) {
         Out prevOut = this.out;
         this.out = target;
         try {
@@ -210,7 +211,7 @@ public final class InternalContext implements Context {
     @Override
     public ExportedFunction exportFunction(String name) throws NoSuchFunctionException {
         var obj = this.variables().get(name, false);
-        if (!(obj instanceof Function func)) {
+        if (!(obj instanceof WitFunction func)) {
             throw new NoSuchFunctionException(obj);
         }
         return new ExportedFunction(this.script, func, this.out.charset(), this.out.preferBytes());

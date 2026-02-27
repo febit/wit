@@ -1,6 +1,6 @@
 package org.febit.wit.parser;
 
-import org.febit.wit.runtime.Function;
+import org.febit.wit.runtime.WitFunction;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface NativeFunctionFactory {
 
-    Function array(Class<?> componentType);
+    WitFunction array(Class<?> componentType);
 
-    Function method(Method method);
+    WitFunction method(Method method);
 
-    Function method(List<Method> methods);
+    WitFunction method(List<Method> methods);
 
-    Function constructor(Constructor<?> constructor);
+    WitFunction constructor(Constructor<?> constructor);
 
-    Function constructor(List<Constructor<?>> constructors);
+    WitFunction constructor(List<Constructor<?>> constructors);
 
     default NativeFunctionFactory withCache() {
         return CachingNativeFunctionFactory.of(this);

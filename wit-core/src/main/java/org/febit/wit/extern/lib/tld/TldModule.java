@@ -7,7 +7,7 @@ import org.febit.wit.WitModule;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.UncheckedException;
 import org.febit.wit.parser.NativeLayout;
-import org.febit.wit.runtime.Function;
+import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.ast.TextPosition;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.PathUtils;
@@ -58,7 +58,7 @@ public class TldModule implements WitModule {
         }
     }
 
-    protected Function createFunction(NativeLayout nativeLayout, TldFunction func) {
+    protected WitFunction createFunction(NativeLayout nativeLayout, TldFunction func) {
 
         if (checkAccess) {
             nativeLayout.securityCheck(

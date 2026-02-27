@@ -1,8 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.test.component.lib;
 
-import org.febit.wit.runtime.Function;
 import org.febit.wit.runtime.Undefined;
+import org.febit.wit.runtime.WitFunction;
 
 import java.util.Map;
 
@@ -14,9 +14,9 @@ public class ConstMethods {
     /**
      * A empty function, do nothing.
      */
-    public static final Function.Constable noop = args -> Undefined.UNDEFINED;
+    public static final WitFunction.Constable noop = args -> Undefined.UNDEFINED;
 
-    public static final Function.Constable CONST_METHOD = args -> "CONST_METHOD";
+    public static final WitFunction.Constable CONST_METHOD = args -> "CONST_METHOD";
 
     public static String constEmpty() {
         return "constEmpty";
@@ -26,7 +26,7 @@ public class ConstMethods {
         // do nothing
     }
 
-    public static Function constMethod() {
+    public static WitFunction constMethod() {
         return CONST_METHOD;
     }
 

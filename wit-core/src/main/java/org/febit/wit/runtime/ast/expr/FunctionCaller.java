@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.Function;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
+import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -26,7 +26,7 @@ public final class FunctionCaller implements Expression {
     @Nullable
     public Object execute(InternalContext context) {
         var funcObj = this.func.execute(context);
-        if (!(funcObj instanceof Function declare)) {
+        if (!(funcObj instanceof WitFunction declare)) {
             throw new ScriptEvaluateException("not a function", this);
         }
         var paramsObj = context.visit(this.params);
@@ -37,8 +37,8 @@ public final class FunctionCaller implements Expression {
     @Nullable
     public Object evalAsConst() {
         var funcObj = AstUtils.evalConst(this.func);
-        if (!(funcObj instanceof Function.Constable constable)) {
-            if (!(funcObj instanceof Function)) {
+        if (!(funcObj instanceof WitFunction.Constable constable)) {
+            if (!(funcObj instanceof WitFunction)) {
                 throw new ScriptEvaluateException("not a function", this);
             }
             return Undefined.UNDEFINED;

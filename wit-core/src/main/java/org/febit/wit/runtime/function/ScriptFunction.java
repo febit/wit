@@ -3,13 +3,13 @@ package org.febit.wit.runtime.function;
 
 import org.febit.wit.Vars;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.Function;
 import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.ast.FrameIndexer;
 import org.febit.wit.runtime.ast.expr.FunctionDeclarer;
 import org.jspecify.annotations.Nullable;
 
-public final class ScriptFunction implements Function {
+public final class ScriptFunction implements WitFunction {
 
     private final FunctionDeclarer declarer;
     private final InternalContext declarerContext;

@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.parser.NativeFunctionFactory;
 import org.febit.wit.parser.NativeFunctionFactoryDecorator;
 import org.febit.wit.parser.ReflectNativeFunctionFactory;
-import org.febit.wit.runtime.Function;
+import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 @RequiredArgsConstructor(staticName = "create")
 public class AsmNativeFunctionFactory implements NativeFunctionFactoryDecorator {
 
-    private static final String[] FUNC_DECLARE = {"org/febit/wit/runtime/Function"};
+    private static final String[] FUNC_DECLARE = {"org/febit/wit/runtime/WitFunction"};
 
     @Getter
     private final NativeFunctionFactory delegate;
@@ -35,7 +35,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactoryDecorator 
     }
 
     @Override
-    public Function constructor(Constructor<?> constructor) {
+    public WitFunction constructor(Constructor<?> constructor) {
         var function = checkAndConstruct(constructor);
         if (function != null) {
             return function;
@@ -44,7 +44,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactoryDecorator 
     }
 
     @Override
-    public Function method(Method method) {
+    public WitFunction method(Method method) {
         var function = checkAndConstruct(method);
         if (function != null) {
             return function;
@@ -53,7 +53,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactoryDecorator 
     }
 
     @Nullable
-    private Function checkAndConstruct(Member member) {
+    private WitFunction checkAndConstruct(Member member) {
         if (!ClassUtils.isPublic(member.getDeclaringClass()) || !ClassUtils.isPublic(member)) {
             return null;
         }
@@ -68,7 +68,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactoryDecorator 
     @SuppressWarnings({
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    static Function construct(Member obj)
+    static WitFunction construct(Member obj)
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         var className = "org.febit.wit.extern.asm.AsmFunction" + AsmUtils.SEQ.getAndIncrement();
         var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
@@ -190,7 +190,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactoryDecorator 
         }
         m.visitMaxs();
 
-        return (Function) AsmUtils.loadClass(className, classWriter)
+        return (WitFunction) AsmUtils.loadClass(className, classWriter)
                 .getConstructor().newInstance();
     }
 }

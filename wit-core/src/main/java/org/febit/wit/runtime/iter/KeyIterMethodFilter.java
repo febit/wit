@@ -2,17 +2,17 @@
 package org.febit.wit.runtime.iter;
 
 import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.Function;
 import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.WitFunction;
 import org.jspecify.annotations.Nullable;
 
 public final class KeyIterMethodFilter extends IterFilter implements KeyIter {
 
     private final InternalContext context;
-    private final Function method;
+    private final WitFunction method;
     private final KeyIter keyIter;
 
-    public KeyIterMethodFilter(InternalContext context, Function method, KeyIter keyIter) {
+    public KeyIterMethodFilter(InternalContext context, WitFunction method, KeyIter keyIter) {
         super(keyIter);
         this.context = context;
         this.method = method;

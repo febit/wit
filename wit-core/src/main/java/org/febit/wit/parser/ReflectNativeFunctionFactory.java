@@ -1,6 +1,6 @@
 package org.febit.wit.parser;
 
-import org.febit.wit.runtime.Function;
+import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.function.ConstructorNativeFunction;
 import org.febit.wit.runtime.function.MethodNativeFunction;
 import org.febit.wit.runtime.function.MultiConstructorNativeFunction;
@@ -18,18 +18,18 @@ public class ReflectNativeFunctionFactory implements NativeFunctionFactory {
     public static final ReflectNativeFunctionFactory INSTANCE = new ReflectNativeFunctionFactory();
 
     @Override
-    public Function array(Class<?> componentType) {
+    public WitFunction array(Class<?> componentType) {
         return new NewArrayNativeFunction(componentType);
     }
 
     @Override
-    public Function method(Method method) {
+    public WitFunction method(Method method) {
         method.trySetAccessible();
         return new MethodNativeFunction(method);
     }
 
     @Override
-    public Function method(List<Method> methods) {
+    public WitFunction method(List<Method> methods) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException("methods is empty");
         }
@@ -52,13 +52,13 @@ public class ReflectNativeFunctionFactory implements NativeFunctionFactory {
     }
 
     @Override
-    public Function constructor(Constructor<?> constructor) {
+    public WitFunction constructor(Constructor<?> constructor) {
         constructor.trySetAccessible();
         return new ConstructorNativeFunction(constructor);
     }
 
     @Override
-    public Function constructor(List<Constructor<?>> constructors) {
+    public WitFunction constructor(List<Constructor<?>> constructors) {
         if (constructors.isEmpty()) {
             throw new IllegalArgumentException("constructors is empty");
         }

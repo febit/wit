@@ -4,13 +4,13 @@ package org.febit.wit.runtime;
 import org.jspecify.annotations.Nullable;
 
 @FunctionalInterface
-public interface Function {
+public interface WitFunction {
 
     @Nullable
     Object apply(InternalContext context, @Nullable Object @Nullable [] args);
 
     @FunctionalInterface
-    interface Constable extends Function {
+    interface Constable extends WitFunction {
 
         @Nullable
         default Object apply(InternalContext context, @Nullable Object @Nullable [] args) {

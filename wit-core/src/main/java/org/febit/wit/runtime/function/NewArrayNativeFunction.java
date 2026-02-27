@@ -2,13 +2,13 @@
 package org.febit.wit.runtime.function;
 
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.Function;
+import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.util.ClassUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Array;
 
-public class NewArrayNativeFunction implements Function.Constable {
+public class NewArrayNativeFunction implements WitFunction.Constable {
 
     private final Class<?> componentType;
 

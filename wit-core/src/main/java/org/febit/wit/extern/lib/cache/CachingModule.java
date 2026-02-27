@@ -4,9 +4,9 @@ package org.febit.wit.extern.lib.cache;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.Function;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
+import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.util.ArrayUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -66,11 +66,11 @@ public class CachingModule implements WitModule {
         var arg1 = ArrayUtils.get(args, 1);
 
         CachingEntry entry;
-        if (arg0 instanceof Function func) {
+        if (arg0 instanceof WitFunction func) {
             entry = this.using.computeIfAbsent(arg0,
                     () -> compute(context, func, args, 1)
             );
-        } else if (arg1 instanceof Function func) {
+        } else if (arg1 instanceof WitFunction func) {
             entry = this.using.computeIfAbsent(arg0,
                     () -> compute(context, func, args, 2)
             );
@@ -84,7 +84,7 @@ public class CachingModule implements WitModule {
 
     protected static CachingEntry compute(
             InternalContext context,
-            Function func,
+            WitFunction func,
             @Nullable Object[] args,
             int paramsStartedAt
     ) {
