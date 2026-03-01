@@ -1,0 +1,25 @@
+assertNull($LOCAL("a"));
+
+{
+    //TEST: General
+
+    $LOCAL("a","abc");
+    assertEquals("abc", $LOCAL("a"));
+}
+
+{
+    //TEST: include
+
+    $LOCAL("a","abc");
+    include "../lib/local.include.wit";
+    assertEquals("def", $LOCAL("a"));
+}
+
+{
+    //TEST: Global function
+
+    $LOCAL("a","xxx");
+    localTestInGlobal("a","xxx");
+    localTestInGlobal_set("a", "yyy");
+    assertEquals("yyy", $LOCAL("a"));
+}

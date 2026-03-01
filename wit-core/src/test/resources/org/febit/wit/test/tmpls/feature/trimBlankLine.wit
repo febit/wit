@@ -1,5 +1,3 @@
-<%
-
 var trimBlankLine;
 
 var out, out2, out3;
@@ -35,6 +33,3 @@ var out, out2, out3;
         assertArrayEquals(out, out2);
     }
 }
-
-
-%>

@@ -1,0 +1,45 @@
+{
+
+    var a = "A";
+    var b = "B";
+    {
+        import "lib/abc.import.wit";
+
+        var b;
+        var func;
+
+        var c = "c";
+
+        assertSame(a, super.a);
+        assertSame(c, func(c));
+
+        assertNotSame(b, super.b);
+        assertEquals(b, "b");
+
+    }
+    {
+        var b;
+        var b_1;
+        import "lib/abc.import.wit" a,b_1=b;
+
+        var func;
+
+        var c = "c";
+
+        assertSame(a, super.a);
+
+        assertEquals(a, "a");
+
+        assertNull(func);
+        assertNull(b);
+
+        assertEquals(b_1, "b");
+
+    }
+    {
+        import "lib/abc.import.wit" {"1":"1","2":"2"} a,b;
+        var a;
+        var b;
+    }
+
+}

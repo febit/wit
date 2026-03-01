@@ -1,5 +1,3 @@
-<%
-
 assertEquals(CONST_STRING_BUILDER.~toString(), "");
 assertEquals(CONST_ATOMIC_INT.~get(), 0);
 
@@ -55,7 +53,7 @@ obj = [? "assert:DirectValue" : 100 || 200 ?]
 assertEquals(obj, 100);
 
 
-const N100 = 100; 
+const N100 = 100;
 
 obj = [? "assert:DirectValue" : -100 ?]
 assertEquals(obj, -100);
@@ -90,4 +88,3 @@ obj = [? "assert:NotDirectValue" : CONST_ATOMIC_INT && 100 ?]
 assertEquals(obj, 100);
 obj = [? "assert:NotDirectValue" : CONST_ATOMIC_INT || 100 ?]
 assertEquals(obj, CONST_ATOMIC_INT);
-

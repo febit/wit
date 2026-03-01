@@ -1,0 +1,117 @@
+const a = 1;
+const b = "bbb";
+{
+    assertEquals("123".~length(), 3);
+    assertEquals("123".~substring(1,2), "2");
+}
+{
+
+    @import java.util.Map;
+    @import java.util.HashMap;
+    @import java.util.HashSet;
+
+    const map = {
+        "1": a,
+        "2": b
+    };
+
+    assertEquals(map["1"], a);
+    assertEquals(map["2"], b);
+
+    map.~put("2", a);
+    map.~put("3", b);
+    assertEquals(map["2"], a);
+    assertEquals(map["3"], b);
+    assertEquals(map.~size(), 3);
+
+    assertEquals(java.util.Map::get(map,"2"), a);
+    assertEquals( java.util.Map :: size (map), 3);
+
+    var map2 = HashMap::new(map);
+    assertEquals( java.util.Map :: size (map), 3);
+    assertEquals(Map::size(map2), 3);
+    assertEquals(map2["1"], a);
+    assertEquals(map2["2"], a);
+    assertEquals(HashMap::get(map,"3"), b);
+
+    var values = HashSet::new(map2.~values());
+    assertTrue(values.~contains(1));
+    assertTrue(values.~contains(b));
+    assertFalse(values.~contains("not exist"));
+
+}
+{
+    @import java.util.Arrays;
+    @import java.util.List;
+
+    var list = Arrays::asList([1,2,3,"a","b","c"]);
+
+    assertEquals(list[0], 1);
+    assertEquals(List::get(list, 1), 2);
+    assertEquals(list[3], "a");
+    assertEquals(List::get(list, 4), "b");
+
+}
+{
+  @import org.febit.wit.util.StringUtils;
+
+  var max = Math::max;
+
+  assertEquals(max(1,2), 2);
+  assertEquals(Math::max(1,2), 2);
+  assertEquals(Math::min(1,2), 1);
+  assertEquals(String::length("1234"), 4);
+  assertEquals(String::valueOf("1234"), "1234");
+  assertEquals(String::valueOf(1234), "1234");
+
+  assertEquals(Integer::parseInt("1234"), 1234);
+  assertEquals(Long::parseLong("1234"), 1234L);
+
+}
+{
+    var new_stringBuilder = native new StringBuilder();
+    var buf = new_stringBuilder();
+
+    buf.~append("123").~append(456);
+    assertEquals("123456", buf.~toString());
+    assertEquals("123456", StringBuilder::toString(buf));
+}
+{
+    var buf = StringBuilder::new();
+    StringBuilder::append(StringBuilder::append(buf, "123"), "233");
+    assertEquals("123233", StringBuilder::toString(buf));
+
+    buf = StringBuilder::new("233");
+    assertEquals("233", buf.~toString());
+
+    buf = StringBuilder::new(123);
+    assertEquals(123, buf.~capacity());
+}
+{
+
+    var arr
+
+    arr = int[]::new(2)
+    arr[1] = 100
+    assertEquals(2, arr.length)
+    assertEquals(100, arr[1])
+
+    arr = int[][]::new(100)
+    arr[99] = int[]::new(2)
+    assertEquals(100, arr.length)
+    assertEquals(2, arr[99].length)
+    assertEquals(0, arr[99][0])
+
+    arr = String[][]::new(1)
+    arr = StringBuilder[][][]::new(1)
+    arr = Map[][][][]
+            ::new(1)
+
+    arr.~toString()
+    arr.~hashCode()
+    Map[][][][]::hashCode(arr)
+    Map [ ] []   [   ] [
+         ]
+        ::
+        toString(arr)
+}

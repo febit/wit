@@ -1,5 +1,3 @@
-<%
-
 {
     var map = {};
     var count = 0;
@@ -72,5 +70,3 @@
     }
     assertEquals(2, count);
 }
-
-%>

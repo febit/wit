@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AutoTest {
 
     private static final String AUTO_TEST_ROOT = "org/febit/wit/test/tmpls/auto";
-    private static final String AUTO_TEST_ROOT_FLAG = AUTO_TEST_ROOT + "/flag";
+    private static final String AUTO_TEST_ROOT_FLAG = AUTO_TEST_ROOT + "/.mark";
 
     private final LongAdder breakpointCount = new LongAdder();
 
@@ -85,11 +85,11 @@ class AutoTest {
             throw new UncheckedIOException(e);
         }
         var out = TestWit.WIT().asOut(output);
-        var context = script.eval(Vars.empty(), out, this::onBreakpoint);
+        var context = script.eval(Vars.empty(), out, this::handleBreakpoint);
         System.out.println("\tAssertion count: " + context.local().get(AssertionModule.ASSERT_COUNT_KEY));
     }
 
-    private void onBreakpoint(
+    private void handleBreakpoint(
             @Nullable Object label,
             InternalContext context,
             Statement statement,

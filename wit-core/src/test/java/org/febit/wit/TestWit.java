@@ -55,20 +55,20 @@ public class TestWit {
                     .prefix("tld_")
                     .build())
             .initScripts(
-                    "/inits/moduleTest-a-1.init.wit",
+                    "/inits/module-a-1.init.wit",
 
-                    "/inits/moduleTest-a-1.init.wit",
-                    "/inits/moduleTest-a-2.init.wit",
+                    "/inits/module-a-1.init.wit",
+                    "/inits/module-a-2.init.wit",
 
-                    "/inits/moduleTest-a.init.wit",
-                    "/inits/moduleTest-b.init.wit",
+                    "/inits/module-a.init.wit",
+                    "/inits/module-b.init.wit",
 
-                    "/inits/moduleTest-a-1.init.wit",
-                    "/inits/moduleTest-a-2.init.wit",
+                    "/inits/module-a-1.init.wit",
+                    "/inits/module-a-2.init.wit",
 
-                    "/auto/lib/initTest.init.wit",
-                    "/auto/lib/initTest.init2.wit",
-                    "/auto/lib/localTest.init.wit"
+                    "/auto/lib/global.init.wit",
+                    "/auto/lib/global.init2.wit",
+                    "/auto/lib/local.init.wit"
             )
             .build();
 
@@ -83,21 +83,21 @@ public class TestWit {
 
         var classpath = Loaders.classpath()
                 .root("org/febit/wit/test/tmpls")
-                .beginWith(Source.BeginWith.TEMPLATE)
+                .beginWith(Source.BeginWith.SCRIPT)
                 .deputySuffixes(EXT_DEPUTIES)
                 .missingSuffix(EXT_WIT)
                 .build();
 
         var lib = Loaders.classpath()
                 .root("org/febit/wit/test/lib")
-                .beginWith(Source.BeginWith.TEMPLATE)
+                .beginWith(Source.BeginWith.SCRIPT)
                 .deputySuffixes(EXT_DEPUTIES)
                 .missingSuffix(EXT_WIT)
                 .build();
 
         var libSub = Loaders.classpath()
                 .root("org/febit/wit/test/lib-sub")
-                .beginWith(Source.BeginWith.TEMPLATE)
+                .beginWith(Source.BeginWith.SCRIPT)
                 .deputySuffixes(EXT_DEPUTIES)
                 .missingSuffix(EXT_WIT)
                 .build();

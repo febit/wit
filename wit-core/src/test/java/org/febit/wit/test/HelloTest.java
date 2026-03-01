@@ -9,7 +9,7 @@ class HelloTest {
 
     @Test
     void test() throws NoSuchSourceException {
-        var script = TestWit.script("/helloTest.wit");
+        var script = TestWit.script("/hello.wit");
         script.reload();
         script.eval();
     }

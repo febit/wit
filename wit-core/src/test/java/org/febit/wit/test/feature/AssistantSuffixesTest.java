@@ -10,7 +10,7 @@ class AssistantSuffixesTest {
 
     @Test
     void test() {
-        assertDoesNotThrow(tmplChecker("/assistantSuffixesTest.whtml"));
-        assertDoesNotThrow(tmplChecker("/assistantSuffixesTest.wit2"));
+        assertDoesNotThrow(tmplChecker("/feature/suffixes/assistant1.whtml"));
+        assertDoesNotThrow(tmplChecker("/feature/suffixes/assistant2.wit2"));
     }
 }

@@ -1,5 +1,3 @@
-<%
-
 var v1,v2;
 {
     var back1;
@@ -13,5 +11,3 @@ var v1,v2;
     assertEquals("BACK1", back1);
     assertEquals("BACK2", back2);
 }
-
-%>

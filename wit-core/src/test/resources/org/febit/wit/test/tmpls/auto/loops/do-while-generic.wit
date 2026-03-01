@@ -1,0 +1,47 @@
+{
+  var a = 0;
+  var i = 0;
+  do {
+    a += i;
+    i++;
+  } while (i < 5);
+  assertEquals(10, a);
+  assertEquals(5, i);
+}
+{
+  var a = 0;
+  var i = 5;
+  do {
+    a += i;
+    i++;
+  } while (i < 5);
+  assertEquals(5, a);
+  assertEquals(6, i);
+}
+{
+  var a = 0;
+  var i = 0;
+  do {
+    if (i == 2) {
+      i++;
+      continue;
+    }
+    a += i;
+    i++;
+  } while (i <= 4);
+  assertEquals(8, a);
+  assertEquals(5, i);
+}
+{
+  var a = 0;
+  var i = 0;
+  do {
+    if (i == 3) {
+      break;
+    }
+    a += i;
+    i++;
+  } while (i <= 5);
+  assertEquals(3, a);
+  assertEquals(3, i);
+}

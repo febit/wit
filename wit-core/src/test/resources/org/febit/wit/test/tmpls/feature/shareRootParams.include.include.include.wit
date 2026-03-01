@@ -1,4 +1,3 @@
-<%
 var a1, a2;
 var v1, v2;
 
@@ -6,5 +5,3 @@ assertEquals(a1,"A1");
 assertEquals(a2,"A2");
 assertEquals(v1,"V1");
 assertEquals(v2,"V2");
-
-%>

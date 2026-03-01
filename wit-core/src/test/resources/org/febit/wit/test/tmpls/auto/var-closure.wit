@@ -1,0 +1,51 @@
+{
+    var a = "a";
+    var b = "b";
+    {
+        var b = "b";
+        assertSame(a, super.a);
+        assertNotSame(b, super.b);
+        assertEquals(a, "a");
+        {
+            assertSame(a, super.a);
+            assertSame(a, super.super.a);
+            assertNotSame(super.b, super.super.b);
+            assertEquals(a, "a");
+        }
+    }
+
+}
+{
+    {
+        var a,b,c;
+    }
+    {
+        var a, b=c=1, d=2;
+        a = 0;
+        assertEquals(a, 0);
+        assertEquals(b, 1);
+        assertEquals(c, 1);
+        assertEquals(d, 2);
+    }
+    {
+        var b=c=1, d=2, a;
+        a = 0;
+        assertEquals(a, 0);
+        assertEquals(b, 1);
+        assertEquals(c, 1);
+        assertEquals(d, 2);
+    }
+}
+{
+    var $;
+    var _;
+    var __;
+    var $$;
+}
+{
+    //
+    request = 1;
+    session = 1;
+    session = 1;
+    request2 = 1;
+}

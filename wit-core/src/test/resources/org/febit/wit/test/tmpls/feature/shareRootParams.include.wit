@@ -1,4 +1,3 @@
-<%
 var a1, a2;
 var v1, v2;
 
@@ -13,4 +12,3 @@ assertEquals(v2,"V2");
 
 var back1 = "BACK1";
 var back2 = "BACK2";
-%>

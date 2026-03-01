@@ -1,0 +1,7 @@
+var a;
+var b = "b";
+
+{
+a = "a";
+var c = "c";
+}
