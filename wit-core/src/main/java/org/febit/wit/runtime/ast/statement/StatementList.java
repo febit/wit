@@ -5,15 +5,19 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.ast.AstUtils;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public class StatementGroup implements Statement {
+public class StatementList implements Statement, WithFlowControl {
 
     private final Statement[] list;
     @Getter
@@ -36,5 +40,10 @@ public class StatementGroup implements Statement {
             return NoopStatement.INSTANCE;
         }
         return this;
+    }
+
+    @Override
+    public void collectFlowControls(Consumer<FlowControl> collector) {
+        AstUtils.collectFlowControls(collector, this.list);
     }
 }

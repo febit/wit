@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class ForMapNoLoops implements Statement {
+public final class ForMapNonFlow implements Statement {
 
     @Nullable
     private final FunctionDeclarer filter;
@@ -68,7 +68,7 @@ public final class ForMapNoLoops implements Statement {
                     keyIdx, iter.next(),
                     valIdx, iter.value()
             );
-            context.visit(stats);
+            context.visitNonFlow(stats);
         } while (iter.hasNext());
     }
 }

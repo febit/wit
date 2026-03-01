@@ -4,18 +4,18 @@ package org.febit.wit.runtime.ast.statement;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.LoopFlag;
-import org.febit.wit.runtime.ast.Loopable;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public record Return(
         @Nullable Expression value,
         Position position
-) implements Statement, Loopable {
+) implements Statement, WithFlowControl {
 
     @Override
     @Nullable
@@ -23,14 +23,14 @@ public record Return(
         var result = value != null
                 ? value.execute(context)
                 : Undefined.UNDEFINED;
-        context.loop().toReturn(result);
+        context.flow().toReturn(result);
         return null;
     }
 
     @Override
-    public List<LoopFlag> collectLoopFlags() {
-        return List.of(
-                new LoopFlag(LoopFlag.Kind.RETURN, 0, position)
+    public void collectFlowControls(Consumer<FlowControl> collector) {
+        collector.accept(
+                new FlowControl(FlowControl.Kind.RETURN, 0, position)
         );
     }
 }

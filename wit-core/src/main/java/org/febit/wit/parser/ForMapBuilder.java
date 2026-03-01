@@ -5,7 +5,7 @@ import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.statement.ForMap;
-import org.febit.wit.runtime.ast.statement.ForMapNoLoops;
+import org.febit.wit.runtime.ast.statement.ForMapNonFlow;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -44,14 +44,15 @@ public class ForMapBuilder extends BaseForInBuilder {
 
         var collection = AstUtils.optimize(this.collection);
 
-        var loops = AstUtils.collectLoopFlagsForWhile(Arrays.asList(body), elseBody, label);
-        if (loops.length == 0) {
-            return new ForMapNoLoops(filter, collection, frame(),
+        var hasFlowControl = AstUtils.hasFlowControls(body);
+        if (!hasFlowControl) {
+            return new ForMapNonFlow(filter, collection, frame(),
                     iterIndex, keyIndex, valueIndex, body, elseBody, position);
         }
 
+        var controls = AstUtils.flowControlsOverLoop(label, Arrays.asList(body), elseBody);
         return new ForMap(filter, collection, frame(),
                 iterIndex, keyIndex, valueIndex, body,
-                loops, elseBody, label, position);
+                controls, elseBody, label, position);
     }
 }

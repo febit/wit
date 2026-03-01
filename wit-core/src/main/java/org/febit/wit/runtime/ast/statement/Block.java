@@ -5,25 +5,24 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AstUtils;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.IBlock;
-import org.febit.wit.runtime.ast.LoopFlag;
-import org.febit.wit.runtime.ast.Loopable;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class Block implements IBlock, Loopable {
+public final class Block implements IBlock {
 
     @Getter
     private final int frame;
     @Getter
     private final Statement[] statements;
-    private final LoopFlag[] loopFlags;
+    private final List<FlowControl> flowControls;
     @Getter
     private final Position position;
 
@@ -31,18 +30,18 @@ public final class Block implements IBlock, Loopable {
     @Nullable
     public Object execute(InternalContext context) {
         context.variables().onFrame(frame,
-                () -> context.visitAndCheckLoop(statements)
+                () -> context.visit(statements)
         );
         return null;
     }
 
     @Override
-    public List<LoopFlag> collectLoopFlags() {
-        return AstUtils.asList(loopFlags);
+    public void collectFlowControls(Consumer<FlowControl> collector) {
+        flowControls.forEach(collector);
     }
 
     @Override
-    public boolean hasLoopFlags() {
+    public boolean needFlowControlCheck() {
         return true;
     }
 }

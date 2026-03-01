@@ -13,7 +13,7 @@ import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class DoWhileNoLoops implements Statement {
+public final class DoWhileNonFlow implements Statement {
 
     private final Expression condition;
     private final int frame;
@@ -32,7 +32,7 @@ public final class DoWhileNoLoops implements Statement {
     private void execute0(InternalContext context) {
         var stats = this.body;
         do {
-            context.visit(stats);
+            context.visitNonFlow(stats);
         } while (ALU.isTruly(condition.execute(context)));
     }
 }

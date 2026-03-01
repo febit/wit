@@ -5,19 +5,19 @@ import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.LoopFlag;
-import org.febit.wit.runtime.ast.Loopable;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public record IfNot(
         Expression condition,
         Statement elseBody,
         Position position
-) implements Statement, Loopable {
+) implements Statement, WithFlowControl {
 
     @Override
     @Nullable
@@ -29,7 +29,7 @@ public record IfNot(
     }
 
     @Override
-    public List<LoopFlag> collectLoopFlags() {
-        return AstUtils.collectLoopFlags(elseBody);
+    public void collectFlowControls(Consumer<FlowControl> collector) {
+        AstUtils.collectFlowControls(collector, elseBody);
     }
 }

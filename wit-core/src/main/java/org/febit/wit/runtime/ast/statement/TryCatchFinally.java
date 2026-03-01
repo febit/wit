@@ -3,13 +3,13 @@ package org.febit.wit.runtime.ast.statement;
 
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.AstUtils;
-import org.febit.wit.runtime.ast.LoopFlag;
-import org.febit.wit.runtime.ast.Loopable;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public record TryCatchFinally(
         Statement body,
@@ -17,7 +17,7 @@ public record TryCatchFinally(
         @Nullable Statement finallyBody,
         int exceptionVarIndex,
         Position position
-) implements Statement, Loopable {
+) implements Statement, WithFlowControl {
 
     @Override
     @Nullable
@@ -36,7 +36,7 @@ public record TryCatchFinally(
     }
 
     @Override
-    public List<LoopFlag> collectLoopFlags() {
-        return AstUtils.collectLoopFlags(body, catchBody, finallyBody);
+    public void collectFlowControls(Consumer<FlowControl> collector) {
+        AstUtils.collectFlowControls(collector, body, catchBody, finallyBody);
     }
 }

@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class ForInNoLoops implements Statement {
+public final class ForInNonFlow implements Statement {
 
     @Nullable
     private final FunctionDeclarer filter;
@@ -63,7 +63,7 @@ public final class ForInNoLoops implements Statement {
         heap.set(iterIndex, iter);
         do {
             heap.set(itemIdx, iter.next());
-            context.visit(stats);
+            context.visitNonFlow(stats);
         } while (iter.hasNext());
     }
 }

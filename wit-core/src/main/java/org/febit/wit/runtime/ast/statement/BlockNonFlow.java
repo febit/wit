@@ -2,12 +2,15 @@
 package org.febit.wit.runtime.ast.statement;
 
 import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.IBlock;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
-public record BlockWithoutLoops(
+import java.util.function.Consumer;
+
+public record BlockNonFlow(
         int frame,
         Statement[] statements,
         Position position
@@ -17,14 +20,18 @@ public record BlockWithoutLoops(
     @Nullable
     public Object execute(InternalContext context) {
         context.variables().onFrame(frame,
-                () -> context.visit(statements)
+                () -> context.visitNonFlow(statements)
         );
         return null;
     }
 
     @Override
-    public boolean hasLoopFlags() {
+    public boolean needFlowControlCheck() {
         return false;
+    }
+
+    @Override
+    public void collectFlowControls(Consumer<FlowControl> collector) {
     }
 
     @Override

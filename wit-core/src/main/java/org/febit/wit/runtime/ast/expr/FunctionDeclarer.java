@@ -22,7 +22,7 @@ public final class FunctionDeclarer implements Expression {
     private final FrameIndexer[] indexers;
     private final Statement[] statements;
     private final int argsIndexStart;
-    private final boolean hasReturnLoops;
+    private final boolean hasReturnFlow;
     @Getter
     private final Position position;
 
@@ -34,14 +34,14 @@ public final class FunctionDeclarer implements Expression {
     @Nullable
     public Object apply(InternalContext context, @Nullable Object @Nullable [] args) {
         fillArgs(context, args);
-        if (hasReturnLoops) {
-            context.visitAndCheckLoop(statements);
-            var loop = context.loop();
-            var returned = loop.returned();
-            loop.reset();
+        if (hasReturnFlow) {
+            context.visit(statements);
+            var flow = context.flow();
+            var returned = flow.returned();
+            flow.reset();
             return returned;
         } else {
-            context.visit(statements);
+            context.visitNonFlow(statements);
             return Undefined.UNDEFINED;
         }
     }

@@ -2,30 +2,30 @@
 package org.febit.wit.runtime.ast.statement;
 
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.LoopFlag;
-import org.febit.wit.runtime.ast.Loopable;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public record Continue(
         int label,
         Position position
-) implements Statement, Loopable {
+) implements Statement, WithFlowControl {
 
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.loop().toContinue(label);
+        context.flow().toContinue(label);
         return null;
     }
 
     @Override
-    public List<LoopFlag> collectLoopFlags() {
-        return List.of(
-                new LoopFlag(LoopFlag.Kind.CONTINUE, label, position)
+    public void collectFlowControls(Consumer<FlowControl> collector) {
+        collector.accept(
+                new FlowControl(FlowControl.Kind.CONTINUE, label, position)
         );
     }
 }

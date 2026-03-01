@@ -7,17 +7,17 @@ import org.junit.jupiter.api.Test;
 import static org.febit.wit.TestWit.tmplChecker;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ExportedFunctionLoopOverflowTest {
+class ExportedFunctionFlowOverflowTest {
 
     @Test
     void test() {
         assertThrows(ParseException.class,
-                tmplChecker("/loopTests/loopOverflow1.wit"));
+                tmplChecker("/flow-overflow/break-in-function.wit"));
 
         assertThrows(ParseException.class,
-                tmplChecker("/loopTests/loopOverflow2.wit"));
+                tmplChecker("/flow-overflow/label-mismatch.wit"));
 
         assertThrows(ParseException.class,
-                tmplChecker("/loopTests/loopOverflow3.wit"));
+                tmplChecker("/flow-overflow/switch-continue.wit"));
     }
 }

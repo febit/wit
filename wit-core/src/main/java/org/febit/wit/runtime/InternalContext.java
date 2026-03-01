@@ -49,7 +49,7 @@ public final class InternalContext implements Context {
     private final AccessorFactory accessors;
 
     @lombok.Getter
-    private final Loop loop = new Loop();
+    private final Flow flow = new Flow();
 
     /**
      * Input parameters.
@@ -108,7 +108,7 @@ public final class InternalContext implements Context {
         return results;
     }
 
-    public void visit(Statement[] stats) {
+    public void visitNonFlow(Statement[] stats) {
         var i = 0;
         var len = stats.length;
         while (i < len) {
@@ -116,13 +116,51 @@ public final class InternalContext implements Context {
         }
     }
 
-    public void visitAndCheckLoop(Statement[] stats) {
+    public void visit(Statement[] stats) {
         var i = 0;
         var len = stats.length;
-        var lp = this.loop();
-        while (i < len && lp.isNone()) {
+        var fl = this.flow();
+        while (i < len && fl.isNoop()) {
             stats[i++].execute(this);
         }
+    }
+
+    /**
+     * Visit loop body, handle flow control.
+     *
+     * @param stats loop body statements
+     * @param label loop label
+     * @return true if loop should break, false if should continue
+     */
+    public boolean visitLoopFlow(Statement[] stats, int label) {
+        var fl = this.flow();
+
+        var i = 0;
+        var len = stats.length;
+        while (i < len && fl.isNoop()) {
+            stats[i++].execute(this);
+        }
+        if (fl.isNoop()) {
+            return false;
+        }
+        if (!fl.isTarget(label)) {
+            return true;
+        }
+        return switch (fl.kind()) {
+            case RETURN -> true;
+            case BREAK -> {
+                // Reset flow state
+                // Then break to exit the flow
+                fl.reset();
+                yield true;
+            }
+            case CONTINUE -> {
+                // Reset flow state, Then continue to next loop iteration
+                fl.reset();
+                yield false;
+            }
+            case NOOP -> throw new IllegalStateException("unexpected NOOP");
+        };
     }
 
     /**

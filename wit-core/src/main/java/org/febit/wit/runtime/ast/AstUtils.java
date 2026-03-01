@@ -9,15 +9,12 @@ import org.febit.wit.runtime.ast.statement.NoopStatement;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 @UtilityClass
 public class AstUtils {
-
-    private static final LoopFlag[] EMPTY_LOOPS = new LoopFlag[0];
 
     public static boolean isImmutableDirectValue(Expression expr) {
         return (expr instanceof DirectValue direct)
@@ -60,49 +57,45 @@ public class AstUtils {
         }
     }
 
-    public static List<LoopFlag> asList(LoopFlag... loops) {
-        if (loops.length == 0) {
-            return Collections.emptyList();
+    public static void collectFlowControls(Consumer<FlowControl> collector, @Nullable Statement statement) {
+        if (statement instanceof WithFlowControl with) {
+            with.collectFlowControls(collector);
         }
-        return Arrays.asList(loops);
     }
 
-    public static List<LoopFlag> collectLoopFlags(@Nullable Statement statement) {
-        if (statement instanceof Loopable loopable) {
-            return loopable.collectLoopFlags();
-        }
-        return Collections.emptyList();
-    }
-
-    public static List<LoopFlag> collectLoopFlags(@Nullable Statement... statements) {
-        if (statements.length == 0) {
-            return Collections.emptyList();
-        }
-        List<LoopFlag> loops = new ArrayList<>();
+    public static void collectFlowControls(Consumer<FlowControl> collector, @Nullable Statement... statements) {
         for (var statement : statements) {
-            loops.addAll(collectLoopFlags(statement));
+            collectFlowControls(collector, statement);
         }
-        return loops;
+    }
+
+    public static boolean hasFlowControls(Statement @Nullable ... statements) {
+        if (statements == null) {
+            return false;
+        }
+        var has = new AtomicBoolean(false);
+        AstUtils.collectFlowControls(ctrl -> has.set(true), statements);
+        return has.get();
     }
 
     /**
-     * Collect loops exported by while/for statement.
+     * Collect flow controls for loop body and else block.
      * <p>
-     * Loops target to current while/for statement will be excluded.
+     * Flow controls in loop body that targeting to current loop statement will be ignored.
      */
-    public static LoopFlag[] collectLoopFlagsForWhile(
-            List<Statement> body, @Nullable Statement elseBody, int label) {
-        var list = body.stream()
-                .flatMap(stat -> collectLoopFlags(stat).stream())
-                // Only accept loops that are not targeting to current while/for statement
-                .filter(loop -> !(loop.matchLabel(label)
-                        && loop.kind().isBreakOrContinue()))
-                .collect(Collectors.toList());
-
-        // Loops in else block are all exported
-        list.addAll(AstUtils.collectLoopFlags(elseBody));
-        return list.isEmpty() ? EMPTY_LOOPS
-                : list.toArray(new LoopFlag[0]);
+    public static List<FlowControl> flowControlsOverLoop(
+            int label, List<Statement> body, @Nullable Statement elseBody) {
+        var list = new ArrayList<FlowControl>();
+        // Only accept controls that are not targeting to current while/for statement
+        body.forEach(stat -> collectFlowControls(f -> {
+            if (f.matchesLabel(label) && f.kind().isBreakOrContinue()) {
+                return;
+            }
+            list.add(f);
+        }, stat));
+        // Controls in else block are all exported
+        collectFlowControls(list::add, elseBody);
+        return List.copyOf(list);
     }
 
 }

@@ -1,14 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast;
 
-public record LoopFlag(
+public record FlowControl(
         Kind kind,
         int label,
         Position position
 ) {
 
     public enum Kind {
-        NONE,
+        NOOP,
         BREAK,
         CONTINUE,
         RETURN,
@@ -26,12 +26,12 @@ public record LoopFlag(
             return this == BREAK || this == CONTINUE;
         }
 
-        public boolean isNone() {
-            return this == NONE;
+        public boolean isNoop() {
+            return this == NOOP;
         }
     }
 
-    public boolean matchLabel(int label) {
+    public boolean matchesLabel(int label) {
         return this.label == 0 || this.label == label;
     }
 }

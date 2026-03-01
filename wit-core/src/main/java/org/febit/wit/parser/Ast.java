@@ -9,8 +9,8 @@ import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.IBlock;
-import org.febit.wit.runtime.ast.LoopFlag;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.expr.Assign;
@@ -40,10 +40,10 @@ import org.febit.wit.runtime.ast.oper.IntStep;
 import org.febit.wit.runtime.ast.oper.Or;
 import org.febit.wit.runtime.ast.oper.SelfCalcAndAssign;
 import org.febit.wit.runtime.ast.statement.Block;
-import org.febit.wit.runtime.ast.statement.BlockWithoutLoops;
+import org.febit.wit.runtime.ast.statement.BlockNonFlow;
 import org.febit.wit.runtime.ast.statement.BreakpointStatement;
 import org.febit.wit.runtime.ast.statement.DoWhile;
-import org.febit.wit.runtime.ast.statement.DoWhileNoLoops;
+import org.febit.wit.runtime.ast.statement.DoWhileNonFlow;
 import org.febit.wit.runtime.ast.statement.Echo;
 import org.febit.wit.runtime.ast.statement.If;
 import org.febit.wit.runtime.ast.statement.IfElse;
@@ -52,11 +52,11 @@ import org.febit.wit.runtime.ast.statement.Interpolation;
 import org.febit.wit.runtime.ast.statement.NoopStatement;
 import org.febit.wit.runtime.ast.statement.RenderRedirect;
 import org.febit.wit.runtime.ast.statement.Return;
-import org.febit.wit.runtime.ast.statement.StatementGroup;
+import org.febit.wit.runtime.ast.statement.StatementList;
 import org.febit.wit.runtime.ast.statement.TryCatchFinally;
 import org.febit.wit.runtime.ast.statement.TryFinally;
 import org.febit.wit.runtime.ast.statement.While;
-import org.febit.wit.runtime.ast.statement.WhileNoLoops;
+import org.febit.wit.runtime.ast.statement.WhileNonFlow;
 import org.febit.wit.runtime.ast.template.TemplateStringValue;
 import org.jspecify.annotations.Nullable;
 
@@ -220,20 +220,20 @@ public class Ast {
         var frame = body.frame();
         var statements = body.statements();
 
-        if (!body.hasLoopFlags()) {
+        if (!body.needFlowControlCheck()) {
             return switch (kind) {
-                case WHILE -> new WhileNoLoops(condition, frame, statements, pos);
-                case DO_WHILE -> new DoWhileNoLoops(condition, frame, statements, pos);
+                case WHILE -> new WhileNonFlow(condition, frame, statements, pos);
+                case DO_WHILE -> new DoWhileNonFlow(condition, frame, statements, pos);
             };
         }
 
         if (label == null) {
             label = 0;
         }
-        var loops = AstUtils.collectLoopFlagsForWhile(List.of(body), null, label);
+        var controls = AstUtils.flowControlsOverLoop(label, List.of(body), null);
         return switch (kind) {
-            case WHILE -> new While(condition, frame, statements, loops, label, pos);
-            case DO_WHILE -> new DoWhile(condition, frame, statements, loops, label, pos);
+            case WHILE -> new While(condition, frame, statements, controls, label, pos);
+            case DO_WHILE -> new DoWhile(condition, frame, statements, controls, label, pos);
         };
     }
 
@@ -362,7 +362,7 @@ public class Ast {
         }
         List<Statement> temp = new ArrayList<>(list.size());
         for (var stat : list) {
-            if (stat instanceof StatementGroup group) {
+            if (stat instanceof StatementList group) {
                 temp.addAll(group.list());
                 continue;
             }
@@ -377,7 +377,7 @@ public class Ast {
     }
 
     public static Statement statementGroup(List<Statement> list, Position pos) {
-        return new StatementGroup(flatStatements(list), pos);
+        return new StatementList(flatStatements(list), pos);
     }
 
     public static Expression functionCall(
@@ -416,10 +416,11 @@ public class Ast {
 
     public static IBlock block(@Nullable List<Statement> list, int frame, Position pos) {
         var statements = flatStatements(list);
-        var loops = AstUtils.collectLoopFlags(statements);
-        return loops.isEmpty()
-                ? new BlockWithoutLoops(frame, statements, pos)
-                : new Block(frame, statements, loops.toArray(new LoopFlag[0]), pos);
+        var controls = new ArrayList<FlowControl>();
+        AstUtils.collectFlowControls(controls::add, statements);
+        return controls.isEmpty()
+                ? new BlockNonFlow(frame, statements, pos)
+                : new Block(frame, statements, List.copyOf(controls), pos);
     }
 
     public static AssignableExpression castToAssignable(Expression expr) {

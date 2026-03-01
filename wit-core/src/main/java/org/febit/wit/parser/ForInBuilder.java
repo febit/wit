@@ -5,7 +5,7 @@ import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.statement.ForIn;
-import org.febit.wit.runtime.ast.statement.ForInNoLoops;
+import org.febit.wit.runtime.ast.statement.ForInNonFlow;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -34,15 +34,16 @@ public class ForInBuilder extends BaseForInBuilder {
 
         var collection = AstUtils.optimize(this.collection);
 
-        var loops = AstUtils.collectLoopFlagsForWhile(Arrays.asList(body), elseBody, label);
-        if (loops.length == 0) {
-            return new ForInNoLoops(filter, collection, frame(),
+        var hasFlowControl = AstUtils.hasFlowControls(body);
+        if (!hasFlowControl) {
+            return new ForInNonFlow(filter, collection, frame(),
                     iterIndex, itemIndex, body, elseBody, position);
         }
 
+        var controls = AstUtils.flowControlsOverLoop(label, Arrays.asList(body), elseBody);
         return new ForIn(filter, collection, frame(),
                 iterIndex, itemIndex, body,
-                loops, elseBody, label, position
+                controls, elseBody, label, position
         );
     }
 }

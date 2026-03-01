@@ -1,5 +1,0 @@
-<%
-var func = function(){
-    break; //continue
-};
-%>

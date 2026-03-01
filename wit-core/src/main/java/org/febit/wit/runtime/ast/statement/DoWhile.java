@@ -6,24 +6,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.LoopFlag;
-import org.febit.wit.runtime.ast.Loopable;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class DoWhile implements Statement, Loopable {
+public final class DoWhile implements Statement, WithFlowControl {
 
     private final Expression condition;
     private final int frame;
     private final Statement[] body;
-    private final LoopFlag[] loopFlags;
+    private final List<FlowControl> flowControls;
     private final int label;
     @Getter
     private final Position position;
@@ -40,35 +40,16 @@ public final class DoWhile implements Statement, Loopable {
         var statements = this.body;
         var myLabel = this.label;
         var cond = this.condition;
-        var loop = context.loop();
-        label:
         do {
-            context.visitAndCheckLoop(statements);
-            if (loop.isNone()) {
-                continue;
-            }
-            if (!context.loop().isTargetLabel(myLabel)) {
-                break; //while
-            }
-            switch (loop.kind()) {
-                case BREAK -> {
-                    // Reset loop state
-                    // Then break to exit the loop
-                    context.loop().reset();
-                    break label;
-                }
-                case RETURN -> {
-                    break label;
-                }
-                case CONTINUE -> // Reset loop state, Then continue to next loop iteration
-                        context.loop().reset();
-                case NONE -> throw new IllegalStateException("unexpected NOOP");
+            if (context.visitLoopFlow(statements, myLabel)) {
+                // End this loop if not continue
+                break;
             }
         } while (ALU.isTruly(cond.execute(context)));
     }
 
     @Override
-    public List<LoopFlag> collectLoopFlags() {
-        return AstUtils.asList(loopFlags);
+    public void collectFlowControls(Consumer<FlowControl> collector) {
+        flowControls.forEach(collector);
     }
 }

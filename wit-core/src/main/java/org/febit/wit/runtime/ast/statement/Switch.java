@@ -4,15 +4,14 @@ package org.febit.wit.runtime.ast.statement;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.LoopFlag;
-import org.febit.wit.runtime.ast.Loopable;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public record Switch(
         Expression condition,
@@ -20,7 +19,7 @@ public record Switch(
         Map<Object, Branch> branches,
         int label,
         Position position
-) implements Statement, Loopable {
+) implements Statement, WithFlowControl {
 
     @Override
     @Nullable
@@ -34,19 +33,19 @@ public record Switch(
         }
         if (branch != null) {
             branch.execute(context);
-            context.loop().resetIfBreak(label);
+            context.flow().resetIfBreak(label);
         }
         return null;
     }
 
     @Override
-    public List<LoopFlag> collectLoopFlags() {
-        List<LoopFlag> loops = new LinkedList<>();
-        //XXX: May have duplicated LoopInfo caused by duplicated CaseEntry
-        branches.values().forEach(entry -> loops.addAll(entry.collectPossibleLoops()));
-        //remove loops for this switch
-        loops.removeIf(loop -> loop.matchLabel(this.label) && loop.kind().isBreak());
-        return loops;
+    public void collectFlowControls(Consumer<FlowControl> collector) {
+        //XXX: May have duplicated controls caused by duplicated Branch
+        branches.values().forEach(entry -> AstUtils.collectFlowControls(ctrl -> {
+            if (!ctrl.matchesLabel(this.label) || !ctrl.kind().isBreak()) {
+                collector.accept(ctrl);
+            }
+        }, entry.body));
     }
 
     public record Branch(Statement body, @Nullable Branch next) {
@@ -54,14 +53,11 @@ public record Switch(
         @Nullable
         Object execute(InternalContext context) {
             body.execute(context);
-            if (context.loop().isNone() && next != null) {
+            if (context.flow().isNoop() && next != null) {
                 return next.execute(context);
             }
             return null;
         }
 
-        List<LoopFlag> collectPossibleLoops() {
-            return AstUtils.collectLoopFlags(body);
-        }
     }
 }

@@ -314,10 +314,11 @@ public class Assembler {
 
     public ScriptAST buildAST(List<Statement> list) {
         var statements = Ast.flatStatements(list);
-        var loops = AstUtils.collectLoopFlags(statements);
-        if (!loops.isEmpty()) {
-            throw new ParseException("loop overflow: " + loops);
-        }
+
+        AstUtils.collectFlowControls(ctrl -> {
+            throw new ParseException("Unhandled flow control: " + ctrl, ctrl.position());
+        }, statements);
+
         return new ScriptAST(
                 statements,
                 this.varLayout.buildFrameIndexers(),

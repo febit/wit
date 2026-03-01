@@ -36,7 +36,7 @@ public final class ScriptAST {
 
         var local = GenricHeap.local();
         var context = new InternalContext(script, variables, inputs, out, local, handler);
-        context.visit(this.statements);
+        context.visitNonFlow(this.statements);
         // assert context.indexer = 0
         return context;
     }
@@ -51,7 +51,7 @@ public final class ScriptAST {
                 context.local(),
                 context.breakpointHandler()
         );
-        newContext.visit(this.statements);
+        newContext.visitNonFlow(this.statements);
         // assert context.indexer = 0
         return newContext;
     }

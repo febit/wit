@@ -1,0 +1,68 @@
+<%
+{
+    for(i : 3..6){
+        //empty block
+    }else{
+        //empty block
+    }
+}
+{
+    var new_ints = native [] int;
+    var ints = new_ints(4);
+    ints[0] = 3;
+    ints[1] = 4;
+    ints[2] = 5;
+    ints[3] = 6;
+    assertEquals(4, ints.size);
+    var s = "";
+    for(i : ints){
+        s +=  for.iter.isOdd? "1":"0";
+    }
+    assertEquals("1010", s);
+}
+{
+    var s = "";
+    for(i : 3..6){
+        s +=  for.iter.isOdd? "1":"0";
+    }
+    assertEquals("1010", s);
+}
+{
+  var a = 0;
+  for (i : 0..3) {
+    a += i;
+  }
+  assertEquals(6, a);
+}
+
+{
+  var a = 0;
+  for (i : 0..3) {
+    for (j : 0..3) {
+      a += i * j;
+    }
+  }
+  assertEquals(36, a);
+}
+
+{
+  var a = 0;
+  for (i : 0..3) {
+    if (i == 2) {
+      break;
+    }
+    a += i;
+  }
+  assertEquals(1, a);
+}
+
+{
+  var a = 0;
+  for (i : 0..3) {
+    if (i == 2) {
+      continue;
+    }
+    a += i;
+  }
+  assertEquals(4, a);
+}
