@@ -31,7 +31,7 @@ public class WitBuilder {
     private static final int FEATURE_DEFAULTS = Feature.collectFeatureDefaults();
 
     private final List<WitModule> modules = new ArrayList<>();
-    private final List<String> initScripts = new ArrayList<>();
+    private final List<String> setupScripts = new ArrayList<>();
     private final Set<String> predefinedVars = new HashSet<>();
 
     private final ComposedAccessorFactory.Builder accessorFactory = ComposedAccessorFactory.builder();
@@ -56,13 +56,13 @@ public class WitBuilder {
         return this;
     }
 
-    public WitBuilder initScripts(String... scripts) {
-        this.initScripts.addAll(Arrays.asList(scripts));
+    public WitBuilder setup(String... scripts) {
+        this.setupScripts.addAll(Arrays.asList(scripts));
         return this;
     }
 
-    public WitBuilder initScripts(Collection<String> scripts) {
-        this.initScripts.addAll(scripts);
+    public WitBuilder setup(Collection<String> scripts) {
+        this.setupScripts.addAll(scripts);
         return this;
     }
 
@@ -155,35 +155,34 @@ public class WitBuilder {
             module.apply(wit);
         }
         try {
-            initScripts(wit, initScripts);
+            setup(wit, setupScripts);
         } catch (NoSuchSourceException e) {
             throw new UncheckedIOException(e.getMessage(), e);
         }
         return wit;
     }
 
-    private static void initScripts(Wit wit, List<String> scripts) throws NoSuchSourceException {
+    private static void setup(Wit wit, List<String> scripts) throws NoSuchSourceException {
         var fixed = scripts.stream()
                 .distinct()
                 .toList();
 
         if (fixed.isEmpty()) {
-            log.info("[INIT] no init scripts to apply.");
+            log.info("[INIT] Skipping setup scripts, none provided.");
             return;
         }
-        log.info("[INIT] applying init scripts: total={}", fixed.size());
 
         var total = fixed.size();
         var staticHeaps = wit.staticHeaps();
-
         for (int i = 0; i < total; i++) {
             var path = fixed.get(i);
-            log.info("[INIT] applying init scripts [{}/{}]: {}", i + 1, total, path);
+            log.info("[INIT] Applying setup scripts [{}/{}]: {}", i + 1, total, path);
             wit.script(path).eval(acceptor -> {
                 acceptor.set("GLOBAL", staticHeaps.variables());
                 acceptor.set("CONST", staticHeaps.constants());
             }, DiscardOut.get());
         }
+        log.info("[INIT] Applied setup scripts, total: {}", total);
     }
 
 }

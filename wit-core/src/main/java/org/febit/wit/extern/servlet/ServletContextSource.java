@@ -18,7 +18,7 @@ public record ServletContextSource(
 ) implements Source {
 
     @Override
-    public Reader openReader() throws IOException {
+    public Reader open() throws IOException {
         var in = servletContext.getResourceAsStream(path);
         if (in != null) {
             return new InputStreamReader(in, charset);

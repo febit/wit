@@ -382,7 +382,7 @@ abstract class AbstractParser {
         Lexer lexer = null;
         try {
             //ISSUE: LexerProvider
-            lexer = new Lexer(source.openReader());
+            lexer = new Lexer(source.open());
             lexer.setTrimCodeBlockBlankLine(assembler.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE));
             lexer.beginWith(source.beginWith());
             lexer.setOffset(source);
@@ -401,7 +401,7 @@ abstract class AbstractParser {
                 try {
                     lexer.close();
                 } catch (IOException ex) {
-                    log.warn("Failed to close lexer.", ex);
+                    log.warn("Cannot close lexer", ex);
                 }
             }
         }

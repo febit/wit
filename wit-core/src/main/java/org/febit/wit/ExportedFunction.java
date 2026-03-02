@@ -44,10 +44,6 @@ public final class ExportedFunction {
         return new InternalContext(script, variables, Vars.empty(), out, local, null);
     }
 
-    private InternalContext createContext() {
-        return createContext(defaultOut);
-    }
-
     @Nullable
     private Object doApply(InternalContext context, @Nullable Object @Nullable ... args) {
         return this.function.apply(context, args);
@@ -55,7 +51,7 @@ public final class ExportedFunction {
 
     @Nullable
     public Object apply(@Nullable Object @Nullable ... args) {
-        return doApply(createContext(), args);
+        return doApply(createContext(defaultOut), args);
     }
 
     @Nullable

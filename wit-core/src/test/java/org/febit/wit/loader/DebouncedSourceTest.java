@@ -31,7 +31,7 @@ class DebouncedSourceTest {
         }
 
         @Override
-        public Reader openReader() {
+        public Reader open() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

@@ -5,7 +5,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Strings;
 import org.febit.wit.Script;
 import org.febit.wit.TestWit;
-import org.febit.wit.Vars;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
@@ -38,7 +37,6 @@ class AutoTest {
 
     @Test
     void test() throws ParseException, ScriptEvaluateException, URISyntaxException, IOException {
-
         breakpointCount.reset();
         var classLoader = ClassUtils.getDefaultClassLoader();
         var out = new ByteArrayOutputStream();
@@ -77,16 +75,18 @@ class AutoTest {
     }
 
     private void mergeScript(String path, OutputStream output) {
-        System.out.println("Auto Test: " + path);
         Script script;
         try {
             script = TestWit.WIT().script(path);
         } catch (NoSuchSourceException e) {
             throw new UncheckedIOException(e);
         }
-        var out = TestWit.WIT().asOut(output);
-        var context = script.eval(Vars.empty(), out, this::handleBreakpoint);
-        System.out.println("\tAssertion count: " + context.local().get(AssertionModule.ASSERT_COUNT_KEY));
+        System.out.println("Testing: " + path);
+        var context = script.evaluator()
+                .out(output)
+                .breakpointHandler(this::handleBreakpoint)
+                .eval();
+        System.out.println("\tassertion count: " + context.local().get(AssertionModule.ASSERT_COUNT_KEY));
     }
 
     private void handleBreakpoint(

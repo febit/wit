@@ -26,9 +26,9 @@ public class DebouncedSource implements Source {
     }
 
     @Override
-    public Reader openReader() throws IOException {
+    public Reader open() throws IOException {
         // force clear version stamp
-        return this.delegate.openReader();
+        return this.delegate.open();
     }
 
     @Override

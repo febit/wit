@@ -1,5 +1,6 @@
 package org.febit.wit;
 
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.Out;
@@ -37,6 +38,7 @@ public interface Script {
 
     Context merge(InternalContext target, Vars inputs);
 
+    @CheckReturnValue
     default Evaluator evaluator() {
         return Evaluator.of(this);
     }

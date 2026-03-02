@@ -22,7 +22,7 @@ public record ClasspathSource(
     }
 
     @Override
-    public Reader openReader() throws IOException {
+    public Reader open() throws IOException {
         var in = ClassUtils.getDefaultClassLoader()
                 .getResourceAsStream(path);
         if (in == null) {

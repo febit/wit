@@ -18,7 +18,7 @@ public record EmptySource(
     }
 
     @Override
-    public Reader openReader() throws IOException {
+    public Reader open() throws IOException {
         throw new NoSuchSourceException(message);
     }
 

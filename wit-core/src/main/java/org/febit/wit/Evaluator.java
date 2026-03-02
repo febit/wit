@@ -1,5 +1,6 @@
 package org.febit.wit;
 
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -18,9 +19,12 @@ import java.util.function.Supplier;
 import static org.febit.wit.util.Defaults.nvl;
 
 @Getter
-@Setter
+@Setter(onMethod_ = {@CheckReturnValue})
 @Accessors(fluent = true, chain = true)
-@RequiredArgsConstructor(staticName = "of")
+@RequiredArgsConstructor(
+        staticName = "of",
+        onConstructor_ = {@CheckReturnValue}
+)
 public class Evaluator {
 
     @lombok.NonNull
@@ -40,11 +44,13 @@ public class Evaluator {
     private BreakpointHandler breakpointHandler;
 
     @Tolerate
+    @CheckReturnValue
     public Evaluator out(Writer writer) {
         return this.out(() -> script.engine().asOut(writer, charset));
     }
 
     @Tolerate
+    @CheckReturnValue
     public Evaluator out(OutputStream output) {
         return this.out(() -> script.engine().asOut(output, charset));
     }

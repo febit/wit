@@ -1,6 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.io;
 
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -20,7 +22,8 @@ public interface Source {
      */
     BeginWith beginWith();
 
-    Reader openReader() throws IOException;
+    @CheckReturnValue
+    Reader open() throws IOException;
 
     /**
      * Return current source version.

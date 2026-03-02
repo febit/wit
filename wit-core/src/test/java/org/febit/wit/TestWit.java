@@ -54,7 +54,7 @@ public class TestWit {
                     .path("tld-test.tld")
                     .prefix("tld_")
                     .build())
-            .initScripts(
+            .setup(
                     "/inits/module-a-1.init.wit",
 
                     "/inits/module-a-1.init.wit",

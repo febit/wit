@@ -12,7 +12,7 @@ public record StringSource(
 ) implements Source {
 
     @Override
-    public Reader openReader() {
+    public Reader open() {
         return new StringReader(this.text);
     }
 

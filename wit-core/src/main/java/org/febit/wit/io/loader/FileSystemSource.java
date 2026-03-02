@@ -36,7 +36,7 @@ public record FileSystemSource(
     }
 
     @Override
-    public Reader openReader() throws IOException {
+    public Reader open() throws IOException {
         return new InputStreamReader(
                 Files.newInputStream(path, StandardOpenOption.READ),
                 charset
