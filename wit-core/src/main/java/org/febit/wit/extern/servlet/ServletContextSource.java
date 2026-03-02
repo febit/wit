@@ -3,7 +3,7 @@ package org.febit.wit.extern.servlet;
 
 import jakarta.servlet.ServletContext;
 import org.febit.wit.exception.NoSuchSourceException;
-import org.febit.wit.runtime.Source;
+import org.febit.wit.io.Source;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

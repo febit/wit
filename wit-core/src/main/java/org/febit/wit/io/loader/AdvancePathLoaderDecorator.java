@@ -1,8 +1,7 @@
-package org.febit.wit.loader.impl;
+package org.febit.wit.io.loader;
 
-import org.febit.wit.loader.BasicPathLoader;
-import org.febit.wit.loader.Loader;
-import org.febit.wit.runtime.Source;
+import org.febit.wit.io.Loader;
+import org.febit.wit.io.Source;
 import org.febit.wit.util.PathUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -13,7 +12,7 @@ import java.util.List;
 )
 public class AdvancePathLoaderDecorator implements Loader {
 
-    private final BasicPathLoader delegate;
+    private final PathBasedLoader delegate;
 
     /**
      * Whether to enable caching.

@@ -2,10 +2,10 @@ package org.febit.wit;
 
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.exception.NoSuchSourceException;
-import org.febit.wit.io.DiscardOut;
+import org.febit.wit.io.Loader;
 import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.DefaultCodecFactory;
-import org.febit.wit.loader.Loader;
+import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.parser.template.AdaptiveTemplateTextFactory;

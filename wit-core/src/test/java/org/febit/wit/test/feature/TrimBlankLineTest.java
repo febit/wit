@@ -5,7 +5,7 @@ import org.febit.wit.Feature;
 import org.febit.wit.TestWit;
 import org.febit.wit.Vars;
 import org.febit.wit.exception.NoSuchSourceException;
-import org.febit.wit.io.DiscardOut;
+import org.febit.wit.io.out.DiscardOut;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

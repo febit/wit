@@ -1,12 +1,11 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
-package org.febit.wit.loader.impl;
+package org.febit.wit.io.loader;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.loader.Loader;
-import org.febit.wit.loader.LoaderDecorator;
-import org.febit.wit.runtime.Source;
+import org.febit.wit.io.Loader;
+import org.febit.wit.io.Source;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor(staticName = "of")

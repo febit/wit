@@ -1,9 +1,10 @@
-package org.febit.wit.loader;
+package org.febit.wit.io.loader;
 
+import org.febit.wit.io.Loader;
 import org.febit.wit.util.PathUtils;
 import org.jspecify.annotations.Nullable;
 
-public interface BasicPathLoader extends Loader {
+public interface PathBasedLoader extends Loader {
 
     @Nullable
     @Override

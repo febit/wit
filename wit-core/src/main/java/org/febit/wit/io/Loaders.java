@@ -1,16 +1,16 @@
-package org.febit.wit.loader;
+package org.febit.wit.io;
 
 import lombok.Singular;
 import lombok.experimental.UtilityClass;
-import org.febit.wit.loader.impl.AdvancePathLoaderDecorator;
-import org.febit.wit.loader.impl.ClasspathLoader;
-import org.febit.wit.loader.impl.DebouncedLoaderDecorator;
-import org.febit.wit.loader.impl.DispatcherLoader;
-import org.febit.wit.loader.impl.FileSystemLoader;
-import org.febit.wit.loader.impl.NoopLoader;
-import org.febit.wit.loader.impl.SecurityLoaderDecorator;
-import org.febit.wit.loader.impl.StringLoader;
-import org.febit.wit.runtime.Source;
+import org.febit.wit.io.loader.AdvancePathLoaderDecorator;
+import org.febit.wit.io.loader.ClasspathLoader;
+import org.febit.wit.io.loader.DebouncedLoaderDecorator;
+import org.febit.wit.io.loader.DispatcherLoader;
+import org.febit.wit.io.loader.EmptyLoader;
+import org.febit.wit.io.loader.FileSystemLoader;
+import org.febit.wit.io.loader.PathBasedLoader;
+import org.febit.wit.io.loader.SecurityLoaderDecorator;
+import org.febit.wit.io.loader.StringLoader;
 import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.Charset;
@@ -21,8 +21,8 @@ import java.util.List;
 @UtilityClass
 public class Loaders {
 
-    public static NoopLoader noop() {
-        return new NoopLoader();
+    public static EmptyLoader empty() {
+        return new EmptyLoader();
     }
 
     public static DispatcherLoader.Builder dispatcher() {
@@ -45,7 +45,7 @@ public class Loaders {
         return DebouncedLoaderDecorator.of(delegate, (int) delay.toMillis());
     }
 
-    public static AdvancePathLoaderDecorator.Builder advance(BasicPathLoader delegate) {
+    public static AdvancePathLoaderDecorator.Builder advance(PathBasedLoader delegate) {
         return AdvancePathLoaderDecorator.builder()
                 .delegate(delegate);
     }

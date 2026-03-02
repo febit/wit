@@ -1,7 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
-package org.febit.wit.io;
+package org.febit.wit.io.out;
 
-import org.febit.wit.Out;
+import org.febit.wit.io.Out;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;

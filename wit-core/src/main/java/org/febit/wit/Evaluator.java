@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.Tolerate;
-import org.febit.wit.io.DiscardOut;
+import org.febit.wit.io.Out;
+import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.runtime.BreakpointHandler;
 import org.jspecify.annotations.Nullable;
 

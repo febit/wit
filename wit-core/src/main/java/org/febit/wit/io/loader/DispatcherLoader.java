@@ -1,13 +1,13 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
-package org.febit.wit.loader.impl;
+package org.febit.wit.io.loader;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.loader.Loader;
-import org.febit.wit.loader.Loaders;
-import org.febit.wit.runtime.Source;
+import org.febit.wit.io.Loader;
+import org.febit.wit.io.Loaders;
+import org.febit.wit.io.Source;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class DispatcherLoader implements Loader {
             sorted.sort(RULE_PREFIX_DESC);
 
             return new DispatcherLoader(
-                    nvl(this.fallback, Loaders::noop),
+                    nvl(this.fallback, Loaders::empty),
                     List.copyOf(sorted)
             );
         }

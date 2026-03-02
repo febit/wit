@@ -1,4 +1,4 @@
 @NullMarked
-package org.febit.wit.loader.impl;
+package org.febit.wit.io.out;
 
 import org.jspecify.annotations.NullMarked;

@@ -2,7 +2,8 @@
 package org.febit.wit;
 
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.io.DiscardOut;
+import org.febit.wit.io.Out;
+import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.heap.GenricHeap;

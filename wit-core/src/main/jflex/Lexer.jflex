@@ -4,7 +4,7 @@ package org.febit.wit.parser;
 import org.jspecify.annotations.Nullable;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.runtime.ast.TextPosition;
-import org.febit.wit.runtime.Source;
+import org.febit.wit.io.Source;
 import org.febit.wit.util.LexerCharsBuffer;
 
 import java.util.ArrayDeque;

@@ -1,8 +1,8 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
-package org.febit.wit.loader.impl;
+package org.febit.wit.io.loader;
 
 import org.febit.wit.exception.NoSuchSourceException;
-import org.febit.wit.runtime.Source;
+import org.febit.wit.io.Source;
 import org.febit.wit.util.ClassUtils;
 
 import java.io.IOException;

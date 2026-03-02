@@ -1,17 +1,17 @@
-package org.febit.wit.loader.impl;
+package org.febit.wit.io.loader;
 
-import org.febit.wit.loader.Loader;
-import org.febit.wit.runtime.Source;
+import org.febit.wit.io.Loader;
+import org.febit.wit.io.Source;
 import org.jspecify.annotations.Nullable;
 
 /**
  * A loader that without any sources.
  */
-public class NoopLoader implements Loader {
+public class EmptyLoader implements Loader {
 
     @Override
     public Source get(String path) {
-        return new NoSuchSource(path, "No such source: " + path);
+        return new EmptySource(path, "No such source: " + path);
     }
 
     @Override

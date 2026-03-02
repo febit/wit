@@ -3,15 +3,15 @@ package org.febit.wit.extern.servlet;
 
 import jakarta.servlet.ServletContext;
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.loader.BasicPathLoader;
-import org.febit.wit.loader.impl.FileSystemSource;
-import org.febit.wit.runtime.Source;
+import org.febit.wit.io.Source;
+import org.febit.wit.io.loader.FileSystemSource;
+import org.febit.wit.io.loader.PathBasedLoader;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
 @RequiredArgsConstructor(staticName = "of")
-public class ServletContextLoader implements BasicPathLoader {
+public class ServletContextLoader implements PathBasedLoader {
 
     private final ServletContext servletContext;
     private final Charset charset;

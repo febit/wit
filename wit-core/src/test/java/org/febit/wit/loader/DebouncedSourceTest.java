@@ -1,8 +1,8 @@
 package org.febit.wit.loader;
 
 import lombok.Setter;
-import org.febit.wit.loader.impl.DebouncedSource;
-import org.febit.wit.runtime.Source;
+import org.febit.wit.io.Source;
+import org.febit.wit.io.loader.DebouncedSource;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Test;
 

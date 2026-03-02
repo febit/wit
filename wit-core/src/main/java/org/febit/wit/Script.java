@@ -2,10 +2,11 @@ package org.febit.wit;
 
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.io.DiscardOut;
+import org.febit.wit.io.Out;
+import org.febit.wit.io.Source;
+import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Source;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;

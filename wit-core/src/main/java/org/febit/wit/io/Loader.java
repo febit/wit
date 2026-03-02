@@ -1,7 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
-package org.febit.wit.loader;
+package org.febit.wit.io;
 
-import org.febit.wit.runtime.Source;
 import org.jspecify.annotations.Nullable;
 
 public interface Loader {
