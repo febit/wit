@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Array;
 import java.util.concurrent.atomic.LongAdder;
 
-import static org.febit.wit.util.ArrayUtils.get;
+import static org.febit.wit.util.Args.at;
 
 public class AssertionModule implements WitModule {
 
@@ -35,49 +35,49 @@ public class AssertionModule implements WitModule {
 
         private static Object assertTrue(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertObjectTrue(get(args, 0));
+            AssertionModule.assertObjectTrue(at(args, 0));
             return Undefined.UNDEFINED;
         }
 
         private static Object assertFalse(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertObjectFalse(get(args, 0));
+            AssertionModule.assertObjectFalse(at(args, 0));
             return Undefined.UNDEFINED;
         }
 
         private static Object assertNotNull(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertNotNull(get(args, 0));
+            AssertionModule.assertNotNull(at(args, 0));
             return Undefined.UNDEFINED;
         }
 
         private static Object assertNull(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertNull(get(args, 0));
+            AssertionModule.assertNull(at(args, 0));
             return Undefined.UNDEFINED;
         }
 
         private static Object assertEquals(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertEquals(get(args, 0), get(args, 1));
+            AssertionModule.assertEquals(at(args, 0), at(args, 1));
             return Undefined.UNDEFINED;
         }
 
         private static Object assertSame(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertSame(get(args, 0), get(args, 1));
+            AssertionModule.assertSame(at(args, 0), at(args, 1));
             return Undefined.UNDEFINED;
         }
 
         private static Object assertNotSame(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertNotSame(get(args, 0), get(args, 1));
+            AssertionModule.assertNotSame(at(args, 0), at(args, 1));
             return Undefined.UNDEFINED;
         }
 
         private static Object assertArrayEquals(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertArrayEquals(get(args, 0), get(args, 1));
+            AssertionModule.assertArrayEquals(at(args, 0), at(args, 1));
             return Undefined.UNDEFINED;
         }
     }

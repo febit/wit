@@ -7,7 +7,7 @@ import org.febit.wit.WitModule;
 import org.febit.wit.runtime.WitFunction;
 import org.jspecify.annotations.Nullable;
 
-import static org.febit.wit.util.ArrayUtils.get;
+import static org.febit.wit.util.Args.at;
 
 @SuppressWarnings({
         "squid:S1172", // Unused method parameters should be removed
@@ -29,25 +29,25 @@ public class TypesModule implements WitModule {
     @UtilityClass
     static class Types {
         static boolean is_function(@Nullable Object @Nullable [] args) {
-            return get(args, 0) instanceof WitFunction;
+            return at(args, 0) instanceof WitFunction;
         }
 
         static boolean is_number(@Nullable Object @Nullable [] args) {
-            return get(args, 0) instanceof Number;
+            return at(args, 0) instanceof Number;
         }
 
         static boolean is_bool(@Nullable Object @Nullable [] args) {
-            return get(args, 0) instanceof Boolean;
+            return at(args, 0) instanceof Boolean;
         }
 
         static boolean is_null(@Nullable Object @Nullable [] args) {
             return args == null
                     || args.length == 0
-                    || get(args, 0) == null;
+                    || at(args, 0) == null;
         }
 
         static boolean is_array(@Nullable Object @Nullable [] args) {
-            final Object item = get(args, 0);
+            final Object item = at(args, 0);
             return item != null
                     && item.getClass().isArray();
         }

@@ -2,7 +2,6 @@
 package org.febit.wit.runtime.ast;
 
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.util.ArrayUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.ObjIntConsumer;
@@ -11,7 +10,7 @@ import java.util.function.ObjIntConsumer;
 public final class FrameIndexer {
 
     public static final FrameIndexer EMPTY = new FrameIndexer(
-            null, ArrayUtils.emptyStrings(), new int[0]);
+            null, new String[0], new int[0]);
 
     @Nullable
     private final FrameIndexer upstream;

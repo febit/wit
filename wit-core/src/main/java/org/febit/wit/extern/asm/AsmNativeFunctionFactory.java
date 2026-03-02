@@ -152,7 +152,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactoryDecorator 
             m.visitVarInsn(Constants.ALOAD, 2);
 
             m.push(isStatic || isConstructor ? paramTypesLen : paramTypesLen + 1);
-            m.invokeStatic("org/febit/wit/util/ArrayUtils", "ensureMinSize",
+            m.invokeStatic("org/febit/wit/util/Args", "ensureSize",
                     "([Ljava/lang/Object;I)[Ljava/lang/Object;");
             m.visitVarInsn(Constants.ASTORE, 2);
 

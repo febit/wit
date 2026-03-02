@@ -9,7 +9,6 @@ import org.febit.wit.runtime.ast.FrameIndexer;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.TextPosition;
 import org.febit.wit.runtime.heap.StaticHeaps;
-import org.febit.wit.util.ArrayUtils;
 import org.febit.wit.util.Stack;
 import org.jspecify.annotations.Nullable;
 
@@ -145,7 +144,7 @@ public class VarLayout {
             if (up != null) {
                 return up;
             }
-            return new FrameIndexer(null, ArrayUtils.emptyStrings(), new int[0]);
+            return FrameIndexer.EMPTY;
         }
         var size = map.size();
         var names = new String[size];

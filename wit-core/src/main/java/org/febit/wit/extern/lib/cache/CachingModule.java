@@ -7,7 +7,7 @@ import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.WitFunction;
-import org.febit.wit.util.ArrayUtils;
+import org.febit.wit.util.Args;
 import org.jspecify.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
@@ -51,7 +51,7 @@ public class CachingModule implements WitModule {
     }
 
     private Object doRemove(InternalContext context, @Nullable Object @Nullable [] args) {
-        var key = ArrayUtils.get(args, 0);
+        var key = Args.at(args, 0);
         this.using.remove(key);
         return Undefined.UNDEFINED;
     }
@@ -63,7 +63,7 @@ public class CachingModule implements WitModule {
                     + " put(key?, factory, ...args?).");
         }
         var arg0 = args[0];
-        var arg1 = ArrayUtils.get(args, 1);
+        var arg1 = Args.at(args, 1);
 
         CachingEntry entry;
         if (arg0 instanceof WitFunction func) {
@@ -90,7 +90,7 @@ public class CachingModule implements WitModule {
     ) {
         var methodArgs = args.length > paramsStartedAt
                 ? Arrays.copyOfRange(args, paramsStartedAt, args.length)
-                : ArrayUtils.emptyObjects();
+                : Args.empty();
 
         Object returned;
         Object outed;

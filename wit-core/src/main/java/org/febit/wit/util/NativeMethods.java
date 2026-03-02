@@ -34,7 +34,7 @@ public class NativeMethods {
     public static Object invoke(
             final Method method, @Nullable Object self, @Nullable Object @Nullable [] args
     ) {
-        var methodArgs = prepareArgs(method.getParameterCount(), args, 0);
+        var methodArgs = fitArgs(args, method.getParameterCount(), 0);
         try {
             Object result = method.invoke(self, methodArgs);
             return ClassUtils.isVoidType(method.getReturnType())
@@ -52,7 +52,7 @@ public class NativeMethods {
     public static Object invoke(
             Constructor<?> constructor, @Nullable Object @Nullable [] args
     ) {
-        var methodArgs = prepareArgs(constructor.getParameterCount(), args, 0);
+        var methodArgs = fitArgs(args, constructor.getParameterCount(), 0);
         try {
             return constructor.newInstance(methodArgs);
         } catch (InstantiationException ex) {
@@ -80,19 +80,19 @@ public class NativeMethods {
         return argTypes;
     }
 
-    private static @Nullable Object[] prepareArgs(
-            int acceptArgsCount, @Nullable Object @Nullable [] args, final int from) {
+    private static @Nullable Object[] fitArgs(
+            @Nullable Object @Nullable [] args, int expectedSize, final int from) {
         if (args == null) {
-            return acceptArgsCount == 0
-                    ? ArrayUtils.emptyObjects()
-                    : new Object[acceptArgsCount];
+            return expectedSize == 0
+                    ? Args.empty()
+                    : new Object[expectedSize];
         }
-        if (from == 0 && args.length == acceptArgsCount) {
+        if (from == 0 && args.length == expectedSize) {
             return args;
         }
-        final Object[] result = new Object[acceptArgsCount];
-        System.arraycopy(args, from, result, 0, Math.min(args.length - from, acceptArgsCount));
-        return result;
+        var fit = new Object[expectedSize];
+        System.arraycopy(args, from, fit, 0, Math.min(args.length - from, expectedSize));
+        return fit;
     }
 
     /**
@@ -343,7 +343,7 @@ public class NativeMethods {
         if (args == null || args.length == 0 || args[0] == null) {
             throw new ScriptEvaluateException("this method need one argument at least");
         }
-        var methodArgs = prepareArgs(method.getParameterCount(), args, 1);
+        var methodArgs = fitArgs(args, method.getParameterCount(), 1);
         return invoke(method, args[0], methodArgs);
     }
 
