@@ -9,7 +9,7 @@ import org.febit.wit.io.Source;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor(staticName = "of")
-public class DebouncedLoaderDecorator implements LoaderDecorator {
+public class DebouncedLoaderDecorator implements Loader.Decorator {
 
     @Getter
     private final Loader delegate;

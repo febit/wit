@@ -11,7 +11,7 @@ import java.util.List;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor(staticName = "of")
-public class SecurityLoaderDecorator implements LoaderDecorator {
+public class SecurityLoaderDecorator implements Loader.Decorator {
 
     @Getter
     private final Loader delegate;

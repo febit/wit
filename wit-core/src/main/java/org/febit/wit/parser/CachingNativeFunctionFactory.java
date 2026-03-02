@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentMap;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor(staticName = "of")
-public class CachingNativeFunctionFactory implements NativeFunctionFactoryDecorator {
+public class CachingNativeFunctionFactory implements NativeFunctionFactory.Decorator {
 
     protected final ConcurrentMap<Object, WitFunction> cache = new ConcurrentHashMap<>();
 
