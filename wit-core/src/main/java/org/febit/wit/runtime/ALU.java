@@ -3,14 +3,16 @@ package org.febit.wit.runtime;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.util.CollectionUtils;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.DoubleAdder;
@@ -292,6 +294,25 @@ public class ALU {
         return !isTruly(o1);
     }
 
+    public static int size(@Nullable Object object) {
+        if (object == null) {
+            return 0;
+        }
+        if (object.getClass().isArray()) {
+            return Array.getLength(object);
+        }
+        if (object instanceof Collection<?> collection) {
+            return collection.size();
+        }
+        if (object instanceof Map<?, ?> map) {
+            return map.size();
+        }
+        if (object instanceof CharSequence cs) {
+            return cs.length();
+        }
+        return -1;
+    }
+
     public static boolean isTruly(@Nullable Object obj) {
         if (obj == null) {
             return false;
@@ -303,7 +324,7 @@ public class ALU {
             return false;
         }
 
-        var size = CollectionUtils.size(obj);
+        var size = size(obj);
         if (size == 0) {
             return false;
         }
@@ -321,6 +342,7 @@ public class ALU {
         }
         return true;
     }
+
     // ==
     public static boolean isEqual(@Nullable Object o1, @Nullable Object o2) {
         if (o1 == o2) {
@@ -526,7 +548,6 @@ public class ALU {
             default -> throw unsupportedTypeException(o1, o2);
         };
     }
-
 
     private static Object charToInt(final Object o1) {
         if (o1 instanceof Character c) {

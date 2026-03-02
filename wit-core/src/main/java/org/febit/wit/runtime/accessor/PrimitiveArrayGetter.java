@@ -1,7 +1,7 @@
 package org.febit.wit.runtime.accessor;
 
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.util.CollectionUtils;
+import org.febit.wit.runtime.ALU;
 import org.jspecify.annotations.Nullable;
 
 @FunctionalInterface
@@ -20,8 +20,8 @@ public interface PrimitiveArrayGetter<T> extends Getter<T> {
             return getValue(array, idx.intValue());
         }
         return switch (property.toString()) {
-            case "size", "length" -> CollectionUtils.size(array);
-            case "isEmpty" -> CollectionUtils.size(array) == 0;
+            case "size", "length" -> ALU.size(array);
+            case "isEmpty" -> ALU.size(array) == 0;
             default -> throw new ScriptEvaluateException("Invalid property: array#" + property);
         };
     }
