@@ -5,7 +5,7 @@ import org.jspecify.annotations.Nullable;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.runtime.ast.TextPosition;
 import org.febit.wit.runtime.Source;
-import org.febit.wit.util.LexerCharArrayWriter;
+import org.febit.wit.util.LexerCharsBuffer;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import java.util.Deque;
     private boolean templateStringFlag = false;
     private int templateStringBraceClosingCounter = 0;
 
-    private final LexerCharArrayWriter stringBuffer = new LexerCharArrayWriter(256);
+    private final LexerCharsBuffer charsBuffer = new LexerCharsBuffer(256);
     private boolean trimCodeBlockBlankLine = false;
     private int stringLine = 0;
     private int stringColumn = 0;
@@ -120,52 +120,52 @@ import java.util.Deque;
         return (char) yychar;
     }
 
-    private char[] popAsCharArray() {
-        char[] chars = stringBuffer.toCharArray();
-        stringBuffer.reset();
+    private char[] popChars() {
+        char[] chars = charsBuffer.toCharArray();
+        charsBuffer.reset();
         return chars;
     }
 
-    private char[] popAsCharArrayOmitStartingLineSeparator() {
-        char[] chars = stringBuffer.toArrayOmitStartingLineSeparator();
-        stringBuffer.reset();
+    private char[] popCharsWithoutLeadingLineEnding() {
+        char[] chars = charsBuffer.toCharsWithoutLeadingLineEnding();
+        charsBuffer.reset();
         return chars;
     }
 
     private String popAsString() {
-        return new String(popAsCharArray());
+        return new String(popChars());
     }
 
-    private void resetString() {
-        stringBuffer.reset();
+    private void resetCharsBuffer() {
+        charsBuffer.reset();
         stringLine = yyline;
         stringColumn = yycolumn;
     }
 
     private void appendToString(char c) {
-        stringBuffer.write(c);
+        charsBuffer.write(c);
     }
 
     private void appendToString(char c, int repeat) {
         if (repeat == 1) {
-            stringBuffer.append(c);
+            charsBuffer.append(c);
         } else if (repeat == 2) {
-            stringBuffer.append(c).append(c);
+            charsBuffer.append(c).append(c);
         } else if (repeat != 0) {
             final char[] chars = new char[repeat];
             while (repeat != 0) {
                 chars[--repeat] = c;
             }
-            stringBuffer.write(chars);
+            charsBuffer.write(chars);
         }
     }
 
     private void appendToString(char c, char c2) {
-        stringBuffer.append(c).append(c2);
+        charsBuffer.append(c).append(c2);
     }
 
     private void pullToString() {
-        stringBuffer.write(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+        charsBuffer.write(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
     }
 
     void beginWith(Source.BeginWith with) {
@@ -193,13 +193,13 @@ import java.util.Deque;
         final char[] chars;
         if (trimCodeBlockBlankLine) {
             if (!interpolationFlag) {
-                stringBuffer.trimRightAfterLastLineSeparator();
+                charsBuffer.trimTrailingBlankLine();
             }
             chars = this.leftInterpolationFlag
-                    ? popAsCharArray()
-                    : popAsCharArrayOmitStartingLineSeparator();
+                    ? popChars()
+                    : popCharsWithoutLeadingLineEnding();
         } else {
-            chars = popAsCharArray();
+            chars = popChars();
         }
         return token(TokenKinds.TEXT_STATEMENT, stringLine, stringColumn, chars);
     }
@@ -362,7 +362,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 
   [^]                                  { pullToString(); }
 
-  <<EOF>>                               { yybegin(STATE_EOF); return token(TokenKinds.TEXT_STATEMENT, stringLine, stringColumn, (!trimCodeBlockBlankLine || this.leftInterpolationFlag) ? popAsCharArray() : popAsCharArrayOmitStartingLineSeparator());}
+  <<EOF>>                               { yybegin(STATE_EOF); return token(TokenKinds.TEXT_STATEMENT, stringLine, stringColumn, (!trimCodeBlockBlankLine || this.leftInterpolationFlag) ? popChars() : popCharsWithoutLeadingLineEnding());}
 }
 
 
@@ -478,9 +478,9 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
 
 
   /* string literal */
-  \"                             { yybegin(STATE_STRING); resetString(); }
+  \"                             { yybegin(STATE_STRING); resetCharsBuffer(); }
 
-  "r\""                          { yybegin(STATE_RAW_STRING); resetString(); }
+  "r\""                          { yybegin(STATE_RAW_STRING); resetCharsBuffer(); }
 
   /* character literal */
   \'                             { yybegin(STATE_CHAR_LITERAL); }

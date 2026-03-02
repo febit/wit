@@ -2,14 +2,11 @@
 package org.febit.wit.util;
 
 import java.io.CharArrayWriter;
+import java.util.Arrays;
 
-public class LexerCharArrayWriter extends CharArrayWriter {
+public class LexerCharsBuffer extends CharArrayWriter {
 
-    public LexerCharArrayWriter() {
-        this(256);
-    }
-
-    public LexerCharArrayWriter(int size) {
+    public LexerCharsBuffer(int size) {
         super(size);
     }
 
@@ -18,20 +15,20 @@ public class LexerCharArrayWriter extends CharArrayWriter {
         write(source, 0, source.length);
     }
 
-    public char[] toArrayOmitStartingLineSeparator() {
-        final int size = this.count;
+    public char[] toCharsWithoutLeadingLineEnding() {
+        var size = this.count;
         if (size == 0) {
             return new char[0];
         }
-        final int skip;
-        final char[] source = this.buf;
-        switch (source[0]) {
+        var src = this.buf;
+        int skip;
+        switch (src[0]) {
             case '\n' -> skip = 1;
             case '\r' -> {
                 if (size <= 1) {
                     return new char[0];
                 }
-                if (source[1] == '\n') {
+                if (src[1] == '\n') {
                     if (size == 2) {
                         return new char[0];
                     }
@@ -44,16 +41,15 @@ public class LexerCharArrayWriter extends CharArrayWriter {
                 return toCharArray();
             }
         }
-        var buf = new char[size - skip];
-        System.arraycopy(source, skip, buf, 0, count - skip);
-        return buf;
+        return Arrays.copyOfRange(src, skip, size);
     }
 
-    public void trimRightAfterLastLineSeparator() {
+    public void trimTrailingBlankLine() {
         var source = this.buf;
         int pos = this.count - 1;
         char c;
-        // find unblank char pos
+
+        // Backward scan for trailing blanks
         while (pos >= 0) {
             c = source[pos];
             if (c != ' ' && c != '\t') {
@@ -61,14 +57,20 @@ public class LexerCharArrayWriter extends CharArrayWriter {
             }
             pos--;
         }
+
+        // Abort trimming, if no more chars.
         if (pos < 0) {
-            // no more chars, not find line separator
             return;
         }
+
         c = source[pos];
-        if (c == '\n' || c == '\r') {
-            // trim to line separator
-            this.count = pos + 1;
+
+        // Abort trimming, if last char is not CR/LF.
+        if (c != '\n' && c != '\r') {
+            return;
         }
+
+        // trim last CR/LF.
+        this.count = pos + 1;
     }
 }
