@@ -11,10 +11,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static org.febit.wit.util.Defaults.nvl;
+
 @UtilityClass
 class AsmUtils {
 
-    static final String TYPE_STRING_NAME = "java/lang/String";
+    static final String TYPE_OBJ = "java/lang/Object";
+    static final String TYPE_STRING = "java/lang/String";
+    static final String TYPE_EVAL_EX = "org/febit/wit/exception/ScriptEvaluateException";
+    static final String TYPE_UNDEFINED = "org/febit/wit/runtime/Undefined";
+
     static final String METHOD_CTOR = "<init>";
     static final AtomicLong SEQ = new AtomicLong(1);
 
@@ -24,42 +30,28 @@ class AsmUtils {
         return CLASS_LOADER.loadClass(name, classWriter.toByteArray());
     }
 
-    static String getBoxedInternalName(Class<?> type) {
-        var boxed = ClassUtils.getBoxedPrimitiveClass(type);
-        var name = boxed != null
-                ? boxed.getName()
-                : type.getName();
-        return getInternalName(name);
+    static String toBoxedInternalName(Class<?> type) {
+        var boxed = nvl(ClassUtils.getBoxedPrimitiveClass(type), type);
+        return toInternalName(boxed.getName());
     }
 
-    static String getInternalName(String className) {
-        int i = className.indexOf('.');
-        if (i < 0) {
-            return className;
-        }
-        char[] str = className.toCharArray();
-        int len = str.length;
-        for (; i < len; i++) {
-            if (str[i] == '.') {
-                str[i] = '/';
-            }
-        }
-        return new String(str);
+    static String toInternalName(String className) {
+        return className.replace('.', '/');
     }
 
     static String getDescriptor(Constructor<?> c) {
-        StringBuilder buf = new StringBuilder();
+        var buf = new StringBuilder();
         buf.append('(');
-        for (Class<?> paramType : c.getParameterTypes()) {
+        for (var paramType : c.getParameterTypes()) {
             buf.append(getDescriptor(paramType));
         }
         return buf.append(")V").toString();
     }
 
     static String getDescriptor(Method m) {
-        StringBuilder buf = new StringBuilder();
+        var buf = new StringBuilder();
         buf.append('(');
-        for (Class<?> paramType : m.getParameterTypes()) {
+        for (var paramType : m.getParameterTypes()) {
             buf.append(getDescriptor(paramType));
         }
         return buf.append(')').append(getDescriptor(m.getReturnType())).toString();
@@ -69,7 +61,7 @@ class AsmUtils {
         if (c.isPrimitive()) {
             return String.valueOf(ClassUtils.getAliasOfBaseType(c.getName()));
         }
-        String internalName = getInternalName(c.getName());
+        var internalName = toInternalName(c.getName());
         if (c.isArray()) {
             return internalName;
         }
@@ -81,11 +73,11 @@ class AsmUtils {
             return;
         }
         if (type == void.class) {
-            m.visitFieldInsn(Constants.GETSTATIC, "org/febit/wit/runtime/Undefined",
-                    "UNDEFINED", "Lorg/febit/wit/runtime/Undefined;");
+            m.visitFieldInsn(Constants.GETSTATIC, TYPE_UNDEFINED,
+                    "UNDEFINED", "L" + TYPE_UNDEFINED + ";");
             return;
         }
-        String boxedType = getBoxedInternalName(type);
+        var boxedType = toBoxedInternalName(type);
         m.invokeStatic(boxedType, "valueOf", "(" + getDescriptor(type) + ")L" + boxedType + ";");
     }
 
@@ -97,22 +89,23 @@ class AsmUtils {
             // ignore void.class
             return;
         }
-        m.invokeVirtual(getBoxedInternalName(type), type.getName() + "Value", "()" + getDescriptor(type));
+        m.invokeVirtual(toBoxedInternalName(type), type.getName() + "Value", "()" + getDescriptor(type));
     }
 
     static void visitScriptEvaluateException(MethodWriter m, String message) {
-        m.visitTypeInsn(Constants.NEW, "org/febit/wit/exception/ScriptEvaluateException");
+        m.visitTypeInsn(Constants.NEW, TYPE_EVAL_EX);
         m.visitInsn(Constants.DUP);
         m.visitLdcInsn(message);
-        m.visitMethodInsn(Constants.INVOKESPECIAL, "org/febit/wit/exception/ScriptEvaluateException",
+        m.visitMethodInsn(Constants.INVOKESPECIAL,
+                TYPE_EVAL_EX,
                 METHOD_CTOR, "(Ljava/lang/String;)V");
         m.visitInsn(Constants.ATHROW);
     }
 
     static void visitConstructor(ClassWriter classWriter) {
-        MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, METHOD_CTOR, "()V", null);
+        var m = classWriter.visitMethod(Constants.ACC_PUBLIC, METHOD_CTOR, "()V", null);
         m.visitVarInsn(Constants.ALOAD, 0);
-        m.visitMethodInsn(Constants.INVOKESPECIAL, "java/lang/Object", METHOD_CTOR, "()V");
+        m.visitMethodInsn(Constants.INVOKESPECIAL, TYPE_OBJ, METHOD_CTOR, "()V");
         m.visitInsn(Constants.RETURN);
         m.visitMaxs();
     }

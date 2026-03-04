@@ -9,45 +9,45 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AsmUtilsTest {
 
-    static String getInternalName(final Class<?> c) {
-        return AsmUtils.getInternalName(c.getName());
+    static String toInternalName(final Class<?> c) {
+        return AsmUtils.toInternalName(c.getName());
     }
 
     @Test
-    void getInternalName() {
-        assertEquals("java/lang/Integer", getInternalName(Integer.class));
-        assertEquals("java/lang/String", getInternalName(String.class));
-        assertEquals("java/util/Map", getInternalName(Map.class));
+    void toInternalName() {
+        assertEquals("java/lang/Integer", toInternalName(Integer.class));
+        assertEquals("java/lang/String", toInternalName(String.class));
+        assertEquals("java/util/Map", toInternalName(Map.class));
 
-        assertEquals("int", getInternalName(int.class));
-        assertEquals("boolean", getInternalName(boolean.class));
-        assertEquals("void", getInternalName(Void.TYPE));
-        assertEquals("java/lang/Void", getInternalName(Void.class));
+        assertEquals("int", toInternalName(int.class));
+        assertEquals("boolean", toInternalName(boolean.class));
+        assertEquals("void", toInternalName(Void.TYPE));
+        assertEquals("java/lang/Void", toInternalName(Void.class));
 
-        assertEquals("[I", getInternalName(int[].class));
-        assertEquals("[[I", getInternalName(int[][].class));
-        assertEquals("[[[I", getInternalName(int[][][].class));
+        assertEquals("[I", toInternalName(int[].class));
+        assertEquals("[[I", toInternalName(int[][].class));
+        assertEquals("[[[I", toInternalName(int[][][].class));
 
-        assertEquals("[Ljava/lang/Integer;", getInternalName(Integer[].class));
-        assertEquals("[[Ljava/lang/Integer;", getInternalName(Integer[][].class));
-        assertEquals("[[[Ljava/lang/Integer;", getInternalName(Integer[][][].class));
+        assertEquals("[Ljava/lang/Integer;", toInternalName(Integer[].class));
+        assertEquals("[[Ljava/lang/Integer;", toInternalName(Integer[][].class));
+        assertEquals("[[[Ljava/lang/Integer;", toInternalName(Integer[][][].class));
 
     }
 
     @Test
-    void test_getBoxedInternalName() {
-        assertEquals("java/lang/Integer", AsmUtils.getBoxedInternalName(Integer.class));
-        assertEquals("java/lang/String", AsmUtils.getBoxedInternalName(String.class));
-        assertEquals("java/util/Map", AsmUtils.getBoxedInternalName(Map.class));
+    void testToBoxedInternalName() {
+        assertEquals("java/lang/Integer", AsmUtils.toBoxedInternalName(Integer.class));
+        assertEquals("java/lang/String", AsmUtils.toBoxedInternalName(String.class));
+        assertEquals("java/util/Map", AsmUtils.toBoxedInternalName(Map.class));
 
-        assertEquals("java/lang/Integer", AsmUtils.getBoxedInternalName(int.class));
-        assertEquals("java/lang/Boolean", AsmUtils.getBoxedInternalName(boolean.class));
-        assertEquals("java/lang/Void", AsmUtils.getBoxedInternalName(Void.TYPE));
-        assertEquals("java/lang/Void", AsmUtils.getBoxedInternalName(Void.class));
+        assertEquals("java/lang/Integer", AsmUtils.toBoxedInternalName(int.class));
+        assertEquals("java/lang/Boolean", AsmUtils.toBoxedInternalName(boolean.class));
+        assertEquals("java/lang/Void", AsmUtils.toBoxedInternalName(Void.TYPE));
+        assertEquals("java/lang/Void", AsmUtils.toBoxedInternalName(Void.class));
 
-        assertEquals("[I", AsmUtils.getBoxedInternalName(int[].class));
-        assertEquals("[[I", AsmUtils.getBoxedInternalName(int[][].class));
-        assertEquals("[[[I", AsmUtils.getBoxedInternalName(int[][][].class));
+        assertEquals("[I", AsmUtils.toBoxedInternalName(int[].class));
+        assertEquals("[[I", AsmUtils.toBoxedInternalName(int[][].class));
+        assertEquals("[[[I", AsmUtils.toBoxedInternalName(int[][][].class));
     }
 
     @Test

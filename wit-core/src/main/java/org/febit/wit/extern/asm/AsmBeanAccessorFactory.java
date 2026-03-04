@@ -79,7 +79,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         var className = "org.febit.wit.extern.asm.AsmBeanAccessor" + AsmUtils.SEQ.getAndIncrement();
 
         var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
-                AsmUtils.getInternalName(className), "java/lang/Object", ASM_ACCESSOR);
+                AsmUtils.toInternalName(className), AsmUtils.TYPE_OBJ, ASM_ACCESSOR);
         AsmUtils.visitConstructor(classWriter);
 
         var fields = PropertyInfos.resolve(beanClass)
@@ -95,7 +95,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
             hashes[hashCount++] = hash = fields[0].name().hashCode();
             int i = 1;
             while (i < fieldCount) {
-                PropertyInfo property = fields[i];
+                var property = fields[i];
                 if (hash != property.name().hashCode()) {
                     indexer[hashCount - 1] = i;
                     hashes[hashCount++] = hash = property.name().hashCode();
@@ -111,7 +111,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         visitXetMethod(false, classWriter, beanClass, fields, hashes, indexer);
 
         //getMatchClass
-        final MethodWriter m = classWriter.visitMethod(Constants.ACC_PUBLIC, "getMatchClass",
+        var m = classWriter.visitMethod(Constants.ACC_PUBLIC, "getMatchClass",
                 "()Ljava/lang/Class;", null);
         m.visitInsn(Constants.ACONST_NULL);
         m.visitInsn(Constants.ARETURN);
@@ -120,9 +120,10 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         return AsmUtils.loadClass(className, classWriter);
     }
 
-    private static void visitXetMethod(final boolean isGetter, final ClassWriter classWriter, final Class<?> beanClass,
-                                       final PropertyInfo[] fields, final int[] hashes, final int[] indexer) {
-        final String beanName = AsmUtils.getBoxedInternalName(beanClass);
+    private static void visitXetMethod(
+            final boolean isGetter, final ClassWriter classWriter, final Class<?> beanClass,
+            final PropertyInfo[] props, final int[] hashes, final int[] indexer) {
+        var beanName = AsmUtils.toBoxedInternalName(beanClass);
         final MethodWriter m;
         if (isGetter) {
             m = classWriter.visitMethod(Constants.ACC_PUBLIC, "get",
@@ -131,17 +132,17 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
             m = classWriter.visitMethod(Constants.ACC_PUBLIC, "set",
                     "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V", null);
         }
-        final int fieldInfosLength = fields.length;
-        if (fieldInfosLength != 0) {
+        var propsSize = props.length;
+        if (propsSize != 0) {
             var finalEndLabel = new Label();
-            if (fieldInfosLength < 4) {
-                visitXetFields(isGetter, m, fields, 0, fieldInfosLength, beanName, finalEndLabel);
+            if (propsSize < 4) {
+                visitXetFields(isGetter, m, props, 0, propsSize, beanName, finalEndLabel);
             } else {
                 m.visitVarInsn(Constants.ALOAD, 2);
-                m.invokeVirtual("java/lang/Object", "hashCode", "()I");
+                m.invokeVirtual(AsmUtils.TYPE_OBJ, "hashCode", "()I");
 
-                final int size = hashes.length;
-                Label[] labels = new Label[size];
+                var size = hashes.length;
+                var labels = new Label[size];
                 for (int i = 0; i < size; i++) {
                     labels[i] = new Label();
                 }
@@ -151,43 +152,44 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
                 for (int i = 0; i < size; i++) {
                     int end = indexer[i];
                     m.visitLabel(labels[i]);
-                    visitXetFields(isGetter, m, fields, start, end, beanName, finalEndLabel);
+                    visitXetFields(isGetter, m, props, start, end, beanName, finalEndLabel);
                     start = end;
                 }
             }
             m.visitLabel(finalEndLabel);
         }
         //Exception
-        m.visitTypeInsn(Constants.NEW, "org/febit/wit/exception/ScriptEvaluateException");
+        m.visitTypeInsn(Constants.NEW, AsmUtils.TYPE_EVAL_EX);
         m.visitInsn(Constants.DUP);
         m.visitLdcInsn("Invalid property " + beanClass.getName() + '#');
         m.visitVarInsn(Constants.ALOAD, 2);
-        m.invokeStatic(AsmUtils.TYPE_STRING_NAME, "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
-        m.invokeVirtual(AsmUtils.TYPE_STRING_NAME, "concat", "(Ljava/lang/String;)Ljava/lang/String;");
-        m.visitMethodInsn(Constants.INVOKESPECIAL, "org/febit/wit/exception/ScriptEvaluateException",
+        m.invokeStatic(AsmUtils.TYPE_STRING, "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
+        m.invokeVirtual(AsmUtils.TYPE_STRING, "concat", "(Ljava/lang/String;)Ljava/lang/String;");
+        m.visitMethodInsn(Constants.INVOKESPECIAL, AsmUtils.TYPE_EVAL_EX,
                 AsmUtils.METHOD_CTOR, "(Ljava/lang/String;)V");
         m.visitInsn(Constants.ATHROW);
         m.visitMaxs();
     }
 
-    private static void visitXetFields(final boolean isGetter, final MethodWriter m,
-                                       final PropertyInfo[] properties, final int start, final int end,
-                                       final String beanName, final Label failedMatchLabel) {
-        final Label[] gotoTable = new Label[end - start];
+    private static void visitXetFields(
+            final boolean isGetter, final MethodWriter m,
+            final PropertyInfo[] props, final int start, final int end,
+            final String beanName, final Label failedMatchLabel) {
+        var gotoTable = new Label[end - start];
         //if ==
         for (int i = start; i < end; i++) {
-            Label label = new Label();
+            var label = new Label();
             gotoTable[i - start] = label;
-            m.visitLdcInsn(properties[i].name());
+            m.visitLdcInsn(props[i].name());
             m.visitVarInsn(Constants.ALOAD, 2);
             // if == goto
             m.visitJumpInsn(Constants.IF_ACMPEQ, label);
         }
         //if equals
         for (int i = start; i < end; i++) {
-            m.visitLdcInsn(properties[i].name());
+            m.visitLdcInsn(props[i].name());
             m.visitVarInsn(Constants.ALOAD, 2);
-            m.invokeVirtual(AsmUtils.TYPE_STRING_NAME, "equals", "(Ljava/lang/Object;)Z");
+            m.invokeVirtual(AsmUtils.TYPE_STRING, "equals", "(Ljava/lang/Object;)Z");
             // if true goto
             m.visitJumpInsn(Constants.IFNE, gotoTable[i - start]);
         }
@@ -196,7 +198,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         //actions
         for (int i = start; i < end; i++) {
             m.visitLabel(gotoTable[i - start]);
-            PropertyInfo info = properties[i];
+            var info = props[i];
             if (isGetter) {
                 appendGetFieldCode(m, info, beanName);
             } else {
@@ -205,7 +207,8 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         }
     }
 
-    private static void appendGetFieldCode(final MethodWriter m, final PropertyInfo property, final String beanName) {
+    private static void appendGetFieldCode(
+            final MethodWriter m, final PropertyInfo property, final String beanName) {
         var getter = property.getterMethod();
         var field = property.field();
         if (getter == null && field == null) {
@@ -214,7 +217,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
                     + property.owner().getName() + "#" + property.name());
             return;
         }
-        Class<?> resultType = getter != null ? getter.getReturnType() : field.getType();
+        var resultType = getter != null ? getter.getReturnType() : field.getType();
         m.visitVarInsn(Constants.ALOAD, 1);
         m.checkCast(beanName);
         if (getter != null) {
@@ -228,7 +231,8 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         m.visitInsn(Constants.ARETURN);
     }
 
-    private static void appendSetFieldCode(final MethodWriter m, final PropertyInfo property, final String beanName) {
+    private static void appendSetFieldCode(
+            final MethodWriter m, final PropertyInfo property, final String beanName) {
         var setter = property.setterMethod();
         var field = property.field();
         if (setter == null && (field == null || property.isReadonlyField())) {
@@ -237,13 +241,13 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
                     + property.owner().getName() + "#" + property.name());
             return;
         }
-        Class<?> fieldClass = setter != null
+        var fieldClass = setter != null
                 ? setter.getParameterTypes()[0]
                 : field.getType();
         m.visitVarInsn(Constants.ALOAD, 1);
         m.checkCast(beanName);
         m.visitVarInsn(Constants.ALOAD, 3);
-        m.checkCast(AsmUtils.getBoxedInternalName(fieldClass));
+        m.checkCast(AsmUtils.toBoxedInternalName(fieldClass));
         AsmUtils.visitUnboxIfNeed(m, fieldClass);
         if (setter != null) {
             //book.setName((String)name)
