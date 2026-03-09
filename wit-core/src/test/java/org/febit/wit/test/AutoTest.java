@@ -38,7 +38,7 @@ class AutoTest {
     @Test
     void test() throws ParseException, ScriptEvaluateException, URISyntaxException, IOException {
         breakpointCount.reset();
-        var classLoader = ClassUtils.getDefaultClassLoader();
+        var classLoader = ClassUtils.classLoader();
         var out = new ByteArrayOutputStream();
 
         var url = classLoader.getResource(AUTO_TEST_ROOT_FLAG);

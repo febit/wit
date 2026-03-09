@@ -38,7 +38,7 @@ public class TldModule implements WitModule {
         var nativeLayout = wit.nativeLayout();
 
         log.info("Load TLD file: {}", path);
-        var input = ClassUtils.getDefaultClassLoader()
+        var input = ClassUtils.classLoader()
                 .getResourceAsStream(PathUtils.concat("META-INF/", path));
         if (input == null) {
             throw new UncheckedIOException(new IOException("TLD file not found: " + path));

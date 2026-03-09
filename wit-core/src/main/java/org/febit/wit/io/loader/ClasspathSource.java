@@ -18,12 +18,12 @@ public record ClasspathSource(
 
     @Override
     public boolean exists() {
-        return ClassUtils.getDefaultClassLoader().getResource(path) != null;
+        return ClassUtils.classLoader().getResource(path) != null;
     }
 
     @Override
     public Reader open() throws IOException {
-        var in = ClassUtils.getDefaultClassLoader()
+        var in = ClassUtils.classLoader()
                 .getResourceAsStream(path);
         if (in == null) {
             throw new NoSuchSourceException("No such resource: " + path);

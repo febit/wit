@@ -31,7 +31,7 @@ class AsmUtils {
     }
 
     static String toBoxedInternalName(Class<?> type) {
-        var boxed = nvl(ClassUtils.getBoxedPrimitiveClass(type), type);
+        var boxed = nvl(ClassUtils.toBoxed(type), type);
         return toInternalName(boxed.getName());
     }
 
@@ -117,7 +117,7 @@ class AsmUtils {
 
         @Override
         protected Class<?> findClass(String name) throws ClassNotFoundException {
-            return ClassUtils.getDefaultClassLoader().loadClass(name);
+            return ClassUtils.classLoader().loadClass(name);
         }
 
         Class<?> loadClass(String name, byte[] b) throws ClassFormatError {

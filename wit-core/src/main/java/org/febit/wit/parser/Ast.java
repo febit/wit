@@ -89,10 +89,6 @@ public class Ast {
         return new Return(value, pos);
     }
 
-    public static Return returnUndefined(Position pos) {
-        return new Return(null, pos);
-    }
-
     public static RenderRedirect renderRedirect(Statement body, AssignableExpression target, Position pos) {
         return new RenderRedirect(body, target, pos);
     }

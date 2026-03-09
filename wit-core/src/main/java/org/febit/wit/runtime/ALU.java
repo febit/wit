@@ -669,14 +669,14 @@ public class ALU {
     }
 
     private static void requireNonNull(@Nullable Object o1, @Nullable Object o2) {
-        if (o1 == null || o2 == null) {
-            if (o1 != null) {
-                throw new ScriptEvaluateException("right value is null");
-            } else {
-                throw new ScriptEvaluateException(o2 != null
-                        ? "left value is null"
-                        : "left & right values are null");
-            }
+        if (o1 != null && o2 != null) {
+            return;
         }
+        if (o1 != null) {
+            throw new ScriptEvaluateException("right value is null");
+        }
+        throw new ScriptEvaluateException(o2 != null
+                ? "left value is null"
+                : "left & right values are null");
     }
 }

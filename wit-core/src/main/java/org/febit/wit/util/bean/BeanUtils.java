@@ -21,7 +21,7 @@ public class BeanUtils {
 
     @Nullable
     public static Object get(Object bean, String name) throws BeanException {
-        var getter = getAccessor(bean.getClass(), name).getter;
+        var getter = accessor(bean.getClass(), name).getter;
         if (getter != null) {
             return getter.get(bean);
         }
@@ -29,7 +29,7 @@ public class BeanUtils {
     }
 
     public static void set(Object bean, String name, @Nullable Object value) throws BeanException {
-        var setter = getAccessor(bean.getClass(), name).setter;
+        var setter = accessor(bean.getClass(), name).setter;
         if (setter != null) {
             setter.set(bean, value);
             return;
@@ -37,10 +37,10 @@ public class BeanUtils {
         throw new BeanException("Unable to get setter for " + bean.getClass() + "#" + name);
     }
 
-    private static Accessor getAccessor(Class<?> cls, String name) throws BeanException {
+    private static Accessor accessor(Class<?> cls, String name) throws BeanException {
         var descs = CACHE.unsafeGet(cls);
         if (descs == null) {
-            descs = CACHE.putIfAbsent(cls, resolveAccessors(cls));
+            descs = CACHE.putIfAbsent(cls, createAccessors(cls));
         }
         var accessor = descs.get(name);
         if (accessor != null) {
@@ -49,11 +49,13 @@ public class BeanUtils {
         throw new BeanException("Unable to get field: " + cls + "#" + name);
     }
 
-    private static Map<String, Accessor> resolveAccessors(Class<?> cls) {
+    private static Map<String, Accessor> createAccessors(Class<?> cls) {
         var map = new HashMap<String, Accessor>(16);
-        PropertyInfos.resolve(cls)
-                .forEach(fieldInfo -> map.put(fieldInfo.name(),
-                        new Accessor(fieldInfo.getter(), fieldInfo.setter())));
+        BeanProperties.introspect(cls)
+                .forEach(prop -> map.put(
+                        prop.name(),
+                        new Accessor(prop.getter(), prop.setter())
+                ));
         return map;
     }
 

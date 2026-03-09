@@ -10,13 +10,13 @@ import java.lang.reflect.Method;
 @lombok.Builder(
         builderClassName = "Builder"
 )
-public record PropertyInfo(
-        Class<?> owner,
+public record BeanProperty(
         String name,
+        Class<?> beanType,
         @Nullable Field field,
         @Nullable Method getterMethod,
         @Nullable Method setterMethod
-) implements Comparable<PropertyInfo> {
+) implements Comparable<BeanProperty> {
 
     public BeanUtils.@Nullable Getter getter() {
         if (getterMethod != null) {
@@ -48,7 +48,7 @@ public record PropertyInfo(
     }
 
     @Override
-    public int compareTo(final PropertyInfo o) {
+    public int compareTo(final BeanProperty o) {
         return Integer.compare(name().hashCode(), o.name().hashCode());
     }
 
@@ -62,10 +62,10 @@ public record PropertyInfo(
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof PropertyInfo other)) {
+        if (!(obj instanceof BeanProperty other)) {
             return false;
         }
-        return this.owner() == other.owner()
+        return this.beanType() == other.beanType()
                 && this.name().equals(other.name());
     }
 }

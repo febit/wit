@@ -17,7 +17,8 @@ public class CollectionAccessor<T extends Collection<?>> implements Getter<T>, S
         if (property == null) {
             throw new ScriptEvaluateException("Property can't be null for collections.");
         }
-        if (property instanceof Number number && collection instanceof List<?> list) {
+        if (property instanceof Number number
+                && collection instanceof List<?> list) {
             try {
                 return list.get(number.intValue());
             } catch (IndexOutOfBoundsException e) {

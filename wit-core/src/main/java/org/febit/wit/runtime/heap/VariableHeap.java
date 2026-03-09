@@ -17,7 +17,7 @@ public class VariableHeap implements Heap {
 
     private final @Nullable Object[] table;
     /**
-     * Upstream tables.
+     * Upper layers of variables.
      * <p>
      * Functions are run in different layer tables, to avoid conflicts.
      * <p>
@@ -25,7 +25,7 @@ public class VariableHeap implements Heap {
      */
     private final @Nullable Object[][] uppers;
     /**
-     * Variables indexers by frame.
+     * Indexers for each frame.
      */
     private final FrameIndexer[] indexers;
     /**

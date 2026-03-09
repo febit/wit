@@ -14,19 +14,19 @@ import static java.lang.Character.toLowerCase;
 
 @Slf4j
 @UtilityClass
-public class PropertyInfos {
+public class BeanProperties {
 
-    public static Stream<PropertyInfo> resolve(Class<?> beanType) {
-        var props = new HashMap<String, PropertyInfo.Builder>();
-        var sink = (Function<String, PropertyInfo.Builder>) name ->
-                props.computeIfAbsent(name, n -> PropertyInfo.builder().name(n));
+    public static Stream<BeanProperty> introspect(Class<?> beanType) {
+        var props = new HashMap<String, BeanProperty.Builder>();
+        var sink = (Function<String, BeanProperty.Builder>) name ->
+                props.computeIfAbsent(name, n -> BeanProperty.builder().name(n));
 
-        scanForRecord(beanType, sink);
-        scanPublicFields(beanType, sink);
-        scanStandardBeanMethods(beanType, sink);
+        inspectRecord(beanType, sink);
+        inspectPublicFields(beanType, sink);
+        inspectStandardBeanMethods(beanType, sink);
 
         return props.values().stream()
-                .map(b -> b.owner(beanType).build());
+                .map(b -> b.beanType(beanType).build());
     }
 
     static String resolveNameFromMethod(final String raw, final int offset) {
@@ -45,7 +45,7 @@ public class PropertyInfos {
         return new String(buff);
     }
 
-    static void scanForRecord(Class<?> beanType, Function<String, PropertyInfo.Builder> sink) {
+    private static void inspectRecord(Class<?> beanType, Function<String, BeanProperty.Builder> collector) {
         if (!beanType.isRecord()) {
             return;
         }
@@ -56,19 +56,19 @@ public class PropertyInfos {
         for (var comp : components) {
             var name = comp.getName();
             var accessor = comp.getAccessor();
-            sink.apply(name).getterMethod(accessor);
+            collector.apply(name).getterMethod(accessor);
         }
     }
 
-    static void scanPublicFields(Class<?> beanType, Function<String, PropertyInfo.Builder> sink) {
+    private static void inspectPublicFields(Class<?> beanType, Function<String, BeanProperty.Builder> collector) {
         for (var field : beanType.getFields()) {
             if (!ClassUtils.isStatic(field)) {
-                sink.apply(field.getName()).field(field);
+                collector.apply(field.getName()).field(field);
             }
         }
     }
 
-    static void scanStandardBeanMethods(Class<?> beanType, Function<String, PropertyInfo.Builder> sink) {
+    private static void inspectStandardBeanMethods(Class<?> beanType, Function<String, BeanProperty.Builder> collector) {
         for (var method : beanType.getMethods()) {
             if (ClassUtils.isStatic(method)
                     || method.getDeclaringClass() == Object.class) {
@@ -80,18 +80,18 @@ public class PropertyInfos {
             if (argsCount == 0 && method.getReturnType() != void.class) {
                 if (methodNameLength > 3 && methodName.startsWith("get")) {
                     var name = resolveNameFromMethod(methodName, 3);
-                    sink.apply(name).getterMethod(method);
+                    collector.apply(name).getterMethod(method);
                 } else if (methodNameLength > 2 && methodName.startsWith("is")
                         && method.getReturnType() == boolean.class) {
                     var name = resolveNameFromMethod(methodName, 2);
-                    sink.apply(name).getterMethod(method);
+                    collector.apply(name).getterMethod(method);
                 }
             } else if (argsCount == 1
                     && methodNameLength > 3
                     && method.getReturnType() == void.class
                     && methodName.startsWith("set")) {
                 var name = resolveNameFromMethod(methodName, 3);
-                sink.apply(name).setterMethod(method);
+                collector.apply(name).setterMethod(method);
             }
         }
     }

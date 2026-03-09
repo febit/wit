@@ -319,12 +319,12 @@ public class NativeMethods {
             return COST_EXACT;
         }
         if (acceptType.isPrimitive()) {
-            return passedType == ClassUtils.getBoxedPrimitiveClass(acceptType)
+            return passedType == ClassUtils.toBoxed(acceptType)
                     ? COST_PRIMITIVE
                     : COST_NEVER;
         }
         if (passedType.isPrimitive()) {
-            return acceptType == ClassUtils.getBoxedPrimitiveClass(passedType)
+            return acceptType == ClassUtils.toBoxed(passedType)
                     ? COST_PRIMITIVE
                     : COST_NEVER;
         }

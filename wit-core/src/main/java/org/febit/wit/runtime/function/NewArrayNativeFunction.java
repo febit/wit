@@ -20,12 +20,12 @@ public class NewArrayNativeFunction implements WitFunction.Constable {
     public Object apply(@Nullable Object @Nullable [] args) {
         final int len;
         if (args != null && args.length != 0) {
-            Object lenObject = args[0];
-            if (!(lenObject instanceof Number)) {
+            Object arg0 = args[0];
+            if (!(arg0 instanceof Number number0)) {
                 throw new ScriptEvaluateException(
-                        "must given a number as array's length, but get : " + ClassUtils.name(lenObject));
+                        "must given a number as array's length, but got: " + ClassUtils.className(arg0));
             }
-            len = ((Number) lenObject).intValue();
+            len = number0.intValue();
             if (len < 0) {
                 throw new ScriptEvaluateException(
                         "must given a non-negative number as array's length: " + len);

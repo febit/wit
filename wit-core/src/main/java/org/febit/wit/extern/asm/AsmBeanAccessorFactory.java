@@ -10,8 +10,8 @@ import org.febit.wit.runtime.accessor.Setter;
 import org.febit.wit.runtime.accessor.impl.BeanReflectAccessor;
 import org.febit.wit.util.ClassMap;
 import org.febit.wit.util.ClassUtils;
-import org.febit.wit.util.bean.PropertyInfo;
-import org.febit.wit.util.bean.PropertyInfos;
+import org.febit.wit.util.bean.BeanProperties;
+import org.febit.wit.util.bean.BeanProperty;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
 import org.febit.wit_shaded.asm.Label;
@@ -82,9 +82,9 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
                 AsmUtils.toInternalName(className), AsmUtils.TYPE_OBJ, ASM_ACCESSOR);
         AsmUtils.visitConstructor(classWriter);
 
-        var fields = PropertyInfos.resolve(beanClass)
+        var fields = BeanProperties.introspect(beanClass)
                 .sorted()
-                .toArray(PropertyInfo[]::new);
+                .toArray(BeanProperty[]::new);
 
         final int fieldCount = fields.length;
         int[] hashes = new int[fieldCount];
@@ -122,7 +122,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
 
     private static void visitXetMethod(
             final boolean isGetter, final ClassWriter classWriter, final Class<?> beanClass,
-            final PropertyInfo[] props, final int[] hashes, final int[] indexer) {
+            final BeanProperty[] props, final int[] hashes, final int[] indexer) {
         var beanName = AsmUtils.toBoxedInternalName(beanClass);
         final MethodWriter m;
         if (isGetter) {
@@ -173,7 +173,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
 
     private static void visitXetFields(
             final boolean isGetter, final MethodWriter m,
-            final PropertyInfo[] props, final int start, final int end,
+            final BeanProperty[] props, final int start, final int end,
             final String beanName, final Label failedMatchLabel) {
         var gotoTable = new Label[end - start];
         //if ==
@@ -208,13 +208,13 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
     }
 
     private static void appendGetFieldCode(
-            final MethodWriter m, final PropertyInfo property, final String beanName) {
+            final MethodWriter m, final BeanProperty property, final String beanName) {
         var getter = property.getterMethod();
         var field = property.field();
         if (getter == null && field == null) {
             //Unreadable Exception
             AsmUtils.visitScriptEvaluateException(m, "Unreadable property "
-                    + property.owner().getName() + "#" + property.name());
+                    + property.beanType().getName() + "#" + property.name());
             return;
         }
         var resultType = getter != null ? getter.getReturnType() : field.getType();
@@ -232,13 +232,13 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
     }
 
     private static void appendSetFieldCode(
-            final MethodWriter m, final PropertyInfo property, final String beanName) {
+            final MethodWriter m, final BeanProperty property, final String beanName) {
         var setter = property.setterMethod();
         var field = property.field();
         if (setter == null && (field == null || property.isReadonlyField())) {
             // Readonly Exception
             AsmUtils.visitScriptEvaluateException(m, "Readonly property "
-                    + property.owner().getName() + "#" + property.name());
+                    + property.beanType().getName() + "#" + property.name());
             return;
         }
         var fieldClass = setter != null

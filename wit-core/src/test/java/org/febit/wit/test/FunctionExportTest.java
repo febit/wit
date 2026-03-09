@@ -63,10 +63,10 @@ class FunctionExportTest {
 
         exception = assertThrows(NoSuchFunctionException.class,
                 () -> context.exportFunction("noSuchFunction"));
-        assertEquals("No such function: null", exception.getMessage());
+        assertEquals("No such function: noSuchFunction", exception.getMessage());
 
         exception = assertThrows(NoSuchFunctionException.class,
                 () -> context.exportFunction("count"));
-        assertEquals("No such function: java.lang.Integer", exception.getMessage());
+        assertEquals("No such function: count", exception.getMessage());
     }
 }

@@ -51,9 +51,6 @@ public final class InternalContext implements Context {
     @lombok.Getter
     private final Flow flow = new Flow();
 
-    /**
-     * Input parameters.
-     */
     @lombok.Getter
     private final Vars inputs;
 
@@ -63,9 +60,6 @@ public final class InternalContext implements Context {
     @lombok.Getter
     private final Heap local;
 
-    /**
-     * Output, stream or writer.
-     */
     @lombok.Getter
     private Out out;
 
@@ -108,19 +102,19 @@ public final class InternalContext implements Context {
         return results;
     }
 
-    public void visitNonFlow(Statement[] stats) {
-        var i = 0;
-        var len = stats.length;
-        while (i < len) {
-            stats[i++].execute(this);
-        }
-    }
-
     public void visit(Statement[] stats) {
         var i = 0;
         var len = stats.length;
         var fl = this.flow();
         while (i < len && fl.isNoop()) {
+            stats[i++].execute(this);
+        }
+    }
+
+    public void visitNonFlow(Statement[] stats) {
+        var i = 0;
+        var len = stats.length;
+        while (i < len) {
             stats[i++].execute(this);
         }
     }
@@ -134,7 +128,6 @@ public final class InternalContext implements Context {
      */
     public boolean visitLoopFlow(Statement[] stats, int label) {
         var fl = this.flow();
-
         var i = 0;
         var len = stats.length;
         while (i < len && fl.isNoop()) {
@@ -250,7 +243,7 @@ public final class InternalContext implements Context {
     public ExportedFunction exportFunction(String name) throws NoSuchFunctionException {
         var obj = this.variables().get(name, false);
         if (!(obj instanceof WitFunction func)) {
-            throw new NoSuchFunctionException(obj);
+            throw new NoSuchFunctionException("No such function: " + name);
         }
         return new ExportedFunction(this.script, func, this.out.charset(), this.out.preferBytes());
     }

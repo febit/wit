@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.febit.wit.util.bean.PropertyInfos.resolveNameFromMethod;
+import static org.febit.wit.util.bean.BeanProperties.resolveNameFromMethod;
 import static org.junit.jupiter.api.Assertions.*;
 
-class PropertyInfosTest {
+class BeanPropertiesTest {
 
     @Test
     void testResolveNameFromMethod() {
@@ -27,9 +27,9 @@ class PropertyInfosTest {
 
     @Test
     void user() {
-        var mapped = PropertyInfos.resolve(User.class)
+        var mapped = BeanProperties.introspect(User.class)
                 .collect(Collectors.toMap(
-                        PropertyInfo::name,
+                        BeanProperty::name,
                         property -> property
                 ));
 
@@ -95,9 +95,9 @@ class PropertyInfosTest {
 
     @Test
     void foo() {
-        var mapped = PropertyInfos.resolve(Foo.class)
+        var mapped = BeanProperties.introspect(Foo.class)
                 .collect(Collectors.toMap(
-                        PropertyInfo::name,
+                        BeanProperty::name,
                         property -> property
                 ));
 

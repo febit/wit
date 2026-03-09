@@ -120,26 +120,29 @@ public class PathUtils {
         // double dot slash
         outer:
         for (int i = prefix + 2; i < size; i++) {
-            if (array[i] == UNIX_SEPARATOR && array[i - 1] == '.' && array[i - 2] == '.'
-                    && (i == prefix + 2 || array[i - 3] == UNIX_SEPARATOR)) {
-                if (i == prefix + 2) {
-                    return null;
-                }
-                int j;
-                for (j = i - 4; j >= prefix; j--) {
-                    if (array[j] == UNIX_SEPARATOR) {
-                        // remove b/../ from a/b/../c
-                        System.arraycopy(array, i + 1, array, j + 1, size - i);
-                        size -= (i - j);
-                        i = j + 1;
-                        continue outer;
-                    }
-                }
-                // remove a/../ from a/../c
-                System.arraycopy(array, i + 1, array, prefix, size - i);
-                size -= (i + 1 - prefix);
-                i = prefix + 1;
+            if (array[i] != UNIX_SEPARATOR
+                    || array[i - 1] != '.'
+                    || array[i - 2] != '.'
+                    || (i != prefix + 2 && array[i - 3] != UNIX_SEPARATOR)) {
+                continue;
             }
+            if (i == prefix + 2) {
+                return null;
+            }
+            int j;
+            for (j = i - 4; j >= prefix; j--) {
+                if (array[j] == UNIX_SEPARATOR) {
+                    // remove b/../ from a/b/../c
+                    System.arraycopy(array, i + 1, array, j + 1, size - i);
+                    size -= (i - j);
+                    i = j + 1;
+                    continue outer;
+                }
+            }
+            // remove a/../ from a/../c
+            System.arraycopy(array, i + 1, array, prefix, size - i);
+            size -= (i + 1 - prefix);
+            i = prefix + 1;
         }
 
         if (size <= 0) {  // should never be less than 0
@@ -216,27 +219,27 @@ public class PathUtils {
             return posUnix + 1;
         }
         if (ch1 == ':') {
-            if ((ch0 >= 'A' && ch0 <= 'Z') || (ch0 >= 'a' && ch0 <= 'z')) {
-                if (len == 2 || !isSeparator(filename.charAt(2))) {
-                    return 2;
-                }
-                return 3;
+            if ((ch0 < 'A' || ch0 > 'Z') && (ch0 < 'a' || ch0 > 'z')) {
+                return -1;
             }
-            return -1;
+            if (len == 2 || !isSeparator(filename.charAt(2))) {
+                return 2;
+            }
+            return 3;
         }
-        if (isSeparator(ch0)) {
-            if (isSeparator(ch1)) {
-                int posUnix = filename.indexOf(UNIX_SEPARATOR, 2);
-                int posWin = filename.indexOf(WINDOWS_SEPARATOR, 2);
-                if ((posUnix == -1 && posWin == -1) || posUnix == 2 || posWin == 2) {
-                    return -1;
-                }
-                posUnix = posUnix == -1 ? posWin : posUnix;
-                posWin = posWin == -1 ? posUnix : posWin;
-                return Math.min(posUnix, posWin) + 1;
-            }
+        if (!isSeparator(ch0)) {
+            return 0;
+        }
+        if (!isSeparator(ch1)) {
             return 1;
         }
-        return 0;
+        int posUnix = filename.indexOf(UNIX_SEPARATOR, 2);
+        int posWin = filename.indexOf(WINDOWS_SEPARATOR, 2);
+        if ((posUnix == -1 && posWin == -1) || posUnix == 2 || posWin == 2) {
+            return -1;
+        }
+        posUnix = posUnix == -1 ? posWin : posUnix;
+        posWin = posWin == -1 ? posUnix : posWin;
+        return Math.min(posUnix, posWin) + 1;
     }
 }

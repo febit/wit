@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 @UtilityClass
 public class ClassUtils {
 
-    public static String name(@Nullable Object targetObj) {
+    public static String className(@Nullable Object targetObj) {
         return targetObj != null ? targetObj.getClass().getName() : "null";
     }
 
@@ -42,12 +42,12 @@ public class ClassUtils {
         return result.values().stream();
     }
 
-    public static ClassLoader getDefaultClassLoader() {
+    public static ClassLoader classLoader() {
         return Thread.currentThread().getContextClassLoader();
     }
 
     @Nullable
-    public static Class<?> getBoxedPrimitiveClass(Class<?> type) {
+    public static Class<?> toBoxed(Class<?> type) {
         if (!type.isPrimitive()) {
             return null;
         }
@@ -146,7 +146,7 @@ public class ClassUtils {
     }
 
     private static Class<?> loadByQualifiedName(String name) throws ClassNotFoundException {
-        return Class.forName(name, true, getDefaultClassLoader());
+        return Class.forName(name, true, classLoader());
     }
 
     public static boolean isStatic(Member member) {
