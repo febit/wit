@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 
 public record ForIn(
         int label,
-        int frame,
+        int scope,
         Expression collection,
         @Nullable FunctionDeclarer filter,
         int iterIndex,
@@ -34,7 +34,7 @@ public record ForIn(
     public Object execute(InternalContext context) {
         Iter iter = iter(context);
         if (iter.hasNext()) {
-            context.variables().onFrame(frame, () -> execute0(context, iter));
+            context.variables().onScope(scope, () -> execute0(context, iter));
             return null;
         }
         if (elseBody != null) {

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public record BlockNonFlow(
-        int frame,
+        int scope,
         StatementBatch bodyBatch,
         Position position
 ) implements IBlock {
@@ -20,7 +20,7 @@ public record BlockNonFlow(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.variables().onFrame(frame,
+        context.variables().onScope(scope,
                 () -> bodyBatch.execute(context)
         );
         return null;

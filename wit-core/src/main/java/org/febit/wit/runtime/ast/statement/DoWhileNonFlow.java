@@ -9,7 +9,7 @@ import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
 public record DoWhileNonFlow(
-        int frame,
+        int scope,
         Expression condition,
         StatementBatch body,
         Position position
@@ -18,7 +18,7 @@ public record DoWhileNonFlow(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.variables().onFrame(frame, () -> execute0(context));
+        context.variables().onScope(scope, () -> execute0(context));
         return null;
     }
 

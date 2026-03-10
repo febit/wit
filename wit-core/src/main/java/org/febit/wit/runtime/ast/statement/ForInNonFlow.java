@@ -12,7 +12,7 @@ import org.febit.wit.util.Iters;
 import org.jspecify.annotations.Nullable;
 
 public record ForInNonFlow(
-        int frame,
+        int scope,
         Expression collection,
         @Nullable FunctionDeclarer filter,
         int iterIndex,
@@ -27,7 +27,7 @@ public record ForInNonFlow(
     public Object execute(InternalContext context) {
         Iter iter = iter(context);
         if (iter.hasNext()) {
-            context.variables().onFrame(frame, () -> execute0(context, iter));
+            context.variables().onScope(scope, () -> execute0(context, iter));
             return null;
         }
         if (elseBody != null) {

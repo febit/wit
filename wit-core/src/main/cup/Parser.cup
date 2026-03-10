@@ -264,21 +264,21 @@ importPart2     ::= importPart1:builder IDENTIFIER:ident
                     ;
 
 
-block           ::= (LBRACE {: assembler.varLayout().shiftFrame(); yield null; :}) statement[]:list? RBRACE
-                    {: yield Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos); :}
+block           ::= (LBRACE {: assembler.varLayout().shiftScope(); yield null; :}) statement[]:list? RBRACE
+                    {: yield Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos); :}
                     ;
 
 
-tryPart         ::= (TRY LBRACE {: assembler.varLayout().shiftFrame(); yield null; :}):sym statement[]:list? RBRACE
-                    {: yield Ast.tryCatchBuilder().body(Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos)).pos(%sym.symbol%.pos); :}
+tryPart         ::= (TRY LBRACE {: assembler.varLayout().shiftScope(); yield null; :}):sym statement[]:list? RBRACE
+                    {: yield Ast.tryCatchBuilder().body(Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)).pos(%sym.symbol%.pos); :}
                     ;
 
-catchPart       ::= tryPart:builder (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: assembler.varLayout().shiftFrame(); yield assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos); :}):varIndex statement[]:list? RBRACE
-                    {: yield (%builder%).exceptionVarIndex((Integer)(%varIndex%)).catchBody(Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos)); :}
+catchPart       ::= tryPart:builder (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: assembler.varLayout().shiftScope(); yield assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos); :}):varIndex statement[]:list? RBRACE
+                    {: yield (%builder%).exceptionVarIndex((Integer)(%varIndex%)).catchBody(Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)); :}
                     ;
 
-finallyPart     ::= (tryPart:$ | catchPart:$):builder (FINALLY LBRACE {: assembler.varLayout().shiftFrame(); yield null; :}) statement[]:list? RBRACE
-                    {: yield (%builder%).finallyBody(Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos)); :}
+finallyPart     ::= (tryPart:$ | catchPart:$):builder (FINALLY LBRACE {: assembler.varLayout().shiftScope(); yield null; :}) statement[]:list? RBRACE
+                    {: yield (%builder%).finallyBody(Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)); :}
                     ;
 
 
@@ -287,9 +287,9 @@ ifStat          ::= IF:sym LPAREN expression:expr RPAREN block:body (ELSE block:
                     ;
 
 forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
-                    {: yield new ForInBuilder(%item%, assembler.varLayout(), %sym.symbol%.pos).collection(%items%).shiftFrame(); :}
+                    {: yield new ForInBuilder(%item%, assembler.varLayout(), %sym.symbol%.pos).collection(%items%).shiftScope(); :}
                     |FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COLON expression:map RPAREN
-                    {: yield new ForMapBuilder(%key%, %value%, assembler.varLayout(), %sym.symbol%.pos).collection(%map%).shiftFrame(); :}
+                    {: yield new ForMapBuilder(%key%, %value%, assembler.varLayout(), %sym.symbol%.pos).collection(%map%).shiftScope(); :}
                     ;
 
 
@@ -315,7 +315,7 @@ lambdaForHead2  ::= lambdaForHead1:builder expression:expr COLON
 
 
 lambdaForHead   ::= lambdaForHead2:builder expression:items RPAREN
-                    {: yield (%builder%).collection(%items%).shiftFrame(); :}
+                    {: yield (%builder%).collection(%items%).shiftScope(); :}
                     ;
 
 
@@ -331,8 +331,8 @@ whileBuilder       ::= WHILE:sym LPAREN expression:condition RPAREN block:body
                     ;
 
 
-caseBlockStat   ::= {: assembler.varLayout().shiftFrame(); yield null; :} statement[]:list?
-                    {: yield Ast.block(%list%, assembler.varLayout().unshiftFrame(), %list.symbol%.pos); :}
+caseBlockStat   ::= {: assembler.varLayout().shiftScope(); yield null; :} statement[]:list?
+                    {: yield Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos); :}
                     ;
 
 

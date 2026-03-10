@@ -8,16 +8,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
-public record GenricHeap(
+public record GenericHeap(
         Map<String, @Nullable Object> table
 ) implements Heap {
 
-    public static GenricHeap local() {
-        return new GenricHeap(new HashMap<>());
+    public static GenericHeap local() {
+        return new GenericHeap(new HashMap<>());
     }
 
-    public static GenricHeap concurrent() {
-        return new GenricHeap(new ConcurrentHashMap<>());
+    public static GenericHeap concurrent() {
+        return new GenericHeap(new ConcurrentHashMap<>());
     }
 
     @Override

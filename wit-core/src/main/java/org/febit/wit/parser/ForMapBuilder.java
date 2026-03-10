@@ -29,8 +29,8 @@ public class ForMapBuilder extends BaseForInBuilder {
     }
 
     @Override
-    public final ForMapBuilder shiftFrame() {
-        super.shiftFrame();
+    public final ForMapBuilder shiftScope() {
+        super.shiftScope();
         this.keyIndex = varLayout.assignVar(keyVarName, position);
         this.valueIndex = varLayout.assignVar(valueVarName, position);
         return this;
@@ -49,11 +49,11 @@ public class ForMapBuilder extends BaseForInBuilder {
             if (bodyBatches.size() != 1) {
                 throw new IllegalStateException("unexpected body batches size: " + bodyBatches.size());
             }
-            return new ForMapNonFlow(frame(), collection, filter,
+            return new ForMapNonFlow(scope(), collection, filter,
                     iterIndex, keyIndex, valueIndex, bodyBatches.get(0), elseBody, position);
         }
 
-        return new ForMap(label(), frame(), collection, filter,
+        return new ForMap(label(), scope(), collection, filter,
                 iterIndex, keyIndex, valueIndex, bodyBatches,
                 elseBody, bodiesInspect.bubbledFlowControls(),
                 position);

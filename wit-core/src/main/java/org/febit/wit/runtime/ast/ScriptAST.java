@@ -1,30 +1,24 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.febit.wit.Script;
 import org.febit.wit.Vars;
 import org.febit.wit.io.Out;
 import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.statement.StatementBatch;
-import org.febit.wit.runtime.heap.GenricHeap;
+import org.febit.wit.runtime.heap.GenericHeap;
 import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
 
-@RequiredArgsConstructor
-public final class ScriptAST {
+import java.util.List;
 
-    private final StatementBatch body;
-    private final FrameIndexer[] indexers;
-    private final int frameSize;
-
-    @Getter
-    private final long sourceVersion;
-
-    @Getter
-    private final long createdAt = System.currentTimeMillis();
+public record ScriptAST(
+        long sourceVersion,
+        int heapSize,
+        List<ScopedIndexer> scopedIndexers,
+        StatementBatch body
+) {
 
     public InternalContext execute(
             Script script,
@@ -32,10 +26,10 @@ public final class ScriptAST {
             Vars inputs,
             @Nullable BreakpointHandler handler
     ) {
-        var variables = new VariableHeap(frameSize, indexers);
+        var variables = new VariableHeap(heapSize, scopedIndexers);
         inputs.sink(variables::set);
 
-        var local = GenricHeap.local();
+        var local = GenericHeap.local();
         var context = new InternalContext(script, variables, inputs, out, local, handler);
         body.execute(context);
         // assert context.indexer = 0
@@ -43,7 +37,7 @@ public final class ScriptAST {
     }
 
     public InternalContext execute(Script script, InternalContext context, Vars inputs) {
-        var variables = new VariableHeap(frameSize, indexers);
+        var variables = new VariableHeap(heapSize, scopedIndexers);
         var newContext = new InternalContext(
                 script,
                 variables,

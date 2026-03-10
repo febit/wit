@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public record Block(
-        int frame,
+        int scope,
         List<StatementBatch> body,
         List<FlowControl> bubbledFlowControls,
         Position position
@@ -20,7 +20,7 @@ public record Block(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.variables().onFrame(frame,
+        context.variables().onScope(scope,
                 () -> context.visitBatches(body)
         );
         return null;

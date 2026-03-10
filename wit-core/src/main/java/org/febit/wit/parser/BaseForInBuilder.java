@@ -25,7 +25,7 @@ public abstract class BaseForInBuilder {
     protected final VarLayout varLayout;
     protected final Position position;
 
-    private boolean frameShifted = false;
+    private boolean scopeShifted = false;
 
     @Getter
     @Setter
@@ -35,7 +35,7 @@ public abstract class BaseForInBuilder {
     protected List<Statement> body;
 
     @Getter
-    private int frame;
+    private int scope;
 
     @Setter
     @Nullable
@@ -58,21 +58,21 @@ public abstract class BaseForInBuilder {
 
     public abstract Statement build();
 
-    public BaseForInBuilder shiftFrame() {
-        if (frameShifted) {
-            throw new IllegalStateException("frame already shifted");
+    public BaseForInBuilder shiftScope() {
+        if (scopeShifted) {
+            throw new IllegalStateException("scope already shifted");
         }
-        this.frameShifted = true;
-        varLayout.shiftFrame();
+        this.scopeShifted = true;
+        varLayout.shiftScope();
         iterIndex = varLayout.assignVar("for.iter", position);
         return this;
     }
 
     public BaseForInBuilder body(@Nullable List<Statement> list) {
-        if (!frameShifted) {
-            throw new IllegalStateException("frame not shifted");
+        if (!scopeShifted) {
+            throw new IllegalStateException("scope not shifted");
         }
-        this.frame = varLayout.unshiftFrame();
+        this.scope = varLayout.unshiftScope();
         this.body = nvl(list, List::of);
         return this;
     }

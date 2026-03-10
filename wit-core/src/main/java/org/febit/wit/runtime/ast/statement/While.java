@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 public record While(
         int label,
-        int frame,
+        int scope,
         Expression condition,
         List<StatementBatch> body,
         List<FlowControl> bubbledFlowControls,
@@ -25,7 +25,7 @@ public record While(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.variables().onFrame(frame, () -> execute0(context));
+        context.variables().onScope(scope, () -> execute0(context));
         return null;
     }
 

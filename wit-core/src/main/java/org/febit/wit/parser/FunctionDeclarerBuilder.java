@@ -28,7 +28,7 @@ public class FunctionDeclarerBuilder {
         this.position = position;
         this.assignTarget = assignTarget;
 
-        varLayout.shiftLayer();
+        varLayout.shiftFrame();
         argsIndexStart = varLayout.assignVar("arguments", position);
     }
 
@@ -96,9 +96,9 @@ public class FunctionDeclarerBuilder {
     }
 
     public FunctionDeclarer build(List<Statement> list) {
-        var indexers = varLayout.buildFrameIndexers();
-        int frameSize = varLayout.frameSize();
-        varLayout.unshiftLayer();
+        var indexers = varLayout.buildScopedIndexers();
+        int heapSize = varLayout.heapSize();
+        varLayout.unshiftFrame();
 
         var batches = Ast.batch(list, ctrl -> {
             if (!ctrl.state().isReturn()) {
@@ -112,7 +112,7 @@ public class FunctionDeclarerBuilder {
         }
 
         return new FunctionDeclarer(argDefaults,
-                frameSize,
+                heapSize,
                 indexers,
                 batches,
                 argsIndexStart,

@@ -6,8 +6,8 @@ import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;
 
-public record VariableHeapUpperValue(
-        int layer,
+public record VariableHeapFrameValue(
+        int frame,
         int index,
         Position position
 ) implements AssignableExpression {
@@ -15,13 +15,13 @@ public record VariableHeapUpperValue(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        return context.variables().getAtLayer(layer, index);
+        return context.variables().getAtFrame(frame, index);
     }
 
     @Override
     @Nullable
     public Object assign(InternalContext context, @Nullable Object value) {
-        context.variables().setAtLayer(layer, index, value);
+        context.variables().setAtFrame(frame, index, value);
         return value;
     }
 }

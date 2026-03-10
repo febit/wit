@@ -69,18 +69,18 @@ public class ScriptImpl implements Script {
         if (myAst == null) {
             return true;
         }
-        return myAst.getSourceVersion() != this.source.version();
+        return myAst.sourceVersion() != this.source.version();
     }
 
     /**
      * Evaluate this script.
      *
-     * @param inputs     vars
-     * @param out      out
+     * @param inputs            vars
+     * @param out               out
      * @param breakpointHandler listener
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ParseException         when unable to parse
+     * @throws ParseException          when unable to parse
      */
     public Context eval(Vars inputs, Out out, @Nullable BreakpointHandler breakpointHandler) {
         Objects.requireNonNull(inputs, "inputs is required");

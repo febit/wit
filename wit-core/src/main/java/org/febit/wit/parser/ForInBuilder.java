@@ -20,8 +20,8 @@ public class ForInBuilder extends BaseForInBuilder {
     }
 
     @Override
-    public final ForInBuilder shiftFrame() {
-        super.shiftFrame();
+    public final ForInBuilder shiftScope() {
+        super.shiftScope();
         itemIndex = varLayout.assignVar(itemVarName, position);
         return this;
     }
@@ -39,11 +39,11 @@ public class ForInBuilder extends BaseForInBuilder {
             if (bodyBatches.size() != 1) {
                 throw new IllegalStateException("unexpected body batches size: " + bodyBatches.size());
             }
-            return new ForInNonFlow(frame(), collection, filter,
+            return new ForInNonFlow(scope(), collection, filter,
                     iterIndex, itemIndex, bodyBatches.get(0), elseBody, position);
         }
 
-        return new ForIn(label(), frame(), collection, filter,
+        return new ForIn(label(), scope(), collection, filter,
                 iterIndex, itemIndex, bodyBatches,
                 elseBody, bodiesInspect.bubbledFlowControls(),
                 position

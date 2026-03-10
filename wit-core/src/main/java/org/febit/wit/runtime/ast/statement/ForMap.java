@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 
 public record ForMap(
         int label,
-        int frame,
+        int scope,
         Expression collection,
         @Nullable FunctionDeclarer filter,
         int iterIndex,
@@ -35,7 +35,7 @@ public record ForMap(
     public Object execute(InternalContext context) {
         var iter = iter(context);
         if (iter.hasNext()) {
-            context.variables().onFrame(frame, () -> execute0(context, iter));
+            context.variables().onScope(scope, () -> execute0(context, iter));
             return null;
         }
         if (elseBody != null) {

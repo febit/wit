@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.FrameIndexer;
 import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.ast.ScopedIndexer;
 import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.function.ScriptFunction;
 import org.jspecify.annotations.Nullable;
@@ -19,8 +19,8 @@ import java.util.List;
 public final class FunctionDeclarer implements Expression {
 
     private final Object[] argDefaults;
-    private final int frameSize;
-    private final FrameIndexer[] indexers;
+    private final int heapSize;
+    private final List<ScopedIndexer> indexers;
     private final List<StatementBatch> body;
     private final int argsIndexStart;
     @Getter
@@ -28,7 +28,7 @@ public final class FunctionDeclarer implements Expression {
 
     @Override
     public ScriptFunction execute(InternalContext context) {
-        return new ScriptFunction(this, context, indexers, this.frameSize);
+        return new ScriptFunction(this, context, this.heapSize, indexers);
     }
 
     @Nullable

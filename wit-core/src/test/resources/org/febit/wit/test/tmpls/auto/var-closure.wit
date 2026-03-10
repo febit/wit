@@ -18,9 +18,14 @@
 {
     {
         var a,b,c;
+        assertNull(a);
+        assertNull(b);
+        assertNull(c);
     }
     {
         var a, b=c=1, d=2;
+        assertNull(a);
+
         a = 0;
         assertEquals(a, 0);
         assertEquals(b, 1);
@@ -29,6 +34,8 @@
     }
     {
         var b=c=1, d=2, a;
+        assertNull(a);
+
         a = 0;
         assertEquals(a, 0);
         assertEquals(b, 1);

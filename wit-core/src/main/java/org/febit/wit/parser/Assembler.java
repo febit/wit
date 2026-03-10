@@ -181,8 +181,8 @@ public class Assembler {
         return contextVars;
     }
 
-    public Expression createContextValue(int frameOffset, String name, Position position) {
-        var addr = varLayout.locate(name, frameOffset, !Feature.LOOSE_VAR.isEnabled(this.features), position);
+    public Expression createContextValue(int scopeOffset, String name, Position position) {
+        var addr = varLayout.locate(name, scopeOffset, !Feature.LOOSE_VAR.isEnabled(this.features), position);
         return Ast.value(addr, position);
     }
 
@@ -320,10 +320,10 @@ public class Assembler {
             throw new IllegalStateException("Unexpected batches size: " + batches.size());
         }
         return new ScriptAST(
-                batches.get(0),
-                this.varLayout.buildFrameIndexers(),
-                this.varLayout.frameSize(),
-                this.lastSourceVersion
+                this.lastSourceVersion,
+                this.varLayout.heapSize(),
+                this.varLayout.buildScopedIndexers(),
+                batches.get(0)
         );
     }
 }

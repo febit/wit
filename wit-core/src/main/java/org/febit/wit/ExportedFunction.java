@@ -6,7 +6,7 @@ import org.febit.wit.io.Out;
 import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.WitFunction;
-import org.febit.wit.runtime.heap.GenricHeap;
+import org.febit.wit.runtime.heap.GenericHeap;
 import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
 
@@ -40,7 +40,7 @@ public final class ExportedFunction {
 
     private InternalContext createContext(Out out) {
         var variables = VariableHeap.empty();
-        var local = GenricHeap.local();
+        var local = GenericHeap.local();
         return new InternalContext(script, variables, Vars.empty(), out, local, null);
     }
 

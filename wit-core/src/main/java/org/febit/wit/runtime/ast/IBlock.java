@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IBlock extends Statement, WithFlowControl {
 
-    int frame();
+    int scope();
 
     List<StatementBatch> body();
 }

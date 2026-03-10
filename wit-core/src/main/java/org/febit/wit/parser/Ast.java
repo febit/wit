@@ -27,7 +27,7 @@ import org.febit.wit.runtime.ast.expr.NewArray;
 import org.febit.wit.runtime.ast.expr.NewMap;
 import org.febit.wit.runtime.ast.expr.PropertyAccess;
 import org.febit.wit.runtime.ast.expr.SuppliedValue;
-import org.febit.wit.runtime.ast.expr.VariableHeapUpperValue;
+import org.febit.wit.runtime.ast.expr.VariableHeapFrameValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
 import org.febit.wit.runtime.ast.extra.Import;
 import org.febit.wit.runtime.ast.oper.And;
@@ -216,7 +216,7 @@ public class Ast {
         Objects.requireNonNull(body, "body is required");
         Objects.requireNonNull(pos, "position is required");
 
-        var frame = body.frame();
+        var scope = body.scope();
         var batches = body.body();
 
         var controls = new ArrayList<FlowControl>();
@@ -228,8 +228,8 @@ public class Ast {
             }
             var batch0 = batches.get(0);
             return switch (kind) {
-                case WHILE -> new WhileNonFlow(frame, condition, batch0, pos);
-                case DO_WHILE -> new DoWhileNonFlow(frame, condition, batch0, pos);
+                case WHILE -> new WhileNonFlow(scope, condition, batch0, pos);
+                case DO_WHILE -> new DoWhileNonFlow(scope, condition, batch0, pos);
             };
         }
 
@@ -240,8 +240,8 @@ public class Ast {
                 .filter(FlowControls.loopBubbleFilter(label))
                 .toList());
         return switch (kind) {
-            case WHILE -> new While(label, frame, condition, batches, bubbled, pos);
-            case DO_WHILE -> new DoWhile(label, frame, condition, batches, bubbled, pos);
+            case WHILE -> new While(label, scope, condition, batches, bubbled, pos);
+            case DO_WHILE -> new DoWhile(label, scope, condition, batches, bubbled, pos);
         };
     }
 
@@ -337,7 +337,7 @@ public class Ast {
     public static Expression value(VarAddress addr, Position pos) {
         return switch (addr.kind()) {
             case VAR -> new VariableHeapValue(addr.index(), pos);
-            case VAR_UPPER -> new VariableHeapUpperValue(addr.layerOffset(), addr.index(), pos);
+            case FRAME_VAR -> new VariableHeapFrameValue(addr.frameOffset(), addr.index(), pos);
             case DIRECT -> new DirectValue(addr.value(), pos);
             case HEAP -> {
                 var key = Objects.requireNonNull(addr.key());
@@ -402,17 +402,17 @@ public class Ast {
         return NoopStatement.INSTANCE;
     }
 
-    public static IBlock block(@Nullable List<Statement> list, int frame, Position pos) {
+    public static IBlock block(@Nullable List<Statement> list, int scope, Position pos) {
         var controls = new ArrayList<FlowControl>();
         var batches = batch(list, controls::add);
         if (controls.isEmpty()) {
             if (batches.size() != 1) {
                 throw new IllegalStateException("Unexpected multiple batches without flow control");
             }
-            return new BlockNonFlow(frame, batches.get(0), pos);
+            return new BlockNonFlow(scope, batches.get(0), pos);
         }
 
-        return new Block(frame, batches, List.copyOf(controls), pos);
+        return new Block(scope, batches, List.copyOf(controls), pos);
     }
 
     public static void flatAndOptimize(@Nullable List<Statement> statements, Consumer<Statement> collector) {

@@ -5,7 +5,7 @@ import org.jspecify.annotations.Nullable;
 
 public record VarAddress(
         Kind kind,
-        int layerOffset,
+        int frameOffset,
         int index,
         @Nullable Heap heap,
         @Nullable String key,
@@ -14,7 +14,7 @@ public record VarAddress(
 
     public enum Kind {
         VAR,
-        VAR_UPPER,
+        FRAME_VAR,
         DIRECT,
         HEAP,
         ;
@@ -24,8 +24,8 @@ public record VarAddress(
         return new VarAddress(Kind.VAR, 0, index, null, null, null);
     }
 
-    static VarAddress ofUpper(int layerOffset, int index) {
-        return new VarAddress(Kind.VAR_UPPER, layerOffset, index, null, null, null);
+    static VarAddress ofUpper(int frameOffset, int index) {
+        return new VarAddress(Kind.FRAME_VAR, frameOffset, index, null, null, null);
     }
 
     static VarAddress ofHeap(Heap heap, String name) {

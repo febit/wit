@@ -8,9 +8,9 @@ import lombok.experimental.Accessors;
 public class StaticHeaps {
 
     @Getter
-    private final Heap constants = GenricHeap.concurrent();
+    private final Heap constants = GenericHeap.concurrent();
     @Getter
-    private final Heap variables = GenricHeap.concurrent();
+    private final Heap variables = GenericHeap.concurrent();
 
     public void clear() {
         this.constants().clear();

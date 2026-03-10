@@ -5,35 +5,25 @@ import org.febit.wit.Vars;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.WitFunction;
-import org.febit.wit.runtime.ast.FrameIndexer;
+import org.febit.wit.runtime.ast.ScopedIndexer;
 import org.febit.wit.runtime.ast.expr.FunctionDeclarer;
 import org.jspecify.annotations.Nullable;
 
-public final class ScriptFunction implements WitFunction {
+import java.util.List;
 
-    private final FunctionDeclarer declarer;
-    private final InternalContext declarerContext;
-    private final FrameIndexer[] indexers;
-    private final int frameSize;
-
-    public ScriptFunction(
-            FunctionDeclarer declarer,
-            InternalContext declarerContext,
-            FrameIndexer[] indexers,
-            int frameSize
-    ) {
-        this.declarer = declarer;
-        this.declarerContext = declarerContext;
-        this.indexers = indexers;
-        this.frameSize = frameSize;
-    }
+public record ScriptFunction(
+        FunctionDeclarer declarer,
+        InternalContext declarerContext,
+        int heapSize,
+        List<ScopedIndexer> indexers
+) implements WitFunction {
 
     @Nullable
     @Override
     public Object apply(InternalContext context, @Nullable Object @Nullable [] args) {
         var declaredAt = this.declarerContext;
         try {
-            var subVariables = declaredAt.variables().shift(this.frameSize, this.indexers);
+            var subVariables = declaredAt.variables().shift(this.heapSize, this.indexers);
             var sub = new InternalContext(
                     declaredAt.script(),
                     subVariables,
