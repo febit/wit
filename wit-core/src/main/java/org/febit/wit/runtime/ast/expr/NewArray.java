@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.ast.StatementUtils;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
@@ -24,6 +24,6 @@ public final class NewArray implements Expression {
 
     @Override
     public Object evalAsConst() {
-        return AstUtils.evalConstArray(this.values);
+        return StatementUtils.evalConstArray(this.values);
     }
 }

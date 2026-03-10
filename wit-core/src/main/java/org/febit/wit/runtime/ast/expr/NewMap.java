@@ -3,9 +3,9 @@ package org.febit.wit.runtime.ast.expr;
 
 import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.ast.StatementUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +40,8 @@ public record NewMap(
         var result = new HashMap<>(initialCapacity, 0.75f);
         for (var entry : entries) {
             result.put(
-                    AstUtils.evalConst(entry.key()),
-                    AstUtils.evalConst(entry.value())
+                    StatementUtils.evalAsConst(entry.key()),
+                    StatementUtils.evalAsConst(entry.value())
             );
         }
         return result;

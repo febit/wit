@@ -148,8 +148,8 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     |LRDEBUG:sym
                     {: yield Ast.breakpointStatement(null, null, %sym.symbol%.pos); :}
-                    |LDEBUG:sym expression:label COLON RDEBUG
-                    {: yield Ast.breakpointStatement(null, %label%, %sym.symbol%.pos); :}
+                    |LDEBUG:sym expression:mark COLON RDEBUG
+                    {: yield Ast.breakpointStatement(%mark%, null, %sym.symbol%.pos); :}
 
                     |expression:expr INTERPOLATION_END
                     {: yield Ast.interpolation(%expr%); :}
@@ -160,9 +160,9 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     // Switch
                     |switchPart:builder
-                    {: yield (%builder%).build(0); :}
+                    {: yield (%builder%).label(0).build(); :}
                     |IDENTIFIER:label COLON switchPart:builder
-                    {: yield (%builder%).build(assembler.getLabelIndex(%label%)); :}
+                    {: yield (%builder%).label(assembler.getLabelIndex(%label%)).build(); :}
 
                     // While
                     |whileBuilder:builder
@@ -172,9 +172,9 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     //forIn
                     |forInPart:builder
-                    {: yield (%builder%).build(0); :}
+                    {: yield (%builder%).label(0).build(); :}
                     |IDENTIFIER:label COLON forInPart:builder
-                    {: yield (%builder%).build(assembler.getLabelIndex(%label%)); :}
+                    {: yield (%builder%).label(assembler.getLabelIndex(%label%)).build(); :}
 
                     //RedirectOut
                     |block:stat EQGT:sym expression:expr SEMICOLON
@@ -190,7 +190,7 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     //var
                     |VAR varPart[COMMA]:parts SEMICOLON
-                    {: yield Ast.statementGroup(%parts%, %parts.symbol%.pos); :}
+                    {: yield Ast.statementList(%parts%, %parts.symbol%.pos); :}
 
                     //echoStat
                     |ECHO:sym expression:expr SEMICOLON
@@ -385,10 +385,10 @@ expressionStatementAble ::=
 expression      ::= expressionStatementAble:$
 
                     |LDEBUG:sym expression:expr RDEBUG
-                    {: yield Ast.breakpointExpr(%expr%, null, %sym.symbol%.pos); :}
+                    {: yield Ast.breakpointExpr(null, %expr%, %sym.symbol%.pos); :}
 
-                    |LDEBUG:sym expression:label COLON expression:expr RDEBUG
-                    {: yield Ast.breakpointExpr(%expr%, %label%, %sym.symbol%.pos); :}
+                    |LDEBUG:sym expression:mark COLON expression:expr RDEBUG
+                    {: yield Ast.breakpointExpr(%mark%, %expr%, %sym.symbol%.pos); :}
 
                     //bitNotOp ~
                     |COMP:sym expression:expr
@@ -577,7 +577,7 @@ templateStringBuilder  ::= TEMPLATE_STRING_START:sym
 funcArg             ::= IDENTIFIER:ident
                         {: yield new ArgumentInfo(%ident%, null); :}
                         | IDENTIFIER:ident EQ expression:expr
-                        {: yield new ArgumentInfo(%ident%, AstUtils.evalConst(%expr%)); :}
+                        {: yield new ArgumentInfo(%ident%, StatementUtils.evalAsConst(%expr%)); :}
                         ;
 
 

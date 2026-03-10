@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.NativeMethods;
 import org.jspecify.annotations.Nullable;
@@ -38,9 +38,9 @@ public final class DynamicNativeMethodCaller implements Expression {
     @Override
     @Nullable
     public Object evalAsConst() {
-        var selfObj = AstUtils.evalConst(self);
+        var selfObj = StatementUtils.evalAsConst(self);
         var methods = getMethods(selfObj);
-        var paramsObj = AstUtils.evalConstArray(this.params);
+        var paramsObj = StatementUtils.evalConstArray(this.params);
         return chooseAndInvoke(selfObj, methods, paramsObj);
     }
 

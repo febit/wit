@@ -7,8 +7,8 @@ import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
 public record BreakpointStatement(
+        @Nullable Object mark,
         @Nullable Statement supervised,
-        @Nullable Object label,
         Position position
 ) implements Statement {
 
@@ -20,7 +20,7 @@ public record BreakpointStatement(
         }
         var handler = context.breakpointHandler();
         if (handler != null) {
-            handler.handle(label, context, this, null);
+            handler.handle(mark, context, this, null);
         }
         return null;
     }

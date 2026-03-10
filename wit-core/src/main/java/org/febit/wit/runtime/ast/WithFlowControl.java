@@ -6,7 +6,8 @@ import java.util.function.Consumer;
 public interface WithFlowControl {
 
     /**
-     * Collect flow controls in current node.
+     * Collect flow controls that may bubble up to parent statement, such as break/continue/return.
+     * Without controls swallowed by self.
      */
-    void collectFlowControls(Consumer<FlowControl> collector);
+    void bubbleFlowControls(Consumer<FlowControl> collector);
 }

@@ -2,8 +2,8 @@
 package org.febit.wit.runtime.ast.statement;
 
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.FlowControl;
+import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.WithFlowControl;
@@ -12,10 +12,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 public record TryCatchFinally(
+        int exceptionVarIndex,
         Statement body,
         Statement catchBody,
         @Nullable Statement finallyBody,
-        int exceptionVarIndex,
         Position position
 ) implements Statement, WithFlowControl {
 
@@ -36,7 +36,7 @@ public record TryCatchFinally(
     }
 
     @Override
-    public void collectFlowControls(Consumer<FlowControl> collector) {
-        AstUtils.collectFlowControls(collector, body, catchBody, finallyBody);
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+        FlowControls.collect(collector, body, catchBody, finallyBody);
     }
 }

@@ -21,6 +21,22 @@
 {
   var a = 0;
   var i = 0;
+  while ((i++) < 5) {
+  }
+  assertEquals(0, a);
+  assertEquals(6, i);
+}
+{
+  var a = 0;
+  var i = 0;
+  while ((++i) < 5) {
+  }
+  assertEquals(0, a);
+  assertEquals(5, i);
+}
+{
+  var a = 0;
+  var i = 0;
   while (i <= 4) {
     if (i == 2) {
       i++;

@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast.statement;
 
+import org.febit.wit.runtime.FlowState;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
@@ -23,9 +24,9 @@ public record Continue(
     }
 
     @Override
-    public void collectFlowControls(Consumer<FlowControl> collector) {
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
         collector.accept(
-                new FlowControl(FlowControl.Kind.CONTINUE, label, position)
+                new FlowControl(label, FlowState.CONTINUE, position)
         );
     }
 }

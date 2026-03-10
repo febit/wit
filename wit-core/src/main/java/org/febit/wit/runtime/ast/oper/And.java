@@ -3,9 +3,9 @@ package org.febit.wit.runtime.ast.oper;
 
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.runtime.ast.expr.DirectValue;
 import org.jspecify.annotations.Nullable;
 
@@ -26,10 +26,10 @@ public record And(
 
     @Override
     public Expression optimize() {
-        if (!AstUtils.isImmutableDirectValue(left)) {
+        if (!StatementUtils.isImmutableDirectValue(left)) {
             return this;
         }
-        if (AstUtils.isImmutableDirectValue(right)) {
+        if (StatementUtils.isImmutableDirectValue(right)) {
             return new DirectValue(
                     ALU.and(((DirectValue) left).value(), ((DirectValue) right).value()),
                     position);

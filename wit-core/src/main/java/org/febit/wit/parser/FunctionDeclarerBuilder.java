@@ -2,7 +2,6 @@
 package org.febit.wit.parser;
 
 import org.febit.wit.exception.ParseException;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
@@ -14,7 +13,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FunctionDeclarerBuilder {
 
@@ -98,19 +96,15 @@ public class FunctionDeclarerBuilder {
     }
 
     public FunctionDeclarer build(List<Statement> list) {
-        var statements = Ast.flatStatements(list);
         var indexers = varLayout.buildFrameIndexers();
         int frameSize = varLayout.frameSize();
         varLayout.unshiftLayer();
 
-        var hasReturn = new AtomicBoolean(false);
-        AstUtils.collectFlowControls(ctrl -> {
-            if (ctrl.kind().isReturn()) {
-                hasReturn.set(true);
-            } else {
-                throw new ParseException("Unhandled flow control in function body: " + ctrl, ctrl.position());
+        var batches = Ast.batch(list, ctrl -> {
+            if (!ctrl.state().isReturn()) {
+                throw new ParseException("flow control leaks from function body: " + ctrl.state(), ctrl.position());
             }
-        }, statements);
+        });
 
         var argDefaults = new Object[this.args.size()];
         for (int i = 0; i < argDefaults.length; i++) {
@@ -120,9 +114,8 @@ public class FunctionDeclarerBuilder {
         return new FunctionDeclarer(argDefaults,
                 frameSize,
                 indexers,
-                statements,
+                batches,
                 argsIndexStart,
-                hasReturn.get(),
                 position);
     }
 }

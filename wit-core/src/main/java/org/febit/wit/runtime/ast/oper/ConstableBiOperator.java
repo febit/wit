@@ -3,9 +3,9 @@ package org.febit.wit.runtime.ast.oper;
 
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.runtime.ast.expr.DirectValue;
 import org.jspecify.annotations.Nullable;
 
@@ -33,8 +33,8 @@ public record ConstableBiOperator(
 
     @Override
     public Expression optimize() {
-        if (AstUtils.isImmutableDirectValue(left)
-                && AstUtils.isImmutableDirectValue(right)) {
+        if (StatementUtils.isImmutableDirectValue(left)
+                && StatementUtils.isImmutableDirectValue(right)) {
             return new DirectValue(
                     operator.apply(
                             ((DirectValue) left).value(),
@@ -50,8 +50,8 @@ public record ConstableBiOperator(
     @Nullable
     public Object evalAsConst() {
         return operator.apply(
-                AstUtils.evalConst(left),
-                AstUtils.evalConst(right)
+                StatementUtils.evalAsConst(left),
+                StatementUtils.evalAsConst(right)
         );
     }
 }

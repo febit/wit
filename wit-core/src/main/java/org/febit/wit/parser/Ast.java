@@ -7,12 +7,13 @@ import org.febit.wit.Script;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.ast.AssignableExpression;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.FlowControl;
+import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.IBlock;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.runtime.ast.expr.Assign;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
 import org.febit.wit.runtime.ast.expr.DirectValue;
@@ -52,6 +53,7 @@ import org.febit.wit.runtime.ast.statement.Interpolation;
 import org.febit.wit.runtime.ast.statement.NoopStatement;
 import org.febit.wit.runtime.ast.statement.RenderRedirect;
 import org.febit.wit.runtime.ast.statement.Return;
+import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.ast.statement.StatementList;
 import org.febit.wit.runtime.ast.statement.TryCatchFinally;
 import org.febit.wit.runtime.ast.statement.TryFinally;
@@ -63,13 +65,14 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 @UtilityClass
 public class Ast {
 
-    private static final Statement[] EMPTY_STATEMENTS = new Statement[0];
     private static final Expression[] EMPTY_EXPRESSIONS = new Expression[0];
 
     public static IfExpr ifExpr(
@@ -90,7 +93,7 @@ public class Ast {
     }
 
     public static RenderRedirect renderRedirect(Statement body, AssignableExpression target, Position pos) {
-        return new RenderRedirect(body, target, pos);
+        return new RenderRedirect(target, body, pos);
     }
 
     public static IncreaseAndGet increaseAndGet(AssignableExpression target, Position pos) {
@@ -142,17 +145,17 @@ public class Ast {
     }
 
     public static Statement breakpointStatement(
+            @Nullable Expression mark,
             @Nullable Statement supervised,
-            @Nullable Expression label,
             Position pos
     ) {
-        var labelObj = label == null ? null : AstUtils.evalConst(label);
-        return new BreakpointStatement(supervised, labelObj, pos);
+        var labelObj = mark == null ? null : StatementUtils.evalAsConst(mark);
+        return new BreakpointStatement(labelObj, supervised, pos);
     }
 
-    public static Expression breakpointExpr(Expression supervised, @Nullable Expression label, Position pos) {
-        var labelObj = label == null ? null : AstUtils.evalConst(label);
-        return new BreakpointExpr(supervised, labelObj, pos);
+    public static Expression breakpointExpr(@Nullable Expression mark, Expression supervised, Position pos) {
+        var markObj = mark == null ? null : StatementUtils.evalAsConst(mark);
+        return new BreakpointExpr(markObj, supervised, pos);
     }
 
     public static SuppliedValue emptyArray(Position pos) {
@@ -175,8 +178,8 @@ public class Ast {
     }
 
     public static NewMap.NewMapEntry entryOfNewMap(Expression key, Expression value) {
-        key = AstUtils.optimize(key);
-        value = AstUtils.optimize(value);
+        key = StatementUtils.optimize(key);
+        value = StatementUtils.optimize(value);
         return new NewMap.NewMapEntry(key, value);
     }
 
@@ -214,22 +217,31 @@ public class Ast {
         Objects.requireNonNull(pos, "position is required");
 
         var frame = body.frame();
-        var statements = body.statements();
+        var batches = body.body();
 
-        if (!body.needFlowControlCheck()) {
+        var controls = new ArrayList<FlowControl>();
+        FlowControls.collect(controls::add, body);
+
+        if (controls.isEmpty()) {
+            if (batches.size() != 1) {
+                throw new IllegalStateException("Unexpected multiple batches without flow control");
+            }
+            var batch0 = batches.get(0);
             return switch (kind) {
-                case WHILE -> new WhileNonFlow(condition, frame, statements, pos);
-                case DO_WHILE -> new DoWhileNonFlow(condition, frame, statements, pos);
+                case WHILE -> new WhileNonFlow(frame, condition, batch0, pos);
+                case DO_WHILE -> new DoWhileNonFlow(frame, condition, batch0, pos);
             };
         }
 
         if (label == null) {
             label = 0;
         }
-        var controls = AstUtils.flowControlsOverLoop(label, List.of(body), null);
+        var bubbled = List.copyOf(controls.stream()
+                .filter(FlowControls.loopBubbleFilter(label))
+                .toList());
         return switch (kind) {
-            case WHILE -> new While(condition, frame, statements, controls, label, pos);
-            case DO_WHILE -> new DoWhile(condition, frame, statements, controls, label, pos);
+            case WHILE -> new While(label, frame, condition, batches, bubbled, pos);
+            case DO_WHILE -> new DoWhile(label, frame, condition, batches, bubbled, pos);
         };
     }
 
@@ -247,16 +259,16 @@ public class Ast {
         Objects.requireNonNull(body, "tryBody is required");
         Objects.requireNonNull(pos, "position is required");
 
-        body = AstUtils.optimize(body);
+        body = StatementUtils.optimize(body);
 
         if (catchBody != null) {
             Objects.requireNonNull(exceptionVarIndex,
                     "exceptionVarIndex is required when catchBody is provided");
-            catchBody = AstUtils.optimize(catchBody);
+            catchBody = StatementUtils.optimize(catchBody);
         }
 
         if (finallyBody != null) {
-            finallyBody = AstUtils.optimize(finallyBody);
+            finallyBody = StatementUtils.optimize(finallyBody);
         }
 
         if (catchBody == null) {
@@ -265,7 +277,7 @@ public class Ast {
             }
             return new TryFinally(body, finallyBody, pos);
         }
-        return new TryCatchFinally(body, catchBody, finallyBody, exceptionVarIndex, pos);
+        return new TryCatchFinally(exceptionVarIndex, body, catchBody, finallyBody, pos);
     }
 
     @Builder(
@@ -284,10 +296,10 @@ public class Ast {
         Objects.requireNonNull(path, "path is required");
         Objects.requireNonNull(pos, "position is required");
 
-        path = AstUtils.optimize(path);
+        path = StatementUtils.optimize(path);
 
         if (params != null) {
-            params = AstUtils.optimize(params);
+            params = StatementUtils.optimize(params);
         }
 
         var refer = script.path();
@@ -301,7 +313,7 @@ public class Ast {
 
         var targets = exportVars.stream()
                 .map(ImportVar::target)
-                .map(AstUtils::optimize)
+                .map(StatementUtils::optimize)
                 .map(AssignableExpression.class::cast)
                 .toArray(AssignableExpression[]::new);
 
@@ -347,46 +359,26 @@ public class Ast {
         }
         var arr = list.toArray(new Expression[0]);
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = AstUtils.optimize(arr[i]);
+            arr[i] = StatementUtils.optimize(arr[i]);
         }
         return arr;
     }
 
-    public static Statement[] flatStatements(@Nullable List<Statement> list) {
-        if (list == null || list.isEmpty()) {
-            return EMPTY_STATEMENTS;
-        }
-        List<Statement> temp = new ArrayList<>(list.size());
-        for (var stat : list) {
-            if (stat instanceof StatementList group) {
-                temp.addAll(group.list());
-                continue;
-            }
-            stat = AstUtils.optimize(stat);
-            if (!(stat instanceof NoopStatement)) {
-                temp.add(stat);
-            }
-        }
-        return list.isEmpty()
-                ? EMPTY_STATEMENTS
-                : temp.toArray(new Statement[0]);
-    }
-
-    public static Statement statementGroup(List<Statement> list, Position pos) {
-        return new StatementList(flatStatements(list), pos);
+    public static Statement statementList(List<Statement> list, Position pos) {
+        return new StatementList(List.copyOf(list), pos);
     }
 
     public static Expression functionCall(
             Expression func, Expression[] params, Position pos) {
-        AstUtils.optimize(params);
-        func = AstUtils.optimize(func);
+        StatementUtils.optimize(params);
+        func = StatementUtils.optimize(func);
         return new FunctionCaller(func, params, pos);
     }
 
     public static Expression dynamicNativeMethodCall(
             Expression self, String method, Expression[] params, Position pos) {
-        AstUtils.optimize(params);
-        self = AstUtils.optimize(self);
+        StatementUtils.optimize(params);
+        self = StatementUtils.optimize(self);
         return new DynamicNativeMethodCaller(method, self, params, pos);
     }
 
@@ -396,8 +388,8 @@ public class Ast {
             @Nullable Statement elseBody,
             Position pos
     ) {
-        thenBody = AstUtils.optimize(thenBody);
-        elseBody = AstUtils.optimize(elseBody);
+        thenBody = StatementUtils.optimize(thenBody);
+        elseBody = StatementUtils.optimize(elseBody);
         if (!(thenBody instanceof NoopStatement)) {
             if (elseBody instanceof NoopStatement) {
                 return new If(ifExpr, thenBody, pos);
@@ -411,12 +403,70 @@ public class Ast {
     }
 
     public static IBlock block(@Nullable List<Statement> list, int frame, Position pos) {
-        var statements = flatStatements(list);
         var controls = new ArrayList<FlowControl>();
-        AstUtils.collectFlowControls(controls::add, statements);
-        return controls.isEmpty()
-                ? new BlockNonFlow(frame, statements, pos)
-                : new Block(frame, statements, List.copyOf(controls), pos);
+        var batches = batch(list, controls::add);
+        if (controls.isEmpty()) {
+            if (batches.size() != 1) {
+                throw new IllegalStateException("Unexpected multiple batches without flow control");
+            }
+            return new BlockNonFlow(frame, batches.get(0), pos);
+        }
+
+        return new Block(frame, batches, List.copyOf(controls), pos);
+    }
+
+    public static void flatAndOptimize(@Nullable List<Statement> statements, Consumer<Statement> collector) {
+        if (statements == null || statements.isEmpty()) {
+            return;
+        }
+        for (var stat : statements) {
+            if (stat instanceof StatementList list) {
+                flatAndOptimize(list.statements(), collector);
+                continue;
+            }
+            stat = StatementUtils.optimize(stat);
+            if (stat instanceof NoopStatement) {
+                continue;
+            }
+            collector.accept(stat);
+        }
+    }
+
+    /**
+     * Batch statements, collect flow controls.
+     *
+     * @return always not empty, if no statement, return a batch with empty statements.
+     */
+    public static List<StatementBatch> batch(@Nullable List<Statement> list, Consumer<FlowControl> controlsCollector) {
+        if (list == null || list.isEmpty()) {
+            return List.of(StatementBatch.empty());
+        }
+        var flag = new AtomicBoolean();
+        var collecting = (Consumer<FlowControl>) (ctrl -> {
+            flag.set(true);
+            controlsCollector.accept(ctrl);
+        });
+
+        var batches = new ArrayList<StatementBatch>();
+        var current = new ArrayList<Statement>();
+
+        flatAndOptimize(list, stat -> {
+            current.add(stat);
+            FlowControls.collect(collecting, stat);
+            if (flag.get()) {
+                batches.add(StatementBatch.of(current));
+                current.clear();
+                flag.set(false);
+            }
+        });
+
+        if (!current.isEmpty()) {
+            batches.add(StatementBatch.of(current));
+        }
+        if (batches.isEmpty()) {
+            return List.of(StatementBatch.empty());
+        }
+        return List.copyOf(batches);
     }
 
     public static AssignableExpression castToAssignable(Expression expr) {
@@ -436,7 +486,7 @@ public class Ast {
         if (biFunc == null) {
             throw unsupportedOperator(pos);
         }
-        var optimized = AstUtils.optimize(
+        var optimized = StatementUtils.optimize(
                 new SelfCalcAndAssign(assignable, delta, biFunc, pos)
         );
         Objects.requireNonNull(optimized);
@@ -453,7 +503,7 @@ public class Ast {
             case TokenKinds.NOT -> ALU::not;
             default -> throw unsupportedOperator(token.pos);
         };
-        var optimized = AstUtils.optimize(
+        var optimized = StatementUtils.optimize(
                 new ConstableUnaryOperator(target, func, token.pos)
         );
         Objects.requireNonNull(optimized);
@@ -476,7 +526,7 @@ public class Ast {
                 yield new ConstableBiOperator(left, right, biFunc, token.pos);
             }
         };
-        var optimized = AstUtils.optimize(op);
+        var optimized = StatementUtils.optimize(op);
         Objects.requireNonNull(optimized);
         return optimized;
     }

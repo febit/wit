@@ -1,13 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.parser;
 
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.runtime.ast.statement.ForIn;
 import org.febit.wit.runtime.ast.statement.ForInNonFlow;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class ForInBuilder extends BaseForInBuilder {
@@ -28,22 +27,26 @@ public class ForInBuilder extends BaseForInBuilder {
     }
 
     @Override
-    public Statement build(int label) {
+    public Statement build() {
         Objects.requireNonNull(this.body);
         Objects.requireNonNull(this.collection);
 
-        var collection = AstUtils.optimize(this.collection);
+        var collection = StatementUtils.optimize(this.collection);
 
-        var hasFlowControl = AstUtils.hasFlowControls(body);
-        if (!hasFlowControl) {
-            return new ForInNonFlow(filter, collection, frame(),
-                    iterIndex, itemIndex, body, elseBody, position);
+        var bodiesInspect = inspectBodies();
+        var bodyBatches = bodiesInspect.bodyBatches();
+        if (!bodiesInspect.isBodyHasFlowControls()) {
+            if (bodyBatches.size() != 1) {
+                throw new IllegalStateException("unexpected body batches size: " + bodyBatches.size());
+            }
+            return new ForInNonFlow(frame(), collection, filter,
+                    iterIndex, itemIndex, bodyBatches.get(0), elseBody, position);
         }
 
-        var controls = AstUtils.flowControlsOverLoop(label, Arrays.asList(body), elseBody);
-        return new ForIn(filter, collection, frame(),
-                iterIndex, itemIndex, body,
-                controls, elseBody, label, position
+        return new ForIn(label(), frame(), collection, filter,
+                iterIndex, itemIndex, bodyBatches,
+                elseBody, bodiesInspect.bubbledFlowControls(),
+                position
         );
     }
 }

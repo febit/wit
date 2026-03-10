@@ -2,9 +2,9 @@
 package org.febit.wit.runtime.ast.statement;
 
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.FlowControl;
+import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.WithFlowControl;
@@ -14,10 +14,10 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public record Switch(
-        Expression condition,
-        @Nullable Branch defaultBranch,
-        Map<Object, Branch> branches,
         int label,
+        Expression condition,
+        Map<Object, Branch> branches,
+        @Nullable Branch defaultBranch,
         Position position
 ) implements Statement, WithFlowControl {
 
@@ -39,13 +39,20 @@ public record Switch(
     }
 
     @Override
-    public void collectFlowControls(Consumer<FlowControl> collector) {
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
         //XXX: May have duplicated controls caused by duplicated Branch
-        branches.values().forEach(entry -> AstUtils.collectFlowControls(ctrl -> {
-            if (!ctrl.matchesLabel(this.label) || !ctrl.kind().isBreak()) {
+        var filtered = (Consumer<FlowControl>) ctrl -> {
+            if (!ctrl.matchesLabel(this.label) || !ctrl.state().isBreak()) {
                 collector.accept(ctrl);
             }
-        }, entry.body));
+        };
+
+        branches.values().forEach(entry ->
+                FlowControls.collect(filtered, entry.body)
+        );
+        if (defaultBranch != null) {
+            FlowControls.collect(filtered, defaultBranch.body);
+        }
     }
 
     public record Branch(Statement body, @Nullable Branch next) {

@@ -11,8 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
 
 public record RenderRedirect(
-        Statement body,
         AssignableExpression target,
+        Statement body,
         Position position
 ) implements Statement {
 

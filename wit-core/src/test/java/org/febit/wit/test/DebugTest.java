@@ -6,36 +6,33 @@ import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DebugTest {
-
-    private final Set<Object> labelCache = new HashSet<>();
-    private int pointCount = 0;
 
     @Test
     void test() throws NoSuchSourceException {
         var script = TestWit.script("/debug.wit");
         script.eval();
 
-        labelCache.clear();
-        pointCount = 0;
+        var marks = new HashSet<>();
+        var counter = new AtomicInteger(0);
 
         script.evaluator()
-                .breakpointHandler((label, context, statement, result) -> {
-                    labelCache.add(label);
-                    pointCount++;
+                .breakpointHandler((mark, context, statement, result) -> {
+                    marks.add(mark);
+                    counter.incrementAndGet();
                 })
                 .eval();
 
-        assertEquals(18, pointCount);
-        assertTrue(labelCache.contains(null));
-        assertTrue(labelCache.contains("p1"));
-        assertTrue(labelCache.contains("p2"));
-        assertTrue(labelCache.contains("p3"));
-        assertTrue(labelCache.contains("p4"));
+        assertEquals(18, counter.intValue());
+        assertTrue(marks.contains(null));
+        assertTrue(marks.contains("p1"));
+        assertTrue(marks.contains("p2"));
+        assertTrue(marks.contains("p3"));
+        assertTrue(marks.contains("p4"));
 
     }
 

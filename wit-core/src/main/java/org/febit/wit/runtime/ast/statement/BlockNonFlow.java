@@ -8,11 +8,12 @@ import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public record BlockNonFlow(
         int frame,
-        Statement[] statements,
+        StatementBatch bodyBatch,
         Position position
 ) implements IBlock {
 
@@ -20,22 +21,23 @@ public record BlockNonFlow(
     @Nullable
     public Object execute(InternalContext context) {
         context.variables().onFrame(frame,
-                () -> context.visitNonFlow(statements)
+                () -> bodyBatch.execute(context)
         );
         return null;
     }
 
     @Override
-    public boolean needFlowControlCheck() {
-        return false;
+    public List<StatementBatch> body() {
+        return List.of(bodyBatch);
     }
 
     @Override
-    public void collectFlowControls(Consumer<FlowControl> collector) {
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+        // No flow control.
     }
 
     @Override
     public Statement optimize() {
-        return statements.length == 0 ? NoopStatement.INSTANCE : this;
+        return bodyBatch.isEmpty() ? NoopStatement.INSTANCE : this;
     }
 }

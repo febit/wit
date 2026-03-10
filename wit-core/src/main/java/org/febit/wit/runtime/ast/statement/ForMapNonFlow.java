@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast.statement;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -14,22 +11,17 @@ import org.febit.wit.runtime.iter.KeyIterMethodFilter;
 import org.febit.wit.util.Iters;
 import org.jspecify.annotations.Nullable;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public final class ForMapNonFlow implements Statement {
-
-    @Nullable
-    private final FunctionDeclarer filter;
-    private final Expression collection;
-    private final int frame;
-    private final int iterIndex;
-    private final int keyIndex;
-    private final int valueIndex;
-    private final Statement[] statements;
-    @Nullable
-    private final Statement elseBody;
-    @Getter
-    private final Position position;
+public record ForMapNonFlow(
+        int frame,
+        Expression collection,
+        @Nullable FunctionDeclarer filter,
+        int iterIndex,
+        int keyIndex,
+        int valueIndex,
+        StatementBatch body,
+        @Nullable Statement elseBody,
+        Position position
+) implements Statement {
 
     @Override
     @Nullable
@@ -58,7 +50,7 @@ public final class ForMapNonFlow implements Statement {
             "squid:S3776", // Cognitive Complexity of methods should not be too high
     })
     private void execute0(InternalContext context, KeyIter iter) {
-        var stats = this.statements;
+        var batch = this.body;
         var keyIdx = this.keyIndex;
         var valIdx = this.valueIndex;
         var heap = context.variables();
@@ -68,7 +60,7 @@ public final class ForMapNonFlow implements Statement {
                     keyIdx, iter.next(),
                     valIdx, iter.value()
             );
-            context.visitNonFlow(stats);
+            batch.execute(context);
         } while (iter.hasNext());
     }
 }

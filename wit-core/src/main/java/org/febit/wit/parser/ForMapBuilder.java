@@ -1,13 +1,12 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.parser;
 
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.runtime.ast.statement.ForMap;
 import org.febit.wit.runtime.ast.statement.ForMapNonFlow;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class ForMapBuilder extends BaseForInBuilder {
@@ -38,21 +37,25 @@ public class ForMapBuilder extends BaseForInBuilder {
     }
 
     @Override
-    public Statement build(int label) {
+    public Statement build() {
         Objects.requireNonNull(body);
         Objects.requireNonNull(collection);
 
-        var collection = AstUtils.optimize(this.collection);
+        var collection = StatementUtils.optimize(this.collection);
 
-        var hasFlowControl = AstUtils.hasFlowControls(body);
-        if (!hasFlowControl) {
-            return new ForMapNonFlow(filter, collection, frame(),
-                    iterIndex, keyIndex, valueIndex, body, elseBody, position);
+        var bodiesInspect = inspectBodies();
+        var bodyBatches = bodiesInspect.bodyBatches();
+        if (!bodiesInspect.isBodyHasFlowControls()) {
+            if (bodyBatches.size() != 1) {
+                throw new IllegalStateException("unexpected body batches size: " + bodyBatches.size());
+            }
+            return new ForMapNonFlow(frame(), collection, filter,
+                    iterIndex, keyIndex, valueIndex, bodyBatches.get(0), elseBody, position);
         }
 
-        var controls = AstUtils.flowControlsOverLoop(label, Arrays.asList(body), elseBody);
-        return new ForMap(filter, collection, frame(),
-                iterIndex, keyIndex, valueIndex, body,
-                controls, elseBody, label, position);
+        return new ForMap(label(), frame(), collection, filter,
+                iterIndex, keyIndex, valueIndex, bodyBatches,
+                elseBody, bodiesInspect.bubbledFlowControls(),
+                position);
     }
 }

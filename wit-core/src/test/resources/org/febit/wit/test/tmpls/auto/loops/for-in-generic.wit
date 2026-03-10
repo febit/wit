@@ -1,9 +1,14 @@
 {
-    for(i : 3..6){
+    var step = 3..6;
+    assertEquals(-1, step.index);
+    assertTrue(step.hasNext);
+    for(i : step){
         //empty block
     }else{
         //empty block
     }
+    assertFalse(step.hasNext);
+    assertEquals(3, step.index);
 }
 {
     var new_ints = native [] int;

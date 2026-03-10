@@ -1,20 +1,20 @@
 package org.febit.wit.runtime;
 
 import lombok.experimental.Accessors;
-import org.febit.wit.runtime.ast.FlowControl;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
 public class Flow {
 
     /**
-     * Flow kind.
+     * Flow state.
      */
     @lombok.Getter
-    private FlowControl.Kind kind = FlowControl.Kind.NOOP;
+    private FlowState state = FlowState.NOOP;
 
     /**
-     * Target label id, used by break/continue-controls, 0 for any label.
+     * Target label id, used by break/continue-controls, 0 if not specified.
      */
     private int target;
 
@@ -25,7 +25,7 @@ public class Flow {
     private Object returned;
 
     public boolean isNoop() {
-        return kind.isNoop();
+        return state == FlowState.NOOP;
     }
 
     /**
@@ -48,7 +48,7 @@ public class Flow {
      */
     public void toBreak(int label) {
         this.target = label;
-        this.kind = FlowControl.Kind.BREAK;
+        this.state = FlowState.BREAK;
     }
 
     /**
@@ -58,7 +58,7 @@ public class Flow {
      */
     public void toContinue(int label) {
         this.target = label;
-        this.kind = FlowControl.Kind.CONTINUE;
+        this.state = FlowState.CONTINUE;
     }
 
     /**
@@ -69,7 +69,7 @@ public class Flow {
     public void toReturn(@Nullable Object value) {
         this.returned = value;
         this.target = 0;
-        this.kind = FlowControl.Kind.RETURN;
+        this.state = FlowState.RETURN;
     }
 
     /**
@@ -78,7 +78,7 @@ public class Flow {
     public void reset() {
         this.returned = null;
         this.target = 0;
-        this.kind = FlowControl.Kind.NOOP;
+        this.state = FlowState.NOOP;
     }
 
     /**
@@ -87,22 +87,28 @@ public class Flow {
      * @param label target label id
      */
     public void resetIfBreak(int label) {
-        if (this.kind.isBreak() && isTarget(label)) {
+        if (this.state.isBreak() && isTarget(label)) {
             this.reset();
         }
     }
 
     /**
-     * Get the returned value if current control is return,
-     * otherwise return {@link Undefined#UNDEFINED}.
+     * Get the returned value if current control is return, then reset to noop control.
      *
      * @return the returned
+     * @throws ScriptEvaluateException if current control is not return or noop
      */
     @Nullable
-    public Object returned() {
-        return this.kind.isReturn()
-                ? this.returned
-                : Undefined.UNDEFINED;
+    public Object returnAndReset() {
+        return switch (this.state) {
+            case RETURN -> {
+                var ret = this.returned;
+                reset();
+                yield ret;
+            }
+            case NOOP -> Undefined.UNDEFINED;
+            default -> throw new ScriptEvaluateException("Flow control leaks when returning: " + this.state);
+        };
     }
 
 }

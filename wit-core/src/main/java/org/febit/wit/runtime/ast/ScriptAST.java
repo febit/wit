@@ -8,6 +8,7 @@ import org.febit.wit.Vars;
 import org.febit.wit.io.Out;
 import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.heap.GenricHeap;
 import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
@@ -15,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 @RequiredArgsConstructor
 public final class ScriptAST {
 
-    private final Statement[] statements;
+    private final StatementBatch body;
     private final FrameIndexer[] indexers;
     private final int frameSize;
 
@@ -36,7 +37,7 @@ public final class ScriptAST {
 
         var local = GenricHeap.local();
         var context = new InternalContext(script, variables, inputs, out, local, handler);
-        context.visitNonFlow(this.statements);
+        body.execute(context);
         // assert context.indexer = 0
         return context;
     }
@@ -51,7 +52,7 @@ public final class ScriptAST {
                 context.local(),
                 context.breakpointHandler()
         );
-        newContext.visitNonFlow(this.statements);
+        body.execute(newContext);
         // assert context.indexer = 0
         return newContext;
     }

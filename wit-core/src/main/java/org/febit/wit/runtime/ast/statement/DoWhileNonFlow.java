@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast.statement;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
@@ -11,15 +8,12 @@ import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public final class DoWhileNonFlow implements Statement {
-
-    private final Expression condition;
-    private final int frame;
-    private final Statement[] body;
-    @Getter
-    private final Position position;
+public record DoWhileNonFlow(
+        int frame,
+        Expression condition,
+        StatementBatch body,
+        Position position
+) implements Statement {
 
     @Override
     @Nullable
@@ -30,9 +24,9 @@ public final class DoWhileNonFlow implements Statement {
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     private void execute0(InternalContext context) {
-        var stats = this.body;
+        var batch = this.body;
         do {
-            context.visitNonFlow(stats);
+            batch.execute(context);
         } while (ALU.isTruly(condition.execute(context)));
     }
 }

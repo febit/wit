@@ -8,9 +8,9 @@ import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.WitFunction;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.ast.StatementUtils;
 import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
@@ -36,14 +36,14 @@ public final class FunctionCaller implements Expression {
     @Override
     @Nullable
     public Object evalAsConst() {
-        var funcObj = AstUtils.evalConst(this.func);
+        var funcObj = StatementUtils.evalAsConst(this.func);
         if (!(funcObj instanceof WitFunction.Constable constable)) {
             if (!(funcObj instanceof WitFunction)) {
                 throw new ScriptEvaluateException("not a function", this);
             }
             return Undefined.UNDEFINED;
         }
-        var paramsObj = AstUtils.evalConstArray(this.params);
+        var paramsObj = StatementUtils.evalConstArray(this.params);
         return constable.apply(paramsObj);
     }
 }

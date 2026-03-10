@@ -5,11 +5,11 @@ import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
 import org.febit.wit.Script;
 import org.febit.wit.exception.ParseException;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.ScriptAST;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.runtime.ast.expr.DirectValue;
 import org.febit.wit.runtime.ast.expr.NativeStaticFieldValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
@@ -187,7 +187,7 @@ public class Assembler {
     }
 
     public void assignConst(String name, Expression expr, Position position) {
-        varLayout.assignConst(name, AstUtils.evalConst(expr), position);
+        varLayout.assignConst(name, StatementUtils.evalAsConst(expr), position);
     }
 
     public Expression createNativeStaticFieldValue(ClassNameRope rope, Position position) {
@@ -313,14 +313,14 @@ public class Assembler {
     }
 
     public ScriptAST buildAST(List<Statement> list) {
-        var statements = Ast.flatStatements(list);
-
-        AstUtils.collectFlowControls(ctrl -> {
+        var batches = Ast.batch(list, ctrl -> {
             throw new ParseException("Unhandled flow control: " + ctrl, ctrl.position());
-        }, statements);
-
+        });
+        if (batches.size() != 1) {
+            throw new IllegalStateException("Unexpected batches size: " + batches.size());
+        }
         return new ScriptAST(
-                statements,
+                batches.get(0),
                 this.varLayout.buildFrameIndexers(),
                 this.varLayout.frameSize(),
                 this.lastSourceVersion

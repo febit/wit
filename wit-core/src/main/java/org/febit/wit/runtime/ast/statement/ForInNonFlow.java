@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast.statement;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -14,21 +11,16 @@ import org.febit.wit.runtime.iter.IterMethodFilter;
 import org.febit.wit.util.Iters;
 import org.jspecify.annotations.Nullable;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public final class ForInNonFlow implements Statement {
-
-    @Nullable
-    private final FunctionDeclarer filter;
-    private final Expression collection;
-    private final int frame;
-    private final int iterIndex;
-    private final int itemIndex;
-    private final Statement[] statements;
-    @Nullable
-    private final Statement elseBody;
-    @Getter
-    private final Position position;
+public record ForInNonFlow(
+        int frame,
+        Expression collection,
+        @Nullable FunctionDeclarer filter,
+        int iterIndex,
+        int itemIndex,
+        StatementBatch body,
+        @Nullable Statement elseBody,
+        Position position
+) implements Statement {
 
     @Override
     @Nullable
@@ -57,13 +49,13 @@ public final class ForInNonFlow implements Statement {
             "squid:S3776", // Cognitive Complexity of methods should not be too high
     })
     private void execute0(InternalContext context, Iter iter) {
-        var stats = this.statements;
+        var batch = this.body;
         var itemIdx = this.itemIndex;
         var heap = context.variables();
         heap.set(iterIndex, iter);
         do {
             heap.set(itemIdx, iter.next());
-            context.visitNonFlow(stats);
+            batch.execute(context);
         } while (iter.hasNext());
     }
 }

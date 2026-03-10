@@ -7,8 +7,8 @@ import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;
 
 public record BreakpointExpr(
+        @Nullable Object mark,
         Expression supervised,
-        @Nullable Object label,
         Position position
 ) implements Expression {
 
@@ -18,7 +18,7 @@ public record BreakpointExpr(
         Object result = supervised.execute(context);
         var handler = context.breakpointHandler();
         if (handler != null) {
-            handler.handle(label, context, this, result);
+            handler.handle(mark, context, this, result);
         }
         return result;
     }

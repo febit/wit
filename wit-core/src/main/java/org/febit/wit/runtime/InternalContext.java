@@ -16,13 +16,14 @@ import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.Render;
 import org.febit.wit.runtime.accessor.Setter;
 import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.heap.Heap;
 import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -38,6 +39,9 @@ import java.util.function.Function;
 public final class InternalContext implements Context {
 
     @lombok.Getter
+    private final Flow flow = new Flow();
+
+    @lombok.Getter
     private final Script script;
 
     private final int features;
@@ -47,9 +51,6 @@ public final class InternalContext implements Context {
     private final BreakpointHandler breakpointHandler;
 
     private final AccessorFactory accessors;
-
-    @lombok.Getter
-    private final Flow flow = new Flow();
 
     @lombok.Getter
     private final Vars inputs;
@@ -85,12 +86,12 @@ public final class InternalContext implements Context {
         inputs.sink(variables::set);
     }
 
-    public boolean isEnabled(Feature feature) {
-        return feature.isEnabled(this.features);
-    }
-
     public Wit engine() {
         return this.script.engine();
+    }
+
+    public boolean isEnabled(Feature feature) {
+        return feature.isEnabled(this.features);
     }
 
     public Object[] visit(Expression[] exprs) {
@@ -102,53 +103,42 @@ public final class InternalContext implements Context {
         return results;
     }
 
-    public void visit(Statement[] stats) {
-        var i = 0;
-        var len = stats.length;
+    public void visitBatches(List<StatementBatch> batches) {
         var fl = this.flow();
-        while (i < len && fl.isNoop()) {
-            stats[i++].execute(this);
-        }
-    }
-
-    public void visitNonFlow(Statement[] stats) {
-        var i = 0;
-        var len = stats.length;
-        while (i < len) {
-            stats[i++].execute(this);
+        for (int i = 0, len = batches.size(); i < len && fl.isNoop(); i++) {
+            batches.get(i).execute(this);
         }
     }
 
     /**
      * Visit loop body, handle flow control.
      *
-     * @param stats loop body statements
-     * @param label loop label
-     * @return true if loop should break, false if should continue
+     * @param body loop body batches
+     * @param label   loop label
+     * @return true if loop should interrupt, false if should continue to next iteration
      */
-    public boolean visitLoopFlow(Statement[] stats, int label) {
+    public boolean visitLoopBody(List<StatementBatch> body, int label) {
         var fl = this.flow();
-        var i = 0;
-        var len = stats.length;
-        while (i < len && fl.isNoop()) {
-            stats[i++].execute(this);
+        for (int i = 0, len = body.size(); i < len && fl.isNoop(); i++) {
+            body.get(i).execute(this);
         }
         if (fl.isNoop()) {
+            // Continue to next iteration
             return false;
         }
         if (!fl.isTarget(label)) {
+            // Interrupt loop, sine ctrl cannot be handled by current loop
             return true;
         }
-        return switch (fl.kind()) {
-            case RETURN -> true;
+        return switch (fl.state()) {
+            case RETURN -> true; // Interrupt loop, loops cannot handle return control.
             case BREAK -> {
-                // Reset flow state
-                // Then break to exit the flow
+                // Reset & Interrupt loop.
                 fl.reset();
                 yield true;
             }
             case CONTINUE -> {
-                // Reset flow state, Then continue to next loop iteration
+                // Reset & Continue to next iteration.
                 fl.reset();
                 yield false;
             }

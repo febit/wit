@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.FrameIndexer;
 import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.function.ScriptFunction;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
@@ -20,9 +21,8 @@ public final class FunctionDeclarer implements Expression {
     private final Object[] argDefaults;
     private final int frameSize;
     private final FrameIndexer[] indexers;
-    private final Statement[] statements;
+    private final List<StatementBatch> body;
     private final int argsIndexStart;
-    private final boolean hasReturnFlow;
     @Getter
     private final Position position;
 
@@ -34,16 +34,8 @@ public final class FunctionDeclarer implements Expression {
     @Nullable
     public Object apply(InternalContext context, @Nullable Object @Nullable [] args) {
         fillArgs(context, args);
-        if (hasReturnFlow) {
-            context.visit(statements);
-            var flow = context.flow();
-            var returned = flow.returned();
-            flow.reset();
-            return returned;
-        } else {
-            context.visitNonFlow(statements);
-            return Undefined.UNDEFINED;
-        }
+        context.visitBatches(body);
+        return context.flow().returnAndReset();
     }
 
     private void fillArgs(InternalContext context, @Nullable Object @Nullable [] args) {

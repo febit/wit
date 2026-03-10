@@ -1,9 +1,6 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast.statement;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.FlowControl;
@@ -19,25 +16,18 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public class ForIn implements Statement, WithFlowControl {
-
-    @Nullable
-    private final FunctionDeclarer filter;
-
-    private final Expression collection;
-    private final int frame;
-    private final int iterIndex;
-    private final int itemIndex;
-    private final Statement[] body;
-    private final List<FlowControl> flowControls;
-
-    @Nullable
-    private final Statement elseBody;
-    private final int label;
-    @Getter
-    private final Position position;
+public record ForIn(
+        int label,
+        int frame,
+        Expression collection,
+        @Nullable FunctionDeclarer filter,
+        int iterIndex,
+        int itemIndex,
+        List<StatementBatch> body,
+        @Nullable Statement elseBody,
+        List<FlowControl> bubbledFlowControls,
+        Position position
+) implements Statement, WithFlowControl {
 
     @Override
     @Nullable
@@ -66,14 +56,14 @@ public class ForIn implements Statement, WithFlowControl {
             "squid:S3776", // Cognitive Complexity of methods should not be too high
     })
     private void execute0(InternalContext context, Iter iter) {
-        var statements = this.body;
+        var batches = this.body;
         var myLabel = this.label;
         var itemIdx = this.itemIndex;
         var heap = context.variables();
         heap.set(iterIndex, iter);
         do {
             heap.set(itemIdx, iter.next());
-            if (context.visitLoopFlow(statements, myLabel)) {
+            if (context.visitLoopBody(batches, myLabel)) {
                 // End this loop if not continue
                 break;
             }
@@ -81,7 +71,7 @@ public class ForIn implements Statement, WithFlowControl {
     }
 
     @Override
-    public void collectFlowControls(Consumer<FlowControl> collector) {
-        flowControls.forEach(collector);
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+        bubbledFlowControls.forEach(collector);
     }
 }

@@ -2,8 +2,8 @@
 package org.febit.wit.runtime.ast.statement;
 
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AstUtils;
 import org.febit.wit.runtime.ast.FlowControl;
+import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.WithFlowControl;
@@ -31,7 +31,7 @@ public record TryFinally(
     }
 
     @Override
-    public void collectFlowControls(Consumer<FlowControl> collector) {
-        AstUtils.collectFlowControls(collector, body, finalBody);
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+        FlowControls.collect(collector, body, finalBody);
     }
 }
