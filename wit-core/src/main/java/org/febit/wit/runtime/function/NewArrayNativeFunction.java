@@ -8,31 +8,32 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Array;
 
-public class NewArrayNativeFunction implements WitFunction.Constable {
-
-    private final Class<?> componentType;
-
-    public NewArrayNativeFunction(Class<?> componentType) {
-        this.componentType = componentType;
-    }
+public record NewArrayNativeFunction(
+        Class<?> componentType
+) implements WitFunction.Constable {
 
     @Override
     public Object apply(@Nullable Object @Nullable [] args) {
-        final int len;
-        if (args != null && args.length != 0) {
-            Object arg0 = args[0];
-            if (!(arg0 instanceof Number number0)) {
-                throw new ScriptEvaluateException(
-                        "must given a number as array's length, but got: " + ClassUtils.className(arg0));
-            }
-            len = number0.intValue();
-            if (len < 0) {
-                throw new ScriptEvaluateException(
-                        "must given a non-negative number as array's length: " + len);
-            }
-        } else {
-            len = 0;
+        var size = resolveSize(args);
+        return Array.newInstance(componentType, size);
+    }
+
+    private int resolveSize(@Nullable Object @Nullable [] args) {
+        if (args == null || args.length == 0) {
+            return 0;
         }
-        return Array.newInstance(componentType, len);
+
+        var arg0 = args[0];
+        if (!(arg0 instanceof Number number)) {
+            throw new ScriptEvaluateException(
+                    "A number is expected as array's length, but got: " + ClassUtils.className(arg0));
+        }
+
+        var size = number.intValue();
+        if (size < 0) {
+            throw new ScriptEvaluateException(
+                    "A non-negative number is expected as array's length, but got: " + size);
+        }
+        return size;
     }
 }

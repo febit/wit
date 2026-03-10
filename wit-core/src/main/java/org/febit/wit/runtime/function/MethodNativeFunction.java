@@ -7,13 +7,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
-public final class MethodNativeFunction implements WitFunction.Constable {
-
-    private final Method method;
-
-    public MethodNativeFunction(Method method) {
-        this.method = method;
-    }
+public record MethodNativeFunction(
+        Method method
+) implements WitFunction.Constable {
 
     @Nullable
     @Override

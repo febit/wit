@@ -7,13 +7,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 
-public class ConstructorNativeFunction implements WitFunction.Constable {
-
-    private final Constructor<?> constructor;
-
-    public ConstructorNativeFunction(Constructor<?> constructor) {
-        this.constructor = constructor;
-    }
+public record ConstructorNativeFunction(
+        Constructor<?> constructor
+) implements WitFunction.Constable {
 
     @Override
     public Object apply(@Nullable Object @Nullable [] args) {
