@@ -7,8 +7,7 @@ import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.expr.FunctionDeclarer;
 import org.febit.wit.runtime.iter.Iter;
-import org.febit.wit.runtime.iter.IterMethodFilter;
-import org.febit.wit.util.Iters;
+import org.febit.wit.runtime.iter.Iters;
 import org.jspecify.annotations.Nullable;
 
 public record ForInNonFlow(
@@ -37,11 +36,11 @@ public record ForInNonFlow(
     }
 
     private Iter iter(InternalContext context) {
-        var iter = Iters.toIter(collection.execute(context), this);
+        var iter = Iters.ofIter(collection.execute(context), this);
         if (filter == null) {
             return iter;
         }
-        return new IterMethodFilter(context, filter.execute(context), iter);
+        return Iters.ofFiltered(context, iter, filter.execute(context));
     }
 
     @SuppressWarnings({

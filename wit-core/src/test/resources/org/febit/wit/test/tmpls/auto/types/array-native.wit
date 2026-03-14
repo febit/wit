@@ -1,0 +1,9 @@
+{
+    var new_ints = native [] int;
+    var ints = new_ints(4);
+    ints[0] = 3;
+    ints[1] = 4;
+    ints[2] = 5;
+    ints[3] = 6;
+    assertEquals(4, ints.size);
+}

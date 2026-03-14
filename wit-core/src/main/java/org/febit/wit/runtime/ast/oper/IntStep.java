@@ -5,7 +5,8 @@ import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.util.Iters;
+import org.febit.wit.runtime.iter.IntAscIter;
+import org.febit.wit.runtime.iter.IntDescIter;
 
 public record IntStep(
         Expression from,
@@ -18,7 +19,7 @@ public record IntStep(
         var fromObj = ALU.requireNumber(from.execute(context)).intValue();
         var toObj = ALU.requireNumber(to.execute(context)).intValue();
         return fromObj < toObj
-                ? Iters.asc(fromObj, toObj)
-                : Iters.desc(fromObj, toObj);
+                ? IntAscIter.of(fromObj, toObj)
+                : IntDescIter.of(fromObj, toObj);
     }
 }

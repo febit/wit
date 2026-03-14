@@ -1,0 +1,40 @@
+{
+  var iter = 11..14;
+
+  assertNull(iter[null]);
+  assertEquals(-1, iter.index);
+
+  assertTrue(iter.hasNext);
+  assertEquals(11, iter.next);
+  assertEquals(0, iter.index);
+  assertTrue(iter.isFirst);
+  assertTrue(iter.isOdd);
+  assertFalse(iter.isEven);
+
+  assertTrue(iter.hasNext);
+  assertEquals(12, iter.next);
+  assertTrue(iter.hasNext);
+  assertEquals(1, iter.index);
+  assertFalse(iter.isFirst);
+  assertFalse(iter.isOdd);
+  assertTrue(iter.isEven);
+
+  assertTrue(iter.hasNext);
+  assertEquals(13, iter.next);
+  assertTrue(iter.hasNext);
+  assertEquals(2, iter.index);
+  assertFalse(iter.isFirst);
+  assertTrue(iter.isOdd);
+  assertFalse(iter.isEven);
+
+  assertTrue(iter.hasNext);
+  assertEquals(14, iter.next);
+  assertFalse(iter.hasNext);
+  assertEquals(3, iter.index);
+  assertFalse(iter.isFirst);
+  assertFalse(iter.isOdd);
+  assertTrue(iter.isEven);
+
+  assertFalse(iter.hasNext);
+
+}

@@ -6,7 +6,6 @@ import org.apache.commons.lang3.Strings;
 import org.febit.wit.Script;
 import org.febit.wit.TestWit;
 import org.febit.wit.exception.NoSuchSourceException;
-import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.runtime.InternalContext;
@@ -21,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.LongAdder;
@@ -36,7 +34,7 @@ class AutoTest {
     private final LongAdder breakpointCount = new LongAdder();
 
     @Test
-    void test() throws ParseException, ScriptEvaluateException, URISyntaxException, IOException {
+    void test() throws Exception {
         breakpointCount.reset();
         var classLoader = ClassUtils.classLoader();
         var out = new ByteArrayOutputStream();

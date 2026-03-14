@@ -1,0 +1,26 @@
+{
+    var iter;
+
+    var odd = "";
+    var even = "";
+    var first = "";
+
+    var sum = 0;
+
+    for(i : 0..3){
+        sum += i;
+        iter = for.iter;
+        first += for.iter.isFirst? "1":"0";
+        odd += for.iter.isOdd? "1":"0";
+        even += for.iter.isEven? "1":"0";
+    }
+
+    assertEquals(6, sum);
+
+    assertEquals("1000", first);
+    assertEquals("1010", odd);
+    assertEquals("0101", even);
+
+    assertNotNull(iter);
+    assertFalse(iter.hasNext);
+}

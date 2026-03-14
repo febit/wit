@@ -8,9 +8,8 @@ import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.WithFlowControl;
 import org.febit.wit.runtime.ast.expr.FunctionDeclarer;
+import org.febit.wit.runtime.iter.Iters;
 import org.febit.wit.runtime.iter.KeyIter;
-import org.febit.wit.runtime.iter.KeyIterMethodFilter;
-import org.febit.wit.util.Iters;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -45,11 +44,11 @@ public record ForMap(
     }
 
     private KeyIter iter(InternalContext context) {
-        var iter = Iters.toKeyIter(collection.execute(context), this);
+        var iter = Iters.ofKeyIter(collection.execute(context), this);
         if (filter == null) {
             return iter;
         }
-        return new KeyIterMethodFilter(context, filter.execute(context), iter);
+        return Iters.ofFiltered(context, iter, filter.execute(context));
     }
 
     @SuppressWarnings({

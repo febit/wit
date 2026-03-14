@@ -5,10 +5,10 @@ import org.jspecify.annotations.Nullable;
 
 public interface Iter {
 
+    int index();
+
     boolean hasNext();
 
     @Nullable
     Object next();
-
-    int index();
 }

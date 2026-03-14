@@ -8,7 +8,7 @@ import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.util.Iters;
+import org.febit.wit.runtime.iter.Iters;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public final class GroupAssign implements Expression {
     @Override
     public Object execute(InternalContext context) {
         var values = value.execute(context);
-        var iter = Iters.toIter(values, this);
+        var iter = Iters.ofIter(values, this);
         var targetsObj = this.targets;
 
         final int targetSize = targetsObj.length;
