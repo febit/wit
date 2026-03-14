@@ -198,7 +198,7 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     //@import
                     |NATIVE_IMPORT:sym classPureName:nameRope SEMICOLON
-                    {: assembler.registerClass(%nameRope%, %sym.symbol%.pos); yield NoopStatement.INSTANCE; :}
+                    {: assembler.importClass(%nameRope%, %sym.symbol%.pos); yield NoopStatement.INSTANCE; :}
 
                     // Break
                     |BREAK:sym IDENTIFIER:label? SEMICOLON

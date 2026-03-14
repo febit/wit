@@ -29,7 +29,7 @@ public class ClassNameRope {
         return this;
     }
 
-    public String build() {
+    public String pop() {
         return segments.remove(segments.size() - 1);
     }
 

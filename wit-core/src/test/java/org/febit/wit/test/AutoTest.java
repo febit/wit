@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.LongAdder;
@@ -28,7 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AutoTest {
 
-    private static final String AUTO_TEST_ROOT = "org/febit/wit/test/tmpls/auto";
+    private static final String TEST_ROOT = "org/febit/wit/test/tmpls";
+    private static final String AUTO_TEST_ROOT = TEST_ROOT + "/auto";
     private static final String AUTO_TEST_ROOT_FLAG = AUTO_TEST_ROOT + "/.mark";
 
     private final LongAdder breakpointCount = new LongAdder();
@@ -57,10 +59,12 @@ class AutoTest {
             cases.forEach(p -> {
                 out.reset();
                 mergeScript(p, out);
-                var outInput = classLoader.getResourceAsStream(p + ".out");
+                var outInput = classLoader.getResourceAsStream(TEST_ROOT + p + ".out");
                 if (outInput != null) {
                     try {
-                        assertArrayEquals(IOUtils.toByteArray(outInput), out.toByteArray());
+                        var expected = IOUtils.toString(outInput, StandardCharsets.UTF_8);
+                        var actual = out.toString(StandardCharsets.UTF_8);
+                        assertEquals(expected, actual);
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }

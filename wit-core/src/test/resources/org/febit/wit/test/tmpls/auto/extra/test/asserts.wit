@@ -1,0 +1,38 @@
+@import org.febit.wit.exception.ScriptEvaluateException;
+
+var new_str = native new String(String);
+
+{
+  assertEquals("Hello, World!", "Hello, " + "World!");
+  assertEquals(5, 2 + 3);
+
+  var test = "Test";
+  assertSame(test, test);
+  assertNotSame(new_str("Test"), new_str("Test"));
+
+  assertTrue(10 > 5);
+  assertFalse(5 > 10);
+  assertNull(null);
+  assertNotNull("Not null");
+}
+{
+  assertInstanceOf(native String.class, "Test");
+  assertNotInstanceOf(native Integer.class, "Test");
+}
+{
+  assertArrayEquals([1, 2, 3], [1, 2, 3]);
+}
+{
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    throw "Expected error";
+  });
+  assertDoesNotThrow(() -> {
+    // No exception thrown
+  });
+}
+{
+  assertThrows(native AssertionError.class, (a, b) -> {
+      assertEquals(a, b);
+      echo "This line will not be reached if assertion fails";
+  }, 1, 2);
+}

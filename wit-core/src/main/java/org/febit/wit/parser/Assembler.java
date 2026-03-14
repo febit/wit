@@ -29,6 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Accessors(fluent = true)
 public class Assembler {
 
+    private static final String CLASS = "class";
+
     private final Map<String, String> importedClasses = new HashMap<>();
     private final Map<@Nullable String, Integer> labelIndexMap = new HashMap<>();
     private final AtomicInteger nextLabelIndex = new AtomicInteger();
@@ -130,7 +132,7 @@ public class Assembler {
         return className;
     }
 
-    public void registerClass(ClassNameRope rope, Position position) throws ParseException {
+    public void importClass(ClassNameRope rope, Position position) throws ParseException {
         var simpleName = rope.simpleName();
         if (ClassUtils.findPrimitiveClass(simpleName) != null) {
             throw new ParseException("Cannot import primitive type:" + simpleName, position);
@@ -194,11 +196,15 @@ public class Assembler {
         if (rope.size() <= 1) {
             throw new ParseException("native static need a field name.", position);
         }
-        var fieldName = rope.build();
+        var fieldName = rope.pop();
         var clazz = toClass(rope, position);
+
         var path = clazz.getName() + '.' + fieldName;
         if (!this.nativeLayout.security().allowed(path)) {
             throw new ParseException("Inaccessible native path: " + path, position);
+        }
+        if (CLASS.equals(fieldName)) {
+            return new DirectValue(clazz, position);
         }
         final Field field;
         try {

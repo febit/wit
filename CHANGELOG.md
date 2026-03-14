@@ -6,6 +6,8 @@
 
 + 支持 Record 类，的 Getter 方法。
 + 支持通过 Java 原生的代码 Builder 模式构建 Wit 引擎实例，提供更流畅的 API 体验。
++ 支持 Native Class。
++ Assertion 模块，提供更多的断言方法。
 
 #### IMPROVEMENTS:
 
