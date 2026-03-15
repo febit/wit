@@ -172,7 +172,7 @@ public class ALU {
             }
             case BIG_DECIMAL -> toBigDecimal(o1).add(toBigDecimal(o2));
             case CHAR -> plus(charToInt(o1), charToInt(o2));
-            default -> throw unsupportedTypeException(o1, o2);
+            default -> throw unsupportedTypeException(o1, o2); // should not happen
         };
     }
 
@@ -201,11 +201,12 @@ public class ALU {
     public static Object negative(@Nullable Object o1) {
         requireNonNull(o1);
         return switch (getTypeMark(o1)) {
+            case BYTE -> -((Byte) o1);
+            case SHORT -> -((Short) o1);
             case INTEGER -> -((Integer) o1);
             case LONG -> -((Long) o1);
             case DOUBLE -> -((Double) o1);
             case FLOAT -> -((Float) o1);
-            case SHORT -> -((Short) o1);
             case BIG_INTEGER -> ((BigInteger) o1).negate();
             case BIG_DECIMAL -> ((BigDecimal) o1).negate();
             case CHAR -> -((Character) o1);
@@ -565,10 +566,7 @@ public class ALU {
                 || type == Byte.class;
     }
 
-    private static float toFloat(@Nullable Object o1) {
-        if (o1 == null) {
-            return 0F;
-        }
+    private static float toFloat(Object o1) {
         if (o1 instanceof Float f) {
             return f;
         }
@@ -581,10 +579,7 @@ public class ALU {
         return toBigDecimal(o1).floatValue();
     }
 
-    private static double toDouble(@Nullable Object o1) {
-        if (o1 == null) {
-            return 0D;
-        }
+    private static double toDouble(Object o1) {
         if (o1 instanceof Double d) {
             return d;
         }
@@ -597,10 +592,7 @@ public class ALU {
         return toBigDecimal(o1).doubleValue();
     }
 
-    private static BigInteger toBigInteger(@Nullable Object o1) {
-        if (o1 == null) {
-            return BigInteger.ZERO;
-        }
+    private static BigInteger toBigInteger(Object o1) {
         if (o1 instanceof BigInteger bi) {
             return bi;
         }
@@ -613,10 +605,7 @@ public class ALU {
         return new BigDecimal(o1.toString()).toBigInteger();
     }
 
-    private static BigDecimal toBigDecimal(@Nullable Object o1) {
-        if (o1 == null) {
-            return BigDecimal.ZERO;
-        }
+    private static BigDecimal toBigDecimal(Object o1) {
         if (o1 instanceof BigDecimal decimal) {
             return decimal;
         }
@@ -630,13 +619,13 @@ public class ALU {
         return new BigDecimal(o1.toString());
     }
 
-    private static boolean isNotDoubleOrFloat(@Nullable Object o1) {
-        Class<?> type = o1 == null ? null : o1.getClass();
+    private static boolean isNotDoubleOrFloat(Object o1) {
+        var type = o1.getClass();
         return type != Float.class
                 && type != Double.class;
     }
 
-    private static boolean isNotDoubleOrFloat(@Nullable Object o1, @Nullable Object o2) {
+    private static boolean isNotDoubleOrFloat(Object o1, Object o2) {
         return isNotDoubleOrFloat(o1) && isNotDoubleOrFloat(o2);
     }
 

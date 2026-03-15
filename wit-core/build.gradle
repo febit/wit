@@ -21,8 +21,10 @@ def cupRuntime = configurations.create('cup')
 dependencies {
   api 'org.slf4j:slf4j-api'
   compileOnly libs.jakarta.servlet.api
-  testImplementation 'commons-io:commons-io'
+
   cup files('src/main/cup/java_cup_wit-20260218.jar')
+
+  testImplementation 'commons-io:commons-io'
 }
 
 def PKG_CORE = 'org/febit/wit/parser'

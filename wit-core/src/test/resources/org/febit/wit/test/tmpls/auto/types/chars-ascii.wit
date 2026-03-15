@@ -1,0 +1,71 @@
+{
+  assertEquals(48, '0' +0);
+  assertEquals(49, '1' +0);
+  assertEquals(50, '2' +0);
+}
+{
+  assertEquals(97, 'a' +0);
+  assertEquals(98, 'b' +0);
+  assertEquals(99, 'c' +0);
+
+  assertEquals(65, 'A' +0);
+  assertEquals(66, 'B' +0);
+  assertEquals(67, 'C' +0);
+}
+{
+  // control chars
+  assertEquals(0, '\0' +0);
+  assertEquals(1, '\1' +0);
+  assertEquals(8, '\b' +0);
+  assertEquals(9, '\t' +0);
+  assertEquals(10, '\n' +0);
+  assertEquals(12, '\f' +0);
+  assertEquals(13, '\r' +0);
+}
+{
+  // special chars
+  assertEquals(32, ' ' +0);
+  assertEquals(33, '!' +0);
+  assertEquals(34, '"' +0);
+  assertEquals(34, '\"' +0);
+  assertEquals(35, '#' +0);
+  assertEquals(36, '$' +0);
+  assertEquals(37, '%' +0);
+  assertEquals(38, '&' +0);
+  assertEquals(39, '\'' +0);
+  assertEquals(40, '(' +0);
+  assertEquals(41, ')' +0);
+  assertEquals(42, '*' +0);
+  assertEquals(43, '+' +0);
+  assertEquals(44, ',' +0);
+  assertEquals(45, '-' +0);
+  assertEquals(46, '.' +0);
+  assertEquals(47, '/' +0);
+  assertEquals(47, '\/' +0);
+
+  // ... number chars
+
+  assertEquals(58, ':' +0);
+  assertEquals(59, ';' +0);
+  assertEquals(60, '<' +0);
+  assertEquals(61, '=' +0);
+  assertEquals(62, '>' +0);
+  assertEquals(63, '?' +0);
+  assertEquals(64, '@' +0);
+
+  // ... upper chars
+
+  assertEquals(91, '[' +0);
+  assertEquals(92, '\\' +0);
+  assertEquals(93, ']' +0);
+  assertEquals(94, '^' +0);
+  assertEquals(95, '_' +0);
+  assertEquals(96, '`' +0);
+
+  // ... lower chars
+
+  assertEquals(123, '{' +0);
+  assertEquals(124, '|' +0);
+  assertEquals(125, '}' +0);
+  assertEquals(126, '~' +0);
+}

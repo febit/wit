@@ -13,9 +13,20 @@
 {
     var s = "";
     for(i : 3..6){
-        s +=  for.iter.isOdd? "1":"0";
+        s += for.iter.isOdd? "1":"0";
     }
     assertEquals("1010", s);
+}
+{
+    var s = "";
+    for(i : 0..1){
+      for(j : 2..3){
+        var flag = (super.for.iter.isOdd ? 4 : 2)
+                   + (for.iter.isOdd ? 1 : 0);
+        s += flag;
+      }
+    }
+    assertEquals("5432", s);
 }
 {
   var a = 0;

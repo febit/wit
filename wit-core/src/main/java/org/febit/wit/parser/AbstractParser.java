@@ -110,7 +110,7 @@ abstract class AbstractParser {
         short sym;
         for (int i = 0; i < len; i += 2) {
             sym = row[i];
-            if (higherLevel && !Token.isTopLevel(sym)) {
+            if (higherLevel && !Token.isHighestLevel(sym)) {
                 continue;
             }
             if (notFirst) {

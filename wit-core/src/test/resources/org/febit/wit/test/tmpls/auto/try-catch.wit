@@ -1,0 +1,45 @@
+@import org.febit.wit.exception.ScriptEvaluateException;
+
+{
+
+  var a;
+  try {
+    a = 1;
+  } catch (e) {
+    // Should not throw an exception.
+    assertFalse(true);
+  }
+  assertEquals(1, a);
+}
+{
+  var a;
+  try {
+    throw "error";
+  } catch (e) {
+    a = e;
+  }
+  assertInstanceOf(native ScriptEvaluateException.class, a);
+}
+{
+  var a = 1;
+  try {
+    a += 2;
+  } finally {
+    a += 4
+  }
+  assertEquals(7, a);
+}
+{
+  var a;
+  var b;
+  try {
+    throw "error";
+    b = "after throw";
+  } catch (ignored) {
+  } finally {
+    a = "finally";
+  }
+  assertEquals("finally", a);
+  assertNull(b);
+}
+

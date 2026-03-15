@@ -536,7 +536,7 @@ public class Ast {
         return switch (token) {
             case TokenKinds.PLUS -> ALU::plus;
             case TokenKinds.MINUS -> ALU::minus;
-            case TokenKinds.MULT -> ALU::multi;
+            case TokenKinds.MULTI -> ALU::multi;
             case TokenKinds.DIV -> ALU::div;
             case TokenKinds.MOD -> ALU::mod;
             case TokenKinds.LSHIFT -> ALU::lshift;

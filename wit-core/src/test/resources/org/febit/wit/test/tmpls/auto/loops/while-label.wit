@@ -1,37 +1,31 @@
 {
   var a = 0;
-  label: for (i : 0..3) {
+  var i = 0;
+  label: while (i < 4) {
+    i ++;
     if (i == 2) {
         continue label;
     }
     a += i;
   }
-  assertEquals(4, a);
+  assertEquals(8, a);
 }
-
 {
-  var a = 0;
-  label: for (i : 0..3) {
-    if (i == 2) {
-        break label;
-    }
-    a += i;
-  }
-  assertEquals(1, a);
-}
-
-{
-  var a = ""
-  outer: for (i : 1..5) {
-    inner: for (j : 1..4) {
+  var a = "";
+  var i = 0;
+  outer: while (i < 5) {
+    i++;
+    var j = 0;
+    inner: while (j < 4) {
+        j++;
         if (i == 1 && j == 2) {
             continue outer;
         }
         if (i == 2 && j == 3) {
-            continue;
+            continue inner;
         }
         if (i == 3 && j == 3) {
-            break inner;
+            break;
         }
         if (i == 4 && j == 3) {
             break outer;

@@ -1,0 +1,7 @@
+{
+  assertEquals('a', 'a');
+  assertEquals('\0', '\0');
+  assertEquals('\1', '\1');
+  assertEquals('\141', 'a');
+  assertEquals('\t', '\t');
+}

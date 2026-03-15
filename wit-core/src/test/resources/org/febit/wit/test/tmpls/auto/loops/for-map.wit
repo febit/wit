@@ -50,7 +50,7 @@
     assertEquals(1, count);
 
     count = 0;
-    for(k, v -> v > 10 : map){
+    for(k, v -> { return v > 10 } : map){
         assertEquals(v, k - 100);
         count++;
     }

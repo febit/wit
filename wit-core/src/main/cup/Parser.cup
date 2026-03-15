@@ -33,7 +33,7 @@ terminal Integer    VAR,
                     BREAK, CONTINUE, RETURN,
 
                     PLUSPLUS, MINUSMINUS,  // ++ ==
-                    PLUS, MINUS, MULT, DIV, MOD,  // + - * /
+                    PLUS, MINUS, MULTI, DIV, MOD,  // + - * /
                     LSHIFT, RSHIFT, URSHIFT,  // << >> >>>
                     LT, GT, LTEQ, GTEQ, EQEQ, NOTEQ,  // < > <= >= == !=
                     AND, XOR, OR, COMP,  // & ^ | ~
@@ -111,7 +111,7 @@ precedence left     EQEQ, NOTEQ; // == !=
 precedence left     LT, LTEQ, GT, GTEQ; // < <= > >=  //Unsupport: instanceOf
 precedence left     LSHIFT, RSHIFT, URSHIFT; // << >> >>>
 precedence left     PLUS, MINUS; // + -
-precedence left     MULT, DIV, MOD; // * / %
+precedence left     MULTI, DIV, MOD; // * / %
 precedence right    PLUSPLUS, MINUSMINUS, UMINUS, NOT, COMP; // ++ -- - ! ~
 precedence left     EQGT;  // =>
 precedence right    RPAREN_MINUSGT, MINUSGT; // ->
@@ -412,7 +412,7 @@ expression      ::= expressionStatementAble:$
 
                     /***********  binaries *************/
                     //-- binary:  *
-                    |expression:lexpr MULT:sym expression:rexpr
+                    |expression:lexpr MULTI:sym expression:rexpr
                     {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  /
                     |expression:lexpr DIV:sym expression:rexpr

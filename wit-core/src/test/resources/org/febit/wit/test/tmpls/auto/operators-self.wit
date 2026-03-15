@@ -1,0 +1,57 @@
+{
+  var a;
+
+  a = 1;
+  a += 1;
+  assertEquals(2, a);
+
+  a = 6
+  a -= 1;
+  assertEquals(5, a);
+
+  a = 4
+  a *= 2;
+  assertEquals(8, a);
+
+  a = 5
+  a /= 2;
+  assertEquals(2, a);
+
+  a = 5
+  a %= 2;
+  assertEquals(1, a);
+}
+{
+  var a;
+
+  a = 5
+  a <<= 2;
+  assertEquals(20, a);
+
+  a = 5
+  a >>= 2;
+  assertEquals(1, a);
+
+  a = -5
+  a >>= 2;
+  assertEquals(-2, a);
+
+  a = -5
+  a >>>= 2;
+  assertEquals(1073741822, a);
+}
+{
+  var a;
+
+  a = 5
+  a &= 3;
+  assertEquals(1, a);
+
+  a = 5
+  a |= 3;
+  assertEquals(7, a);
+
+  a = 5
+  a ^= 3;
+  assertEquals(6, a);
+}

@@ -5,7 +5,6 @@ import lombok.experimental.UtilityClass;
 import org.febit.wit.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -177,11 +176,5 @@ public class ClassUtils {
 
     public static boolean isVoidType(Class<?> cls) {
         return cls == void.class || cls == Void.class;
-    }
-
-    public static <T extends AccessibleObject> void setAccessible(T[] objects) {
-        for (T obj : objects) {
-            obj.trySetAccessible();
-        }
     }
 }

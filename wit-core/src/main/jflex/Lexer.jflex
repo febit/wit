@@ -450,7 +450,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   "--"                           { return token(TokenKinds.MINUSMINUS); }
   "+"                            { return token(TokenKinds.PLUS); }
   "-"                            { return token(TokenKinds.MINUS); }
-  "*"                            { return token(TokenKinds.MULT); }
+  "*"                            { return token(TokenKinds.MULTI); }
   "/"                            { return token(TokenKinds.DIV); }
   "&"                            { return token(TokenKinds.AND); }
   "|"                            { return token(TokenKinds.OR); }
@@ -461,7 +461,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   ">>>"                          { return token(TokenKinds.URSHIFT); }
   "+="                           { return token(TokenKinds.SELFEQ, TokenKinds.PLUS); }
   "-="                           { return token(TokenKinds.SELFEQ, TokenKinds.MINUS); }
-  "*="                           { return token(TokenKinds.SELFEQ, TokenKinds.MULT); }
+  "*="                           { return token(TokenKinds.SELFEQ, TokenKinds.MULTI); }
   "/="                           { return token(TokenKinds.SELFEQ, TokenKinds.DIV); }
   "&="                           { return token(TokenKinds.SELFEQ, TokenKinds.AND); }
   "|="                           { return token(TokenKinds.SELFEQ, TokenKinds.OR); }

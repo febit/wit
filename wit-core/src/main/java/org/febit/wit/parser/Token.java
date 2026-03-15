@@ -20,7 +20,7 @@ public final class Token {
     int state;
     boolean isAtEdgeOfNewLine = false;
 
-    static boolean isTopLevel(short kind) {
+    static boolean isHighestLevel(int kind) {
         return switch (kind) {
             case TokenKinds.COLON, //":"
                  TokenKinds.SEMICOLON,  //";"
@@ -38,7 +38,7 @@ public final class Token {
     @SuppressWarnings({
             "java:S1479" // too many case clauses
     })
-    static String name(short kind) {
+    static String name(int kind) {
         return switch (kind) {
             case TokenKinds.EOF -> "EOF";
             case TokenKinds.ERROR -> "ERROR";
@@ -73,7 +73,7 @@ public final class Token {
             case TokenKinds.MINUSMINUS -> "--";
             case TokenKinds.PLUS -> "+";
             case TokenKinds.MINUS -> "-";
-            case TokenKinds.MULT -> "*";
+            case TokenKinds.MULTI -> "*";
             case TokenKinds.DIV -> "/";
             case TokenKinds.MOD -> "%";
             case TokenKinds.LSHIFT -> "<<";

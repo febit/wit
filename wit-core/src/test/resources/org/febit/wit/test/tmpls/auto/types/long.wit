@@ -1,0 +1,20 @@
+{
+    // long
+    assertEquals((9223372036854775806L).~toString(), "9223372036854775806");
+    assertEquals((9223372036854775807L).~toString(), "9223372036854775807");
+    assertEquals((-    9223372036854775808L).~toString(), "-9223372036854775808");
+    assertEquals((-9223372036854775807L).~toString(), "-9223372036854775807");
+    assertEquals((0x8000000000000000L).~toString(), "-9223372036854775808");
+    assertEquals((0x8000000000000001L).~toString(), "-9223372036854775807");
+    assertEquals((0x7FFFFFFFFFFFFFFFL).~toString(), "9223372036854775807");
+    assertEquals((0xFFFFFFFFFFFFFFFFL).~toString(), "-1");
+
+    assertEquals((0b0L).~toString(), "0");
+    assertEquals((0b1L).~toString(), "1");
+    assertEquals((0b1101l).~toString(), "13");
+
+    assertEquals((00777777777777777777777L).~toString(), "9223372036854775807");
+    assertEquals((01777777777777777777777L).~toString(), "-1");
+    assertEquals((01000000000000000000000L).~toString(), "-9223372036854775808");
+    assertEquals((01000000000000000000001L).~toString(), "-9223372036854775807");
+}

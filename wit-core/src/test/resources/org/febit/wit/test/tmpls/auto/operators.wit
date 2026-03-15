@@ -1,15 +1,27 @@
 {
-
+    // + - * / %
     assertEquals(3, 1+2);
     assertEquals(-1, 1-2);
     assertEquals(4, 2*2);
     assertEquals(2, 5/2);
     assertEquals(1, 5%2);
+}
+{
+    // << >> >>>
     assertEquals(20,5 << 2);
     assertEquals(1, 5 >> 2);
     assertEquals(-2, -5 >> 2);
     assertEquals(1073741822, -5 >>> 2);
-
+}
+{
+    // bitwise
+    assertEquals(1, 5 & 3);
+    assertEquals(7, 5 | 3);
+    assertEquals(6, 5 ^ 3);
+    assertEquals(-6, ~5);
+}
+{
+    // Truly & Falsy
     var VOID = (()->{ return; })();
 
     assertTrue(true);
@@ -22,15 +34,41 @@
 
     assertFalse(!true);
     assertFalse(!1);
-    assertFalse(!0);
     assertFalse(!-1);
     assertFalse(!"0");
     assertFalse(![0]);
+    assertFalse(!!0);
     assertFalse(!!null);
     assertFalse(!!VOID);
+}
+{
+    // &&
+    assertEquals(2, 1 && 2);
+    assertEquals(null, null && 2);
 
+    // ||
+    assertEquals(1, 1 || 2);
+    assertEquals(2, null || 2);
+}
+{
+    // Floating point numbers.
+    assertTrue(0.1f == 0.1f);
+    assertTrue(0.1F == 0.1D);
+    assertTrue((0.0F) == 0);
+    assertTrue(3.146 == 3.146F);
 
+    assertTrue(0.1f >= 0.1D);
+    assertTrue(0.1f <= 0.1D);
+
+    assertFalse(0.1f > 0.1D);
+    assertFalse(0.1f < 0.1D);
+
+    // XXX: failed case
+    // assertTrue((0.1F + 0D) == 0.1F);
+}
+{
     //chars
+
     //a : 97
     var a = 'a';
     var temp = 'a' +1;
@@ -42,6 +80,9 @@
     assertTrue(98 > a);
     assertTrue(90 < a);
     assertTrue(90 <= a);
+
+    assertFalse(null == a);
+    assertFalse(a == null);
 
     assertEquals(97 -1 , a -1);
     assertEquals(97 +1 , temp);
@@ -56,33 +97,12 @@
     assertEquals(97 >> 2 , a >> 2);
     assertEquals(97 % 2 , a % 2);
 
-    //Compare Floating point numbers.
-    assertTrue(0.1f == 0.1f);
-    assertTrue(0.1F == 0.1D);
-    assertTrue((0.0F) == 0);
-    assertTrue(3.146 == 3.146F);
-
-    assertTrue(0.1f >= 0.1D);
-    assertTrue(0.1f <= 0.1D);
-
-    assertFalse(0.1f > 0.1D);
-    assertFalse(0.1f < 0.1D);
-
-    // XXX: failed case
-    // assertTrue((0.1F + 0D) == 0.1F);
-
+    assertEquals("11", 1 +"1");
+    assertEquals("c1", "c" + '1');
+}
+{
     // ?:
     assertEquals(1, true?1:2);
-
-    // ||
-    assertEquals(1, 1 || 2);
-    assertEquals(2, null || 2);
-
-
-    assertEquals("11", 1 +"1");
-
-    assertEquals("c1", "c" + '1');
-
 }
 {
     var a = 'a';
@@ -94,6 +114,9 @@
     assertEquals(97 -1, a ++ );
     assertEquals(97, a ++ );
     assertEquals(97 +1, a);
+    assertEquals(97, --a);
+    assertEquals(96, --a);
+    assertEquals(96, a);
 }
 {
     //Int Step test

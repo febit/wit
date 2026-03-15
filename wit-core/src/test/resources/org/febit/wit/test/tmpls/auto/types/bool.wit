@@ -1,0 +1,4 @@
+{
+    assertTrue(true);
+    assertFalse(false);
+}

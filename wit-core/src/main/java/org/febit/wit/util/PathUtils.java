@@ -44,16 +44,22 @@ public class PathUtils {
         }
         int len = basePath.length();
         int prefix = getPrefixLength(fullFilenameToAdd);
-        if (prefix == 0 && len != 0) {
-            if (isSeparator(basePath.charAt(len - 1))) {
-                return normalize(basePath.concat(fullFilenameToAdd));
-            }
-            return normalize(basePath + '/' + fullFilenameToAdd);
+        if (prefix < 0) {
+            // invalid full filename
+            return null;
         }
         if (prefix > 0) {
+            // full filename is already absolute, return normalized
             return normalize(fullFilenameToAdd);
         }
-        return null;
+        if (len == 0) {
+            // base path is empty, return normalized full filename
+            return normalize(fullFilenameToAdd);
+        }
+        if (isSeparator(basePath.charAt(len - 1))) {
+            return normalize(basePath.concat(fullFilenameToAdd));
+        }
+        return normalize(basePath + '/' + fullFilenameToAdd);
     }
 
     /**
@@ -189,7 +195,7 @@ public class PathUtils {
     @SuppressWarnings({
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    private static int getPrefixLength(@Nullable String filename) {
+    static int getPrefixLength(@Nullable String filename) {
         if (filename == null) {
             return -1;
         }

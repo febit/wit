@@ -1,18 +1,78 @@
 package org.febit.wit.runtime;
 
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
+import static org.febit.wit.runtime.ALU.greater;
+import static org.febit.wit.runtime.ALU.greaterEqual;
 import static org.febit.wit.runtime.ALU.isEqual;
+import static org.febit.wit.runtime.ALU.isTruly;
+import static org.febit.wit.runtime.ALU.less;
+import static org.febit.wit.runtime.ALU.lessEqual;
 import static org.febit.wit.runtime.ALU.plus;
 import static org.febit.wit.runtime.ALU.size;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings({
+        "java:S5961", // Test methods should not contain too many assertions
+})
 class ALUTest {
+
+    @Test
+    void testCompareUnsupportedTypes() {
+        assertThrows(ScriptEvaluateException.class, () -> greater("abc", "def"));
+        assertThrows(ScriptEvaluateException.class, () -> greater(new Object(), new Object()));
+        assertThrows(ScriptEvaluateException.class, () -> greater(List.of(1), List.of(1)));
+
+        assertThrows(ScriptEvaluateException.class, () -> greaterEqual("abc", "def"));
+        assertThrows(ScriptEvaluateException.class, () -> less("abc", "def"));
+        assertThrows(ScriptEvaluateException.class, () -> lessEqual("abc", "def"));
+    }
+
+    @Test
+    void testIsTruly() {
+        assertFalse(isTruly(Undefined.UNDEFINED));
+        assertTrue(isTruly(new Object()));
+
+        assertFalse(isTruly(false));
+        assertFalse(isTruly(null));
+        assertFalse(isTruly(""));
+        assertFalse(isTruly(0));
+        assertFalse(isTruly(-0));
+        assertFalse(isTruly(0.0F));
+        assertFalse(isTruly(0.0D));
+        assertFalse(isTruly(new int[0]));
+        assertFalse(isTruly(new String[0]));
+        assertFalse(isTruly(List.of()));
+        assertFalse(isTruly(Set.of()));
+        assertFalse(isTruly(Map.of()));
+        assertFalse(isTruly(Collections.emptyIterator()));
+        assertFalse(isTruly((Iterable<Object>) Collections::emptyIterator));
+        assertFalse(isTruly(new Vector<>()));
+        assertFalse(isTruly(new Vector<>().elements()));
+
+        assertTrue(isTruly(true));
+        assertTrue(isTruly(1));
+        assertTrue(isTruly(-1));
+        assertTrue(isTruly(0.1));
+        assertTrue(isTruly(-0.1));
+        assertTrue(isTruly("abc"));
+        assertTrue(isTruly(new int[]{1}));
+        assertTrue(isTruly(new String[]{"a"}));
+        assertTrue(isTruly(List.of(1)));
+        assertTrue(isTruly(Set.of(1)));
+        assertTrue(isTruly(Map.of("a", 1)));
+        assertTrue(isTruly(List.of(1).iterator()));
+        assertTrue(isTruly((Iterable<Integer>) () -> List.of(1).iterator()));
+        assertTrue(isTruly(new Vector<>(List.of(1))));
+        assertTrue(isTruly(new Vector<>(List.of(1)).elements()));
+    }
 
     @Test
     void testSize() {
