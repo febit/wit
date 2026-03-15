@@ -16,6 +16,7 @@
 #### BUG FIXES:
 
 + 修复 ALU 计算 Double 与 Float 类型数值时类型转换导致的精度问题。
++ 修复 ALU 零值应被是为 Falsy。
 
 ### BREAKING CHANGES:
 

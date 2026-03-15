@@ -323,7 +323,9 @@ public class ALU {
         if (obj == Undefined.UNDEFINED) {
             return false;
         }
-
+        if (obj instanceof Number number) {
+            return !isEqual(number, 0);
+        }
         var size = size(obj);
         if (size == 0) {
             return false;
