@@ -1,16 +1,14 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.runtime.ast.expr;
 
-import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.StatementUtils;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
-@Accessors(fluent = true)
 public record NewMap(
         List<NewMapEntry> entries,
         Position position
@@ -23,7 +21,7 @@ public record NewMap(
     public Object execute(InternalContext context) {
         var entries = this.entries;
         var initialCapacity = Math.max((entries.size() + 1) * 4 / 3, 4);
-        var result = new HashMap<>(initialCapacity, 0.75f);
+        var result = new LinkedHashMap<>(initialCapacity, 0.75f);
         for (var entry : entries) {
             result.put(
                     entry.key().execute(context),
@@ -37,7 +35,7 @@ public record NewMap(
     public Object evalAsConst() {
         var entries = this.entries;
         var initialCapacity = Math.max((entries.size() + 1) * 4 / 3, 4);
-        var result = new HashMap<>(initialCapacity, 0.75f);
+        var result = new LinkedHashMap<>(initialCapacity, 0.75f);
         for (var entry : entries) {
             result.put(
                     StatementUtils.evalAsConst(entry.key()),

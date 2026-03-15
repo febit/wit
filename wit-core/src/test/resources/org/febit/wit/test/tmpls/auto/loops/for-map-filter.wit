@@ -1,0 +1,61 @@
+
+{
+    var map = {
+        [101] : 1,
+        102 : 2,
+        111 : 11
+    };
+
+    var count = 0;
+
+    for(k, v : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(3, count);
+
+    count = 0;
+    for(k, v -> k && v : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(3, count);
+
+    count = 0;
+    for(k, v -> k>110 : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(1, count);
+
+    count = 0;
+    for(k, v -> { return v > 10 } : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(1, count);
+
+    count = 0;
+    for(k, v -> k>110 || k==101 : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(2, count);
+
+    count = 0;
+    for(k, v -> k>110 || v == 1 : map){
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(2, count);
+
+    count = 0;
+    for(k, v -> k>110 || v == 1 : map) {
+        if (k == 111) {
+            continue;
+        }
+        assertEquals(v, k - 100);
+        count++;
+    }
+    assertEquals(1, count);
+}

@@ -1,0 +1,43 @@
+{
+  var a;
+  if (true) {
+    a = 1;
+  } else {
+    a = 2;
+  }
+  assertEquals(1, a);
+
+  a = 0;
+  if (false) {
+    a = 1;
+  } else {
+    a = 2;
+  }
+  assertEquals(2, a);
+
+  a = 0;
+  if (false) {
+  } else {
+    a = 3;
+  }
+  assertEquals(3, a);
+
+  a = 0;
+  if (true) {
+  } else {
+    a = 3;
+  }
+  assertEquals(0, a);
+
+  a = 0;
+  if (true) {
+    a = 4;
+  }
+  assertEquals(4, a);
+
+  a = 0;
+  if (false) {
+    a = 4;
+  }
+  assertEquals(0, a);
+}

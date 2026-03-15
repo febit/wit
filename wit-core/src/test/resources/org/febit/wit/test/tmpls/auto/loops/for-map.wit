@@ -17,8 +17,58 @@
     for(k, v -> k && v : map){
         count++;
     }
-
     assertEquals(0, count);
+}
+{
+    var map = {};
+    var elseExecuted = false;
+    for (k, v : map){
+        assertTrue(false);
+    } else {
+        elseExecuted = true;
+        assertTrue(true);
+    }
+    assertTrue(elseExecuted);
+
+    elseExecuted = false;
+    for (k, v : map){
+        break;
+    } else {
+        elseExecuted = true;
+        assertTrue(true);
+    }
+    assertTrue(elseExecuted);
+}
+{
+    var map = {
+        "a" : 1,
+        "b" : 2,
+        "c" : 3
+    };
+
+    var sum = 0;
+    for(k, v : map){
+        sum += v;
+    }
+    assertEquals(6, sum);
+
+    sum = 0;
+    for(k, v : map){
+      if(k == "b"){
+          continue;
+      }
+      sum += v;
+    }
+    assertEquals(4, sum);
+
+    sum = 0;
+    for(k, v : map){
+      if(k == "b"){
+        break;
+      }
+      sum += v;
+    }
+    assertEquals(1, sum);
 }
 {
     var map = {
@@ -28,45 +78,9 @@
     };
 
     var count = 0;
-
     for(k, v : map){
         assertEquals(v, k - 100);
         count++;
     }
     assertEquals(3, count);
-
-    count = 0;
-    for(k, v -> k && v : map){
-        assertEquals(v, k - 100);
-        count++;
-    }
-    assertEquals(3, count);
-
-    count = 0;
-    for(k, v -> k>110 : map){
-        assertEquals(v, k - 100);
-        count++;
-    }
-    assertEquals(1, count);
-
-    count = 0;
-    for(k, v -> { return v > 10 } : map){
-        assertEquals(v, k - 100);
-        count++;
-    }
-    assertEquals(1, count);
-
-    count = 0;
-    for(k, v -> k>110 || k==101 : map){
-        assertEquals(v, k - 100);
-        count++;
-    }
-    assertEquals(2, count);
-
-    count = 0;
-    for(k, v -> k>110 || v == 1 : map){
-        assertEquals(v, k - 100);
-        count++;
-    }
-    assertEquals(2, count);
 }

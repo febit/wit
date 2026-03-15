@@ -18,3 +18,22 @@
         assertNotNull(null);
     }
 }
+{
+    var elseExecuted = false;
+    for(i : []) {
+        assertTrue(false);
+    } else {
+        elseExecuted = true;
+        assertTrue(true);
+    }
+    assertTrue(elseExecuted);
+
+    elseExecuted = false;
+    for(i : []) {
+        break;
+    } else {
+        elseExecuted = true;
+        assertTrue(true);
+    }
+    assertTrue(elseExecuted);
+}
