@@ -3,6 +3,7 @@ package org.febit.wit.parser;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
+import org.febit.wit.Presets;
 import org.febit.wit.Script;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.runtime.ast.Expression;
@@ -28,8 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Accessors(fluent = true)
 public class Assembler {
-
-    private static final String CLASS = "class";
 
     private final Map<String, String> importedClasses = new HashMap<>();
     private final Map<@Nullable String, Integer> labelIndexMap = new HashMap<>();
@@ -203,7 +202,7 @@ public class Assembler {
         if (!this.nativeLayout.security().allowed(path)) {
             throw new ParseException("Inaccessible native path: " + path, position);
         }
-        if (CLASS.equals(fieldName)) {
+        if (Presets.CLASS.equals(fieldName)) {
             return new DirectValue(clazz, position);
         }
         final Field field;
@@ -274,7 +273,7 @@ public class Assembler {
 
     public Expression createConstructorNativeFunctionValue(
             Class<?> clazz, @Nullable List<Class<?>> paramTypes, Position position) {
-        this.nativeLayout.securityCheck(clazz.getName() + ".new", position);
+        this.nativeLayout.securityCheck(clazz.getName() + '.' + Presets.NEW, position);
 
         Constructor<?> constructor;
         try {
@@ -290,7 +289,7 @@ public class Assembler {
 
     public Expression createConstructorNativeFunctionValue(
             Class<?> clazz, Position position) {
-        this.nativeLayout.securityCheck(clazz.getName() + ".new", position);
+        this.nativeLayout.securityCheck(clazz.getName() + '.' + Presets.NEW, position);
 
         var constructors = clazz.getConstructors();
         var func = this.nativeLayout.functions().constructor(List.of(constructors));
@@ -303,7 +302,7 @@ public class Assembler {
         var cls = toClass(className);
 
         var method = ref.substring(split + 2).trim();
-        if (!"new".equals(method)) {
+        if (!Presets.NEW.equals(method)) {
             return createMethodNativeFunctionValue(cls, method, position);
         }
         if (cls.isArray()) {

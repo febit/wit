@@ -1,6 +1,7 @@
 // Copyright (c) 2013-present, febit.org. All Rights Reserved.
 package org.febit.wit.parser;
 
+import org.febit.wit.Presets;
 import org.febit.wit.exception.ParseException;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -29,7 +30,7 @@ public class FunctionDeclarerBuilder {
         this.assignTarget = assignTarget;
 
         varLayout.shiftFrame();
-        argsIndexStart = varLayout.assignVar("arguments", position);
+        argsIndexStart = varLayout.assignVar(Presets.ARGUMENTS, position);
     }
 
     public static FunctionDeclarerBuilder create(VarLayout varLayout, Position position) {

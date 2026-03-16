@@ -178,8 +178,8 @@ public class WitBuilder {
             var path = fixed.get(i);
             log.info("[INIT] Applying setup scripts [{}/{}]: {}", i + 1, total, path);
             wit.script(path).eval(acceptor -> {
-                acceptor.set("GLOBAL", staticHeaps.variables());
-                acceptor.set("CONST", staticHeaps.constants());
+                acceptor.set(Presets.GLOBAL, staticHeaps.variables());
+                acceptor.set(Presets.CONST, staticHeaps.constants());
             }, DiscardOut.get());
         }
         log.info("[INIT] Applied setup scripts, total: {}", total);

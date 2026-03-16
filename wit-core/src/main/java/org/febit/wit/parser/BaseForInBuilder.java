@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.febit.wit.Presets.FOR_ITER;
 import static org.febit.wit.util.Defaults.nvl;
 
 @Accessors(fluent = true, chain = true)
@@ -64,7 +65,7 @@ public abstract class BaseForInBuilder {
         }
         this.scopeShifted = true;
         varLayout.shiftScope();
-        iterIndex = varLayout.assignVar("for.iter", position);
+        iterIndex = varLayout.assignVar(FOR_ITER, position);
         return this;
     }
 
