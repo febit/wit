@@ -26,7 +26,7 @@ public class LocalContextRegister implements WitModule {
     @Override
     public void apply(Wit wit) {
         var heap = wit.staticHeaps().constants();
-        heap.setFunction(this.name, LocalContextRegister::local);
+        heap.setAsFunction(this.name, LocalContextRegister::local);
     }
 
     @Nullable

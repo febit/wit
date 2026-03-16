@@ -24,25 +24,25 @@ public class AssertionModule implements WitModule {
     @Override
     public void apply(Wit wit) {
         var heap = wit.staticHeaps().constants();
-        heap.setFunction("assertTrue", Assertions::assertTrue);
-        heap.setFunction("assertFalse", Assertions::assertFalse);
+        heap.setAsFunction("assertTrue", Assertions::assertTrue);
+        heap.setAsFunction("assertFalse", Assertions::assertFalse);
 
-        heap.setFunction("assertNull", Assertions::assertNull);
-        heap.setFunction("assertNotNull", Assertions::assertNotNull);
+        heap.setAsFunction("assertNull", Assertions::assertNull);
+        heap.setAsFunction("assertNotNull", Assertions::assertNotNull);
 
-        heap.setFunction("assertSame", Assertions::assertSame);
-        heap.setFunction("assertNotSame", Assertions::assertNotSame);
+        heap.setAsFunction("assertSame", Assertions::assertSame);
+        heap.setAsFunction("assertNotSame", Assertions::assertNotSame);
 
-        heap.setFunction("assertEquals", Assertions::assertEquals);
-        heap.setFunction("assertNotEquals", Assertions::assertNotEquals);
+        heap.setAsFunction("assertEquals", Assertions::assertEquals);
+        heap.setAsFunction("assertNotEquals", Assertions::assertNotEquals);
 
-        heap.setFunction("assertArrayEquals", Assertions::assertArrayEquals);
+        heap.setAsFunction("assertArrayEquals", Assertions::assertArrayEquals);
 
-        heap.setFunction("assertInstanceOf", Assertions::assertInstanceOf);
-        heap.setFunction("assertNotInstanceOf", Assertions::assertNotInstanceOf);
+        heap.setAsFunction("assertInstanceOf", Assertions::assertInstanceOf);
+        heap.setAsFunction("assertNotInstanceOf", Assertions::assertNotInstanceOf);
 
-        heap.setFunction("assertThrows", Assertions::assertThrows);
-        heap.setFunction("assertDoesNotThrow", Assertions::assertDoesNotThrow);
+        heap.setAsFunction("assertThrows", Assertions::assertThrows);
+        heap.setAsFunction("assertDoesNotThrow", Assertions::assertDoesNotThrow);
     }
 
     @UtilityClass

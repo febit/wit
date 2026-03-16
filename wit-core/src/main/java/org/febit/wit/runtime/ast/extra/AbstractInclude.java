@@ -55,7 +55,7 @@ public abstract class AbstractInclude implements Statement {
             var newContext = script.merge(context, inputs);
             if (export) {
                 var result = new HashMap<String, @Nullable Object>();
-                newContext.variables().exportTo(result);
+                newContext.variables().each(result::put);
                 return result;
             }
             return Map.of();

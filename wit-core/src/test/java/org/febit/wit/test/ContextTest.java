@@ -3,6 +3,7 @@ package org.febit.wit.test;
 
 import org.febit.wit.TestWit;
 import org.febit.wit.exception.NoSuchSourceException;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -17,8 +18,8 @@ class ContextTest {
 
         assertEquals("a", context.variables().get("a"));
 
-        var exported = new HashMap<String, Object>();
-        context.variables().exportTo(exported);
+        var exported = new HashMap<String, @Nullable Object>();
+        context.variables().each(exported::put);
 
         assertTrue(exported.containsKey("a"));
         assertTrue(exported.containsKey("b"));

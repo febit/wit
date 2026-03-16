@@ -4,7 +4,6 @@ import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.WitFunction;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 public interface Heap {
@@ -25,15 +24,11 @@ public interface Heap {
 
     void each(BiConsumer<String, @Nullable Object> action);
 
-    default void setFunction(String key, WitFunction method) {
-        set(key, method);
+    default void setAsFunction(String key, WitFunction func) {
+        set(key, func);
     }
 
-    default void setFunction(String key, WitFunction.Constable method) {
-        set(key, method);
-    }
-
-    default void exportTo(Map<? super String, @Nullable Object> map) {
-        each(map::put);
+    default void setAsFunction(String key, WitFunction.Constable func) {
+        set(key, func);
     }
 }

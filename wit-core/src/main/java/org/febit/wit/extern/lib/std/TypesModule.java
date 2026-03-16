@@ -18,12 +18,12 @@ public class TypesModule implements WitModule {
     @Override
     public void apply(Wit wit) {
         var heap = wit.staticHeaps().constants();
-        heap.setFunction("is_array", Types::is_array);
-        heap.setFunction("is_bool", Types::is_bool);
-        heap.setFunction("is_function", Types::is_function);
-        heap.setFunction("is_callable", Types::is_function);
-        heap.setFunction("is_null", Types::is_null);
-        heap.setFunction("is_number", Types::is_number);
+        heap.setAsFunction("is_array", Types::is_array);
+        heap.setAsFunction("is_bool", Types::is_bool);
+        heap.setAsFunction("is_function", Types::is_function);
+        heap.setAsFunction("is_callable", Types::is_function);
+        heap.setAsFunction("is_null", Types::is_null);
+        heap.setAsFunction("is_number", Types::is_number);
     }
 
     @UtilityClass
