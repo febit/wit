@@ -12,6 +12,20 @@ subprojects {
   version = rootProject.version
 }
 
+allprojects {
+
+  standardMavenPublish {
+    pom {
+      customPom(it)
+    }
+  }
+
+  repositories {
+    mavenCentral()
+  }
+
+}
+
 configure(subprojects.findAll {
   !it.name.endsWith('-bom')
 }) {
@@ -27,10 +41,6 @@ configure(subprojects.findAll {
 
   test {
     useJUnitPlatform()
-  }
-
-  repositories {
-    mavenCentral()
   }
 
   dependencyManagement {
@@ -49,5 +59,41 @@ configure(subprojects.findAll {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
+  }
+}
+
+def customPom(MavenPom pom) {
+  pom.with {
+    name.set project.name
+    description.set project.description
+    url.set 'https://github.com/febit/wit'
+    organization {
+      name = 'Febit'
+      url = 'https://github.com/febit'
+    }
+    licenses {
+      license {
+        name = 'BSD-3-Clause license'
+        url = 'https://github.com/febit/wit/blob/main/LICENSE'
+        distribution = 'repo'
+      }
+    }
+    scm {
+      url = 'https://github.com/febit/wit'
+      connection = 'scm:git:https://github.com/febit/wit.git'
+      developerConnection = 'scm:git:https://github.com/febit/wit.git'
+    }
+    issueManagement {
+      system = 'GitHub'
+      url = 'https://github.com/febit/wit/issues'
+    }
+    developers {
+      developer {
+        id = 'kurt'
+        name = 'Kurt Zhu'
+        email = 'zqq@febit.org'
+        timezone = '+8'
+      }
+    }
   }
 }
