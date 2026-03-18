@@ -1,8 +1,7 @@
 Febit Wit
 ====
 
- [![BSD License](http://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/febit/wit/blob/master/LICENSE)
- [![Build Status](https://api.travis-ci.org/febit/wit.png)](https://travis-ci.org/febit/wit)
+[![Apache-2.0 License](https://img.shields.io/badge/license-apache-blue.svg)][license]
 
 This is a script wit, all written in Java, **support Java 17+**.
 
@@ -37,21 +36,20 @@ script.eval(params, out);
 ## Hello Wit
 
 ```js
-Hello Wit!
-<%
-var books
+%>Hello Wit!<%
+var books;
 {
-    for(book : books){
+    for(book : books) {
 %>
-${for.iter.index}.《${book.name}》 ￥${book.price}
+${for.iter.index + 1}.《${book.name}》 ￥${book.price}
 <%
     }
 }
 {
-    var func = function(a, b){
-        return a + b + arguments[3]
-    }
-    echo func("a", "b", "c")
+    var func = function(a, b) {
+        return a + b + arguments[3];
+    };
+    echo func("a", "b", "c");
 }
 {
     var map = {
@@ -59,11 +57,12 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
         1: 1,
         "key2": "value2",
         3: 2 + 1
-    }
-    map[5] = 2 + 3
-    map.~put("6", 2*3)
-    for(key, value : map){
-        echo key + ":" +value + "\n"
+    };
+    map[5] = 2 + 3;
+    map.~put("6", 2*3);
+    
+    for(key, value : map) {
+        echo key + ":" +value + "\n";
     }
 }
 %>
@@ -72,8 +71,8 @@ ${for.iter.index}.《${book.name}》 ￥${book.price}
 > [More examples][tests]
 
 ## License
- 
-**Febit Wit** is released under the BSD License. See the bundled [LICENSE file][license] for
+
+**Febit Wit 3** is released under the Apache-2.0 license. See the bundled [LICENSE file][license] for
 details.
 
 ## Third-party Licenses
@@ -84,10 +83,11 @@ details.
 
 > [github-issue][new_issue_github]
 
-[tests]: https://github.com/febit/wit/tree/master/wit-core/src/test/resources/org/febit/wit/test/tmpls
+[tests]: https://github.com/febit/wit/tree/main/wit-core/src/test/resources/org/febit/wit/test/tmpls
 
 [new_issue_github]: https://github.com/febit/wit/issues/new
 
-[license]: https://github.com/febit/wit/blob/master/LICENSE
-[asm_license]: http://asm.ow2.org/license.html
+[license]: https://github.com/febit/wit/blob/main/LICENSE.txt
+
+[asm_license]: https://asm.ow2.io/license.html
 
