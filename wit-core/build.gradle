@@ -8,7 +8,11 @@ ext {
   moduleName = 'Wit Core'
 }
 
-tasks.named("sourcesJar") {
+tasks.named('sourcesJar') {
+  mustRunAfter 'generateJflex'
+}
+
+tasks.named('licenseMain') {
   mustRunAfter 'generateJflex'
 }
 
