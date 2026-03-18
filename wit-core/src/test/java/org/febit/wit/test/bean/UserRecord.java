@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.accessor;
+package org.febit.wit.test.bean;
 
-@FunctionalInterface
-public interface AccessorConsumer {
-    <T> void accept(Class<T> type, Accessor<? extends T> accessor);
+public record UserRecord(
+        String name,
+        int age
+) {
 }

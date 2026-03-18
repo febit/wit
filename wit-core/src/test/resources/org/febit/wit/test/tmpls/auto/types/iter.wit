@@ -40,4 +40,5 @@
   assertFalse(iter.hasNext);
 
   assertThrows(native ScriptEvaluateException.class, () -> iter.next());
+  assertThrows(native ScriptEvaluateException.class, () -> iter.x);
 }

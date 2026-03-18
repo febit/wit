@@ -1,0 +1,26 @@
+@import org.febit.wit.exception.ScriptEvaluateException;
+
+var abc = "abc";
+var empty = "";
+
+{
+  assertTrue("".isEmpty);
+  assertEquals(3, "abc".size);
+  assertEquals(3, "abc".length);
+
+  assertEquals('a', abc[0]);
+  assertEquals('b', abc[1]);
+  assertEquals('c', abc[2]);
+}
+{
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    var x = empty[0];
+  });
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    var x = abc[null];
+  });
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    var x = abc["x"];
+  });
+}
+

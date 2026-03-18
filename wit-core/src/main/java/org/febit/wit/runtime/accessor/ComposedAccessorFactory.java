@@ -29,8 +29,6 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ComposedAccessorFactory implements AccessorFactory {
 
-    private static final ReflectBeanAccessorFactory REFLECT_FACTORY = new ReflectBeanAccessorFactory();
-
     private final ClassMap<Getter<?>> mappedGetters = new ClassMap<>();
     private final ClassMap<Setter<?>> mappedSetters = new ClassMap<>();
     private final ClassMap<Render<?>> mappedRenders = new ClassMap<>();
@@ -137,8 +135,9 @@ public class ComposedAccessorFactory implements AccessorFactory {
         private final List<TypedTuple<Setter<?>>> setters = new ArrayList<>();
         private final List<TypedTuple<Render<?>>> renders = new ArrayList<>();
 
-        private boolean withPredefined = true;
-        private AccessorFactory fallback = REFLECT_FACTORY;
+        private AccessorFactory fallback = ReflectBeanAccessorFactory.INSTANCE;
+
+        private boolean withPresets = true;
 
         public Builder fallback(AccessorFactory factory) {
             this.fallback = factory;
@@ -146,7 +145,7 @@ public class ComposedAccessorFactory implements AccessorFactory {
         }
 
         public Builder fallbackWithReflect() {
-            this.fallback = REFLECT_FACTORY;
+            this.fallback = ReflectBeanAccessorFactory.INSTANCE;
             return this;
         }
 
@@ -155,8 +154,8 @@ public class ComposedAccessorFactory implements AccessorFactory {
             return this;
         }
 
-        public Builder withPredefined(boolean with) {
-            this.withPredefined = with;
+        public Builder withPresets(boolean with) {
+            this.withPresets = with;
             return this;
         }
 
@@ -175,8 +174,8 @@ public class ComposedAccessorFactory implements AccessorFactory {
         }
 
         public ComposedAccessorFactory build() {
-            if (withPredefined) {
-                PredefinedAccessors.registerAll(this::accessor);
+            if (withPresets) {
+                PresetAccessors.registerAll(this::accessor);
             }
             return new ComposedAccessorFactory(
                     List.copyOf(getters),

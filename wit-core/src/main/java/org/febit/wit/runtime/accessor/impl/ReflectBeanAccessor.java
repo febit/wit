@@ -23,13 +23,15 @@ import org.febit.wit.runtime.accessor.Setter;
 import org.febit.wit.util.bean.BeanUtils;
 import org.jspecify.annotations.Nullable;
 
-public class BeanReflectAccessor implements Getter<Object>, Setter<Object>, Render<Object> {
+public class ReflectBeanAccessor implements Getter<Object>, Setter<Object>, Render<Object> {
+
+    public static final ReflectBeanAccessor INSTANCE = new ReflectBeanAccessor();
 
     @Nullable
     @Override
     public Object get(Object obj, @Nullable Object property) {
         if (property == null) {
-            throw new ScriptEvaluateException("Property should not be null for bean access.");
+            throw new ScriptEvaluateException("property should not be null for bean access.");
         }
         try {
             return BeanUtils.get(obj, property.toString());
@@ -41,7 +43,7 @@ public class BeanReflectAccessor implements Getter<Object>, Setter<Object>, Rend
     @Override
     public void set(Object obj, @Nullable Object property, @Nullable Object value) {
         if (property == null) {
-            throw new ScriptEvaluateException("Property should not be null for bean access.");
+            throw new ScriptEvaluateException("property should not be null for bean access.");
         }
         try {
             BeanUtils.set(obj, property.toString(), value);

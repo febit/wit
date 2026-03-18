@@ -25,7 +25,7 @@ public class CharSequenceAccessor implements Getter<CharSequence> {
     @Override
     public Object get(final CharSequence seq, @Nullable Object property) {
         if (property == null) {
-            throw new ScriptEvaluateException("Property can't be null for CharSequence.");
+            throw new ScriptEvaluateException("property should not be null for CharSequence access.");
         }
         if (property instanceof Number number) {
             try {
@@ -38,7 +38,8 @@ public class CharSequenceAccessor implements Getter<CharSequence> {
             case "size", "length" -> seq.length();
             case "isEmpty" -> seq.isEmpty();
             default -> throw new ScriptEvaluateException(
-                    "Invalid property or can't read: java.lang.CharSequence#" + property);
+                    "unsupported property for CharSequence access: " + property
+            );
         };
     }
 }

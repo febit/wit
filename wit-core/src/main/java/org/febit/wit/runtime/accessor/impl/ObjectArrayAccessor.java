@@ -26,28 +26,31 @@ public class ObjectArrayAccessor implements Getter<Object[]>, Setter<Object[]> {
     @Override
     public Object get(@Nullable Object[] array, @Nullable Object property) {
         if (property == null) {
-            throw new ScriptEvaluateException("Array index is null.");
+            throw new ScriptEvaluateException("property/index should not be null for array access.");
         }
         if (property instanceof Number idx) {
-            return array[idx.intValue()];
+            try {
+                return array[idx.intValue()];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new ScriptEvaluateException("index out of bounds: " + idx, e);
+            }
         }
         return switch (property.toString()) {
             case "size", "length" -> array.length;
             case "isEmpty" -> array.length == 0;
-            default -> throw new ScriptEvaluateException("Invalid property: array#" + property);
+            default -> throw new ScriptEvaluateException("Unsupported property for array access: " + property);
         };
     }
 
     @Override
     public void set(@Nullable Object[] array, @Nullable Object property, @Nullable Object value) {
-        if (property instanceof Number idx) {
-            try {
-                array[idx.intValue()] = value;
-                return;
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ScriptEvaluateException("Array index out of bounds: " + property, e);
-            }
+        if (!(property instanceof Number idx)) {
+            throw new ScriptEvaluateException("property/index should be a number for array access.");
         }
-        throw new ScriptEvaluateException("Invalid property: array#" + property);
+        try {
+            array[idx.intValue()] = value;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new ScriptEvaluateException("index out of bounds: " + idx, e);
+        }
     }
 }

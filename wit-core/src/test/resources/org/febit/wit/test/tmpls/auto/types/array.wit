@@ -1,21 +1,60 @@
-var arrayEmpty = [];
+@import org.febit.wit.exception.ScriptEvaluateException;
 
-assertEquals(arrayEmpty.size, 0);
-assertEquals(arrayEmpty.length, 0);
+{
+  var arr = [];
 
-var arrayLoose = [
-    "a",
-];
+  assertEquals(arr.size, 0);
+  assertEquals(arr.length, 0);
+  assertTrue(arr.isEmpty);
+}
+{
 
-assertEquals(arrayLoose.size, 1);
-assertEquals(arrayLoose[0], "a");
+  var arr = [
+      "a",
+  ];
 
-var arrayLoose2 = [
-    "a", "b", null
-];
+  assertFalse(arr.isEmpty);
+  assertEquals(arr.size, 1);
+  assertEquals(arr[0], "a");
+}
+{
 
-assertEquals(arrayLoose2.size, 3);
-assertEquals(arrayLoose2[0], "a");
-assertEquals(arrayLoose2[1], "b");
-assertEquals(arrayLoose2[2], null);
+  var arr = [
+      "a", "b", null
+  ];
+
+  assertEquals(arr.size, 3);
+  assertEquals(arr[0], "a");
+  assertEquals(arr[1], "b");
+  assertEquals(arr[2], null);
+}
+{
+  var arr = [];
+
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    var x = arr[0];
+  });
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    var x = arr[-1];
+  });
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    var x = arr[null];
+  });
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    var x = arr["x"];
+  });
+
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    arr[0] = "x";
+  });
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    arr[-1] = "x";
+  });
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    arr[null] = "x";
+  });
+  assertThrows(native ScriptEvaluateException.class, () -> {
+    arr["x"] = "x";
+  });
+}
 

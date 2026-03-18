@@ -29,6 +29,7 @@ dependencies {
   cup files('src/main/cup/java_cup_wit-20260218.jar')
 
   testImplementation 'commons-io:commons-io'
+  testImplementation libs.jakarta.servlet.api
 }
 
 def PKG_CORE = 'org/febit/wit/parser'

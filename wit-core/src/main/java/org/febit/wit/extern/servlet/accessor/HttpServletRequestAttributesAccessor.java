@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 public class HttpServletRequestAttributesAccessor
         implements Getter<HttpServletRequestAttributes>, Setter<HttpServletRequestAttributes> {
+
     @Nullable
     @Override
     public Object get(HttpServletRequestAttributes bean, @Nullable Object property) {

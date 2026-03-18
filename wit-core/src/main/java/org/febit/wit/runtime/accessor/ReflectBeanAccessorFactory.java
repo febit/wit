@@ -15,27 +15,27 @@
  */
 package org.febit.wit.runtime.accessor;
 
-import org.febit.wit.runtime.accessor.impl.BeanReflectAccessor;
+import org.febit.wit.runtime.accessor.impl.ReflectBeanAccessor;
 
 public class ReflectBeanAccessorFactory implements AccessorFactory {
 
-    private static final BeanReflectAccessor ACCESSOR = new BeanReflectAccessor();
+    public static final ReflectBeanAccessorFactory INSTANCE = new ReflectBeanAccessorFactory();
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> Getter<T> getter(Class<T> type) {
-        return (Getter<T>) ACCESSOR;
+        return (Getter<T>) ReflectBeanAccessor.INSTANCE;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> Setter<T> setter(Class<T> type) {
-        return (Setter<T>) ACCESSOR;
+        return (Setter<T>) ReflectBeanAccessor.INSTANCE;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> Render<T> render(Class<T> type) {
-        return(Render<T>) ACCESSOR;
+        return (Render<T>) ReflectBeanAccessor.INSTANCE;
     }
 }

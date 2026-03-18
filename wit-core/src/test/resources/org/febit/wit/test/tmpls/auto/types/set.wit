@@ -1,0 +1,42 @@
+@import org.febit.wit.exception.ScriptEvaluateException;
+
+var new_set = native new java.util.HashSet();
+
+{
+    var set = new_set();
+    assertTrue(set.isEmpty);
+    assertEquals(0, set.size);
+    assertEquals(0, set.length);
+
+    set.~add("1");
+    set.~add("2");
+    set.~add("3");
+    set.~add("3");
+
+    assertFalse(set.isEmpty);
+    assertEquals(3, set.size);
+}
+{
+    var set = new_set();
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        set[0] = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        set[null] = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        set["x"] = "x";
+    });
+
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = set[0];
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = set[null];
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = set["x"];
+    });
+}
+
+

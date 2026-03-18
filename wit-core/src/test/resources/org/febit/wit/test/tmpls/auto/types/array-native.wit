@@ -1,9 +1,163 @@
+@import org.febit.wit.exception.ScriptEvaluateException;
+
+const new_bools = native [] boolean;
+const new_bytes = native [] byte;
+const new_chars = native [] char;
+const new_shorts = native [] short;
+const new_ints = native [] int;
+const new_longs = native [] long;
+const new_floats = native [] float;
+const new_doubles = native [] double;
+
 {
-    var new_ints = native [] int;
+    var ints = new_ints(0);
+    assertTrue(ints.isEmpty);
+    assertEquals(0, ints.size);
+    assertEquals(0, ints.length);
+
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        ints[0] = 1;
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        ints[0] = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        ints[null] = 1;
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = ints[null];
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = ints["x"];
+    });
+}
+{
+
     var ints = new_ints(4);
-    ints[0] = 3;
-    ints[1] = 4;
-    ints[2] = 5;
-    ints[3] = 6;
+    assertFalse(ints.isEmpty);
     assertEquals(4, ints.size);
+    assertEquals(4, ints.length);
+
+    assertEquals(0, ints[0]);
+    assertEquals(0, ints[1]);
+    assertEquals(0, ints[2]);
+    assertEquals(0, ints[3]);
+
+    ints[0] = 3L;
+    ints[1] = 4.~byteValue();
+    ints[2] = 5;
+
+    assertEquals(3, ints[0]);
+    assertEquals(4, ints[1]);
+    assertEquals(5, ints[2]);
+    assertEquals(0, ints[3]);
+}
+{
+    var floats = new_floats(2);
+    assertFalse(floats.isEmpty);
+    assertEquals(2, floats.size);
+
+    assertEquals(0.0F, floats[0]);
+
+    floats[0] = 3.14;
+    floats[1] = 2.718F;
+
+    assertEquals(3.14F, floats[0]);
+    assertEquals(2.718F, floats[1]);
+}
+{
+    var chars = new_chars(3);
+    assertFalse(chars.isEmpty);
+    assertEquals(3, chars.size);
+
+    // assertEquals('\001', chars[0]);
+
+    chars[0] = 'A';
+    chars[1] = 'B';
+    chars[2] = 'C';
+
+    assertEquals('A', chars[0]);
+    assertEquals('B', chars[1]);
+    assertEquals('C', chars[2]);
+
+    chars[0] = 97;
+    assertEquals('a', chars[0]);
+
+    chars[0] = "b";
+    assertEquals('b', chars[0]);
+
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        chars[0] = "abc";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        chars[0] = "";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        chars[0] = true;
+    });
+}
+{
+    var bools = new_bools(2);
+    assertFalse(bools.isEmpty);
+    assertEquals(2, bools.size);
+
+    assertEquals(false, bools[0]);
+
+    bools[0] = 1;
+    bools[1] = false;
+
+    assertEquals(true, bools[0]);
+    assertEquals(false, bools[1]);
+}
+{
+    var bytes = new_bytes(2);
+    assertFalse(bytes.isEmpty);
+    assertEquals(2, bytes.size);
+
+    // assertEquals(0, bytes[0]);
+
+    bytes[0] = 1;
+    bytes[1] = 2.~byteValue();
+
+    assertEquals(1.~byteValue(), bytes[0]);
+    assertEquals(2.~byteValue(), bytes[1]);
+}
+{
+    var shorts = new_shorts(2);
+    assertFalse(shorts.isEmpty);
+    assertEquals(2, shorts.size);
+
+    assertEquals(0.~shortValue(), shorts[0]);
+
+    shorts[0] = 100;
+    shorts[1] = 200;
+
+    assertEquals(100.~shortValue(), shorts[0]);
+    assertEquals(200.~shortValue(), shorts[1]);
+}
+{
+    var longs = new_longs(2);
+    assertFalse(longs.isEmpty);
+    assertEquals(2, longs.size);
+
+    assertEquals(0L, longs[0]);
+
+    longs[0] = 10000000000L;
+    longs[1] = 20000000000L;
+
+    assertEquals(10000000000L, longs[0]);
+    assertEquals(20000000000L, longs[1]);
+}
+{
+    var doubles = new_doubles(2);
+    assertFalse(doubles.isEmpty);
+    assertEquals(2, doubles.size);
+
+    assertEquals(0.0, doubles[0]);
+
+    doubles[0] = 3.141592653589793;
+    doubles[1] = 2.718281828459045;
+
+    assertEquals(3.141592653589793, doubles[0]);
+    assertEquals(2.718281828459045, doubles[1]);
 }

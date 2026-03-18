@@ -21,7 +21,7 @@ import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.Render;
 import org.febit.wit.runtime.accessor.Setter;
-import org.febit.wit.runtime.accessor.impl.BeanReflectAccessor;
+import org.febit.wit.runtime.accessor.impl.ReflectBeanAccessor;
 import org.febit.wit.util.ClassMap;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.bean.BeanProperties;
@@ -40,7 +40,8 @@ import static org.febit.wit.util.Defaults.nvl;
 public class AsmBeanAccessorFactory implements AccessorFactory {
 
     private static final String[] ASM_ACCESSOR = {"org/febit/wit/extern/asm/AsmBeanAccessor"};
-    private static final BeanReflectAccessor FALLBACK = new BeanReflectAccessor();
+
+    private static final ReflectBeanAccessor FALLBACK = ReflectBeanAccessor.INSTANCE;
     private static final ClassMap<AsmBeanAccessor> CACHE = new ClassMap<>();
 
     @Override

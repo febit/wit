@@ -1,7 +1,13 @@
+@import org.febit.wit.exception.ScriptEvaluateException;
+
 var new_list = native new java.util.ArrayList();
 
 {
     var list = new_list();
+
+    assertEquals(0, list.size);
+    assertEquals(0, list.length);
+    assertTrue(list.isEmpty);
 
     list[2] = "2";
     list[4] = "4";
@@ -9,9 +15,12 @@ var new_list = native new java.util.ArrayList();
     list[2] = "No.2";
     list[9] = "No.9";
 
+    assertFalse(list.isEmpty);
     assertEquals(10, list.size);
+
     assertNull(list[0]);
     assertNull(list[1]);
+
     assertEquals("No.2", list[2]);
     assertEquals("3", list[3]);
     assertEquals("4", list[4]);
@@ -20,9 +29,32 @@ var new_list = native new java.util.ArrayList();
     // bad data
     list.~add("No.10");
     list.~add(8,"No.8");
+
     assertEquals(12, list.size);
     assertEquals("No.8", list[8]);
     assertEquals(null, list[9]);
     assertEquals("No.9", list[10]);
     assertEquals("No.10", list[11]);
+}
+{
+    var list = new_list();
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        list[-1] = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        list[null] = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        list["x"] = "x";
+    });
+
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = list[-1];
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = list[null];
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = list["x"];
+    });
 }

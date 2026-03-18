@@ -23,18 +23,18 @@ import org.febit.wit.runtime.accessor.Render;
 import org.febit.wit.runtime.accessor.Setter;
 import org.jspecify.annotations.Nullable;
 
-public class InternalVoidAccessor implements Getter<Undefined>,
+public class UndefinedAccessor implements Getter<Undefined>,
         Setter<Undefined>, Render<Undefined> {
 
     @Nullable
     @Override
     public Object get(Undefined obj, @Nullable Object property) {
-        throw new ScriptEvaluateException("'Void' type has no property.");
+        throw new ScriptEvaluateException("type 'Undefined' has no property.");
     }
 
     @Override
     public void set(Undefined obj, @Nullable Object property, @Nullable Object value) {
-        throw new ScriptEvaluateException("'Void' type has no property.");
+        throw new ScriptEvaluateException("type 'Undefined' has no property.");
     }
 
     @Override

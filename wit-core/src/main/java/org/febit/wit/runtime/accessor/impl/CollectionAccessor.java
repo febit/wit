@@ -29,21 +29,22 @@ public class CollectionAccessor<T extends Collection<?>> implements Getter<T>, S
     @Override
     public Object get(T collection, @Nullable Object property) {
         if (property == null) {
-            throw new ScriptEvaluateException("Property can't be null for collections.");
+            throw new ScriptEvaluateException("property should not be null for collection access.");
         }
         if (property instanceof Number number
                 && collection instanceof List<?> list) {
             try {
                 return list.get(number.intValue());
             } catch (IndexOutOfBoundsException e) {
-                throw new ScriptEvaluateException("Index out of bounds: " + number, e);
+                throw new ScriptEvaluateException("index out of bounds: " + number.intValue(), e);
             }
         }
         return switch (property.toString()) {
             case "size", "length" -> collection.size();
             case "isEmpty" -> collection.isEmpty();
             default -> throw new ScriptEvaluateException(
-                    "Invalid property or can't read: java.util.Collection#" + property);
+                    "unsupported property for collection access: " + property
+            );
         };
     }
 
@@ -51,21 +52,20 @@ public class CollectionAccessor<T extends Collection<?>> implements Getter<T>, S
     @SuppressWarnings("unchecked")
     public void set(T collection, @Nullable Object property, @Nullable Object value) {
         if (!(property instanceof Number number)) {
-            throw new ScriptEvaluateException("Property must be a number for collections.");
+            throw new ScriptEvaluateException("property should be a number for collection access.");
+        }
+        if (!(collection instanceof List<?> list)) {
+            throw new ScriptEvaluateException("collection should be a List for indexed access.");
         }
         var index = number.intValue();
-        var size = collection.size();
+        var size = list.size();
         if (index >= size) {
             for (int i = index - size; i != 0; i--) {
-                collection.add(null);
+                list.add(null);
             }
-            ((Collection<Object>) collection).add(value);
+            ((List<Object>) list).add(value);
             return;
         }
-        if (collection instanceof List<?> list) {
-            ((List<Object>) list).set(index, value);
-            return;
-        }
-        throw new ScriptEvaluateException("Invalid property or can't write: java.util.Collection#" + property);
+        ((List<Object>) list).set(index, value);
     }
 }

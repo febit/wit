@@ -1,0 +1,39 @@
+@import org.febit.wit.exception.ScriptEvaluateException;
+@import org.febit.wit.runtime.Undefined;
+
+var UNDEFINED = (() -> { return; })();
+
+{
+    assertInstanceOf(native Undefined.class, UNDEFINED);
+    assertTrue(!UNDEFINED);
+    assertFalse(!!UNDEFINED);
+}
+{
+    var out;
+    { echo UNDEFINED; } => out;
+    assertTrue(out.isEmpty);
+}
+{
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        UNDEFINED[0] = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        UNDEFINED[null] = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        UNDEFINED["x"] = "x";
+    });
+
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = UNDEFINED[0];
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = UNDEFINED[null];
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = UNDEFINED["x"];
+    });
+}
+
+
+

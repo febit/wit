@@ -30,52 +30,52 @@ public class HttpServletRequestAccessor implements Getter<HttpServletRequest> {
     @SuppressWarnings({
             "java:S1479" // "switch" statements should not have too many "case" clauses
     })
-    public Object get(HttpServletRequest bean, @Nullable Object property) {
+    public Object get(HttpServletRequest req, @Nullable Object property) {
         if (property == null) {
             return null;
         }
         return switch (property.toString()) {
-            case "attrs", "attributes" -> new HttpServletRequestAttributes(bean);
-            case "parameters", "params" -> new HttpServletRequestParameters(bean);
-            case "headers" -> new HttpServletRequestHeaders(bean);
-            case "header" -> new HttpServletRequestHeader(bean);
-            case "protocol" -> bean.getProtocol();
-            case "secure" -> bean.isSecure();
-            case "url", "requestURL" -> bean.getRequestURL();
-            case "userPrincipal" -> bean.getUserPrincipal();
-            case "locales" -> bean.getLocales();
-            case "servletPath" -> bean.getServletPath();
-            case "remoteHost" -> bean.getRemoteHost();
-            case "remotePort" -> bean.getRemotePort();
-            case "remoteUser" -> bean.getRemoteUser();
-            case "pathInfo" -> bean.getPathInfo();
-            case "session" -> bean.getSession();
-            case "requestedSessionIdFromCookie" -> bean.isRequestedSessionIdFromCookie();
-            case "attributeNames" -> bean.getAttributeNames();
-            case "serverName" -> bean.getServerName();
-            case "serverPort" -> bean.getServerPort();
-            case "parameterMap" -> bean.getParameterMap();
-            case "localPort" -> bean.getLocalPort();
-            case "locale" -> bean.getLocale();
-            case "requestedSessionIdFromURL", "requestedSessionIdFromUrl" -> bean.isRequestedSessionIdFromURL();
-            case "scheme" -> bean.getScheme();
-            case "contentLength" -> bean.getContentLength();
-            case "contextPath" -> bean.getContextPath();
-            case "requestedSessionIdValid" -> bean.isRequestedSessionIdValid();
-            case "cookies" -> bean.getCookies();
-            case "remoteAddr" -> bean.getRemoteAddr();
-            case "headerNames" -> bean.getHeaderNames();
-            case "requestedSessionId" -> bean.getRequestedSessionId();
-            case "contentType" -> bean.getContentType();
-            case "pathTranslated" -> bean.getPathTranslated();
-            case "parameterNames" -> bean.getParameterNames();
-            case "authType" -> bean.getAuthType();
-            case "queryString" -> bean.getQueryString();
-            case "localAddr" -> bean.getLocalAddr();
-            case "localName" -> bean.getLocalName();
-            case "method" -> bean.getMethod();
-            case "requestURI" -> bean.getRequestURI();
-            case "characterEncoding" -> bean.getCharacterEncoding();
+            case "attrs", "attributes" -> new HttpServletRequestAttributes(req);
+            case "parameters", "params" -> new HttpServletRequestParameters(req);
+            case "headers" -> new HttpServletRequestHeaders(req);
+            case "header" -> new HttpServletRequestHeader(req);
+            case "protocol" -> req.getProtocol();
+            case "secure" -> req.isSecure();
+            case "url", "requestURL" -> req.getRequestURL();
+            case "userPrincipal" -> req.getUserPrincipal();
+            case "locales" -> req.getLocales();
+            case "servletPath" -> req.getServletPath();
+            case "remoteHost" -> req.getRemoteHost();
+            case "remotePort" -> req.getRemotePort();
+            case "remoteUser" -> req.getRemoteUser();
+            case "pathInfo" -> req.getPathInfo();
+            case "session" -> req.getSession();
+            case "requestedSessionIdFromCookie" -> req.isRequestedSessionIdFromCookie();
+            case "attributeNames" -> req.getAttributeNames();
+            case "serverName" -> req.getServerName();
+            case "serverPort" -> req.getServerPort();
+            case "parameterMap" -> req.getParameterMap();
+            case "localPort" -> req.getLocalPort();
+            case "locale" -> req.getLocale();
+            case "requestedSessionIdFromURL", "requestedSessionIdFromUrl" -> req.isRequestedSessionIdFromURL();
+            case "scheme" -> req.getScheme();
+            case "contentLength" -> req.getContentLength();
+            case "contextPath" -> req.getContextPath();
+            case "requestedSessionIdValid" -> req.isRequestedSessionIdValid();
+            case "cookies" -> req.getCookies();
+            case "remoteAddr" -> req.getRemoteAddr();
+            case "headerNames" -> req.getHeaderNames();
+            case "requestedSessionId" -> req.getRequestedSessionId();
+            case "contentType" -> req.getContentType();
+            case "pathTranslated" -> req.getPathTranslated();
+            case "parameterNames" -> req.getParameterNames();
+            case "authType" -> req.getAuthType();
+            case "queryString" -> req.getQueryString();
+            case "localAddr" -> req.getLocalAddr();
+            case "localName" -> req.getLocalName();
+            case "method" -> req.getMethod();
+            case "requestURI" -> req.getRequestURI();
+            case "characterEncoding" -> req.getCharacterEncoding();
             default -> null;
         };
     }
