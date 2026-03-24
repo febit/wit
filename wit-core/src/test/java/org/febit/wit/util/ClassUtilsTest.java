@@ -41,6 +41,29 @@ class ClassUtilsTest {
     }
 
     @Test
+    void testFindPrimitiveClass() {
+        assertSame(int.class, ClassUtils.findPrimitiveClass("int"));
+        assertSame(boolean.class, ClassUtils.findPrimitiveClass("boolean"));
+        assertSame(long.class, ClassUtils.findPrimitiveClass("long"));
+        assertSame(float.class, ClassUtils.findPrimitiveClass("float"));
+        assertSame(double.class, ClassUtils.findPrimitiveClass("double"));
+        assertSame(byte.class, ClassUtils.findPrimitiveClass("byte"));
+        assertSame(char.class, ClassUtils.findPrimitiveClass("char"));
+        assertSame(short.class, ClassUtils.findPrimitiveClass("short"));
+        assertSame(void.class, ClassUtils.findPrimitiveClass("void"));
+
+        assertNull(ClassUtils.findPrimitiveClass(null));
+        assertNull(ClassUtils.findPrimitiveClass("java.lang.String"));
+    }
+
+    @Test
+    void testIsVoidType() {
+        assertTrue(ClassUtils.isVoidType(void.class));
+        assertTrue(ClassUtils.isVoidType(Void.class));
+        assertFalse(ClassUtils.isVoidType(int.class));
+    }
+
+    @Test
     void testLoadByName() throws ClassNotFoundException {
 
         assertThrows(UncheckedException.class, () -> loadByName("class.not.exists", 0));

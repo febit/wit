@@ -75,7 +75,11 @@ public class AssertionModule implements WitModule {
 
         private static Object assertFalse(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertObjectFalse(at(args, 0), context.script());
+            if (at(args, 0) instanceof Boolean bool) {
+                AssertionModule.assertTrue(!bool, context.script());
+            } else {
+                fail("not a Boolean", context.script());
+            }
             return Undefined.UNDEFINED;
         }
 
@@ -242,14 +246,6 @@ public class AssertionModule implements WitModule {
     static void assertTrue(boolean condition, Script script) {
         if (!condition) {
             fail("expected true, but not", script);
-        }
-    }
-
-    static void assertObjectFalse(@Nullable Object condition, Script script) {
-        if (condition instanceof Boolean bool) {
-            assertTrue(!bool, script);
-        } else {
-            fail("not a Boolean", script);
         }
     }
 

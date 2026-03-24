@@ -23,6 +23,7 @@ import org.febit.wit.extern.lib.cache.CachingModule;
 import org.febit.wit.extern.lib.cache.impl.SimpleCache;
 import org.febit.wit.extern.lib.context.GlobalContextRegister;
 import org.febit.wit.extern.lib.context.LocalContextRegister;
+import org.febit.wit.extern.lib.std.TypesModule;
 import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.extern.lib.tld.TldModule;
 import org.febit.wit.io.Loader;
@@ -58,6 +59,7 @@ public class TestWit {
             .module(new TestCasesModule())
             .module(new TestSpiFlagModule())
             .module(new TestConfigFlagModule())
+            .module(new TypesModule())
             .module(CachingModule.builder()
                     .using(SimpleCache.ofLru(100))
                     .withClear(true)

@@ -1,4 +1,5 @@
 @import org.febit.wit.exception.ScriptEvaluateException;
+@import org.febit.wit.extern.lib.test.WitAssertionError;
 
 var new_str = native new String(String);
 
@@ -6,21 +7,96 @@ var new_str = native new String(String);
   assertEquals("Hello, World!", "Hello, " + "World!");
   assertEquals(5, 2 + 3);
 
+  assertNotEquals(5, 4);
+
+  assertThrows(native WitAssertionError.class, () -> {
+      assertEquals(1, 2);
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertEquals(1, "1");
+  });
+
+  assertThrows(native WitAssertionError.class, () -> {
+      assertNotEquals(2, 2);
+  });
+
+  assertThrows(native WitAssertionError.class, (a, b) -> {
+      assertEquals(a, b);
+      echo "This line will not be reached if assertion fails";
+  }, 1, 2);
+}
+{
   var test = "Test";
   assertSame(test, test);
   assertNotSame(new_str("Test"), new_str("Test"));
 
+  assertThrows(native WitAssertionError.class, () -> {
+      assertSame(1, 2);
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertNotSame(test, test);
+  });
+}
+{
   assertTrue(10 > 5);
   assertFalse(5 > 10);
+
+  assertThrows(native WitAssertionError.class, () -> {
+      assertTrue(false);
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertTrue();
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertTrue(1);
+  });
+
+  assertThrows(native WitAssertionError.class, () -> {
+      assertFalse(true);
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertFalse();
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertFalse(1);
+  });
+}
+{
   assertNull(null);
   assertNotNull("Not null");
+
+  assertThrows(native WitAssertionError.class, () -> {
+      assertNull(1);
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertNotNull(null);
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertNotNull(null);
+  });
 }
 {
   assertInstanceOf(native String.class, "Test");
   assertNotInstanceOf(native Integer.class, "Test");
+
+  assertThrows(native WitAssertionError.class, () -> {
+      assertInstanceOf(native Integer.class, "Test");
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertNotInstanceOf(native String.class, "Test");
+  });
+
+  assertThrows(native WitAssertionError.class, () -> {
+      assertInstanceOf(1, "Test");
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertNotInstanceOf(1, "Test");
+  });
 }
 {
-  assertArrayEquals([1, 2, 3], [1, 2, 3]);
+  var arr = [1, 2, 3];
+  assertArrayEquals([1, 2, 3], arr);
+  assertArrayEquals(arr, arr);
 }
 {
   assertThrows(native ScriptEvaluateException.class, () -> {
@@ -29,10 +105,20 @@ var new_str = native new String(String);
   assertDoesNotThrow(() -> {
     // No exception thrown
   });
+
+  assertThrows(native WitAssertionError.class, () -> {
+      assertThrows();
+  });
+
+  assertThrows(native WitAssertionError.class, () -> {
+      assertThrows(1);
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertThrows(native ScriptEvaluateException.class);
+  });
+  assertThrows(native WitAssertionError.class, () -> {
+      assertThrows(native ScriptEvaluateException.class, () -> {});
+  });
 }
 {
-  assertThrows(native AssertionError.class, (a, b) -> {
-      assertEquals(a, b);
-      echo "This line will not be reached if assertion fails";
-  }, 1, 2);
 }

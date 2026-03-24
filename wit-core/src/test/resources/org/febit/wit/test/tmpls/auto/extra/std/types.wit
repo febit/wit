@@ -1,0 +1,33 @@
+{
+  assertTrue(is_array([]))
+  assertTrue(is_array([1, 2]))
+
+  assertFalse(is_array())
+  assertFalse(is_array(1))
+}
+{
+  assertTrue(is_bool(true))
+  assertTrue(is_bool(false))
+
+  assertFalse(is_bool())
+  assertFalse(is_bool(1))
+}
+{
+  assertTrue(is_null(null))
+  assertTrue(is_null())
+
+  assertFalse(is_null(1))
+}
+{
+  assertTrue(is_number(1))
+
+  assertFalse(is_number())
+  assertFalse(is_number("x"))
+}
+{
+  assertTrue(is_function(() -> {}))
+  assertTrue(is_callable(() -> {}))
+
+  assertFalse(is_function())
+  assertFalse(is_function(1))
+}

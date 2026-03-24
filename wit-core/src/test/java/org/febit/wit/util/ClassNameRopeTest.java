@@ -26,28 +26,50 @@ class ClassNameRopeTest {
         ClassNameRope rope;
 
         rope = new ClassNameRope("abc");
+        assertFalse(rope.isArray());
+        assertTrue(rope.isSimpleName());
         assertEquals("abc", rope.simpleName());
         assertEquals("abc", rope.componentName());
         assertEquals("abc", rope.toString());
 
         rope = new ClassNameRope("abc").increaseArrayDepth();
+        assertTrue(rope.isArray());
+        assertTrue(rope.isSimpleName());
         assertEquals("abc", rope.simpleName());
         assertEquals("abc", rope.componentName());
         assertEquals("abc[]", rope.toString());
 
         rope = new ClassNameRope("abc").append("def");
+        assertFalse(rope.isArray());
+        assertFalse(rope.isSimpleName());
         assertEquals("def", rope.simpleName());
         assertEquals("abc.def", rope.componentName());
         assertEquals("abc.def", rope.toString());
 
         rope = new ClassNameRope("abc").append("def").increaseArrayDepth();
+        assertTrue(rope.isArray());
+        assertFalse(rope.isSimpleName());
         assertEquals("def", rope.simpleName());
         assertEquals("abc.def", rope.componentName());
         assertEquals("abc.def[]", rope.toString());
 
         rope = new ClassNameRope("abc").append("def").increaseArrayDepth().increaseArrayDepth();
+        assertTrue(rope.isArray());
+        assertFalse(rope.isSimpleName());
         assertEquals("def", rope.simpleName());
         assertEquals("abc.def", rope.componentName());
         assertEquals("abc.def[][]", rope.toString());
+    }
+
+    @Test
+    void testEmpty() {
+        var rope = new ClassNameRope("x");
+        rope.pop();
+
+        assertFalse(rope.isArray());
+        assertFalse(rope.isSimpleName());
+
+        assertThrows(IllegalStateException.class, rope::simpleName);
+        assertThrows(IllegalStateException.class, rope::componentName);
     }
 }
