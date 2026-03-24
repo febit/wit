@@ -19,40 +19,40 @@ import lombok.Getter;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.TextPosition;
 
-public class ParseException extends ScriptException {
+public class ScriptParseException extends ScriptException {
 
     @Getter
     private final Position position;
 
-    public ParseException(String message) {
+    public ScriptParseException(String message) {
         this(message, TextPosition.UNKNOWN);
     }
 
-    public ParseException(String message, Position position) {
+    public ScriptParseException(String message, Position position) {
         super(message);
         this.position = position;
     }
 
-    public ParseException(String message, Throwable cause) {
+    public ScriptParseException(String message, Throwable cause) {
         this(message, cause, TextPosition.UNKNOWN);
     }
 
-    public ParseException(String message, Throwable cause, Position position) {
+    public ScriptParseException(String message, Throwable cause, Position position) {
         super(message, cause);
         this.position = position;
     }
 
-    public ParseException(Throwable cause) {
+    public ScriptParseException(Throwable cause) {
         this(cause, TextPosition.UNKNOWN);
     }
 
-    public ParseException(Throwable cause, Position position) {
+    public ScriptParseException(Throwable cause, Position position) {
         super(cause);
         this.position = position;
     }
 
     @Override
-    protected void printBody(PrintStreamOrWriter out, String prefix) {
+    public void printTraceBody(ScriptTracker.PrintProxy out, String prefix) {
         out.print(prefix)
                 .print("\tat ")
                 .print(this.position);

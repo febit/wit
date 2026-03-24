@@ -16,8 +16,8 @@
 package org.febit.wit;
 
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
-import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.Source;
 import org.febit.wit.io.out.DiscardOut;
@@ -63,7 +63,7 @@ public interface Script {
      *
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ParseException          when unable to parse
+     * @throws ScriptParseException          when unable to parse
      */
     default Context eval() {
         return eval(Vars.empty(), DiscardOut.get(), null);
@@ -76,7 +76,7 @@ public interface Script {
      * @param output out
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ParseException          when unable to parse
+     * @throws ScriptParseException          when unable to parse
      */
     default Context eval(Vars inputs, OutputStream output) {
         var out = engine().asOut(output);
@@ -90,7 +90,7 @@ public interface Script {
      * @param writer writer
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ParseException          when unable to parse
+     * @throws ScriptParseException          when unable to parse
      */
     default Context eval(Vars inputs, Writer writer) {
         var out = engine().asOut(writer);
@@ -104,7 +104,7 @@ public interface Script {
      * @param out  out
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ParseException          when unable to parse
+     * @throws ScriptParseException          when unable to parse
      */
     default Context eval(Vars inputs, Out out) {
         return eval(inputs, out, null);

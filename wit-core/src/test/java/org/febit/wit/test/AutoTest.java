@@ -47,11 +47,11 @@ class AutoTest {
     private static final String AUTO_TEST_ROOT = TEST_ROOT + "/auto";
     private static final String AUTO_TEST_ROOT_FLAG = AUTO_TEST_ROOT + "/.mark";
 
-    private final LongAdder breakpointCount = new LongAdder();
+    private final LongAdder breakpointCounter = new LongAdder();
 
     @Test
     void test() throws Exception {
-        breakpointCount.reset();
+        breakpointCounter.reset();
         var classLoader = ClassUtils.classLoader();
         var out = new ByteArrayOutputStream();
 
@@ -87,7 +87,7 @@ class AutoTest {
             });
         }
 
-        System.out.println("Breakpoint count: " + breakpointCount);
+        System.out.println("Breakpoint count: " + breakpointCounter);
     }
 
     private void mergeScript(String path, OutputStream output) {
@@ -111,7 +111,7 @@ class AutoTest {
             Statement statement,
             @Nullable Object result
     ) {
-        breakpointCount.increment();
+        breakpointCounter.increment();
         var innerExpr = statement instanceof BreakpointExpr
                 ? ((BreakpointExpr) statement).supervised()
                 : null;

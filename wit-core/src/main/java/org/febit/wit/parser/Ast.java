@@ -19,7 +19,7 @@ import lombok.Builder;
 import lombok.Singular;
 import lombok.experimental.UtilityClass;
 import org.febit.wit.Script;
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
@@ -488,11 +488,11 @@ public class Ast {
         if (expr instanceof AssignableExpression assign) {
             return assign;
         }
-        throw new ParseException("expression is not assignable", expr.position());
+        throw new ScriptParseException("expression is not assignable", expr.position());
     }
 
-    public static ParseException unsupportedOperator(Position pos) {
-        return new ParseException("Unsupported Operator", pos);
+    public static ScriptParseException unsupportedOperator(Position pos) {
+        return new ScriptParseException("Unsupported Operator", pos);
     }
 
     public static Expression selfAssign(Expression target, Expression delta, int tokenKind, Position pos) {

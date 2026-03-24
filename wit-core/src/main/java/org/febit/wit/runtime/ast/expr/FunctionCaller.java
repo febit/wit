@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.exception.StatementTracker;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.WitFunction;
@@ -38,17 +39,30 @@ public final class FunctionCaller implements Expression {
 
     @Override
     @Nullable
+    @SuppressWarnings({
+            "java:S1181", // Throwable and Error should not be caught
+    })
     public Object execute(InternalContext context) {
         var funcObj = this.func.execute(context);
         if (!(funcObj instanceof WitFunction declare)) {
             throw new ScriptEvaluateException("not a function", this);
         }
         var paramsObj = context.visit(this.params);
-        return declare.apply(context, paramsObj);
+        try {
+            return declare.apply(context, paramsObj);
+        } catch (Throwable ex) {
+            if (ex instanceof StatementTracker tracker) {
+                tracker.add(this);
+            }
+            throw ex;
+        }
     }
 
     @Override
     @Nullable
+    @SuppressWarnings({
+            "java:S1181", // Throwable and Error should not be caught
+    })
     public Object evalAsConst() {
         var funcObj = StatementUtils.evalAsConst(this.func);
         if (!(funcObj instanceof WitFunction.Constable constable)) {
@@ -58,6 +72,13 @@ public final class FunctionCaller implements Expression {
             return Undefined.UNDEFINED;
         }
         var paramsObj = StatementUtils.evalConstArray(this.params);
-        return constable.apply(paramsObj);
+        try {
+            return constable.apply(paramsObj);
+        } catch (Throwable ex) {
+            if (ex instanceof StatementTracker tracker) {
+                tracker.add(this);
+            }
+            throw ex;
+        }
     }
 }

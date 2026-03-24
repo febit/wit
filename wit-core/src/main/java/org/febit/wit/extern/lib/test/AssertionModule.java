@@ -16,6 +16,7 @@
 package org.febit.wit.extern.lib.test;
 
 import lombok.experimental.UtilityClass;
+import org.febit.wit.Script;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
 import org.febit.wit.runtime.InternalContext;
@@ -64,55 +65,59 @@ public class AssertionModule implements WitModule {
 
         private static Object assertTrue(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertObjectTrue(at(args, 0));
+            if (at(args, 0) instanceof Boolean bool) {
+                AssertionModule.assertTrue(bool, context.script());
+            } else {
+                fail("not a Boolean", context.script());
+            }
             return Undefined.UNDEFINED;
         }
 
         private static Object assertFalse(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertObjectFalse(at(args, 0));
+            AssertionModule.assertObjectFalse(at(args, 0), context.script());
             return Undefined.UNDEFINED;
         }
 
         private static Object assertNotNull(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertNotNull(at(args, 0));
+            AssertionModule.assertNotNull(at(args, 0), context.script());
             return Undefined.UNDEFINED;
         }
 
         private static Object assertNull(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertNull(at(args, 0));
+            AssertionModule.assertNull(at(args, 0), context.script());
             return Undefined.UNDEFINED;
         }
 
         private static Object assertEquals(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertEquals(at(args, 0), at(args, 1));
+            AssertionModule.assertEquals(at(args, 0), at(args, 1), context.script());
             return Undefined.UNDEFINED;
         }
 
         private static Object assertNotEquals(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertNotEquals(at(args, 0), at(args, 1));
+            AssertionModule.assertNotEquals(at(args, 0), at(args, 1), context.script());
             return Undefined.UNDEFINED;
         }
 
         private static Object assertSame(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertSame(at(args, 0), at(args, 1));
+            AssertionModule.assertSame(at(args, 0), at(args, 1), context.script());
             return Undefined.UNDEFINED;
         }
 
         private static Object assertNotSame(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertNotSame(at(args, 0), at(args, 1));
+            AssertionModule.assertNotSame(at(args, 0), at(args, 1), context.script());
             return Undefined.UNDEFINED;
         }
 
         private static Object assertArrayEquals(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
-            AssertionModule.assertArrayEquals(at(args, 0), at(args, 1));
+            AssertionModule.assertArrayEquals(at(args, 0), at(args, 1), context.script());
             return Undefined.UNDEFINED;
         }
 
@@ -120,9 +125,9 @@ public class AssertionModule implements WitModule {
             plusAssertCount(context);
             var expected = at(args, 0);
             if (expected instanceof Class<?> expectedClass) {
-                AssertionModule.assertInstanceOf(expectedClass, at(args, 1));
+                AssertionModule.assertInstanceOf(expectedClass, at(args, 1), context.script());
             } else {
-                fail("expected should be a Class, but was " + className(expected));
+                fail("expected should be a Class, but was " + className(expected), context.script());
             }
             return Undefined.UNDEFINED;
         }
@@ -131,9 +136,9 @@ public class AssertionModule implements WitModule {
             plusAssertCount(context);
             var unexpected = at(args, 0);
             if (unexpected instanceof Class<?> unexpectedClass) {
-                AssertionModule.assertNotInstanceOf(unexpectedClass, at(args, 1));
+                AssertionModule.assertNotInstanceOf(unexpectedClass, at(args, 1), context.script());
             } else {
-                fail("unexpected should be a Class, but was " + className(unexpected));
+                fail("unexpected should be a Class, but was " + className(unexpected), context.script());
             }
             return Undefined.UNDEFINED;
         }
@@ -143,16 +148,16 @@ public class AssertionModule implements WitModule {
             plusAssertCount(context);
             var arg0 = at(args, 0);
             if (!(arg0 instanceof Class<?> expected)) {
-                fail("expected should be a Class, but was " + className(arg0));
+                fail("expected should be a Class, but was " + className(arg0), context.script());
                 return Undefined.UNDEFINED;
             }
             if (!Throwable.class.isAssignableFrom(expected)) {
-                fail("expected should be a Class of Throwable, but was " + expected.getName());
+                fail("expected should be a Class of Throwable, but was " + expected.getName(), context.script());
                 return Undefined.UNDEFINED;
             }
             var func = at(args, 1);
             if (!(func instanceof WitFunction)) {
-                fail("executable should be a function, but was " + className(func));
+                fail("executable should be a function, but was " + className(func), context.script());
                 return Undefined.UNDEFINED;
             }
 
@@ -160,15 +165,19 @@ public class AssertionModule implements WitModule {
             var funcArgs = Arrays.copyOfRange(args, 2, args.length);
             return AssertionModule.assertThrows(
                     (Class<? extends Throwable>) expected,
-                    () -> ((WitFunction) func).apply(context, funcArgs)
+                    () -> ((WitFunction) func).apply(context, funcArgs),
+                    context.script()
             );
         }
 
+        @SuppressWarnings({
+                "java:S1181", // Throwable and Error should not be caught
+        })
         private static Object assertDoesNotThrow(InternalContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             var func = at(args, 0);
             if (!(func instanceof WitFunction)) {
-                fail("executable should be a function, but was " + className(func));
+                fail("executable should be a function, but was " + className(func), context.script());
                 return Undefined.UNDEFINED;
             }
 
@@ -177,7 +186,7 @@ public class AssertionModule implements WitModule {
             try {
                 ((WitFunction) func).apply(context, funcArgs);
             } catch (Throwable actualThrown) {
-                fail("Expected no exception to be thrown, but was " + actualThrown);
+                fail("Expected no exception to be thrown, but was " + actualThrown, context.script());
             }
             return Undefined.UNDEFINED;
         }
@@ -192,140 +201,137 @@ public class AssertionModule implements WitModule {
         count.increment();
     }
 
-    static void assertObjectTrue(@Nullable Object condition) {
-        if (condition instanceof Boolean bool) {
-            assertTrue(bool);
-        } else {
-            fail("not a Boolean");
-        }
-    }
-
-    static void assertInstanceOf(Class<?> expectedType, @Nullable Object actual) {
+    static void assertInstanceOf(Class<?> expectedType, @Nullable Object actual, Script script) {
         if (!expectedType.isInstance(actual)) {
             fail("Expected instance of "
-                    + expectedType.getName()
-                    + " but was "
-                    + className(actual)
+                            + expectedType.getName()
+                            + " but was "
+                            + className(actual),
+                    script
             );
         }
     }
 
-    static void assertNotInstanceOf(Class<?> unexpectedType, @Nullable Object actual) {
+    static void assertNotInstanceOf(Class<?> unexpectedType, @Nullable Object actual, Script script) {
         if (unexpectedType.isInstance(actual)) {
             fail("Expected not instance of "
-                    + unexpectedType.getName()
-                    + " but was "
-                    + className(actual)
+                            + unexpectedType.getName()
+                            + " but was "
+                            + className(actual),
+                    script
             );
         }
     }
 
-    static Throwable assertThrows(Class<? extends Throwable> expectedType, Runnable executable) {
+    @SuppressWarnings({
+            "java:S1181", // Throwable and Error should not be caught
+    })
+    static Throwable assertThrows(Class<? extends Throwable> expectedType, Runnable executable, Script script) {
         try {
             executable.run();
         } catch (Throwable actualThrown) {
             if (expectedType.isInstance(actualThrown)) {
                 return actualThrown;
             }
-            fail("Expected " + expectedType.getName() + " to be thrown, but was " + actualThrown);
+            fail("Expected " + expectedType.getName() + " to be thrown, but was " + actualThrown, script);
         }
-        fail("Expected " + expectedType.getName() + " to be thrown, but nothing was thrown.");
+        fail("Expected " + expectedType.getName() + " to be thrown, but nothing was thrown.", script);
         return null;
     }
 
-    static void assertTrue(boolean condition) {
+    static void assertTrue(boolean condition, Script script) {
         if (!condition) {
-            fail(null);
+            fail("expected true, but not", script);
         }
     }
 
-    static void assertObjectFalse(@Nullable Object condition) {
+    static void assertObjectFalse(@Nullable Object condition, Script script) {
         if (condition instanceof Boolean bool) {
-            assertTrue(!bool);
+            assertTrue(!bool, script);
         } else {
-            fail("not a Boolean");
+            fail("not a Boolean", script);
         }
     }
 
-    static void assertNotNull(@Nullable Object object) {
-        assertTrue(object != null);
+    static void assertNotNull(@Nullable Object object, Script script) {
+        assertTrue(object != null, script);
     }
 
-    static void assertNull(@Nullable Object object) {
-        assertTrue(object == null);
+    static void assertNull(@Nullable Object object, Script script) {
+        assertTrue(object == null, script);
     }
 
-    static void assertEquals(@Nullable Object expected, @Nullable Object actual) {
+    static void assertEquals(@Nullable Object expected, @Nullable Object actual, Script script) {
         if ((expected == null && actual != null)
                 || (expected != null && !expected.equals(actual))) {
-            failNotEquals(expected, actual);
+            failNotEquals(expected, actual, script);
         }
     }
 
-    static void assertNotEquals(@Nullable Object unexpected, @Nullable Object actual) {
+    static void assertNotEquals(@Nullable Object unexpected, @Nullable Object actual, Script script) {
         if ((unexpected == null && actual == null)
                 || (unexpected != null && unexpected.equals(actual))) {
-            fail("expected not equals:<" + unexpected + ">");
+            fail("expected not equals:<" + unexpected + ">", script);
         }
     }
 
-    static void assertSame(@Nullable Object expected, @Nullable Object actual) {
+    static void assertSame(@Nullable Object expected, @Nullable Object actual, Script script) {
         if (expected == actual) {
             return;
         }
-        failNotSame(expected, actual);
+        failNotSame(expected, actual, script);
     }
 
-    static void assertNotSame(@Nullable Object unexpected, @Nullable Object actual) {
+    static void assertNotSame(@Nullable Object unexpected, @Nullable Object actual, Script script) {
         if (unexpected == actual) {
-            failSame();
+            failSame(script);
         }
     }
 
-    static void assertArrayEquals(@Nullable Object expected, @Nullable Object actual) {
+    static void assertArrayEquals(@Nullable Object expected, @Nullable Object actual, Script script) {
         if (expected == actual) {
             return;
         }
-        final int expectedLength = assertArraysAreSameLength(expected, actual);
+        final int expectedLength = assertArraysAreSameLength(expected, actual, script);
         for (int i = 0; i < expectedLength; i++) {
             try {
-                assertEquals(Array.get(expected, i), Array.get(actual, i));
+                assertEquals(Array.get(expected, i), Array.get(actual, i), script);
             } catch (AssertionError e) {
-                fail("arrays first differed at element " + i);
+                fail("arrays first differed at element " + i, script);
             }
         }
     }
 
-    static int assertArraysAreSameLength(@Nullable Object expected, @Nullable Object actual) {
+    static int assertArraysAreSameLength(@Nullable Object expected, @Nullable Object actual, Script script) {
         if (expected == null) {
-            fail("expected array was null");
+            fail("expected array was null", script);
         }
         if (actual == null) {
-            fail("actual array was null");
+            fail("actual array was null", script);
         }
         int actualLength = Array.getLength(actual);
         int expectedLength = Array.getLength(expected);
         if (actualLength != expectedLength) {
             fail("array lengths differed, expected.length="
-                    + expectedLength + " actual.length=" + actualLength);
+                    + expectedLength + " actual.length=" + actualLength, script);
         }
         return expectedLength;
     }
 
-    private static void fail(@Nullable String message) {
-        throw new AssertionError(message == null ? "" : message);
+    private static void fail(String message, Script script) {
+        throw new WitAssertionError(message, script);
     }
 
-    private static void failSame() {
-        fail("expected not same");
+    private static void failSame(Script script) {
+        fail("expected not same", script);
     }
 
-    private static void failNotSame(@Nullable Object expected, @Nullable Object actual) {
-        fail("expected same:<" + expected + "> was not:<" + actual + ">");
+    private static void failNotSame(@Nullable Object expected, @Nullable Object actual, Script script) {
+        fail("expected same:<" + expected + "> was not:<" + actual + ">", script);
     }
 
-    private static void failNotEquals(@Nullable Object expected, @Nullable Object actual) {
-        fail(format(expected, actual));
+    private static void failNotEquals(@Nullable Object expected, @Nullable Object actual, Script script) {
+        fail(format(expected, actual), script);
     }
 
     private static String format(@Nullable Object expected, @Nullable Object actual) {

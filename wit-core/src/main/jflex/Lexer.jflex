@@ -2,7 +2,7 @@
 package org.febit.wit.parser;
 
 import org.jspecify.annotations.Nullable;
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.TextPosition;
 import org.febit.wit.io.Source;
 import org.febit.wit.util.LexerCharsBuffer;
@@ -227,7 +227,7 @@ import java.util.Deque;
     private int yyDecInt(int startOffset, int endOffset) {
         long result = parseDecLong(zzBuffer, zzStartRead + startOffset, zzMarkedPos + endOffset);
         if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
-            throw new ParseException("Number overflow", getPosition());
+            throw new ScriptParseException("Number overflow", getPosition());
         }
         return (int) result;
     }
@@ -263,12 +263,12 @@ import java.util.Deque;
         long result = 0;
         while (start < end) {
             if (result > Long.MAX_VALUE / 10) {
-                throw new ParseException("Number overflow", getPosition());
+                throw new ScriptParseException("Number overflow", getPosition());
             }
             result *= 10;
             int digit = Character.digit(buffer[start++], 10);
             if (result > (Long.MAX_VALUE - digit)) {
-                throw new ParseException("Number overflow", getPosition());
+                throw new ScriptParseException("Number overflow", getPosition());
             }
             result += digit;
         }
@@ -486,7 +486,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   \'                             { yybegin(STATE_CHAR_LITERAL); }
 
   /* script string literal */
-  "`"                             { if(templateStringFlag){ throw new ParseException("Illegal character '`', not support nesting script string.", getPosition()); } yybegin(STATE_TEMPLATE_STRING); this.templateStringFlag = true; templateStringBraceClosingCounter = 0; return token(TokenKinds.TEMPLATE_STRING_START); }
+  "`"                             { if(templateStringFlag){ throw new ScriptParseException("Illegal character '`', not support nesting script string.", getPosition()); } yybegin(STATE_TEMPLATE_STRING); this.templateStringFlag = true; templateStringBraceClosingCounter = 0; return token(TokenKinds.TEMPLATE_STRING_START); }
 
   /* numeric literals */
 
@@ -550,7 +550,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   \\{LineTerminator}             { /* escape new line */ }
 
   /* error cases */
-  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
+  \\.                            { throw new ScriptParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
 }
 
 <STATE_RAW_STRING> {
@@ -579,7 +579,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   .|\r|\n                       { appendToString(yyTextChar()); }
 
   /* error cases */
-  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
+  \\.                            { throw new ScriptParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
 }
 
 <STATE_CHAR_LITERAL> {
@@ -598,11 +598,11 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(STATE_SCRIPT); return token(TokenKinds.DIRECT_VALUE, (char) yyInt(1, -1 ,8));}
 
   /* error cases */
-  \\.                            { throw new ParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
-  {LineTerminator}               { throw new ParseException("Unterminated character literal at end of line", getPosition()); }
+  \\.                            { throw new ScriptParseException("Illegal escape sequence \""+yytext()+"\"", getPosition()); }
+  {LineTerminator}               { throw new ScriptParseException("Unterminated character literal at end of line", getPosition()); }
 }
 
 /* error fallback */
-[^]                              { throw new ParseException("Illegal character \""+yytext()+"\" at line "+yyline+", column "+yycolumn, getPosition()); }
+[^]                              { throw new ScriptParseException("Illegal character \""+yytext()+"\" at line "+yyline+", column "+yycolumn, getPosition()); }
 <<EOF>>                          { return token(TokenKinds.EOF); }
 

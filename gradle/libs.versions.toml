@@ -1,7 +1,7 @@
 [versions]
 hierynomus-license = '0.16.1'
 
-febit-commons = '4.0.0'
+febit-commons = '4.0.1'
 febit-devkit = '1.6.0'
 jakarta-servlet-api='6.1.0'
 slf4j = '2.0.17'

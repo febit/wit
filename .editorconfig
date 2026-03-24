@@ -8,8 +8,11 @@ max_line_length = 120
 indent_style = space
 indent_size = 2
 insert_final_newline = true
-trim_trailing_whitespace = true
+trim_trailing_whitespace = false
 ij_continuation_indent_size = 4
+
+[*.{java,kt,groovy,wit}]
+trim_trailing_whitespace = true
 
 [*.{java,kt}]
 indent_size = 4
@@ -32,9 +35,6 @@ ij_groovy_names_count_to_use_import_on_demand = 99
 
 [*.bat]
 end_of_line = crlf
-
-[*.md]
-trim_trailing_whitespace = false
 
 [Makefile]
 indent_style = tab

@@ -1,14 +1,13 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.parser;
 
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.parser.Ast.*;
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.ast.*;
 import org.febit.wit.runtime.ast.expr.*;
 import org.febit.wit.runtime.ast.expr.NewMap.NewMapEntry;
 import org.febit.wit.runtime.ast.extra.*;
-import org.febit.wit.runtime.ast.oper.*;
 import org.febit.wit.runtime.ast.statement.*;
 import org.febit.wit.util.ClassNameRope;
 

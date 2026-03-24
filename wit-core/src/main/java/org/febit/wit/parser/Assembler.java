@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
 import org.febit.wit.Presets;
 import org.febit.wit.Script;
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.ScriptAST;
@@ -108,7 +108,7 @@ public class Assembler {
         try {
             return ClassUtils.loadByName(classFullName, arrayDept);
         } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class<?> not found:" + classFullName, ex);
+            throw new ScriptParseException("Class<?> not found:" + classFullName, ex);
         }
     }
 
@@ -146,10 +146,10 @@ public class Assembler {
         return className;
     }
 
-    public void importClass(ClassNameRope rope, Position position) throws ParseException {
+    public void importClass(ClassNameRope rope, Position position) throws ScriptParseException {
         var simpleName = rope.simpleName();
         if (ClassUtils.findPrimitiveClass(simpleName) != null) {
-            throw new ParseException("Cannot import primitive type:" + simpleName, position);
+            throw new ScriptParseException("Cannot import primitive type:" + simpleName, position);
         }
         var componentName = rope.componentName();
         var existing = importedClasses.get(simpleName);
@@ -157,7 +157,7 @@ public class Assembler {
             if (existing.equals(componentName)) {
                 return;
             }
-            throw new ParseException("Ambiguous import for class name: " + simpleName
+            throw new ScriptParseException("Ambiguous import for class name: " + simpleName
                     + ", exists: " + existing + ", new: " + componentName, position);
         }
         importedClasses.put(simpleName, componentName);
@@ -168,13 +168,13 @@ public class Assembler {
                 l -> nextLabelIndex.getAndIncrement());
     }
 
-    public Class<?> toClass(ClassNameRope rope, Position position) throws ParseException {
+    public Class<?> toClass(ClassNameRope rope, Position position) throws ScriptParseException {
         var compName = rope.componentName();
         var classFullName = resolveClassFullName(compName);
         try {
             return ClassUtils.loadByName(classFullName, rope.arrayDepth());
         } catch (ClassNotFoundException ex) {
-            throw new ParseException("Class<?> not found:" + classFullName, ex, position);
+            throw new ScriptParseException("Class<?> not found:" + classFullName, ex, position);
         }
     }
 
@@ -208,14 +208,14 @@ public class Assembler {
 
     public Expression createNativeStaticFieldValue(ClassNameRope rope, Position position) {
         if (rope.size() <= 1) {
-            throw new ParseException("native static need a field name.", position);
+            throw new ScriptParseException("native static need a field name.", position);
         }
         var fieldName = rope.pop();
         var clazz = toClass(rope, position);
 
         var path = clazz.getName() + '.' + fieldName;
         if (!this.nativeLayout.security().allowed(path)) {
-            throw new ParseException("Inaccessible native path: " + path, position);
+            throw new ScriptParseException("Inaccessible native path: " + path, position);
         }
         if (Presets.CLASS.equals(fieldName)) {
             return new DirectValue(clazz, position);
@@ -224,10 +224,10 @@ public class Assembler {
         try {
             field = clazz.getField(fieldName);
         } catch (NoSuchFieldException ex) {
-            throw new ParseException("No such field: " + path, ex, position);
+            throw new ScriptParseException("No such field: " + path, ex, position);
         }
         if (!ClassUtils.isStatic(field)) {
-            throw new ParseException("No a static field: " + path, position);
+            throw new ScriptParseException("No a static field: " + path, position);
         }
         field.trySetAccessible();
         if (!ClassUtils.isFinal(field)) {
@@ -236,7 +236,7 @@ public class Assembler {
         try {
             return new DirectValue(field.get(null), position);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            throw new ParseException("Failed to get static field value: " + path, ex, position);
+            throw new ScriptParseException("Failed to get static field value: " + path, ex, position);
         }
     }
 
@@ -246,7 +246,7 @@ public class Assembler {
             classForCheck = classForCheck.getComponentType();
         }
         if (ClassUtils.isVoidType(classForCheck)) {
-            throw new ParseException("ComponentType must not void", pos);
+            throw new ScriptParseException("ComponentType must not void", pos);
         }
         this.nativeLayout.securityCheck(classForCheck.getName() + ".[]", pos);
 
@@ -264,7 +264,7 @@ public class Assembler {
                     paramTypes == null ? new Class[0] : paramTypes.toArray(new Class[0])
             );
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ParseException(ex.getMessage(), ex, position);
+            throw new ScriptParseException(ex.getMessage(), ex, position);
         }
 
         var func = this.nativeLayout.functions().method(method);
@@ -279,7 +279,7 @@ public class Assembler {
                 .filter(ClassUtils::isPublic)
                 .toList();
         if (methods.isEmpty()) {
-            throw new ParseException("No such method: " + clazz.getName() + '#' + methodName, position);
+            throw new ScriptParseException("No such method: " + clazz.getName() + '#' + methodName, position);
         }
 
         var func = this.nativeLayout.functions().method(methods);
@@ -296,7 +296,7 @@ public class Assembler {
                     paramTypes == null ? new Class[0] : paramTypes.toArray(new Class[0])
             );
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ParseException(ex.getMessage(), ex, position);
+            throw new ScriptParseException(ex.getMessage(), ex, position);
         }
         var func = this.nativeLayout.functions().constructor(constructor);
         return new DirectValue(func, position);
@@ -334,7 +334,7 @@ public class Assembler {
 
     public ScriptAST buildAST(List<Statement> list) {
         var batches = Ast.batch(list, ctrl -> {
-            throw new ParseException("Unhandled flow control: " + ctrl, ctrl.position());
+            throw new ScriptParseException("Unhandled flow control: " + ctrl, ctrl.position());
         });
         if (batches.size() != 1) {
             throw new IllegalStateException("Unexpected batches size: " + batches.size());

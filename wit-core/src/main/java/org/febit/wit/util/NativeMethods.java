@@ -188,7 +188,7 @@ public class NativeMethods {
             if (method != null) {
                 return method;
             }
-            throw new AmbiguousMethodException(
+            throw AmbiguousMethodException.of(
                     Arrays.copyOf(candidate, candidateCount),
                     argTypes);
         }
@@ -274,7 +274,7 @@ public class NativeMethods {
             if (constructor != null) {
                 return constructor;
             }
-            throw new AmbiguousMethodException(
+            throw AmbiguousMethodException.of(
                     Arrays.copyOf(candidate, candidateCount),
                     argTypes);
         }

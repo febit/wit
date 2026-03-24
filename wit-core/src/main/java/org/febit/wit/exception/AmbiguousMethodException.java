@@ -25,11 +25,7 @@ public class AmbiguousMethodException extends ScriptEvaluateException {
         super(message);
     }
 
-    public <T extends Member> AmbiguousMethodException(T[] methods, @Nullable Class<?>[] argTypes) {
-        this(buildMessage(methods, argTypes));
-    }
-
-    protected static <T extends Member> String buildMessage(T[] methods, @Nullable Class<?>[] argTypes) {
+    public static <T extends Member> AmbiguousMethodException of(T[] methods, @Nullable Class<?>[] argTypes) {
         var buf = new StringBuilder();
         buf.append("Ambiguous method for args [");
         for (int i = 0; i < argTypes.length; i++) {
@@ -47,7 +43,6 @@ public class AmbiguousMethodException extends ScriptEvaluateException {
             }
             buf.append(methods[i]);
         }
-        return buf.toString();
+        return new AmbiguousMethodException(buf.toString());
     }
-
 }

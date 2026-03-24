@@ -18,6 +18,6 @@ assertEquals(str, "3, 9527, Mr Tang, Master.")
 str = `${((name)->{ var map={func:"bala..bala..bala"}; return "nested function: " + name + " - " + map[name]})("func")}`
 assertEquals(str, "nested function: func - bala..bala..bala")
 
-// ParseException: Illegal character '`', not support nesting script string
+// ScriptParseException: Illegal character '`', not support nesting script string
 // str = `${`nested`}.`
 // assertEquals(str, "nested.")

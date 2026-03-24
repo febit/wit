@@ -16,6 +16,7 @@
 package org.febit.wit.runtime.ast.statement;
 
 import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.exception.StatementTracker;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -32,11 +33,18 @@ public record Throw(
     public Object execute(InternalContext context) {
         var ex = this.exception.execute(context);
         if (ex instanceof RuntimeException runtime) {
+            if (runtime instanceof StatementTracker tracker) {
+                tracker.add(this);
+            }
             throw runtime;
         }
+        ScriptEvaluateException thrown;
         if (ex instanceof Throwable throwable) {
-            throw new ScriptEvaluateException(throwable);
+            thrown = new ScriptEvaluateException(throwable);
+        } else {
+            thrown = new ScriptEvaluateException(String.valueOf(ex));
         }
-        throw new ScriptEvaluateException(String.valueOf(ex));
+        thrown.add(this);
+        throw thrown;
     }
 }

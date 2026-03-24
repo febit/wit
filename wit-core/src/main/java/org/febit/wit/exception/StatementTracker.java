@@ -13,20 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast;
+package org.febit.wit.exception;
 
-import org.febit.wit.exception.ScriptParseException;
-import org.jspecify.annotations.Nullable;
+import org.febit.wit.runtime.ast.Statement;
 
-public interface Expression extends Statement {
+import java.util.List;
 
-    @Nullable
-    default Object evalAsConst() {
-        throw new ScriptParseException("Cannot calculate as const", position());
-    }
+public interface StatementTracker extends ScriptTracker {
+
+    void add(Statement statement);
+
+    List<Statement> statements();
 
     @Override
-    default Expression optimize() {
-        return this;
+    default void printTraceBody(PrintProxy out, String indent) {
+        for (var stat : statements()) {
+            out.print(indent)
+                    .print("\tat ")
+                    .print(stat.position())
+                    .print(" ")
+                    .print(stat.getClass().getSimpleName())
+                    .print('\n');
+        }
     }
 }

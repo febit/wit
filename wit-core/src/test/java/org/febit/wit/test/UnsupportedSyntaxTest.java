@@ -15,7 +15,7 @@
  */
 package org.febit.wit.test;
 
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.junit.jupiter.api.Test;
 
 import static org.febit.wit.TestWit.codeChecker;
@@ -39,21 +39,21 @@ class UnsupportedSyntaxTest {
         assertDoesNotThrow(codeChecker("var x = 0 - 2147483647"));
         assertDoesNotThrow(codeChecker("var x = 0 - - 2147483648"));
 
-        assertThrows(ParseException.class, codeChecker("var x = 10000000000"));
-        assertThrows(ParseException.class, codeChecker("var x = 100000000000000000000"));
-        assertThrows(ParseException.class, codeChecker("var x = 2147483648"));
-        assertThrows(ParseException.class, codeChecker("var x = 2147483649"));
-        assertThrows(ParseException.class, codeChecker("var x = -2147483649"));
-        assertThrows(ParseException.class, codeChecker("var x = 0 - 2147483648"));
-        assertThrows(ParseException.class, codeChecker("var x = 0 - - 2147483649"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 10000000000"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 100000000000000000000"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 2147483648"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 2147483649"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = -2147483649"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 0 - 2147483648"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 0 - - 2147483649"));
 
         assertDoesNotThrow(codeChecker("var x = 0x0"));
         assertDoesNotThrow(codeChecker("var x = 0xFFFFFFFF"));
         assertDoesNotThrow(codeChecker("var x = 0xFFFFFFFFL"));
         assertDoesNotThrow(codeChecker("var x = 0x0123456789ABCDEFL"));
 
-        assertThrows(ParseException.class, codeChecker("var x = 0xFFFFFFFFF"));
-        assertThrows(ParseException.class, codeChecker("var x = 0x0123456789ABCDEF0L"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 0xFFFFFFFFF"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 0x0123456789ABCDEF0L"));
 
         assertDoesNotThrow(codeChecker("var x = 00"));
         assertDoesNotThrow(codeChecker("var x = 000"));
@@ -70,12 +70,12 @@ class UnsupportedSyntaxTest {
         assertDoesNotThrow(codeChecker("var x = 00777777777777777777777L"));
         assertDoesNotThrow(codeChecker("var x = 01777777777777777777777L"));
 
-        assertThrows(ParseException.class, codeChecker("var x = 08"));
-        assertThrows(ParseException.class, codeChecker("var x = 0017777777777"));
-        assertThrows(ParseException.class, codeChecker("var x = 047777777777"));
-        assertThrows(ParseException.class, codeChecker("var x = 0177777777770"));
-        assertThrows(ParseException.class, codeChecker("var x = 0277777777770"));
-        assertThrows(ParseException.class, codeChecker("var x = 02777777777777777777777L"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 08"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 0017777777777"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 047777777777"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 0177777777770"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 0277777777770"));
+        assertThrows(ScriptParseException.class, codeChecker("var x = 02777777777777777777777L"));
 
     }
 }

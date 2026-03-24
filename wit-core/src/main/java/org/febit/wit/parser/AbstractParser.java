@@ -18,7 +18,7 @@ package org.febit.wit.parser;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Feature;
 import org.febit.wit.Script;
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.exception.UncheckedException;
 import org.febit.wit.runtime.ast.ScriptAST;
 import org.febit.wit.runtime.ast.TextPosition;
@@ -143,19 +143,19 @@ abstract class AbstractParser {
         return new Token(TokenKinds.SEMICOLON, refer.pos, null);
     }
 
-    public static ScriptAST parse(Script script) throws ParseException {
+    public static ScriptAST parse(Script script) throws ScriptParseException {
         return new Parser().parse0(script);
     }
 
     @Nullable
-    abstract Object doAction(int actionId) throws ParseException;
+    abstract Object doAction(int actionId) throws ScriptParseException;
 
     /**
      * @param script Script
      * @return ScriptAST
-     * @throws ParseException ParseException
+     * @throws ScriptParseException ScriptParseException
      */
-    protected ScriptAST parse0(Script script) throws ParseException {
+    protected ScriptAST parse0(Script script) throws ScriptParseException {
         this.assembler = new Assembler(script);
 
         var source = script.source();
@@ -171,10 +171,10 @@ abstract class AbstractParser {
             var ast = this.process(lexer).value;
             Objects.requireNonNull(ast, "Parser result is null.");
             return (ScriptAST) ast;
-        } catch (ParseException e) {
+        } catch (ScriptParseException e) {
             throw e;
         } catch (Exception e) {
-            throw new ParseException(e);
+            throw new ScriptParseException(e);
         } finally {
             this.assembler.onParserCompleted();
             if (lexer != null) {
@@ -276,7 +276,7 @@ abstract class AbstractParser {
                 }
             }
             if (act == 0) {
-                throw new ParseException("Syntax error at line " + lexer.getLine()
+                throw new ScriptParseException("Syntax error at line " + lexer.getLine()
                         + " column " + lexer.getColumn()
                         + ", Hints: " + buildSimpleHintMessage(tail),
                         TextPosition.of(lexer.getLine(), lexer.getColumn())

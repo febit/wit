@@ -21,8 +21,8 @@ import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
 import org.febit.wit.Vars;
 import org.febit.wit.exception.NoSuchSourceException;
-import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -73,7 +73,7 @@ public abstract class AbstractInclude implements Statement {
                 return result;
             }
             return Map.of();
-        } catch (NoSuchSourceException | ScriptEvaluateException | ParseException e) {
+        } catch (NoSuchSourceException | ScriptEvaluateException | ScriptParseException e) {
             throw new ScriptEvaluateException(e, this);
         }
     }

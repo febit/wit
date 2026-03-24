@@ -18,7 +18,7 @@ package org.febit.wit.parser;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.parser.security.NativeSecurity;
 import org.febit.wit.parser.security.NoopNativeSecurity;
 import org.febit.wit.runtime.ast.Position;
@@ -44,7 +44,7 @@ public class NativeLayout {
 
     public void securityCheck(String path, Position position) {
         if (!security().allowed(path)) {
-            throw new ParseException("Not accessible of native path: " + path, position);
+            throw new ScriptParseException("Not accessible of native path: " + path, position);
         }
     }
 

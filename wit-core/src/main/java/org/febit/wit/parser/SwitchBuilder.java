@@ -17,7 +17,7 @@ package org.febit.wit.parser;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
@@ -57,12 +57,12 @@ public class SwitchBuilder {
         var branch = new Branch(StatementUtils.optimize(body), latest);
         // else use last as current for this key
         if (branches.containsKey(compareTo)) {
-            throw new ParseException("duplicated case value in one switch", position);
+            throw new ScriptParseException("duplicated case value in one switch", position);
         }
 
         if (compareTo == null) {
             if (defaultBranch != null) {
-                throw new ParseException("multi default block in one switch", position);
+                throw new ScriptParseException("multi default block in one switch", position);
             }
             defaultBranch = branch;
         } else {

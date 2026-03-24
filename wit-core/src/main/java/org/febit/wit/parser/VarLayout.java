@@ -18,7 +18,7 @@ package org.febit.wit.parser;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Wit;
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.ScopedIndexer;
 import org.febit.wit.runtime.ast.TextPosition;
@@ -141,7 +141,7 @@ public class VarLayout {
 
         //failed
         if (force) {
-            throw new ParseException("No such variable: " + name, position);
+            throw new ScriptParseException("No such variable: " + name, position);
         }
         //assign at root
         return contextAddress(root.frameSeq, root.assignVar(name, position));
@@ -198,7 +198,7 @@ public class VarLayout {
 
         void shouldNotAssigned(String name, Position position) {
             if (this.table.containsKey(name)) {
-                throw new ParseException("Variable already exists: " + name, position);
+                throw new ScriptParseException("Variable already exists: " + name, position);
             }
         }
 

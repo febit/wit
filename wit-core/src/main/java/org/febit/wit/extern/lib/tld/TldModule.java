@@ -18,7 +18,7 @@ package org.febit.wit.extern.lib.tld;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.exception.UncheckedException;
 import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.runtime.WitFunction;
@@ -91,7 +91,7 @@ public class TldModule implements WitModule {
         try {
             method = clazz.getMethod(func.methodName(), paramTypes);
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ParseException(ex.getMessage(), ex, TextPosition.UNKNOWN);
+            throw new ScriptParseException(ex.getMessage(), ex, TextPosition.UNKNOWN);
         }
 
         return nativeLayout.functions().method(method);

@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ScriptEvaluateException extends ScriptException {
+public class ScriptEvaluateException extends ScriptException implements StatementTracker {
 
-    private final List<Statement> statementStack = new ArrayList<>(8);
+    private final List<Statement> statements = new ArrayList<>(8);
 
     public ScriptEvaluateException(String message) {
         super(message);
@@ -31,7 +31,7 @@ public class ScriptEvaluateException extends ScriptException {
 
     public ScriptEvaluateException(String message, Statement statement) {
         super(message);
-        addStatement(statement);
+        add(statement);
     }
 
     public ScriptEvaluateException(String message, Throwable cause) {
@@ -40,7 +40,7 @@ public class ScriptEvaluateException extends ScriptException {
 
     public ScriptEvaluateException(String message, Throwable cause, Statement statement) {
         super(message, cause);
-        addStatement(statement);
+        add(statement);
     }
 
     public ScriptEvaluateException(Throwable cause) {
@@ -49,34 +49,24 @@ public class ScriptEvaluateException extends ScriptException {
 
     public ScriptEvaluateException(Throwable cause, Statement statement) {
         super(cause);
-        addStatement(statement);
+        add(statement);
     }
 
-    public static ScriptEvaluateException from(final Exception ex, final Statement statement) {
-        if (ex instanceof ScriptEvaluateException sre) {
-            sre.addStatement(statement);
-            return sre;
+    public static ScriptEvaluateException from(Exception ex, Statement statement) {
+        if (ex instanceof ScriptEvaluateException see) {
+            see.add(statement);
+            return see;
         }
         return new ScriptEvaluateException(ex.toString(), ex, statement);
     }
 
-    public final void addStatement(Statement statement) {
-        statementStack.add(statement);
-    }
-
-    public List<Statement> getStatementStack() {
-        return Collections.unmodifiableList(statementStack);
+    @Override
+    public final void add(Statement statement) {
+        statements.add(statement);
     }
 
     @Override
-    protected void printBody(PrintStreamOrWriter out, String prefix) {
-        for (var stat : statementStack) {
-            out.print(prefix)
-                    .print("\tat ")
-                    .print(stat.position())
-                    .print(" ")
-                    .print(stat.getClass().getSimpleName())
-                    .print('\n');
-        }
+    public List<Statement> statements() {
+        return Collections.unmodifiableList(statements);
     }
 }

@@ -47,7 +47,7 @@ tasks.register('generateParser') {
       exec.setClasspath(cupRuntime)
       exec.mainClass.set("java_cup.Main")
       exec.args(
-          '-exception', 'ParseException',
+          '-exception', 'ScriptParseException',
           '-symbols', 'TokenKinds',
           '-destdir', parserSrcDir.get().dir(PKG_CORE).getAsFile().absolutePath,
           '-destresdir', parserResDir.get().dir(PKG_CORE).getAsFile().absolutePath,

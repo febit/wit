@@ -16,7 +16,7 @@
 package org.febit.wit.parser;
 
 import org.febit.wit.Presets;
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
@@ -78,7 +78,7 @@ public class FunctionDeclarerBuilder {
 
     public FunctionDeclarerBuilder arg(ArgumentInfo info) {
         if (varLayout.assignVar(info.name, position) != (argsIndexStart + (this.args.size() + 1))) {
-            throw new ParseException("Cannot assign argument variable: " + info.name);
+            throw new ScriptParseException("Cannot assign argument variable: " + info.name);
         }
         this.args.add(info);
         return this;
@@ -117,7 +117,8 @@ public class FunctionDeclarerBuilder {
 
         var batches = Ast.batch(list, ctrl -> {
             if (!ctrl.state().isReturn()) {
-                throw new ParseException("flow control leaks from function body: " + ctrl.state(), ctrl.position());
+                throw new ScriptParseException(
+                        "flow control leaks from function body: " + ctrl.state(), ctrl.position());
             }
         });
 

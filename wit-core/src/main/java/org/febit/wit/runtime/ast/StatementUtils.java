@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.exception.ParseException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.ast.expr.DirectValue;
 import org.febit.wit.runtime.ast.statement.NoopStatement;
@@ -62,7 +62,7 @@ public class StatementUtils {
         try {
             return statement.optimize();
         } catch (Exception e) {
-            throw new ParseException("Exception occur when do optimization", e, statement.position());
+            throw new ScriptParseException("Exception occur when do optimization", e, statement.position());
         }
     }
 

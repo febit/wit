@@ -13,43 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.exception;
+package org.febit.wit.extern.lib.test;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Script;
-import org.jspecify.annotations.Nullable;
+import org.febit.wit.exception.StatementTracker;
+import org.febit.wit.runtime.ast.Statement;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Accessors(fluent = true)
-public abstract class ScriptException extends RuntimeException implements ScriptTracker {
+public class WitAssertionError extends AssertionError implements StatementTracker {
+
+    private final List<Statement> statements = new ArrayList<>(8);
 
     @Getter
-    private boolean nested;
-    @Getter
-    @Nullable
-    private Script script;
+    private final transient Script script;
 
-    protected ScriptException(String message) {
-        this(message, null);
-    }
-
-    protected ScriptException(Throwable cause) {
-        this(cause.getMessage(), cause);
-    }
-
-    protected ScriptException(String message, @Nullable Throwable cause) {
-        super(message, cause, true, false);
-        if (cause instanceof ScriptException se) {
-            se.nested = true;
-        }
-    }
-
-    public ScriptException script(Script script) {
+    public WitAssertionError(String message, Script script) {
+        super(message);
         this.script = script;
-        return this;
+    }
+
+    @Override
+    public void add(Statement statement) {
+        statements.add(statement);
+    }
+
+    @Override
+    public List<Statement> statements() {
+        return Collections.unmodifiableList(statements);
+    }
+
+    @Override
+    public boolean nested() {
+        return false;
     }
 
     @Override

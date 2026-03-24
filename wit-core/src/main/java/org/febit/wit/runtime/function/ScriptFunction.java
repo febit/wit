@@ -48,11 +48,11 @@ public record ScriptFunction(
             );
             return declarer.apply(sub, args);
         } catch (Exception e) {
-            var runtimeException = ScriptEvaluateException.from(e, declarer);
+            var evaluateException = ScriptEvaluateException.from(e, declarer);
             if (context != declaredAt) {
-                throw runtimeException.setScript(declaredAt.script());
+                evaluateException.script(declaredAt.script());
             }
-            throw runtimeException;
+            throw evaluateException;
         }
     }
 }

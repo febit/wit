@@ -17,9 +17,9 @@ package org.febit.wit;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.febit.wit.exception.ParseException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.ScriptException;
+import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.Source;
 import org.febit.wit.parser.Parser;
@@ -55,7 +55,7 @@ public class ScriptImpl implements Script {
     /**
      * Reload this script.
      *
-     * @throws ParseException when unable to parse
+     * @throws ScriptParseException when unable to parse
      */
     @Override
     public void reload() {
@@ -94,7 +94,7 @@ public class ScriptImpl implements Script {
      * @param breakpointHandler listener
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ParseException          when unable to parse
+     * @throws ScriptParseException          when unable to parse
      */
     public Context eval(Vars inputs, Out out, @Nullable BreakpointHandler breakpointHandler) {
         Objects.requireNonNull(inputs, "inputs is required");
@@ -142,6 +142,6 @@ public class ScriptImpl implements Script {
 
     private ScriptException completeException(Exception exception) {
         return ((exception instanceof ScriptException ex) ? ex
-                : new ScriptEvaluateException(exception)).setScript(this);
+                : new ScriptEvaluateException(exception)).script(this);
     }
 }

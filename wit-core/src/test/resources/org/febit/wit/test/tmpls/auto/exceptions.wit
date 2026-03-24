@@ -1,0 +1,45 @@
+@import java.io.PrintWriter;
+@import java.io.StringWriter;
+@import java.io.Writer;
+@import org.febit.wit.exception.ScriptEvaluateException;
+@import org.febit.wit.extern.lib.test.WitAssertionError;
+
+var new_print_writer = native new PrintWriter(Writer);
+var new_string_writer = native new StringWriter();
+
+var printError = function(ex) {
+  var out = new_string_writer();
+  var print = new_print_writer(out);
+  ex.~printStackTrace(print);
+  echo "------ Exception Stack Trace ------\n";
+  echo out;
+  echo "-----------------------------------\n";
+}
+{
+  var e = assertThrows(native ScriptEvaluateException.class, () -> {
+    throw "This is a test exception.";
+  });
+  echo "No.01\n";
+  printError(e);
+}
+{
+  var e = assertThrows(native ScriptEvaluateException.class, () -> {
+    {
+      var func = function() {
+        throw "Exception in function.";
+      }
+      if(1) {
+        func();
+      }
+    }
+  });
+  echo "No.02\n";
+  printError(e);
+}
+{
+  var e = assertThrows(native WitAssertionError.class, () -> {
+    assertTrue(false, "Will throw an assertion error.");
+  });
+  echo "No.03\n";
+  printError(e);
+}
