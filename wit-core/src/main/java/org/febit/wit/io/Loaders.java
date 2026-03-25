@@ -17,6 +17,7 @@ package org.febit.wit.io;
 
 import lombok.Singular;
 import lombok.experimental.UtilityClass;
+import org.febit.wit.io.Source.BeginWith;
 import org.febit.wit.io.loader.AdvancePathLoaderDecorator;
 import org.febit.wit.io.loader.ClasspathLoader;
 import org.febit.wit.io.loader.DebouncedLoaderDecorator;
@@ -26,10 +27,13 @@ import org.febit.wit.io.loader.FileSystemLoader;
 import org.febit.wit.io.loader.PathBasedLoader;
 import org.febit.wit.io.loader.SecurityLoaderDecorator;
 import org.febit.wit.io.loader.StringLoader;
+import org.febit.wit.util.ClassUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.time.Duration;
 import java.util.List;
 
@@ -70,14 +74,18 @@ public class Loaders {
             builderMethodName = "classpath"
     )
     private static Loader classpath0(
+            @Nullable ClassLoader classLoader,
             @Nullable Charset charset,
-            Source.@Nullable BeginWith beginWith,
+            @Nullable BeginWith beginWith,
             @Nullable Boolean cacheEnabled,
 
             @Nullable String root,
-            @Nullable String missingSuffix,
-            @Singular List<String> deputySuffixes
+            @Nullable String completeMissingSuffix,
+            @Singular List<String> candidateSuffixes
     ) {
+        if (classLoader == null) {
+            classLoader = ClassUtils.classLoader();
+        }
         if (charset == null) {
             charset = StandardCharsets.UTF_8;
         }
@@ -85,11 +93,11 @@ public class Loaders {
             beginWith = Source.BeginWith.SCRIPT;
         }
 
-        var delegate = ClasspathLoader.of(charset, beginWith);
+        var delegate = ClasspathLoader.of(classLoader, charset, beginWith);
         var advance = advance(delegate)
                 .root(root)
-                .missingSuffix(missingSuffix)
-                .deputySuffixes(deputySuffixes);
+                .completeMissingSuffix(completeMissingSuffix)
+                .candidateSuffixes(candidateSuffixes);
         if (cacheEnabled != null) {
             advance.cacheEnabled(cacheEnabled);
         }
@@ -101,24 +109,28 @@ public class Loaders {
             builderMethodName = "fileSystem"
     )
     private static Loader fileSystem0(
+            @Nullable FileSystem fileSystem,
             @Nullable Charset charset,
-            Source.@Nullable BeginWith beginWith,
+            @Nullable BeginWith beginWith,
             @Nullable Boolean cacheEnabled,
             @Nullable String root,
-            @Nullable String missingSuffix,
-            @Singular List<String> deputySuffixes
+            @Nullable String completeMissingSuffix,
+            @Singular List<String> candidateSuffixes
     ) {
+        if (fileSystem == null) {
+            fileSystem = FileSystems.getDefault();
+        }
         if (charset == null) {
             charset = StandardCharsets.UTF_8;
         }
         if (beginWith == null) {
             beginWith = Source.BeginWith.SCRIPT;
         }
-        var delegate = FileSystemLoader.of(charset, beginWith);
+        var delegate = FileSystemLoader.of(fileSystem, charset, beginWith);
         var advance = advance(delegate)
                 .root(root)
-                .missingSuffix(missingSuffix)
-                .deputySuffixes(deputySuffixes);
+                .completeMissingSuffix(completeMissingSuffix)
+                .candidateSuffixes(candidateSuffixes);
         if (cacheEnabled != null) {
             advance.cacheEnabled(cacheEnabled);
         }

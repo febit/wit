@@ -21,13 +21,13 @@ import java.io.Reader;
 import java.io.StringReader;
 
 public record StringSource(
-        String text,
+        String content,
         BeginWith beginWith
 ) implements Source {
 
     @Override
     public Reader open() {
-        return new StringReader(this.text);
+        return new StringReader(this.content);
     }
 
     @Override

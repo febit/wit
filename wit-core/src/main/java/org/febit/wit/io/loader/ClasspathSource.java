@@ -17,7 +17,6 @@ package org.febit.wit.io.loader;
 
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.io.Source;
-import org.febit.wit.util.ClassUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,6 +24,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 
 public record ClasspathSource(
+        ClassLoader classLoader,
         String path,
         Charset charset,
         BeginWith beginWith
@@ -32,13 +32,12 @@ public record ClasspathSource(
 
     @Override
     public boolean exists() {
-        return ClassUtils.classLoader().getResource(path) != null;
+        return classLoader.getResource(path) != null;
     }
 
     @Override
     public Reader open() throws IOException {
-        var in = ClassUtils.classLoader()
-                .getResourceAsStream(path);
+        var in = classLoader.getResourceAsStream(path);
         if (in == null) {
             throw new NoSuchSourceException("No such resource: " + path);
         }

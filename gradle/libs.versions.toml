@@ -6,11 +6,12 @@ febit-devkit = '1.6.0'
 jakarta-servlet-api='6.1.0'
 slf4j = '2.0.17'
 xbib-jflex = "3.0.2"
+zerofs = "0.1.0"
 
 [libraries]
 febit-commons-deps = { module = 'org.febit:febit-commons-dependencies', version.ref = 'febit-commons' }
 jakarta-servlet-api= { module = 'jakarta.servlet:jakarta.servlet-api', version.ref = 'jakarta-servlet-api' }
-
+zerofs = { module = 'io.roastedroot:zerofs', version.ref = 'zerofs' }
 
 [plugins]
 febit-bom = { id = 'org.febit.standard-bom', version.ref = 'febit-devkit' }

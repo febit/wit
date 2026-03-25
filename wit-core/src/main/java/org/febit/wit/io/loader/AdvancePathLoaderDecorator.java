@@ -15,6 +15,8 @@
  */
 package org.febit.wit.io.loader;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.febit.wit.io.Loader;
 import org.febit.wit.io.Source;
 import org.febit.wit.util.PathUtils;
@@ -25,13 +27,16 @@ import java.util.List;
 @lombok.Builder(
         builderClassName = "Builder"
 )
+@Accessors(fluent = true)
 public class AdvancePathLoaderDecorator implements Loader {
 
+    @Getter
     private final PathBasedLoader delegate;
 
     /**
      * Whether to enable caching.
      */
+    @Getter
     private final boolean cacheEnabled;
 
     /**
@@ -40,28 +45,30 @@ public class AdvancePathLoaderDecorator implements Loader {
      * Nullable means no root prefix.
      */
     @Nullable
+    @Getter
     private final String root;
 
     /**
-     * The suffix to append when missing.
+     * The suffix to complete if is missing.
      * <p>
-     * Nullable means no suffix appending.
+     * Nullable means no suffix to complete.
      *
-     * @see #deputySuffixes
+     * @see #candidateSuffixes
      */
     @Nullable
-    private final String missingSuffix;
+    @Getter
+    private final String completeMissingSuffix;
 
     /**
-     * The deputy suffixes that are also acceptable.
+     * The candidate suffixes to check if the path is missing the suffix.
      * <p>
      * if the path ends with any of these suffixes,
-     * no missing suffix will be appended.
+     * no missing suffix will be completed.
      *
-     * @see #missingSuffix
+     * @see #completeMissingSuffix
      */
     @Nullable
-    private final List<String> deputySuffixes;
+    private final List<String> candidateSuffixes;
 
     public static Builder builder() {
         return new Builder();
@@ -109,8 +116,8 @@ public class AdvancePathLoaderDecorator implements Loader {
      * /path/to/tmpl1.wit , ../tmpl2.wit =&gt; /path/tmpl2.wit
      * </pre>
      *
-     * @param refer path to refence
-     * @param relative  path to relative
+     * @param refer    path to refence
+     * @param relative path to relative
      * @return path
      */
     @Nullable
@@ -153,19 +160,19 @@ public class AdvancePathLoaderDecorator implements Loader {
             return null;
         }
 
-        if (this.missingSuffix == null
-                || normalized.endsWith(this.missingSuffix)
+        if (this.completeMissingSuffix == null
+                || normalized.endsWith(this.completeMissingSuffix)
                 || normalized.charAt(normalized.length() - 1) == '/') {
             return normalized;
         }
 
-        if (this.deputySuffixes != null) {
-            for (var deputy : this.deputySuffixes) {
+        if (this.candidateSuffixes != null) {
+            for (var deputy : this.candidateSuffixes) {
                 if (normalized.endsWith(deputy)) {
                     return normalized;
                 }
             }
         }
-        return normalized.concat(this.missingSuffix);
+        return normalized.concat(this.completeMissingSuffix);
     }
 }

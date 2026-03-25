@@ -25,7 +25,11 @@ import org.jspecify.annotations.Nullable;
 public class StringLoader implements Loader {
 
     private final boolean cacheEnabled;
-    private final Source.BeginWith beginWith;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    @SuppressWarnings("NullableProblems")
+    private final Source.BeginWith beginWith = Source.BeginWith.SCRIPT;
 
     @Override
     public Source get(String path) {

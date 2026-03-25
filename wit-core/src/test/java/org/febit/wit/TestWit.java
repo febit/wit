@@ -100,22 +100,22 @@ public class TestWit {
         var classpath = Loaders.classpath()
                 .root("org/febit/wit/test/tmpls")
                 .beginWith(Source.BeginWith.SCRIPT)
-                .deputySuffixes(EXT_DEPUTIES)
-                .missingSuffix(EXT_WIT)
+                .candidateSuffixes(EXT_DEPUTIES)
+                .completeMissingSuffix(EXT_WIT)
                 .build();
 
         var lib = Loaders.classpath()
                 .root("org/febit/wit/test/lib")
                 .beginWith(Source.BeginWith.SCRIPT)
-                .deputySuffixes(EXT_DEPUTIES)
-                .missingSuffix(EXT_WIT)
+                .candidateSuffixes(EXT_DEPUTIES)
+                .completeMissingSuffix(EXT_WIT)
                 .build();
 
         var libSub = Loaders.classpath()
                 .root("org/febit/wit/test/lib-sub")
                 .beginWith(Source.BeginWith.SCRIPT)
-                .deputySuffixes(EXT_DEPUTIES)
-                .missingSuffix(EXT_WIT)
+                .candidateSuffixes(EXT_DEPUTIES)
+                .completeMissingSuffix(EXT_WIT)
                 .build();
 
         var lazyLoader = Loaders.debounce(classpath, Duration.ofSeconds(10));

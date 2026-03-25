@@ -30,6 +30,7 @@ dependencies {
 
   testImplementation 'commons-io:commons-io'
   testImplementation libs.jakarta.servlet.api
+  testImplementation libs.zerofs
 }
 
 def PKG_CORE = 'org/febit/wit/parser'

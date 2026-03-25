@@ -17,13 +17,13 @@ package org.febit.wit.io.loader;
 
 import org.febit.wit.io.Source;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
@@ -37,7 +37,7 @@ public record FileSystemSource(
     public long version() {
         try {
             return Files.getLastModifiedTime(path).toMillis();
-        } catch (FileNotFoundException e) {
+        } catch (NoSuchFileException e) {
             return -1;
         } catch (IOException e) {
             throw new UncheckedIOException(e);

@@ -15,20 +15,27 @@
  */
 package org.febit.wit.io.loader;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.febit.wit.io.Source;
 
 import java.nio.charset.Charset;
 
+@Accessors(fluent = true)
 @RequiredArgsConstructor(staticName = "of")
 public class ClasspathLoader implements PathBasedLoader {
 
+    @Getter
+    private final ClassLoader classLoader;
+    @Getter
     private final Charset charset;
+    @Getter
     private final Source.BeginWith beginWith;
 
     @Override
     public Source get(String path) {
-        return new ClasspathSource(path, charset, beginWith);
+        return new ClasspathSource(classLoader, path, charset, beginWith);
     }
 
 }
