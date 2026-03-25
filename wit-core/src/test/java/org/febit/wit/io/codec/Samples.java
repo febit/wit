@@ -15,10 +15,21 @@
  */
 package org.febit.wit.io.codec;
 
-import java.io.IOException;
-import java.io.Writer;
+import lombok.experimental.UtilityClass;
 
-public interface Decoder {
+@UtilityClass
+public class Samples {
 
-    void decode(byte[] bytes, int off, int len, Writer writer) throws IOException;
+    static final String TEXT_UTF8 = "UTF-8\n"
+            + "ASCII: abcdefghijklmnopqrstuvwxyz\n"
+            + "Symbols: !@#$%^&*()_+-=~`|\\;:'\",.<>/?\n"
+            + "Chinese: 中文字符\n"
+            + "emoji: \uD83D\uDE00\uD83D\uDE02\uD83D\uDE09\n"
+            // 装饰符号
+            + "Decorators: \uD83C\uDFF3\uFE0F\u200D\uD83C\uDF08\uD83C\uDF1E\uFE0F\uD83C\uDF1F\uFE0F\n"
+            // 4字节字符
+            + "4-byte chars: \uD83D\uDE00\uD83D\uDE02\uD83D\uDE09\n"
+            // 3字节字符
+            + "3-byte chars: \u4E2D\u6587\u5B57\u7B26\n";
+
 }

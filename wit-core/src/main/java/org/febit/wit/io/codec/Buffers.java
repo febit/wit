@@ -15,18 +15,39 @@
  */
 package org.febit.wit.io.codec;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 
-@RequiredArgsConstructor(staticName = "of")
+@Slf4j
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Accessors(fluent = true)
 final class Buffers {
 
     private static final int DEFAULT_SIZE = 1024;
 
+    /**
+     * If the buffer size is too small, unexpected exceptions may occur,
+     * such as {@code BufferOverflowException} or {@code MalformedInputException}.
+     */
+    private static final int MIN_SIZE = 16;
+
+    @Getter
     private final int size;
 
     private char @Nullable [] chars;
     private byte @Nullable [] bytes;
+
+    public static Buffers of(int size) {
+        if (size < MIN_SIZE) {
+            log.warn("Buffer size {} is too small, use {} instead", size, MIN_SIZE);
+            size = MIN_SIZE;
+        }
+        return new Buffers(size);
+    }
 
     public static Buffers of() {
         return of(DEFAULT_SIZE);

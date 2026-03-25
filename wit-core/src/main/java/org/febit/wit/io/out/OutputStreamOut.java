@@ -61,7 +61,7 @@ public final class OutputStreamOut implements Out {
     @Override
     public void write(char[] chars, int offset, int length) {
         try {
-            this.encoder.write(chars, offset, length, this.output);
+            this.encoder.encode(chars, offset, length, this.output);
         } catch (IOException ex) {
             throw new ScriptEvaluateException(ex);
         }
@@ -75,7 +75,7 @@ public final class OutputStreamOut implements Out {
     @Override
     public void write(String string, int offset, int length) {
         try {
-            this.encoder.write(string, offset, length, this.output);
+            this.encoder.encode(string, offset, length, this.output);
         } catch (IOException ex) {
             throw new ScriptEvaluateException(ex);
         }

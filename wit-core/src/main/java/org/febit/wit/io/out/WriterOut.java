@@ -43,7 +43,7 @@ public final class WriterOut implements Out {
     @Override
     public void write(byte[] bytes, int offset, int length) {
         try {
-            this.decoder.write(bytes, offset, length, this.writer);
+            this.decoder.decode(bytes, offset, length, this.writer);
         } catch (IOException ex) {
             throw new ScriptEvaluateException(ex);
         }
@@ -52,7 +52,7 @@ public final class WriterOut implements Out {
     @Override
     public void write(byte[] bytes) {
         try {
-            this.decoder.write(bytes, 0, bytes.length, this.writer);
+            this.decoder.decode(bytes, 0, bytes.length, this.writer);
         } catch (IOException ex) {
             throw new ScriptEvaluateException(ex);
         }

@@ -47,7 +47,7 @@ public class ByteArrayTemplateTextFactory implements TemplateTextFactory {
     protected byte[] encode(char[] text) {
         try {
             var out = outputs.get();
-            encoders.get().write(text, 0, text.length, out);
+            encoders.get().encode(text, 0, text.length, out);
             var bytes = out.toByteArray();
             out.reset();
             return bytes;

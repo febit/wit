@@ -20,7 +20,7 @@ import java.io.OutputStream;
 
 public interface Encoder {
 
-    void write(char[] chars, int offset, int length, OutputStream out) throws IOException;
+    void encode(char[] chars, int offset, int length, OutputStream out) throws IOException;
 
-    void write(String string, int offset, int length, OutputStream out) throws IOException;
+    void encode(String string, int offset, int length, OutputStream out) throws IOException;
 }

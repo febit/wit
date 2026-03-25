@@ -39,7 +39,7 @@ public class DefaultDecoder implements Decoder {
     }
 
     @Override
-    public void write(byte @Nullable [] bytes, int offset, int length, Writer writer) throws IOException {
+    public void decode(byte @Nullable [] bytes, int offset, int length, Writer writer) throws IOException {
         if (bytes == null || length == 0) {
             return;
         }

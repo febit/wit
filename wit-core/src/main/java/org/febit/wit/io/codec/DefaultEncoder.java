@@ -39,26 +39,50 @@ public class DefaultEncoder implements Encoder {
     }
 
     @Override
-    public void write(String string, int offset, int length, OutputStream out) throws IOException {
-        char[] chars = this.buffers.chars();
-        int copied = 0;
-        while (copied < length) {
-            int copyLen = Math.min(chars.length, length - copied);
-            string.getChars(offset + copied, offset + copied + copyLen, chars, 0);
-            write(chars, 0, copyLen, out);
-            copied += copyLen;
+    public void encode(String string, int offset, int length, OutputStream out) throws IOException {
+        var chars = this.buffers.chars();
+        int remaining = length;
+
+        while (remaining > 0) {
+            var srcBegin = offset + length - remaining;
+            int batchSize = Math.min(remaining, chars.length);
+            string.getChars(srcBegin, srcBegin + batchSize, chars, 0);
+
+            // If last char is a high surrogate,
+            //   exclude it in current batch to avoid splitting surrogate pair
+            if (Character.isHighSurrogate(chars[batchSize - 1])) {
+                batchSize -= 1;
+                if (batchSize == 0) {
+                    throw new IllegalStateException("High surrogate char at offset " + srcBegin + " cannot be encoded");
+                }
+            }
+
+            var in = CharBuffer.wrap(chars, 0, batchSize);
+            encode(in, out);
+            if (in.remaining() != 0) {
+                throw new IllegalStateException(
+                        "Should have encoded all chars, but " + in.remaining() + " chars remain unencoded");
+            }
+            remaining -= in.position();
         }
     }
 
     @Override
-    public void write(char @Nullable [] chars, int offset, int length, OutputStream out) throws IOException {
+    public void encode(char @Nullable [] chars, int offset, int length, OutputStream out) throws IOException {
         if (chars == null || length == 0) {
+            return;
+        }
+        var in = CharBuffer.wrap(chars, offset, length);
+        encode(in, out);
+    }
+
+    void encode(CharBuffer in, OutputStream out) throws IOException {
+        if (!in.hasRemaining()) {
             return;
         }
         var encoder = this.charsetEncoder.reset();
         var bytes = this.buffers.bytes();
         var buf = ByteBuffer.wrap(bytes);
-        var in = CharBuffer.wrap(chars, offset, length);
         for (; ; ) {
             var cr = in.hasRemaining()
                     ? encoder.encode(in, buf, true)

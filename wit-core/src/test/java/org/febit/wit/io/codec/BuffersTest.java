@@ -15,10 +15,15 @@
  */
 package org.febit.wit.io.codec;
 
-import java.io.IOException;
-import java.io.Writer;
+import org.junit.jupiter.api.Test;
 
-public interface Decoder {
+import static org.junit.jupiter.api.Assertions.*;
 
-    void decode(byte[] bytes, int off, int len, Writer writer) throws IOException;
+class BuffersTest {
+
+    @Test
+    void tooSmall() {
+        var buffers = Buffers.of(8);
+        assertEquals(16, buffers.size());
+    }
 }
