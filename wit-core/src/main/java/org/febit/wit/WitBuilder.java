@@ -62,8 +62,7 @@ public class WitBuilder {
     private Loader loader;
 
     public WitBuilder predefinedVars(String... vars) {
-        this.predefinedVars.addAll(List.of(vars));
-        return this;
+        return predefinedVars(List.of(vars));
     }
 
     public WitBuilder predefinedVars(Collection<String> vars) {
@@ -72,8 +71,7 @@ public class WitBuilder {
     }
 
     public WitBuilder setup(String... scripts) {
-        this.setupScripts.addAll(Arrays.asList(scripts));
-        return this;
+        return setup(Arrays.asList(scripts));
     }
 
     public WitBuilder setup(Collection<String> scripts) {

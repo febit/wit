@@ -1,7 +1,15 @@
+var UNDEFINED = (() -> { return; })();
+
 var str
 
 str = ``
 assertEquals(str, "")
+
+str = `null: ${null}`
+assertEquals(str, "null: ")
+
+str = `undefined: ${UNDEFINED}`
+assertEquals(str, "undefined: ")
 
 str = `awesome\t\n script
 

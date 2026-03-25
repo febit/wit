@@ -19,7 +19,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.io.Loader;
 import org.febit.wit.io.Out;
@@ -44,7 +43,6 @@ import static org.febit.wit.util.Defaults.nvl;
 /**
  * Wit script engine.
  */
-@Slf4j
 @lombok.Builder(
         access = AccessLevel.PACKAGE,
         builderClassName = "InternalBuilder",
@@ -148,10 +146,10 @@ public class Wit {
         // then create script
         script = new ScriptImpl(this, normalized, myLoader.get(normalized));
         if (myLoader.isCacheEnabled(normalized)) {
-            var oldScript = this.cachedScripts.putIfAbsent(normalized, script);
-            // if old script exist, use the old one
-            if (oldScript != null) {
-                script = oldScript;
+            var present = this.cachedScripts.putIfAbsent(normalized, script);
+            // Use the present script if exists
+            if (present != null) {
+                script = present;
             }
         }
         return script;

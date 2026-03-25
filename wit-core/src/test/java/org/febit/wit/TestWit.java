@@ -97,11 +97,22 @@ public class TestWit {
                 .beginWith(Source.BeginWith.TEMPLATE)
                 .build();
 
+        var cachedString = Loaders.string()
+                .beginWith(Source.BeginWith.TEMPLATE)
+                .cacheEnabled(true)
+                .build();
+
         var classpath = Loaders.classpath()
                 .root("org/febit/wit/test/tmpls")
                 .beginWith(Source.BeginWith.SCRIPT)
                 .candidateSuffixes(EXT_DEPUTIES)
                 .completeMissingSuffix(EXT_WIT)
+                .build();
+
+        var cachedClasspath = Loaders.classpath()
+                .root("org/febit/wit/test/tmpls")
+                .beginWith(Source.BeginWith.SCRIPT)
+                .cacheEnabled(true)
                 .build();
 
         var lib = Loaders.classpath()
@@ -126,6 +137,8 @@ public class TestWit {
                 .rule("lib-test:", lazyLoader)
                 .rule("lib:", lib)
                 .rule("lib:sub:", libSub)
+                .rule("cached:", cachedClasspath)
+                .rule("cached-string:", cachedString)
                 .fallback(lazyLoader)
                 .build();
     }

@@ -17,6 +17,8 @@ package org.febit.wit.parser.security;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.febit.wit.parser.security.RuleBasedNativeSecurity.ROOT_PATH;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,13 +29,12 @@ class RuleBasedNativeSecurityTest {
 
         var builder = RuleBasedNativeSecurity.builder()
                 .deny("a")
-                .allow("a")
-                .allow("b")
-                .deny("b")
-                .allow("c")
+                .allow("a", "b")
+                .deny(List.of("b"))
+                .allow(List.of("c"))
                 .deny("c.d")
                 .allow("c.d.e.f")
-                .deny("c.d.e.f.g");
+                .deny(new String[]{"c.d.e.f.g"});
 
         var security = builder.build();
 
@@ -56,6 +57,9 @@ class RuleBasedNativeSecurityTest {
         assertFalse(security.allowed("c.d.e"));
         assertTrue(security.allowed("c.d.e.f"));
         assertFalse(security.allowed("c.d.e.f.g"));
+
+        assertFalse(security.allowed("c.d.e.f.g.h"));
+        // Double check to make sure the cache works.
         assertFalse(security.allowed("c.d.e.f.g.h"));
 
         security = builder.allowRoot().build();
