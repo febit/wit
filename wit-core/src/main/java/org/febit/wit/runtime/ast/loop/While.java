@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.statement;
+package org.febit.wit.runtime.ast.loop;
 
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
-public record WhileNonFlow(
+import java.util.function.Consumer;
+
+public record While(
         int scope,
         Expression condition,
-        StatementBatch body,
+        LoopBody body,
         Position position
-) implements Statement {
+) implements Statement, WithFlowControl {
 
     @Override
     @Nullable
@@ -38,10 +42,18 @@ public record WhileNonFlow(
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     private void execute0(InternalContext context) {
-        var batch = this.body;
+        var loop = this.body;
         var cond = this.condition;
         while (ALU.isTruly(cond.execute(context))) {
-            batch.execute(context);
+            if (loop.execute(context)) {
+                // End this loop if not continue
+                break;
+            }
         }
+    }
+
+    @Override
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+        this.body.bubbleFlowControls(collector);
     }
 }

@@ -43,6 +43,6 @@ public record IfElse(
 
     @Override
     public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        FlowControls.collect(collector, then, elseBody);
+        FlowControls.bubble(collector, then, elseBody);
     }
 }

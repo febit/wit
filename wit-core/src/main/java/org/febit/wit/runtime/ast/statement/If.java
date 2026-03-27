@@ -44,6 +44,6 @@ public record If(
 
     @Override
     public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        FlowControls.collect(collector, then);
+        FlowControls.bubble(collector, then);
     }
 }

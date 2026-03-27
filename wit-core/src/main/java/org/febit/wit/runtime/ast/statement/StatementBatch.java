@@ -17,9 +17,13 @@ package org.febit.wit.runtime.ast.statement;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.ast.FlowControl;
+import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * A batch of statements, used for internal optimization, not for AST.
@@ -27,7 +31,7 @@ import java.util.List;
  * NOTICE: Except the last one, statements in batch should not have flow control.
  */
 @RequiredArgsConstructor(staticName = "of")
-public class StatementBatch {
+public class StatementBatch implements WithFlowControl {
 
     private final Statement[] statements;
 
@@ -51,5 +55,10 @@ public class StatementBatch {
 
     public boolean isEmpty() {
         return this.statements.length == 0;
+    }
+
+    @Override
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+        FlowControls.bubble(collector, statements);
     }
 }

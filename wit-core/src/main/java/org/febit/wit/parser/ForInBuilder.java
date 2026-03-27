@@ -18,8 +18,7 @@ package org.febit.wit.parser;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.StatementUtils;
-import org.febit.wit.runtime.ast.statement.ForIn;
-import org.febit.wit.runtime.ast.statement.ForInNonFlow;
+import org.febit.wit.runtime.ast.loop.ForIn;
 
 import java.util.Objects;
 
@@ -46,20 +45,11 @@ public class ForInBuilder extends BaseForInBuilder {
         Objects.requireNonNull(this.collection);
 
         var collection = StatementUtils.optimize(this.collection);
-
-        var bodiesInspect = inspectBodies();
-        var bodyBatches = bodiesInspect.bodyBatches();
-        if (!bodiesInspect.isBodyHasFlowControls()) {
-            if (bodyBatches.size() != 1) {
-                throw new IllegalStateException("unexpected body batches size: " + bodyBatches.size());
-            }
-            return new ForInNonFlow(scope(), collection, filter,
-                    iterIndex, itemIndex, bodyBatches.get(0), elseBody, position);
-        }
-
-        return new ForIn(label(), scope(), collection, filter,
-                iterIndex, itemIndex, bodyBatches,
-                elseBody, bodiesInspect.bubbledFlowControls(),
+        var loopBody = Ast.loopBodyFromStatements(this.body, label());
+        return new ForIn(
+                scope(), collection, filter,
+                iterIndex, itemIndex,
+                loopBody, elseBody,
                 position
         );
     }

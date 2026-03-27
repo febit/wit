@@ -13,25 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast;
+@NullMarked
+package org.febit.wit.runtime.ast.loop;
 
-import lombok.experimental.UtilityClass;
-import org.jspecify.annotations.Nullable;
-
-import java.util.function.Consumer;
-
-@UtilityClass
-public class FlowControls {
-
-    public static void bubble(Consumer<FlowControl> collector, @Nullable Statement statement) {
-        if (statement instanceof WithFlowControl with) {
-            with.bubbleFlowControls(collector);
-        }
-    }
-
-    public static void bubble(Consumer<FlowControl> collector, @Nullable Statement... statements) {
-        for (var statement : statements) {
-            bubble(collector, statement);
-        }
-    }
-}
+import org.jspecify.annotations.NullMarked;

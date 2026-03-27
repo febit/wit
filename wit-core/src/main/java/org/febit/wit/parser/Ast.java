@@ -46,6 +46,11 @@ import org.febit.wit.runtime.ast.expr.SuppliedValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapFrameValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
 import org.febit.wit.runtime.ast.extra.Import;
+import org.febit.wit.runtime.ast.loop.DoWhile;
+import org.febit.wit.runtime.ast.loop.LoopBody;
+import org.febit.wit.runtime.ast.loop.LoopBodyNonFlow;
+import org.febit.wit.runtime.ast.loop.LoopBodyWithFlow;
+import org.febit.wit.runtime.ast.loop.While;
 import org.febit.wit.runtime.ast.oper.And;
 import org.febit.wit.runtime.ast.oper.ConstableBiOperator;
 import org.febit.wit.runtime.ast.oper.ConstableUnaryOperator;
@@ -59,8 +64,6 @@ import org.febit.wit.runtime.ast.oper.SelfCalcAndAssign;
 import org.febit.wit.runtime.ast.statement.Block;
 import org.febit.wit.runtime.ast.statement.BlockNonFlow;
 import org.febit.wit.runtime.ast.statement.BreakpointStatement;
-import org.febit.wit.runtime.ast.statement.DoWhile;
-import org.febit.wit.runtime.ast.statement.DoWhileNonFlow;
 import org.febit.wit.runtime.ast.statement.Echo;
 import org.febit.wit.runtime.ast.statement.If;
 import org.febit.wit.runtime.ast.statement.IfElse;
@@ -73,8 +76,6 @@ import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.ast.statement.StatementList;
 import org.febit.wit.runtime.ast.statement.TryCatchFinally;
 import org.febit.wit.runtime.ast.statement.TryFinally;
-import org.febit.wit.runtime.ast.statement.While;
-import org.febit.wit.runtime.ast.statement.WhileNonFlow;
 import org.febit.wit.runtime.ast.template.TemplateStringValue;
 import org.jspecify.annotations.Nullable;
 
@@ -88,7 +89,6 @@ import java.util.function.UnaryOperator;
 
 @UtilityClass
 public class Ast {
-
 
     public static IfExpr ifExpr(
             Expression condition,
@@ -229,32 +229,14 @@ public class Ast {
         Objects.requireNonNull(body, "body is required");
         Objects.requireNonNull(pos, "position is required");
 
+        var loopBody = loopBodyFromBatches(
+                body.body(),
+                label != null ? label : 0
+        );
         var scope = body.scope();
-        var batches = body.body();
-
-        var controls = new ArrayList<FlowControl>();
-        FlowControls.collect(controls::add, body);
-
-        if (controls.isEmpty()) {
-            if (batches.size() != 1) {
-                throw new IllegalStateException("Unexpected multiple batches without flow control");
-            }
-            var batch0 = batches.get(0);
-            return switch (kind) {
-                case WHILE -> new WhileNonFlow(scope, condition, batch0, pos);
-                case DO_WHILE -> new DoWhileNonFlow(scope, condition, batch0, pos);
-            };
-        }
-
-        if (label == null) {
-            label = 0;
-        }
-        var bubbled = List.copyOf(controls.stream()
-                .filter(FlowControls.loopBubbleFilter(label))
-                .toList());
         return switch (kind) {
-            case WHILE -> new While(label, scope, condition, batches, bubbled, pos);
-            case DO_WHILE -> new DoWhile(label, scope, condition, batches, bubbled, pos);
+            case WHILE -> new While(scope, condition, loopBody, pos);
+            case DO_WHILE -> new DoWhile(scope, condition, loopBody, pos);
         };
     }
 
@@ -331,6 +313,34 @@ public class Ast {
                 .toArray(AssignableExpression[]::new);
 
         return new Import(path, params, vars, targets, refer, pos);
+    }
+
+    public static LoopBody loopBodyFromStatements(List<Statement> statements, int targetLabel) {
+        var controls = new ArrayList<FlowControl>();
+        var batches = batch(statements, controls::add);
+        return loopBody0(batches, controls, targetLabel);
+    }
+
+    public static LoopBody loopBodyFromBatches(List<StatementBatch> batches, int targetLabel) {
+        var controls = new ArrayList<FlowControl>();
+        batches.forEach(batch -> batch.bubbleFlowControls(controls::add));
+        return loopBody0(batches, controls, targetLabel);
+    }
+
+    private static LoopBody loopBody0(List<StatementBatch> batches, List<FlowControl> controls, int targetLabel) {
+        if (controls.isEmpty()) {
+            if (batches.size() != 1) {
+                throw new IllegalStateException("Unexpected multiple batches without flow control");
+            }
+            var batch0 = batches.get(0);
+            return new LoopBodyNonFlow(batch0);
+        }
+
+        var bubbled = List.copyOf(controls.stream()
+                .filter(f -> !f.matchesLabel(targetLabel)
+                        || !f.state().isBreakOrContinue())
+                .toList());
+        return new LoopBodyWithFlow(targetLabel, batches, bubbled);
     }
 
     public record ImportVar(String name, AssignableExpression target) {
@@ -463,7 +473,7 @@ public class Ast {
 
         flatAndOptimize(list, stat -> {
             current.add(stat);
-            FlowControls.collect(collecting, stat);
+            FlowControls.bubble(collecting, stat);
             if (flag.get()) {
                 batches.add(StatementBatch.of(current));
                 current.clear();

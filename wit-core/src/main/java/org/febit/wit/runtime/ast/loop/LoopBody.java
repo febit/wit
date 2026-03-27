@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast;
+package org.febit.wit.runtime.ast.loop;
 
-import lombok.experimental.UtilityClass;
-import org.jspecify.annotations.Nullable;
+import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.ast.WithFlowControl;
 
-import java.util.function.Consumer;
+public interface LoopBody extends WithFlowControl {
 
-@UtilityClass
-public class FlowControls {
-
-    public static void bubble(Consumer<FlowControl> collector, @Nullable Statement statement) {
-        if (statement instanceof WithFlowControl with) {
-            with.bubbleFlowControls(collector);
-        }
-    }
-
-    public static void bubble(Consumer<FlowControl> collector, @Nullable Statement... statements) {
-        for (var statement : statements) {
-            bubble(collector, statement);
-        }
-    }
+    /**
+     * Execute loop body, handle flow control.
+     *
+     * @param context execution context
+     * @return true if loop should interrupt, false if should continue to next iteration
+     */
+    boolean execute(InternalContext context);
 }

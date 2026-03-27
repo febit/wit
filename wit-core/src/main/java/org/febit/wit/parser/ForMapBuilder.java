@@ -18,8 +18,7 @@ package org.febit.wit.parser;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.StatementUtils;
-import org.febit.wit.runtime.ast.statement.ForMap;
-import org.febit.wit.runtime.ast.statement.ForMapNonFlow;
+import org.febit.wit.runtime.ast.loop.ForMap;
 
 import java.util.Objects;
 
@@ -56,20 +55,12 @@ public class ForMapBuilder extends BaseForInBuilder {
         Objects.requireNonNull(collection);
 
         var collection = StatementUtils.optimize(this.collection);
-
-        var bodiesInspect = inspectBodies();
-        var bodyBatches = bodiesInspect.bodyBatches();
-        if (!bodiesInspect.isBodyHasFlowControls()) {
-            if (bodyBatches.size() != 1) {
-                throw new IllegalStateException("unexpected body batches size: " + bodyBatches.size());
-            }
-            return new ForMapNonFlow(scope(), collection, filter,
-                    iterIndex, keyIndex, valueIndex, bodyBatches.get(0), elseBody, position);
-        }
-
-        return new ForMap(label(), scope(), collection, filter,
-                iterIndex, keyIndex, valueIndex, bodyBatches,
-                elseBody, bodiesInspect.bubbledFlowControls(),
-                position);
+        var loopBody = Ast.loopBodyFromStatements(this.body, label());
+        return new ForMap(
+                scope(), collection, filter,
+                iterIndex, keyIndex, valueIndex,
+                loopBody, elseBody,
+                position
+        );
     }
 }

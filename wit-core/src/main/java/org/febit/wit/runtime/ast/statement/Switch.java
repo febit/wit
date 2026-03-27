@@ -62,10 +62,10 @@ public record Switch(
         };
 
         branches.values().forEach(entry ->
-                FlowControls.collect(filtered, entry.body)
+                FlowControls.bubble(filtered, entry.body)
         );
         if (defaultBranch != null) {
-            FlowControls.collect(filtered, defaultBranch.body);
+            FlowControls.bubble(filtered, defaultBranch.body);
         }
     }
 

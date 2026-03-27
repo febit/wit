@@ -13,28 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.statement;
+package org.febit.wit.runtime.ast.loop;
 
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.FlowControl;
+import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.febit.wit.runtime.ast.expr.FunctionDeclarer;
 import org.febit.wit.runtime.iter.Iters;
 import org.febit.wit.runtime.iter.KeyIter;
 import org.jspecify.annotations.Nullable;
 
-public record ForMapNonFlow(
+import java.util.function.Consumer;
+
+public record ForMap(
         int scope,
         Expression collection,
         @Nullable FunctionDeclarer filter,
         int iterIndex,
         int keyIndex,
         int valueIndex,
-        StatementBatch body,
+        LoopBody body,
         @Nullable Statement elseBody,
         Position position
-) implements Statement {
+) implements Statement, WithFlowControl {
 
     @Override
     @Nullable
@@ -63,7 +68,7 @@ public record ForMapNonFlow(
             "squid:S3776", // Cognitive Complexity of methods should not be too high
     })
     private void execute0(InternalContext context, KeyIter iter) {
-        var batch = this.body;
+        var loop = this.body;
         var keyIdx = this.keyIndex;
         var valIdx = this.valueIndex;
         var heap = context.variables();
@@ -73,7 +78,16 @@ public record ForMapNonFlow(
                     keyIdx, iter.next(),
                     valIdx, iter.value()
             );
-            batch.execute(context);
+            if (loop.execute(context)) {
+                // End this loop if not continue
+                break;
+            }
         } while (iter.hasNext());
+    }
+
+    @Override
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+        this.body.bubbleFlowControls(collector);
+        FlowControls.bubble(collector, this.elseBody);
     }
 }

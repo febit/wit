@@ -51,6 +51,6 @@ public record TryCatchFinally(
 
     @Override
     public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        FlowControls.collect(collector, body, catchBody, finallyBody);
+        FlowControls.bubble(collector, body, catchBody, finallyBody);
     }
 }

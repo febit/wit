@@ -13,39 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.statement;
+package org.febit.wit.runtime.ast.loop;
 
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.FlowControl;
-import org.febit.wit.runtime.ast.FlowControls;
-import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.WithFlowControl;
-import org.jspecify.annotations.Nullable;
+import org.febit.wit.runtime.ast.statement.StatementBatch;
 
 import java.util.function.Consumer;
 
-public record TryFinally(
-        Statement body,
-        @Nullable Statement finalBody,
-        Position position
-) implements Statement, WithFlowControl {
+public record LoopBodyNonFlow(
+        StatementBatch batch
+) implements LoopBody {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    @Nullable
-    public Object execute(InternalContext context) {
-        try {
-            body.execute(context);
-        } finally {
-            if (finalBody != null) {
-                finalBody.execute(context);
-            }
-        }
-        return null;
+    public boolean execute(InternalContext context) {
+        batch.execute(context);
+        return false;
     }
 
     @Override
     public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        FlowControls.bubble(collector, body, finalBody);
+        // No flow control, do nothing.
     }
 }

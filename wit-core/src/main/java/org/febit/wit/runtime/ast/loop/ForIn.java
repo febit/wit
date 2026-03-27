@@ -13,27 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.statement;
+package org.febit.wit.runtime.ast.loop;
 
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.FlowControl;
+import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.febit.wit.runtime.ast.expr.FunctionDeclarer;
 import org.febit.wit.runtime.iter.Iter;
 import org.febit.wit.runtime.iter.Iters;
 import org.jspecify.annotations.Nullable;
 
-public record ForInNonFlow(
+import java.util.function.Consumer;
+
+public record ForIn(
         int scope,
         Expression collection,
         @Nullable FunctionDeclarer filter,
         int iterIndex,
         int itemIndex,
-        StatementBatch body,
+        LoopBody body,
         @Nullable Statement elseBody,
         Position position
-) implements Statement {
+) implements Statement, WithFlowControl {
 
     @Override
     @Nullable
@@ -62,13 +67,22 @@ public record ForInNonFlow(
             "squid:S3776", // Cognitive Complexity of methods should not be too high
     })
     private void execute0(InternalContext context, Iter iter) {
-        var batch = this.body;
+        var loop = this.body;
         var itemIdx = this.itemIndex;
         var heap = context.variables();
         heap.set(iterIndex, iter);
         do {
             heap.set(itemIdx, iter.next());
-            batch.execute(context);
+            if (loop.execute(context)) {
+                // End this loop if not continue
+                break;
+            }
         } while (iter.hasNext());
+    }
+
+    @Override
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+        this.body.bubbleFlowControls(collector);
+        FlowControls.bubble(collector, this.elseBody);
     }
 }

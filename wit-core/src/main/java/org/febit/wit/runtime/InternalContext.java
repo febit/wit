@@ -115,42 +115,6 @@ public final class InternalContext implements Context {
     }
 
     /**
-     * Visit loop body, handle flow control.
-     *
-     * @param body loop body batches
-     * @param label   loop label
-     * @return true if loop should interrupt, false if should continue to next iteration
-     */
-    public boolean visitLoopBody(List<StatementBatch> body, int label) {
-        var fl = this.flow();
-        for (int i = 0, len = body.size(); i < len && fl.isNoop(); i++) {
-            body.get(i).execute(this);
-        }
-        if (fl.isNoop()) {
-            // Continue to next iteration
-            return false;
-        }
-        if (!fl.isTarget(label)) {
-            // Interrupt loop, sine ctrl cannot be handled by current loop
-            return true;
-        }
-        return switch (fl.state()) {
-            case RETURN -> true; // Interrupt loop, loops cannot handle return control.
-            case BREAK -> {
-                // Reset & Interrupt loop.
-                fl.reset();
-                yield true;
-            }
-            case CONTINUE -> {
-                // Reset & Continue to next iteration.
-                fl.reset();
-                yield false;
-            }
-            case NOOP -> throw new IllegalStateException("unexpected NOOP");
-        };
-    }
-
-    /**
      * Get a bean's property.
      *
      * @param <T>      bean type

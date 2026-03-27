@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.statement;
+package org.febit.wit.runtime.ast.loop;
 
 import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.InternalContext;
@@ -24,15 +24,12 @@ import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public record DoWhile(
-        int label,
         int scope,
         Expression condition,
-        List<StatementBatch> body,
-        List<FlowControl> bubbledFlowControls,
+        LoopBody body,
         Position position
 ) implements Statement, WithFlowControl {
 
@@ -45,11 +42,10 @@ public record DoWhile(
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     private void execute0(InternalContext context) {
-        var batches = this.body;
-        var myLabel = this.label;
+        var loop = this.body;
         var cond = this.condition;
         do {
-            if (context.visitLoopBody(batches, myLabel)) {
+            if (loop.execute(context)) {
                 // End this loop if not continue
                 break;
             }
@@ -58,6 +54,6 @@ public record DoWhile(
 
     @Override
     public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        bubbledFlowControls.forEach(collector);
+        this.body.bubbleFlowControls(collector);
     }
 }

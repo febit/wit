@@ -19,6 +19,12 @@
 }
 {
     var s = "";
+    for(i : []){
+    }
+    assertEquals("", s);
+}
+{
+    var s = "";
     for(i : 0..1){
       for(j : 2..3){
         var flag = (super.for.iter.isOdd ? 4 : 2)
