@@ -32,4 +32,10 @@ public record SuppliedValue(
     public Object execute(InternalContext context) {
         return this.factory.get();
     }
+
+    @Override
+    @Nullable
+    public Object evalAsConst() {
+        return this.factory.get();
+    }
 }
