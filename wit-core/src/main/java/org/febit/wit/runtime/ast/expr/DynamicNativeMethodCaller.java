@@ -15,9 +15,6 @@
  */
 package org.febit.wit.runtime.ast.expr;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
@@ -30,22 +27,19 @@ import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.List;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public final class DynamicNativeMethodCaller implements Expression {
-
-    private final String methodName;
-    private final Expression self;
-    private final Expression[] params;
-    @Getter
-    private final Position position;
+public record DynamicNativeMethodCaller(
+        Expression self,
+        String methodName,
+        ExpressionArray params,
+        Position position
+) implements Expression {
 
     @Override
     @Nullable
     public Object execute(InternalContext context) {
         var selfObj = this.self.execute(context);
         var methods = getMethods(selfObj);
-        var paramsObj = context.visit(this.params);
+        var paramsObj = this.params.execute(context);
         return chooseAndInvoke(selfObj, methods, paramsObj);
     }
 
@@ -54,7 +48,7 @@ public final class DynamicNativeMethodCaller implements Expression {
     public Object evalAsConst() {
         var selfObj = StatementUtils.evalAsConst(self);
         var methods = getMethods(selfObj);
-        var paramsObj = StatementUtils.evalConstArray(this.params);
+        var paramsObj = this.params.evalAsConst();
         return chooseAndInvoke(selfObj, methods, paramsObj);
     }
 

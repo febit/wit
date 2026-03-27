@@ -15,9 +15,6 @@
  */
 package org.febit.wit.runtime.ast.expr;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.StatementTracker;
 import org.febit.wit.runtime.InternalContext;
@@ -28,14 +25,11 @@ import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.StatementUtils;
 import org.jspecify.annotations.Nullable;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public final class FunctionCaller implements Expression {
-
-    private final Expression func;
-    private final Expression[] params;
-    @Getter
-    private final Position position;
+public record FunctionCaller(
+        Expression func,
+        ExpressionArray params,
+        Position position
+) implements Expression {
 
     @Override
     @Nullable
@@ -47,7 +41,7 @@ public final class FunctionCaller implements Expression {
         if (!(funcObj instanceof WitFunction declare)) {
             throw new ScriptEvaluateException("not a function", this);
         }
-        var paramsObj = context.visit(this.params);
+        var paramsObj = this.params.execute(context);
         try {
             return declare.apply(context, paramsObj);
         } catch (Throwable ex) {
@@ -71,7 +65,7 @@ public final class FunctionCaller implements Expression {
             }
             return Undefined.UNDEFINED;
         }
-        var paramsObj = StatementUtils.evalConstArray(this.params);
+        var paramsObj = this.params.evalAsConst();
         try {
             return constable.apply(paramsObj);
         } catch (Throwable ex) {

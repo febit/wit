@@ -593,11 +593,11 @@ funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
-                        {: yield Ast.functionCall(%funcExpr%, Ast.emptyExpressions(), %funcExpr.symbol%.pos); :}
+                        {: yield Ast.functionCall(%funcExpr%, ExpressionArray.ofEmpty(), %funcExpr.symbol%.pos); :}
                         |expression:funcExpr LPAREN expression[COMMA]:list COMMA? RPAREN
                         {: yield Ast.functionCall(%funcExpr%, Ast.toExpressionArray(%list%), %funcExpr.symbol%.pos); :}
                         |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN RPAREN
-                        {: yield Ast.dynamicNativeMethodCall(%param0%, %ident%, Ast.emptyExpressions(), %ident.symbol%.pos); :}
+                        {: yield Ast.dynamicNativeMethodCall(%param0%, %ident%, ExpressionArray.ofEmpty(), %ident.symbol%.pos); :}
                         |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expression[COMMA]:list COMMA? RPAREN
                         {: yield Ast.dynamicNativeMethodCall(%param0%, %ident%, Ast.toExpressionArray(%list%), %ident.symbol%.pos); :}
                         ;

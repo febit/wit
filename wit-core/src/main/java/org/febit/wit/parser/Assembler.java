@@ -27,6 +27,7 @@ import org.febit.wit.runtime.ast.ScriptAST;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.runtime.ast.expr.DirectValue;
+import org.febit.wit.runtime.ast.expr.ExpressionArray;
 import org.febit.wit.runtime.ast.expr.NativeStaticFieldValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
 import org.febit.wit.runtime.ast.statement.NoopStatement;
@@ -189,12 +190,12 @@ public class Assembler {
         return new VariableHeapValue(varLayout.assignVar(name, position), position);
     }
 
-    public VariableHeapValue[] declareVarAndCreateContextValues(List<String> names, Position position) {
-        var contextVars = new VariableHeapValue[names.size()];
+    public ExpressionArray declareVarAndCreateContextValues(List<String> names, Position position) {
+        var contextVars = new Expression[names.size()];
         for (int i = 0; i < names.size(); i++) {
             contextVars[i] = declareVarAndCreateContextValue(names.get(i), position);
         }
-        return contextVars;
+        return ExpressionArray.of(contextVars);
     }
 
     public Expression createContextValue(int scopeOffset, String name, Position position) {

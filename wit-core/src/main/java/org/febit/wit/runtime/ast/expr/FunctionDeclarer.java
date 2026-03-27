@@ -32,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public final class FunctionDeclarer implements Expression {
 
-    private final Object[] argDefaults;
+    private final @Nullable Object[] argDefaults;
     private final int heapSize;
     private final List<ScopedIndexer> indexers;
     private final List<StatementBatch> body;

@@ -36,22 +36,11 @@ public class StatementUtils {
                 .evalAsConst();
     }
 
-    public static @Nullable Object[] evalConstArray(Expression[] expressions) {
-        var len = expressions.length;
-        var results = new Object[len];
-        for (int i = 0; i < len; i++) {
-            results[i] = StatementUtils.evalAsConst(expressions[i]);
-        }
-        return results;
-    }
-
     public static Expression optimize(Expression expression) {
-        return expression.optimize();
-    }
-
-    public static void optimize(Expression[] expression) {
-        for (int i = 0; i < expression.length; i++) {
-            expression[i] = optimize(expression[i]);
+        try {
+            return expression.optimize();
+        } catch (Exception e) {
+            throw new ScriptParseException("Exception occur when do optimization", e, expression.position());
         }
     }
 

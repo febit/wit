@@ -29,7 +29,6 @@ import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.Render;
 import org.febit.wit.runtime.accessor.Setter;
-import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.heap.Heap;
 import org.febit.wit.runtime.heap.VariableHeap;
@@ -106,15 +105,6 @@ public final class InternalContext implements Context {
 
     public boolean isEnabled(Feature feature) {
         return feature.isEnabled(this.features);
-    }
-
-    public Object[] visit(Expression[] exprs) {
-        var len = exprs.length;
-        var results = new Object[len];
-        for (int i = 0; i < len; i++) {
-            results[i] = exprs[i].execute(this);
-        }
-        return results;
     }
 
     public void visitBatches(List<StatementBatch> batches) {

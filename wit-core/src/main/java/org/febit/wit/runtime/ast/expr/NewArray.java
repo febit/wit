@@ -15,29 +15,22 @@
  */
 package org.febit.wit.runtime.ast.expr;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.StatementUtils;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public final class NewArray implements Expression {
-
-    private final Expression[] values;
-    @Getter
-    private final Position position;
+public record NewArray(
+        ExpressionArray values,
+        Position position
+) implements Expression {
 
     @Override
     public Object execute(InternalContext context) {
-        return context.visit(this.values);
+        return this.values.execute(context);
     }
 
     @Override
     public Object evalAsConst() {
-        return StatementUtils.evalConstArray(this.values);
+        return this.values.evalAsConst();
     }
 }

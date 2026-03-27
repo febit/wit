@@ -33,6 +33,7 @@ import org.febit.wit.runtime.ast.expr.Assign;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
 import org.febit.wit.runtime.ast.expr.DirectValue;
 import org.febit.wit.runtime.ast.expr.DynamicNativeMethodCaller;
+import org.febit.wit.runtime.ast.expr.ExpressionArray;
 import org.febit.wit.runtime.ast.expr.FixedPropertyAccess;
 import org.febit.wit.runtime.ast.expr.FunctionCaller;
 import org.febit.wit.runtime.ast.expr.GroupAssign;
@@ -88,7 +89,6 @@ import java.util.function.UnaryOperator;
 @UtilityClass
 public class Ast {
 
-    private static final Expression[] EMPTY_EXPRESSIONS = new Expression[0];
 
     public static IfExpr ifExpr(
             Expression condition,
@@ -131,10 +131,12 @@ public class Ast {
         return new Assign(target, value, pos);
     }
 
-    public static Expression groupAssign(Expression[] targets, Expression value, Position pos) {
-        var assignables = new AssignableExpression[targets.length];
-        for (int i = 0; i < targets.length; i++) {
-            assignables[i] = castToAssignable(targets[i]);
+    public static Expression groupAssign(ExpressionArray targets, Expression value, Position pos) {
+        var targetList = targets.asList();
+        var size = targetList.size();
+        var assignables = new AssignableExpression[size];
+        for (int i = 0; i < size; i++) {
+            assignables[i] = castToAssignable(targetList.get(i));
         }
         return new GroupAssign(assignables, value, pos);
     }
@@ -177,10 +179,6 @@ public class Ast {
         return new SuppliedValue(() -> new Object[0], pos);
     }
 
-    public static Expression[] emptyExpressions() {
-        return EMPTY_EXPRESSIONS;
-    }
-
     public static NewArray newArray(
             List<Expression> values,
             Position pos
@@ -212,7 +210,7 @@ public class Ast {
             Position pos
     ) {
         Objects.requireNonNull(pos, "position is required");
-        return new TemplateStringValue(toExpressionArray(segments), pos);
+        return new TemplateStringValue(toExpressionArray(segments).asList(), pos);
     }
 
     @Builder(
@@ -368,15 +366,15 @@ public class Ast {
         WHILE, DO_WHILE
     }
 
-    public static Expression[] toExpressionArray(@Nullable List<Expression> list) {
+    public static ExpressionArray toExpressionArray(@Nullable List<Expression> list) {
         if (list == null || list.isEmpty()) {
-            return EMPTY_EXPRESSIONS;
+            return ExpressionArray.ofEmpty();
         }
         var arr = list.toArray(new Expression[0]);
         for (int i = 0; i < arr.length; i++) {
             arr[i] = StatementUtils.optimize(arr[i]);
         }
-        return arr;
+        return ExpressionArray.of(arr);
     }
 
     public static Statement statementList(List<Statement> list, Position pos) {
@@ -384,17 +382,15 @@ public class Ast {
     }
 
     public static Expression functionCall(
-            Expression func, Expression[] params, Position pos) {
-        StatementUtils.optimize(params);
+            Expression func, ExpressionArray params, Position pos) {
         func = StatementUtils.optimize(func);
         return new FunctionCaller(func, params, pos);
     }
 
     public static Expression dynamicNativeMethodCall(
-            Expression self, String method, Expression[] params, Position pos) {
-        StatementUtils.optimize(params);
+            Expression self, String method, ExpressionArray params, Position pos) {
         self = StatementUtils.optimize(self);
-        return new DynamicNativeMethodCaller(method, self, params, pos);
+        return new DynamicNativeMethodCaller(self, method, params, pos);
     }
 
     public static Statement ifStatement(

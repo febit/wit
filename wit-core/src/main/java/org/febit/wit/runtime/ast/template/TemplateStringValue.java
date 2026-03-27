@@ -15,28 +15,24 @@
  */
 package org.febit.wit.runtime.ast.template;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
-import org.jspecify.annotations.Nullable;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public class TemplateStringValue implements Expression {
+import java.util.List;
 
-    private final Expression[] segments;
-    @Getter
-    private final Position position;
+public record TemplateStringValue(
+        List<Expression> segments,
+        Position position
+) implements Expression {
 
     @Override
-    @Nullable
     public Object execute(InternalContext context) {
         var buf = new StringBuilder();
-        for (var segment : segments) {
+        var exprs = this.segments;
+        for (int i = 0, size = exprs.size(); i < size; i++) {
+            var segment = exprs.get(i);
             var s = segment.execute(context);
             if (s != null && s != Undefined.UNDEFINED) {
                 buf.append(s);
