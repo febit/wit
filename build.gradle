@@ -61,19 +61,19 @@ configure(subprojects.findAll {
     mustRunAfter 'generateModule'
   }
 
-  dependencyManagement {
-    imports {
-      mavenBom "${libs.febit.commons.deps.get()}"
-    }
-  }
-
   dependencies {
+    implementation(platform(libs.febit.commons.deps))
+    implementation(platform(libs.jetty.bom))
+    implementation(platform(libs.jetty.ee11.bom))
+
     compileOnly 'org.jspecify:jspecify'
     compileOnly 'com.github.spotbugs:spotbugs-annotations'
     testCompileOnly 'org.jspecify:jspecify'
     testCompileOnly 'com.github.spotbugs:spotbugs-annotations'
 
     testImplementation 'org.febit:febit-commons-test'
+    testImplementation 'org.eclipse.jetty.ee11:jetty-ee11-servlet'
+
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.slf4j:slf4j-simple'

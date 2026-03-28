@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
-import static org.febit.wit.TestWit.WIT;
+import static org.febit.wit.WitTestSupport.WIT;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 

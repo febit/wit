@@ -18,7 +18,7 @@ package org.febit.wit.test;
 import org.febit.wit.exception.ScriptParseException;
 import org.junit.jupiter.api.Test;
 
-import static org.febit.wit.TestWit.codeChecker;
+import static org.febit.wit.WitTestSupport.codeChecker;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UnsupportedSyntaxTest {

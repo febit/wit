@@ -16,27 +16,33 @@
 package org.febit.wit.extern.servlet;
 
 import jakarta.servlet.ServletContext;
-import lombok.RequiredArgsConstructor;
 import org.febit.wit.io.Source;
 import org.febit.wit.io.loader.FileSystemSource;
 import org.febit.wit.io.loader.PathBasedLoader;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-@RequiredArgsConstructor(staticName = "of")
+@lombok.Builder(
+        builderClassName = "Builder"
+)
 public class ServletContextLoader implements PathBasedLoader {
 
-    private final ServletContext servletContext;
-    private final Charset charset;
-    private final Source.BeginWith beginWith;
+    @lombok.NonNull
+    private final ServletContext context;
+
+    @lombok.Builder.Default
+    private final Charset charset = StandardCharsets.UTF_8;
+    @lombok.Builder.Default
+    private final Source.BeginWith beginWith = Source.BeginWith.SCRIPT;
 
     @Override
     public Source get(String path) {
-        var real = servletContext.getRealPath(path);
+        var real = context.getRealPath(path);
         if (real != null) {
             return new FileSystemSource(Path.of(real), charset, beginWith);
         }
-        return new ServletContextSource(path, charset, servletContext, beginWith);
+        return new ServletContextSource(path, charset, context, beginWith);
     }
 }

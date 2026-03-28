@@ -1,0 +1,4 @@
+<%
+  echo "Hello, there! Welcome to the Wit world!";
+  echo "\n";
+%>

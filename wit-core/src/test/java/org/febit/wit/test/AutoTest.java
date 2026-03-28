@@ -18,7 +18,7 @@ package org.febit.wit.test;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Strings;
 import org.febit.wit.Script;
-import org.febit.wit.TestWit;
+import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.extern.lib.test.AssertionModule;
@@ -93,7 +93,7 @@ class AutoTest {
     private void mergeScript(String path, OutputStream output) {
         Script script;
         try {
-            script = TestWit.WIT().script(path);
+            script = WitTestSupport.WIT().script(path);
         } catch (NoSuchSourceException e) {
             throw new UncheckedIOException(e);
         }

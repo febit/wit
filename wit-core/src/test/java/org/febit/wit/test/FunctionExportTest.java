@@ -15,7 +15,7 @@
  */
 package org.febit.wit.test;
 
-import org.febit.wit.TestWit;
+import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchFunctionException;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class FunctionExportTest {
     @Test
     void test() throws NoSuchSourceException {
 
-        var context = TestWit.script("/func-export.wit").eval();
+        var context = WitTestSupport.script("/func-export.wit").eval();
 
         var plus = context.exportFunction("plus");
         assertNotNull(plus);

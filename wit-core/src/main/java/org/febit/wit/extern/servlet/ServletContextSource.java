@@ -27,13 +27,13 @@ import java.nio.charset.Charset;
 public record ServletContextSource(
         String path,
         Charset charset,
-        ServletContext servletContext,
+        ServletContext context,
         Source.BeginWith beginWith
 ) implements Source {
 
     @Override
     public Reader open() throws IOException {
-        var in = servletContext.getResourceAsStream(path);
+        var in = context.getResourceAsStream(path);
         if (in != null) {
             return new InputStreamReader(in, charset);
         }
@@ -43,7 +43,7 @@ public record ServletContextSource(
     @Override
     public boolean exists() {
         try {
-            return servletContext.getResource(path) != null;
+            return context.getResource(path) != null;
         } catch (Exception ignored) {
             // ignore
         }

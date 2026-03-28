@@ -16,8 +16,8 @@
 package org.febit.wit.test.feature;
 
 import org.febit.wit.Feature;
-import org.febit.wit.TestWit;
 import org.febit.wit.Vars;
+import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.io.out.DiscardOut;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class TrimBlankLineTest {
     @Test
     void test() throws NoSuchSourceException {
 
-        var wit = spy(TestWit.WIT());
+        var wit = spy(WitTestSupport.WIT());
         when(wit.features())
                 .thenReturn(Feature.TRIM_CODE_BLOCK_BLANK_LINE.enable(Feature.collectFeatureDefaults()));
 

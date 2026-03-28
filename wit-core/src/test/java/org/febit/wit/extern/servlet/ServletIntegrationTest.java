@@ -13,34 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.test;
+package org.febit.wit.extern.servlet;
 
-import org.febit.wit.Vars;
-import org.febit.wit.WitTestSupport;
-import org.febit.wit.exception.NoSuchSourceException;
+import org.apache.commons.io.IOUtils;
+import org.febit.wit.ServletTestSupport;
 import org.junit.jupiter.api.Test;
 
-import java.io.StringWriter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class StringLoaderTest {
+class ServletIntegrationTest {
 
     @Test
-    void test() throws NoSuchSourceException {
-        var writer = new StringWriter();
-
-        WitTestSupport.script("string:<% echo \"Hello Wit！\"; %>")
-                .eval(Vars.empty(), writer);
-        assertEquals("Hello Wit！", writer.toString());
+    void index() {
+        var actual = request("/index.whtml");
+        var expected = request("/index.whtml.out");
+        assertEquals(expected, actual);
     }
 
-    @Test
-    void testCodeFirst() throws NoSuchSourceException {
-        var writer = new StringWriter();
-
-        WitTestSupport.script("code: echo \"Hello Wit！\";")
-                .eval(Vars.empty(), writer);
-        assertEquals("Hello Wit！", writer.toString());
+    static String request(String path) {
+        try {
+            var url = ServletTestSupport.uri().resolve(path)
+                    .toURL();
+            return IOUtils.toString(url.openStream(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
+
 }

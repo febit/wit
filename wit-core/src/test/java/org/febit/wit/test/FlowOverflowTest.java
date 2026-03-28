@@ -18,7 +18,7 @@ package org.febit.wit.test;
 import org.febit.wit.exception.ScriptParseException;
 import org.junit.jupiter.api.Test;
 
-import static org.febit.wit.TestWit.tmplChecker;
+import static org.febit.wit.WitTestSupport.tmplChecker;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FlowOverflowTest {

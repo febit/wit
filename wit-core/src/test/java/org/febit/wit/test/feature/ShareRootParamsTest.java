@@ -16,8 +16,8 @@
 package org.febit.wit.test.feature;
 
 import org.febit.wit.Feature;
-import org.febit.wit.TestWit;
 import org.febit.wit.Vars;
+import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.io.out.DiscardOut;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class ShareRootParamsTest {
 
     @Test
     void test() throws NoSuchSourceException {
-        var wit = spy(TestWit.WIT());
+        var wit = spy(WitTestSupport.WIT());
         when(wit.isEnabled(Feature.SHARE_ROOT_PARAMS))
                 .thenReturn(true);
 

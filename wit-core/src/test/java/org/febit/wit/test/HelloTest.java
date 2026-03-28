@@ -15,7 +15,7 @@
  */
 package org.febit.wit.test;
 
-import org.febit.wit.TestWit;
+import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ class HelloTest {
 
     @Test
     void test() throws NoSuchSourceException {
-        var script = TestWit.script("/hello.wit");
+        var script = WitTestSupport.script("/hello.wit");
         script.reload();
         script.eval();
     }

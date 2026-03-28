@@ -26,6 +26,8 @@ import org.febit.wit.extern.lib.context.LocalContextRegister;
 import org.febit.wit.extern.lib.std.TypesModule;
 import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.extern.lib.tld.TldModule;
+import org.febit.wit.extern.servlet.ServletAccessors;
+import org.febit.wit.extern.servlet.ServletContextLoader;
 import org.febit.wit.io.Loader;
 import org.febit.wit.io.Loaders;
 import org.febit.wit.io.Source;
@@ -38,9 +40,10 @@ import java.time.Duration;
 import java.util.List;
 
 @Slf4j
-public class TestWit {
+public class WitTestSupport {
 
     private static final String EXT_WIT = ".wit";
+    private static final String EXT_WHTML = ".whtml";
     private static final List<String> EXT_DEPUTIES = List.of(EXT_WIT, ".whtml", ".wit2");
 
     @Getter
@@ -51,6 +54,7 @@ public class TestWit {
                     "request", "request2",
                     "session", "session2"
             )
+            .configureAccessors(ServletAccessors::registerAll)
             .module(new AssertionModule())
             .modules(
                     GlobalContextRegister.create(),
@@ -129,6 +133,11 @@ public class TestWit {
                 .completeMissingSuffix(EXT_WIT)
                 .build();
 
+        var servlet = ServletContextLoader.builder()
+                .context(ServletTestSupport.context())
+                .beginWith(Source.BeginWith.TEMPLATE)
+                .build();
+
         var lazyLoader = Loaders.debounce(classpath, Duration.ofSeconds(10));
         return Loaders.dispatcher()
                 .rule("code:", code)
@@ -137,6 +146,7 @@ public class TestWit {
                 .rule("lib-test:", lazyLoader)
                 .rule("lib:", lib)
                 .rule("lib:sub:", libSub)
+                .rule("servlet:", servlet)
                 .rule("cached:", cachedClasspath)
                 .rule("cached-string:", cachedString)
                 .fallback(lazyLoader)
@@ -155,4 +165,5 @@ public class TestWit {
     public static Executable codeChecker(String code) {
         return tmplChecker("code: \n" + code);
     }
+
 }

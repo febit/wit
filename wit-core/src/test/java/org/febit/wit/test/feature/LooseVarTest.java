@@ -16,7 +16,7 @@
 package org.febit.wit.test.feature;
 
 import org.febit.wit.Feature;
-import org.febit.wit.TestWit;
+import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +30,7 @@ class LooseVarTest {
 
         var features = Feature.LOOSE_VAR.enable(Feature.collectFeatureDefaults());
 
-        var wit = spy(TestWit.WIT());
+        var wit = spy(WitTestSupport.WIT());
         when(wit.features()).thenReturn(features);
 
         var script = wit.script("/feature/looseVar.wit");

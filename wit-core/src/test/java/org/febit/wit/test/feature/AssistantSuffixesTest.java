@@ -17,7 +17,7 @@ package org.febit.wit.test.feature;
 
 import org.junit.jupiter.api.Test;
 
-import static org.febit.wit.TestWit.tmplChecker;
+import static org.febit.wit.WitTestSupport.tmplChecker;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AssistantSuffixesTest {
