@@ -129,7 +129,7 @@ public class ComposedAccessorFactory implements AccessorFactory {
         return resolveSetter(type);
     }
 
-    public static class Builder {
+    public static class Builder implements AccessorConsumer {
 
         private final List<TypedTuple<Getter<?>>> getters = new ArrayList<>();
         private final List<TypedTuple<Setter<?>>> setters = new ArrayList<>();
@@ -138,6 +138,11 @@ public class ComposedAccessorFactory implements AccessorFactory {
         private AccessorFactory fallback = ReflectBeanAccessorFactory.INSTANCE;
 
         private boolean withPresets = true;
+
+        @Override
+        public <T> void accept(Class<T> type, Accessor<? extends T> accessor) {
+            accessor(type, accessor);
+        }
 
         public Builder fallback(AccessorFactory factory) {
             this.fallback = factory;
