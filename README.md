@@ -3,7 +3,7 @@ Febit Wit
 
 [![Apache-2.0 License](https://img.shields.io/badge/license-apache-blue.svg)][license]
 
-This is a script wit, all written in Java, **support Java 17+**.
+A script/template engine implemented in pure Java (Java 17+).
 
 ## How to use
 
