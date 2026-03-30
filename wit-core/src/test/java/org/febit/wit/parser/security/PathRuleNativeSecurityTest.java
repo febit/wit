@@ -19,15 +19,15 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.febit.wit.parser.security.RuleBasedNativeSecurity.ROOT_PATH;
+import static org.febit.wit.parser.security.PathRuleNativeSecurity.ROOT_PATH;
 import static org.junit.jupiter.api.Assertions.*;
 
-class RuleBasedNativeSecurityTest {
+class PathRuleNativeSecurityTest {
 
     @Test
     void test() {
 
-        var builder = RuleBasedNativeSecurity.builder()
+        var builder = PathRuleNativeSecurity.builder()
                 .deny("a")
                 .allow("a", "b")
                 .deny(List.of("b"))
