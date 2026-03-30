@@ -15,6 +15,7 @@
  */
 package org.febit.wit.io.loader;
 
+import org.febit.wit.io.Loader;
 import org.febit.wit.io.Loaders;
 import org.junit.jupiter.api.Test;
 
@@ -24,31 +25,88 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SecurityLoaderDecoratorTest {
 
-    @Test
-    void allow() {
-        var loader = Loaders.security(
-                Loaders.string().build(),
-                List.of(
-                        "/a/",
-                        "/b",
-                        "/c/d"
-                )
-        );
-
-        assertInstanceOf(StringSource.class, loader.get("/a/"));
-        assertInstanceOf(StringSource.class, loader.get("/a/x.wit"));
-
-        assertInstanceOf(StringSource.class, loader.get("/b"));
-        assertInstanceOf(StringSource.class, loader.get("/b/x.wit"));
-        assertInstanceOf(StringSource.class, loader.get("/bcd.wit"));
-
-        assertInstanceOf(StringSource.class, loader.get("/c/d/x.wit"));
-
-        assertInstanceOf(EmptySource.class, loader.get("/"));
-        assertInstanceOf(EmptySource.class, loader.get("/a"));
-        assertInstanceOf(EmptySource.class, loader.get("/abc"));
-        assertInstanceOf(EmptySource.class, loader.get("/a.wit"));
-        assertInstanceOf(EmptySource.class, loader.get("//b"));
+    static void assertAllow(String path, Loader loader) {
+        assertInstanceOf(StringSource.class, loader.get(path), "Expected allow: " + path);
     }
 
+    static void assertDeny(String path, Loader loader) {
+        assertInstanceOf(EmptySource.class, loader.get(path), "Expected deny: " + path);
+    }
+
+    @Test
+    void builderAllowAndDeny() {
+        var loader = Loaders.security(Loaders.string().build())
+                .allow("/a/", "/b")
+                .deny("/b/secret")
+                .allow("/c/d")
+                .build();
+
+        assertAllow("/a/x.wit", loader);
+        assertAllow("/b", loader);
+        assertAllow("/b/x.wit", loader);
+        assertAllow("/c/d", loader);
+
+        assertDeny("/b/secret", loader);
+        assertDeny("/b/secret/x.wit", loader);
+    }
+
+    @Test
+    void denyOverridesAllow() {
+        var loader = SecurityLoaderDecorator.builder(Loaders.string().build())
+                .allow("/a/")
+                .deny("/a/b/")
+                .allow("/a/b/c")
+                .build();
+
+        assertAllow("/a/x.wit", loader);
+        assertDeny("/a/b/x.wit", loader);
+        assertAllow("/a/b/c", loader);
+    }
+
+    @Test
+    void directoryVsExact() {
+        Loader delegate = Loaders.string().build();
+        var loader = SecurityLoaderDecorator.builder(delegate).allow(List.of("/foo", "/bar/")).build();
+
+        assertAllow("/foo", loader);
+        assertAllow("/foo/", loader);
+        assertAllow("/foo/x.wit", loader);
+
+        assertDeny("/foobar", loader);
+
+        assertDeny("/bar", loader);
+        assertAllow("/bar/", loader);
+        assertAllow("/bar/x.wit", loader);
+    }
+
+    @Test
+    void normalizedPaths() {
+        Loader delegate = Loaders.string().build();
+        var loader = SecurityLoaderDecorator.builder(delegate).allow(List.of("/a/", "/b")).build();
+
+        assertAllow("/a//x.wit", loader);
+        assertAllow("/b//x.wit", loader);
+
+        assertDeny("/a/../c.wit", loader);
+        assertDeny("/b/../c.wit", loader);
+        assertDeny("//b", loader);
+    }
+
+    @Test
+    void emptyRules() {
+        Loader delegate = Loaders.string().build();
+        var loader = SecurityLoaderDecorator.builder(delegate).allow(List.of()).build();
+
+        assertDeny("/anything", loader);
+    }
+
+    @Test
+    void invalidPaths() {
+        var loader = Loaders.security(Loaders.string().build())
+                .allow("/safe/")
+                .build();
+
+        assertDeny("/safe/../../etc/passwd", loader);
+        assertDeny("/safe/../x", loader);
+    }
 }

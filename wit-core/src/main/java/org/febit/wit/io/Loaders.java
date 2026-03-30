@@ -52,8 +52,8 @@ public class Loaders {
         return StringLoader.builder();
     }
 
-    public static SecurityLoaderDecorator security(Loader delegate, List<String> allows) {
-        return SecurityLoaderDecorator.of(delegate, allows);
+    public static SecurityLoaderDecorator.Builder security(Loader delegate) {
+        return SecurityLoaderDecorator.builder(delegate);
     }
 
     public static DebouncedLoaderDecorator debounce(Loader delegate, long delayMillis) {

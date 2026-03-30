@@ -16,29 +16,94 @@
 package org.febit.wit.io.loader;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.io.Loader;
 import org.febit.wit.io.Source;
+import org.febit.wit.util.PathTrie;
+import org.febit.wit.util.PathUtils;
 
-import java.util.List;
+import java.util.Collection;
 
 @Accessors(fluent = true)
-@RequiredArgsConstructor(staticName = "of")
 public class SecurityLoaderDecorator implements Loader.Decorator {
 
     @Getter
     private final Loader delegate;
-    private final List<String> allows;
+    private final PathTrie trie;
+
+    public static Builder builder(Loader delegate) {
+        return new Builder(delegate);
+    }
+
+    private SecurityLoaderDecorator(Loader delegate, PathTrie trie) {
+        this.delegate = delegate;
+        this.trie = trie;
+    }
 
     @Override
     public Source get(String path) {
-        for (var allow : this.allows) {
-            if (path.startsWith(allow)) {
-                return this.delegate.get(path);
-            }
+        var normalizedPath = PathUtils.normalize(path);
+        if (this.trie.match(normalizedPath)) {
+            return this.delegate.get(path);
         }
         return new EmptySource(path, "Access denied.");
+    }
+
+    public static class Builder {
+        private final PathTrie.Builder trieBuilder = PathTrie.builder('/');
+
+        private final Loader delegate;
+
+        private Builder(Loader delegate) {
+            this.delegate = delegate;
+        }
+
+        public Builder allow(String path) {
+            this.trieBuilder.allow(path);
+            return this;
+        }
+
+        public Builder allow(String... paths) {
+            for (var p : paths) {
+                allow(p);
+            }
+            return this;
+        }
+
+        public Builder allow(Collection<String> paths) {
+            for (var p : paths) {
+                allow(p);
+            }
+            return this;
+        }
+
+        public Builder deny(String path) {
+            this.trieBuilder.deny(path);
+            return this;
+        }
+
+        public Builder deny(String... paths) {
+            for (var p : paths) {
+                deny(p);
+            }
+            return this;
+        }
+
+        public Builder deny(Collection<String> paths) {
+            for (var p : paths) {
+                deny(p);
+            }
+            return this;
+        }
+
+        public Builder rule(String path, boolean allowed) {
+            this.trieBuilder.rule(path, allowed);
+            return this;
+        }
+
+        public SecurityLoaderDecorator build() {
+            return new SecurityLoaderDecorator(this.delegate, this.trieBuilder.build());
+        }
     }
 
 }
