@@ -33,54 +33,102 @@ public class PathUtils {
     }
 
     @Nullable
-    public static String parent(@Nullable String filename) {
-        if (filename == null) {
+    public static String parent(@Nullable String path) {
+        if (path == null) {
             return null;
         }
-        int index = filename.lastIndexOf(UNIX_SEPARATOR);
+        int index = path.lastIndexOf(UNIX_SEPARATOR);
         if (index < 0) {
             return "";
         }
-        return filename.substring(0, index + 1);
+        return path.substring(0, index + 1);
     }
 
     @Nullable
-    public String sibling(@Nullable String refer, String name) {
+    public static String sibling(@Nullable String refer, String path) {
         return refer != null
-                ? concat(parent(refer), name)
-                : name;
+                ? concat(parent(refer), path)
+                : path;
     }
 
     @Nullable
-    public static String concat(@Nullable String basePath, String fullFilenameToAdd) {
-        if (basePath == null) {
+    public static String concat(@Nullable String refer, String path) {
+        if (refer == null) {
             return null;
         }
-        int len = basePath.length();
-        int prefix = getPrefixLength(fullFilenameToAdd);
+        int len = refer.length();
+        int prefix = getPrefixLength(path);
         if (prefix < 0) {
             // invalid full filename
             return null;
         }
         if (prefix > 0) {
             // full filename is already absolute, return normalized
-            return normalize(fullFilenameToAdd);
+            return normalize(path);
         }
         if (len == 0) {
             // base path is empty, return normalized full filename
-            return normalize(fullFilenameToAdd);
+            return normalize(path);
         }
-        if (isSeparator(basePath.charAt(len - 1))) {
-            return normalize(basePath.concat(fullFilenameToAdd));
+        if (isSeparator(refer.charAt(len - 1))) {
+            return normalize(refer.concat(path));
         }
-        return normalize(basePath + '/' + fullFilenameToAdd);
+        return normalize(refer + '/' + path);
     }
 
     /**
-     * Internal method to perform the normalization.
+     * Normalizes a path, removing double and single dot path steps.
      *
-     * @param filename file name
+     * <p>
+     * Windows separators are converted to Unix separators.
+     * All duplicate separators are merged into a single separator.
+     * All occurrences of "./" are removed.
+     * All occurrences of "dir/../" are removed.
+     * <p>
+     * Leading and trailing separators are preserved.
+     * <p>
+     *
+     * <pre>
+     * Overflow cases:
+     * /../             -->   null
+     * /../a            -->   null
+     * ../              -->   null
+     *
+     * Double slash cases:
+     * //a              -->   /a
+     * /a//             -->   /a/
+     * /a//b            -->   /a/b
+     *
+     * Dot slash cases:
+     * /./              -->   /
+     * /a/./            -->   /a/
+     * /a/../           -->   /
+     * /a/../b          -->   /b
+     *
+     * Other cases:
+     * /a/./b           -->   /a/b
+     * /a/./../b        -->   /b
+     * /a/.././b        -->   /b
+     *
+     * Trailing slash cases:
+     * /a/..            -->   /
+     * /a/../           -->   /
+     *
+     * /a/              -->   /a/
+     * /a               -->   /a
+     *
+     * /a/.             -->   /a
+     * /a/./            -->   /a/
+     *
+     * /a/b/..          -->   /a
+     * /a/b/../         -->   /a/
+     * /a/b/.           -->   /a/b
+     * /a/b/./          -->   /a/b/
+     * </pre>
+     *
+     * @param path path
      * @return normalized filename
+     * @see #normalize(String, boolean)
      */
     @Nullable
     @SuppressWarnings({
@@ -89,39 +137,60 @@ public class PathUtils {
             "squid:ForLoopCounterChangedCheck",
             "squid:LabelsShouldNotBeUsedCheck",
     })
-    public static String normalize(@Nullable String filename) {
-        if (filename == null) {
+    public static String normalize(@Nullable String path) {
+        return normalize(path, true);
+    }
+
+    /**
+     * Normalizes a path, removing double and single dot path steps.
+     *
+     * @param path              path
+     * @param keepTrailingSlash if true, keeps the trailing slash if it exists in the input; otherwise, removes it
+     * @return normalized path
+     * @See #normalize(String)
+     */
+    @Nullable
+    @SuppressWarnings({
+            "squid:S3776", // Cognitive Complexity of methods should not be too high
+            "java:S6541", // Methods should not perform too many tasks (aka Brain method)
+            "squid:ForLoopCounterChangedCheck",
+            "squid:LabelsShouldNotBeUsedCheck",
+    })
+    public static String normalize(@Nullable String path, boolean keepTrailingSlash) {
+        if (path == null) {
             return null;
         }
-        if (filename.isEmpty()) {
-            return filename;
+        if (path.isEmpty()) {
+            return path;
         }
 
-        int prefix = getPrefixLength(filename);
+        int prefix = getPrefixLength(path);
         if (prefix < 0) {
             return null;
         }
 
-        int size = filename.length();
-        char[] array = new char[size + 2];  // +1 for possible extra slash, +2 for arraycopy
-        filename.getChars(0, filename.length(), array, 0);
+        int size = path.length();
+        char[] buffer = new char[size + 2];  // +1 for possible extra slash, +2 for arraycopy
+
+        path.getChars(0, path.length(), buffer, 0);
+        boolean tailingSlash = keepTrailingSlash && isSeparator(path.charAt(size - 1));
 
         // fix separators throughout
         for (int i = 0; i < size; i++) {
-            if (array[i] == WINDOWS_SEPARATOR) {
-                array[i] = UNIX_SEPARATOR;
+            if (buffer[i] == WINDOWS_SEPARATOR) {
+                buffer[i] = UNIX_SEPARATOR;
             }
         }
 
         // add extra separator on the end to simplify code below
-        if (array[size - 1] != UNIX_SEPARATOR) {
-            array[size++] = UNIX_SEPARATOR;
+        if (buffer[size - 1] != UNIX_SEPARATOR) {
+            buffer[size++] = UNIX_SEPARATOR;
         }
 
         // adjoining slashes
         for (int i = prefix + 1; i < size; i++) {
-            if (array[i] == UNIX_SEPARATOR && array[i - 1] == UNIX_SEPARATOR) {
-                System.arraycopy(array, i, array, i - 1, size - i);
+            if (buffer[i] == UNIX_SEPARATOR && buffer[i - 1] == UNIX_SEPARATOR) {
+                System.arraycopy(buffer, i, buffer, i - 1, size - i);
                 size--;
                 i--;
             }
@@ -129,9 +198,9 @@ public class PathUtils {
 
         // dot slash
         for (int i = prefix + 1; i < size; i++) {
-            if (array[i] == UNIX_SEPARATOR && array[i - 1] == '.'
-                    && (i == prefix + 1 || array[i - 2] == UNIX_SEPARATOR)) {
-                System.arraycopy(array, i + 1, array, i - 1, size - i);
+            if (buffer[i] == UNIX_SEPARATOR && buffer[i - 1] == '.'
+                    && (i == prefix + 1 || buffer[i - 2] == UNIX_SEPARATOR)) {
+                System.arraycopy(buffer, i + 1, buffer, i - 1, size - i);
                 size -= 2;
                 i--;
             }
@@ -140,10 +209,10 @@ public class PathUtils {
         // double dot slash
         outer:
         for (int i = prefix + 2; i < size; i++) {
-            if (array[i] != UNIX_SEPARATOR
-                    || array[i - 1] != '.'
-                    || array[i - 2] != '.'
-                    || (i != prefix + 2 && array[i - 3] != UNIX_SEPARATOR)) {
+            if (buffer[i] != UNIX_SEPARATOR
+                    || buffer[i - 1] != '.'
+                    || buffer[i - 2] != '.'
+                    || (i != prefix + 2 && buffer[i - 3] != UNIX_SEPARATOR)) {
                 continue;
             }
             if (i == prefix + 2) {
@@ -151,16 +220,16 @@ public class PathUtils {
             }
             int j;
             for (j = i - 4; j >= prefix; j--) {
-                if (array[j] == UNIX_SEPARATOR) {
+                if (buffer[j] == UNIX_SEPARATOR) {
                     // remove b/../ from a/b/../c
-                    System.arraycopy(array, i + 1, array, j + 1, size - i);
+                    System.arraycopy(buffer, i + 1, buffer, j + 1, size - i);
                     size -= (i - j);
                     i = j + 1;
                     continue outer;
                 }
             }
             // remove a/../ from a/../c
-            System.arraycopy(array, i + 1, array, prefix, size - i);
+            System.arraycopy(buffer, i + 1, buffer, prefix, size - i);
             size -= (i + 1 - prefix);
             i = prefix + 1;
         }
@@ -169,9 +238,13 @@ public class PathUtils {
             return "";
         }
         if (size <= prefix) {  // should never be less than prefix
-            return new String(array, 0, size);
+            return new String(buffer, 0, size);
         }
-        return new String(array, 0, size - 1);  // lose trailing separator
+        if (!tailingSlash) {
+            return new String(buffer, 0, size - 1);
+        }
+        buffer[size - 1] = UNIX_SEPARATOR;
+        return new String(buffer, 0, size);
     }
 
     // ---------------------------------------------------------------- prefix

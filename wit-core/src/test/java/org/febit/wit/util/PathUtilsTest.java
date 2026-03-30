@@ -17,149 +17,185 @@ package org.febit.wit.util;
 
 import org.junit.jupiter.api.Test;
 
+import static org.febit.wit.util.PathUtils.concat;
+import static org.febit.wit.util.PathUtils.getPrefixLength;
+import static org.febit.wit.util.PathUtils.normalize;
+import static org.febit.wit.util.PathUtils.parent;
+import static org.febit.wit.util.PathUtils.sibling;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PathUtilsTest {
 
     @Test
-    void concat() {
+    void testConcat() {
 
         // Null base path
-        assertNull(PathUtils.concat(null, "tmpl.wit"));
-        assertNull(PathUtils.concat(null, "./tmpl.wit"));
-        assertNull(PathUtils.concat(null, "../tmpl.wit"));
-        assertNull(PathUtils.concat(null, "/tmpl.wit"));
+        assertNull(concat(null, "tmpl.wit"));
+        assertNull(concat(null, "./tmpl.wit"));
+        assertNull(concat(null, "../tmpl.wit"));
+        assertNull(concat(null, "/tmpl.wit"));
 
         // Overflowing above root
-        assertNull(PathUtils.concat("/", "../tmpl.wit"));
-        assertNull(PathUtils.concat("", "../tmpl.wit"));
+        assertNull(concat("/", "../tmpl.wit"));
+        assertNull(concat("", "../tmpl.wit"));
 
         // Invalid
-        assertNull(PathUtils.concat("/parent/", ":tmpl.wit"));
+        assertNull(concat("/parent/", ":tmpl.wit"));
 
         // Just return normalized
-        assertEquals("tmpl.wit", PathUtils.concat("", "./tmpl.wit"));
-        assertEquals("tmpl.wit", PathUtils.concat("", "././tmpl.wit"));
-        assertEquals("tmpl.wit", PathUtils.concat("", "a/../tmpl.wit"));
+        assertEquals("tmpl.wit", concat("", "./tmpl.wit"));
+        assertEquals("tmpl.wit", concat("", "././tmpl.wit"));
+        assertEquals("tmpl.wit", concat("", "a/../tmpl.wit"));
 
-        assertEquals("/parent/tmpl.wit", PathUtils.concat("/parent/", "tmpl.wit"));
-        assertEquals("/parent/tmpl.wit", PathUtils.concat("/parent/", "./tmpl.wit"));
-        assertEquals("/tmpl.wit", PathUtils.concat("/parent/", "../tmpl.wit"));
+        assertEquals("/parent/tmpl.wit", concat("/parent/", "tmpl.wit"));
+        assertEquals("/parent/tmpl.wit", concat("/parent/", "./tmpl.wit"));
+        assertEquals("/tmpl.wit", concat("/parent/", "../tmpl.wit"));
 
-        assertEquals("/parent/tmpl.wit", PathUtils.concat("/parent", "tmpl.wit"));
-        assertEquals("/parent/tmpl.wit", PathUtils.concat("/parent", "./tmpl.wit"));
-        assertEquals("/tmpl.wit", PathUtils.concat("/parent", "../tmpl.wit"));
+        assertEquals("/parent/tmpl.wit", concat("/parent", "tmpl.wit"));
+        assertEquals("/parent/tmpl.wit", concat("/parent", "./tmpl.wit"));
+        assertEquals("/tmpl.wit", concat("/parent", "../tmpl.wit"));
     }
 
     @Test
-    void normalize() {
+    void testNormalize() {
         // Overflowing above root
-        assertNull(PathUtils.normalize("/../tmpl.wit"));
-        assertNull(PathUtils.normalize("../tmpl.wit"));
-        assertNull(PathUtils.normalize("/parent/../../tmpl.wit"));
+        assertNull(normalize(".."));
+        assertNull(normalize("../"));
+        assertNull(normalize("../tmpl.wit"));
+        assertNull(normalize("/../"));
+        assertNull(normalize("/../a"));
+        assertNull(normalize("/../tmpl.wit"));
+        assertNull(normalize("/parent/../../tmpl.wit"));
+
+        // Dot
+        assertEquals("", normalize("."));
+        assertEquals("", normalize("./"));
+        assertEquals("", normalize("././"));
+        assertEquals("a", normalize("./a"));
+        assertEquals("a", normalize("./a"));
+        assertEquals("a", normalize("././a"));
 
         // Invalid
-        assertNull(PathUtils.normalize(":tmpl.wit"));
+        assertNull(normalize(":tmpl.wit"));
 
         // Empty
-        assertNull(PathUtils.normalize(null));
-        assertEquals("", PathUtils.normalize(""));
+        assertNull(normalize(null));
+        assertEquals("", normalize(""));
+
+        assertEquals("/a/", normalize("/a/"));
+        assertEquals("/a", normalize("/a"));
 
         // Window separators
-        assertEquals("a/b/c", PathUtils.normalize("a\\b\\c"));
-        assertEquals("/path/tmpl.wit", PathUtils.normalize("/path\\to/\\..\\./.\\tmpl.wit"));
+        assertEquals("a/b/c", normalize("a\\b\\c"));
+        assertEquals("/path/tmpl.wit", normalize("/path\\to/\\..\\./.\\tmpl.wit"));
 
         // Special segments
-        assertEquals("~/", PathUtils.normalize("~"));
-        assertEquals("~/", PathUtils.normalize("~/"));
-        assertEquals("~/tmpl.wit", PathUtils.normalize("~/tmpl.wit"));
+        assertEquals("~/", normalize("~"));
+        assertEquals("~/", normalize("~/"));
+        assertEquals("~/tmpl.wit", normalize("~/tmpl.wit"));
 
-        assertNull(PathUtils.normalize("~/../tmpl.wit"));
-
-        // Slashes
-        assertEquals("/path/tmpl.wit", PathUtils.normalize("/path//to/..//tmpl.wit"));
-        assertEquals("/path/tmpl.wit", PathUtils.normalize("/path/to/.././/tmpl.wit"));
-        assertEquals("/path/tmpl.wit", PathUtils.normalize("/path/./to/../tmpl.wit"));
-        assertEquals("/path/to..tmpl.wit", PathUtils.normalize("/path/./to..tmpl.wit"));
-        assertEquals("/path/..tmpl.wit", PathUtils.normalize("/path/./..tmpl.wit"));
+        assertNull(normalize("~/../tmpl.wit"));
     }
 
     @Test
-    void sibling() {
-        assertEquals("/parent/sibling.wit", PathUtils.sibling("/parent/tmpl.wit", "sibling.wit"));
-        assertEquals("/parent/sibling.wit", PathUtils.sibling("/parent/tmpl.wit", "./sibling.wit"));
-        assertEquals("/sibling.wit", PathUtils.sibling("/parent/tmpl.wit", "../sibling.wit"));
-
-        assertEquals("/sibling.wit", PathUtils.sibling("/parent/tmpl.wit", "/sibling.wit"));
-
-        assertEquals("sibling.wit", PathUtils.sibling(null, "sibling.wit"));
-        assertEquals("./sibling.wit", PathUtils.sibling(null, "./sibling.wit"));
-        assertEquals("../sibling.wit", PathUtils.sibling(null, "../sibling.wit"));
+    void testNormalizeSlashes() {
+        assertEquals("/path/tmpl.wit", normalize("/path//to/..//tmpl.wit"));
+        assertEquals("/path/tmpl.wit", normalize("/path/to/.././/tmpl.wit"));
+        assertEquals("/path/tmpl.wit", normalize("/path/./to/../tmpl.wit"));
+        assertEquals("/path/to..tmpl.wit", normalize("/path/./to..tmpl.wit"));
+        assertEquals("/path/..tmpl.wit", normalize("/path/./..tmpl.wit"));
     }
 
     @Test
-    void parent() {
-        assertNull(PathUtils.parent(null));
-        assertEquals("", PathUtils.parent(""));
+    void testNormalizeTrailingSlash() {
+        assertEquals("/", normalize("/a/.."));
+        assertEquals("/", normalize("/a/../"));
+        assertEquals("/a/", normalize("/a/"));
+        assertEquals("/a", normalize("/a"));
+        assertEquals("/a", normalize("/a/."));
+        assertEquals("/a/", normalize("/a/./"));
+        assertEquals("/a", normalize("/a/b/.."));
+        assertEquals("/a/", normalize("/a/b/../"));
+        assertEquals("/a/b", normalize("/a/b/."));
+        assertEquals("/a/b/", normalize("/a/b/./"));
+    }
+
+    @Test
+    void testSibling() {
+        assertEquals("/parent/sibling.wit", sibling("/parent/tmpl.wit", "sibling.wit"));
+        assertEquals("/parent/sibling.wit", sibling("/parent/tmpl.wit", "./sibling.wit"));
+        assertEquals("/sibling.wit", sibling("/parent/tmpl.wit", "../sibling.wit"));
+
+        assertEquals("/sibling.wit", sibling("/parent/tmpl.wit", "/sibling.wit"));
+
+        assertEquals("sibling.wit", sibling(null, "sibling.wit"));
+        assertEquals("./sibling.wit", sibling(null, "./sibling.wit"));
+        assertEquals("../sibling.wit", sibling(null, "../sibling.wit"));
+    }
+
+    @Test
+    void testParent() {
+        assertNull(parent(null));
+        assertEquals("", parent(""));
 
         // Non-UNIX separators are not treated as separators.
-        assertEquals("", PathUtils.parent("a\\b\\c"));
+        assertEquals("", parent("a\\b\\c"));
 
-        assertEquals("", PathUtils.parent("abc"));
-        assertEquals("", PathUtils.parent("tmpl.wit"));
+        assertEquals("", parent("abc"));
+        assertEquals("", parent("tmpl.wit"));
 
-        assertEquals("/", PathUtils.parent("/tmpl.wit"));
-        assertEquals("parent/", PathUtils.parent("parent/tmpl.wit"));
-        assertEquals("/parent/", PathUtils.parent("/parent/tmpl.wit"));
+        assertEquals("/", parent("/tmpl.wit"));
+        assertEquals("parent/", parent("parent/tmpl.wit"));
+        assertEquals("/parent/", parent("/parent/tmpl.wit"));
     }
 
     @Test
-    void getPrefixLength() {
+    void testGetPrefixLength() {
         // Invalid
-        assertEquals(-1, PathUtils.getPrefixLength(null));
-        assertEquals(-1, PathUtils.getPrefixLength(":abc"));
+        assertEquals(-1, getPrefixLength(null));
+        assertEquals(-1, getPrefixLength(":abc"));
 
         // No prefix
-        assertEquals(0, PathUtils.getPrefixLength(""));
-        assertEquals(0, PathUtils.getPrefixLength("a"));
-        assertEquals(0, PathUtils.getPrefixLength("abc"));
-        assertEquals(0, PathUtils.getPrefixLength("./abc"));
-        assertEquals(0, PathUtils.getPrefixLength("../abc"));
+        assertEquals(0, getPrefixLength(""));
+        assertEquals(0, getPrefixLength("a"));
+        assertEquals(0, getPrefixLength("abc"));
+        assertEquals(0, getPrefixLength("./abc"));
+        assertEquals(0, getPrefixLength("../abc"));
 
-        assertEquals(1, PathUtils.getPrefixLength("/abc"));
-        assertEquals(1, PathUtils.getPrefixLength("/"));
-        assertEquals(1, PathUtils.getPrefixLength("/abc/def"));
+        assertEquals(1, getPrefixLength("/abc"));
+        assertEquals(1, getPrefixLength("/"));
+        assertEquals(1, getPrefixLength("/abc/def"));
 
         // Unix home directory prefix
-        assertEquals(2, PathUtils.getPrefixLength("~"));
-        assertEquals(2, PathUtils.getPrefixLength("~/abc"));
-        assertEquals(6, PathUtils.getPrefixLength("~\\abc"));
-        assertEquals(6, PathUtils.getPrefixLength("~user"));
-        assertEquals(6, PathUtils.getPrefixLength("~user/abc"));
-        assertEquals(10, PathUtils.getPrefixLength("~user\\abc"));
-        assertEquals(3, PathUtils.getPrefixLength("~:/abc"));
+        assertEquals(2, getPrefixLength("~"));
+        assertEquals(2, getPrefixLength("~/abc"));
+        assertEquals(6, getPrefixLength("~\\abc"));
+        assertEquals(6, getPrefixLength("~user"));
+        assertEquals(6, getPrefixLength("~user/abc"));
+        assertEquals(10, getPrefixLength("~user\\abc"));
+        assertEquals(3, getPrefixLength("~:/abc"));
     }
 
     @Test
-    void getPrefixLengthWindows() {
+    void testGetPrefixLengthWindows() {
         // Windows drive letter prefix
-        assertEquals(2, PathUtils.getPrefixLength("C:"));
-        assertEquals(3, PathUtils.getPrefixLength("C:/"));
-        assertEquals(3, PathUtils.getPrefixLength("C:\\"));
-        assertEquals(2, PathUtils.getPrefixLength("C:abc"));
-        assertEquals(3, PathUtils.getPrefixLength("C:/abc"));
-        assertEquals(3, PathUtils.getPrefixLength("C:\\abc"));
-        assertEquals(3, PathUtils.getPrefixLength("x:/abc"));
-        assertEquals(-1, PathUtils.getPrefixLength("1:/abc"));
-        assertEquals(-1, PathUtils.getPrefixLength("1:\\abc"));
-        assertEquals(-1, PathUtils.getPrefixLength("\r:/abc"));
-        assertEquals(-1, PathUtils.getPrefixLength("_:/abc"));
-        assertEquals(-1, PathUtils.getPrefixLength("?:/abc"));
-        assertEquals(-1, PathUtils.getPrefixLength("|:/abc"));
+        assertEquals(2, getPrefixLength("C:"));
+        assertEquals(3, getPrefixLength("C:/"));
+        assertEquals(3, getPrefixLength("C:\\"));
+        assertEquals(2, getPrefixLength("C:abc"));
+        assertEquals(3, getPrefixLength("C:/abc"));
+        assertEquals(3, getPrefixLength("C:\\abc"));
+        assertEquals(3, getPrefixLength("x:/abc"));
+        assertEquals(-1, getPrefixLength("1:/abc"));
+        assertEquals(-1, getPrefixLength("1:\\abc"));
+        assertEquals(-1, getPrefixLength("\r:/abc"));
+        assertEquals(-1, getPrefixLength("_:/abc"));
+        assertEquals(-1, getPrefixLength("?:/abc"));
+        assertEquals(-1, getPrefixLength("|:/abc"));
 
         // Windows UNC path prefix
-        assertEquals(9, PathUtils.getPrefixLength("//server/share"));
-        assertEquals(9, PathUtils.getPrefixLength("\\\\server\\share"));
+        assertEquals(9, getPrefixLength("//server/share"));
+        assertEquals(9, getPrefixLength("\\\\server\\share"));
     }
 
 }

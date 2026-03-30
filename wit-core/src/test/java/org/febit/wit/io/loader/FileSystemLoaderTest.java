@@ -63,7 +63,7 @@ class FileSystemLoaderTest {
         assertNull(loader.normalize("/a/../../c.wit"));
 
         assertEquals("/", loader.normalize(""));
-        assertEquals("/a/b/c.wit", loader.normalize("a/b/c/"));
+        assertEquals("/a/b/c/", loader.normalize("a/b/c/"));
 
         assertEquals("/c.wit", loader.normalize("\\c.wit"));
         assertEquals("/c.wit", loader.normalize("/c.wit"));

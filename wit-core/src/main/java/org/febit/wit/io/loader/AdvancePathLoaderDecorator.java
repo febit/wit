@@ -81,7 +81,7 @@ public class AdvancePathLoaderDecorator implements Loader {
          * Nullable means no root prefix.
          */
         public Builder root(@Nullable String root) {
-            var normalized = PathUtils.normalize(root);
+            var normalized = PathUtils.normalize(root, false);
             this.root = normalized == null || normalized.isEmpty()
                     ? null : normalized;
             return this;
