@@ -22,7 +22,7 @@ import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.WithFlowControl;
-import org.febit.wit.runtime.ast.expr.FunctionDeclarer;
+import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclarer;
 import org.febit.wit.runtime.iter.Iter;
 import org.febit.wit.runtime.iter.Iters;
 import org.jspecify.annotations.Nullable;
@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 public record ForIn(
         int scope,
         Expression collection,
-        @Nullable FunctionDeclarer filter,
+        @Nullable ScriptFunctionDeclarer filter,
         int iterIndex,
         int itemIndex,
         LoopBody body,

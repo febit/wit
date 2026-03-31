@@ -13,7 +13,7 @@ import org.febit.wit.util.ClassNameRope;
 
 import java.util.List;
 
-import static org.febit.wit.parser.FunctionDeclarerBuilder.ArgumentInfo;
+import static org.febit.wit.parser.ScriptFunctionDeclarerBuilder.ArgumentInfo;
 
 /* Terminals */
 terminal Integer    VAR,
@@ -87,10 +87,10 @@ nonterminal Expression contextValueExpr;
 /* function & Lambda */
 nonterminal ArgumentInfo funcArg;
 nonterminal Expression funcExecuteExpr;
-nonterminal FunctionDeclarerBuilder funcHead, funcStatementHead, mapPropertyFuncHead;
+nonterminal ScriptFunctionDeclarerBuilder funcHead, funcStatementHead, mapPropertyFuncHead;
 nonterminal Expression lambdaExpr;
-nonterminal FunctionDeclarerBuilder lambdaExprHead;
-nonterminal FunctionDeclarerBuilder lambdaForHead1, lambdaForMapHead1;
+nonterminal ScriptFunctionDeclarerBuilder lambdaExprHead;
+nonterminal ScriptFunctionDeclarerBuilder lambdaForHead1, lambdaForMapHead1;
 
 /* precedence */
 precedence left     SEMICOLON; // ;
@@ -293,12 +293,12 @@ forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
 
 
 lambdaForHead1  ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
-                    {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
+                    {: yield ScriptFunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
                     ;
 
 
 lambdaForMapHead1   ::= FOR LPAREN IDENTIFIER:key COMMA IDENTIFIER:value MINUSGT:sym
-                    {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%key%).arg(%value%); :}
+                    {: yield ScriptFunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%key%).arg(%value%); :}
                     ;
 
 
@@ -581,15 +581,15 @@ funcArg             ::= IDENTIFIER:ident
 
 
 funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:args? RPAREN
-                        {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos), %sym.symbol%.pos).args(%args%); :}
+                        {: yield ScriptFunctionDeclarerBuilder.create(assembler.varLayout(), assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos), %sym.symbol%.pos).args(%args%); :}
                         ;
 
 // mapPropertyFuncHead ::= LPAREN:sym funcArg[COMMA]:args? RPAREN
-//                         {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
+//                         {: yield ScriptFunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
 //                         ;
 
 funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
-                        {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
+                        {: yield ScriptFunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
@@ -605,9 +605,9 @@ funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
 
 /* lambda */
 lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
-                        {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
+                        {: yield ScriptFunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
                         |LPAREN funcArg[COMMA]:args? RPAREN_MINUSGT:sym
-                        {: yield FunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
+                        {: yield ScriptFunctionDeclarerBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
                         ;
 
 

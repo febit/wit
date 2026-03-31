@@ -52,10 +52,15 @@ public final class ExportedFunction {
         this(container, function, new DiscardOut(charset, isByteStream));
     }
 
-    private InternalContext createContext(Out out) {
-        var variables = VariableHeap.empty();
-        var local = GenericHeap.local();
-        return new InternalContext(script, variables, Vars.empty(), out, local, null);
+    private InternalContext contextForCaller(Out out) {
+        return new InternalContext(
+                script,
+                VariableHeap.empty(),
+                Vars.empty(),
+                out,
+                GenericHeap.local(),
+                null
+        );
     }
 
     @Nullable
@@ -65,12 +70,12 @@ public final class ExportedFunction {
 
     @Nullable
     public Object apply(@Nullable Object @Nullable ... args) {
-        return doApply(createContext(defaultOut), args);
+        return doApply(contextForCaller(defaultOut), args);
     }
 
     @Nullable
     public Object applyWithOut(Out out, @Nullable Object @Nullable ... args) {
-        return doApply(createContext(out), args);
+        return doApply(contextForCaller(out), args);
     }
 
     @Nullable
