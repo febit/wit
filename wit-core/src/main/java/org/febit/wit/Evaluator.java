@@ -43,7 +43,6 @@ import static org.febit.wit.util.Defaults.nvl;
 public class Evaluator {
 
     @lombok.NonNull
-    @SuppressWarnings("NullableProblems")
     private final Script script;
 
     @Nullable

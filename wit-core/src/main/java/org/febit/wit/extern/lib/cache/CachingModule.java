@@ -44,7 +44,6 @@ public class CachingModule implements WitModule {
     private final boolean withRemove = true;
 
     @lombok.NonNull
-    @SuppressWarnings("NullableProblems")
     private final Cache<Object, CachingEntry> using;
 
     @Override

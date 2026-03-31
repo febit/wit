@@ -28,7 +28,6 @@ public class StringLoader implements Loader {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    @SuppressWarnings("NullableProblems")
     private final Source.BeginWith beginWith = Source.BeginWith.SCRIPT;
 
     @Override

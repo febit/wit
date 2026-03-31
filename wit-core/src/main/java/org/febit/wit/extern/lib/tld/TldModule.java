@@ -38,7 +38,6 @@ import java.util.List;
 public class TldModule implements WitModule {
 
     @lombok.NonNull
-    @SuppressWarnings("NullableProblems")
     private final String path;
 
     @lombok.Builder.Default
