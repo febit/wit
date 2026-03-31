@@ -41,19 +41,19 @@ class ClassUtilsTest {
     }
 
     @Test
-    void testFindPrimitiveClass() {
-        assertSame(int.class, ClassUtils.findPrimitiveClass("int"));
-        assertSame(boolean.class, ClassUtils.findPrimitiveClass("boolean"));
-        assertSame(long.class, ClassUtils.findPrimitiveClass("long"));
-        assertSame(float.class, ClassUtils.findPrimitiveClass("float"));
-        assertSame(double.class, ClassUtils.findPrimitiveClass("double"));
-        assertSame(byte.class, ClassUtils.findPrimitiveClass("byte"));
-        assertSame(char.class, ClassUtils.findPrimitiveClass("char"));
-        assertSame(short.class, ClassUtils.findPrimitiveClass("short"));
-        assertSame(void.class, ClassUtils.findPrimitiveClass("void"));
+    void testAsPrimitiveClass() {
+        assertSame(int.class, ClassUtils.asPrimitiveClass("int"));
+        assertSame(boolean.class, ClassUtils.asPrimitiveClass("boolean"));
+        assertSame(long.class, ClassUtils.asPrimitiveClass("long"));
+        assertSame(float.class, ClassUtils.asPrimitiveClass("float"));
+        assertSame(double.class, ClassUtils.asPrimitiveClass("double"));
+        assertSame(byte.class, ClassUtils.asPrimitiveClass("byte"));
+        assertSame(char.class, ClassUtils.asPrimitiveClass("char"));
+        assertSame(short.class, ClassUtils.asPrimitiveClass("short"));
+        assertSame(void.class, ClassUtils.asPrimitiveClass("void"));
 
-        assertNull(ClassUtils.findPrimitiveClass(null));
-        assertNull(ClassUtils.findPrimitiveClass("java.lang.String"));
+        assertNull(ClassUtils.asPrimitiveClass(null));
+        assertNull(ClassUtils.asPrimitiveClass("java.lang.String"));
     }
 
     @Test

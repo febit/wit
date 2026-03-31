@@ -28,12 +28,12 @@ import java.util.stream.Collectors;
 public class HeapNativeUtils {
 
     @SuppressWarnings("UnusedReturnValue")
-    public static int addStaticMethods(
+    public static int collectStaticMethods(
             Heap target, NativeFunctionFactory functionFactory, Class<?> type) {
-        return addStaticMethods(target, functionFactory, type, false);
+        return collectStaticMethods(target, functionFactory, type, false);
     }
 
-    public static int addStaticMethods(
+    public static int collectStaticMethods(
             Heap target,
             NativeFunctionFactory functionFactory,
             Class<?> type,
@@ -51,11 +51,11 @@ public class HeapNativeUtils {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public static int addConstFields(Heap target, Class<?> type) {
-        return addConstFields(target, type, false);
+    public static int collectConstFields(Heap target, Class<?> type) {
+        return collectConstFields(target, type, false);
     }
 
-    public static int addConstFields(
+    public static int collectConstFields(
             Heap target,
             Class<?> type,
             boolean ignoreIfPresent

@@ -40,7 +40,7 @@ public record NewArrayNativeFunction(
         var arg0 = args[0];
         if (!(arg0 instanceof Number number)) {
             throw new ScriptEvaluateException(
-                    "A number is expected as array's length, but got: " + ClassUtils.className(arg0));
+                    "A number is expected as array's length, but got: " + ClassUtils.classNameOf(arg0));
         }
 
         var size = number.intValue();

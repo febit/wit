@@ -29,12 +29,12 @@ import java.util.stream.Stream;
 @UtilityClass
 public class ClassUtils {
 
-    public static String className(@Nullable Object targetObj) {
+    public static String classNameOf(@Nullable Object targetObj) {
         return targetObj != null ? targetObj.getClass().getName() : "null";
     }
 
     public static Stream<Method> methods(Class<?> target, String name) {
-        var result = new HashMap<String, Method>();
+        var distinct = new HashMap<String, Method>();
         for (var method : target.getMethods()) {
             if (!method.getName().equals(name)) {
                 continue;
@@ -45,14 +45,14 @@ public class ClassUtils {
                         .append(',');
             }
             var key = keyBuf.toString();
-            var old = result.get(key);
+            var old = distinct.get(key);
             if (old == null
                     || old.getDeclaringClass()
                     .isAssignableFrom(method.getDeclaringClass())) {
-                result.put(key, method);
+                distinct.put(key, method);
             }
         }
-        return result.values().stream();
+        return distinct.values().stream();
     }
 
     public static ClassLoader classLoader() {
@@ -94,7 +94,7 @@ public class ClassUtils {
         throw new IllegalStateException("Unknown primitive type: " + type.getName());
     }
 
-    public static char getAliasOfBaseType(final String name) {
+    public static char aliasOfBaseType(final String name) {
         return switch (name) {
             case "int" -> 'I';
             case "long" -> 'J';
@@ -109,28 +109,8 @@ public class ClassUtils {
         };
     }
 
-    public static Class<?> loadByName(String name, int arrayDepth) throws ClassNotFoundException {
-        if (arrayDepth == 0) {
-            return loadByName(name);
-        }
-        char alias = getAliasOfBaseType(name);
-        final char[] chars;
-        if (alias == '\0') {
-            chars = new char[name.length() + 2 + arrayDepth];
-            Arrays.fill(chars, 0, arrayDepth, '[');
-            chars[arrayDepth] = 'L';
-            name.getChars(0, name.length(), chars, arrayDepth + 1);
-            chars[chars.length - 1] = ';';
-        } else {
-            chars = new char[arrayDepth + 1];
-            Arrays.fill(chars, 0, arrayDepth, '[');
-            chars[arrayDepth] = alias;
-        }
-        return loadByQualifiedName(new String(chars));
-    }
-
     @Nullable
-    public static Class<?> findPrimitiveClass(@Nullable final String name) {
+    public static Class<?> asPrimitiveClass(@Nullable final String name) {
         if (name == null) {
             return null;
         }
@@ -148,9 +128,13 @@ public class ClassUtils {
         };
     }
 
+    private static Class<?> loadByQualifiedName(String name) throws ClassNotFoundException {
+        return Class.forName(name, true, classLoader());
+    }
+
     public static Class<?> loadByName(String name) {
         try {
-            var cls = findPrimitiveClass(name);
+            var cls = asPrimitiveClass(name);
             return cls != null ? cls
                     : loadByQualifiedName(name);
         } catch (ClassNotFoundException ex) {
@@ -158,8 +142,24 @@ public class ClassUtils {
         }
     }
 
-    private static Class<?> loadByQualifiedName(String name) throws ClassNotFoundException {
-        return Class.forName(name, true, classLoader());
+    public static Class<?> loadByName(String name, int arrayDepth) throws ClassNotFoundException {
+        if (arrayDepth == 0) {
+            return loadByName(name);
+        }
+        char alias = aliasOfBaseType(name);
+        final char[] chars;
+        if (alias == '\0') {
+            chars = new char[name.length() + 2 + arrayDepth];
+            Arrays.fill(chars, 0, arrayDepth, '[');
+            chars[arrayDepth] = 'L';
+            name.getChars(0, name.length(), chars, arrayDepth + 1);
+            chars[chars.length - 1] = ';';
+        } else {
+            chars = new char[arrayDepth + 1];
+            Arrays.fill(chars, 0, arrayDepth, '[');
+            chars[arrayDepth] = alias;
+        }
+        return loadByQualifiedName(new String(chars));
     }
 
     public static boolean isStatic(Member member) {

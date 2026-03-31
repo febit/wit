@@ -85,7 +85,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         var className = "org.febit.wit.extern.asm.AsmFunction" + AsmUtils.SEQ.getAndIncrement();
         var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
-                AsmUtils.toInternalName(className), AsmUtils.TYPE_OBJ, FUNC_DECLARE);
+                AsmUtils.internalNameOf(className), AsmUtils.TYPE_OBJ, FUNC_DECLARE);
 
         AsmUtils.visitConstructor(classWriter);
 
@@ -102,18 +102,18 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
             isInterface = method.getDeclaringClass().isInterface();
             isStatic = ClassUtils.isStatic(method);
             isConstructor = false;
-            ownerClass = AsmUtils.toInternalName(method.getDeclaringClass().getName());
+            ownerClass = AsmUtils.internalNameOf(method.getDeclaringClass().getName());
             destName = method.getName();
-            destDesc = AsmUtils.getDescriptor(method);
+            destDesc = AsmUtils.descriptorOf(method);
             paramTypes = method.getParameterTypes();
             returnType = method.getReturnType();
         } else if (obj instanceof Constructor<?> constructor) {
             isInterface = false;
             isStatic = false;
             isConstructor = true;
-            ownerClass = AsmUtils.toInternalName(constructor.getDeclaringClass().getName());
+            ownerClass = AsmUtils.internalNameOf(constructor.getDeclaringClass().getName());
             destName = AsmUtils.METHOD_CTOR;
-            destDesc = AsmUtils.getDescriptor(constructor);
+            destDesc = AsmUtils.descriptorOf(constructor);
             paramTypes = constructor.getParameterTypes();
             returnType = constructor.getDeclaringClass();
         } else {
@@ -182,7 +182,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
                 m.visitVarInsn(Constants.ALOAD, 2);
                 m.push(paramCount);
                 m.visitInsn(Constants.AALOAD);
-                m.checkCast(AsmUtils.toBoxedInternalName(paramType));
+                m.checkCast(AsmUtils.boxedInternalNameOf(paramType));
                 AsmUtils.visitUnboxIfNeed(m, paramType);
                 paramCount++;
             }

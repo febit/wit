@@ -80,11 +80,11 @@ public class ScriptImpl implements Script {
         return ast;
     }
 
-    private boolean isAstExpired(@Nullable ScriptAST myAst) {
-        if (myAst == null) {
+    private boolean isAstExpired(@Nullable ScriptAST ast) {
+        if (ast == null) {
             return true;
         }
-        return myAst.sourceVersion() != this.source.version();
+        return ast.sourceVersion() != this.source.version();
     }
 
     /**

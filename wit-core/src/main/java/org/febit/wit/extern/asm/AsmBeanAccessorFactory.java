@@ -94,7 +94,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         var className = "org.febit.wit.extern.asm.AsmBeanAccessor" + AsmUtils.SEQ.getAndIncrement();
 
         var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
-                AsmUtils.toInternalName(className), AsmUtils.TYPE_OBJ, ASM_ACCESSOR);
+                AsmUtils.internalNameOf(className), AsmUtils.TYPE_OBJ, ASM_ACCESSOR);
         AsmUtils.visitConstructor(classWriter);
 
         var fields = BeanProperties.introspect(beanClass)
@@ -138,7 +138,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
     private static void visitXetMethod(
             final boolean isGetter, final ClassWriter classWriter, final Class<?> beanClass,
             final BeanProperty[] props, final int[] hashes, final int[] indexer) {
-        var beanName = AsmUtils.toBoxedInternalName(beanClass);
+        var beanName = AsmUtils.boxedInternalNameOf(beanClass);
         final MethodWriter m;
         if (isGetter) {
             m = classWriter.visitMethod(Constants.ACC_PUBLIC, "get",
@@ -237,10 +237,10 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         m.checkCast(beanName);
         if (getter != null) {
             //return book.getName()
-            m.invokeVirtual(beanName, getter.getName(), AsmUtils.getDescriptor(getter));
+            m.invokeVirtual(beanName, getter.getName(), AsmUtils.descriptorOf(getter));
         } else {
             //return book.name
-            m.visitFieldInsn(Constants.GETFIELD, beanName, property.name(), AsmUtils.getDescriptor(resultType));
+            m.visitFieldInsn(Constants.GETFIELD, beanName, property.name(), AsmUtils.descriptorOf(resultType));
         }
         AsmUtils.visitBoxIfNeed(m, resultType);
         m.visitInsn(Constants.ARETURN);
@@ -262,14 +262,14 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         m.visitVarInsn(Constants.ALOAD, 1);
         m.checkCast(beanName);
         m.visitVarInsn(Constants.ALOAD, 3);
-        m.checkCast(AsmUtils.toBoxedInternalName(fieldClass));
+        m.checkCast(AsmUtils.boxedInternalNameOf(fieldClass));
         AsmUtils.visitUnboxIfNeed(m, fieldClass);
         if (setter != null) {
             //book.setName((String)name)
-            m.invokeVirtual(beanName, setter.getName(), AsmUtils.getDescriptor(setter));
+            m.invokeVirtual(beanName, setter.getName(), AsmUtils.descriptorOf(setter));
         } else {
             //book.name = (String) name
-            m.visitFieldInsn(Constants.PUTFIELD, beanName, property.name(), AsmUtils.getDescriptor(fieldClass));
+            m.visitFieldInsn(Constants.PUTFIELD, beanName, property.name(), AsmUtils.descriptorOf(fieldClass));
         }
 
         m.visitInsn(Constants.RETURN);

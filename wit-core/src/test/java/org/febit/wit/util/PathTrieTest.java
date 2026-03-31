@@ -18,7 +18,7 @@ package org.febit.wit.util;
 import org.febit.wit.util.PathTrie.Segment;
 import org.junit.jupiter.api.Test;
 
-import static org.febit.wit.util.PathTrie.split;
+import static org.febit.wit.util.PathTrie.segments;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PathTrieTest {
@@ -32,31 +32,31 @@ class PathTrieTest {
     }
 
     @Test
-    void testSplitDot() {
-        assertArrayEquals(arr(), split("", '.'));
+    void testSegmentsDot() {
+        assertArrayEquals(arr(), segments("", '.'));
 
-        assertArrayEquals(arr("."), split(".", '.'));
-        assertArrayEquals(arr(".", "."), split("..", '.'));
-        assertArrayEquals(arr(".", ".", "."), split("...", '.'));
+        assertArrayEquals(arr("."), segments(".", '.'));
+        assertArrayEquals(arr(".", "."), segments("..", '.'));
+        assertArrayEquals(arr(".", ".", "."), segments("...", '.'));
 
-        assertArrayEquals(arr("a"), split("a", '.'));
-        assertArrayEquals(arr("a", ".b"), split("a.b", '.'));
-        assertArrayEquals(arr("a", ".b", ".c"), split("a.b.c", '.'));
-        assertArrayEquals(arr(".a", ".b", ".c", "."), split(".a.b.c.", '.'));
+        assertArrayEquals(arr("a"), segments("a", '.'));
+        assertArrayEquals(arr("a", ".b"), segments("a.b", '.'));
+        assertArrayEquals(arr("a", ".b", ".c"), segments("a.b.c", '.'));
+        assertArrayEquals(arr(".a", ".b", ".c", "."), segments(".a.b.c.", '.'));
     }
 
     @Test
-    void testSplitSlash() {
-        assertArrayEquals(arr(), split("", '/'));
+    void testSegmentsSlash() {
+        assertArrayEquals(arr(), segments("", '/'));
 
-        assertArrayEquals(arr("/"), split("/", '/'));
-        assertArrayEquals(arr("/", "/"), split("//", '/'));
-        assertArrayEquals(arr("/", "/", "/"), split("///", '/'));
+        assertArrayEquals(arr("/"), segments("/", '/'));
+        assertArrayEquals(arr("/", "/"), segments("//", '/'));
+        assertArrayEquals(arr("/", "/", "/"), segments("///", '/'));
 
-        assertArrayEquals(arr("a"), split("a", '/'));
-        assertArrayEquals(arr("a", "/b"), split("a/b", '/'));
-        assertArrayEquals(arr("a", "/b", "/c"), split("a/b/c", '/'));
-        assertArrayEquals(arr("/a", "/b", "/c", "/"), split("/a/b/c/", '/'));
+        assertArrayEquals(arr("a"), segments("a", '/'));
+        assertArrayEquals(arr("a", "/b"), segments("a/b", '/'));
+        assertArrayEquals(arr("a", "/b", "/c"), segments("a/b/c", '/'));
+        assertArrayEquals(arr("/a", "/b", "/c", "/"), segments("/a/b/c/", '/'));
     }
 
     @Test

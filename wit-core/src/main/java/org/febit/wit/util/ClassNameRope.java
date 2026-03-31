@@ -77,8 +77,7 @@ public class ClassNameRope {
         return buf.substring(0, buf.length() - 1);
     }
 
-    @Override
-    public String toString() {
+    public String fullName() {
         var buf = new StringBuilder();
         for (int i = 0; i < segments.size(); i++) {
             if (i != 0) {
@@ -90,5 +89,10 @@ public class ClassNameRope {
             buf.append('[').append(']');
         }
         return buf.toString();
+    }
+
+    @Override
+    public String toString() {
+        return fullName();
     }
 }

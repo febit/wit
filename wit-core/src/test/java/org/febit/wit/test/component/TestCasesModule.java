@@ -52,8 +52,8 @@ public class TestCasesModule implements WitModule {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-        HeapNativeUtils.addConstFields(heaps.constants(), ConstMethods.class);
-        HeapNativeUtils.addStaticMethods(heaps.constants(), functions, ConstMethods.class);
+        HeapNativeUtils.collectConstFields(heaps.constants(), ConstMethods.class);
+        HeapNativeUtils.collectStaticMethods(heaps.constants(), functions, ConstMethods.class);
 
         try {
             heaps.constants().set("new_ConstMethods2", functions.constructor(ConstMethods2.class.getConstructor()));

@@ -53,7 +53,7 @@ public final class PathTrie {
      * a/b          -> ["a", "/b"]
      * </pre>
      */
-    static Segment[] split(@Nullable String path, char separator) {
+    static Segment[] segments(@Nullable String path, char separator) {
         if (path == null || path.isEmpty()) {
             return EMPTY_SEGMENTS;
         }
@@ -168,7 +168,7 @@ public final class PathTrie {
 
         private void insert(Rule rule) {
             var node = this.root;
-            var segments = split(rule.path, this.separator);
+            var segments = segments(rule.path, this.separator);
 
             for (var segment : segments) {
                 node = node.children.computeIfAbsent(segment, k -> new NodeBuilder());

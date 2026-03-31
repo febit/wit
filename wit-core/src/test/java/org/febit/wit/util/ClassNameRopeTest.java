@@ -30,35 +30,35 @@ class ClassNameRopeTest {
         assertTrue(rope.isSimpleName());
         assertEquals("abc", rope.simpleName());
         assertEquals("abc", rope.componentName());
-        assertEquals("abc", rope.toString());
+        assertEquals("abc", rope.fullName());
 
         rope = new ClassNameRope("abc").increaseArrayDepth();
         assertTrue(rope.isArray());
         assertTrue(rope.isSimpleName());
         assertEquals("abc", rope.simpleName());
         assertEquals("abc", rope.componentName());
-        assertEquals("abc[]", rope.toString());
+        assertEquals("abc[]", rope.fullName());
 
         rope = new ClassNameRope("abc").append("def");
         assertFalse(rope.isArray());
         assertFalse(rope.isSimpleName());
         assertEquals("def", rope.simpleName());
         assertEquals("abc.def", rope.componentName());
-        assertEquals("abc.def", rope.toString());
+        assertEquals("abc.def", rope.fullName());
 
         rope = new ClassNameRope("abc").append("def").increaseArrayDepth();
         assertTrue(rope.isArray());
         assertFalse(rope.isSimpleName());
         assertEquals("def", rope.simpleName());
         assertEquals("abc.def", rope.componentName());
-        assertEquals("abc.def[]", rope.toString());
+        assertEquals("abc.def[]", rope.fullName());
 
         rope = new ClassNameRope("abc").append("def").increaseArrayDepth().increaseArrayDepth();
         assertTrue(rope.isArray());
         assertFalse(rope.isSimpleName());
         assertEquals("def", rope.simpleName());
         assertEquals("abc.def", rope.componentName());
-        assertEquals("abc.def[][]", rope.toString());
+        assertEquals("abc.def[][]", rope.fullName());
     }
 
     @Test

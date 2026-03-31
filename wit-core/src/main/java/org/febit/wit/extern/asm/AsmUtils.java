@@ -44,38 +44,38 @@ class AsmUtils {
         return CLASS_LOADER.loadClass(name, classWriter.toByteArray());
     }
 
-    static String toBoxedInternalName(Class<?> type) {
+    static String boxedInternalNameOf(Class<?> type) {
         var boxed = nvl(ClassUtils.toBoxed(type), type);
-        return toInternalName(boxed.getName());
+        return internalNameOf(boxed.getName());
     }
 
-    static String toInternalName(String className) {
+    static String internalNameOf(String className) {
         return className.replace('.', '/');
     }
 
-    static String getDescriptor(Constructor<?> c) {
+    static String descriptorOf(Constructor<?> c) {
         var buf = new StringBuilder();
         buf.append('(');
         for (var paramType : c.getParameterTypes()) {
-            buf.append(getDescriptor(paramType));
+            buf.append(descriptorOf(paramType));
         }
         return buf.append(")V").toString();
     }
 
-    static String getDescriptor(Method m) {
+    static String descriptorOf(Method m) {
         var buf = new StringBuilder();
         buf.append('(');
         for (var paramType : m.getParameterTypes()) {
-            buf.append(getDescriptor(paramType));
+            buf.append(descriptorOf(paramType));
         }
-        return buf.append(')').append(getDescriptor(m.getReturnType())).toString();
+        return buf.append(')').append(descriptorOf(m.getReturnType())).toString();
     }
 
-    static String getDescriptor(Class<?> c) {
+    static String descriptorOf(Class<?> c) {
         if (c.isPrimitive()) {
-            return String.valueOf(ClassUtils.getAliasOfBaseType(c.getName()));
+            return String.valueOf(ClassUtils.aliasOfBaseType(c.getName()));
         }
-        var internalName = toInternalName(c.getName());
+        var internalName = internalNameOf(c.getName());
         if (c.isArray()) {
             return internalName;
         }
@@ -91,8 +91,8 @@ class AsmUtils {
                     "UNDEFINED", "L" + TYPE_UNDEFINED + ";");
             return;
         }
-        var boxedType = toBoxedInternalName(type);
-        m.invokeStatic(boxedType, "valueOf", "(" + getDescriptor(type) + ")L" + boxedType + ";");
+        var boxedType = boxedInternalNameOf(type);
+        m.invokeStatic(boxedType, "valueOf", "(" + descriptorOf(type) + ")L" + boxedType + ";");
     }
 
     static void visitUnboxIfNeed(MethodWriter m, Class<?> type) {
@@ -103,7 +103,7 @@ class AsmUtils {
             // ignore void.class
             return;
         }
-        m.invokeVirtual(toBoxedInternalName(type), type.getName() + "Value", "()" + getDescriptor(type));
+        m.invokeVirtual(boxedInternalNameOf(type), type.getName() + "Value", "()" + descriptorOf(type));
     }
 
     static void visitScriptEvaluateException(MethodWriter m, String message) {

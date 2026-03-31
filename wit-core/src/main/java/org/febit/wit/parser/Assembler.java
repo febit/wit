@@ -128,7 +128,7 @@ public class Assembler {
         Class<?> cls;
 
         // 2. find as primitive type
-        cls = ClassUtils.findPrimitiveClass(className);
+        cls = ClassUtils.asPrimitiveClass(className);
         if (cls != null) {
             return className;
         }
@@ -149,7 +149,7 @@ public class Assembler {
 
     public void importClass(ClassNameRope rope, Position position) throws ScriptParseException {
         var simpleName = rope.simpleName();
-        if (ClassUtils.findPrimitiveClass(simpleName) != null) {
+        if (ClassUtils.asPrimitiveClass(simpleName) != null) {
             throw new ScriptParseException("Cannot import primitive type:" + simpleName, position);
         }
         var componentName = rope.componentName();

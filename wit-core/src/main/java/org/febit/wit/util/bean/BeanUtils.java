@@ -54,7 +54,7 @@ public class BeanUtils {
     private static Accessor accessor(Class<?> cls, String name) throws BeanException {
         var descs = CACHE.unsafeGet(cls);
         if (descs == null) {
-            descs = CACHE.putIfAbsent(cls, createAccessors(cls));
+            descs = CACHE.putIfAbsent(cls, collectAccessors(cls));
         }
         var accessor = descs.get(name);
         if (accessor != null) {
@@ -63,7 +63,7 @@ public class BeanUtils {
         throw new BeanException("Unable to get field: " + cls + "#" + name);
     }
 
-    private static Map<String, Accessor> createAccessors(Class<?> cls) {
+    private static Map<String, Accessor> collectAccessors(Class<?> cls) {
         var map = new HashMap<String, Accessor>(16);
         BeanProperties.introspect(cls)
                 .forEach(prop -> map.put(
