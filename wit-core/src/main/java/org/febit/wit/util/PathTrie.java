@@ -30,6 +30,8 @@ import java.util.Map;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PathTrie {
 
+    private static final Segment[] EMPTY_SEGMENTS = {};
+
     private final char separator;
     private final Node root;
 
@@ -51,22 +53,32 @@ public final class PathTrie {
      * a/b          -> ["a", "/b"]
      * </pre>
      */
-    static String[] split(@Nullable String path, char separator) {
+    static Segment[] split(@Nullable String path, char separator) {
         if (path == null || path.isEmpty()) {
-            return new String[0];
+            return EMPTY_SEGMENTS;
         }
         int len = path.length();
-        var list = new ArrayList<String>();
+
+        // Pre-count segments to allocate exact-sized array
+        int count = 1;
+        for (int i = 1; i < len; i++) {
+            if (path.charAt(i) == separator) {
+                count++;
+            }
+        }
+
+        var segments = new Segment[count];
         int start = 0;
+        int idx = 0;
         for (int i = 1; i < len; i++) {
             if (path.charAt(i) != separator) {
                 continue;
             }
-            list.add(path.substring(start, i));
+            segments[idx++] = new Segment(path, start, i);
             start = i;
         }
-        list.add(path.substring(start));
-        return list.toArray(new String[0]);
+        segments[idx] = new Segment(path, start, len);
+        return segments;
     }
 
     /**
@@ -76,19 +88,37 @@ public final class PathTrie {
      * @return true if allowed, false if denied or no matching rule
      */
     public boolean match(@Nullable String path) {
-        var segments = split(path, this.separator);
+        if (path == null || path.isEmpty()) {
+            return this.root.allowed != null && this.root.allowed;
+        }
+
+        int len = path.length();
         var node = this.root;
-        for (var segment : segments) {
-            var cadi = node.children.get(segment);
-            if (cadi != null) {
-                node = cadi;
+        int segStart = 0;
+        // Reusable segment for HashMap lookups — avoids per-segment allocation
+        var lookup = new Segment(path, 0, 0);
+
+        for (int i = 1; ; i++) {
+            if (i < len && path.charAt(i) != this.separator) {
                 continue;
             }
 
-            // Finished matching segments
-            // Fallback if segment starts with separator
-            if (!segment.isEmpty()
-                    && segment.charAt(0) == this.separator
+            // Found segment boundary [segStart, i)
+            lookup.reset(segStart, i);
+
+            var found = node.children.get(lookup);
+            if (found != null) {
+                node = found;
+                segStart = i;
+                if (i >= len) {
+                    break;
+                }
+                continue;
+            }
+
+            // No child match — check fallback if segment starts with separator
+            if (segStart != i
+                    && path.charAt(segStart) == this.separator
                     && node.fallbackChild != null
             ) {
                 node = node.fallbackChild;
@@ -98,15 +128,22 @@ public final class PathTrie {
         return node.allowed != null && node.allowed;
     }
 
+    private record Node(
+            Map<Segment, Node> children,
+            @Nullable Node fallbackChild,
+            @Nullable Boolean allowed
+    ) {
+    }
+
     public static final class Builder {
         private final char separator;
-        private final String separatorString;
+        private final Segment fallbackKey;
         private final List<Rule> rules = new ArrayList<>();
         private final NodeBuilder root = new NodeBuilder();
 
         private Builder(char separator) {
             this.separator = separator;
-            this.separatorString = String.valueOf(separator);
+            this.fallbackKey = new Segment(String.valueOf(separator), 0, 1);
         }
 
         public Builder allow(String path) {
@@ -151,29 +188,88 @@ public final class PathTrie {
         }
 
         private class NodeBuilder {
-            private final Map<String, NodeBuilder> children = new HashMap<>();
+            private final Map<Segment, NodeBuilder> children = new HashMap<>();
             @Nullable
             private Boolean allowed;
 
             Node build() {
-                var frozen = new HashMap<String, Node>();
+                var frozen = new HashMap<Segment, Node>();
                 for (var entry : this.children.entrySet()) {
-                    frozen.put(entry.getKey(), entry.getValue().build());
+                    frozen.put(entry.getKey().compact(), entry.getValue().build());
                 }
                 return new Node(
                         Map.copyOf(frozen),
-                        frozen.get(Builder.this.separatorString),
+                        frozen.get(Builder.this.fallbackKey),
                         this.allowed
                 );
             }
         }
     }
 
-    private record Node(
-            Map<String, Node> children,
-            @Nullable Node fallbackChild,
-            @Nullable Boolean allowed
-    ) {
-    }
+    static class Segment {
 
+        private final String base;
+        private int start;
+        private int end;
+
+        private int hash = 0;
+
+        Segment(String base, int start, int end) {
+            this.base = base;
+            this.start = start;
+            this.end = end;
+        }
+
+        /**
+         * Resets start/end for reuse as a HashMap lookup key.
+         */
+        void reset(int start, int end) {
+            this.start = start;
+            this.end = end;
+            this.hash = 0;
+        }
+
+        Segment compact() {
+            if (start == 0 && end == base.length()) {
+                return this;
+            }
+            return new Segment(toString(), 0, end - start);
+        }
+
+        @Override
+        public String toString() {
+            return base.substring(start, end);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = this.hash;
+            if (h != 0) {
+                return h;
+            }
+            for (int i = start; i < end; i++) {
+                h = 31 * h + base.charAt(i);
+            }
+            if (h == 0) {
+                h = 1;
+            }
+            this.hash = h;
+            return h;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Segment other)) {
+                return false;
+            }
+            if (end - start != other.end - other.start) {
+                return false;
+            }
+            if (hash != 0 && other.hash != 0 && hash != other.hash) return false;
+            return base.regionMatches(start, other.base, other.start, end - start);
+        }
+    }
 }

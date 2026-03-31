@@ -15,6 +15,7 @@
  */
 package org.febit.wit.util;
 
+import org.febit.wit.util.PathTrie.Segment;
 import org.junit.jupiter.api.Test;
 
 import static org.febit.wit.util.PathTrie.split;
@@ -22,8 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PathTrieTest {
 
-    static String[] arr(String... parts) {
-        return parts;
+    static PathTrie.Segment[] arr(String... parts) {
+        var arr = new Segment[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            arr[i] = new Segment(parts[i], 0, parts[i].length());
+        }
+        return arr;
     }
 
     @Test
