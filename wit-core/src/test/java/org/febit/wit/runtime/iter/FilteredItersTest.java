@@ -38,7 +38,7 @@ class FilteredItersTest {
         );
 
         IterAsserts.empty(Iters.ofFiltered(context,
-                RandomAccessIter.of("abc"),
+                SequenceIter.of("abc"),
                 (context, args) -> false)
         );
     }
@@ -57,11 +57,11 @@ class FilteredItersTest {
     @Test
     void abc() {
         IterAsserts.abc(Iters.ofFiltered(context,
-                RandomAccessIter.of(List.of("a", "b", "c")),
+                SequenceIter.of(List.of("a", "b", "c")),
                 (context, args) -> true)
         );
         IterAsserts.abc(Iters.ofFiltered(context,
-                RandomAccessIter.of(Lists.collect(new String[]{
+                SequenceIter.of(Lists.collect(new String[]{
                         "0", "a", "1", "b", "c", null, "d", "e"
                 })),
                 FilteredItersTest::isAbc

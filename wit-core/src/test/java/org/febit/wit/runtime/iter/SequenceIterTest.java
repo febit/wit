@@ -19,32 +19,32 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-class RandomAccessIterTest {
+class SequenceIterTest {
 
     @Test
     void list() {
-        IterAsserts.empty(RandomAccessIter.of(List.of()));
-        IterAsserts.abc(RandomAccessIter.of(List.of("a", "b", "c")));
+        IterAsserts.empty(SequenceIter.of(List.of()));
+        IterAsserts.abc(SequenceIter.of(List.of("a", "b", "c")));
     }
 
     @Test
     void stringArray() {
-        IterAsserts.empty(RandomAccessIter.of(new String[]{}));
-        IterAsserts.abc(RandomAccessIter.of(new String[]{"a", "b", "c"}));
+        IterAsserts.empty(SequenceIter.of(new String[]{}));
+        IterAsserts.abc(SequenceIter.of(new String[]{"a", "b", "c"}));
     }
 
     @Test
     void objectArray() {
-        IterAsserts.empty(RandomAccessIter.of(new Object[]{}));
-        IterAsserts.abc(RandomAccessIter.of(new Object[]{"a", "b", "c"}));
+        IterAsserts.empty(SequenceIter.of(new Object[]{}));
+        IterAsserts.abc(SequenceIter.of(new Object[]{"a", "b", "c"}));
     }
 
     @Test
     void chars() {
-        IterAsserts.empty(RandomAccessIter.of(""));
-        IterAsserts.empty(RandomAccessIter.ofArray("".toCharArray()));
-        IterAsserts.abcChars(RandomAccessIter.of("abc"));
-        IterAsserts.abcChars(RandomAccessIter.ofArray("abc".toCharArray()));
+        IterAsserts.empty(SequenceIter.of(""));
+        IterAsserts.empty(SequenceIter.ofArray("".toCharArray()));
+        IterAsserts.abcChars(SequenceIter.of("abc"));
+        IterAsserts.abcChars(SequenceIter.ofArray("abc".toCharArray()));
     }
 
 }

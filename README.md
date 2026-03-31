@@ -7,7 +7,7 @@ A script/template engine implemented in pure Java (Java 17+).
 
 ## How to use
 
-+ Maven: 
++ Maven
 
 ```xml
 <dependency>
@@ -17,7 +17,7 @@ A script/template engine implemented in pure Java (Java 17+).
 </dependency>
 ```
 
-+ or Gradle
++ Gradle
 
 ```
 implementation 'org.febit.wit:wit-core:3.0.0-SNAPSHOT'

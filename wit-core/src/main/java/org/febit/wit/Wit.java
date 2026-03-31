@@ -94,9 +94,7 @@ public class Wit {
         var path = this.loader.sibling(refer, relative);
         if (path == null) {
             throw new NoSuchSourceException(
-                    "Illegal script path: sibling of "
-                            + refer + " and " + relative
-            );
+                    "Illegal script path: sibling of " + refer + " and " + relative);
         }
         return script(path);
     }

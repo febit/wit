@@ -25,14 +25,10 @@ public record DiscardOut(
         boolean preferBytes
 ) implements Out {
 
-    public static final DiscardOut INSTANCE = new DiscardOut();
+    private static final DiscardOut INSTANCE = new DiscardOut(StandardCharsets.UTF_8, false);
 
     public static DiscardOut get() {
         return INSTANCE;
-    }
-
-    public DiscardOut() {
-        this(StandardCharsets.UTF_8, false);
     }
 
     @Override

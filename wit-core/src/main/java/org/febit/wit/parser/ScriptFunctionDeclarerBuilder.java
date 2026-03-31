@@ -20,10 +20,10 @@ import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.expr.Assign;
 import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclarer;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
-import org.febit.wit.runtime.ast.statement.Return;
+import org.febit.wit.runtime.ast.flow.Return;
+import org.febit.wit.runtime.ast.oper.Assign;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;

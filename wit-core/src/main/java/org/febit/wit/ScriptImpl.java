@@ -26,6 +26,7 @@ import org.febit.wit.parser.Parser;
 import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.ScriptAST;
+import org.febit.wit.runtime.heap.GenericHeap;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
@@ -44,7 +45,7 @@ public class ScriptImpl implements Script {
     private final Source source;
 
     @Nullable
-    private volatile ScriptAST ast;
+    private volatile ScriptAST parsedAst;
 
     public ScriptImpl(Wit engine, String path, Source source) {
         this.engine = engine;
@@ -59,24 +60,24 @@ public class ScriptImpl implements Script {
      */
     @Override
     public void reload() {
-        prepareAst(true);
+        ast(true);
     }
 
-    private ScriptAST prepareAst() {
-        var myAst = this.ast;
-        if (!isAstExpired(myAst)) {
-            return myAst;
+    private ScriptAST ast() {
+        var ast = this.parsedAst;
+        if (!isAstExpired(ast)) {
+            return ast;
         }
-        return prepareAst(false);
+        return ast(false);
     }
 
-    private synchronized ScriptAST prepareAst(boolean renew) {
-        var myAst = this.ast;
-        if (renew || isAstExpired(myAst)) {
-            myAst = Parser.parse(this);
-            this.ast = myAst;
+    private synchronized ScriptAST ast(boolean renew) {
+        var ast = this.parsedAst;
+        if (renew || isAstExpired(ast)) {
+            ast = Parser.parse(this);
+            this.parsedAst = ast;
         }
-        return myAst;
+        return ast;
     }
 
     private boolean isAstExpired(@Nullable ScriptAST myAst) {
@@ -94,33 +95,57 @@ public class ScriptImpl implements Script {
      * @param breakpointHandler listener
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ScriptParseException          when unable to parse
+     * @throws ScriptParseException    when unable to parse
      */
     public Context eval(Vars inputs, Out out, @Nullable BreakpointHandler breakpointHandler) {
         Objects.requireNonNull(inputs, "inputs is required");
         Objects.requireNonNull(out, "out is required");
-
         try {
-            return Parser.parse(this)
-                    .execute(this, out, inputs, breakpointHandler);
+            var ast = ast();
+            var context = new InternalContext(
+                    this,
+                    ast.createVariableHeap(),
+                    inputs,
+                    out,
+                    GenericHeap.local(),
+                    breakpointHandler
+            );
+            ast.execute(context);
+            return context;
         } catch (Exception e) {
-            throw completeException(e);
+            throw handleException(e);
         }
     }
 
     @Override
-    public Context merge(InternalContext target, Vars inputs) {
+    public Context merge(InternalContext parent, Vars inputs) {
         try {
-            return prepareAst()
-                    .execute(this, target, inputs);
+            var ast = ast();
+            var context = new InternalContext(
+                    this,
+                    ast.createVariableHeap(),
+                    inputs,
+                    parent.out(),
+                    parent.local(),
+                    parent.breakpointHandler()
+            );
+            ast.execute(context);
+            return context;
         } catch (Exception e) {
-            throw completeException(e);
+            throw handleException(e);
         }
+    }
+
+    private ScriptException handleException(Exception exception) {
+        var se = (exception instanceof ScriptException ex) ? ex
+                : new ScriptEvaluateException(exception);
+        se.script(this);
+        return se;
     }
 
     @Override
     public void reset() {
-        this.ast = null;
+        this.parsedAst = null;
     }
 
     @Override
@@ -140,8 +165,4 @@ public class ScriptImpl implements Script {
                 && this.path.equals(other.path);
     }
 
-    private ScriptException completeException(Exception exception) {
-        return ((exception instanceof ScriptException ex) ? ex
-                : new ScriptEvaluateException(exception)).script(this);
-    }
 }

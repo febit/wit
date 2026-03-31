@@ -15,13 +15,13 @@
  */
 package org.febit.wit.test;
 
-import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchFunctionException;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 
+import static org.febit.wit.WitTestSupport.script;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FunctionExportTest {
@@ -29,37 +29,37 @@ class FunctionExportTest {
     @Test
     void test() throws NoSuchSourceException {
 
-        var context = WitTestSupport.script("/func-export.wit").eval();
+        var context = script("/func-export.wit").eval();
 
-        var plus = context.exportFunction("plus");
+        var plus = context.exportAsFunction("plus");
         assertNotNull(plus);
 
         assertEquals(1, plus.apply(0, 1));
         assertEquals(5, plus.apply(2, 3));
         assertEquals(1, plus.apply(-2, 3));
 
-        var counter = context.exportFunction("counter");
+        var counter = context.exportAsFunction("counter");
         assertNotNull(counter);
 
         assertEquals(0, counter.apply());
         assertEquals(1, counter.apply());
         assertEquals(2, counter.apply());
 
-        var counter2 = context.exportFunction("counter2");
+        var counter2 = context.exportAsFunction("counter2");
         assertNotNull(counter2);
 
         assertEquals(0, counter2.apply());
         assertEquals(1, counter2.apply());
         assertEquals(2, counter2.apply());
 
-        var str_len = context.exportFunction("str_len");
+        var str_len = context.exportAsFunction("str_len");
         assertNotNull(str_len);
 
         assertEquals(0, str_len.apply(""));
         assertEquals(1, str_len.apply("a"));
         assertEquals(4, str_len.apply("abcd"));
 
-        var print = context.exportFunction("print");
+        var print = context.exportAsFunction("print");
         StringWriter writer;
 
         assertNotNull(print);
@@ -76,11 +76,11 @@ class FunctionExportTest {
         NoSuchFunctionException exception;
 
         exception = assertThrows(NoSuchFunctionException.class,
-                () -> context.exportFunction("noSuchFunction"));
+                () -> context.exportAsFunction("noSuchFunction"));
         assertEquals("No such function: noSuchFunction", exception.getMessage());
 
         exception = assertThrows(NoSuchFunctionException.class,
-                () -> context.exportFunction("count"));
+                () -> context.exportAsFunction("count"));
         assertEquals("No such function: count", exception.getMessage());
     }
 }

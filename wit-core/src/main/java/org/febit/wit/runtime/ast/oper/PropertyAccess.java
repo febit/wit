@@ -13,23 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.expr;
+package org.febit.wit.runtime.ast.oper;
 
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;
 
-public record Assign(
-        AssignableExpression target,
-        Expression value,
+public record PropertyAccess(
+        Expression target,
+        Expression property,
         Position position
-) implements Expression {
+) implements AssignableExpression {
 
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        return target.assign(context, value.execute(context));
+        try {
+            return context.getProperty(
+                    target.execute(context),
+                    property.execute(context)
+            );
+        } catch (Exception e) {
+            throw ScriptEvaluateException.from(e, this);
+        }
+    }
+
+    @Override
+    @Nullable
+    public Object assign(InternalContext context, @Nullable final Object value) {
+        try {
+            context.setProperty(
+                    target.execute(context),
+                    property.execute(context),
+                    value
+            );
+            return value;
+        } catch (Exception e) {
+            throw ScriptEvaluateException.from(e, this);
+        }
     }
 }

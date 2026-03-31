@@ -15,15 +15,9 @@
  */
 package org.febit.wit.runtime.ast;
 
-import org.febit.wit.Script;
-import org.febit.wit.Vars;
-import org.febit.wit.io.Out;
-import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.statement.StatementBatch;
-import org.febit.wit.runtime.heap.GenericHeap;
 import org.febit.wit.runtime.heap.VariableHeap;
-import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -34,35 +28,11 @@ public record ScriptAST(
         StatementBatch body
 ) {
 
-    public InternalContext execute(
-            Script script,
-            Out out,
-            Vars inputs,
-            @Nullable BreakpointHandler handler
-    ) {
-        var variables = new VariableHeap(heapSize, scopedIndexers);
-        inputs.sink(variables::set);
+    public VariableHeap createVariableHeap() {
+        return new VariableHeap(heapSize, scopedIndexers);
+    }
 
-        var local = GenericHeap.local();
-        var context = new InternalContext(script, variables, inputs, out, local, handler);
+    public void execute(InternalContext context) {
         body.execute(context);
-        // assert context.indexer = 0
-        return context;
     }
-
-    public InternalContext execute(Script script, InternalContext context, Vars inputs) {
-        var variables = new VariableHeap(heapSize, scopedIndexers);
-        var newContext = new InternalContext(
-                script,
-                variables,
-                inputs,
-                context.out(),
-                context.local(),
-                context.breakpointHandler()
-        );
-        body.execute(newContext);
-        // assert context.indexer = 0
-        return newContext;
-    }
-
 }

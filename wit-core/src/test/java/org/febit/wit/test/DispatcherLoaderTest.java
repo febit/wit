@@ -15,15 +15,16 @@
  */
 package org.febit.wit.test;
 
-import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
+
+import static org.febit.wit.WitTestSupport.script;
 
 class DispatcherLoaderTest {
 
     @Test
     void test() throws NoSuchSourceException {
-        WitTestSupport.script("lib:/lib.wit").eval();
-        WitTestSupport.script("lib:sub:/lib-sub.wit").eval();
+        script("lib:/lib.wit").eval();
+        script("lib:sub:/lib-sub.wit").eval();
     }
 }

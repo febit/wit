@@ -13,34 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.statement;
+package org.febit.wit.runtime.ast.oper;
 
-import org.febit.wit.runtime.FlowState;
+import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.FlowControl;
+import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
-import java.util.function.Consumer;
-
-public record Continue(
-        int label,
+public record IfExpr(
+        Expression condition,
+        Expression left,
+        Expression right,
         Position position
-) implements Statement, WithFlowControl {
+) implements Expression {
 
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.flow().toContinue(label);
-        return null;
-    }
-
-    @Override
-    public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        collector.accept(
-                new FlowControl(label, FlowState.CONTINUE, position)
-        );
+        return (ALU.isTruly(condition.execute(context)) ? left : right)
+                .execute(context);
     }
 }

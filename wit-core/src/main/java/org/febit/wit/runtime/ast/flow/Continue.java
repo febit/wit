@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.statement;
+package org.febit.wit.runtime.ast.flow;
 
 import org.febit.wit.runtime.FlowState;
 import org.febit.wit.runtime.InternalContext;
@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public record Break(
+public record Continue(
         int label,
         Position position
 ) implements Statement, WithFlowControl {
@@ -33,14 +33,14 @@ public record Break(
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.flow().toBreak(label);
+        context.flow().toContinue(label);
         return null;
     }
 
     @Override
     public void bubbleFlowControls(Consumer<FlowControl> collector) {
         collector.accept(
-                new FlowControl(label, FlowState.BREAK, position)
+                new FlowControl(label, FlowState.CONTINUE, position)
         );
     }
 }

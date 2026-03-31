@@ -17,7 +17,6 @@ package org.febit.wit;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.io.Out;
-import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.heap.GenericHeap;
@@ -26,31 +25,17 @@ import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.io.Writer;
-import java.nio.charset.Charset;
 
 /**
  * Exported function.
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(staticName = "of")
 @SuppressWarnings("UnusedReturnValue")
 public final class ExportedFunction {
 
     private final Script script;
     private final WitFunction function;
     private final Out defaultOut;
-
-    public ExportedFunction(Script container, WitFunction function) {
-        this(container, function, DiscardOut.get());
-    }
-
-    public ExportedFunction(
-            Script container,
-            WitFunction function,
-            Charset charset,
-            boolean isByteStream
-    ) {
-        this(container, function, new DiscardOut(charset, isByteStream));
-    }
 
     private InternalContext contextForCaller(Out out) {
         return new InternalContext(

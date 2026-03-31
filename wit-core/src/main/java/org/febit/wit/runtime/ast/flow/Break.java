@@ -13,31 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.template;
+package org.febit.wit.runtime.ast.flow;
 
+import org.febit.wit.runtime.FlowState;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.Undefined;
-import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
+import org.jspecify.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
-public record TemplateStringValue(
-        List<Expression> segments,
+public record Break(
+        int label,
         Position position
-) implements Expression {
+) implements Statement, WithFlowControl {
 
     @Override
+    @Nullable
     public Object execute(InternalContext context) {
-        var buf = new StringBuilder();
-        var exprs = this.segments;
-        for (int i = 0, size = exprs.size(); i < size; i++) {
-            var segment = exprs.get(i);
-            var s = segment.execute(context);
-            if (s != null && s != Undefined.UNDEFINED) {
-                buf.append(s);
-            }
-        }
-        return buf.toString();
+        context.flow().toBreak(label);
+        return null;
+    }
+
+    @Override
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+        collector.accept(
+                new FlowControl(label, FlowState.BREAK, position)
+        );
     }
 }

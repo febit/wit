@@ -15,41 +15,29 @@
  */
 package org.febit.wit.runtime.ast.expr;
 
-import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.AssignableExpression;
+import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
-import org.jspecify.annotations.Nullable;
 
-public record FixedPropertyAccess(
-        Expression target,
-        String property,
+import java.util.List;
+
+public record TemplateStringValue(
+        List<Expression> segments,
         Position position
-) implements AssignableExpression {
+) implements Expression {
 
     @Override
-    @Nullable
     public Object execute(InternalContext context) {
-        try {
-            return context.getBeanProperty(
-                    target.execute(context),
-                    property);
-        } catch (Exception e) {
-            throw ScriptEvaluateException.from(e, this);
+        var buf = new StringBuilder();
+        var exprs = this.segments;
+        for (int i = 0, size = exprs.size(); i < size; i++) {
+            var segment = exprs.get(i);
+            var s = segment.execute(context);
+            if (s != null && s != Undefined.UNDEFINED) {
+                buf.append(s);
+            }
         }
-    }
-
-    @Override
-    @Nullable
-    public Object assign(InternalContext context, @Nullable final Object value) {
-        try {
-            context.setBeanProperty(
-                    target.execute(context),
-                    property, value);
-            return value;
-        } catch (Exception e) {
-            throw ScriptEvaluateException.from(e, this);
-        }
+        return buf.toString();
     }
 }

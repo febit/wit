@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor(staticName = "of")
-public class RandomAccessIter implements Iter {
+public class SequenceIter implements Iter {
 
     private final int max;
     private final Getter getter;

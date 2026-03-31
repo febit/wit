@@ -18,6 +18,7 @@ package org.febit.wit.runtime.ast.extra;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+import org.febit.wit.Context;
 import org.febit.wit.Feature;
 import org.febit.wit.Vars;
 import org.febit.wit.exception.NoSuchSourceException;
@@ -43,9 +44,10 @@ public abstract class AbstractInclude implements Statement {
     @Getter
     private final Position position;
 
-    protected Vars prepareParams(InternalContext context) {
+    protected Vars extractParams(InternalContext context) {
         final Vars inputs;
-        final Object paramsObj = this.params == null ? null : this.params.execute(context);
+        final Object paramsObj = this.params == null ? null
+                : this.params.execute(context);
         if (paramsObj == null) {
             inputs = Vars.empty();
         } else if (paramsObj instanceof Map) {
@@ -63,18 +65,22 @@ public abstract class AbstractInclude implements Statement {
         if (scriptPath == null) {
             throw new ScriptEvaluateException("Script name should not be null.", path);
         }
+
+        Context merged;
         try {
-            Vars inputs = prepareParams(context);
-            var script = context.script().engine().script(refer, String.valueOf(scriptPath));
-            var newContext = script.merge(context, inputs);
-            if (export) {
-                var result = new HashMap<String, @Nullable Object>();
-                newContext.variables().each(result::put);
-                return result;
-            }
-            return Map.of();
+            Vars inputs = extractParams(context);
+            var script = context.script()
+                    .engine()
+                    .script(refer, String.valueOf(scriptPath));
+            merged = script.merge(context, inputs);
         } catch (NoSuchSourceException | ScriptEvaluateException | ScriptParseException e) {
             throw new ScriptEvaluateException(e, this);
         }
+        if (!export) {
+            return Map.of();
+        }
+        var result = new HashMap<String, @Nullable Object>();
+        merged.variables().each(result::put);
+        return result;
     }
 }

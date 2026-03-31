@@ -15,15 +15,16 @@
  */
 package org.febit.wit.test;
 
-import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
+
+import static org.febit.wit.WitTestSupport.script;
 
 class HelloTest {
 
     @Test
     void test() throws NoSuchSourceException {
-        var script = WitTestSupport.script("/hello.wit");
+        var script = script("/hello.wit");
         script.reload();
         script.eval();
     }

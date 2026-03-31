@@ -13,24 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit;
+@NullMarked
+package org.febit.wit.runtime.ast.flow;
 
-import org.febit.wit.exception.NoSuchFunctionException;
-import org.febit.wit.runtime.heap.Heap;
-
-/**
- * Runtime context.
- */
-@SuppressWarnings({
-        "squid:S1214", //Constants should not be defined in interfaces
-        "squid:RedundantThrowsDeclarationCheck"
-})
-public interface Context {
-
-    Heap variables();
-
-    Heap local();
-
-    ExportedFunction exportAsFunction(String name) throws NoSuchFunctionException;
-
-}
+import org.jspecify.annotations.NullMarked;

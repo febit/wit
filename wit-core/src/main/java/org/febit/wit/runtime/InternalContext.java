@@ -25,6 +25,7 @@ import org.febit.wit.Wit;
 import org.febit.wit.exception.NoSuchFunctionException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.Out;
+import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.Render;
@@ -40,15 +41,10 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * Internal Context.
- * <p>
- * store variables and access global components for AST-nodes
- *
+ * Internal runtime context for script execution.
+ * It provides access to the script, variables, inputs, outputs, and other runtime features.
  */
 @Accessors(fluent = true)
-@SuppressWarnings({
-        "squid:RedundantThrowsDeclarationCheck"
-})
 public final class InternalContext implements Context {
 
     @lombok.Getter
@@ -123,9 +119,12 @@ public final class InternalContext implements Context {
      * @return value
      */
     @Nullable
-    public <T> Object getBeanProperty(@Nullable T obj, @Nullable Object property) {
+    public <T> Object getProperty(@Nullable T obj, @Nullable Object property) {
         if (obj == null) {
-            return handleAccessorNullPointer();
+            if (!isEnabled(Feature.IGNORE_ACCESSOR_NULL_POINTER)) {
+                throw new ScriptEvaluateException("Null pointer.");
+            }
+            return Undefined.UNDEFINED;
         }
         @SuppressWarnings("unchecked")
         var getter = (Getter<Object>) this.accessors.getter(obj.getClass());
@@ -139,22 +138,16 @@ public final class InternalContext implements Context {
      * @param property property
      * @param value    value
      */
-    public <T> void setBeanProperty(@Nullable T obj, @Nullable Object property, @Nullable Object value) {
+    public <T> void setProperty(@Nullable T obj, @Nullable Object property, @Nullable Object value) {
         if (obj == null) {
-            handleAccessorNullPointer();
+            if (!isEnabled(Feature.IGNORE_ACCESSOR_NULL_POINTER)) {
+                throw new ScriptEvaluateException("Null pointer.");
+            }
             return;
         }
         @SuppressWarnings("unchecked")
         var setter = (Setter<Object>) this.accessors.setter(obj.getClass());
         setter.set(obj, property, value);
-    }
-
-    @Nullable
-    private Object handleAccessorNullPointer() {
-        if (isEnabled(Feature.IGNORE_ACCESSOR_NULL_POINTER)) {
-            return null;
-        }
-        throw new ScriptEvaluateException("Null pointer.");
     }
 
     @Nullable
@@ -198,11 +191,14 @@ public final class InternalContext implements Context {
     }
 
     @Override
-    public ExportedFunction exportFunction(String name) throws NoSuchFunctionException {
+    public ExportedFunction exportAsFunction(String name) throws NoSuchFunctionException {
         var obj = this.variables().get(name, false);
         if (!(obj instanceof WitFunction func)) {
             throw new NoSuchFunctionException("No such function: " + name);
         }
-        return new ExportedFunction(this.script, func, this.out.charset(), this.out.preferBytes());
+        return ExportedFunction.of(
+                this.script, func,
+                new DiscardOut(this.out.charset(), this.out.preferBytes())
+        );
     }
 }

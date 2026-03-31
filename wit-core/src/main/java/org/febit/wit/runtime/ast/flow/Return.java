@@ -13,23 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.statement;
+package org.febit.wit.runtime.ast.flow;
 
+import org.febit.wit.runtime.FlowState;
 import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
-public record Interpolation(
-        Expression value,
+import java.util.function.Consumer;
+
+public record Return(
+        @Nullable Expression value,
         Position position
-) implements Statement {
+) implements Statement, WithFlowControl {
 
     @Override
     @Nullable
     public Object execute(InternalContext context) {
-        context.out(value.execute(context));
+        var result = value != null
+                ? value.execute(context)
+                : Undefined.UNDEFINED;
+        context.flow().toReturn(result);
         return null;
+    }
+
+    @Override
+    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+        collector.accept(
+                new FlowControl(0, FlowState.RETURN, position)
+        );
     }
 }

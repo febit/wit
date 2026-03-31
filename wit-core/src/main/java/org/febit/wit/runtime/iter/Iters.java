@@ -49,14 +49,14 @@ public class Iters {
             return iter;
         }
         if (o1 instanceof List<?> list && list instanceof RandomAccess) {
-            return RandomAccessIter.of(list);
+            return SequenceIter.of(list);
         }
         var clazz = o1.getClass();
         if (clazz.isArray()) {
             if (o1 instanceof Object[] arr) {
-                return RandomAccessIter.of(arr);
+                return SequenceIter.of(arr);
             }
-            return RandomAccessIter.ofArray(o1);
+            return SequenceIter.ofArray(o1);
         }
         if (o1 instanceof Iterable) {
             return IteratorIter.of(((Iterable<?>) o1).iterator());
@@ -68,7 +68,7 @@ public class Iters {
             return EnumerationIter.of((Enumeration<?>) o1);
         }
         if (o1 instanceof CharSequence cs) {
-            return RandomAccessIter.of(cs);
+            return SequenceIter.of(cs);
         }
         throw new ScriptEvaluateException("Unsupported type to Iter: " + o1.getClass(), refer);
     }

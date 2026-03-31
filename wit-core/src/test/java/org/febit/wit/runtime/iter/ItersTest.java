@@ -43,12 +43,12 @@ class ItersTest {
     @Test
     void iter() {
         assertInstanceOf(EmptyIter.class, Iters.ofIter(null, statement));
-        assertInstanceOf(RandomAccessIter.class, Iters.ofIter(new String[]{"a", "b"}, statement));
-        assertInstanceOf(RandomAccessIter.class, Iters.ofIter(new int[]{1, 2}, statement));
-        assertInstanceOf(RandomAccessIter.class, Iters.ofIter("abc", statement));
+        assertInstanceOf(SequenceIter.class, Iters.ofIter(new String[]{"a", "b"}, statement));
+        assertInstanceOf(SequenceIter.class, Iters.ofIter(new int[]{1, 2}, statement));
+        assertInstanceOf(SequenceIter.class, Iters.ofIter("abc", statement));
 
-        assertInstanceOf(RandomAccessIter.class, Iters.ofIter(List.of("a", "b"), statement));
-        assertInstanceOf(RandomAccessIter.class, Iters.ofIter(new ArrayList<>(List.of("a", "b")), statement));
+        assertInstanceOf(SequenceIter.class, Iters.ofIter(List.of("a", "b"), statement));
+        assertInstanceOf(SequenceIter.class, Iters.ofIter(new ArrayList<>(List.of("a", "b")), statement));
 
         assertInstanceOf(IteratorIter.class, Iters.ofIter(new LinkedList<>(List.of("a", "b")), statement));
         assertInstanceOf(IteratorIter.class, Iters.ofIter(Set.of("a", "b"), statement));

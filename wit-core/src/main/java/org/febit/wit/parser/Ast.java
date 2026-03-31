@@ -29,37 +29,39 @@ import org.febit.wit.runtime.ast.IBlock;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.StatementUtils;
-import org.febit.wit.runtime.ast.expr.Assign;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
 import org.febit.wit.runtime.ast.expr.DirectValue;
 import org.febit.wit.runtime.ast.expr.DynamicNativeMethodCaller;
 import org.febit.wit.runtime.ast.expr.ExpressionArray;
-import org.febit.wit.runtime.ast.expr.FixedPropertyAccess;
 import org.febit.wit.runtime.ast.expr.FunctionCaller;
-import org.febit.wit.runtime.ast.expr.GroupAssign;
 import org.febit.wit.runtime.ast.expr.HeapValue;
-import org.febit.wit.runtime.ast.expr.IfExpr;
 import org.febit.wit.runtime.ast.expr.NewArray;
 import org.febit.wit.runtime.ast.expr.NewMap;
-import org.febit.wit.runtime.ast.expr.PropertyAccess;
 import org.febit.wit.runtime.ast.expr.SuppliedValue;
+import org.febit.wit.runtime.ast.expr.TemplateStringValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapFrameValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
 import org.febit.wit.runtime.ast.extra.Import;
+import org.febit.wit.runtime.ast.flow.Return;
 import org.febit.wit.runtime.ast.loop.DoWhile;
 import org.febit.wit.runtime.ast.loop.LoopBody;
 import org.febit.wit.runtime.ast.loop.LoopBodyNonFlow;
 import org.febit.wit.runtime.ast.loop.LoopBodyWithFlow;
 import org.febit.wit.runtime.ast.loop.While;
 import org.febit.wit.runtime.ast.oper.And;
+import org.febit.wit.runtime.ast.oper.Assign;
 import org.febit.wit.runtime.ast.oper.ConstableBiOperator;
 import org.febit.wit.runtime.ast.oper.ConstableUnaryOperator;
 import org.febit.wit.runtime.ast.oper.DecreaseAndGet;
+import org.febit.wit.runtime.ast.oper.FixedPropertyAccess;
 import org.febit.wit.runtime.ast.oper.GetAndDecrease;
 import org.febit.wit.runtime.ast.oper.GetAndIncrease;
+import org.febit.wit.runtime.ast.oper.GroupAssign;
+import org.febit.wit.runtime.ast.oper.IfExpr;
 import org.febit.wit.runtime.ast.oper.IncreaseAndGet;
 import org.febit.wit.runtime.ast.oper.IntStep;
 import org.febit.wit.runtime.ast.oper.Or;
+import org.febit.wit.runtime.ast.oper.PropertyAccess;
 import org.febit.wit.runtime.ast.oper.SelfCalcAndAssign;
 import org.febit.wit.runtime.ast.statement.Block;
 import org.febit.wit.runtime.ast.statement.BlockNonFlow;
@@ -68,15 +70,13 @@ import org.febit.wit.runtime.ast.statement.Echo;
 import org.febit.wit.runtime.ast.statement.If;
 import org.febit.wit.runtime.ast.statement.IfElse;
 import org.febit.wit.runtime.ast.statement.IfNot;
-import org.febit.wit.runtime.ast.statement.Interpolation;
 import org.febit.wit.runtime.ast.statement.NoopStatement;
 import org.febit.wit.runtime.ast.statement.RenderRedirect;
-import org.febit.wit.runtime.ast.statement.Return;
 import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.ast.statement.StatementList;
 import org.febit.wit.runtime.ast.statement.TryCatchFinally;
 import org.febit.wit.runtime.ast.statement.TryFinally;
-import org.febit.wit.runtime.ast.template.TemplateStringValue;
+import org.febit.wit.runtime.ast.template.Interpolation;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -127,11 +127,11 @@ public class Ast {
         return new GetAndDecrease(target, pos);
     }
 
-    public static Expression assign(AssignableExpression target, Expression value, Position pos) {
+    public static Assign assign(AssignableExpression target, Expression value, Position pos) {
         return new Assign(target, value, pos);
     }
 
-    public static Expression groupAssign(ExpressionArray targets, Expression value, Position pos) {
+    public static GroupAssign groupAssign(ExpressionArray targets, Expression value, Position pos) {
         var targetList = targets.asList();
         var size = targetList.size();
         var assignables = new AssignableExpression[size];
@@ -149,7 +149,7 @@ public class Ast {
         return new FixedPropertyAccess(target, property, pos);
     }
 
-    public static Statement interpolation(Expression value) {
+    public static Interpolation interpolation(Expression value) {
         return new Interpolation(value, value.position());
     }
 
@@ -161,7 +161,7 @@ public class Ast {
         return directValue(token.value, token.pos);
     }
 
-    public static Statement breakpointStatement(
+    public static BreakpointStatement breakpointStatement(
             @Nullable Expression mark,
             @Nullable Statement supervised,
             Position pos
@@ -211,6 +211,10 @@ public class Ast {
     ) {
         Objects.requireNonNull(pos, "position is required");
         return new TemplateStringValue(toExpressionArray(segments).asList(), pos);
+    }
+
+    public enum WhileKind {
+        WHILE, DO_WHILE
     }
 
     @Builder(
@@ -279,7 +283,7 @@ public class Ast {
             builderMethodName = "importBuilder",
             builderClassName = "ImportBuilder"
     )
-    private static Statement import0(
+    private static Import import0(
             Script script,
             Position pos,
             Expression path,
@@ -372,10 +376,6 @@ public class Ast {
         };
     }
 
-    public enum WhileKind {
-        WHILE, DO_WHILE
-    }
-
     public static ExpressionArray toExpressionArray(@Nullable List<Expression> list) {
         if (list == null || list.isEmpty()) {
             return ExpressionArray.ofEmpty();
@@ -387,17 +387,17 @@ public class Ast {
         return ExpressionArray.of(arr);
     }
 
-    public static Statement statementList(List<Statement> list, Position pos) {
+    public static StatementList statementList(List<Statement> list, Position pos) {
         return new StatementList(List.copyOf(list), pos);
     }
 
-    public static Expression functionCall(
+    public static FunctionCaller functionCall(
             Expression func, ExpressionArray params, Position pos) {
         func = StatementUtils.optimize(func);
         return new FunctionCaller(func, params, pos);
     }
 
-    public static Expression dynamicNativeMethodCall(
+    public static DynamicNativeMethodCaller dynamicNativeMethodCall(
             Expression self, String method, ExpressionArray params, Position pos) {
         self = StatementUtils.optimize(self);
         return new DynamicNativeMethodCaller(self, method, params, pos);

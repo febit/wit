@@ -15,20 +15,20 @@
  */
 package org.febit.wit.test;
 
-import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.febit.wit.WitTestSupport.script;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DebugTest {
 
     @Test
     void test() throws NoSuchSourceException {
-        var script = WitTestSupport.script("/debug.wit");
+        var script = script("/debug.wit");
         script.eval();
 
         var marks = new HashSet<>();

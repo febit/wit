@@ -15,20 +15,20 @@
  */
 package org.febit.wit.test;
 
-import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
+import static org.febit.wit.WitTestSupport.script;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ContextTest {
 
     @Test
     void test() throws NoSuchSourceException {
-        var context = WitTestSupport.script("/context.wit").eval();
+        var context = script("/context.wit").eval();
 
         assertEquals("a", context.variables().get("a"));
 
