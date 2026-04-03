@@ -13,28 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.extra;
+package org.febit.wit.runtime.ast.include;
 
+import org.febit.wit.Context;
 import org.febit.wit.runtime.InternalContext;
-import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.Position;
-import org.jspecify.annotations.Nullable;
+import org.febit.wit.runtime.ast.Assignable;
 
-public final class Include extends AbstractInclude {
+import java.util.List;
 
-    public Include(
-            Expression pathExpr,
-            Expression paramsExpr,
-            String refer,
-            Position position
+public record AssignMappedIncludeHandler(
+        List<Entry> entries
+) implements IncludeHandler {
+
+    public AssignMappedIncludeHandler {
+        entries = List.copyOf(entries);
+    }
+
+    public record Entry(
+            String variable,
+            Assignable target
     ) {
-        super(pathExpr, paramsExpr, refer, position);
     }
 
     @Override
-    @Nullable
-    public Object execute(InternalContext context) {
-        mergeScript(context, false);
-        return null;
+    public void process(InternalContext parent, Context included) {
+        var source = included.variables();
+        for (var entry : entries) {
+            var value = source.get(entry.variable);
+            entry.target.assign(parent, value);
+        }
     }
 }

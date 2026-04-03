@@ -41,8 +41,11 @@ import org.febit.wit.runtime.ast.expr.SuppliedValue;
 import org.febit.wit.runtime.ast.expr.TemplateStringValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapFrameValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
-import org.febit.wit.runtime.ast.extra.Import;
 import org.febit.wit.runtime.ast.flow.Return;
+import org.febit.wit.runtime.ast.include.AssignMappedIncludeHandler;
+import org.febit.wit.runtime.ast.include.Include;
+import org.febit.wit.runtime.ast.include.IncludeHandler;
+import org.febit.wit.runtime.ast.include.IncludeHandlers;
 import org.febit.wit.runtime.ast.loop.DoWhile;
 import org.febit.wit.runtime.ast.loop.LoopBody;
 import org.febit.wit.runtime.ast.loop.LoopBodyNonFlow;
@@ -279,17 +282,26 @@ public class Ast {
         return new TryCatchFinally(exceptionVarIndex, body, catchBody, finallyBody, pos);
     }
 
+    public static class IncludeBuilder {
+
+        public IncludeBuilder export(String name, Expression target) {
+            var optimized = castToAssignable(StatementUtils.optimize(target));
+            return exportVar(new AssignMappedIncludeHandler.Entry(name, optimized));
+        }
+    }
+
     @Builder(
-            builderMethodName = "importBuilder",
-            builderClassName = "ImportBuilder"
+            builderMethodName = "includeBuilder",
+            builderClassName = "IncludeBuilder"
     )
-    private static Import import0(
+    private static Include include(
             Script script,
             Position pos,
             Expression path,
+            @Nullable Boolean withoutExport,
             @Nullable Expression params,
             @Singular("exportVar")
-            List<ImportVar> exportVars
+            List<AssignMappedIncludeHandler.Entry> exportMappings
     ) {
         Objects.requireNonNull(script, "script is required");
         Objects.requireNonNull(path, "path is required");
@@ -302,21 +314,17 @@ public class Ast {
         }
 
         var refer = script.path();
-        if (exportVars.isEmpty()) {
-            return new Import(path, params, null, null, refer, pos);
+
+        IncludeHandler handler;
+        if (withoutExport != null && withoutExport) {
+            handler = IncludeHandlers::noop;
+        } else if (exportMappings.isEmpty()) {
+            // If empty, means export & import all.
+            handler = IncludeHandlers::importAll;
+        } else {
+            handler = new AssignMappedIncludeHandler(exportMappings);
         }
-
-        var vars = exportVars.stream()
-                .map(ImportVar::name)
-                .toArray(String[]::new);
-
-        var targets = exportVars.stream()
-                .map(ImportVar::target)
-                .map(StatementUtils::optimize)
-                .map(AssignableExpression.class::cast)
-                .toArray(AssignableExpression[]::new);
-
-        return new Import(path, params, vars, targets, refer, pos);
+        return new Include(refer, path, handler, params, pos);
     }
 
     public static LoopBody loopBodyFromStatements(List<Statement> statements, int targetLabel) {
@@ -345,20 +353,6 @@ public class Ast {
                         || !f.state().isBreakOrContinue())
                 .toList());
         return new LoopBodyWithFlow(targetLabel, batches, bubbled);
-    }
-
-    public record ImportVar(String name, AssignableExpression target) {
-    }
-
-    public static class ImportBuilder {
-
-        public ImportBuilder export(String name, Expression target) {
-            return export(name, castToAssignable(target));
-        }
-
-        public ImportBuilder export(String name, AssignableExpression target) {
-            return exportVar(new ImportVar(name, target));
-        }
     }
 
     public static Expression value(VarAddress addr, Position pos) {

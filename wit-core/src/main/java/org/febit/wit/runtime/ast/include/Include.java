@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.extra;
+package org.febit.wit.runtime.ast.include;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.febit.wit.Context;
 import org.febit.wit.Feature;
 import org.febit.wit.Vars;
@@ -30,57 +27,55 @@ import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor
-public abstract class AbstractInclude implements Statement {
+public record Include(
+        String refer,
+        Expression path,
+        IncludeHandler handler,
+        @Nullable Expression inputs,
+        Position position
+) implements Statement {
 
-    private final Expression path;
+    @Override
     @Nullable
-    private final Expression params;
-    private final String refer;
-    @Getter
-    private final Position position;
-
-    protected Vars extractParams(InternalContext context) {
-        final Vars inputs;
-        final Object paramsObj = this.params == null ? null
-                : this.params.execute(context);
-        if (paramsObj == null) {
-            inputs = Vars.empty();
-        } else if (paramsObj instanceof Map) {
-            inputs = Vars.of((Map<?, ?>) paramsObj);
-        } else {
-            throw new ScriptEvaluateException("Script param must be a Map.", this.params);
-        }
-        return context.isEnabled(Feature.SHARE_ROOT_PARAMS)
-                ? Vars.concat(context.inputs(), inputs)
-                : inputs;
+    public Object execute(InternalContext context) {
+        var included = include(context);
+        handler.process(context, included);
+        return null;
     }
 
-    protected Map<String, @Nullable Object> mergeScript(InternalContext context, boolean export) {
+    private Context include(InternalContext context) {
         var scriptPath = path.execute(context);
         if (scriptPath == null) {
-            throw new ScriptEvaluateException("Script name should not be null.", path);
+            throw new ScriptEvaluateException("Script path should not be null.", path);
         }
-
-        Context merged;
         try {
-            Vars inputs = extractParams(context);
+            Vars inputs = resolveInputs(context);
             var script = context.script()
                     .engine()
                     .script(refer, String.valueOf(scriptPath));
-            merged = script.merge(context, inputs);
+            return script.merge(context, inputs);
         } catch (NoSuchSourceException | ScriptEvaluateException | ScriptParseException e) {
             throw new ScriptEvaluateException(e, this);
         }
-        if (!export) {
-            return Map.of();
-        }
-        var result = new HashMap<String, @Nullable Object>();
-        merged.variables().each(result::put);
-        return result;
     }
+
+    private Vars resolveInputs(InternalContext context) {
+        var paramsObj = this.inputs == null ? null
+                : this.inputs.execute(context);
+
+        final Vars inputVars;
+        if (paramsObj == null) {
+            inputVars = Vars.empty();
+        } else if (paramsObj instanceof Map) {
+            inputVars = Vars.of((Map<?, ?>) paramsObj);
+        } else {
+            throw new ScriptEvaluateException("Script inputs must be a Map.", this.inputs);
+        }
+        return context.isEnabled(Feature.SHARE_ROOT_PARAMS)
+                ? Vars.concat(context.inputs(), inputVars)
+                : inputVars;
+    }
+
 }

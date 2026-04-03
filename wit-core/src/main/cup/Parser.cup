@@ -7,7 +7,7 @@ import org.febit.wit.runtime.ALU;
 import org.febit.wit.runtime.ast.*;
 import org.febit.wit.runtime.ast.expr.*;
 import org.febit.wit.runtime.ast.expr.NewMap.NewMapEntry;
-import org.febit.wit.runtime.ast.extra.*;
+import org.febit.wit.runtime.ast.include.*;
 import org.febit.wit.runtime.ast.flow.*;
 import org.febit.wit.runtime.ast.statement.*;
 import org.febit.wit.util.ClassNameRope;
@@ -71,7 +71,7 @@ nonterminal ScriptAST scriptAST;
 nonterminal Statement statement, ifStat, varPart;
 nonterminal IBlock block, caseBlockStat;
 nonterminal Expression varAssign;
-nonterminal ImportBuilder importPart1, importPart2;
+nonterminal IncludeBuilder importPart1, importPart2;
 nonterminal SwitchBuilder switchPart, switchPart0;
 nonterminal BaseForInBuilder forInHead, forInPart, lambdaForHead, lambdaForHead2;
 nonterminal WhileBuilder whileBuilder;
@@ -218,9 +218,9 @@ statement       ::= expressionStatementAble:$ SEMICOLON
                     |importPart2:builder SEMICOLON
                     {: yield (%builder%).build(); :}
 
-                    //includeStat
+                    // Include
                     |INCLUDE:sym expression:expr newMapExpr:paramsExpr? SEMICOLON
-                    {: yield new Include(%expr%, %paramsExpr%, assembler.script().path(), %sym.symbol%.pos); :}
+                    {: yield Ast.includeBuilder().withoutExport(true).script(assembler.script()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos).build(); :}
 
                     //funcStatement
                     |funcStatementHead:builder LBRACE statement[]:list? RBRACE
@@ -249,7 +249,7 @@ varPart         ::= varAssign:$
 
 
 importPart1     ::= IMPORT:sym expression:expr newMapExpr:paramsExpr?
-                    {: yield Ast.importBuilder().script(assembler.script()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos); :}
+                    {: yield Ast.includeBuilder().script(assembler.script()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos); :}
                     ;
 
 

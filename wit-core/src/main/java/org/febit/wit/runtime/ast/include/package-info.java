@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 @NullMarked
-package org.febit.wit.runtime.ast.extra;
+package org.febit.wit.runtime.ast.include;
 
 import org.jspecify.annotations.NullMarked;
