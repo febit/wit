@@ -5,8 +5,8 @@ plugins {
   alias libs.plugins.febit.codegen.module
 }
 
-group 'org.febit.wit'
-version '3.0.0-SNAPSHOT'
+group = 'org.febit.wit'
+version = '3.0.0-SNAPSHOT'
 
 subprojects {
   group = rootProject.group
