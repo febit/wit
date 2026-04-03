@@ -15,6 +15,9 @@
  */
 package org.febit.wit;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.io.Loader;
@@ -40,7 +43,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static org.febit.wit.util.Defaults.nvl;
+
 @Slf4j
+@Accessors(fluent = true, chain = true)
 public class WitBuilder {
 
     private static final int FEATURE_DEFAULTS = Feature.collectFeatureDefaults();
@@ -53,11 +59,24 @@ public class WitBuilder {
 
     private int features = FEATURE_DEFAULTS;
 
-    private Charset charset = StandardCharsets.UTF_8;
-    private CodecFactory codecFactory = new DefaultCodecFactory();
-    private NativeLayout nativeLayout = NativeLayout.ofDefault();
-    private TemplateTextFactory templateTextFactory = new AdaptiveTemplateTextFactory();
-
+    @Getter
+    @Setter
+    @Nullable
+    private Charset charset;
+    @Getter
+    @Setter
+    @Nullable
+    private CodecFactory codecFactory;
+    @Getter
+    @Setter
+    @Nullable
+    private NativeLayout nativeLayout;
+    @Getter
+    @Setter
+    @Nullable
+    private TemplateTextFactory templateTextFactory;
+    @Getter
+    @Setter
     @Nullable
     private Loader loader;
 
@@ -85,30 +104,6 @@ public class WitBuilder {
         return this;
     }
 
-    public WitBuilder loader(Loader loader) {
-        Objects.requireNonNull(loader);
-        this.loader = loader;
-        return this;
-    }
-
-    public WitBuilder templateTextFactory(TemplateTextFactory factory) {
-        Objects.requireNonNull(factory);
-        this.templateTextFactory = factory;
-        return this;
-    }
-
-    public WitBuilder codecFactory(CodecFactory factory) {
-        Objects.requireNonNull(factory);
-        this.codecFactory = factory;
-        return this;
-    }
-
-    public WitBuilder nativeLayout(NativeLayout factory) {
-        Objects.requireNonNull(factory);
-        this.nativeLayout = factory;
-        return this;
-    }
-
     public <T> WitBuilder accessor(Class<T> type, Accessor<? extends T> accessor) {
         this.accessorFactory.accessor(type, accessor);
         return this;
@@ -121,11 +116,6 @@ public class WitBuilder {
 
     public WitBuilder disable(Feature feature) {
         this.features = feature.disable(this.features);
-        return this;
-    }
-
-    public WitBuilder charset(Charset charset) {
-        this.charset = charset;
         return this;
     }
 
@@ -156,12 +146,12 @@ public class WitBuilder {
         var wit = Wit.internalBuilder()
                 .predefinedVars(List.copyOf(vars))
                 .features(features)
-                .charset(charset)
                 .loader(loader)
                 .accessors(accessors)
-                .codecFactory(codecFactory)
-                .nativeLayout(nativeLayout)
-                .templateTextFactory(templateTextFactory)
+                .charset(nvl(charset, StandardCharsets.UTF_8))
+                .codecFactory(nvl(codecFactory, DefaultCodecFactory::new))
+                .nativeLayout(nvl(nativeLayout, NativeLayout::ofDefault))
+                .templateTextFactory(nvl(templateTextFactory, AdaptiveTemplateTextFactory::new))
                 .build();
 
         for (var module : modules) {
