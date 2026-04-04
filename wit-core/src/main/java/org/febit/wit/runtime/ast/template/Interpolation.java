@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.template;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
@@ -28,7 +28,7 @@ public record Interpolation(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         context.out(value.execute(context));
         return null;
     }

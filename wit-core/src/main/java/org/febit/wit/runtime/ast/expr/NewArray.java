@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.expr;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 
@@ -25,7 +25,7 @@ public record NewArray(
 ) implements Expression {
 
     @Override
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         return this.values.execute(context);
     }
 

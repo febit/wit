@@ -18,7 +18,7 @@ package org.febit.wit.runtime.ast.template;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
@@ -37,7 +37,7 @@ public final class AdaptiveTemplateText implements Statement {
 
     @Nullable
     @Override
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         var out = context.out();
         if (out.preferBytes()
                 && charset.equals(out.charset())) {

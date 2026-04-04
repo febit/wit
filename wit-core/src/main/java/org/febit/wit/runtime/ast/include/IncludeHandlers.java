@@ -17,16 +17,16 @@ package org.febit.wit.runtime.ast.include;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.Context;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 
 @UtilityClass
 public class IncludeHandlers {
 
-    public static void noop(InternalContext parent, Context included) {
+    public static void noop(RuntimeContext parent, Context included) {
         // do nothing
     }
 
-    public static void importAll(InternalContext parent, Context included) {
+    public static void importAll(RuntimeContext parent, Context included) {
         var target = parent.variables();
         included.variables().each(target::set);
     }

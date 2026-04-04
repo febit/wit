@@ -18,7 +18,7 @@ package org.febit.wit.runtime.ast.oper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -34,7 +34,7 @@ public final class GroupAssign implements Expression {
     private final Position position;
 
     @Override
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         var values = value.execute(context);
         var iter = Iters.ofIter(values, this);
         var targetsObj = this.targets;

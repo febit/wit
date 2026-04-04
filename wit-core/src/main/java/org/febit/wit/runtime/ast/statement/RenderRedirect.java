@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.statement;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
@@ -32,7 +32,7 @@ public record RenderRedirect(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         if (context.out().preferBytes()) {
             var buffer = new ByteArrayOutputStream(256);
             context.redirect(buffer, body::execute);

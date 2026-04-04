@@ -18,7 +18,7 @@ package org.febit.wit.extern.lib.cache;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.util.Args;
@@ -58,19 +58,19 @@ public class CachingModule implements WitModule {
         }
     }
 
-    private Object doClear(InternalContext context, @Nullable Object @Nullable [] args) {
+    private Object doClear(RuntimeContext context, @Nullable Object @Nullable [] args) {
         this.using.clear();
         return Undefined.UNDEFINED;
     }
 
-    private Object doRemove(InternalContext context, @Nullable Object @Nullable [] args) {
+    private Object doRemove(RuntimeContext context, @Nullable Object @Nullable [] args) {
         var key = Args.at(args, 0);
         this.using.remove(key);
         return Undefined.UNDEFINED;
     }
 
     @Nullable
-    public Object doPut(InternalContext context, @Nullable Object @Nullable [] args) {
+    public Object doPut(RuntimeContext context, @Nullable Object @Nullable [] args) {
         if (args == null || args.length < 1) {
             throw new ScriptEvaluateException("At least one argument is required for cache function:"
                     + " put(key?, factory, ...args?).");
@@ -96,7 +96,7 @@ public class CachingModule implements WitModule {
     }
 
     protected static CachingEntry compute(
-            InternalContext context,
+            RuntimeContext context,
             WitFunction func,
             @Nullable Object[] args,
             int paramsStartedAt

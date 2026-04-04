@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.febit.wit.Vars;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.ScopedIndexer;
@@ -33,7 +33,7 @@ import java.util.List;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class ScriptFunctionDeclarer implements Expression {
+public final class ScriptFunctionDeclaration implements Expression {
 
     private final int heapSize;
     private final List<ScopedIndexer> indexers;
@@ -44,43 +44,41 @@ public final class ScriptFunctionDeclarer implements Expression {
     private final Position position;
 
     @Override
-    public ScriptFunction execute(InternalContext context) {
+    public ScriptFunction execute(RuntimeContext context) {
         return new ScriptFunction(this, context);
     }
 
     /**
      * Apply the function.
      *
-     * @param declarerContext the context where the function is declared,
-     *                        variables in this context can be accessed in the function body
-     *                        as scoped closure variables.
-     * @param callerContext   the context where the function is called, used for output and the local variables.
-     * @param args            the arguments passed to the function, can be null if no arguments passed.
+     * @param declarationContext the context where the function is declared, used for variable resolution and other declaration-time features.
+     * @param invocationContext  the context where the function is invoked.
+     * @param args               the arguments passed to the function, can be null if no arguments passed.
      * @return the result of the function execution, can be null.
      */
     @Nullable
     public Object apply(
-            InternalContext declarerContext,
-            InternalContext callerContext,
+            RuntimeContext declarationContext,
+            RuntimeContext invocationContext,
             @Nullable Object @Nullable [] args
     ) {
-        var vars = declarerContext.variables().shift(this.heapSize, this.indexers);
+        var vars = declarationContext.variables().shift(this.heapSize, this.indexers);
         fillArgs(vars, args);
-        var context = new InternalContext(
-                declarerContext.script(),
+        var context = new RuntimeContext(
+                declarationContext.script(),
                 vars,
                 Vars.empty(),
-                callerContext.out(),
-                callerContext.local(),
-                declarerContext.breakpointHandler()
+                invocationContext.out(),
+                invocationContext.local(),
+                declarationContext.breakpointHandler()
         );
         try {
             context.visitBatches(body);
             return context.flow().returnAndReset();
         } catch (Exception e) {
             var see = ScriptEvaluateException.from(e, this);
-            if (callerContext != declarerContext) {
-                see.script(declarerContext.script());
+            if (invocationContext != declarationContext) {
+                see.script(declarationContext.script());
             }
             throw see;
         }

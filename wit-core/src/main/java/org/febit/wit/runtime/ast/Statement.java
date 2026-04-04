@@ -15,13 +15,13 @@
  */
 package org.febit.wit.runtime.ast;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
 
 public interface Statement {
 
     @Nullable
-    Object execute(InternalContext context);
+    Object execute(RuntimeContext context);
 
     Position position();
 

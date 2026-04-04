@@ -22,7 +22,7 @@ import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.extern.lib.test.AssertionModule;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
 import org.febit.wit.runtime.ast.expr.DirectValue;
@@ -107,7 +107,7 @@ class AutoTest {
 
     private void handleBreakpoint(
             @Nullable Object label,
-            InternalContext context,
+            RuntimeContext context,
             Statement statement,
             @Nullable Object result
     ) {

@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.flow;
 
 import org.febit.wit.runtime.FlowState;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
@@ -32,7 +32,7 @@ public record Continue(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         context.flow().toContinue(label);
         return null;
     }

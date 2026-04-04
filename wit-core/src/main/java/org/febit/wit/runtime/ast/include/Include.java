@@ -21,7 +21,7 @@ import org.febit.wit.Vars;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.ScriptParseException;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
@@ -39,13 +39,13 @@ public record Include(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         var included = include(context);
         handler.process(context, included);
         return null;
     }
 
-    private Context include(InternalContext context) {
+    private Context include(RuntimeContext context) {
         var scriptPath = path.execute(context);
         if (scriptPath == null) {
             throw new ScriptEvaluateException("Script path should not be null.", path);
@@ -66,7 +66,7 @@ public record Include(
         }
     }
 
-    private Vars resolveInputs(InternalContext context) {
+    private Vars resolveInputs(RuntimeContext context) {
         var paramsObj = this.inputs == null ? null
                 : this.inputs.execute(context);
 

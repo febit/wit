@@ -24,7 +24,7 @@ import org.febit.wit.io.Out;
 import org.febit.wit.io.Source;
 import org.febit.wit.parser.Parser;
 import org.febit.wit.runtime.BreakpointHandler;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.ScriptAST;
 import org.febit.wit.runtime.heap.GenericHeap;
 import org.febit.wit.runtime.heap.Heap;
@@ -101,7 +101,7 @@ public class ScriptImpl implements Script {
         Objects.requireNonNull(out, "out is required");
         try {
             var ast = ast();
-            var context = new InternalContext(
+            var context = new RuntimeContext(
                     this,
                     ast.createVariableHeap(),
                     inputs,

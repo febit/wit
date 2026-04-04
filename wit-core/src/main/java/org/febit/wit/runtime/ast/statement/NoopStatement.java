@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.statement;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.TextPosition;
@@ -27,7 +27,7 @@ public record NoopStatement(Position position) implements Statement {
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         return null;
     }
 }

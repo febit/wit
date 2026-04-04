@@ -15,11 +15,11 @@
  */
 package org.febit.wit.runtime.ast;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
 
 public interface Assignable {
 
     @Nullable
-    Object assign(InternalContext context, @Nullable Object value);
+    Object assign(RuntimeContext context, @Nullable Object value);
 }

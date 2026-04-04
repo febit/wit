@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
@@ -44,7 +44,7 @@ public class LocalContextRegister implements WitModule {
     }
 
     @Nullable
-    public static Object local(InternalContext context, @Nullable Object @Nullable [] args) {
+    public static Object local(RuntimeContext context, @Nullable Object @Nullable [] args) {
         final int len = args == null ? 0 : args.length;
         if (args == null || len < 1) {
             throw new ScriptEvaluateException("One more arguments expected for local context function");

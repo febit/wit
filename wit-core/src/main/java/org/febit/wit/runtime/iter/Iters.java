@@ -18,7 +18,7 @@ package org.febit.wit.runtime.iter;
 import lombok.experimental.UtilityClass;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
@@ -86,13 +86,13 @@ public class Iters {
         throw new ScriptEvaluateException("Unsupported type to KeyIter: " + o1.getClass(), refer);
     }
 
-    public static Iter ofFiltered(InternalContext context, Iter iter, WitFunction function) {
+    public static Iter ofFiltered(RuntimeContext context, Iter iter, WitFunction function) {
         return new FilteredIter<>(iter, (i, pending) -> ALU.isTruly(
                 function.apply(context, new @Nullable Object[]{pending})
         ));
     }
 
-    public static KeyIter ofFiltered(InternalContext context, KeyIter iter, WitFunction function) {
+    public static KeyIter ofFiltered(RuntimeContext context, KeyIter iter, WitFunction function) {
         return new FilteredKeyIter<>(iter, (i, pending) -> ALU.isTruly(
                 function.apply(context, new @Nullable Object[]{pending, i.value()})
         ));

@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.loop;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.statement.StatementBatch;
 
@@ -29,7 +29,7 @@ public record LoopBodyNonFlow(
      * {@inheritDoc}
      */
     @Override
-    public boolean execute(InternalContext context) {
+    public boolean execute(RuntimeContext context) {
         batch.execute(context);
         return false;
     }

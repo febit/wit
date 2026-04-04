@@ -15,14 +15,14 @@
  */
 package org.febit.wit.runtime.ast.loop;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.WithFlowControl;
-import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclarer;
+import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclaration;
 import org.febit.wit.runtime.iter.Iter;
 import org.febit.wit.runtime.iter.Iters;
 import org.jspecify.annotations.Nullable;
@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 public record ForIn(
         int scope,
         Expression collection,
-        @Nullable ScriptFunctionDeclarer filter,
+        @Nullable ScriptFunctionDeclaration filter,
         int iterIndex,
         int itemIndex,
         LoopBody body,
@@ -42,7 +42,7 @@ public record ForIn(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         Iter iter = iter(context);
         if (iter.hasNext()) {
             context.variables().onScope(scope, () -> execute0(context, iter));
@@ -54,7 +54,7 @@ public record ForIn(
         return null;
     }
 
-    private Iter iter(InternalContext context) {
+    private Iter iter(RuntimeContext context) {
         var iter = Iters.ofIter(collection.execute(context), this);
         if (filter == null) {
             return iter;
@@ -66,7 +66,7 @@ public record ForIn(
             "UnnecessaryLocalVariable",
             "squid:S3776", // Cognitive Complexity of methods should not be too high
     })
-    private void execute0(InternalContext context, Iter iter) {
+    private void execute0(RuntimeContext context, Iter iter) {
         var loop = this.body;
         var itemIdx = this.itemIndex;
         var heap = context.variables();

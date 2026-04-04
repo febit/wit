@@ -17,7 +17,7 @@ package org.febit.wit.runtime.ast.expr;
 
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.StatementTracker;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.ast.Expression;
@@ -36,7 +36,7 @@ public record FunctionCaller(
     @SuppressWarnings({
             "java:S1181", // Throwable and Error should not be caught
     })
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         var funcObj = this.func.execute(context);
         if (!(funcObj instanceof WitFunction declare)) {
             throw new ScriptEvaluateException("not a function", this);

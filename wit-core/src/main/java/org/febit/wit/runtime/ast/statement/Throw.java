@@ -17,7 +17,7 @@ package org.febit.wit.runtime.ast.statement;
 
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.StatementTracker;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
@@ -30,7 +30,7 @@ public record Throw(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         var ex = this.exception.execute(context);
         if (ex instanceof RuntimeException runtime) {
             if (runtime instanceof StatementTracker tracker) {

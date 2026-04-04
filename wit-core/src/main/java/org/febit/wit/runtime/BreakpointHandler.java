@@ -21,5 +21,5 @@ import org.jspecify.annotations.Nullable;
 @FunctionalInterface
 public interface BreakpointHandler {
 
-    void handle(@Nullable Object mark, InternalContext context, Statement statement, @Nullable Object result);
+    void handle(@Nullable Object mark, RuntimeContext context, Statement statement, @Nullable Object result);
 }

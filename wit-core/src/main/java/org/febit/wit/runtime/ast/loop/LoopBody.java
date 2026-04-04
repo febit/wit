@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.loop;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.WithFlowControl;
 
 public interface LoopBody extends WithFlowControl {
@@ -26,5 +26,5 @@ public interface LoopBody extends WithFlowControl {
      * @param context execution context
      * @return true if loop should interrupt, false if should continue to next iteration
      */
-    boolean execute(InternalContext context);
+    boolean execute(RuntimeContext context);
 }

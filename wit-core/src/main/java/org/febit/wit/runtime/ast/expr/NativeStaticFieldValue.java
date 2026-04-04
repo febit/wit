@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.expr;
 
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;
@@ -30,7 +30,7 @@ public record NativeStaticFieldValue(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         try {
             return field.get(null);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
@@ -40,7 +40,7 @@ public record NativeStaticFieldValue(
 
     @Override
     @Nullable
-    public Object assign(InternalContext context, @Nullable Object value) {
+    public Object assign(RuntimeContext context, @Nullable Object value) {
         try {
             field.set(null, value);
             return value;

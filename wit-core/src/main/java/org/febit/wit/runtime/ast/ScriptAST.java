@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.heap.VariableHeap;
 
@@ -32,7 +32,7 @@ public record ScriptAST(
         return new VariableHeap(heapSize, scopedIndexers);
     }
 
-    public void execute(InternalContext context) {
+    public void execute(RuntimeContext context) {
         body.execute(context);
     }
 }

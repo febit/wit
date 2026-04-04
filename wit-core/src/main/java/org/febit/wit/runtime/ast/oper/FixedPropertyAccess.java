@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.oper;
 
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -30,7 +30,7 @@ public record FixedPropertyAccess(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         try {
             return context.getProperty(
                     target.execute(context),
@@ -42,7 +42,7 @@ public record FixedPropertyAccess(
 
     @Override
     @Nullable
-    public Object assign(InternalContext context, @Nullable final Object value) {
+    public Object assign(RuntimeContext context, @Nullable final Object value) {
         try {
             context.setProperty(
                     target.execute(context),

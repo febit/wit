@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.loop;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.statement.StatementBatch;
 
@@ -32,7 +32,7 @@ public record LoopBodyWithFlow(
      * {@inheritDoc}
      */
     @Override
-    public boolean execute(InternalContext context) {
+    public boolean execute(RuntimeContext context) {
         context.visitBatches(this.batches);
         var flow = context.flow();
         if (flow.isNoop()) {

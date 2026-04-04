@@ -20,7 +20,7 @@ import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclarer;
+import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclaration;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
 import org.febit.wit.runtime.ast.flow.Return;
 import org.febit.wit.runtime.ast.oper.Assign;
@@ -29,7 +29,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScriptFunctionDeclarerBuilder {
+public class ScriptFunctionDeclarationBuilder {
 
     private final Position position;
     private final int assignTarget;
@@ -38,7 +38,7 @@ public class ScriptFunctionDeclarerBuilder {
 
     private final List<ArgumentInfo> args = new ArrayList<>();
 
-    private ScriptFunctionDeclarerBuilder(VarLayout varLayout, int assignTarget, Position position) {
+    private ScriptFunctionDeclarationBuilder(VarLayout varLayout, int assignTarget, Position position) {
         this.varLayout = varLayout;
         this.position = position;
         this.assignTarget = assignTarget;
@@ -47,30 +47,30 @@ public class ScriptFunctionDeclarerBuilder {
         argsBeginIndex = varLayout.assignVar(Presets.ARGUMENTS, position);
     }
 
-    public static ScriptFunctionDeclarerBuilder create(VarLayout varLayout, Position position) {
-        return new ScriptFunctionDeclarerBuilder(varLayout, -1, position);
+    public static ScriptFunctionDeclarationBuilder create(VarLayout varLayout, Position position) {
+        return new ScriptFunctionDeclarationBuilder(varLayout, -1, position);
     }
 
-    public static ScriptFunctionDeclarerBuilder create(VarLayout varLayout, int assignTarget, Position position) {
-        return new ScriptFunctionDeclarerBuilder(varLayout, assignTarget, position);
+    public static ScriptFunctionDeclarationBuilder create(VarLayout varLayout, int assignTarget, Position position) {
+        return new ScriptFunctionDeclarationBuilder(varLayout, assignTarget, position);
     }
 
-    public ScriptFunctionDeclarerBuilder args(@Nullable List<ArgumentInfo> infos) {
+    public ScriptFunctionDeclarationBuilder args(@Nullable List<ArgumentInfo> infos) {
         if (infos != null) {
             infos.forEach(this::arg);
         }
         return this;
     }
 
-    public ScriptFunctionDeclarerBuilder arg(String name) {
+    public ScriptFunctionDeclarationBuilder arg(String name) {
         return arg(name, null);
     }
 
-    public ScriptFunctionDeclarerBuilder arg(String name, @Nullable Object defaultValue) {
+    public ScriptFunctionDeclarationBuilder arg(String name, @Nullable Object defaultValue) {
         return arg(new ArgumentInfo(name, defaultValue));
     }
 
-    public ScriptFunctionDeclarerBuilder arg(ArgumentInfo info) {
+    public ScriptFunctionDeclarationBuilder arg(ArgumentInfo info) {
         if (varLayout.assignVar(info.name, position) != (argsBeginIndex + (this.args.size() + 1))) {
             throw new ScriptParseException("Cannot assign argument variable: " + info.name);
         }
@@ -100,11 +100,11 @@ public class ScriptFunctionDeclarerBuilder {
         return expr;
     }
 
-    public ScriptFunctionDeclarer build(Expression lambda) {
+    public ScriptFunctionDeclaration build(Expression lambda) {
         return build(lambdaBody(lambda));
     }
 
-    public ScriptFunctionDeclarer build(List<Statement> list) {
+    public ScriptFunctionDeclaration build(List<Statement> list) {
         var indexers = varLayout.buildScopedIndexers();
         int heapSize = varLayout.heapSize();
         varLayout.unshiftFrame();
@@ -121,7 +121,7 @@ public class ScriptFunctionDeclarerBuilder {
             argDefaults[i] = this.args.get(i).defaultValue;
         }
 
-        return new ScriptFunctionDeclarer(
+        return new ScriptFunctionDeclaration(
                 heapSize,
                 indexers,
                 batches,

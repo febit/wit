@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.statement;
 
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Statement;
@@ -43,7 +43,7 @@ public class StatementBatch implements WithFlowControl {
         return new StatementBatch(statements.toArray(Statement[]::new));
     }
 
-    public void execute(InternalContext context) {
+    public void execute(RuntimeContext context) {
         for (var stat : statements) {
             stat.execute(context);
         }

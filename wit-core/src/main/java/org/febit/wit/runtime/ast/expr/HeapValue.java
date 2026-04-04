@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.expr;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.heap.Heap;
@@ -29,13 +29,13 @@ public record HeapValue(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         return this.heap.get(name);
     }
 
     @Override
     @Nullable
-    public Object assign(InternalContext context, @Nullable Object value) {
+    public Object assign(RuntimeContext context, @Nullable Object value) {
         this.heap.set(name, value);
         return value;
     }

@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.template;
 
 import org.febit.wit.io.Out;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Position;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -44,7 +44,7 @@ class AdaptiveTemplateTextTest {
     @Test
     void execute() {
         var buffer = new StringBuilder();
-        var context = mock(InternalContext.class);
+        var context = mock(RuntimeContext.class);
 
         buffer.setLength(0);
         when(context.out()).thenReturn(wrapAsOutputStreamOut(buffer));
@@ -63,7 +63,7 @@ class AdaptiveTemplateTextTest {
         when(out.preferBytes()).thenReturn(true);
         when(out.charset()).thenReturn(StandardCharsets.UTF_16);
 
-        var context = mock(InternalContext.class);
+        var context = mock(RuntimeContext.class);
         when(context.out()).thenReturn(out);
 
         templateText.execute(context);

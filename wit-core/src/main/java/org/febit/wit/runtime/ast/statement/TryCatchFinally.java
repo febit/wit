@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.statement;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Position;
@@ -35,7 +35,7 @@ public record TryCatchFinally(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         try {
             body.execute(context);
         } catch (Exception e) {

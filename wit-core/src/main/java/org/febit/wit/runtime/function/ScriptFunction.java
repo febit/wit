@@ -15,19 +15,19 @@
  */
 package org.febit.wit.runtime.function;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.WitFunction;
-import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclarer;
+import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclaration;
 import org.jspecify.annotations.Nullable;
 
 public record ScriptFunction(
-        ScriptFunctionDeclarer declarer,
-        InternalContext declarerContext
+        ScriptFunctionDeclaration declaration,
+        RuntimeContext declarationContext
 ) implements WitFunction {
 
     @Nullable
     @Override
-    public Object apply(InternalContext context, @Nullable Object @Nullable [] args) {
-        return declarer.apply(declarerContext, context, args);
+    public Object apply(RuntimeContext invocationContext, @Nullable Object @Nullable [] args) {
+        return declaration.apply(declarationContext, invocationContext, args);
     }
 }

@@ -45,7 +45,7 @@ import java.util.function.Function;
  * It provides access to the script, variables, inputs, outputs, and other runtime features.
  */
 @Accessors(fluent = true)
-public final class InternalContext implements Context {
+public final class RuntimeContext implements Context {
 
     @lombok.Getter
     private final Flow flow = new Flow();
@@ -73,7 +73,7 @@ public final class InternalContext implements Context {
     @lombok.Getter
     private Out out;
 
-    public InternalContext(
+    public RuntimeContext(
             Script script,
             VariableHeap variables,
             Vars inputs,
@@ -152,21 +152,21 @@ public final class InternalContext implements Context {
 
     @Nullable
     public Object redirect(
-            Writer writer, Function<InternalContext, @Nullable Object> action) {
+            Writer writer, Function<RuntimeContext, @Nullable Object> action) {
         var target = engine().asOut(writer, this.out.charset());
         return redirect(target, action);
     }
 
     @Nullable
     public Object redirect(
-            OutputStream output, Function<InternalContext, @Nullable Object> action) {
+            OutputStream output, Function<RuntimeContext, @Nullable Object> action) {
         var target = engine().asOut(output, this.out.charset());
         return redirect(target, action);
     }
 
     @Nullable
     public Object redirect(
-            Out target, Function<InternalContext, @Nullable Object> action) {
+            Out target, Function<RuntimeContext, @Nullable Object> action) {
         Out prevOut = this.out;
         this.out = target;
         try {

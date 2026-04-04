@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.febit.wit.util.Defaults.nvl;
+
 @Accessors(fluent = true)
 public class VarLayout {
 
@@ -155,10 +157,7 @@ public class VarLayout {
 
     private static ScopedIndexer createScopedIndexer(@Nullable ScopedIndexer up, Map<String, Integer> map) {
         if (map.isEmpty()) {
-            if (up != null) {
-                return up;
-            }
-            return ScopedIndexer.EMPTY;
+            return nvl(up, ScopedIndexer.EMPTY);
         }
 
         int i = 0;

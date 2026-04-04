@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.iter;
 
 import org.febit.lang.util.Lists;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.util.Args;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 
 class FilteredItersTest {
 
-    private final InternalContext context = mock(InternalContext.class);
+    private final RuntimeContext context = mock(RuntimeContext.class);
 
     @Test
     void empty() {
@@ -43,7 +43,7 @@ class FilteredItersTest {
         );
     }
 
-    private static boolean isAbc(InternalContext context, Object[] args) {
+    private static boolean isAbc(RuntimeContext context, Object[] args) {
         var str = (String) Args.at(args, 0);
         if (str == null) {
             return false;

@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.expr;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;
@@ -28,7 +28,7 @@ public record BreakpointExpr(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         Object result = supervised.execute(context);
         var handler = context.breakpointHandler();
         if (handler != null) {

@@ -17,7 +17,7 @@ package org.febit.wit;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.io.Out;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.heap.GenericHeap;
 import org.febit.wit.runtime.heap.VariableHeap;
@@ -37,8 +37,8 @@ public final class ExportedFunction {
     private final WitFunction function;
     private final Out defaultOut;
 
-    private InternalContext contextForCaller(Out out) {
-        return new InternalContext(
+    private RuntimeContext createInvocationContext(Out out) {
+        return new RuntimeContext(
                 script,
                 VariableHeap.empty(),
                 Vars.empty(),
@@ -49,18 +49,18 @@ public final class ExportedFunction {
     }
 
     @Nullable
-    private Object doApply(InternalContext context, @Nullable Object @Nullable ... args) {
-        return this.function.apply(context, args);
+    private Object doApply(RuntimeContext invocationContext, @Nullable Object @Nullable ... args) {
+        return this.function.apply(invocationContext, args);
     }
 
     @Nullable
     public Object apply(@Nullable Object @Nullable ... args) {
-        return doApply(contextForCaller(defaultOut), args);
+        return doApply(createInvocationContext(defaultOut), args);
     }
 
     @Nullable
     public Object applyWithOut(Out out, @Nullable Object @Nullable ... args) {
-        return doApply(contextForCaller(out), args);
+        return doApply(createInvocationContext(out), args);
     }
 
     @Nullable

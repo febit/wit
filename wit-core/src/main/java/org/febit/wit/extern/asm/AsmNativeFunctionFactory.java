@@ -122,7 +122,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
 
         var paramTypesLen = paramTypes.length;
         var m = classWriter.visitMethod(Constants.ACC_PUBLIC, "apply",
-                "(Lorg/febit/wit/runtime/InternalContext;[Ljava/lang/Object;)Ljava/lang/Object;", null);
+                "(Lorg/febit/wit/runtime/RuntimeContext;[Ljava/lang/Object;)Ljava/lang/Object;", null);
 
         if (paramTypesLen == 0) {
             if (isStatic) {

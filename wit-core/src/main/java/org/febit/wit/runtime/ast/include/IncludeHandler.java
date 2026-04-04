@@ -16,10 +16,10 @@
 package org.febit.wit.runtime.ast.include;
 
 import org.febit.wit.Context;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 
 @FunctionalInterface
 public interface IncludeHandler {
 
-    void process(InternalContext parent, Context included);
+    void process(RuntimeContext parent, Context included);
 }

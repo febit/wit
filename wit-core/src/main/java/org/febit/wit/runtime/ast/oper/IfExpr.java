@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.oper;
 
 import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;
@@ -30,7 +30,7 @@ public record IfExpr(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         return (ALU.isTruly(condition.execute(context)) ? left : right)
                 .execute(context);
     }

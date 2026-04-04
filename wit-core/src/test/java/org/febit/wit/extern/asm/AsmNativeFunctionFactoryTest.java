@@ -16,7 +16,7 @@
 package org.febit.wit.extern.asm;
 
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +36,7 @@ class AsmNativeFunctionFactoryTest {
 
     @Test
     void testToString() throws Exception {
-        var context = mock(InternalContext.class);
+        var context = mock(RuntimeContext.class);
         var str_toString = AsmNativeFunctionFactory.construct(String.class.getMethod("toString"));
         assertEquals(PKG_ASM, str_toString.getClass().getPackageName());
 
@@ -45,7 +45,7 @@ class AsmNativeFunctionFactoryTest {
 
     @Test
     void currentTimeMillis() throws Exception {
-        var context = mock(InternalContext.class);
+        var context = mock(RuntimeContext.class);
         var currentTimeMillis = AsmNativeFunctionFactory.construct(System.class.getMethod("currentTimeMillis"));
 
         assertEquals(PKG_ASM, currentTimeMillis.getClass().getPackageName());
@@ -57,7 +57,7 @@ class AsmNativeFunctionFactoryTest {
 
     @Test
     void arraycopy() throws Exception {
-        var context = mock(InternalContext.class);
+        var context = mock(RuntimeContext.class);
         var arraycopy = AsmNativeFunctionFactory.construct(
                 System.class.getMethod("arraycopy", Object.class, int.class, Object.class, int.class, int.class));
 
@@ -73,7 +73,7 @@ class AsmNativeFunctionFactoryTest {
 
     @Test
     void list() throws Exception {
-        var context = mock(InternalContext.class);
+        var context = mock(RuntimeContext.class);
 
         var newList = AsmNativeFunctionFactory.construct(ArrayList.class.getConstructor());
         var newListWithInitSize = AsmNativeFunctionFactory.construct(ArrayList.class.getConstructor(int.class));

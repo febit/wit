@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.loop;
 
 import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.Position;
@@ -35,13 +35,13 @@ public record DoWhile(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         context.variables().onScope(scope, () -> execute0(context));
         return null;
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    private void execute0(InternalContext context) {
+    private void execute0(RuntimeContext context) {
         var loop = this.body;
         var cond = this.condition;
         do {

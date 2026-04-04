@@ -19,7 +19,7 @@ import lombok.experimental.UtilityClass;
 import org.febit.wit.Script;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.WitFunction;
 import org.jspecify.annotations.Nullable;
@@ -63,7 +63,7 @@ public class AssertionModule implements WitModule {
     @UtilityClass
     private static class Assertions {
 
-        private static Object assertTrue(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertTrue(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             if (at(args, 0) instanceof Boolean bool) {
                 AssertionModule.assertTrue(bool, context.script());
@@ -73,7 +73,7 @@ public class AssertionModule implements WitModule {
             return Undefined.UNDEFINED;
         }
 
-        private static Object assertFalse(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertFalse(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             if (at(args, 0) instanceof Boolean bool) {
                 AssertionModule.assertTrue(!bool, context.script());
@@ -83,49 +83,49 @@ public class AssertionModule implements WitModule {
             return Undefined.UNDEFINED;
         }
 
-        private static Object assertNotNull(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertNotNull(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             AssertionModule.assertNotNull(at(args, 0), context.script());
             return Undefined.UNDEFINED;
         }
 
-        private static Object assertNull(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertNull(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             AssertionModule.assertNull(at(args, 0), context.script());
             return Undefined.UNDEFINED;
         }
 
-        private static Object assertEquals(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertEquals(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             AssertionModule.assertEquals(at(args, 0), at(args, 1), context.script());
             return Undefined.UNDEFINED;
         }
 
-        private static Object assertNotEquals(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertNotEquals(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             AssertionModule.assertNotEquals(at(args, 0), at(args, 1), context.script());
             return Undefined.UNDEFINED;
         }
 
-        private static Object assertSame(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertSame(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             AssertionModule.assertSame(at(args, 0), at(args, 1), context.script());
             return Undefined.UNDEFINED;
         }
 
-        private static Object assertNotSame(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertNotSame(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             AssertionModule.assertNotSame(at(args, 0), at(args, 1), context.script());
             return Undefined.UNDEFINED;
         }
 
-        private static Object assertArrayEquals(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertArrayEquals(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             AssertionModule.assertArrayEquals(at(args, 0), at(args, 1), context.script());
             return Undefined.UNDEFINED;
         }
 
-        private static Object assertInstanceOf(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertInstanceOf(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             var expected = at(args, 0);
             if (expected instanceof Class<?> expectedClass) {
@@ -136,7 +136,7 @@ public class AssertionModule implements WitModule {
             return Undefined.UNDEFINED;
         }
 
-        private static Object assertNotInstanceOf(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertNotInstanceOf(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             var unexpected = at(args, 0);
             if (unexpected instanceof Class<?> unexpectedClass) {
@@ -148,7 +148,7 @@ public class AssertionModule implements WitModule {
         }
 
         @SuppressWarnings("unchecked")
-        private static Object assertThrows(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertThrows(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             var arg0 = at(args, 0);
             if (!(arg0 instanceof Class<?> expected)) {
@@ -177,7 +177,7 @@ public class AssertionModule implements WitModule {
         @SuppressWarnings({
                 "java:S1181", // Throwable and Error should not be caught
         })
-        private static Object assertDoesNotThrow(InternalContext context, @Nullable Object @Nullable [] args) {
+        private static Object assertDoesNotThrow(RuntimeContext context, @Nullable Object @Nullable [] args) {
             plusAssertCount(context);
             var func = at(args, 0);
             if (!(func instanceof WitFunction)) {
@@ -196,7 +196,7 @@ public class AssertionModule implements WitModule {
         }
     }
 
-    static void plusAssertCount(InternalContext context) {
+    static void plusAssertCount(RuntimeContext context) {
         LongAdder count = (LongAdder) context.local().get(ASSERT_COUNT_KEY);
         if (count == null) {
             count = new LongAdder();

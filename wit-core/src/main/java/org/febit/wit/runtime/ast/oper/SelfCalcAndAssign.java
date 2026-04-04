@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.oper;
 
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -33,7 +33,7 @@ public record SelfCalcAndAssign(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         try {
             var targetObj = this.target;
             // Must execute right expr first!

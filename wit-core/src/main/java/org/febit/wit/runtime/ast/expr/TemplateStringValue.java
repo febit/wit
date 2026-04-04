@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.expr;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
@@ -28,7 +28,7 @@ public record TemplateStringValue(
 ) implements Expression {
 
     @Override
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         var buf = new StringBuilder();
         var exprs = this.segments;
         for (int i = 0, size = exprs.size(); i < size; i++) {

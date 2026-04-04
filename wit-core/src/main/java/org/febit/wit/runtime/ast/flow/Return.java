@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.flow;
 
 import org.febit.wit.runtime.FlowState;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.FlowControl;
@@ -34,7 +34,7 @@ public record Return(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         var result = value != null
                 ? value.execute(context)
                 : Undefined.UNDEFINED;

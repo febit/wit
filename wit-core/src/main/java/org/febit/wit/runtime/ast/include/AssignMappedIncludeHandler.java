@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.include;
 
 import org.febit.wit.Context;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Assignable;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public record AssignMappedIncludeHandler(
     }
 
     @Override
-    public void process(InternalContext parent, Context included) {
+    public void process(RuntimeContext parent, Context included) {
         var source = included.variables();
         for (var entry : entries) {
             var value = source.get(entry.variable);

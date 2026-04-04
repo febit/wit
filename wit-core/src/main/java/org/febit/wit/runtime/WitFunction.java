@@ -21,13 +21,13 @@ import org.jspecify.annotations.Nullable;
 public interface WitFunction {
 
     @Nullable
-    Object apply(InternalContext context, @Nullable Object @Nullable [] args);
+    Object apply(RuntimeContext context, @Nullable Object @Nullable [] args);
 
     @FunctionalInterface
     interface Constable extends WitFunction {
 
         @Nullable
-        default Object apply(InternalContext context, @Nullable Object @Nullable [] args) {
+        default Object apply(RuntimeContext context, @Nullable Object @Nullable [] args) {
             return apply(args);
         }
 

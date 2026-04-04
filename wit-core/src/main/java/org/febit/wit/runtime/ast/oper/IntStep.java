@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.oper;
 
 import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.iter.IntAscIter;
@@ -29,7 +29,7 @@ public record IntStep(
 ) implements Expression {
 
     @Override
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         var fromObj = ALU.requireNumber(from.execute(context)).intValue();
         var toObj = ALU.requireNumber(to.execute(context)).intValue();
         return fromObj < toObj

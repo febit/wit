@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.ast.expr;
 
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.StatementUtils;
 import org.jspecify.annotations.Nullable;
@@ -38,7 +38,7 @@ public class ExpressionArray {
         return List.of(values);
     }
 
-    public @Nullable Object[] execute(InternalContext context) {
+    public @Nullable Object[] execute(RuntimeContext context) {
         var exprs = this.values;
         var len = exprs.length;
         var results = new Object[len];

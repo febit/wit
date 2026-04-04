@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.statement;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.FlowControls;
@@ -37,7 +37,7 @@ public record Switch(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         var key = condition.execute(context);
         var branch = key != null
                 ? branches.get(key)
@@ -72,7 +72,7 @@ public record Switch(
     public record Branch(Statement body, @Nullable Branch next) {
 
         @Nullable
-        Object execute(InternalContext context) {
+        Object execute(RuntimeContext context) {
             body.execute(context);
             if (context.flow().isNoop() && next != null) {
                 return next.execute(context);

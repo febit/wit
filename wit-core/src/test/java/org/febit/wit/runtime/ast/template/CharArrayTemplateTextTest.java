@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime.ast.template;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Position;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +37,7 @@ class CharArrayTemplateTextTest {
     @Test
     void execute() {
         var buffer = new StringBuilder();
-        var context = mock(InternalContext.class);
+        var context = mock(RuntimeContext.class);
 
         buffer.setLength(0);
         reset(context);

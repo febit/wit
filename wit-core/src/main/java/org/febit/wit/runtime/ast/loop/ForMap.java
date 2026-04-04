@@ -15,14 +15,14 @@
  */
 package org.febit.wit.runtime.ast.loop;
 
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.FlowControls;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.WithFlowControl;
-import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclarer;
+import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclaration;
 import org.febit.wit.runtime.iter.Iters;
 import org.febit.wit.runtime.iter.KeyIter;
 import org.jspecify.annotations.Nullable;
@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 public record ForMap(
         int scope,
         Expression collection,
-        @Nullable ScriptFunctionDeclarer filter,
+        @Nullable ScriptFunctionDeclaration filter,
         int iterIndex,
         int keyIndex,
         int valueIndex,
@@ -43,7 +43,7 @@ public record ForMap(
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         var iter = iter(context);
         if (iter.hasNext()) {
             context.variables().onScope(scope, () -> execute0(context, iter));
@@ -55,7 +55,7 @@ public record ForMap(
         return null;
     }
 
-    private KeyIter iter(InternalContext context) {
+    private KeyIter iter(RuntimeContext context) {
         var iter = Iters.ofKeyIter(collection.execute(context), this);
         if (filter == null) {
             return iter;
@@ -67,7 +67,7 @@ public record ForMap(
             "UnnecessaryLocalVariable",
             "squid:S3776", // Cognitive Complexity of methods should not be too high
     })
-    private void execute0(InternalContext context, KeyIter iter) {
+    private void execute0(RuntimeContext context, KeyIter iter) {
         var loop = this.body;
         var keyIdx = this.keyIndex;
         var valIdx = this.valueIndex;

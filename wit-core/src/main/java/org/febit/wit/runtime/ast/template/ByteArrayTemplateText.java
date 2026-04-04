@@ -18,7 +18,7 @@ package org.febit.wit.runtime.ast.template;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
@@ -33,7 +33,7 @@ public final class ByteArrayTemplateText implements Statement {
 
     @Override
     @Nullable
-    public Object execute(InternalContext context) {
+    public Object execute(RuntimeContext context) {
         context.out().write(bytes);
         return null;
     }
