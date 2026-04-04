@@ -51,11 +51,16 @@ public record Include(
             throw new ScriptEvaluateException("Script path should not be null.", path);
         }
         try {
-            Vars inputs = resolveInputs(context);
+            var inputs = resolveInputs(context);
             var script = context.script()
                     .engine()
                     .script(refer, String.valueOf(scriptPath));
-            return script.merge(context, inputs);
+            return script.eval(
+                    inputs,
+                    context.out(),
+                    context.local(),
+                    context.breakpointHandler()
+            );
         } catch (NoSuchSourceException | ScriptEvaluateException | ScriptParseException e) {
             throw new ScriptEvaluateException(e, this);
         }

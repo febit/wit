@@ -27,9 +27,12 @@ import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.InternalContext;
 import org.febit.wit.runtime.ast.ScriptAST;
 import org.febit.wit.runtime.heap.GenericHeap;
+import org.febit.wit.runtime.heap.Heap;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
+
+import static org.febit.wit.util.Defaults.nvl;
 
 @SuppressWarnings({
         "UnusedReturnValue"
@@ -87,17 +90,13 @@ public class ScriptImpl implements Script {
         return ast.sourceVersion() != this.source.version();
     }
 
-    /**
-     * Evaluate this script.
-     *
-     * @param inputs            vars
-     * @param out               out
-     * @param breakpointHandler listener
-     * @return Context
-     * @throws ScriptEvaluateException when script runtime exception
-     * @throws ScriptParseException    when unable to parse
-     */
-    public Context eval(Vars inputs, Out out, @Nullable BreakpointHandler breakpointHandler) {
+    @Override
+    public Context eval(
+            Vars inputs,
+            Out out,
+            @Nullable Heap local,
+            @Nullable BreakpointHandler breakpointHandler
+    ) {
         Objects.requireNonNull(inputs, "inputs is required");
         Objects.requireNonNull(out, "out is required");
         try {
@@ -107,40 +106,17 @@ public class ScriptImpl implements Script {
                     ast.createVariableHeap(),
                     inputs,
                     out,
-                    GenericHeap.local(),
+                    nvl(local, GenericHeap::local),
                     breakpointHandler
             );
             ast.execute(context);
             return context;
         } catch (Exception e) {
-            throw handleException(e);
+            var se = (e instanceof ScriptException ex) ? ex
+                    : new ScriptEvaluateException(e);
+            se.script(this);
+            throw se;
         }
-    }
-
-    @Override
-    public Context merge(InternalContext parent, Vars inputs) {
-        try {
-            var ast = ast();
-            var context = new InternalContext(
-                    this,
-                    ast.createVariableHeap(),
-                    inputs,
-                    parent.out(),
-                    parent.local(),
-                    parent.breakpointHandler()
-            );
-            ast.execute(context);
-            return context;
-        } catch (Exception e) {
-            throw handleException(e);
-        }
-    }
-
-    private ScriptException handleException(Exception exception) {
-        var se = (exception instanceof ScriptException ex) ? ex
-                : new ScriptEvaluateException(exception);
-        se.script(this);
-        return se;
     }
 
     @Override

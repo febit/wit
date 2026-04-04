@@ -24,6 +24,8 @@ import lombok.experimental.Tolerate;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.runtime.BreakpointHandler;
+import org.febit.wit.runtime.heap.GenericHeap;
+import org.febit.wit.runtime.heap.Heap;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
@@ -54,6 +56,15 @@ public class Evaluator {
     @Nullable
     private Supplier<Out> out;
 
+    /**
+     * Heap to store local variables.
+     * If not provided, a {@code GenericHeap.local()} heap will be used by default.
+     *
+     * @see GenericHeap#local()
+     */
+    @Nullable
+    private Heap local;
+
     @Nullable
     private BreakpointHandler breakpointHandler;
 
@@ -73,6 +84,7 @@ public class Evaluator {
         return script().eval(
                 nvl(inputs, Vars::empty),
                 nvl(out, (Supplier<Out>) DiscardOut::get).get(),
+                nvl(local, GenericHeap::local),
                 breakpointHandler
         );
     }

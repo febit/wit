@@ -22,7 +22,7 @@ import org.febit.wit.io.Out;
 import org.febit.wit.io.Source;
 import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.runtime.BreakpointHandler;
-import org.febit.wit.runtime.InternalContext;
+import org.febit.wit.runtime.heap.Heap;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
@@ -45,13 +45,17 @@ public interface Script {
      *
      * @param inputs            input vars
      * @param out               out
+     * @param local             Heap to store local variables, may be null
      * @param breakpointHandler breakpoint handler, may be null
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
      */
-    Context eval(Vars inputs, Out out, @Nullable BreakpointHandler breakpointHandler);
-
-    Context merge(InternalContext target, Vars inputs);
+    Context eval(
+            Vars inputs,
+            Out out,
+            @Nullable Heap local,
+            @Nullable BreakpointHandler breakpointHandler
+    );
 
     @CheckReturnValue
     default Evaluator evaluator() {
@@ -63,10 +67,10 @@ public interface Script {
      *
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ScriptParseException          when unable to parse
+     * @throws ScriptParseException    when unable to parse
      */
     default Context eval() {
-        return eval(Vars.empty(), DiscardOut.get(), null);
+        return eval(Vars.empty(), DiscardOut.get(), null, null);
     }
 
     /**
@@ -76,11 +80,11 @@ public interface Script {
      * @param output out
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ScriptParseException          when unable to parse
+     * @throws ScriptParseException    when unable to parse
      */
     default Context eval(Vars inputs, OutputStream output) {
         var out = engine().asOut(output);
-        return eval(inputs, out, null);
+        return eval(inputs, out, null, null);
     }
 
     /**
@@ -90,24 +94,23 @@ public interface Script {
      * @param writer writer
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ScriptParseException          when unable to parse
+     * @throws ScriptParseException    when unable to parse
      */
     default Context eval(Vars inputs, Writer writer) {
         var out = engine().asOut(writer);
-        return eval(inputs, out, null);
+        return eval(inputs, out, null, null);
     }
 
     /**
      * Eval script.
      *
      * @param inputs input vars
-     * @param out  out
+     * @param out    out
      * @return Context
      * @throws ScriptEvaluateException when script runtime exception
-     * @throws ScriptParseException          when unable to parse
+     * @throws ScriptParseException    when unable to parse
      */
     default Context eval(Vars inputs, Out out) {
-        return eval(inputs, out, null);
+        return eval(inputs, out, null, null);
     }
-
 }
