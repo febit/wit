@@ -22,7 +22,7 @@ import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.ScopedIndexer;
 import org.febit.wit.runtime.ast.TextPosition;
-import org.febit.wit.runtime.heap.StaticHeaps;
+import org.febit.wit.runtime.heap.GlobalHeaps;
 import org.febit.wit.util.Stack;
 import org.jspecify.annotations.Nullable;
 
@@ -51,7 +51,7 @@ public class VarLayout {
     private final Stack<Integer> heapSizeStack = new Stack<>();
 
     @Getter
-    private final StaticHeaps staticHeaps;
+    private final GlobalHeaps globals;
     private final Scope root;
 
     @Getter
@@ -59,7 +59,7 @@ public class VarLayout {
     private int frameCursor;
 
     VarLayout(Wit wit) {
-        this.staticHeaps = wit.staticHeaps();
+        this.globals = wit.globals();
         this.root = shiftScope(-1);
         this.root.assignVarsIfAbsent(wit.predefinedVars());
     }
@@ -132,11 +132,11 @@ public class VarLayout {
         }
 
         // static var/const
-        if (staticHeaps.variables().has(name)) {
-            return VarAddress.ofHeap(staticHeaps.variables(), name);
+        if (globals.variables().has(name)) {
+            return VarAddress.ofHeap(globals.variables(), name);
         }
-        if (staticHeaps.constants().has(name)) {
-            return VarAddress.ofDirect(staticHeaps.constants().get(name));
+        if (globals.constants().has(name)) {
+            return VarAddress.ofDirect(globals.constants().get(name));
         }
 
         //failed

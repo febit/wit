@@ -176,13 +176,13 @@ public class WitBuilder {
         }
 
         var total = fixed.size();
-        var staticHeaps = wit.staticHeaps();
+        var globals = wit.globals();
         for (int i = 0; i < total; i++) {
             var path = fixed.get(i);
-            log.info("[INIT] Applying setup scripts [{}/{}]: {}", i + 1, total, path);
+            log.info("[INIT] Applying setup script [{}/{}]: {}", i + 1, total, path);
             wit.script(path).eval(acceptor -> {
-                acceptor.set(Presets.GLOBAL, staticHeaps.variables());
-                acceptor.set(Presets.CONST, staticHeaps.constants());
+                acceptor.set(Presets.GLOBAL, globals.variables());
+                acceptor.set(Presets.CONST, globals.constants());
             }, DiscardOut.get());
         }
         log.info("[INIT] Applied setup scripts, total: {}", total);

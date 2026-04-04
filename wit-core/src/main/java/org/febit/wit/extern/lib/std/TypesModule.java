@@ -31,7 +31,7 @@ public class TypesModule implements WitModule {
 
     @Override
     public void apply(Wit wit) {
-        var heap = wit.staticHeaps().constants();
+        var heap = wit.globals().constants();
         heap.setAsFunction("is_array", Types::is_array);
         heap.setAsFunction("is_bool", Types::is_bool);
         heap.setAsFunction("is_function", Types::is_function);

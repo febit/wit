@@ -31,7 +31,7 @@ public class TestCasesModule implements WitModule {
     @Override
     public void apply(Wit wit) {
 
-        var heaps = wit.staticHeaps();
+        var heaps = wit.globals();
         var functions = wit.nativeLayout().functions();
 
         // Static

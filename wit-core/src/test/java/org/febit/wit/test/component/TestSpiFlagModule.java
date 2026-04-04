@@ -22,7 +22,7 @@ public class TestSpiFlagModule implements WitModule {
 
     @Override
     public void apply(Wit wit) {
-        var heaps = wit.staticHeaps();
+        var heaps = wit.globals();
         heaps.constants().set("PLUGIN_SPI_FLAG", true);
     }
 }

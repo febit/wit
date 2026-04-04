@@ -28,7 +28,7 @@ import org.febit.wit.io.out.WriterOut;
 import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.runtime.accessor.AccessorFactory;
-import org.febit.wit.runtime.heap.StaticHeaps;
+import org.febit.wit.runtime.heap.GlobalHeaps;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
@@ -55,7 +55,7 @@ public class Wit {
     private final ConcurrentMap<String, Script> cachedScripts = new ConcurrentHashMap<>();
 
     @Getter
-    private final StaticHeaps staticHeaps = new StaticHeaps();
+    private final GlobalHeaps globals = new GlobalHeaps();
 
     @Getter
     private final int features;

@@ -48,7 +48,7 @@ public class CachingModule implements WitModule {
 
     @Override
     public void apply(Wit wit) {
-        var heap = wit.staticHeaps().constants();
+        var heap = wit.globals().constants();
         heap.setAsFunction(name, this::doPut);
         if (withRemove) {
             heap.setAsFunction(name + "_remove", this::doRemove);

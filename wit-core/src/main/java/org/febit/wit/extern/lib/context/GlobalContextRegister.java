@@ -42,7 +42,7 @@ public class GlobalContextRegister implements WitModule {
 
     @Override
     public void apply(Wit wit) {
-        var heap = wit.staticHeaps().constants();
+        var heap = wit.globals().constants();
         heap.set(this.name, this.table);
     }
 }

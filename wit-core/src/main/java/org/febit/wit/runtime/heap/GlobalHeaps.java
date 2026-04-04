@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(fluent = true)
-public class StaticHeaps {
+public class GlobalHeaps {
 
     @Getter
     private final Heap constants = GenericHeap.concurrent();

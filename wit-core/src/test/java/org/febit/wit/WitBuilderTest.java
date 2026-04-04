@@ -50,7 +50,7 @@ class WitBuilderTest {
                 .build();
 
         assertNotNull(wit);
-        assertNotNull(wit.staticHeaps());
+        assertNotNull(wit.globals());
 
         assertInstanceOf(ComposedAccessorFactory.class, wit.accessors());
         assertInstanceOf(DefaultCodecFactory.class, wit.codecFactory());

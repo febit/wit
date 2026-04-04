@@ -47,7 +47,7 @@ public class TldModule implements WitModule {
 
     @Override
     public void apply(Wit wit) {
-        var heaps = wit.staticHeaps();
+        var heaps = wit.globals();
         var nativeLayout = wit.nativeLayout();
 
         log.info("Load TLD file: {}", path);

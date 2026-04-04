@@ -38,7 +38,7 @@ public class AssertionModule implements WitModule {
 
     @Override
     public void apply(Wit wit) {
-        var heap = wit.staticHeaps().constants();
+        var heap = wit.globals().constants();
         heap.setAsFunction("assertTrue", Assertions::assertTrue);
         heap.setAsFunction("assertFalse", Assertions::assertFalse);
 
