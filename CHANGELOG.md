@@ -1,29 +1,40 @@
 ## 3.0.0 (not yet released)
 
-这是一个重大的重置版本，包含大量破坏性更改，旨在简化库的使用和维护，同时引入现代 Java 特性。
+This is a major reset release with a large number of breaking changes. It aims to modernize the architecture, simplify
+usage and maintenance, and improve performance and robustness.
 
-### FEATURES:
+### FEATURES
 
-+ 支持 Record 类，的 Getter 方法。
-+ 支持通过 Java 原生的代码 Builder 模式构建 Wit 引擎实例，提供更流畅的 API 体验。
-+ 支持 Native Class。
-+ Assertion 模块，提供更多的断言方法。
++ Support building Wit engine instances using native Java Builder pattern for a smoother API experience.
++ Support `getProperty(bean, propertyName)` for Record objects.
++ Add Native Class syntax to directly access Java Class objects in scripts.
++ Add built-in assertion methods.
++ Throw `WitAssertionError` with full script stack trace when assertion fails.
++ `SecurityLoaderDecorator` (formerly `SecurityLoader`) uses `PathTrie` for path allow/deny rules instead of simple
+  prefix matching.
++ `ClasspathLoader` supports specifying a `ClassLoader` for resource loading.
++ `FileSystemLoader` (formerly `FileLoader`) supports specifying a `FileSystem` for resource loading.
++ Map literals in scripts now create `LinkedHashMap` instances to preserve insertion order.
 
-#### IMPROVEMENTS:
+### IMPROVEMENTS
 
-+ 迁移至 jspecify, 标注 nullability。
++ Migrated nullability annotations to JSpecify standard.
++ Improved unit tests and increased code coverage.
++ Optimized runtime execution of Statement blocks with batch processing to reduce control state checks and improve
+  performance.
 
-#### BUG FIXES:
+### BUG FIXES
 
-+ 修复 ALU 计算 Double 与 Float 类型数值时类型转换导致的精度问题。
-+ 修复 ALU 零值应被是为 Falsy。
++ Fixed precision loss caused by type conversion in ALU when calculating Double and Float values.
++ Fixed ALU `isTruly()` logic for numeric values; 0, 0.0, and -0 are now correctly treated as false.
 
-### BREAKING CHANGES:
+### BREAKING CHANGES
 
-+ 移除对 Java 8 的支持，要求最低 JDK 17，采用现代化的 Java 特性提升性能和可读性
-+ 移除对 Java EE 8 的支持，改为支持 Jakarta EE 9
-+ 移除配置文件的支持, 请使用 Builder 模式构建 Wit 引擎实例
-+ 规范化组件名称, 提高可读性和一致性
-+ 大量的结构解耦和简化, 移除过时和冗余的方法，提升库的易用性和维护性
-+ 扩展模块合并至 Core 模块，简化模块结构
-+ Core 模块引入新的模块依赖 `slf4j-api`，也是目前唯一的外部依赖
++ Updated minimum JDK version to 17; Java 8 is no longer supported.
++ Migrated to Jakarta EE 11; Java EE 8 is no longer supported.
++ Full project restructuring with redesigned package structure, component naming, and module responsibilities.
++ Removed configuration file support; use builder pattern to construct engine instances.
++ Removed all deprecated methods.
++ Merged extension modules into core for a simplified module structure.
++ Core now uses `slf4j-api` for logging as the only required external dependency.
++ Changed default resource loading mode to `BeginWith.SCRIPT`, replacing the old `codeFirst=false` behavior.
