@@ -15,7 +15,6 @@
  */
 package org.febit.wit;
 
-import lombok.RequiredArgsConstructor;
 import org.febit.wit.io.Out;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.WitFunction;
@@ -29,16 +28,27 @@ import java.io.Writer;
 /**
  * Exported function.
  */
-@RequiredArgsConstructor(staticName = "of")
-@SuppressWarnings("UnusedReturnValue")
-public final class ExportedFunction {
+public record ExportedFunction(
+        WitFunction function,
+        Script script,
+        Out out
+) {
 
-    private final Script script;
-    private final WitFunction function;
-    private final Out defaultOut;
+    public ExportedFunction withOut(Out out) {
+        return new ExportedFunction(function, script, out);
+    }
 
-    private RuntimeContext createInvocationContext(Out out) {
-        return new RuntimeContext(
+    public ExportedFunction withOut(Writer writer) {
+        return withOut(script.engine().asOut(writer));
+    }
+
+    public ExportedFunction withOut(OutputStream out) {
+        return withOut(script.engine().asOut(out));
+    }
+
+    @Nullable
+    public Object apply(@Nullable Object @Nullable ... args) {
+        var context = new RuntimeContext(
                 script,
                 VariableHeap.empty(),
                 Vars.empty(),
@@ -46,30 +56,6 @@ public final class ExportedFunction {
                 GenericHeap.local(),
                 null
         );
-    }
-
-    @Nullable
-    private Object doApply(RuntimeContext invocationContext, @Nullable Object @Nullable ... args) {
-        return this.function.apply(invocationContext, args);
-    }
-
-    @Nullable
-    public Object apply(@Nullable Object @Nullable ... args) {
-        return doApply(createInvocationContext(defaultOut), args);
-    }
-
-    @Nullable
-    public Object applyWithOut(Out out, @Nullable Object @Nullable ... args) {
-        return doApply(createInvocationContext(out), args);
-    }
-
-    @Nullable
-    public Object applyWithOut(Writer writer, @Nullable Object @Nullable ... args) {
-        return applyWithOut(script.engine().asOut(writer), args);
-    }
-
-    @Nullable
-    public Object applyWithOut(OutputStream out, @Nullable Object @Nullable ... args) {
-        return applyWithOut(script.engine().asOut(out), args);
+        return this.function.apply(context, args);
     }
 }

@@ -65,11 +65,11 @@ class FunctionExportTest {
         assertNotNull(print);
 
         writer = new StringWriter();
-        print.applyWithOut(writer, "");
+        print.withOut(writer).apply("");
         assertEquals("", writer.toString());
 
         writer = new StringWriter();
-        print.applyWithOut(writer, "hello function");
+        print.withOut(writer).apply("hello function");
         assertEquals("hello function", writer.toString());
 
         // Exception cases:

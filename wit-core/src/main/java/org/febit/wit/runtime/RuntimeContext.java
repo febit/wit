@@ -196,8 +196,9 @@ public final class RuntimeContext implements Context {
         if (!(obj instanceof WitFunction func)) {
             throw new NoSuchFunctionException("No such function: " + name);
         }
-        return ExportedFunction.of(
-                this.script, func,
+        return new ExportedFunction(
+                func,
+                this.script,
                 new DiscardOut(this.out.charset(), this.out.preferBytes())
         );
     }
