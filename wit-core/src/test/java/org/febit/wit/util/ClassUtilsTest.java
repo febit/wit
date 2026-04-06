@@ -20,40 +20,40 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.febit.wit.util.ClassUtils.loadByName;
+import static org.febit.wit.util.ClassUtils.load;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClassUtilsTest {
 
     @Test
-    void testToBoxed() {
-        assertSame(Integer.class, ClassUtils.toBoxed(int.class));
-        assertSame(Boolean.class, ClassUtils.toBoxed(boolean.class));
-        assertSame(Long.class, ClassUtils.toBoxed(long.class));
-        assertSame(Float.class, ClassUtils.toBoxed(float.class));
-        assertSame(Double.class, ClassUtils.toBoxed(double.class));
-        assertSame(Byte.class, ClassUtils.toBoxed(byte.class));
-        assertSame(Character.class, ClassUtils.toBoxed(char.class));
-        assertSame(Short.class, ClassUtils.toBoxed(short.class));
-        assertSame(Void.class, ClassUtils.toBoxed(void.class));
+    void testBoxedType() {
+        assertSame(Integer.class, ClassUtils.boxedType(int.class));
+        assertSame(Boolean.class, ClassUtils.boxedType(boolean.class));
+        assertSame(Long.class, ClassUtils.boxedType(long.class));
+        assertSame(Float.class, ClassUtils.boxedType(float.class));
+        assertSame(Double.class, ClassUtils.boxedType(double.class));
+        assertSame(Byte.class, ClassUtils.boxedType(byte.class));
+        assertSame(Character.class, ClassUtils.boxedType(char.class));
+        assertSame(Short.class, ClassUtils.boxedType(short.class));
+        assertSame(Void.class, ClassUtils.boxedType(void.class));
 
-        assertNull(ClassUtils.toBoxed(String.class));
+        assertNull(ClassUtils.boxedType(String.class));
     }
 
     @Test
-    void testAsPrimitiveClass() {
-        assertSame(int.class, ClassUtils.asPrimitiveClass("int"));
-        assertSame(boolean.class, ClassUtils.asPrimitiveClass("boolean"));
-        assertSame(long.class, ClassUtils.asPrimitiveClass("long"));
-        assertSame(float.class, ClassUtils.asPrimitiveClass("float"));
-        assertSame(double.class, ClassUtils.asPrimitiveClass("double"));
-        assertSame(byte.class, ClassUtils.asPrimitiveClass("byte"));
-        assertSame(char.class, ClassUtils.asPrimitiveClass("char"));
-        assertSame(short.class, ClassUtils.asPrimitiveClass("short"));
-        assertSame(void.class, ClassUtils.asPrimitiveClass("void"));
+    void testPrimitiveType() {
+        assertSame(int.class, ClassUtils.primitiveType("int"));
+        assertSame(boolean.class, ClassUtils.primitiveType("boolean"));
+        assertSame(long.class, ClassUtils.primitiveType("long"));
+        assertSame(float.class, ClassUtils.primitiveType("float"));
+        assertSame(double.class, ClassUtils.primitiveType("double"));
+        assertSame(byte.class, ClassUtils.primitiveType("byte"));
+        assertSame(char.class, ClassUtils.primitiveType("char"));
+        assertSame(short.class, ClassUtils.primitiveType("short"));
+        assertSame(void.class, ClassUtils.primitiveType("void"));
 
-        assertNull(ClassUtils.asPrimitiveClass(null));
-        assertNull(ClassUtils.asPrimitiveClass("java.lang.String"));
+        assertNull(ClassUtils.primitiveType(null));
+        assertNull(ClassUtils.primitiveType("java.lang.String"));
     }
 
     @Test
@@ -64,47 +64,47 @@ class ClassUtilsTest {
     }
 
     @Test
-    void testLoadByName() throws ClassNotFoundException {
+    void testLoad() throws ClassNotFoundException {
 
-        assertThrows(UncheckedException.class, () -> loadByName("class.not.exists", 0));
-        assertThrows(IllegalArgumentException.class, () -> loadByName("int", -1));
+        assertThrows(UncheckedException.class, () -> load("class.not.exists", 0));
+        assertThrows(IllegalArgumentException.class, () -> load("int", -1));
 
-        assertSame(void.class, loadByName("void", 0));
+        assertSame(void.class, load("void", 0));
 
-        assertSame(boolean.class, loadByName("boolean", 0));
-        assertSame(boolean[].class, loadByName("boolean", 1));
-        assertSame(boolean[][].class, loadByName("boolean", 2));
+        assertSame(boolean.class, load("boolean", 0));
+        assertSame(boolean[].class, load("boolean", 1));
+        assertSame(boolean[][].class, load("boolean", 2));
 
-        assertSame(byte.class, loadByName("byte", 0));
-        assertSame(byte[].class, loadByName("byte", 1));
-        assertSame(byte[][].class, loadByName("byte", 2));
+        assertSame(byte.class, load("byte", 0));
+        assertSame(byte[].class, load("byte", 1));
+        assertSame(byte[][].class, load("byte", 2));
 
-        assertSame(char.class, loadByName("char", 0));
-        assertSame(char[].class, loadByName("char", 1));
-        assertSame(char[][].class, loadByName("char", 2));
+        assertSame(char.class, load("char", 0));
+        assertSame(char[].class, load("char", 1));
+        assertSame(char[][].class, load("char", 2));
 
-        assertSame(short.class, loadByName("short", 0));
-        assertSame(short[].class, loadByName("short", 1));
-        assertSame(short[][].class, loadByName("short", 2));
+        assertSame(short.class, load("short", 0));
+        assertSame(short[].class, load("short", 1));
+        assertSame(short[][].class, load("short", 2));
 
-        assertSame(int.class, loadByName("int", 0));
-        assertSame(int[].class, loadByName("int", 1));
-        assertSame(int[][].class, loadByName("int", 2));
+        assertSame(int.class, load("int", 0));
+        assertSame(int[].class, load("int", 1));
+        assertSame(int[][].class, load("int", 2));
 
-        assertSame(long.class, loadByName("long", 0));
-        assertSame(long[].class, loadByName("long", 1));
-        assertSame(long[][].class, loadByName("long", 2));
+        assertSame(long.class, load("long", 0));
+        assertSame(long[].class, load("long", 1));
+        assertSame(long[][].class, load("long", 2));
 
-        assertSame(float.class, loadByName("float", 0));
-        assertSame(float[].class, loadByName("float", 1));
-        assertSame(float[][].class, loadByName("float", 2));
+        assertSame(float.class, load("float", 0));
+        assertSame(float[].class, load("float", 1));
+        assertSame(float[][].class, load("float", 2));
 
-        assertSame(double.class, loadByName("double", 0));
-        assertSame(double[].class, loadByName("double", 1));
-        assertSame(double[][].class, loadByName("double", 2));
+        assertSame(double.class, load("double", 0));
+        assertSame(double[].class, load("double", 1));
+        assertSame(double[][].class, load("double", 2));
 
-        assertSame(Map.class, loadByName("java.util.Map", 0));
-        assertSame(Map[].class, loadByName("java.util.Map", 1));
-        assertSame(Map[][].class, loadByName("java.util.Map", 2));
+        assertSame(Map.class, load("java.util.Map", 0));
+        assertSame(Map[].class, load("java.util.Map", 1));
+        assertSame(Map[][].class, load("java.util.Map", 2));
     }
 }

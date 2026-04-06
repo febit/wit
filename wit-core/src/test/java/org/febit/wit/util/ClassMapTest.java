@@ -74,7 +74,7 @@ class ClassMapTest {
     @Test
     void large() {
         var classes = new ArrayList<>();
-        ReflectionSupport.streamAllClassesInPackage("org.febit.wit", ClassUtils::isPublic, c -> true)
+        ReflectionSupport.streamAllClassesInPackage("org.febit.wit", Modifiers::isPublic, c -> true)
                 .forEach(classes::add);
 
         assertTrue(classes.size() > 200);

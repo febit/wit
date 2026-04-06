@@ -15,7 +15,7 @@
  */
 package org.febit.wit.util.bean;
 
-import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.Modifiers;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -58,7 +58,7 @@ public record BeanProperty(
     }
 
     public boolean isReadonlyField() {
-        return this.field != null && ClassUtils.isFinal(this.field);
+        return this.field != null && Modifiers.isFinal(this.field);
     }
 
     @Override

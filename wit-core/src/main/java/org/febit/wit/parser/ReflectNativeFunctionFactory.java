@@ -22,7 +22,7 @@ import org.febit.wit.runtime.function.MultiConstructorNativeFunction;
 import org.febit.wit.runtime.function.MultiMethodMixedNativeFunction;
 import org.febit.wit.runtime.function.MultiMethodNativeFunction;
 import org.febit.wit.runtime.function.NewArrayNativeFunction;
-import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.Modifiers;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -54,10 +54,10 @@ public class ReflectNativeFunctionFactory implements NativeFunctionFactory {
         }
         methods.forEach(Method::trySetAccessible);
 
-        var isStatic = ClassUtils.isStatic(methods.get(0));
+        var isStatic = Modifiers.isStatic(methods.get(0));
         boolean mix = false;
         for (int i = 1; i < methods.size(); i++) {
-            if (isStatic != ClassUtils.isStatic(methods.get(i))) {
+            if (isStatic != Modifiers.isStatic(methods.get(i))) {
                 mix = true;
                 break;
             }

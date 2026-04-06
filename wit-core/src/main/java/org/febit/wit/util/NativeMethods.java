@@ -183,7 +183,7 @@ public class NativeMethods {
         @Nullable Class<?>[] argTypesForMemberMethods = null;
         for (var method : methods) {
             int cost;
-            if (mix && !ClassUtils.isStatic(method)) {
+            if (mix && !Modifiers.isStatic(method)) {
                 if (argTypes.length == 0
                         || argTypes[0] == null
                         || !method.getDeclaringClass().isAssignableFrom(argTypes[0])) {
@@ -235,7 +235,7 @@ public class NativeMethods {
         var candidateArgs = candidate.getParameterTypes();
         for (int i = 1; i < count; i++) {
             Method next = methods[i];
-            if (mix && ClassUtils.isStatic(candidate) != ClassUtils.isStatic(next)) {
+            if (mix && Modifiers.isStatic(candidate) != Modifiers.isStatic(next)) {
                 // current not support
                 return null;
             }
@@ -357,12 +357,12 @@ public class NativeMethods {
             return COST_EXACT;
         }
         if (acceptType.isPrimitive()) {
-            return passedType == ClassUtils.toBoxed(acceptType)
+            return passedType == ClassUtils.boxedType(acceptType)
                     ? COST_PRIMITIVE
                     : COST_NEVER;
         }
         if (passedType.isPrimitive()) {
-            return acceptType == ClassUtils.toBoxed(passedType)
+            return acceptType == ClassUtils.boxedType(passedType)
                     ? COST_PRIMITIVE
                     : COST_NEVER;
         }
@@ -375,7 +375,7 @@ public class NativeMethods {
 
     @Nullable
     public static Object invoke(Method method, @Nullable Object @Nullable [] args) {
-        if (ClassUtils.isStatic(method)) {
+        if (Modifiers.isStatic(method)) {
             return invoke(method, null, args);
         }
         if (args == null || args.length == 0 || args[0] == null) {

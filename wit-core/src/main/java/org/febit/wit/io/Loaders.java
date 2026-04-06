@@ -84,7 +84,7 @@ public class Loaders {
             @Singular List<String> candidateSuffixes
     ) {
         if (classLoader == null) {
-            classLoader = ClassUtils.classLoader();
+            classLoader = ClassUtils.loader();
         }
         if (charset == null) {
             charset = StandardCharsets.UTF_8;

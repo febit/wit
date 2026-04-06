@@ -20,7 +20,7 @@ import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.StatementUtils;
-import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.Modifiers;
 import org.febit.wit.util.NativeMethods;
 import org.jspecify.annotations.Nullable;
 
@@ -57,8 +57,8 @@ public record DynamicNativeMethodInvocation(
             throw new ScriptEvaluateException("not a function (NPE)", this);
         }
         var methods = NativeMethods.find(target.getClass(), methodName)
-                .filter(ClassUtils::isPublic)
-                .filter(ClassUtils::isNotStatic)
+                .filter(Modifiers::isPublic)
+                .filter(Modifiers::isNotStatic)
                 .toList();
         if (methods.isEmpty()) {
             throw new ScriptEvaluateException("no such native method: " + target.getClass() + '#' + methodName);

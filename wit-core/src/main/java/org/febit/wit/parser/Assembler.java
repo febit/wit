@@ -33,6 +33,7 @@ import org.febit.wit.runtime.ast.expr.VariableHeapValue;
 import org.febit.wit.runtime.ast.statement.NoopStatement;
 import org.febit.wit.util.ClassNameRope;
 import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.Modifiers;
 import org.febit.wit.util.NativeMethods;
 import org.jspecify.annotations.Nullable;
 
@@ -108,7 +109,7 @@ public class Assembler {
         }
         String classFullName = resolveClassFullName(className);
         try {
-            return ClassUtils.loadByName(classFullName, arrayDept);
+            return ClassUtils.load(classFullName, arrayDept);
         } catch (ClassNotFoundException ex) {
             throw new ScriptParseException("Class<?> not found:" + classFullName, ex);
         }
@@ -129,14 +130,14 @@ public class Assembler {
         Class<?> cls;
 
         // 2. find as primitive type
-        cls = ClassUtils.asPrimitiveClass(className);
+        cls = ClassUtils.primitiveType(className);
         if (cls != null) {
             return className;
         }
 
         // 3. find as java.lang.*
         try {
-            cls = ClassUtils.loadByName("java.lang.".concat(className));
+            cls = ClassUtils.load("java.lang.".concat(className));
         } catch (Exception ignore) {
             // Ignore
         }
@@ -150,7 +151,7 @@ public class Assembler {
 
     public void importClass(ClassNameRope rope, Position position) throws ScriptParseException {
         var simpleName = rope.simpleName();
-        if (ClassUtils.asPrimitiveClass(simpleName) != null) {
+        if (ClassUtils.primitiveType(simpleName) != null) {
             throw new ScriptParseException("Cannot import primitive type:" + simpleName, position);
         }
         var componentName = rope.componentName();
@@ -174,7 +175,7 @@ public class Assembler {
         var compName = rope.componentName();
         var classFullName = resolveClassFullName(compName);
         try {
-            return ClassUtils.loadByName(classFullName, rope.arrayDepth());
+            return ClassUtils.load(classFullName, rope.arrayDepth());
         } catch (ClassNotFoundException ex) {
             throw new ScriptParseException("Class<?> not found:" + classFullName, ex, position);
         }
@@ -228,11 +229,11 @@ public class Assembler {
         } catch (NoSuchFieldException ex) {
             throw new ScriptParseException("No such field: " + path, ex, position);
         }
-        if (!ClassUtils.isStatic(field)) {
+        if (!Modifiers.isStatic(field)) {
             throw new ScriptParseException("No a static field: " + path, position);
         }
         field.trySetAccessible();
-        if (!ClassUtils.isFinal(field)) {
+        if (!Modifiers.isFinal(field)) {
             return new NativeStaticFieldValue(field, position);
         }
         try {
@@ -278,7 +279,7 @@ public class Assembler {
         this.nativeLayout.securityCheck(clazz.getName() + '.' + methodName, position);
 
         var methods = NativeMethods.find(clazz, methodName)
-                .filter(ClassUtils::isPublic)
+                .filter(Modifiers::isPublic)
                 .toList();
         if (methods.isEmpty()) {
             throw new ScriptParseException("No such method: " + clazz.getName() + '#' + methodName, position);

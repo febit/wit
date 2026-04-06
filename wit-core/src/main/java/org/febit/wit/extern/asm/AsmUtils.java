@@ -45,7 +45,7 @@ class AsmUtils {
     }
 
     static String boxedInternalNameOf(Class<?> type) {
-        var boxed = nvl(ClassUtils.toBoxed(type), type);
+        var boxed = nvl(ClassUtils.boxedType(type), type);
         return internalNameOf(boxed.getName());
     }
 
@@ -73,7 +73,7 @@ class AsmUtils {
 
     static String descriptorOf(Class<?> c) {
         if (c.isPrimitive()) {
-            return String.valueOf(ClassUtils.aliasOfBaseType(c.getName()));
+            return String.valueOf(ClassUtils.primitiveTypeCode(c.getName()));
         }
         var internalName = internalNameOf(c.getName());
         if (c.isArray()) {
@@ -131,7 +131,7 @@ class AsmUtils {
 
         @Override
         protected Class<?> findClass(String name) throws ClassNotFoundException {
-            return ClassUtils.classLoader().loadClass(name);
+            return ClassUtils.loader().loadClass(name);
         }
 
         Class<?> loadClass(String name, byte[] b) throws ClassFormatError {

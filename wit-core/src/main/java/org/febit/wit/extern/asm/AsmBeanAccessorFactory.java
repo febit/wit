@@ -24,7 +24,7 @@ import org.febit.wit.runtime.accessor.ReflectBeanAccessorFactory;
 import org.febit.wit.runtime.accessor.Render;
 import org.febit.wit.runtime.accessor.Setter;
 import org.febit.wit.util.ClassMap;
-import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.Modifiers;
 import org.febit.wit.util.bean.BeanProperties;
 import org.febit.wit.util.bean.BeanProperty;
 import org.febit.wit_shaded.asm.ClassWriter;
@@ -110,7 +110,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
 
     static Class<?> constructAccessorClass(Class<?> beanClass) {
         //XXX: rewrite
-        if (!ClassUtils.isPublic(beanClass)) {
+        if (!Modifiers.isPublic(beanClass)) {
             throw new UncheckedException("class is not public: " + beanClass.getName());
         }
         var className = "org.febit.wit.extern.asm.AsmBeanAccessor" + AsmUtils.SEQ.getAndIncrement();

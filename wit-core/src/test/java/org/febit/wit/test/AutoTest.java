@@ -52,7 +52,7 @@ class AutoTest {
     @Test
     void test() throws Exception {
         breakpointCounter.reset();
-        var classLoader = ClassUtils.classLoader();
+        var classLoader = ClassUtils.loader();
         var out = new ByteArrayOutputStream();
 
         var url = classLoader.getResource(AUTO_TEST_ROOT_FLAG);

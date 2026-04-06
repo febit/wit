@@ -100,7 +100,7 @@ abstract class AbstractParser {
     }
 
     private static short[][] loadTable(String name) {
-        try (var in = new ObjectInputStream(ClassUtils.classLoader()
+        try (var in = new ObjectInputStream(ClassUtils.loader()
                 .getResourceAsStream("org/febit/wit/parser/Parser$" + name + ".data")
         )) {
             return (short[][]) in.readObject();

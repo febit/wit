@@ -30,7 +30,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
 
 import static org.febit.wit.util.Args.at;
-import static org.febit.wit.util.ClassUtils.classNameOf;
+import static org.febit.wit.util.ClassUtils.nameOf;
 
 public class AssertionModule implements WitModule {
 
@@ -131,7 +131,7 @@ public class AssertionModule implements WitModule {
             if (expected instanceof Class<?> expectedClass) {
                 AssertionModule.assertInstanceOf(expectedClass, at(args, 1), context.script());
             } else {
-                fail("expected should be a Class, but was " + classNameOf(expected), context.script());
+                fail("expected should be a Class, but was " + nameOf(expected), context.script());
             }
             return Undefined.UNDEFINED;
         }
@@ -142,7 +142,7 @@ public class AssertionModule implements WitModule {
             if (unexpected instanceof Class<?> unexpectedClass) {
                 AssertionModule.assertNotInstanceOf(unexpectedClass, at(args, 1), context.script());
             } else {
-                fail("unexpected should be a Class, but was " + classNameOf(unexpected), context.script());
+                fail("unexpected should be a Class, but was " + nameOf(unexpected), context.script());
             }
             return Undefined.UNDEFINED;
         }
@@ -152,7 +152,7 @@ public class AssertionModule implements WitModule {
             plusAssertCount(context);
             var arg0 = at(args, 0);
             if (!(arg0 instanceof Class<?> expected)) {
-                fail("expected should be a Class, but was " + classNameOf(arg0), context.script());
+                fail("expected should be a Class, but was " + nameOf(arg0), context.script());
                 return Undefined.UNDEFINED;
             }
             if (!Throwable.class.isAssignableFrom(expected)) {
@@ -161,7 +161,7 @@ public class AssertionModule implements WitModule {
             }
             var func = at(args, 1);
             if (!(func instanceof WitFunction)) {
-                fail("executable should be a function, but was " + classNameOf(func), context.script());
+                fail("executable should be a function, but was " + nameOf(func), context.script());
                 return Undefined.UNDEFINED;
             }
 
@@ -181,7 +181,7 @@ public class AssertionModule implements WitModule {
             plusAssertCount(context);
             var func = at(args, 0);
             if (!(func instanceof WitFunction)) {
-                fail("executable should be a function, but was " + classNameOf(func), context.script());
+                fail("executable should be a function, but was " + nameOf(func), context.script());
                 return Undefined.UNDEFINED;
             }
 
@@ -210,7 +210,7 @@ public class AssertionModule implements WitModule {
             fail("Expected instance of "
                             + expectedType.getName()
                             + " but was "
-                            + classNameOf(actual),
+                            + nameOf(actual),
                     script
             );
         }
@@ -221,7 +221,7 @@ public class AssertionModule implements WitModule {
             fail("Expected not instance of "
                             + unexpectedType.getName()
                             + " but was "
-                            + classNameOf(actual),
+                            + nameOf(actual),
                     script
             );
         }
@@ -343,7 +343,7 @@ public class AssertionModule implements WitModule {
     }
 
     private static String formatClassAndValue(@Nullable Object value, String valueString) {
-        return classNameOf(value) + "<" + valueString + ">";
+        return nameOf(value) + "<" + valueString + ">";
     }
 
 }

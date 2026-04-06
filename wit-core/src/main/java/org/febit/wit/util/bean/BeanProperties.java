@@ -17,7 +17,7 @@ package org.febit.wit.util.bean;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.Modifiers;
 
 import java.util.HashMap;
 import java.util.function.Function;
@@ -76,7 +76,7 @@ public class BeanProperties {
 
     private static void inspectPublicFields(Class<?> beanType, Function<String, BeanProperty.Builder> collector) {
         for (var field : beanType.getFields()) {
-            if (!ClassUtils.isStatic(field)) {
+            if (!Modifiers.isStatic(field)) {
                 collector.apply(field.getName()).field(field);
             }
         }
@@ -84,7 +84,7 @@ public class BeanProperties {
 
     private static void inspectStandardBeanMethods(Class<?> beanType, Function<String, BeanProperty.Builder> collector) {
         for (var method : beanType.getMethods()) {
-            if (ClassUtils.isStatic(method)
+            if (Modifiers.isStatic(method)
                     || method.getDeclaringClass() == Object.class) {
                 continue;
             }

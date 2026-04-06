@@ -40,7 +40,7 @@ public class HeapNativeUtils {
             boolean ignoreIfPresent
     ) {
         var methodMap = Arrays.stream(type.getMethods())
-                .filter(ClassUtils::isStatic)
+                .filter(Modifiers::isStatic)
                 .filter(m -> !(ignoreIfPresent && target.has(m.getName())))
                 .collect(Collectors.groupingBy(Method::getName));
 
@@ -61,8 +61,8 @@ public class HeapNativeUtils {
             boolean ignoreIfPresent
     ) {
         var fields = Arrays.stream(type.getFields())
-                .filter(ClassUtils::isStatic)
-                .filter(ClassUtils::isFinal)
+                .filter(Modifiers::isStatic)
+                .filter(Modifiers::isFinal)
                 .filter(f -> !(ignoreIfPresent && target.has(f.getName())))
                 .toList();
 

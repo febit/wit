@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AdvancePathLoaderDecoratorTest {
 
     final ClasspathLoader delegate = ClasspathLoader.of(
-            ClassUtils.classLoader(),
+            ClassUtils.loader(),
             StandardCharsets.UTF_8,
             Source.BeginWith.SCRIPT
     );

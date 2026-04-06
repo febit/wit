@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.parser.NativeFunctionFactory;
 import org.febit.wit.parser.ReflectNativeFunctionFactory;
 import org.febit.wit.runtime.WitFunction;
-import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.Modifiers;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
 import org.febit.wit_shaded.asm.Label;
@@ -67,7 +67,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
 
     @Nullable
     private WitFunction checkAndConstruct(Member member) {
-        if (!ClassUtils.isPublic(member.getDeclaringClass()) || !ClassUtils.isPublic(member)) {
+        if (!Modifiers.isPublic(member.getDeclaringClass()) || !Modifiers.isPublic(member)) {
             return null;
         }
         try {
@@ -100,7 +100,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
 
         if (obj instanceof Method method) {
             isInterface = method.getDeclaringClass().isInterface();
-            isStatic = ClassUtils.isStatic(method);
+            isStatic = Modifiers.isStatic(method);
             isConstructor = false;
             ownerClass = AsmUtils.internalNameOf(method.getDeclaringClass().getName());
             destName = method.getName();

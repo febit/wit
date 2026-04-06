@@ -19,23 +19,25 @@ import lombok.experimental.UtilityClass;
 import org.febit.wit.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.Member;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 @UtilityClass
 public class ClassUtils {
 
-    public static String classNameOf(@Nullable Object targetObj) {
+    public static String nameOf(@Nullable Object targetObj) {
         return targetObj != null ? targetObj.getClass().getName() : "null";
     }
 
-    public static ClassLoader classLoader() {
+    public static ClassLoader loader() {
         return Thread.currentThread().getContextClassLoader();
     }
 
+    public static boolean isVoidType(Class<?> cls) {
+        return cls == void.class || cls == Void.class;
+    }
+
     @Nullable
-    public static Class<?> toBoxed(Class<?> type) {
+    public static Class<?> boxedType(Class<?> type) {
         if (!type.isPrimitive()) {
             return null;
         }
@@ -69,7 +71,7 @@ public class ClassUtils {
         throw new IllegalStateException("Unknown primitive type: " + type.getName());
     }
 
-    public static char aliasOfBaseType(final String name) {
+    public static char primitiveTypeCode(final String name) {
         return switch (name) {
             case "int" -> 'I';
             case "long" -> 'J';
@@ -85,7 +87,7 @@ public class ClassUtils {
     }
 
     @Nullable
-    public static Class<?> asPrimitiveClass(@Nullable final String name) {
+    public static Class<?> primitiveType(@Nullable final String name) {
         if (name == null) {
             return null;
         }
@@ -103,27 +105,27 @@ public class ClassUtils {
         };
     }
 
-    private static Class<?> loadByQualifiedName(String name) throws ClassNotFoundException {
-        return Class.forName(name, true, classLoader());
+    private static Class<?> load0(String name) throws ClassNotFoundException {
+        return Class.forName(name, true, loader());
     }
 
-    public static Class<?> loadByName(String name) {
+    public static Class<?> load(String name) {
         try {
-            var cls = asPrimitiveClass(name);
+            var cls = primitiveType(name);
             return cls != null ? cls
-                    : loadByQualifiedName(name);
+                    : load0(name);
         } catch (ClassNotFoundException ex) {
             throw new UncheckedException(ex);
         }
     }
 
-    public static Class<?> loadByName(String name, int arrayDepth) throws ClassNotFoundException {
+    public static Class<?> load(String name, int arrayDepth) throws ClassNotFoundException {
         if (arrayDepth == 0) {
-            return loadByName(name);
+            return load(name);
         }
-        char alias = aliasOfBaseType(name);
+        char code = primitiveTypeCode(name);
         final char[] chars;
-        if (alias == '\0') {
+        if (code == '\0') {
             chars = new char[name.length() + 2 + arrayDepth];
             Arrays.fill(chars, 0, arrayDepth, '[');
             chars[arrayDepth] = 'L';
@@ -132,38 +134,9 @@ public class ClassUtils {
         } else {
             chars = new char[arrayDepth + 1];
             Arrays.fill(chars, 0, arrayDepth, '[');
-            chars[arrayDepth] = alias;
+            chars[arrayDepth] = code;
         }
-        return loadByQualifiedName(new String(chars));
+        return load0(new String(chars));
     }
 
-    public static boolean isStatic(Member member) {
-        return Modifier.isStatic(member.getModifiers());
-    }
-
-    public static boolean isNotStatic(Member member) {
-        return !isStatic(member);
-    }
-
-    public static boolean isFinal(Member member) {
-        return Modifier.isFinal(member.getModifiers());
-    }
-
-    @SuppressWarnings({
-            "BooleanMethodIsAlwaysInverted"
-    })
-    public static boolean isPublic(Class<?> cls) {
-        return Modifier.isPublic(cls.getModifiers());
-    }
-
-    @SuppressWarnings({
-            "BooleanMethodIsAlwaysInverted"
-    })
-    public static boolean isPublic(Member member) {
-        return Modifier.isPublic(member.getModifiers());
-    }
-
-    public static boolean isVoidType(Class<?> cls) {
-        return cls == void.class || cls == Void.class;
-    }
 }

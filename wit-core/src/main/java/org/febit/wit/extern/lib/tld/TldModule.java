@@ -51,7 +51,7 @@ public class TldModule implements WitModule {
         var nativeLayout = wit.nativeLayout();
 
         log.info("Load TLD file: {}", path);
-        var input = ClassUtils.classLoader()
+        var input = ClassUtils.loader()
                 .getResourceAsStream(PathUtils.concat("META-INF/", path));
         if (input == null) {
             throw new UncheckedIOException(new IOException("TLD file not found: " + path));
@@ -81,10 +81,10 @@ public class TldModule implements WitModule {
         }
 
         var paramTypes = func.parameterTypes().stream()
-                .map(ClassUtils::loadByName)
+                .map(ClassUtils::load)
                 .toArray(Class<?>[]::new);
 
-        var clazz = ClassUtils.loadByName(func.declaredClass());
+        var clazz = ClassUtils.load(func.declaredClass());
 
         Method method;
         try {
