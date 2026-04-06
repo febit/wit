@@ -33,8 +33,8 @@ public record ForIn(
         int scope,
         Expression collection,
         @Nullable ScriptFunctionDeclaration filter,
-        int iterIndex,
-        int itemIndex,
+        int iterSlot,
+        int itemSlot,
         LoopBody body,
         @Nullable Statement elseBody,
         Position position
@@ -45,7 +45,7 @@ public record ForIn(
     public Object execute(RuntimeContext context) {
         Iter iter = iter(context);
         if (iter.hasNext()) {
-            context.variables().onScope(scope, () -> execute0(context, iter));
+            context.variables().withScope(scope, () -> execute0(context, iter));
             return null;
         }
         if (elseBody != null) {
@@ -68,11 +68,11 @@ public record ForIn(
     })
     private void execute0(RuntimeContext context, Iter iter) {
         var loop = this.body;
-        var itemIdx = this.itemIndex;
+        var iSlot = this.itemSlot;
         var heap = context.variables();
-        heap.set(iterIndex, iter);
+        heap.set(iterSlot, iter);
         do {
-            heap.set(itemIdx, iter.next());
+            heap.set(iSlot, iter.next());
             if (loop.execute(context)) {
                 // End this loop if not continue
                 break;

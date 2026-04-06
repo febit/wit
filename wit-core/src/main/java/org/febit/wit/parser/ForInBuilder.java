@@ -25,7 +25,7 @@ import java.util.Objects;
 public class ForInBuilder extends BaseForInBuilder {
 
     private final String itemVarName;
-    private int itemIndex;
+    private int itemSlot;
 
     public ForInBuilder(String itemVarName, VarLayout varLayout, Position position) {
         super(varLayout, position);
@@ -35,7 +35,7 @@ public class ForInBuilder extends BaseForInBuilder {
     @Override
     public final ForInBuilder shiftScope() {
         super.shiftScope();
-        itemIndex = varLayout.assignVar(itemVarName, position);
+        itemSlot = varLayout.assignVar(itemVarName, position);
         return this;
     }
 
@@ -48,7 +48,7 @@ public class ForInBuilder extends BaseForInBuilder {
         var loopBody = Ast.loopBodyFromStatements(this.body, label());
         return new ForIn(
                 scope(), collection, filter,
-                iterIndex, itemIndex,
+                iterSlot, itemSlot,
                 loopBody, elseBody,
                 position
         );

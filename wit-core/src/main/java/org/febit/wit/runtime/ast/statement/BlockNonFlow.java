@@ -34,7 +34,7 @@ public record BlockNonFlow(
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {
-        context.variables().onScope(scope,
+        context.variables().withScope(scope,
                 () -> bodyBatch.execute(context)
         );
         return null;

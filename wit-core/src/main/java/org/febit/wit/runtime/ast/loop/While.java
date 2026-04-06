@@ -36,7 +36,7 @@ public record While(
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {
-        context.variables().onScope(scope, () -> execute0(context));
+        context.variables().withScope(scope, () -> execute0(context));
         return null;
     }
 

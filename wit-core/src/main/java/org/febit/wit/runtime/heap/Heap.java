@@ -37,7 +37,7 @@ public interface Heap {
         return get(name, true);
     }
 
-    void each(BiConsumer<String, @Nullable Object> action);
+    void forEach(BiConsumer<String, @Nullable Object> action);
 
     default void setAsFunction(String key, WitFunction func) {
         set(key, func);

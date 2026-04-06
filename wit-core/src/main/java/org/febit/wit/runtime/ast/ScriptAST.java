@@ -17,19 +17,20 @@ package org.febit.wit.runtime.ast;
 
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.statement.StatementBatch;
+import org.febit.wit.runtime.heap.ScopeTable;
 import org.febit.wit.runtime.heap.VariableHeap;
 
 import java.util.List;
 
 public record ScriptAST(
         long sourceVersion,
-        int heapSize,
-        List<ScopedIndexer> scopedIndexers,
+        int variableSlotSize,
+        List<ScopeTable> scopeTables,
         StatementBatch body
 ) {
 
     public VariableHeap createVariableHeap() {
-        return new VariableHeap(heapSize, scopedIndexers);
+        return new VariableHeap(variableSlotSize, scopeTables);
     }
 
     public void execute(RuntimeContext context) {

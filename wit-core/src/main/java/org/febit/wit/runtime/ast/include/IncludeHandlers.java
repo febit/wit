@@ -28,6 +28,6 @@ public class IncludeHandlers {
 
     public static void importAll(RuntimeContext parent, Context included) {
         var target = parent.variables();
-        included.variables().each(target::set);
+        included.variables().forEach(target::set);
     }
 }

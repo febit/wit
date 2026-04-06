@@ -33,7 +33,7 @@ public class ScriptFunctionDeclarationBuilder {
 
     private final Position position;
     private final int assignTarget;
-    private final int argsBeginIndex;
+    private final int argsBeginSlot;
     private final VarLayout varLayout;
 
     private final List<ArgumentInfo> args = new ArrayList<>();
@@ -44,7 +44,7 @@ public class ScriptFunctionDeclarationBuilder {
         this.assignTarget = assignTarget;
 
         varLayout.shiftFrame();
-        argsBeginIndex = varLayout.assignVar(Presets.ARGUMENTS, position);
+        argsBeginSlot = varLayout.assignVar(Presets.ARGUMENTS, position);
     }
 
     public static ScriptFunctionDeclarationBuilder create(VarLayout varLayout, Position position) {
@@ -71,15 +71,15 @@ public class ScriptFunctionDeclarationBuilder {
     }
 
     public ScriptFunctionDeclarationBuilder arg(ArgumentInfo info) {
-        if (varLayout.assignVar(info.name, position) != (argsBeginIndex + (this.args.size() + 1))) {
+        if (varLayout.assignVar(info.name, position) != (argsBeginSlot + (this.args.size() + 1))) {
             throw new ScriptParseException("Cannot assign argument variable: " + info.name);
         }
         this.args.add(info);
         return this;
     }
 
-    public String getArg(int index) {
-        return args.get(index).name;
+    public String argAt(int i) {
+        return args.get(i).name;
     }
 
     private static List<Statement> lambdaBody(Expression lambda) {
@@ -105,8 +105,8 @@ public class ScriptFunctionDeclarationBuilder {
     }
 
     public ScriptFunctionDeclaration build(List<Statement> list) {
-        var indexers = varLayout.buildScopedIndexers();
-        int heapSize = varLayout.heapSize();
+        var scopeTables = varLayout.buildScopeTables();
+        int heapSize = varLayout.slotSize();
         varLayout.unshiftFrame();
 
         var batches = Ast.batch(list, ctrl -> {
@@ -123,10 +123,10 @@ public class ScriptFunctionDeclarationBuilder {
 
         return new ScriptFunctionDeclaration(
                 heapSize,
-                indexers,
+                scopeTables,
                 batches,
                 argDefaults,
-                argsBeginIndex,
+                argsBeginSlot,
                 position
         );
     }

@@ -21,20 +21,20 @@ import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;
 
 public record VariableHeapValue(
-        int index,
+        int slot,
         Position position
 ) implements AssignableExpression {
 
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {
-        return context.variables().get(index);
+        return context.variables().get(slot);
     }
 
     @Override
     @Nullable
     public Object assign(RuntimeContext context, @Nullable Object value) {
-        context.variables().set(index, value);
+        context.variables().set(slot, value);
         return value;
     }
 }

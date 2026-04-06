@@ -33,9 +33,9 @@ public record ForMap(
         int scope,
         Expression collection,
         @Nullable ScriptFunctionDeclaration filter,
-        int iterIndex,
-        int keyIndex,
-        int valueIndex,
+        int iterSlot,
+        int keySlot,
+        int valueSlot,
         LoopBody body,
         @Nullable Statement elseBody,
         Position position
@@ -46,7 +46,7 @@ public record ForMap(
     public Object execute(RuntimeContext context) {
         var iter = iter(context);
         if (iter.hasNext()) {
-            context.variables().onScope(scope, () -> execute0(context, iter));
+            context.variables().withScope(scope, () -> execute0(context, iter));
             return null;
         }
         if (elseBody != null) {
@@ -69,14 +69,14 @@ public record ForMap(
     })
     private void execute0(RuntimeContext context, KeyIter iter) {
         var loop = this.body;
-        var keyIdx = this.keyIndex;
-        var valIdx = this.valueIndex;
+        var kSlot = this.keySlot;
+        var vSlot = this.valueSlot;
         var heap = context.variables();
-        heap.set(iterIndex, iter);
+        heap.set(iterSlot, iter);
         do {
             heap.set(
-                    keyIdx, iter.next(),
-                    valIdx, iter.value()
+                    kSlot, iter.next(),
+                    vSlot, iter.value()
             );
             if (loop.execute(context)) {
                 // End this loop if not continue

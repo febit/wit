@@ -18,7 +18,6 @@ package org.febit.wit.runtime.heap;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.ast.ScopedIndexer;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
@@ -31,44 +30,43 @@ import java.util.function.BiConsumer;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class VariableHeap implements Heap {
 
-    private final @Nullable Object[] table;
+    private final @Nullable Object[] slots;
     /**
-     * Upper frames of variables.
+     * Frame slots stack.
      * <p>
-     * Functions are run in different frame tables, to avoid conflicts.
+     * Functions are run in different frame slots, to avoid conflicts.
      * <p>
-     * Format: [frame][index] => value
+     * Format: [frame][slot] => variable value
      */
-    private final @Nullable Object[][] uppers;
+    private final @Nullable Object[][] frames;
     /**
-     * Indexers for each scope.
+     * Scope tables.
      */
-    private final List<ScopedIndexer> indexers;
+    private final List<ScopeTable> scopeTables;
     /**
      * Current scope.
      */
-    private int scope;
+    private int scope = 0;
 
-    public VariableHeap(int size, List<ScopedIndexer> indexers) {
-        this.indexers = indexers;
-        this.scope = 0;
-        this.table = new Object[size];
-        this.uppers = new Object[0][];
+    public VariableHeap(int slotSize, List<ScopeTable> scopeTables) {
+        this.scopeTables = scopeTables;
+        this.slots = new Object[slotSize];
+        this.frames = new Object[0][];
     }
 
     public static VariableHeap empty() {
-        return new VariableHeap(0, List.of(ScopedIndexer.EMPTY));
+        return new VariableHeap(0, List.of(ScopeTable.EMPTY));
     }
 
-    public VariableHeap shift(int size, List<ScopedIndexer> indexers) {
-        var up = this.uppers;
-        var frames = new Object[up.length + 1][];
-        frames[0] = this.table;
-        System.arraycopy(up, 0, frames, 1, up.length);
-        return new VariableHeap(new Object[size], frames, indexers);
+    public VariableHeap pushFrame(int slotSize, List<ScopeTable> scopeTables) {
+        var stack = this.frames;
+        var next = new Object[stack.length + 1][];
+        next[0] = this.slots;
+        System.arraycopy(stack, 0, next, 1, stack.length);
+        return new VariableHeap(new Object[slotSize], next, scopeTables);
     }
 
-    public void onScope(int scope, Runnable action) {
+    public void withScope(int scope, Runnable action) {
         var prev = this.scope;
         this.scope = scope;
         try {
@@ -78,43 +76,43 @@ public class VariableHeap implements Heap {
         }
     }
 
-    public void set(int idx, @Nullable Object value) {
-        this.table[idx] = value;
+    public void set(int slot, @Nullable Object value) {
+        this.slots[slot] = value;
     }
 
     public void set(
-            int idx1, @Nullable Object value1,
-            int idx2, @Nullable Object value2
+            int slot1, @Nullable Object value1,
+            int slot2, @Nullable Object value2
     ) {
-        var t = this.table;
-        t[idx1] = value1;
-        t[idx2] = value2;
+        var t = this.slots;
+        t[slot1] = value1;
+        t[slot2] = value2;
     }
 
     @Nullable
-    public Object get(int idx) {
-        return this.table[idx];
+    public Object get(int slot) {
+        return this.slots[slot];
     }
 
     @Override
     public boolean has(String name) {
-        return indexer().lookupWithUpper(name) >= 0;
+        return table().findRecursive(name) >= 0;
     }
 
     @Override
     public void set(String name, @Nullable Object value) {
-        int idx = this.indexers.get(this.scope).lookupWithUpper(name);
-        if (idx >= 0) {
-            this.table[idx] = value;
+        int slot = this.scopeTables.get(this.scope).findRecursive(name);
+        if (slot >= 0) {
+            this.slots[slot] = value;
         }
     }
 
     @Nullable
     @Override
     public Object get(String name, boolean strict) throws ScriptEvaluateException {
-        int idx = indexer().lookupWithUpper(name);
-        if (idx >= 0) {
-            return this.table[idx];
+        int slot = table().findRecursive(name);
+        if (slot >= 0) {
+            return this.slots[slot];
         }
         if (strict) {
             throw new ScriptEvaluateException("No such variable: " + name);
@@ -124,27 +122,27 @@ public class VariableHeap implements Heap {
 
     @Override
     public void clear() {
-        Arrays.fill(this.table, null);
+        Arrays.fill(this.slots, null);
     }
 
     @Nullable
-    public Object getAtFrame(int frame, int index) {
-        return this.uppers[frame][index];
+    public Object getAtFrame(int frame, int slot) {
+        return this.frames[frame][slot];
     }
 
-    public void setAtFrame(int frame, int index, @Nullable Object value) {
-        this.uppers[frame][index] = value;
+    public void setAtFrame(int frame, int slot, @Nullable Object value) {
+        this.frames[frame][slot] = value;
     }
 
-    public ScopedIndexer indexer() {
-        return this.indexers.get(this.scope);
+    public ScopeTable table() {
+        return this.scopeTables.get(this.scope);
     }
 
     @Override
-    public void each(BiConsumer<String, @Nullable Object> action) {
-        var myVars = this.table;
-        indexer().each(
-                (name, idx) -> action.accept(name, myVars[idx])
+    public void forEach(BiConsumer<String, @Nullable Object> action) {
+        var thisSlots = this.slots;
+        table().forEach(
+                (name, slot) -> action.accept(name, thisSlots[slot])
         );
     }
 

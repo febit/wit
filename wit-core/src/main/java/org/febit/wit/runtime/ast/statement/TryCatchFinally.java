@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 public record TryCatchFinally(
-        int exceptionVarIndex,
+        int exceptionVarSlot,
         Statement body,
         Statement catchBody,
         @Nullable Statement finallyBody,
@@ -39,7 +39,7 @@ public record TryCatchFinally(
         try {
             body.execute(context);
         } catch (Exception e) {
-            context.variables().set(exceptionVarIndex, e);
+            context.variables().set(exceptionVarSlot, e);
             catchBody.execute(context);
         } finally {
             if (finallyBody != null) {

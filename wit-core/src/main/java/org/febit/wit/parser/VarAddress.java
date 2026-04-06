@@ -21,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 public record VarAddress(
         Kind kind,
         int frameOffset,
-        int index,
+        int slot,
         @Nullable Heap heap,
         @Nullable String key,
         @Nullable Object value
@@ -35,12 +35,12 @@ public record VarAddress(
         ;
     }
 
-    static VarAddress ofVariable(int index) {
-        return new VarAddress(Kind.VAR, 0, index, null, null, null);
+    static VarAddress ofVariable(int slot) {
+        return new VarAddress(Kind.VAR, 0, slot, null, null, null);
     }
 
-    static VarAddress ofUpper(int frameOffset, int index) {
-        return new VarAddress(Kind.FRAME_VAR, frameOffset, index, null, null, null);
+    static VarAddress ofUpper(int frameOffset, int slot) {
+        return new VarAddress(Kind.FRAME_VAR, frameOffset, slot, null, null, null);
     }
 
     static VarAddress ofHeap(Heap heap, String name) {

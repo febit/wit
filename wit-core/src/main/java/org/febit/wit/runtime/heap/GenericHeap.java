@@ -56,7 +56,7 @@ public record GenericHeap(
     }
 
     @Override
-    public void each(BiConsumer<String, @Nullable Object> action) {
+    public void forEach(BiConsumer<String, @Nullable Object> action) {
         this.table.forEach(action);
     }
 }

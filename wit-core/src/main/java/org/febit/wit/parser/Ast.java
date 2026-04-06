@@ -255,7 +255,7 @@ public class Ast {
             Statement body,
             @Nullable Statement catchBody,
             @Nullable Statement finallyBody,
-            @Nullable Integer exceptionVarIndex,
+            @Nullable Integer exceptionVarSlot,
             Position pos
     ) {
         Objects.requireNonNull(body, "tryBody is required");
@@ -264,8 +264,8 @@ public class Ast {
         body = StatementUtils.optimize(body);
 
         if (catchBody != null) {
-            Objects.requireNonNull(exceptionVarIndex,
-                    "exceptionVarIndex is required when catchBody is provided");
+            Objects.requireNonNull(exceptionVarSlot,
+                    "exceptionVarSlot is required when catchBody is provided");
             catchBody = StatementUtils.optimize(catchBody);
         }
 
@@ -279,7 +279,7 @@ public class Ast {
             }
             return new TryFinally(body, finallyBody, pos);
         }
-        return new TryCatchFinally(exceptionVarIndex, body, catchBody, finallyBody, pos);
+        return new TryCatchFinally(exceptionVarSlot, body, catchBody, finallyBody, pos);
     }
 
     public static class IncludeBuilder {
@@ -357,8 +357,8 @@ public class Ast {
 
     public static Expression value(VarAddress addr, Position pos) {
         return switch (addr.kind()) {
-            case VAR -> new VariableHeapValue(addr.index(), pos);
-            case FRAME_VAR -> new VariableHeapFrameValue(addr.frameOffset(), addr.index(), pos);
+            case VAR -> new VariableHeapValue(addr.slot(), pos);
+            case FRAME_VAR -> new VariableHeapFrameValue(addr.frameOffset(), addr.slot(), pos);
             case DIRECT -> new DirectValue(addr.value(), pos);
             case HEAP -> {
                 var key = Objects.requireNonNull(addr.key());

@@ -22,20 +22,20 @@ import org.jspecify.annotations.Nullable;
 
 public record VariableHeapFrameValue(
         int frame,
-        int index,
+        int slot,
         Position position
 ) implements AssignableExpression {
 
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {
-        return context.variables().getAtFrame(frame, index);
+        return context.variables().getAtFrame(frame, slot);
     }
 
     @Override
     @Nullable
     public Object assign(RuntimeContext context, @Nullable Object value) {
-        context.variables().setAtFrame(frame, index, value);
+        context.variables().setAtFrame(frame, slot, value);
         return value;
     }
 }

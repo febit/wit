@@ -27,8 +27,8 @@ public class ForMapBuilder extends BaseForInBuilder {
     private final String keyVarName;
     private final String valueVarName;
 
-    private int keyIndex;
-    private int valueIndex;
+    private int keySlot;
+    private int valueSlot;
 
     public ForMapBuilder(
             String keyVarName,
@@ -44,8 +44,8 @@ public class ForMapBuilder extends BaseForInBuilder {
     @Override
     public final ForMapBuilder shiftScope() {
         super.shiftScope();
-        this.keyIndex = varLayout.assignVar(keyVarName, position);
-        this.valueIndex = varLayout.assignVar(valueVarName, position);
+        this.keySlot = varLayout.assignVar(keyVarName, position);
+        this.valueSlot = varLayout.assignVar(valueVarName, position);
         return this;
     }
 
@@ -58,7 +58,7 @@ public class ForMapBuilder extends BaseForInBuilder {
         var loopBody = Ast.loopBodyFromStatements(this.body, label());
         return new ForMap(
                 scope(), collection, filter,
-                iterIndex, keyIndex, valueIndex,
+                iterSlot, keySlot, valueSlot,
                 loopBody, elseBody,
                 position
         );

@@ -20,9 +20,9 @@ import lombok.experimental.Accessors;
 import org.febit.wit.Wit;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.ScopedIndexer;
 import org.febit.wit.runtime.ast.TextPosition;
 import org.febit.wit.runtime.heap.GlobalHeaps;
+import org.febit.wit.runtime.heap.ScopeTable;
 import org.febit.wit.util.Stack;
 import org.jspecify.annotations.Nullable;
 
@@ -48,16 +48,16 @@ public class VarLayout {
     private final Stack<Scope> scopeView = new Stack<>();
 
     /**
-     * Heap size stack of each frame, used to restore heap size when unshift frame.
+     * Slot size stack of each frame, used to restore slot size when unshift frame.
      */
-    private final Stack<Integer> heapSizeStack = new Stack<>();
+    private final Stack<Integer> slotSizeStack = new Stack<>();
 
     @Getter
     private final GlobalHeaps globals;
     private final Scope root;
 
     @Getter
-    private int heapSize;
+    private int slotSize;
     private int frameCursor;
 
     VarLayout(Wit wit) {
@@ -82,21 +82,21 @@ public class VarLayout {
     }
 
     public void shiftFrame() {
-        heapSizeStack.push(heapSize);
-        heapSize = 0;
+        slotSizeStack.push(slotSize);
+        slotSize = 0;
         frameCursor++;
         shiftScope();
     }
 
     public void unshiftFrame() {
-        heapSize = heapSizeStack.pop();
+        slotSize = slotSizeStack.pop();
         frameCursor--;
         unshiftScope();
     }
 
-    public List<ScopedIndexer> buildScopedIndexers() {
+    public List<ScopeTable> buildScopeTables() {
         var size = this.scopes.size();
-        var result = new ScopedIndexer[size];
+        var tables = new ScopeTable[size];
         int i = 0;
         for (; i < size; i++) {
             if (this.scopes.get(i).frameSeq == this.frameCursor) {
@@ -106,24 +106,24 @@ public class VarLayout {
         final int start = i;
         for (; i < size; i++) {
             var scope = this.scopes.get(i);
-            // assert i == stair.id
+            // assert i == scope.seq
             // exclude const
-            var indexerMap = scope.table;
-            scope.constMap.keySet().forEach(indexerMap::remove);
-            result[i] = createScopedIndexer(scope.upSeq >= 0 ? result[scope.upSeq] : null, indexerMap);
+            var slotMap = scope.table;
+            scope.constMap.keySet().forEach(slotMap::remove);
+            tables[i] = createScopeTable(scope.upSeq >= 0 ? tables[scope.upSeq] : null, slotMap);
         }
-        return List.of(Arrays.copyOfRange(result, start, size));
+        return List.of(Arrays.copyOfRange(tables, start, size));
     }
 
-    public int assignVar(String name, Position position) {
-        return scopeView.peek().assignVar(name, position);
+    public int assignVar(String name, Position pos) {
+        return scopeView.peek().assignVar(name, pos);
     }
 
-    public void assignConst(String name, @Nullable Object value, Position position) {
-        scopeView.peek().assignConst(name, value, position);
+    public void assignConst(String name, @Nullable Object value, Position pos) {
+        scopeView.peek().assignConst(name, value, pos);
     }
 
-    public VarAddress locate(String name, int scopeOffset, boolean force, Position position) {
+    public VarAddress locate(String name, int scopeOffset, boolean force, Position pos) {
 
         //local var/const
         for (; scopeOffset < scopeView.size(); scopeOffset++) {
@@ -143,29 +143,29 @@ public class VarLayout {
 
         //failed
         if (force) {
-            throw new ScriptParseException("No such variable: " + name, position);
+            throw new ScriptParseException("No such variable: " + name, pos);
         }
         //assign at root
-        return contextAddress(root.frameSeq, root.assignVar(name, position));
+        return contextAddress(root.frameSeq, root.assignVar(name, pos));
     }
 
-    private VarAddress contextAddress(int frameSeq, int index) {
+    private VarAddress contextAddress(int frameSeq, int slot) {
         return frameSeq == this.frameCursor
-                ? VarAddress.ofVariable(index)
-                : VarAddress.ofUpper(this.frameCursor - frameSeq - 1, index);
+                ? VarAddress.ofVariable(slot)
+                : VarAddress.ofUpper(this.frameCursor - frameSeq - 1, slot);
     }
 
-    private static ScopedIndexer createScopedIndexer(@Nullable ScopedIndexer up, Map<String, Integer> map) {
+    private static ScopeTable createScopeTable(@Nullable ScopeTable upper, Map<String, Integer> map) {
         if (map.isEmpty()) {
-            return nvl(up, ScopedIndexer.EMPTY);
+            return nvl(upper, ScopeTable.EMPTY);
         }
 
         int i = 0;
-        var entries = new ScopedIndexer.Entry[map.size()];
-        for (var entry : map.entrySet()) {
-            entries[i++] = new ScopedIndexer.Entry(entry.getKey(), entry.getValue());
+        var symbols = new ScopeTable.Symbol[map.size()];
+        for (var e : map.entrySet()) {
+            symbols[i++] = new ScopeTable.Symbol(e.getKey(), e.getValue());
         }
-        return new ScopedIndexer(up, entries);
+        return new ScopeTable(upper, symbols);
     }
 
     private class Scope {
@@ -185,14 +185,14 @@ public class VarLayout {
 
         @Nullable
         VarAddress locate(String name) {
-            var index = this.table.get(name);
-            if (index == null) {
+            var slot = this.table.get(name);
+            if (slot == null) {
                 return null;
             }
-            if (index < 0) {
+            if (slot < 0) {
                 return VarAddress.ofDirect(this.constMap.get(name));
             }
-            return contextAddress(this.frameSeq, index);
+            return contextAddress(this.frameSeq, slot);
         }
 
         void shouldNotAssigned(String name, Position position) {
@@ -203,9 +203,9 @@ public class VarLayout {
 
         Integer assignVar(String name, Position position) {
             shouldNotAssigned(name, position);
-            int index = VarLayout.this.heapSize++;
-            this.table.put(name, index);
-            return index;
+            int slot = VarLayout.this.slotSize++;
+            this.table.put(name, slot);
+            return slot;
         }
 
         void assignConst(final String name, @Nullable Object value, Position position) {

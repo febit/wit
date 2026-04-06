@@ -33,7 +33,7 @@ class ContextTest {
         assertEquals("a", context.variables().get("a"));
 
         var exported = new HashMap<String, @Nullable Object>();
-        context.variables().each(exported::put);
+        context.variables().forEach(exported::put);
 
         assertTrue(exported.containsKey("a"));
         assertTrue(exported.containsKey("b"));

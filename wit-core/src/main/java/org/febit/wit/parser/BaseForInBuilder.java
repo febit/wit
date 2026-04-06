@@ -59,7 +59,7 @@ public abstract class BaseForInBuilder {
     @Nullable
     protected ScriptFunctionDeclaration filter;
 
-    protected int iterIndex;
+    protected int iterSlot;
 
     protected BaseForInBuilder(VarLayout varLayout, Position position) {
         this.position = position;
@@ -74,7 +74,7 @@ public abstract class BaseForInBuilder {
         }
         this.scopeShifted = true;
         varLayout.shiftScope();
-        iterIndex = varLayout.assignVar(FOR_ITER, position);
+        iterSlot = varLayout.assignVar(FOR_ITER, position);
         return this;
     }
 

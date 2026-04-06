@@ -23,9 +23,9 @@ import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.ScopedIndexer;
 import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.function.ScriptFunction;
+import org.febit.wit.runtime.heap.ScopeTable;
 import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
 
@@ -36,10 +36,10 @@ import java.util.List;
 public final class ScriptFunctionDeclaration implements Expression {
 
     private final int heapSize;
-    private final List<ScopedIndexer> indexers;
+    private final List<ScopeTable> scopeTables;
     private final List<StatementBatch> body;
     private final @Nullable Object[] argDefaults;
-    private final int argsBeginIndex;
+    private final int argsBeginSlot;
     @Getter
     private final Position position;
 
@@ -62,8 +62,8 @@ public final class ScriptFunctionDeclaration implements Expression {
             RuntimeContext invocationContext,
             @Nullable Object @Nullable [] args
     ) {
-        var vars = declarationContext.variables().shift(this.heapSize, this.indexers);
-        fillArgs(vars, args);
+        var vars = declarationContext.variables().pushFrame(this.heapSize, this.scopeTables);
+        fillVars(vars, args);
         var context = new RuntimeContext(
                 declarationContext.script(),
                 vars,
@@ -84,9 +84,9 @@ public final class ScriptFunctionDeclaration implements Expression {
         }
     }
 
-    private void fillArgs(VariableHeap vars, @Nullable Object @Nullable [] args) {
-        var varIdx = this.argsBeginIndex;
-        vars.set(varIdx++, args);
+    private void fillVars(VariableHeap vars, @Nullable Object @Nullable [] args) {
+        var slot = this.argsBeginSlot;
+        vars.set(slot++, args);
 
         var defaults = this.argDefaults;
         var size = defaults.length;
@@ -99,12 +99,12 @@ public final class ScriptFunctionDeclaration implements Expression {
         if (args != null) {
             for (int len = Math.min(size, args.length); i < len; i++) {
                 var arg = args[i];
-                vars.set(varIdx++, arg != null ? arg : defaults[i]);
+                vars.set(slot++, arg != null ? arg : defaults[i]);
             }
         }
         // Fill defaults
         for (; i < size; i++) {
-            vars.set(varIdx++, defaults[i]);
+            vars.set(slot++, defaults[i]);
         }
     }
 }

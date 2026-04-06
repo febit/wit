@@ -342,8 +342,8 @@ public class Assembler {
         }
         return new ScriptAST(
                 this.lastSourceVersion,
-                this.varLayout.heapSize(),
-                this.varLayout.buildScopedIndexers(),
+                this.varLayout.slotSize(),
+                this.varLayout.buildScopeTables(),
                 batches.get(0)
         );
     }

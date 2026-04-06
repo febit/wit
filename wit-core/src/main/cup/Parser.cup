@@ -273,8 +273,8 @@ tryPart         ::= (TRY LBRACE {: assembler.varLayout().shiftScope(); yield nul
                     {: yield Ast.tryCatchBuilder().body(Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)).pos(%sym.symbol%.pos); :}
                     ;
 
-catchPart       ::= tryPart:builder (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: assembler.varLayout().shiftScope(); yield assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos); :}):varIndex statement[]:list? RBRACE
-                    {: yield (%builder%).exceptionVarIndex((Integer)(%varIndex%)).catchBody(Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)); :}
+catchPart       ::= tryPart:builder (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: assembler.varLayout().shiftScope(); yield assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos); :}):varSlot statement[]:list? RBRACE
+                    {: yield (%builder%).exceptionVarSlot((Integer)(%varSlot%)).catchBody(Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)); :}
                     ;
 
 finallyPart     ::= (tryPart:$ | catchPart:$):builder (FINALLY LBRACE {: assembler.varLayout().shiftScope(); yield null; :}) statement[]:list? RBRACE
@@ -304,13 +304,13 @@ lambdaForMapHead1   ::= FOR LPAREN IDENTIFIER:key COMMA IDENTIFIER:value MINUSGT
 
 
 lambdaForHead2  ::= lambdaForHead1:builder expression:expr COLON
-                    {: yield new ForInBuilder((%builder%).getArg(0), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
+                    {: yield new ForInBuilder((%builder%).argAt(0), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
                     |lambdaForHead1:builder LBRACE statement[]:list RBRACE COLON
-                    {: yield new ForInBuilder((%builder%).getArg(0), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
+                    {: yield new ForInBuilder((%builder%).argAt(0), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
                     |lambdaForMapHead1:builder expression:expr COLON
-                    {: yield new ForMapBuilder((%builder%).getArg(0), (%builder%).getArg(1), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
+                    {: yield new ForMapBuilder((%builder%).argAt(0), (%builder%).argAt(1), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
                     |lambdaForMapHead1:builder LBRACE statement[]:list RBRACE COLON
-                    {: yield new ForMapBuilder((%builder%).getArg(0), (%builder%).getArg(1), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
+                    {: yield new ForMapBuilder((%builder%).argAt(0), (%builder%).argAt(1), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
                     ;
 
 

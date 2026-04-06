@@ -34,7 +34,7 @@ public record Block(
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {
-        context.variables().onScope(scope,
+        context.variables().withScope(scope,
                 () -> context.visitBatches(body)
         );
         return null;
