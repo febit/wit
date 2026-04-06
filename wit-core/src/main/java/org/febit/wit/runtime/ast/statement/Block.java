@@ -15,8 +15,8 @@
  */
 package org.febit.wit.runtime.ast.statement;
 
+import org.febit.wit.runtime.FlowControl;
 import org.febit.wit.runtime.RuntimeContext;
-import org.febit.wit.runtime.ast.FlowControl;
 import org.febit.wit.runtime.ast.IBlock;
 import org.febit.wit.runtime.ast.Position;
 import org.jspecify.annotations.Nullable;

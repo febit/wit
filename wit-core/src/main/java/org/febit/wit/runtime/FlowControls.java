@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast;
+package org.febit.wit.runtime;
 
 import lombok.experimental.UtilityClass;
+import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.WithFlowControl;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;

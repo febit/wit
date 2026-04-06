@@ -15,6 +15,8 @@
  */
 package org.febit.wit.runtime.ast;
 
+import org.febit.wit.runtime.FlowControl;
+
 import java.util.function.Consumer;
 
 public interface WithFlowControl {

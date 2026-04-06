@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast;
+package org.febit.wit.runtime;
 
-import org.febit.wit.runtime.FlowState;
+import org.febit.wit.runtime.ast.Position;
 
 public record FlowControl(
         int label,
