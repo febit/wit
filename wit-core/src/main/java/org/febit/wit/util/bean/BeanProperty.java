@@ -32,27 +32,27 @@ public record BeanProperty(
         @Nullable Method setterMethod
 ) implements Comparable<BeanProperty> {
 
-    public BeanUtils.@Nullable Getter getter() {
+    public PropertyAccessor.@Nullable Getter getter() {
         if (getterMethod != null) {
             getterMethod.trySetAccessible();
-            return new BeanUtils.MethodGetter(getterMethod);
+            return new PropertyAccessors.MethodGetter(getterMethod);
         }
         if (field != null) {
             field.trySetAccessible();
-            return new BeanUtils.FieldGetter(field);
+            return new PropertyAccessors.FieldGetter(field);
         }
         return null;
     }
 
-    public BeanUtils.@Nullable Setter setter() {
+    public PropertyAccessor.@Nullable Setter setter() {
         if (setterMethod != null) {
             setterMethod.trySetAccessible();
             var propertyType = setterMethod.getParameterTypes()[0];
-            return new BeanUtils.MethodSetter(setterMethod, propertyType);
+            return new PropertyAccessors.MethodSetter(setterMethod, propertyType);
         }
         if (field != null && !isReadonlyField()) {
             field.trySetAccessible();
-            return new BeanUtils.FieldSetter(field, field.getType());
+            return new PropertyAccessors.FieldSetter(field, field.getType());
         }
         return null;
     }

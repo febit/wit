@@ -15,27 +15,50 @@
  */
 package org.febit.wit.runtime.accessor;
 
+import lombok.experimental.UtilityClass;
 import org.febit.wit.runtime.accessor.impl.ReflectBeanAccessor;
+import org.febit.wit.runtime.accessor.impl.ToStringRender;
+import org.febit.wit.util.ClassMap;
 
 public class ReflectBeanAccessorFactory implements AccessorFactory {
 
-    public static final ReflectBeanAccessorFactory INSTANCE = new ReflectBeanAccessorFactory();
+    private final ClassMap<ReflectBeanAccessor<?>> cached = new ClassMap<>();
+
+    @UtilityClass
+    private static class LazyHolder {
+        private static final ReflectBeanAccessorFactory INSTANCE = new ReflectBeanAccessorFactory();
+    }
+
+    public static ReflectBeanAccessorFactory get() {
+        return LazyHolder.INSTANCE;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> ReflectBeanAccessor<T> accessor(Class<T> type) {
+        var accessor = cached.get(type);
+        if (accessor != null) {
+            return (ReflectBeanAccessor<T>) accessor;
+        }
+        return (ReflectBeanAccessor<T>) cached.computeIfAbsent(type, ReflectBeanAccessor::of);
+    }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Getter<T> getter(Class<T> type) {
-        return (Getter<T>) ReflectBeanAccessor.INSTANCE;
+        return accessor(type);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Setter<T> setter(Class<T> type) {
-        return (Setter<T>) ReflectBeanAccessor.INSTANCE;
+        return accessor(type);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Render<T> render(Class<T> type) {
-        return (Render<T>) ReflectBeanAccessor.INSTANCE;
+        return ToStringRender.get();
+    }
+
+    @Override
+    public AccessorFactory cached() {
+        return this;
     }
 }

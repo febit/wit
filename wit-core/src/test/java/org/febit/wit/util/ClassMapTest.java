@@ -36,36 +36,36 @@ class ClassMapTest {
     void putAndGet() {
         var map = new ClassMap<String>(1);
 
-        map.putIfAbsent(String.class, "string");
-        map.putIfAbsent(Integer.class, "integer");
+        map.computeIfAbsent(String.class, t -> "string");
+        map.computeIfAbsent(Integer.class, t -> "integer");
 
         assertEquals(2, map.size());
         assertEquals("string", map.get(String.class));
         assertEquals("integer", map.get(Integer.class));
 
-        map.putIfAbsent(String.class, "string2");
-        map.putIfAbsent(Integer.class, "integer3");
+        map.computeIfAbsent(String.class, t -> "string2");
+        map.computeIfAbsent(Integer.class, t -> "integer3");
 
         assertEquals(2, map.size());
         assertEquals("string", map.get(String.class));
         assertEquals("integer", map.get(Integer.class));
 
-        assertEquals("string", map.unsafeGet(String.class));
-        assertEquals("integer", map.unsafeGet(Integer.class));
+        assertEquals("string", map.get(String.class));
+        assertEquals("integer", map.get(Integer.class));
 
-        map.putIfAbsent(Double.class, "double");
+        map.computeIfAbsent(Double.class, t -> "double");
         assertEquals(3, map.size());
 
-        map.putIfAbsent(Float.class, "float");
+        map.computeIfAbsent(Float.class, t -> "float");
         assertEquals(4, map.size());
 
-        map.putIfAbsent(Object.class, "object");
-        map.putIfAbsent(Object.class, "object");
+        map.computeIfAbsent(Object.class, t -> "object");
+        map.computeIfAbsent(Object.class, t -> "object");
         assertEquals(5, map.size());
 
-        assertEquals("double", map.unsafeGet(Double.class));
-        assertEquals("float", map.unsafeGet(Float.class));
-        assertEquals("object", map.unsafeGet(Object.class));
+        assertEquals("double", map.get(Double.class));
+        assertEquals("float", map.get(Float.class));
+        assertEquals("object", map.get(Object.class));
         assertEquals("double", map.get(Double.class));
         assertEquals("float", map.get(Float.class));
         assertEquals("object", map.get(Object.class));
@@ -84,7 +84,7 @@ class ClassMapTest {
 
         for (; i < 16; i++) {
             var cls = (Class<?>) classes.get(i);
-            map.putIfAbsent(cls, cls.getName());
+            map.computeIfAbsent(cls, Class::getName);
         }
         assertEquals(16, map.size());
         for (int j = 0; j < 16; j++) {
@@ -94,7 +94,7 @@ class ClassMapTest {
 
         for (; i < 32; i++) {
             var cls = (Class<?>) classes.get(i);
-            map.putIfAbsent(cls, cls.getName());
+            map.computeIfAbsent(cls, Class::getName);
         }
         assertEquals(32, map.size());
         for (int j = 0; j < 32; j++) {
@@ -104,7 +104,7 @@ class ClassMapTest {
 
         for (; i < 200; i++) {
             var cls = (Class<?>) classes.get(i);
-            map.putIfAbsent(cls, cls.getName());
+            map.computeIfAbsent(cls, Class::getName);
         }
         assertEquals(200, map.size());
         for (int j = 0; j < 200; j++) {

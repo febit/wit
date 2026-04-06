@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
 @RequiredArgsConstructor(staticName = "create")
 public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator {
 
-    private static final String[] FUNC_DECLARE = {"org/febit/wit/runtime/WitFunction"};
+    private static final String[] FUNC_INTERFACES = {"org/febit/wit/runtime/WitFunction"};
 
     @Getter
     private final NativeFunctionFactory delegate;
@@ -85,7 +85,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         var className = "org.febit.wit.extern.asm.AsmFunction" + AsmUtils.SEQ.getAndIncrement();
         var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
-                AsmUtils.internalNameOf(className), AsmUtils.TYPE_OBJ, FUNC_DECLARE);
+                AsmUtils.internalNameOf(className), AsmUtils.TYPE_OBJ, FUNC_INTERFACES);
 
         AsmUtils.visitConstructor(classWriter);
 

@@ -17,6 +17,8 @@ package org.febit.wit.util;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.function.Function;
+
 public final class ClassMap<V> {
 
     private static final int MAXIMUM_CAPACITY = 1 << 29;
@@ -49,7 +51,7 @@ public final class ClassMap<V> {
     }
 
     @Nullable
-    public V unsafeGet(Class<?> key) {
+    public V get(Class<?> key) {
         var tab = table;
         var e = tab[key.hashCode() & (tab.length - 1)];
         while (e != null) {
@@ -59,13 +61,6 @@ public final class ClassMap<V> {
             e = e.next;
         }
         return null;
-    }
-
-    @Nullable
-    public V get(Class<?> key) {
-        synchronized (this) {
-            return unsafeGet(key);
-        }
     }
 
     @SuppressWarnings({
@@ -112,7 +107,7 @@ public final class ClassMap<V> {
     @SuppressWarnings({
             "squid:ForLoopCounterChangedCheck"
     })
-    public V putIfAbsent(Class<?> key, V value) {
+    public V computeIfAbsent(Class<?> key, Function<Class<?>, V> factory) {
         synchronized (this) {
             var hash = key.hashCode();
             var tab = table;
@@ -131,6 +126,7 @@ public final class ClassMap<V> {
                 index = hash & (tab.length - 1);
             }
 
+            var value = factory.apply(key);
             // creates the new entry.
             tab[index] = new Entry<>(hash, key, value, tab[index]);
             size++;
@@ -142,7 +138,7 @@ public final class ClassMap<V> {
 
         final int hash;
         final Class<?> key;
-        V value;
+        final V value;
         Entry<V> next;
 
         Entry(int hash, Class<?> key, V value, Entry<V> next) {

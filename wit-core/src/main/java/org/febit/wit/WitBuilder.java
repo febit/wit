@@ -28,7 +28,7 @@ import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.parser.template.AdaptiveTemplateTextFactory;
 import org.febit.wit.runtime.accessor.Accessor;
-import org.febit.wit.runtime.accessor.ComposedAccessorFactory;
+import org.febit.wit.runtime.accessor.CompositeAccessorFactory;
 import org.jspecify.annotations.Nullable;
 
 import java.io.UncheckedIOException;
@@ -55,7 +55,7 @@ public class WitBuilder {
     private final List<String> setupScripts = new ArrayList<>();
     private final Set<String> predefinedVars = new HashSet<>();
 
-    private final ComposedAccessorFactory.Builder accessorFactory = ComposedAccessorFactory.builder();
+    private final CompositeAccessorFactory.Builder accessorFactory = CompositeAccessorFactory.builder();
 
     private int features = FEATURE_DEFAULTS;
 
@@ -98,7 +98,7 @@ public class WitBuilder {
         return this;
     }
 
-    public WitBuilder configureAccessors(Consumer<ComposedAccessorFactory.Builder> consumer) {
+    public WitBuilder configureAccessors(Consumer<CompositeAccessorFactory.Builder> consumer) {
         Objects.requireNonNull(consumer);
         consumer.accept(this.accessorFactory);
         return this;
@@ -138,7 +138,7 @@ public class WitBuilder {
             throw new IllegalArgumentException("Loader is not provided.");
         }
 
-        var accessors = this.accessorFactory.build();
+        var accessors = this.accessorFactory.build().cached();
 
         var vars = new ArrayList<>(predefinedVars);
         vars.sort(String::compareTo);

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.util.bean;
+package org.febit.wit.runtime.accessor;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,10 +21,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BeanUtilsTest {
+class ReflectBeanAccessorFactoryTest {
 
     @SuppressWarnings("unused")
-    public class Foo {
+    public static class Foo {
 
         public String public0 = "public0";
         public final String public1 = "public1";
@@ -52,23 +52,26 @@ class BeanUtilsTest {
     void test() {
         Foo foo = new Foo();
 
-        assertEquals(foo.public0, BeanUtils.get(foo, "public0"));
-        assertEquals(foo.public1, BeanUtils.get(foo, "public1"));
-        assertEquals(foo.getPublic2(), BeanUtils.get(foo, "public2"));
-        assertEquals(foo.getPrivate0(), BeanUtils.get(foo, "private0"));
+        var getter = ReflectBeanAccessorFactory.get().getter(Foo.class);
+        var setter = ReflectBeanAccessorFactory.get().setter(Foo.class);
+
+        assertEquals(foo.public0, getter.get(foo, "public0"));
+        assertEquals(foo.public1, getter.get(foo, "public1"));
+        assertEquals(foo.getPublic2(), getter.get(foo, "public2"));
+        assertEquals(foo.getPrivate0(), getter.get(foo, "private0"));
 
         String newStringValue = "new public";
-        BeanUtils.set(foo, "public0", newStringValue);
-        //BeanUtil.set(foo, "public1", "new public"); Exception
-        BeanUtils.set(foo, "private0", newStringValue);
+        setter.set(foo, "public0", newStringValue);
+        //setter.set(foo, "public1", "new public"); Exception
+        setter.set(foo, "private0", newStringValue);
 
         assertEquals(newStringValue, foo.public0);
         assertEquals(newStringValue, foo.getPrivate0());
 
-        assertEquals(foo.isBool(), BeanUtils.get(foo, "bool"));
+        assertEquals(foo.isBool(), getter.get(foo, "bool"));
 
         foo.setBool(false);
-        BeanUtils.set(foo, "bool", true);
+        setter.set(foo, "bool", true);
         assertTrue(foo.isBool());
 
     }

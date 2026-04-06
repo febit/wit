@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.accessor;
+package org.febit.wit.util.bean;
 
-public interface AccessorFactory {
+import org.jspecify.annotations.Nullable;
 
-    <T> Getter<T> getter(Class<T> type);
+public record PropertyAccessor(
+        @Nullable Getter getter,
+        @Nullable Setter setter
+) {
 
-    <T> Setter<T> setter(Class<T> type);
+    public interface Getter {
+        @Nullable
+        Object get(Object bean);
+    }
 
-    <T> Render<T> render(Class<T> type);
+    public interface Setter {
 
-    default AccessorFactory cached() {
-        return CachingAccessorFactory.of(this);
+        Class<?> propertyType();
+
+        void set(Object bean, @Nullable Object value);
     }
 }

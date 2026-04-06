@@ -16,7 +16,6 @@
 package org.febit.wit.util.bean;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.util.ClassMap;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -29,66 +28,19 @@ import java.util.Map;
         "squid:RedundantThrowsDeclarationCheck"
 })
 @UtilityClass
-public class BeanUtils {
+public class PropertyAccessors {
 
-    private static final ClassMap<Map<String, Accessor>> CACHE = new ClassMap<>();
-
-    @Nullable
-    public static Object get(Object bean, String name) throws BeanException {
-        var getter = accessor(bean.getClass(), name).getter;
-        if (getter != null) {
-            return getter.get(bean);
-        }
-        throw new BeanException("Unable to get getter for " + bean.getClass() + "#" + name);
-    }
-
-    public static void set(Object bean, String name, @Nullable Object value) throws BeanException {
-        var setter = accessor(bean.getClass(), name).setter;
-        if (setter != null) {
-            setter.set(bean, value);
-            return;
-        }
-        throw new BeanException("Unable to get setter for " + bean.getClass() + "#" + name);
-    }
-
-    private static Accessor accessor(Class<?> cls, String name) throws BeanException {
-        var descs = CACHE.unsafeGet(cls);
-        if (descs == null) {
-            descs = CACHE.putIfAbsent(cls, collectAccessors(cls));
-        }
-        var accessor = descs.get(name);
-        if (accessor != null) {
-            return accessor;
-        }
-        throw new BeanException("Unable to get field: " + cls + "#" + name);
-    }
-
-    private static Map<String, Accessor> collectAccessors(Class<?> cls) {
-        var map = new HashMap<String, Accessor>(16);
+    public static Map<String, PropertyAccessor> of(Class<?> cls) {
+        var map = new HashMap<String, PropertyAccessor>(16);
         BeanProperties.introspect(cls)
                 .forEach(prop -> map.put(
                         prop.name(),
-                        new Accessor(prop.getter(), prop.setter())
+                        new PropertyAccessor(prop.getter(), prop.setter())
                 ));
-        return map;
+        return Map.copyOf(map);
     }
 
-    private record Accessor(@Nullable Getter getter, @Nullable Setter setter) {
-    }
-
-    public interface Getter {
-        @Nullable
-        Object get(Object bean);
-    }
-
-    public interface Setter {
-
-        Class<?> propertyType();
-
-        void set(Object bean, @Nullable Object value);
-    }
-
-    record MethodGetter(Method method) implements Getter {
+    record MethodGetter(Method method) implements PropertyAccessor.Getter {
         @Override
         @Nullable
         public Object get(Object bean) throws BeanException {
@@ -102,7 +54,7 @@ public class BeanUtils {
         }
     }
 
-    record MethodSetter(Method method, Class<?> propertyType) implements Setter {
+    record MethodSetter(Method method, Class<?> propertyType) implements PropertyAccessor.Setter {
         @Override
         public void set(Object bean, @Nullable Object value) throws BeanException {
             try {
@@ -113,7 +65,7 @@ public class BeanUtils {
         }
     }
 
-    record FieldGetter(Field field) implements Getter {
+    record FieldGetter(Field field) implements PropertyAccessor.Getter {
         @Nullable
         @Override
         public Object get(Object bean) throws BeanException {
@@ -125,7 +77,7 @@ public class BeanUtils {
         }
     }
 
-    record FieldSetter(Field field, Class<?> propertyType) implements Setter {
+    record FieldSetter(Field field, Class<?> propertyType) implements PropertyAccessor.Setter {
         @Override
         public void set(Object bean, @Nullable Object value) throws BeanException {
             try {

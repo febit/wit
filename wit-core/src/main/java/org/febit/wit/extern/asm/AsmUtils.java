@@ -36,7 +36,7 @@ class AsmUtils {
     static final String TYPE_UNDEFINED = "org/febit/wit/runtime/Undefined";
 
     static final String METHOD_CTOR = "<init>";
-    static final AtomicLong SEQ = new AtomicLong(1);
+    static final AtomicLong SEQ = new AtomicLong(1L);
 
     private static final AsmClassLoader CLASS_LOADER = new AsmClassLoader();
 

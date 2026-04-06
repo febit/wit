@@ -15,45 +15,63 @@
  */
 package org.febit.wit.runtime.accessor.impl;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.io.Out;
 import org.febit.wit.runtime.accessor.Getter;
-import org.febit.wit.runtime.accessor.Render;
 import org.febit.wit.runtime.accessor.Setter;
-import org.febit.wit.util.bean.BeanUtils;
+import org.febit.wit.util.bean.BeanException;
+import org.febit.wit.util.bean.PropertyAccessor;
+import org.febit.wit.util.bean.PropertyAccessors;
 import org.jspecify.annotations.Nullable;
 
-public class ReflectBeanAccessor implements Getter<Object>, Setter<Object>, Render<Object> {
+import java.util.Map;
 
-    public static final ReflectBeanAccessor INSTANCE = new ReflectBeanAccessor();
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class ReflectBeanAccessor<T> implements Getter<T>, Setter<T> {
+
+    private final Class<T> beanClass;
+    private final Map<String, PropertyAccessor> accessors;
+
+    public static <T> ReflectBeanAccessor<T> of(Class<T> beanClass) {
+        var accessors = PropertyAccessors.of(beanClass);
+        return new ReflectBeanAccessor<>(beanClass, accessors);
+    }
+
+    private PropertyAccessor accessor(String name) throws BeanException {
+        var accessor = accessors.get(name);
+        if (accessor != null) {
+            return accessor;
+        }
+        throw new BeanException("no such property: " + beanClass + "#" + name);
+    }
 
     @Nullable
     @Override
-    public Object get(Object obj, @Nullable Object property) {
+    public Object get(Object bean, @Nullable Object property) {
         if (property == null) {
             throw new ScriptEvaluateException("property should not be null for bean access.");
         }
-        try {
-            return BeanUtils.get(obj, property.toString());
-        } catch (Exception e) {
-            throw new ScriptEvaluateException(e.getMessage(), e);
+        var name = property.toString();
+        var getter = accessor(name).getter();
+        if (getter != null) {
+            return getter.get(bean);
         }
+        throw new ScriptEvaluateException("property is not readable: " + bean.getClass() + "#" + name);
     }
 
     @Override
-    public void set(Object obj, @Nullable Object property, @Nullable Object value) {
+    public void set(Object bean, @Nullable Object property, @Nullable Object value) {
         if (property == null) {
             throw new ScriptEvaluateException("property should not be null for bean access.");
         }
-        try {
-            BeanUtils.set(obj, property.toString(), value);
-        } catch (Exception e) {
-            throw new ScriptEvaluateException(e.getMessage(), e);
+        var name = property.toString();
+        var setter = accessor(name).setter();
+        if (setter != null) {
+            setter.set(bean, value);
+            return;
         }
+        throw new BeanException("property is not writable: " + bean.getClass() + "#" + name);
     }
 
-    @Override
-    public void render(Out out, Object obj) {
-        out.write(obj.toString());
-    }
 }

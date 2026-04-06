@@ -17,13 +17,11 @@ package org.febit.wit.parser;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.parser.security.NativeSecurity;
 import org.febit.wit.parser.security.NoopNativeSecurity;
 import org.febit.wit.runtime.ast.Position;
 
-@Slf4j
 @Accessors(fluent = true)
 @lombok.Builder(
         builderClassName = "Builder"

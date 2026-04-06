@@ -15,13 +15,14 @@
  */
 package org.febit.wit.extern.asm;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.exception.UncheckedException;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
+import org.febit.wit.runtime.accessor.ReflectBeanAccessorFactory;
 import org.febit.wit.runtime.accessor.Render;
 import org.febit.wit.runtime.accessor.Setter;
-import org.febit.wit.runtime.accessor.impl.ReflectBeanAccessor;
 import org.febit.wit.util.ClassMap;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.bean.BeanProperties;
@@ -30,71 +31,92 @@ import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
 import org.febit.wit_shaded.asm.Label;
 import org.febit.wit_shaded.asm.MethodWriter;
-import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
-
-import static org.febit.wit.util.Defaults.nvl;
+import java.util.Optional;
 
 @Slf4j
 public class AsmBeanAccessorFactory implements AccessorFactory {
 
-    private static final String[] ASM_ACCESSOR = {"org/febit/wit/extern/asm/AsmBeanAccessor"};
+    private static final String[] ACCESSOR_INTERFACES = {"org/febit/wit/extern/asm/AsmBeanAccessor"};
+    private static final ClassMap<Class<?>> ACCESSOR_CLASSES = new ClassMap<>();
 
-    private static final ReflectBeanAccessor FALLBACK = ReflectBeanAccessor.INSTANCE;
-    private static final ClassMap<AsmBeanAccessor> CACHE = new ClassMap<>();
+    private final ClassMap<Optional<AsmBeanAccessor>> cached = new ClassMap<>();
+    private final AccessorFactory fallback = ReflectBeanAccessorFactory.get();
+
+    @UtilityClass
+    private static class LazyHolder {
+        private static final AsmBeanAccessorFactory INSTANCE = new AsmBeanAccessorFactory();
+    }
+
+    public static AsmBeanAccessorFactory get() {
+        return LazyHolder.INSTANCE;
+    }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "OptionalIsPresent"})
     public <T> Getter<T> getter(Class<T> type) {
-        var getter = buildIfAbsent(type);
-        return (Getter<T>) nvl(getter, FALLBACK);
+        var getter = accessor(type);
+        return getter.isPresent()
+                ? (Getter<T>) getter.get()
+                : fallback.getter(type);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "OptionalIsPresent"})
     public <T> Setter<T> setter(Class<T> type) {
-        var setter = buildIfAbsent(type);
-        return (Setter<T>) nvl(setter, FALLBACK);
+        var setter = accessor(type);
+        return setter.isPresent()
+                ? (Setter<T>) setter.get()
+                : fallback.setter(type);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Render<T> render(Class<T> type) {
-        return (Render<T>) FALLBACK;
+        return fallback.render(type);
     }
 
-    @Nullable
-    private AsmBeanAccessor buildIfAbsent(Class<?> type) {
-        var accessor = CACHE.get(type);
+    @SuppressWarnings({
+            "ReplaceNullCheck",
+            "OptionalAssignedToNull",
+            "java:S2789", // "null" should not be used with "Optional"
+    })
+    private Optional<AsmBeanAccessor> accessor(Class<?> type) {
+        var accessor = cached.get(type);
         if (accessor != null) {
             return accessor;
         }
-        synchronized (CACHE) {
-            accessor = CACHE.get(type);
-            if (accessor != null) {
-                return accessor;
-            }
-            try {
-                accessor = (AsmBeanAccessor) constructAccessorClassFor(type)
-                        .getConstructor().newInstance();
-                accessor = CACHE.putIfAbsent(type, accessor);
-            } catch (Exception | LinkageError e) {
-                log.error("Cannot create accessor for type: {}", type.getName(), e);
-            }
-            return accessor;
+        return cached.computeIfAbsent(type, this::tryCreateAccessor);
+    }
+
+    @Override
+    public AccessorFactory cached() {
+        return this;
+    }
+
+    private Optional<AsmBeanAccessor> tryCreateAccessor(Class<?> type) {
+        try {
+            var cls = ACCESSOR_CLASSES.computeIfAbsent(type, AsmBeanAccessorFactory::constructAccessorClass);
+            var instance = (AsmBeanAccessor) cls.getConstructor().newInstance();
+            return Optional.of(instance);
+        } catch (UncheckedException e) {
+            log.warn("Cannot create accessor for type: {}, {}", type.getName(), e.getMessage());
+            return Optional.empty();
+        } catch (Exception | LinkageError e) {
+            log.warn("Cannot create accessor for type: {}", type.getName(), e);
+            return Optional.empty();
         }
     }
 
-    static Class<?> constructAccessorClassFor(Class<?> beanClass) {
+    static Class<?> constructAccessorClass(Class<?> beanClass) {
         //XXX: rewrite
         if (!ClassUtils.isPublic(beanClass)) {
-            throw new UncheckedException("Class<?> is not public: " + beanClass);
+            throw new UncheckedException("class is not public: " + beanClass.getName());
         }
         var className = "org.febit.wit.extern.asm.AsmBeanAccessor" + AsmUtils.SEQ.getAndIncrement();
 
         var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
-                AsmUtils.internalNameOf(className), AsmUtils.TYPE_OBJ, ASM_ACCESSOR);
+                AsmUtils.internalNameOf(className), AsmUtils.TYPE_OBJ, ACCESSOR_INTERFACES);
         AsmUtils.visitConstructor(classWriter);
 
         var fields = BeanProperties.introspect(beanClass)
@@ -176,7 +198,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         //Exception
         m.visitTypeInsn(Constants.NEW, AsmUtils.TYPE_EVAL_EX);
         m.visitInsn(Constants.DUP);
-        m.visitLdcInsn("Invalid property " + beanClass.getName() + '#');
+        m.visitLdcInsn("no such property: " + beanClass.getName() + '#');
         m.visitVarInsn(Constants.ALOAD, 2);
         m.invokeStatic(AsmUtils.TYPE_STRING, "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
         m.invokeVirtual(AsmUtils.TYPE_STRING, "concat", "(Ljava/lang/String;)Ljava/lang/String;");
@@ -227,8 +249,8 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         var getter = property.getterMethod();
         var field = property.field();
         if (getter == null && field == null) {
-            //Unreadable Exception
-            AsmUtils.visitScriptEvaluateException(m, "Unreadable property "
+            // Unreadable Exception
+            AsmUtils.visitScriptEvaluateException(m, "property is not readable: "
                     + property.beanType().getName() + "#" + property.name());
             return;
         }
@@ -236,10 +258,10 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         m.visitVarInsn(Constants.ALOAD, 1);
         m.checkCast(beanName);
         if (getter != null) {
-            //return book.getName()
+            // bean.getName()
             m.invokeVirtual(beanName, getter.getName(), AsmUtils.descriptorOf(getter));
         } else {
-            //return book.name
+            // bean.name
             m.visitFieldInsn(Constants.GETFIELD, beanName, property.name(), AsmUtils.descriptorOf(resultType));
         }
         AsmUtils.visitBoxIfNeed(m, resultType);
@@ -252,7 +274,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         var field = property.field();
         if (setter == null && (field == null || property.isReadonlyField())) {
             // Readonly Exception
-            AsmUtils.visitScriptEvaluateException(m, "Readonly property "
+            AsmUtils.visitScriptEvaluateException(m, "property is not writable: "
                     + property.beanType().getName() + "#" + property.name());
             return;
         }
@@ -265,10 +287,10 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         m.checkCast(AsmUtils.boxedInternalNameOf(fieldClass));
         AsmUtils.visitUnboxIfNeed(m, fieldClass);
         if (setter != null) {
-            //book.setName((String)name)
+            // bean.setName((String) name)
             m.invokeVirtual(beanName, setter.getName(), AsmUtils.descriptorOf(setter));
         } else {
-            //book.name = (String) name
+            // bean.name = (String) name
             m.visitFieldInsn(Constants.PUTFIELD, beanName, property.name(), AsmUtils.descriptorOf(fieldClass));
         }
 

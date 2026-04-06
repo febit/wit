@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.accessor;
+package org.febit.wit.runtime.accessor.impl;
 
-public interface AccessorFactory {
+import org.febit.wit.io.Out;
+import org.febit.wit.runtime.accessor.Render;
 
-    <T> Getter<T> getter(Class<T> type);
+public class ToStringRender<T> implements Render<T> {
 
-    <T> Setter<T> setter(Class<T> type);
+    private static final ToStringRender<Object> INSTANCE = new ToStringRender<>();
 
-    <T> Render<T> render(Class<T> type);
+    @SuppressWarnings("unchecked")
+    public static <T> ToStringRender<T> get() {
+        return (ToStringRender<T>) INSTANCE;
+    }
 
-    default AccessorFactory cached() {
-        return CachingAccessorFactory.of(this);
+    @Override
+    public void render(Out out, T obj) {
+        out.write(obj.toString());
     }
 }

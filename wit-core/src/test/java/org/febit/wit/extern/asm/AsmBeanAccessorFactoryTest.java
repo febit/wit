@@ -18,6 +18,8 @@ package org.febit.wit.extern.asm;
 import lombok.Getter;
 import lombok.Setter;
 import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.runtime.accessor.impl.ReflectBeanAccessor;
+import org.febit.wit.runtime.accessor.impl.ToStringRender;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,7 +48,7 @@ class AsmBeanAccessorFactoryTest {
     }
 
     @SuppressWarnings({"unused"})
-    private static class Book {
+    private static class PrivateBean {
 
         public String f1 = "f1";
         @Getter
@@ -56,56 +58,84 @@ class AsmBeanAccessorFactoryTest {
     }
 
     @Test
-    void testPrivateClass() {
+    void privateBean() {
         assertThrows(Exception.class,
-                () -> AsmBeanAccessorFactory.constructAccessorClassFor(Book.class)
+                () -> AsmBeanAccessorFactory.constructAccessorClass(PrivateBean.class)
                         .getConstructor().newInstance());
 
+        var factory = AsmBeanAccessorFactory.get();
+        var getter = assertDoesNotThrow(() -> factory.getter(PrivateBean.class));
+        var setter = assertDoesNotThrow(() -> factory.setter(PrivateBean.class));
+        var render = assertDoesNotThrow(() -> factory.render(PrivateBean.class));
+
+        assertInstanceOf(ReflectBeanAccessor.class, getter);
+        assertInstanceOf(ReflectBeanAccessor.class, setter);
+        assertInstanceOf(ToStringRender.class, render);
+
+        var bean = new PrivateBean();
+        assertEquals("f1", getter.get(new PrivateBean(), "f1"));
+        assertEquals("f2", getter.get(new PrivateBean(), "f2"));
+        assertEquals(4, getter.get(new PrivateBean(), "f4"));
+
+        setter.set(bean, "f1", "new:f1");
+        setter.set(bean, "f2", "new:f2");
+        setter.set(bean, "f4", 8);
+
+        assertEquals("new:f1", getter.get(bean, "f1"));
+        assertEquals("new:f2", getter.get(bean, "f2"));
+        assertEquals(8, getter.get(bean, "f4"));
     }
 
     @Test
-    void test() throws Exception {
+    @SuppressWarnings("SpellCheckingInspection")
+    void foo() {
         Foo foo = new Foo();
 
-        var accessor = (AsmBeanAccessor) AsmBeanAccessorFactory.constructAccessorClassFor(Foo.class)
-                .getConstructor().newInstance();
+        var factory = AsmBeanAccessorFactory.get();
+
+        var getter = factory.getter(Foo.class);
+        var setter = factory.setter(Foo.class);
+        var render = factory.render(Foo.class);
+
+        assertInstanceOf(AsmBeanAccessor.class, getter);
+        assertInstanceOf(AsmBeanAccessor.class, setter);
+        assertInstanceOf(ToStringRender.class, render);
 
         int i = 0;
-        assertEquals("foo:f1", accessor.get(foo, "f" + (i + 1)));
-        assertEquals("foo:f2", accessor.get(foo, "f" + (i + 2)));
+        assertEquals("foo:f1", getter.get(foo, "f" + (i + 1)));
+        assertEquals("foo:f2", getter.get(foo, "f" + (i + 2)));
 
-        accessor.set(foo, "f1", "new:f1");
-        accessor.set(foo, "f2", "new:f2");
-        accessor.set(foo, "f4", 8);
-        accessor.set(foo, "f5", 8);
-        accessor.set(foo, "bG", "new:bG");
-        accessor.set(foo, "af", "new:af");
+        setter.set(foo, "f1", "new:f1");
+        setter.set(foo, "f2", "new:f2");
+        setter.set(foo, "f4", 8);
+        setter.set(foo, "f5", 8);
+        setter.set(foo, "bG", "new:bG");
+        setter.set(foo, "af", "new:af");
 
-        assertEquals("new:f1", accessor.get(foo, "f1"));
-        assertEquals("new:f2", accessor.get(foo, "f2"));
-        assertEquals("foo:f3", accessor.get(foo, "f3"));
-        assertEquals(8, accessor.get(foo, "f4"));
-        assertEquals(8, accessor.get(foo, "f5"));
-        assertEquals("new:bG", accessor.get(foo, "bG"));
-        assertEquals("new:af", accessor.get(foo, "af"));
+        assertEquals("new:f1", getter.get(foo, "f1"));
+        assertEquals("new:f2", getter.get(foo, "f2"));
+        assertEquals("foo:f3", getter.get(foo, "f3"));
+        assertEquals(8, getter.get(foo, "f4"));
+        assertEquals(8, getter.get(foo, "f5"));
+        assertEquals("new:bG", getter.get(foo, "bG"));
+        assertEquals("new:af", getter.get(foo, "af"));
 
         Exception exception;
 
         exception = assertThrows(ScriptEvaluateException.class,
-                () -> accessor.get(foo, "unreadable"));
-        assertEquals("Unreadable property " + Foo.class.getName() + "#unreadable", exception.getMessage());
+                () -> getter.get(foo, "unreadable"));
+        assertEquals("property is not readable: " + Foo.class.getName() + "#unreadable", exception.getMessage());
 
         exception = assertThrows(ScriptEvaluateException.class,
-                () -> accessor.set(foo, "unwriteable", "unwriteable"));
-        assertEquals("Readonly property " + Foo.class.getName() + "#unwriteable", exception.getMessage());
+                () -> setter.set(foo, "unwriteable", "unwriteable"));
+        assertEquals("property is not writable: " + Foo.class.getName() + "#unwriteable", exception.getMessage());
 
         exception = assertThrows(ScriptEvaluateException.class,
-                () -> accessor.set(foo, "unXable", "unXable"));
-        assertEquals("Invalid property " + Foo.class.getName() + "#unXable", exception.getMessage());
+                () -> setter.set(foo, "unXable", "unXable"));
+        assertEquals("no such property: " + Foo.class.getName() + "#unXable", exception.getMessage());
 
         exception = assertThrows(ScriptEvaluateException.class,
-                () -> accessor.get(foo, "unXable"));
-        assertEquals("Invalid property " + Foo.class.getName() + "#unXable", exception.getMessage());
-
+                () -> getter.get(foo, "unXable"));
+        assertEquals("no such property: " + Foo.class.getName() + "#unXable", exception.getMessage());
     }
 }

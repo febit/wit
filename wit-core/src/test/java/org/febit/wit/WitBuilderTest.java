@@ -22,7 +22,8 @@ import org.febit.wit.io.codec.DefaultCodecFactory;
 import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.parser.template.AdaptiveTemplateTextFactory;
-import org.febit.wit.runtime.accessor.ComposedAccessorFactory;
+import org.febit.wit.runtime.accessor.CachingAccessorFactory;
+import org.febit.wit.runtime.accessor.CompositeAccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.Setter;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ class WitBuilderTest {
         assertNotNull(wit);
         assertNotNull(wit.globals());
 
-        assertInstanceOf(ComposedAccessorFactory.class, wit.accessors());
+        assertInstanceOf(CachingAccessorFactory.class, wit.accessors());
         assertInstanceOf(DefaultCodecFactory.class, wit.codecFactory());
         assertInstanceOf(AdaptiveTemplateTextFactory.class, wit.templateTextFactory());
         assertInstanceOf(NativeLayout.class, wit.nativeLayout());
@@ -97,7 +98,9 @@ class WitBuilderTest {
                 .build();
 
         var accessors = wit.accessors();
-        assertInstanceOf(ComposedAccessorFactory.class, accessors);
+        assertInstanceOf(CachingAccessorFactory.class, accessors);
+        assertInstanceOf(CompositeAccessorFactory.class, ((CachingAccessorFactory) accessors).delegate());
+
         assertSame(fooAccessor, accessors.getter(Foo.class));
         assertSame(fooAccessor, accessors.setter(Foo.class));
         assertSame(barAccessor, accessors.getter(Bar.class));
