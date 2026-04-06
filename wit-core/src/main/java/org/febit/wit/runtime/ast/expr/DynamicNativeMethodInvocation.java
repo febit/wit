@@ -38,7 +38,7 @@ public record DynamicNativeMethodInvocation(
     @Nullable
     public Object execute(RuntimeContext context) {
         var selfObj = this.self.execute(context);
-        var methods = getMethods(selfObj);
+        var methods = listMethods(selfObj);
         var paramsObj = this.params.execute(context);
         return chooseAndInvoke(selfObj, methods, paramsObj);
     }
@@ -47,16 +47,16 @@ public record DynamicNativeMethodInvocation(
     @Nullable
     public Object evalAsConst() {
         var selfObj = StatementUtils.evalAsConst(self);
-        var methods = getMethods(selfObj);
+        var methods = listMethods(selfObj);
         var paramsObj = this.params.evalAsConst();
         return chooseAndInvoke(selfObj, methods, paramsObj);
     }
 
-    private List<Method> getMethods(@Nullable Object target) {
+    private List<Method> listMethods(@Nullable Object target) {
         if (target == null) {
             throw new ScriptEvaluateException("not a function (NPE)", this);
         }
-        var methods = ClassUtils.methods(target.getClass(), methodName)
+        var methods = NativeMethods.find(target.getClass(), methodName)
                 .filter(ClassUtils::isPublic)
                 .filter(ClassUtils::isNotStatic)
                 .toList();

@@ -21,6 +21,7 @@ import org.febit.wit.test.component.lib.ConstMethods;
 import org.febit.wit.test.component.lib.ConstMethods2;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.HeapNativeUtils;
+import org.febit.wit.util.NativeMethods;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,11 +58,11 @@ public class TestCasesModule implements WitModule {
 
         try {
             heaps.constants().set("new_ConstMethods2", functions.constructor(ConstMethods2.class.getConstructor()));
-            heaps.constants().set("const2Member", functions.method(ClassUtils.methods(ConstMethods2.class, "const2Member")
+            heaps.constants().set("const2Member", functions.method(NativeMethods.find(ConstMethods2.class, "const2Member")
                     .filter(ClassUtils::isPublic).toList()));
-            heaps.constants().set("const2Size", functions.method(ClassUtils.methods(ConstMethods2.class, "const2Size")
+            heaps.constants().set("const2Size", functions.method(NativeMethods.find(ConstMethods2.class, "const2Size")
                     .filter(ClassUtils::isPublic).toList()));
-            heaps.constants().set("const2Foo", functions.method(ClassUtils.methods(ConstMethods2.class, "const2Foo")
+            heaps.constants().set("const2Foo", functions.method(NativeMethods.find(ConstMethods2.class, "const2Foo")
                     .filter(ClassUtils::isPublic).toList()));
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);

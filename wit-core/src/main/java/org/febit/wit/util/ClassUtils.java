@@ -20,39 +20,14 @@ import org.febit.wit.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.stream.Stream;
 
 @UtilityClass
 public class ClassUtils {
 
     public static String classNameOf(@Nullable Object targetObj) {
         return targetObj != null ? targetObj.getClass().getName() : "null";
-    }
-
-    public static Stream<Method> methods(Class<?> target, String name) {
-        var distinct = new HashMap<String, Method>();
-        for (var method : target.getMethods()) {
-            if (!method.getName().equals(name)) {
-                continue;
-            }
-            var keyBuf = new StringBuilder();
-            for (var type : method.getParameterTypes()) {
-                keyBuf.append(type.getName())
-                        .append(',');
-            }
-            var key = keyBuf.toString();
-            var old = distinct.get(key);
-            if (old == null
-                    || old.getDeclaringClass()
-                    .isAssignableFrom(method.getDeclaringClass())) {
-                distinct.put(key, method);
-            }
-        }
-        return distinct.values().stream();
     }
 
     public static ClassLoader classLoader() {

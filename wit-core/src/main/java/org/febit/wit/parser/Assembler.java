@@ -33,6 +33,7 @@ import org.febit.wit.runtime.ast.expr.VariableHeapValue;
 import org.febit.wit.runtime.ast.statement.NoopStatement;
 import org.febit.wit.util.ClassNameRope;
 import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.NativeMethods;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -276,7 +277,7 @@ public class Assembler {
             Class<?> clazz, String methodName, Position position) {
         this.nativeLayout.securityCheck(clazz.getName() + '.' + methodName, position);
 
-        var methods = ClassUtils.methods(clazz, methodName)
+        var methods = NativeMethods.find(clazz, methodName)
                 .filter(ClassUtils::isPublic)
                 .toList();
         if (methods.isEmpty()) {

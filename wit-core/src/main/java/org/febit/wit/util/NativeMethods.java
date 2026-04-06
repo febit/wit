@@ -25,7 +25,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 @SuppressWarnings({
         "java:S135", // Loops should not contain more than a single "break" or "continue" statement
@@ -42,7 +44,29 @@ public class NativeMethods {
     // XXX COST_CONVERT = 1000
     private static final int COST_NULL = 1000000;
 
-    private static final Class<?>[] EMPTY_CLASSES = new Class<?>[0];
+    private static final Class<?>[] EMPTY_ARG_TYPES = new Class<?>[0];
+
+    public static Stream<Method> find(Class<?> target, String name) {
+        var methods = new HashMap<String, Method>();
+        var signature = new StringBuilder(64);
+        for (var method : target.getMethods()) {
+            if (!method.getName().equals(name)) {
+                continue;
+            }
+            signature.setLength(0);
+            for (var type : method.getParameterTypes()) {
+                signature.append(type.getTypeName())
+                        .append(',');
+            }
+            methods.compute(signature.toString(), (k, existing) ->
+                    existing == null
+                            || existing.getDeclaringClass().isAssignableFrom(method.getDeclaringClass())
+                            ? method
+                            : existing
+            );
+        }
+        return methods.values().stream();
+    }
 
     @Nullable
     public static Object invoke(
@@ -82,7 +106,7 @@ public class NativeMethods {
 
     private static @Nullable Class<?>[] getArgTypes(@Nullable Object @Nullable [] args) {
         if (args == null || args.length == 0) {
-            return EMPTY_CLASSES;
+            return EMPTY_ARG_TYPES;
         }
 
         @Nullable
