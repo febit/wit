@@ -27,7 +27,7 @@ import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public record DynamicNativeMethodCaller(
+public record DynamicNativeMethodInvocation(
         Expression self,
         String methodName,
         ExpressionArray params,

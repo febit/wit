@@ -31,9 +31,8 @@ import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
 import org.febit.wit.runtime.ast.expr.DirectValue;
-import org.febit.wit.runtime.ast.expr.DynamicNativeMethodCaller;
+import org.febit.wit.runtime.ast.expr.DynamicNativeMethodInvocation;
 import org.febit.wit.runtime.ast.expr.ExpressionArray;
-import org.febit.wit.runtime.ast.expr.FunctionCaller;
 import org.febit.wit.runtime.ast.expr.HeapValue;
 import org.febit.wit.runtime.ast.expr.NewArray;
 import org.febit.wit.runtime.ast.expr.NewMap;
@@ -41,6 +40,7 @@ import org.febit.wit.runtime.ast.expr.SuppliedValue;
 import org.febit.wit.runtime.ast.expr.TemplateStringValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapFrameValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
+import org.febit.wit.runtime.ast.expr.WitFunctionInvocation;
 import org.febit.wit.runtime.ast.flow.Return;
 import org.febit.wit.runtime.ast.include.AssignMappedIncludeHandler;
 import org.febit.wit.runtime.ast.include.Include;
@@ -385,16 +385,16 @@ public class Ast {
         return new StatementList(List.copyOf(list), pos);
     }
 
-    public static FunctionCaller functionCall(
+    public static WitFunctionInvocation functionCall(
             Expression func, ExpressionArray params, Position pos) {
         func = StatementUtils.optimize(func);
-        return new FunctionCaller(func, params, pos);
+        return new WitFunctionInvocation(func, params, pos);
     }
 
-    public static DynamicNativeMethodCaller dynamicNativeMethodCall(
+    public static DynamicNativeMethodInvocation dynamicNativeMethodCall(
             Expression self, String method, ExpressionArray params, Position pos) {
         self = StatementUtils.optimize(self);
-        return new DynamicNativeMethodCaller(self, method, params, pos);
+        return new DynamicNativeMethodInvocation(self, method, params, pos);
     }
 
     public static Statement ifStatement(

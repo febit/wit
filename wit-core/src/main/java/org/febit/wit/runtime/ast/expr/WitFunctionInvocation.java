@@ -25,8 +25,8 @@ import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.StatementUtils;
 import org.jspecify.annotations.Nullable;
 
-public record FunctionCaller(
-        Expression func,
+public record WitFunctionInvocation(
+        Expression function,
         ExpressionArray params,
         Position position
 ) implements Expression {
@@ -37,13 +37,13 @@ public record FunctionCaller(
             "java:S1181", // Throwable and Error should not be caught
     })
     public Object execute(RuntimeContext context) {
-        var funcObj = this.func.execute(context);
-        if (!(funcObj instanceof WitFunction declare)) {
+        var funcObj = this.function.execute(context);
+        if (!(funcObj instanceof WitFunction func)) {
             throw new ScriptEvaluateException("not a function", this);
         }
         var paramsObj = this.params.execute(context);
         try {
-            return declare.apply(context, paramsObj);
+            return func.apply(context, paramsObj);
         } catch (Throwable ex) {
             if (ex instanceof StatementTracker tracker) {
                 tracker.add(this);
@@ -58,7 +58,7 @@ public record FunctionCaller(
             "java:S1181", // Throwable and Error should not be caught
     })
     public Object evalAsConst() {
-        var funcObj = StatementUtils.evalAsConst(this.func);
+        var funcObj = StatementUtils.evalAsConst(this.function);
         if (!(funcObj instanceof WitFunction.Constable constable)) {
             if (!(funcObj instanceof WitFunction)) {
                 throw new ScriptEvaluateException("not a function", this);
