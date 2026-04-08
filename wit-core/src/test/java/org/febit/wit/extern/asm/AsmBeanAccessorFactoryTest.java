@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.accessor.impl.ReflectBeanAccessor;
-import org.febit.wit.runtime.accessor.impl.ToStringRender;
+import org.febit.wit.runtime.accessor.impl.ToStringRenderer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,11 +66,11 @@ class AsmBeanAccessorFactoryTest {
         var factory = AsmBeanAccessorFactory.get();
         var getter = assertDoesNotThrow(() -> factory.getter(PrivateBean.class));
         var setter = assertDoesNotThrow(() -> factory.setter(PrivateBean.class));
-        var render = assertDoesNotThrow(() -> factory.render(PrivateBean.class));
+        var renderer = assertDoesNotThrow(() -> factory.renderer(PrivateBean.class));
 
         assertInstanceOf(ReflectBeanAccessor.class, getter);
         assertInstanceOf(ReflectBeanAccessor.class, setter);
-        assertInstanceOf(ToStringRender.class, render);
+        assertInstanceOf(ToStringRenderer.class, renderer);
 
         var bean = new PrivateBean();
         assertEquals("f1", getter.get(new PrivateBean(), "f1"));
@@ -95,11 +95,11 @@ class AsmBeanAccessorFactoryTest {
 
         var getter = factory.getter(Foo.class);
         var setter = factory.setter(Foo.class);
-        var render = factory.render(Foo.class);
+        var renderer = factory.renderer(Foo.class);
 
         assertInstanceOf(AsmBeanAccessor.class, getter);
         assertInstanceOf(AsmBeanAccessor.class, setter);
-        assertInstanceOf(ToStringRender.class, render);
+        assertInstanceOf(ToStringRenderer.class, renderer);
 
         int i = 0;
         assertEquals("foo:f1", getter.get(foo, "f" + (i + 1)));

@@ -37,14 +37,6 @@ public record StatementList(
     }
 
     @Override
-    public Statement optimize() {
-        if (this.statements.isEmpty()) {
-            return NoopStatement.INSTANCE;
-        }
-        return this;
-    }
-
-    @Override
     public void bubbleFlowControls(Consumer<FlowControl> collector) {
         throw new IllegalStateException("StatementList should be optimized before bubble flow controls");
     }

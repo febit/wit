@@ -28,7 +28,7 @@ public class CachingAccessorFactory implements AccessorFactory {
 
     private final ClassMap<Getter<?>> getters = new ClassMap<>();
     private final ClassMap<Setter<?>> setters = new ClassMap<>();
-    private final ClassMap<Render<?>> renders = new ClassMap<>();
+    private final ClassMap<Renderer<?>> renderers = new ClassMap<>();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -52,11 +52,11 @@ public class CachingAccessorFactory implements AccessorFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Render<T> render(Class<T> type) {
-        var render = (Render<T>) renders.get(type);
-        if (render != null) {
-            return render;
+    public <T> Renderer<T> renderer(Class<T> type) {
+        var renderer = (Renderer<T>) renderers.get(type);
+        if (renderer != null) {
+            return renderer;
         }
-        return (Render<T>) renders.computeIfAbsent(type, delegate::render);
+        return (Renderer<T>) renderers.computeIfAbsent(type, delegate::renderer);
     }
 }

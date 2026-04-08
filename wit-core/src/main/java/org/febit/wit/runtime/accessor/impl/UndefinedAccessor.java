@@ -19,12 +19,12 @@ import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.Out;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.accessor.Getter;
-import org.febit.wit.runtime.accessor.Render;
+import org.febit.wit.runtime.accessor.Renderer;
 import org.febit.wit.runtime.accessor.Setter;
 import org.jspecify.annotations.Nullable;
 
 public class UndefinedAccessor implements Getter<Undefined>,
-        Setter<Undefined>, Render<Undefined> {
+        Setter<Undefined>, Renderer<Undefined> {
 
     @Nullable
     @Override

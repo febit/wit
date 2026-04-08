@@ -23,7 +23,7 @@ import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.statement.StatementBatch;
+import org.febit.wit.runtime.ast.StatementBatch;
 import org.febit.wit.runtime.function.ScriptFunction;
 import org.febit.wit.runtime.heap.ScopeTable;
 import org.febit.wit.runtime.heap.VariableHeap;
@@ -33,7 +33,7 @@ import java.util.List;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class ScriptFunctionDeclaration implements Expression {
+public final class FunctionLiteral implements Expression {
 
     private final int heapSize;
     private final List<ScopeTable> scopeTables;

@@ -13,25 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.oper;
+package org.febit.wit.runtime.accessor;
 
-import org.febit.wit.runtime.ALU;
-import org.febit.wit.runtime.RuntimeContext;
-import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.Position;
-import org.jspecify.annotations.Nullable;
+import org.febit.wit.io.Out;
 
-public record IfExpr(
-        Expression condition,
-        Expression left,
-        Expression right,
-        Position position
-) implements Expression {
+public non-sealed interface Renderer<T> extends Accessor<T> {
 
-    @Override
-    @Nullable
-    public Object execute(RuntimeContext context) {
-        return (ALU.isTruly(condition.execute(context)) ? left : right)
-                .execute(context);
-    }
+    void render(Out out, T obj);
 }

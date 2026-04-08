@@ -181,8 +181,8 @@ public class WitBuilder {
             var path = fixed.get(i);
             log.info("[INIT] Applying setup script [{}/{}]: {}", i + 1, total, path);
             wit.script(path).eval(acceptor -> {
-                acceptor.set(Presets.GLOBAL, globals.variables());
-                acceptor.set(Presets.CONST, globals.constants());
+                acceptor.set(ReservedNames.GLOBAL, globals.variables());
+                acceptor.set(ReservedNames.CONST, globals.constants());
             }, DiscardOut.get());
         }
         log.info("[INIT] Applied setup scripts, total: {}", total);

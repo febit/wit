@@ -13,36 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.statement;
+package org.febit.wit.runtime.ast.oper;
 
-import org.febit.wit.runtime.FlowControl;
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.RuntimeContext;
-import org.febit.wit.runtime.ast.IBlock;
+import org.febit.wit.runtime.ast.AssignableExpression;
+import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.StatementBatch;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BinaryOperator;
 
-public record Block(
-        int scope,
-        List<StatementBatch> body,
-        List<FlowControl> bubbledFlowControls,
+public record CompoundAssign(
+        AssignableExpression target,
+        Expression delta,
+        BinaryOperator<@Nullable Object> operator,
         Position position
-) implements IBlock {
+) implements Expression {
 
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {
-        context.variables().withScope(scope,
-                () -> context.visitBatches(body)
-        );
-        return null;
+        try {
+            var targetObj = this.target;
+            // Must execute right expr first!
+            var deltaObj = delta.execute(context);
+            return targetObj.assign(context,
+                    operator.apply(targetObj.execute(context), deltaObj)
+            );
+        } catch (Exception e) {
+            throw ScriptEvaluateException.from(e, this);
+        }
     }
 
-    @Override
-    public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        bubbledFlowControls.forEach(collector);
-    }
 }

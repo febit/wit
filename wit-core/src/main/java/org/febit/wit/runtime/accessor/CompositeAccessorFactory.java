@@ -28,7 +28,7 @@ public class CompositeAccessorFactory implements AccessorFactory {
 
     private final TypeAccessors<Getter<?>> getters;
     private final TypeAccessors<Setter<?>> setters;
-    private final TypeAccessors<Render<?>> renders;
+    private final TypeAccessors<Renderer<?>> renderers;
 
     public static Builder builder() {
         return new Builder();
@@ -73,15 +73,15 @@ public class CompositeAccessorFactory implements AccessorFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Render<T> render(Class<T> type) {
-        return (Render<T>) renders.find(type);
+    public <T> Renderer<T> renderer(Class<T> type) {
+        return (Renderer<T>) renderers.find(type);
     }
 
     public static class Builder implements AccessorConsumer {
 
         private final List<TypeMapping<Getter<?>>> getters = new ArrayList<>();
         private final List<TypeMapping<Setter<?>>> setters = new ArrayList<>();
-        private final List<TypeMapping<Render<?>>> renders = new ArrayList<>();
+        private final List<TypeMapping<Renderer<?>>> renderers = new ArrayList<>();
 
         private AccessorFactory fallback = ReflectBeanAccessorFactory.get();
 
@@ -120,8 +120,8 @@ public class CompositeAccessorFactory implements AccessorFactory {
             if (accessor instanceof Setter<?> setter) {
                 setters.add(new TypeMapping<>(type, setter));
             }
-            if (accessor instanceof Render<?> render) {
-                renders.add(new TypeMapping<>(type, render));
+            if (accessor instanceof Renderer<?> renderer) {
+                renderers.add(new TypeMapping<>(type, renderer));
             }
             return this;
         }
@@ -133,7 +133,7 @@ public class CompositeAccessorFactory implements AccessorFactory {
             return new CompositeAccessorFactory(
                     new TypeAccessors<>(List.copyOf(getters), fallback::getter),
                     new TypeAccessors<>(List.copyOf(setters), fallback::setter),
-                    new TypeAccessors<>(List.copyOf(renders), fallback::render)
+                    new TypeAccessors<>(List.copyOf(renderers), fallback::renderer)
             );
         }
     }

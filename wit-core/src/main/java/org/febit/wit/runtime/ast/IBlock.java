@@ -15,8 +15,6 @@
  */
 package org.febit.wit.runtime.ast;
 
-import org.febit.wit.runtime.ast.statement.StatementBatch;
-
 import java.util.List;
 
 public interface IBlock extends Statement, WithFlowControl {

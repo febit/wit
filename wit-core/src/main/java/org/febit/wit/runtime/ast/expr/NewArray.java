@@ -17,6 +17,7 @@ package org.febit.wit.runtime.ast.expr;
 
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.ExpressionArray;
 import org.febit.wit.runtime.ast.Position;
 
 public record NewArray(

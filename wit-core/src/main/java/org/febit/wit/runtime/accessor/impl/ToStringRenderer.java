@@ -16,12 +16,19 @@
 package org.febit.wit.runtime.accessor.impl;
 
 import org.febit.wit.io.Out;
-import org.febit.wit.runtime.accessor.Render;
+import org.febit.wit.runtime.accessor.Renderer;
 
-public class CharArrayRender implements Render<char[]> {
+public class ToStringRenderer<T> implements Renderer<T> {
+
+    private static final ToStringRenderer<Object> INSTANCE = new ToStringRenderer<>();
+
+    @SuppressWarnings("unchecked")
+    public static <T> ToStringRenderer<T> get() {
+        return (ToStringRenderer<T>) INSTANCE;
+    }
 
     @Override
-    public void render(Out out, char[] arr) {
-        out.write(arr);
+    public void render(Out out, T obj) {
+        out.write(obj.toString());
     }
 }

@@ -2,19 +2,19 @@ No.01
 ------ Exception Stack Trace ------
 org.febit.wit.exception.ScriptEvaluateException: This is a test exception.
 	at (20:5) Throw
-	at (19:63) ScriptFunctionDeclaration
+	at (19:63) FunctionLiteral
 -----------------------------------
 No.02
 ------ Exception Stack Trace ------
 org.febit.wit.exception.ScriptEvaluateException: Exception in function.
 	at (29:9) Throw
-	at (28:18) ScriptFunctionDeclaration
-	at (32:9) WitFunctionInvocation
-	at (26:63) ScriptFunctionDeclaration
+	at (28:18) FunctionLiteral
+	at (32:9) FunctionCall
+	at (26:63) FunctionLiteral
 -----------------------------------
 No.03
 ------ Exception Stack Trace ------
 org.febit.wit.extern.lib.test.WitAssertionError: expected true, but not
 script: /auto/exceptions.wit
-	at (41:5) WitFunctionInvocation
+	at (41:5) FunctionCall
 -----------------------------------

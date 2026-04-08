@@ -17,8 +17,8 @@ package org.febit.wit.runtime.accessor;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.runtime.Undefined;
-import org.febit.wit.runtime.accessor.impl.ByteArrayRender;
-import org.febit.wit.runtime.accessor.impl.CharArrayRender;
+import org.febit.wit.runtime.accessor.impl.ByteArrayRenderer;
+import org.febit.wit.runtime.accessor.impl.CharArrayRenderer;
 import org.febit.wit.runtime.accessor.impl.CharSequenceAccessor;
 import org.febit.wit.runtime.accessor.impl.CollectionAccessor;
 import org.febit.wit.runtime.accessor.impl.GenericArrayAccessor;
@@ -50,8 +50,8 @@ public class PresetAccessors {
     }
 
     public static void forArrays(AccessorConsumer consumer) {
-        consumer.accept(byte[].class, new ByteArrayRender());
-        consumer.accept(char[].class, new CharArrayRender());
+        consumer.accept(byte[].class, new ByteArrayRenderer());
+        consumer.accept(char[].class, new CharArrayRenderer());
 
         consumer.accept(Object[].class, new ObjectArrayAccessor());
 

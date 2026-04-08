@@ -18,6 +18,7 @@ package org.febit.wit.runtime.ast.expr;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.ExpressionArray;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.util.Modifiers;
@@ -27,7 +28,7 @@ import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public record DynamicNativeMethodInvocation(
+public record DynamicNativeMethod(
         Expression self,
         String methodName,
         ExpressionArray params,

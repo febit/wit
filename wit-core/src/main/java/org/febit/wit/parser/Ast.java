@@ -25,14 +25,16 @@ import org.febit.wit.runtime.FlowControl;
 import org.febit.wit.runtime.FlowControls;
 import org.febit.wit.runtime.ast.AssignableExpression;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.ExpressionArray;
 import org.febit.wit.runtime.ast.IBlock;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.StatementBatch;
 import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.runtime.ast.expr.BreakpointExpr;
 import org.febit.wit.runtime.ast.expr.DirectValue;
-import org.febit.wit.runtime.ast.expr.DynamicNativeMethodInvocation;
-import org.febit.wit.runtime.ast.expr.ExpressionArray;
+import org.febit.wit.runtime.ast.expr.DynamicNativeMethod;
+import org.febit.wit.runtime.ast.expr.FunctionCall;
 import org.febit.wit.runtime.ast.expr.HeapValue;
 import org.febit.wit.runtime.ast.expr.NewArray;
 import org.febit.wit.runtime.ast.expr.NewMap;
@@ -40,7 +42,6 @@ import org.febit.wit.runtime.ast.expr.SuppliedValue;
 import org.febit.wit.runtime.ast.expr.TemplateStringValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapFrameValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
-import org.febit.wit.runtime.ast.expr.WitFunctionInvocation;
 import org.febit.wit.runtime.ast.flow.Return;
 import org.febit.wit.runtime.ast.include.AssignMappedIncludeHandler;
 import org.febit.wit.runtime.ast.include.Include;
@@ -53,29 +54,28 @@ import org.febit.wit.runtime.ast.loop.LoopBodyWithFlow;
 import org.febit.wit.runtime.ast.loop.While;
 import org.febit.wit.runtime.ast.oper.And;
 import org.febit.wit.runtime.ast.oper.Assign;
+import org.febit.wit.runtime.ast.oper.CompoundAssign;
 import org.febit.wit.runtime.ast.oper.ConstableBiOperator;
 import org.febit.wit.runtime.ast.oper.ConstableUnaryOperator;
 import org.febit.wit.runtime.ast.oper.DecreaseAndGet;
+import org.febit.wit.runtime.ast.oper.DestructuringAssign;
 import org.febit.wit.runtime.ast.oper.FixedPropertyAccess;
 import org.febit.wit.runtime.ast.oper.GetAndDecrease;
 import org.febit.wit.runtime.ast.oper.GetAndIncrease;
-import org.febit.wit.runtime.ast.oper.GroupAssign;
-import org.febit.wit.runtime.ast.oper.IfExpr;
 import org.febit.wit.runtime.ast.oper.IncreaseAndGet;
 import org.febit.wit.runtime.ast.oper.IntStep;
 import org.febit.wit.runtime.ast.oper.Or;
 import org.febit.wit.runtime.ast.oper.PropertyAccess;
-import org.febit.wit.runtime.ast.oper.SelfCalcAndAssign;
+import org.febit.wit.runtime.ast.oper.Ternary;
 import org.febit.wit.runtime.ast.statement.Block;
-import org.febit.wit.runtime.ast.statement.BlockNonFlow;
 import org.febit.wit.runtime.ast.statement.BreakpointStatement;
 import org.febit.wit.runtime.ast.statement.Echo;
 import org.febit.wit.runtime.ast.statement.If;
 import org.febit.wit.runtime.ast.statement.IfElse;
 import org.febit.wit.runtime.ast.statement.IfNot;
+import org.febit.wit.runtime.ast.statement.NonFlowBlock;
 import org.febit.wit.runtime.ast.statement.NoopStatement;
 import org.febit.wit.runtime.ast.statement.RenderRedirect;
-import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.ast.statement.StatementList;
 import org.febit.wit.runtime.ast.statement.TryCatchFinally;
 import org.febit.wit.runtime.ast.statement.TryFinally;
@@ -93,13 +93,13 @@ import java.util.function.UnaryOperator;
 @UtilityClass
 public class Ast {
 
-    public static IfExpr ifExpr(
+    public static Ternary ternary(
             Expression condition,
             Expression left,
             Expression right,
             Position pos
     ) {
-        return new IfExpr(condition, left, right, pos);
+        return new Ternary(condition, left, right, pos);
     }
 
     public static Echo echo(Expression value, Position pos) {
@@ -134,14 +134,14 @@ public class Ast {
         return new Assign(target, value, pos);
     }
 
-    public static GroupAssign groupAssign(ExpressionArray targets, Expression value, Position pos) {
+    public static DestructuringAssign destructuringAssign(ExpressionArray targets, Expression value, Position pos) {
         var targetList = targets.asList();
         var size = targetList.size();
         var assignables = new AssignableExpression[size];
         for (int i = 0; i < size; i++) {
             assignables[i] = castToAssignable(targetList.get(i));
         }
-        return new GroupAssign(assignables, value, pos);
+        return new DestructuringAssign(assignables, value, pos);
     }
 
     public static PropertyAccess property(Expression target, Expression property, Position pos) {
@@ -385,20 +385,20 @@ public class Ast {
         return new StatementList(List.copyOf(list), pos);
     }
 
-    public static WitFunctionInvocation functionCall(
+    public static FunctionCall functionCall(
             Expression func, ExpressionArray params, Position pos) {
         func = StatementUtils.optimize(func);
-        return new WitFunctionInvocation(func, params, pos);
+        return new FunctionCall(func, params, pos);
     }
 
-    public static DynamicNativeMethodInvocation dynamicNativeMethodCall(
+    public static DynamicNativeMethod dynamicNativeMethodCall(
             Expression self, String method, ExpressionArray params, Position pos) {
         self = StatementUtils.optimize(self);
-        return new DynamicNativeMethodInvocation(self, method, params, pos);
+        return new DynamicNativeMethod(self, method, params, pos);
     }
 
     public static Statement ifStatement(
-            Expression ifExpr,
+            Expression condition,
             @Nullable Statement thenBody,
             @Nullable Statement elseBody,
             Position pos
@@ -407,12 +407,12 @@ public class Ast {
         elseBody = StatementUtils.optimize(elseBody);
         if (!(thenBody instanceof NoopStatement)) {
             if (elseBody instanceof NoopStatement) {
-                return new If(ifExpr, thenBody, pos);
+                return new If(condition, thenBody, pos);
             }
-            return new IfElse(ifExpr, thenBody, elseBody, pos);
+            return new IfElse(condition, thenBody, elseBody, pos);
         }
         if (!(elseBody instanceof NoopStatement)) {
-            return new IfNot(ifExpr, elseBody, pos);
+            return new IfNot(condition, elseBody, pos);
         }
         return NoopStatement.INSTANCE;
     }
@@ -424,7 +424,7 @@ public class Ast {
             if (batches.size() != 1) {
                 throw new IllegalStateException("Unexpected multiple batches without flow control");
             }
-            return new BlockNonFlow(scope, batches.get(0), pos);
+            return new NonFlowBlock(scope, batches.get(0), pos);
         }
 
         return new Block(scope, batches, List.copyOf(controls), pos);
@@ -502,7 +502,7 @@ public class Ast {
             throw unsupportedOperator(pos);
         }
         var optimized = StatementUtils.optimize(
-                new SelfCalcAndAssign(assignable, delta, biFunc, pos)
+                new CompoundAssign(assignable, delta, biFunc, pos)
         );
         Objects.requireNonNull(optimized);
         return optimized;

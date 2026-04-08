@@ -20,12 +20,13 @@ import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.ast.IBlock;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.runtime.ast.StatementBatch;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-public record BlockNonFlow(
+public record NonFlowBlock(
         int scope,
         StatementBatch bodyBatch,
         Position position

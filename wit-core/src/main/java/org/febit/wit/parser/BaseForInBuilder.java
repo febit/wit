@@ -21,12 +21,12 @@ import lombok.experimental.Accessors;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclaration;
+import org.febit.wit.runtime.ast.expr.FunctionLiteral;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-import static org.febit.wit.Presets.FOR_ITER;
+import static org.febit.wit.ReservedNames.FOR_ITER;
 import static org.febit.wit.util.Defaults.nvl;
 
 @Accessors(fluent = true, chain = true)
@@ -57,7 +57,7 @@ public abstract class BaseForInBuilder {
 
     @Setter
     @Nullable
-    protected ScriptFunctionDeclaration filter;
+    protected FunctionLiteral filter;
 
     protected int iterSlot;
 

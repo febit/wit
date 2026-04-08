@@ -21,7 +21,7 @@ public interface AccessorFactory {
 
     <T> Setter<T> setter(Class<T> type);
 
-    <T> Render<T> render(Class<T> type);
+    <T> Renderer<T> renderer(Class<T> type);
 
     default AccessorFactory cached() {
         return CachingAccessorFactory.of(this);

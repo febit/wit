@@ -17,11 +17,11 @@ package org.febit.wit.runtime.function;
 
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.WitFunction;
-import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclaration;
+import org.febit.wit.runtime.ast.expr.FunctionLiteral;
 import org.jspecify.annotations.Nullable;
 
 public record ScriptFunction(
-        ScriptFunctionDeclaration declaration,
+        FunctionLiteral declaration,
         RuntimeContext declarationContext
 ) implements WitFunction {
 

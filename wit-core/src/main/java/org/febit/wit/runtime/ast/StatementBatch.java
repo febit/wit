@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.runtime.ast.statement;
+package org.febit.wit.runtime.ast;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.runtime.FlowControl;
 import org.febit.wit.runtime.FlowControls;
 import org.febit.wit.runtime.RuntimeContext;
-import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.WithFlowControl;
 
 import java.util.List;
 import java.util.function.Consumer;

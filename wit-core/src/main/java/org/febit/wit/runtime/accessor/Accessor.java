@@ -21,9 +21,9 @@ package org.febit.wit.runtime.accessor;
  * @param <T> the target type
  * @see Getter
  * @see Setter
- * @see Render
+ * @see Renderer
  */
 @SuppressWarnings("unused")
 public sealed interface Accessor<T>
-        permits Getter, Setter, Render {
+        permits Getter, Setter, Renderer {
 }

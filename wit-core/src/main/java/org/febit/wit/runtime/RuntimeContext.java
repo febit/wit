@@ -28,9 +28,9 @@ import org.febit.wit.io.Out;
 import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
-import org.febit.wit.runtime.accessor.Render;
+import org.febit.wit.runtime.accessor.Renderer;
 import org.febit.wit.runtime.accessor.Setter;
-import org.febit.wit.runtime.ast.statement.StatementBatch;
+import org.febit.wit.runtime.ast.StatementBatch;
 import org.febit.wit.runtime.heap.Heap;
 import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
@@ -186,8 +186,8 @@ public final class RuntimeContext implements Context {
             return;
         }
         @SuppressWarnings("unchecked")
-        var render = (Render<Object>) this.accessors.render(type);
-        render.render(out, obj);
+        var renderer = (Renderer<Object>) this.accessors.renderer(type);
+        renderer.render(out, obj);
     }
 
     @Override

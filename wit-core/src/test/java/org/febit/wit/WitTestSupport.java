@@ -21,8 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.extern.lib.cache.CachingModule;
 import org.febit.wit.extern.lib.cache.impl.SimpleCache;
-import org.febit.wit.extern.lib.context.GlobalContextRegister;
-import org.febit.wit.extern.lib.context.LocalContextRegister;
+import org.febit.wit.extern.lib.context.GlobalContextRegistry;
+import org.febit.wit.extern.lib.context.LocalContextRegistry;
 import org.febit.wit.extern.lib.std.TypesModule;
 import org.febit.wit.extern.lib.test.AssertionModule;
 import org.febit.wit.extern.lib.tld.TldModule;
@@ -57,8 +57,8 @@ public class WitTestSupport {
             .configureAccessors(ServletAccessors::registerAll)
             .module(new AssertionModule())
             .modules(
-                    GlobalContextRegister.create(),
-                    LocalContextRegister.create()
+                    GlobalContextRegistry.create(),
+                    LocalContextRegistry.create()
             )
             .module(new TestCasesModule())
             .module(new TestSpiFlagModule())

@@ -16,7 +16,6 @@
 package org.febit.wit.runtime.ast;
 
 import org.febit.wit.runtime.RuntimeContext;
-import org.febit.wit.runtime.ast.statement.StatementBatch;
 import org.febit.wit.runtime.heap.ScopeTable;
 import org.febit.wit.runtime.heap.VariableHeap;
 

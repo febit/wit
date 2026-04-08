@@ -18,16 +18,16 @@ package org.febit.wit.parser;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
-import org.febit.wit.Presets;
+import org.febit.wit.ReservedNames;
 import org.febit.wit.Script;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.ExpressionArray;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.ScriptAST;
 import org.febit.wit.runtime.ast.Statement;
 import org.febit.wit.runtime.ast.StatementUtils;
 import org.febit.wit.runtime.ast.expr.DirectValue;
-import org.febit.wit.runtime.ast.expr.ExpressionArray;
 import org.febit.wit.runtime.ast.expr.NativeStaticFieldValue;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
 import org.febit.wit.runtime.ast.statement.NoopStatement;
@@ -220,7 +220,7 @@ public class Assembler {
         if (!this.nativeLayout.security().allowed(path)) {
             throw new ScriptParseException("Inaccessible native path: " + path, position);
         }
-        if (Presets.CLASS.equals(fieldName)) {
+        if (ReservedNames.CLASS.equals(fieldName)) {
             return new DirectValue(clazz, position);
         }
         final Field field;
@@ -291,7 +291,7 @@ public class Assembler {
 
     public Expression createConstructorNativeFunctionValue(
             Class<?> clazz, @Nullable List<Class<?>> paramTypes, Position position) {
-        this.nativeLayout.securityCheck(clazz.getName() + '.' + Presets.NEW, position);
+        this.nativeLayout.securityCheck(clazz.getName() + '.' + ReservedNames.NEW, position);
 
         Constructor<?> constructor;
         try {
@@ -307,7 +307,7 @@ public class Assembler {
 
     public Expression createConstructorNativeFunctionValue(
             Class<?> clazz, Position position) {
-        this.nativeLayout.securityCheck(clazz.getName() + '.' + Presets.NEW, position);
+        this.nativeLayout.securityCheck(clazz.getName() + '.' + ReservedNames.NEW, position);
 
         var constructors = clazz.getConstructors();
         var func = this.nativeLayout.functions().constructor(List.of(constructors));
@@ -320,7 +320,7 @@ public class Assembler {
         var cls = toClass(className);
 
         var method = ref.substring(split + 2).trim();
-        if (!Presets.NEW.equals(method)) {
+        if (!ReservedNames.NEW.equals(method)) {
             return createMethodNativeFunctionValue(cls, method, position);
         }
         if (cls.isArray()) {

@@ -17,7 +17,7 @@ package org.febit.wit.runtime.accessor;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.runtime.accessor.impl.ReflectBeanAccessor;
-import org.febit.wit.runtime.accessor.impl.ToStringRender;
+import org.febit.wit.runtime.accessor.impl.ToStringRenderer;
 import org.febit.wit.util.ClassMap;
 
 public class ReflectBeanAccessorFactory implements AccessorFactory {
@@ -53,8 +53,8 @@ public class ReflectBeanAccessorFactory implements AccessorFactory {
     }
 
     @Override
-    public <T> Render<T> render(Class<T> type) {
-        return ToStringRender.get();
+    public <T> Renderer<T> renderer(Class<T> type) {
+        return ToStringRenderer.get();
     }
 
     @Override

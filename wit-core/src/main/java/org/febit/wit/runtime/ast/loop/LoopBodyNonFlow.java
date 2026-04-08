@@ -17,7 +17,7 @@ package org.febit.wit.runtime.ast.loop;
 
 import org.febit.wit.runtime.FlowControl;
 import org.febit.wit.runtime.RuntimeContext;
-import org.febit.wit.runtime.ast.statement.StatementBatch;
+import org.febit.wit.runtime.ast.StatementBatch;
 
 import java.util.function.Consumer;
 

@@ -15,12 +15,12 @@
  */
 package org.febit.wit.parser;
 
-import org.febit.wit.Presets;
+import org.febit.wit.ReservedNames;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.runtime.ast.Expression;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.expr.ScriptFunctionDeclaration;
+import org.febit.wit.runtime.ast.expr.FunctionLiteral;
 import org.febit.wit.runtime.ast.expr.VariableHeapValue;
 import org.febit.wit.runtime.ast.flow.Return;
 import org.febit.wit.runtime.ast.oper.Assign;
@@ -44,7 +44,7 @@ public class ScriptFunctionDeclarationBuilder {
         this.assignTarget = assignTarget;
 
         varLayout.shiftFrame();
-        argsBeginSlot = varLayout.assignVar(Presets.ARGUMENTS, position);
+        argsBeginSlot = varLayout.assignVar(ReservedNames.ARGUMENTS, position);
     }
 
     public static ScriptFunctionDeclarationBuilder create(VarLayout varLayout, Position position) {
@@ -100,11 +100,11 @@ public class ScriptFunctionDeclarationBuilder {
         return expr;
     }
 
-    public ScriptFunctionDeclaration build(Expression lambda) {
+    public FunctionLiteral build(Expression lambda) {
         return build(lambdaBody(lambda));
     }
 
-    public ScriptFunctionDeclaration build(List<Statement> list) {
+    public FunctionLiteral build(List<Statement> list) {
         var scopeTables = varLayout.buildScopeTables();
         int heapSize = varLayout.slotSize();
         varLayout.unshiftFrame();
@@ -121,7 +121,7 @@ public class ScriptFunctionDeclarationBuilder {
             argDefaults[i] = this.args.get(i).defaultValue;
         }
 
-        return new ScriptFunctionDeclaration(
+        return new FunctionLiteral(
                 heapSize,
                 scopeTables,
                 batches,

@@ -16,12 +16,12 @@
 package org.febit.wit.runtime.accessor.impl;
 
 import org.febit.wit.io.Out;
-import org.febit.wit.runtime.accessor.Render;
+import org.febit.wit.runtime.accessor.Renderer;
 
-public class ByteArrayRender implements Render<byte[]> {
+public class CharArrayRenderer implements Renderer<char[]> {
 
     @Override
-    public void render(Out out, byte[] arr) {
+    public void render(Out out, char[] arr) {
         out.write(arr);
     }
 }

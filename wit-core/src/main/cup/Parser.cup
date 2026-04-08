@@ -244,7 +244,7 @@ varPart         ::= varAssign:$
                     | IDENTIFIER:ident
                     {: yield assembler.declareVar(%ident%, %ident.symbol%.pos); :}
                     | LBRACK IDENTIFIER[COMMA]:idents RBRACK EQ:sym expression:expr
-                    {: yield Ast.groupAssign(assembler.declareVarAndCreateContextValues(%idents%, %idents.symbol%.pos), %expr%, %sym.symbol%.pos); :}
+                    {: yield Ast.destructuringAssign(assembler.declareVarAndCreateContextValues(%idents%, %idents.symbol%.pos), %expr%, %sym.symbol%.pos); :}
                     ;
 
 
@@ -359,7 +359,7 @@ expressionStatementAble ::=
                     {: yield Ast.assign(Ast.castToAssignable(%lexpr%), %expr%, %sym.symbol%.pos); :}
 
                     |LBRACK expression[COMMA]:list COMMA? RBRACK EQ:sym expression:expr
-                    {: yield Ast.groupAssign(Ast.toExpressionArray(%list%), %expr%, %sym.symbol%.pos); :}
+                    {: yield Ast.destructuringAssign(Ast.toExpressionArray(%list%), %expr%, %sym.symbol%.pos); :}
 
                     // Increase ++
                     |PLUSPLUS:sym expression:expr
@@ -473,8 +473,8 @@ expression      ::= expressionStatementAble:$
                     {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
 
                     // ? :
-                    |expression:ifExpr QUESTION:sym expression:lexpr COLON expression:rexpr
-                    {: yield Ast.ifExpr(%ifExpr%, %lexpr%, %rexpr%, %sym.symbol%.pos); :}
+                    |expression:ternary QUESTION:sym expression:lexpr COLON expression:rexpr
+                    {: yield Ast.ternary(%ternary%, %lexpr%, %rexpr%, %sym.symbol%.pos); :}
 
                     //
                     |DIRECT_VALUE:sym

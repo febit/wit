@@ -21,11 +21,12 @@ import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
 import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.runtime.ast.Expression;
+import org.febit.wit.runtime.ast.ExpressionArray;
 import org.febit.wit.runtime.ast.Position;
 import org.febit.wit.runtime.ast.StatementUtils;
 import org.jspecify.annotations.Nullable;
 
-public record WitFunctionInvocation(
+public record FunctionCall(
         Expression function,
         ExpressionArray params,
         Position position

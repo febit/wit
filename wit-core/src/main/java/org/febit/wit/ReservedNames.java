@@ -18,7 +18,7 @@ package org.febit.wit;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class Presets {
+public class ReservedNames {
 
     /**
      * Used for setup scripts, to register global variables.

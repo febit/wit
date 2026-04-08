@@ -21,7 +21,7 @@ import org.febit.wit.exception.UncheckedException;
 import org.febit.wit.runtime.accessor.AccessorFactory;
 import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.ReflectBeanAccessorFactory;
-import org.febit.wit.runtime.accessor.Render;
+import org.febit.wit.runtime.accessor.Renderer;
 import org.febit.wit.runtime.accessor.Setter;
 import org.febit.wit.util.ClassMap;
 import org.febit.wit.util.Modifiers;
@@ -72,8 +72,8 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
     }
 
     @Override
-    public <T> Render<T> render(Class<T> type) {
-        return fallback.render(type);
+    public <T> Renderer<T> renderer(Class<T> type) {
+        return fallback.renderer(type);
     }
 
     @SuppressWarnings({

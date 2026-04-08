@@ -26,16 +26,16 @@ import org.febit.wit.runtime.iter.Iters;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class GroupAssign implements Expression {
+public final class DestructuringAssign implements Expression {
 
     private final AssignableExpression[] targets;
-    private final Expression value;
+    private final Expression source;
     @Getter
     private final Position position;
 
     @Override
     public Object execute(RuntimeContext context) {
-        var values = value.execute(context);
+        var values = source.execute(context);
         var iter = Iters.ofIter(values, this);
         var targetsObj = this.targets;
 
