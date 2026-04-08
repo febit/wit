@@ -28,7 +28,7 @@ import java.util.List;
         builderClassName = "Builder"
 )
 @Accessors(fluent = true)
-public class AdvancePathLoaderDecorator implements Loader {
+public class AdvancedPathLoader implements Loader {
 
     @Getter
     private final PathBasedLoader delegate;

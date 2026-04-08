@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Getter
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public class DebouncedSource implements Source {
+public class DebouncingSource implements Source {
 
     private final AtomicReference<@Nullable Stamp> stampRef = new AtomicReference<>();
 

@@ -10,7 +10,7 @@ usage and maintenance, and improve performance and robustness.
 + Add Native Class syntax to directly access Java Class objects in scripts.
 + Add built-in assertion methods.
 + Throw `WitAssertionError` with full script stack trace when assertion fails.
-+ `SecurityLoaderDecorator` (formerly `SecurityLoader`) uses `PathTrie` for path allow/deny rules instead of simple
++ `SecurityLoader` uses `PathTrie` for path allow/deny rules instead of simple
   prefix matching.
 + `ClasspathLoader` supports specifying a `ClassLoader` for resource loading.
 + `FileSystemLoader` (formerly `FileLoader`) supports specifying a `FileSystem` for resource loading.

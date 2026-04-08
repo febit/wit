@@ -18,14 +18,14 @@ package org.febit.wit.io;
 import lombok.Singular;
 import lombok.experimental.UtilityClass;
 import org.febit.wit.io.Source.BeginWith;
-import org.febit.wit.io.loader.AdvancePathLoaderDecorator;
+import org.febit.wit.io.loader.AdvancedPathLoader;
 import org.febit.wit.io.loader.ClasspathLoader;
-import org.febit.wit.io.loader.DebouncedLoaderDecorator;
-import org.febit.wit.io.loader.DispatcherLoader;
+import org.febit.wit.io.loader.DebouncingLoader;
+import org.febit.wit.io.loader.DispatchLoader;
 import org.febit.wit.io.loader.EmptyLoader;
 import org.febit.wit.io.loader.FileSystemLoader;
 import org.febit.wit.io.loader.PathBasedLoader;
-import org.febit.wit.io.loader.SecurityLoaderDecorator;
+import org.febit.wit.io.loader.SecurityLoader;
 import org.febit.wit.io.loader.StringLoader;
 import org.febit.wit.util.ClassUtils;
 import org.jspecify.annotations.Nullable;
@@ -44,28 +44,28 @@ public class Loaders {
         return new EmptyLoader();
     }
 
-    public static DispatcherLoader.Builder dispatcher() {
-        return DispatcherLoader.builder();
+    public static DispatchLoader.Builder dispatch() {
+        return DispatchLoader.builder();
     }
 
     public static StringLoader.Builder string() {
         return StringLoader.builder();
     }
 
-    public static SecurityLoaderDecorator.Builder security(Loader delegate) {
-        return SecurityLoaderDecorator.builder(delegate);
+    public static SecurityLoader.Builder security(Loader delegate) {
+        return SecurityLoader.builder(delegate);
     }
 
-    public static DebouncedLoaderDecorator debounce(Loader delegate, long delayMillis) {
-        return DebouncedLoaderDecorator.of(delegate, delayMillis);
+    public static DebouncingLoader debouncing(Loader delegate, long delayMillis) {
+        return DebouncingLoader.of(delegate, delayMillis);
     }
 
-    public static DebouncedLoaderDecorator debounce(Loader delegate, Duration delay) {
-        return DebouncedLoaderDecorator.of(delegate, (int) delay.toMillis());
+    public static DebouncingLoader debouncing(Loader delegate, Duration delay) {
+        return DebouncingLoader.of(delegate, (int) delay.toMillis());
     }
 
-    public static AdvancePathLoaderDecorator.Builder advance(PathBasedLoader delegate) {
-        return AdvancePathLoaderDecorator.builder()
+    public static AdvancedPathLoader.Builder advance(PathBasedLoader delegate) {
+        return AdvancedPathLoader.builder()
                 .delegate(delegate);
     }
 

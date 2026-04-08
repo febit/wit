@@ -25,7 +25,7 @@ import org.febit.wit.util.PathUtils;
 import java.util.Collection;
 
 @Accessors(fluent = true)
-public class SecurityLoaderDecorator implements Loader.Decorator {
+public class SecurityLoader implements Loader.Decorator {
 
     @Getter
     private final Loader delegate;
@@ -35,7 +35,7 @@ public class SecurityLoaderDecorator implements Loader.Decorator {
         return new Builder(delegate);
     }
 
-    private SecurityLoaderDecorator(Loader delegate, PathTrie trie) {
+    private SecurityLoader(Loader delegate, PathTrie trie) {
         this.delegate = delegate;
         this.trie = trie;
     }
@@ -101,8 +101,8 @@ public class SecurityLoaderDecorator implements Loader.Decorator {
             return this;
         }
 
-        public SecurityLoaderDecorator build() {
-            return new SecurityLoaderDecorator(this.delegate, this.trieBuilder.build());
+        public SecurityLoader build() {
+            return new SecurityLoader(this.delegate, this.trieBuilder.build());
         }
     }
 

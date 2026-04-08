@@ -17,7 +17,7 @@ package org.febit.wit.loader;
 
 import lombok.Setter;
 import org.febit.wit.io.Source;
-import org.febit.wit.io.loader.DebouncedSource;
+import org.febit.wit.io.loader.DebouncingSource;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-class DebouncedSourceTest {
+class DebouncingSourceTest {
 
     @Setter
     @NullMarked
@@ -62,7 +62,7 @@ class DebouncedSourceTest {
         var inner = new InnerSource();
         var startMs = 1000L;
 
-        var res = spy(new DebouncedSource(inner, timeout));
+        var res = spy(new DebouncingSource(inner, timeout));
 
         when(res.now()).thenReturn(startMs);
         inner.setVersion(100L);

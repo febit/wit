@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AdvancePathLoaderDecoratorTest {
+class AdvancedPathLoaderTest {
 
     final ClasspathLoader delegate = ClasspathLoader.of(
             ClassUtils.loader(),
@@ -33,7 +33,7 @@ class AdvancePathLoaderDecoratorTest {
 
     @Test
     void basic() {
-        var loader = AdvancePathLoaderDecorator.builder()
+        var loader = AdvancedPathLoader.builder()
                 .delegate(delegate)
                 .cacheEnabled(true)
                 .candidateSuffixes(null)
@@ -51,7 +51,7 @@ class AdvancePathLoaderDecoratorTest {
 
     @Test
     void completeMissingSuffix1() {
-        var loader = AdvancePathLoaderDecorator.builder()
+        var loader = AdvancedPathLoader.builder()
                 .delegate(delegate)
                 .cacheEnabled(false)
                 .completeMissingSuffix(".wit")
@@ -63,21 +63,21 @@ class AdvancePathLoaderDecoratorTest {
 
     @Test
     void root() {
-        var loader = AdvancePathLoaderDecorator.builder()
+        var loader = AdvancedPathLoader.builder()
                 .delegate(delegate)
                 .root("/a/b")
                 .build();
 
         assertEquals("/a/b", loader.root());
 
-        loader = AdvancePathLoaderDecorator.builder()
+        loader = AdvancedPathLoader.builder()
                 .delegate(delegate)
                 .root("/")
                 .build();
 
         assertEquals("/", loader.root());
 
-        loader = AdvancePathLoaderDecorator.builder()
+        loader = AdvancedPathLoader.builder()
                 .delegate(delegate)
                 .root("/a/b/")
                 .build();

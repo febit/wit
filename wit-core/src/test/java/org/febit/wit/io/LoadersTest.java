@@ -15,7 +15,7 @@
  */
 package org.febit.wit.io;
 
-import org.febit.wit.io.loader.AdvancePathLoaderDecorator;
+import org.febit.wit.io.loader.AdvancedPathLoader;
 import org.febit.wit.io.loader.ClasspathLoader;
 import org.febit.wit.io.loader.FileSystemLoader;
 import org.junit.jupiter.api.Test;
@@ -32,9 +32,9 @@ class LoadersTest {
         var loader = Loaders.classpath()
                 .build();
 
-        assertInstanceOf(AdvancePathLoaderDecorator.class, loader);
+        assertInstanceOf(AdvancedPathLoader.class, loader);
 
-        var adv = (AdvancePathLoaderDecorator) loader;
+        var adv = (AdvancedPathLoader) loader;
         assertFalse(adv.cacheEnabled());
         assertNull(adv.root());
         assertNull(adv.completeMissingSuffix());
@@ -58,8 +58,8 @@ class LoadersTest {
                 .completeMissingSuffix(".wit")
                 .build();
 
-        assertInstanceOf(AdvancePathLoaderDecorator.class, loader);
-        var adv = (AdvancePathLoaderDecorator) loader;
+        assertInstanceOf(AdvancedPathLoader.class, loader);
+        var adv = (AdvancedPathLoader) loader;
         assertTrue(adv.cacheEnabled());
         assertEquals("root", adv.root());
         assertEquals(".wit", adv.completeMissingSuffix());
@@ -76,9 +76,9 @@ class LoadersTest {
         var loader = Loaders.fileSystem()
                 .build();
 
-        assertInstanceOf(AdvancePathLoaderDecorator.class, loader);
+        assertInstanceOf(AdvancedPathLoader.class, loader);
 
-        var adv = (AdvancePathLoaderDecorator) loader;
+        var adv = (AdvancedPathLoader) loader;
         assertFalse(adv.cacheEnabled());
         assertNull(adv.root());
         assertNull(adv.completeMissingSuffix());
@@ -103,8 +103,8 @@ class LoadersTest {
                 .completeMissingSuffix(".wit")
                 .build();
 
-        assertInstanceOf(AdvancePathLoaderDecorator.class, loader);
-        var adv = (AdvancePathLoaderDecorator) loader;
+        assertInstanceOf(AdvancedPathLoader.class, loader);
+        var adv = (AdvancedPathLoader) loader;
         assertTrue(adv.cacheEnabled());
         assertEquals("root", adv.root());
         assertEquals(".wit", adv.completeMissingSuffix());

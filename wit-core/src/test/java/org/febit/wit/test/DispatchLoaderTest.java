@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.febit.wit.WitTestSupport.script;
 
-class DispatcherLoaderTest {
+class DispatchLoaderTest {
 
     @Test
     void test() throws NoSuchSourceException {

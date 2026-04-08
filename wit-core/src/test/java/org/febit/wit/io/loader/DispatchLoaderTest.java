@@ -30,7 +30,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class DispatcherLoaderTest {
+class DispatchLoaderTest {
 
     final Loader loaderA = mock(Loader.class);
     final Loader loaderB = mock(Loader.class);
@@ -41,7 +41,7 @@ class DispatcherLoaderTest {
             loaderA, loaderB, loaderAbc, loaderFallback
     );
 
-    final Loader loader = Loaders.dispatcher()
+    final Loader loader = Loaders.dispatch()
             .rule("a:b:c:", loaderAbc)
             .rule("abc:", loaderAbc)
             .rule("a:", loaderA)

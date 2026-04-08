@@ -9,7 +9,7 @@
 + 新增 Native Class 语法，可在脚本中直接获取 Java Class 对象。
 + 新增内置断言方法。
 + 断言失败时抛出 `WitAssertionError`，并自动记录完整脚本调用栈信息。
-+ `SecurityLoaderDecorator`（原 `SecurityLoader`）使用 `PathTrie` 实现路径允许/拒绝规则，替代原简单前缀匹配。
++ `SecurityLoader` 使用 `PathTrie` 实现路径允许/拒绝规则，替代原简单前缀匹配。
 + `ClasspathLoader` 支持传入指定 `ClassLoader` 加载资源。
 + `FileSystemLoader`（原 `FileLoader`）支持传入指定 `FileSystem` 加载资源。
 + 脚本 Map 字面量现在默认创建 `LinkedHashMap` 实例，保持键值插入顺序。

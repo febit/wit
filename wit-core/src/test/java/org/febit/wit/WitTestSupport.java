@@ -138,8 +138,8 @@ public class WitTestSupport {
                 .beginWith(Source.BeginWith.TEMPLATE)
                 .build();
 
-        var lazyLoader = Loaders.debounce(classpath, Duration.ofSeconds(10));
-        return Loaders.dispatcher()
+        var lazyLoader = Loaders.debouncing(classpath, Duration.ofSeconds(10));
+        return Loaders.dispatch()
                 .rule("code:", code)
                 .rule("string:", string)
                 .rule("classpath:", classpath)

@@ -23,7 +23,7 @@ import org.febit.wit.io.Source;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor(staticName = "of")
-public class DebouncedLoaderDecorator implements Loader.Decorator {
+public class DebouncingLoader implements Loader.Decorator {
 
     @Getter
     private final Loader delegate;
@@ -33,7 +33,7 @@ public class DebouncedLoaderDecorator implements Loader.Decorator {
     public Source get(String path) {
         var inner = this.delegate.get(path);
         return this.delayMillis > 0L
-                ? new DebouncedSource(inner, this.delayMillis)
+                ? new DebouncingSource(inner, this.delayMillis)
                 : inner;
     }
 }

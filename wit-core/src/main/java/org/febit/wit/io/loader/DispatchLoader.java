@@ -31,7 +31,7 @@ import java.util.List;
 import static org.febit.wit.util.Defaults.nvl;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class DispatcherLoader implements Loader {
+public class DispatchLoader implements Loader {
 
     private static final Comparator<Rule> RULE_PREFIX_DESC = Comparator.comparing(Rule::prefix).reversed();
 
@@ -59,18 +59,18 @@ public class DispatcherLoader implements Loader {
             return this;
         }
 
-        public DispatcherLoader build() {
+        public DispatchLoader build() {
             var sorted = new ArrayList<>(rules);
             sorted.sort(RULE_PREFIX_DESC);
 
-            return new DispatcherLoader(
+            return new DispatchLoader(
                     nvl(this.fallback, Loaders::empty),
                     List.copyOf(sorted)
             );
         }
     }
 
-    private DispatcherLoader.@Nullable Rule lookup(@Nullable String path) {
+    private DispatchLoader.@Nullable Rule lookup(@Nullable String path) {
         if (path == null) {
             return null;
         }

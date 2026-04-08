@@ -23,7 +23,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SecurityLoaderDecoratorTest {
+class SecurityLoaderTest {
 
     static void assertAllow(String path, Loader loader) {
         assertInstanceOf(StringSource.class, loader.get(path), "Expected allow: " + path);
@@ -52,7 +52,7 @@ class SecurityLoaderDecoratorTest {
 
     @Test
     void denyOverridesAllow() {
-        var loader = SecurityLoaderDecorator.builder(Loaders.string().build())
+        var loader = SecurityLoader.builder(Loaders.string().build())
                 .allow("/a/")
                 .deny("/a/b/")
                 .allow("/a/b/c")
@@ -66,7 +66,7 @@ class SecurityLoaderDecoratorTest {
     @Test
     void directoryVsExact() {
         Loader delegate = Loaders.string().build();
-        var loader = SecurityLoaderDecorator.builder(delegate).allow(List.of("/foo", "/bar/")).build();
+        var loader = SecurityLoader.builder(delegate).allow(List.of("/foo", "/bar/")).build();
 
         assertAllow("/foo", loader);
         assertAllow("/foo/", loader);
@@ -82,7 +82,7 @@ class SecurityLoaderDecoratorTest {
     @Test
     void normalizedPaths() {
         Loader delegate = Loaders.string().build();
-        var loader = SecurityLoaderDecorator.builder(delegate).allow(List.of("/a/", "/b")).build();
+        var loader = SecurityLoader.builder(delegate).allow(List.of("/a/", "/b")).build();
 
         assertAllow("/a//x.wit", loader);
         assertAllow("/b//x.wit", loader);
@@ -95,7 +95,7 @@ class SecurityLoaderDecoratorTest {
     @Test
     void emptyRules() {
         Loader delegate = Loaders.string().build();
-        var loader = SecurityLoaderDecorator.builder(delegate).allow(List.of()).build();
+        var loader = SecurityLoader.builder(delegate).allow(List.of()).build();
 
         assertDeny("/anything", loader);
     }
