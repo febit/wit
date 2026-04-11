@@ -16,10 +16,10 @@
 package org.febit.wit.parser.template;
 
 import org.febit.wit.Script;
+import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Statement;
+import org.febit.wit.ir.template.CharArrayTemplateText;
 import org.febit.wit.parser.TemplateTextFactory;
-import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.template.CharArrayTemplateText;
 
 public class CharArrayTemplateTextFactory implements TemplateTextFactory {
 

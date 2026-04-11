@@ -16,8 +16,9 @@
 package org.febit.wit;
 
 import org.febit.wit.extern.asm.AsmBeanAccessor;
+import org.febit.wit.extern.asm.AsmBeanAccessorFactory;
+import org.febit.wit.io.CodecFactory;
 import org.febit.wit.io.Loader;
-import org.febit.wit.io.codec.CodecFactory;
 import org.febit.wit.io.codec.DefaultCodecFactory;
 import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.parser.TemplateTextFactory;
@@ -93,7 +94,7 @@ class WitBuilderTest {
                 .accessor(Foo.class, fooAccessor)
                 .configureAccessors(builder -> {
                     builder.accessor(Bar.class, barAccessor);
-                    builder.fallbackWithAsm();
+                    builder.fallback(AsmBeanAccessorFactory.get());
                 })
                 .build();
 

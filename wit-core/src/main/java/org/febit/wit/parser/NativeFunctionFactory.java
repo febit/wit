@@ -15,6 +15,7 @@
  */
 package org.febit.wit.parser;
 
+import org.febit.wit.parser.support.CachingNativeFunctionFactory;
 import org.febit.wit.runtime.WitFunction;
 
 import java.lang.reflect.Constructor;

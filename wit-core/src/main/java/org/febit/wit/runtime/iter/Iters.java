@@ -17,10 +17,10 @@ package org.febit.wit.runtime.iter;
 
 import lombok.experimental.UtilityClass;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.ALU;
+import org.febit.wit.ir.Statement;
+import org.febit.wit.ir.support.ALU;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.WitFunction;
-import org.febit.wit.runtime.ast.Statement;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Enumeration;

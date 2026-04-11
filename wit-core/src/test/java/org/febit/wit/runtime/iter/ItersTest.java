@@ -16,7 +16,7 @@
 package org.febit.wit.runtime.iter;
 
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.ir.Statement;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

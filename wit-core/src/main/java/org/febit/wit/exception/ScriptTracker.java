@@ -16,10 +16,12 @@
 package org.febit.wit.exception;
 
 import org.febit.wit.Script;
+import org.febit.wit.ir.Located;
 import org.jspecify.annotations.Nullable;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.List;
 
 public interface ScriptTracker {
 
@@ -31,7 +33,20 @@ public interface ScriptTracker {
     @Nullable
     Throwable getCause();
 
-    void printTraceBody(PrintProxy out, String indent);
+    void add(Located statement);
+
+    List<Located> locations();
+
+    default void printTraceBody(PrintProxy out, String indent) {
+        for (var located : locations()) {
+            out.print(indent)
+                    .print("\tat ")
+                    .print(located.position())
+                    .print(" ")
+                    .print(located.getClass().getSimpleName())
+                    .print('\n');
+        }
+    }
 
     default void printTrace(PrintStream out) {
         printTrace(PrintProxy.wrap(out));

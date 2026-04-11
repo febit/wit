@@ -18,20 +18,20 @@ package org.febit.wit.parser;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
-import org.febit.wit.ReservedNames;
 import org.febit.wit.Script;
 import org.febit.wit.exception.ScriptParseException;
-import org.febit.wit.runtime.ast.Expression;
-import org.febit.wit.runtime.ast.ExpressionArray;
-import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.ScriptAST;
-import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.StatementUtils;
-import org.febit.wit.runtime.ast.expr.DirectValue;
-import org.febit.wit.runtime.ast.expr.NativeStaticFieldValue;
-import org.febit.wit.runtime.ast.expr.VariableHeapValue;
-import org.febit.wit.runtime.ast.statement.NoopStatement;
-import org.febit.wit.util.ClassNameRope;
+import org.febit.wit.ir.Expression;
+import org.febit.wit.ir.ExpressionArray;
+import org.febit.wit.ir.Position;
+import org.febit.wit.ir.ScriptIR;
+import org.febit.wit.ir.Statement;
+import org.febit.wit.ir.expr.DirectValue;
+import org.febit.wit.ir.expr.NativeStaticFieldValue;
+import org.febit.wit.ir.expr.VariableHeapValue;
+import org.febit.wit.ir.statement.NoopStatement;
+import org.febit.wit.ir.support.StatementUtils;
+import org.febit.wit.parser.support.ClassNameRope;
+import org.febit.wit.parser.support.VarLayout;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.Modifiers;
 import org.febit.wit.util.NativeMethods;
@@ -335,14 +335,14 @@ public class Assembler {
         return NoopStatement.INSTANCE;
     }
 
-    public ScriptAST buildAST(List<Statement> list) {
+    public ScriptIR buildScriptIR(List<Statement> list) {
         var batches = Ast.batch(list, ctrl -> {
             throw new ScriptParseException("Unhandled flow control: " + ctrl, ctrl.position());
         });
         if (batches.size() != 1) {
             throw new IllegalStateException("Unexpected batches size: " + batches.size());
         }
-        return new ScriptAST(
+        return new ScriptIR(
                 this.lastSourceVersion,
                 this.varLayout.slotSize(),
                 this.varLayout.buildScopeTables(),

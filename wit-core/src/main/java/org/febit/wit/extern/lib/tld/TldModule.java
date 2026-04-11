@@ -20,9 +20,9 @@ import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.exception.UncheckedException;
+import org.febit.wit.ir.TextPosition;
 import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.runtime.WitFunction;
-import org.febit.wit.runtime.ast.TextPosition;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.PathUtils;
 

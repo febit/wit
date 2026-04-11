@@ -18,8 +18,8 @@ package org.febit.wit.extern.lib.test;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Script;
-import org.febit.wit.exception.StatementTracker;
-import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.exception.ScriptTracker;
+import org.febit.wit.ir.Located;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -28,9 +28,9 @@ import java.util.Collections;
 import java.util.List;
 
 @Accessors(fluent = true)
-public class WitAssertionError extends AssertionError implements StatementTracker {
+public class WitAssertionError extends AssertionError implements ScriptTracker {
 
-    private final List<Statement> statements = new ArrayList<>(8);
+    private final List<Located> locations = new ArrayList<>(8);
 
     @Getter
     private final transient Script script;
@@ -41,13 +41,13 @@ public class WitAssertionError extends AssertionError implements StatementTracke
     }
 
     @Override
-    public void add(Statement statement) {
-        statements.add(statement);
+    public final void add(Located located) {
+        locations.add(located);
     }
 
     @Override
-    public List<Statement> statements() {
-        return Collections.unmodifiableList(statements);
+    public List<Located> locations() {
+        return Collections.unmodifiableList(locations);
     }
 
     @Override

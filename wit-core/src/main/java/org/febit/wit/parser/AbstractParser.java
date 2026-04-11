@@ -20,10 +20,10 @@ import org.febit.wit.Feature;
 import org.febit.wit.Script;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.exception.UncheckedException;
-import org.febit.wit.runtime.ast.ScriptAST;
-import org.febit.wit.runtime.ast.TextPosition;
+import org.febit.wit.ir.ScriptIR;
+import org.febit.wit.ir.TextPosition;
+import org.febit.wit.parser.support.Stack;
 import org.febit.wit.util.ClassUtils;
-import org.febit.wit.util.Stack;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -143,7 +143,7 @@ abstract class AbstractParser {
         return new Token(TokenKinds.SEMICOLON, refer.pos, null);
     }
 
-    public static ScriptAST parse(Script script) throws ScriptParseException {
+    public static ScriptIR parse(Script script) throws ScriptParseException {
         return new Parser().parse0(script);
     }
 
@@ -152,10 +152,10 @@ abstract class AbstractParser {
 
     /**
      * @param script Script
-     * @return ScriptAST
+     * @return ScriptIR
      * @throws ScriptParseException ScriptParseException
      */
-    protected ScriptAST parse0(Script script) throws ScriptParseException {
+    protected ScriptIR parse0(Script script) throws ScriptParseException {
         this.assembler = new Assembler(script);
 
         var source = script.source();
@@ -170,7 +170,7 @@ abstract class AbstractParser {
 
             var ast = this.process(lexer).value;
             Objects.requireNonNull(ast, "Parser result is null.");
-            return (ScriptAST) ast;
+            return (ScriptIR) ast;
         } catch (ScriptParseException e) {
             throw e;
         } catch (Exception e) {

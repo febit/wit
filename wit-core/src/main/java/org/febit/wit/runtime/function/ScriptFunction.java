@@ -15,9 +15,9 @@
  */
 package org.febit.wit.runtime.function;
 
+import org.febit.wit.ir.expr.FunctionLiteral;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.WitFunction;
-import org.febit.wit.runtime.ast.expr.FunctionLiteral;
 import org.jspecify.annotations.Nullable;
 
 public record ScriptFunction(

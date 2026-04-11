@@ -18,14 +18,19 @@ package org.febit.wit.exception;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Script;
+import org.febit.wit.ir.Located;
 import org.jspecify.annotations.Nullable;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Accessors(fluent = true)
 public abstract class ScriptException extends RuntimeException implements ScriptTracker {
 
+    private final List<Located> locations = new ArrayList<>(8);
     @Getter
     private boolean nested;
     @Getter
@@ -50,6 +55,16 @@ public abstract class ScriptException extends RuntimeException implements Script
     public ScriptException script(Script script) {
         this.script = script;
         return this;
+    }
+
+    @Override
+    public void add(Located located) {
+        locations.add(located);
+    }
+
+    @Override
+    public List<Located> locations() {
+        return Collections.unmodifiableList(locations);
     }
 
     @Override

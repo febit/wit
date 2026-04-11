@@ -15,7 +15,7 @@
  */
 package org.febit.wit.runtime;
 
-import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.ir.Statement;
 import org.jspecify.annotations.Nullable;
 
 @FunctionalInterface

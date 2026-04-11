@@ -17,7 +17,6 @@ package org.febit.wit.runtime.accessor;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.extern.asm.AsmBeanAccessorFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,16 +93,6 @@ public class CompositeAccessorFactory implements AccessorFactory {
 
         public Builder fallback(AccessorFactory factory) {
             this.fallback = factory;
-            return this;
-        }
-
-        public Builder fallbackWithReflect() {
-            this.fallback = ReflectBeanAccessorFactory.get();
-            return this;
-        }
-
-        public Builder fallbackWithAsm() {
-            this.fallback = AsmBeanAccessorFactory.get();
             return this;
         }
 

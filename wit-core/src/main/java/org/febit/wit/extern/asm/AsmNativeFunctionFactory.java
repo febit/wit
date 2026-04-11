@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.parser.NativeFunctionFactory;
-import org.febit.wit.parser.ReflectNativeFunctionFactory;
+import org.febit.wit.parser.support.ReflectNativeFunctionFactory;
 import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.util.Modifiers;
 import org.febit.wit_shaded.asm.ClassWriter;

@@ -15,58 +15,42 @@
  */
 package org.febit.wit.exception;
 
-import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.ir.Located;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-public class ScriptEvaluateException extends ScriptException implements StatementTracker {
-
-    private final List<Statement> statements = new ArrayList<>(8);
+public class ScriptEvaluateException extends ScriptException implements ScriptTracker {
 
     public ScriptEvaluateException(String message) {
         super(message);
     }
 
-    public ScriptEvaluateException(String message, Statement statement) {
+    public ScriptEvaluateException(String message, Located located) {
         super(message);
-        add(statement);
+        add(located);
     }
 
     public ScriptEvaluateException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ScriptEvaluateException(String message, Throwable cause, Statement statement) {
+    public ScriptEvaluateException(String message, Throwable cause, Located located) {
         super(message, cause);
-        add(statement);
+        add(located);
     }
 
     public ScriptEvaluateException(Throwable cause) {
         super(cause);
     }
 
-    public ScriptEvaluateException(Throwable cause, Statement statement) {
+    public ScriptEvaluateException(Throwable cause, Located located) {
         super(cause);
-        add(statement);
+        add(located);
     }
 
-    public static ScriptEvaluateException from(Exception ex, Statement statement) {
+    public static ScriptEvaluateException from(Exception ex, Located located) {
         if (ex instanceof ScriptEvaluateException see) {
-            see.add(statement);
+            see.add(located);
             return see;
         }
-        return new ScriptEvaluateException(ex.toString(), ex, statement);
-    }
-
-    @Override
-    public final void add(Statement statement) {
-        statements.add(statement);
-    }
-
-    @Override
-    public List<Statement> statements() {
-        return Collections.unmodifiableList(statements);
+        return new ScriptEvaluateException(ex.toString(), ex, located);
     }
 }

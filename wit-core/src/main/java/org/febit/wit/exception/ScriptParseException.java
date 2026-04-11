@@ -15,14 +15,10 @@
  */
 package org.febit.wit.exception;
 
-import lombok.Getter;
-import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.TextPosition;
+import org.febit.wit.ir.Position;
+import org.febit.wit.ir.TextPosition;
 
 public class ScriptParseException extends ScriptException {
-
-    @Getter
-    private final Position position;
 
     public ScriptParseException(String message) {
         this(message, TextPosition.UNKNOWN);
@@ -30,7 +26,7 @@ public class ScriptParseException extends ScriptException {
 
     public ScriptParseException(String message, Position position) {
         super(message);
-        this.position = position;
+        add(position);
     }
 
     public ScriptParseException(String message, Throwable cause) {
@@ -39,7 +35,7 @@ public class ScriptParseException extends ScriptException {
 
     public ScriptParseException(String message, Throwable cause, Position position) {
         super(message, cause);
-        this.position = position;
+        add(position);
     }
 
     public ScriptParseException(Throwable cause) {
@@ -48,13 +44,6 @@ public class ScriptParseException extends ScriptException {
 
     public ScriptParseException(Throwable cause, Position position) {
         super(cause);
-        this.position = position;
-    }
-
-    @Override
-    public void printTraceBody(ScriptTracker.PrintProxy out, String prefix) {
-        out.print(prefix)
-                .print("\tat ")
-                .print(this.position);
+        add(position);
     }
 }

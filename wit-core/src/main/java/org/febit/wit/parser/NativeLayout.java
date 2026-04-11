@@ -18,9 +18,10 @@ package org.febit.wit.parser;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptParseException;
+import org.febit.wit.ir.Position;
 import org.febit.wit.parser.security.NativeSecurity;
 import org.febit.wit.parser.security.NoopNativeSecurity;
-import org.febit.wit.runtime.ast.Position;
+import org.febit.wit.parser.support.ReflectNativeFunctionFactory;
 
 @Accessors(fluent = true)
 @lombok.Builder(

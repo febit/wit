@@ -17,6 +17,7 @@ package org.febit.wit.runtime;
 
 import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.ir.flow.FlowState;
 import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)

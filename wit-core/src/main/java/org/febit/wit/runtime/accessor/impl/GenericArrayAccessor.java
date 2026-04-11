@@ -17,7 +17,7 @@ package org.febit.wit.runtime.accessor.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.ALU;
+import org.febit.wit.ir.support.ALU;
 import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.Setter;
 import org.jspecify.annotations.Nullable;

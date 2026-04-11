@@ -18,10 +18,10 @@ package org.febit.wit.parser.template;
 import org.febit.wit.Script;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.codec.Encoder;
+import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Statement;
+import org.febit.wit.ir.template.ByteArrayTemplateText;
 import org.febit.wit.parser.TemplateTextFactory;
-import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.template.ByteArrayTemplateText;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

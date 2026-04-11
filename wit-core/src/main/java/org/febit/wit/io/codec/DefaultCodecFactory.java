@@ -15,6 +15,8 @@
  */
 package org.febit.wit.io.codec;
 
+import org.febit.wit.io.CodecFactory;
+
 import java.nio.charset.Charset;
 
 public class DefaultCodecFactory implements CodecFactory {

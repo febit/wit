@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.extern.lib.cache.CachingModule;
-import org.febit.wit.extern.lib.cache.impl.SimpleCache;
+import org.febit.wit.extern.lib.cache.SimpleCache;
 import org.febit.wit.extern.lib.context.GlobalContextRegistry;
 import org.febit.wit.extern.lib.context.LocalContextRegistry;
 import org.febit.wit.extern.lib.std.TypesModule;

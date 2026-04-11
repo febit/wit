@@ -16,9 +16,9 @@
 package org.febit.wit.parser.template;
 
 import org.febit.wit.Script;
-import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.Statement;
-import org.febit.wit.runtime.ast.template.AdaptiveTemplateText;
+import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Statement;
+import org.febit.wit.ir.template.AdaptiveTemplateText;
 
 public class AdaptiveTemplateTextFactory extends ByteArrayTemplateTextFactory {
 

@@ -16,8 +16,8 @@
 package org.febit.wit.parser;
 
 import org.febit.wit.Script;
-import org.febit.wit.runtime.ast.Position;
-import org.febit.wit.runtime.ast.Statement;
+import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Statement;
 
 public interface TemplateTextFactory {
 
