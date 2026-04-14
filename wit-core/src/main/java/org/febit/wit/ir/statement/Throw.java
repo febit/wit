@@ -16,7 +16,7 @@
 package org.febit.wit.ir.statement;
 
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.exception.ScriptTracker;
+import org.febit.wit.exception.ScriptStackTrace;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
@@ -33,8 +33,8 @@ public record Throw(
     public Object execute(RuntimeContext context) {
         var ex = this.exception.execute(context);
         if (ex instanceof RuntimeException runtime) {
-            if (runtime instanceof ScriptTracker tracker) {
-                tracker.add(this);
+            if (runtime instanceof ScriptStackTrace trace) {
+                trace.add(this);
             }
             throw runtime;
         }

@@ -15,15 +15,15 @@
  */
 package org.febit.wit.ir.expr;
 
+import org.febit.wit.engine.WitFunction;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.exception.ScriptTracker;
+import org.febit.wit.exception.ScriptStackTrace;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.ExpressionArray;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.support.StatementUtils;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
-import org.febit.wit.runtime.WitFunction;
 import org.jspecify.annotations.Nullable;
 
 public record FunctionCall(
@@ -46,8 +46,8 @@ public record FunctionCall(
         try {
             return func.apply(context, paramsObj);
         } catch (Throwable ex) {
-            if (ex instanceof ScriptTracker tracker) {
-                tracker.add(this);
+            if (ex instanceof ScriptStackTrace trace) {
+                trace.add(this);
             }
             throw ex;
         }
@@ -70,8 +70,8 @@ public record FunctionCall(
         try {
             return constable.apply(paramsObj);
         } catch (Throwable ex) {
-            if (ex instanceof ScriptTracker tracker) {
-                tracker.add(this);
+            if (ex instanceof ScriptStackTrace trace) {
+                trace.add(this);
             }
             throw ex;
         }

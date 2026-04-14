@@ -18,7 +18,7 @@ package org.febit.wit.ir.statement;
 import org.febit.wit.ir.IBlock;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.StatementBatch;
-import org.febit.wit.ir.flow.FlowControl;
+import org.febit.wit.ir.flow.Jump;
 import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
 
@@ -28,21 +28,25 @@ import java.util.function.Consumer;
 public record Block(
         int scope,
         List<StatementBatch> body,
-        List<FlowControl> bubbledFlowControls,
+        List<Jump> jumps,
         Position position
 ) implements IBlock {
 
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {
-        context.variables().withScope(scope,
-                () -> context.visitBatches(body)
-        );
+        context.variables().withScope(scope, () -> {
+            var flow = context.flow();
+            var batches = this.body;
+            for (int i = 0, len = batches.size(); i < len && flow.isNoop(); i++) {
+                batches.get(i).execute(context);
+            }
+        });
         return null;
     }
 
     @Override
-    public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        bubbledFlowControls.forEach(collector);
+    public void collectJumps(Consumer<Jump> collector) {
+        jumps.forEach(collector);
     }
 }

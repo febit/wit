@@ -16,20 +16,20 @@
 package org.febit.wit.ir;
 
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.ir.flow.FlowControl;
-import org.febit.wit.ir.support.FlowControls;
+import org.febit.wit.ir.flow.Jump;
+import org.febit.wit.ir.support.Jumps;
 import org.febit.wit.runtime.RuntimeContext;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * A batch of statements, used for internal optimization, not for AST.
+ * A batch of statements, used for internal optimization, not for IR.
  * <p>
- * NOTICE: Except the last one, statements in batch should not have flow control.
+ * NOTICE: Except the last one, statements in batch should not have jumps.
  */
 @RequiredArgsConstructor(staticName = "of")
-public class StatementBatch implements WithFlowControl {
+public class StatementBatch implements JumpAware {
 
     private final Statement[] statements;
 
@@ -56,7 +56,7 @@ public class StatementBatch implements WithFlowControl {
     }
 
     @Override
-    public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        FlowControls.bubble(collector, statements);
+    public void collectJumps(Consumer<Jump> collector) {
+        Jumps.collect(collector, statements);
     }
 }

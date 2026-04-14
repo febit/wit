@@ -16,12 +16,12 @@
 package org.febit.wit.ir.loop;
 
 import org.febit.wit.ir.Expression;
+import org.febit.wit.ir.JumpAware;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.WithFlowControl;
 import org.febit.wit.ir.expr.FunctionLiteral;
-import org.febit.wit.ir.flow.FlowControl;
-import org.febit.wit.ir.support.FlowControls;
+import org.febit.wit.ir.flow.Jump;
+import org.febit.wit.ir.support.Jumps;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.iter.Iters;
 import org.febit.wit.runtime.iter.KeyIter;
@@ -39,7 +39,7 @@ public record ForMap(
         LoopBody body,
         @Nullable Statement elseBody,
         Position position
-) implements Statement, WithFlowControl {
+) implements Statement, JumpAware {
 
     @Override
     @Nullable
@@ -86,8 +86,8 @@ public record ForMap(
     }
 
     @Override
-    public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        this.body.bubbleFlowControls(collector);
-        FlowControls.bubble(collector, this.elseBody);
+    public void collectJumps(Consumer<Jump> collector) {
+        this.body.collectJumps(collector);
+        Jumps.collect(collector, this.elseBody);
     }
 }

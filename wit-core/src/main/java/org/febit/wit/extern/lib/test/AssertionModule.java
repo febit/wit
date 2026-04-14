@@ -19,9 +19,9 @@ import lombok.experimental.UtilityClass;
 import org.febit.wit.Script;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
+import org.febit.wit.engine.WitFunction;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
-import org.febit.wit.runtime.WitFunction;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Array;

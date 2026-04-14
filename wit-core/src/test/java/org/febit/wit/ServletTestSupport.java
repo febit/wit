@@ -38,7 +38,7 @@ import java.util.Map;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ServletTestSupport {
+public class ServletTestSupport {
 
     private static final Path WEBAPP_ROOT = Path.of("./src/test/jetty-webapp").toAbsolutePath();
 

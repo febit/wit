@@ -44,7 +44,7 @@ public class WitTestSupport {
 
     private static final String EXT_WIT = ".wit";
     private static final String EXT_WHTML = ".whtml";
-    private static final List<String> EXT_DEPUTIES = List.of(EXT_WIT, ".whtml", ".wit2");
+    private static final List<String> EXT_DEPUTIES = List.of(EXT_WIT, EXT_WHTML, ".wit2");
 
     @Getter
     @Accessors(fluent = true)

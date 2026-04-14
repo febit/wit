@@ -27,7 +27,7 @@ import java.nio.charset.Charset;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class AdaptiveTemplateText implements Statement {
+public class AdaptiveTemplateText implements Statement {
 
     private final char[] chars;
     private final byte[] encoded;

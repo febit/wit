@@ -17,7 +17,7 @@ package org.febit.wit.ir;
 
 import java.util.List;
 
-public interface IBlock extends Statement, WithFlowControl {
+public interface IBlock extends Statement, JumpAware {
 
     int scope();
 

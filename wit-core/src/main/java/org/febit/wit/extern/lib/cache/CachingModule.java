@@ -17,10 +17,10 @@ package org.febit.wit.extern.lib.cache;
 
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
+import org.febit.wit.engine.WitFunction;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
-import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.util.Args;
 import org.jspecify.annotations.Nullable;
 

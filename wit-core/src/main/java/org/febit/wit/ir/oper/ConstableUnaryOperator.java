@@ -18,7 +18,7 @@ package org.febit.wit.ir.oper;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.Position;
-import org.febit.wit.ir.expr.DirectValue;
+import org.febit.wit.ir.expr.ConstantValue;
 import org.febit.wit.ir.support.StatementUtils;
 import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
@@ -43,8 +43,8 @@ public record ConstableUnaryOperator(
 
     @Override
     public Expression optimize() {
-        if (StatementUtils.isImmutableDirectValue(target)) {
-            return new DirectValue(operator.apply(((DirectValue) target).value()), position);
+        if (StatementUtils.isImmutable(target)) {
+            return new ConstantValue(operator.apply(((ConstantValue) target).value()), position);
         }
         return this;
     }

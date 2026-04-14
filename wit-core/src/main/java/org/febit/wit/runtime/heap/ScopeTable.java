@@ -21,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.ObjIntConsumer;
 
 @RequiredArgsConstructor
-public final class ScopeTable {
+public class ScopeTable {
 
     private static final int NOT_FOUND = -1;
 

@@ -16,11 +16,11 @@
 package org.febit.wit.ir.statement;
 
 import org.febit.wit.ir.Expression;
+import org.febit.wit.ir.JumpAware;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.WithFlowControl;
-import org.febit.wit.ir.flow.FlowControl;
-import org.febit.wit.ir.support.FlowControls;
+import org.febit.wit.ir.flow.Jump;
+import org.febit.wit.ir.support.Jumps;
 import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
 
@@ -33,7 +33,7 @@ public record Switch(
         Map<Object, Branch> branches,
         @Nullable Branch defaultBranch,
         Position position
-) implements Statement, WithFlowControl {
+) implements Statement, JumpAware {
 
     @Override
     @Nullable
@@ -53,19 +53,19 @@ public record Switch(
     }
 
     @Override
-    public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        //XXX: May have duplicated controls caused by duplicated Branch
-        var filtered = (Consumer<FlowControl>) ctrl -> {
-            if (!ctrl.matchesLabel(this.label) || !ctrl.state().isBreak()) {
-                collector.accept(ctrl);
+    public void collectJumps(Consumer<Jump> collector) {
+        //XXX: May have duplicated jumps caused by duplicated Branch
+        var filtered = (Consumer<Jump>) jump -> {
+            if (!jump.matchesLabel(this.label) || !jump.state().isBreak()) {
+                collector.accept(jump);
             }
         };
 
         branches.values().forEach(entry ->
-                FlowControls.bubble(filtered, entry.body)
+                Jumps.collect(filtered, entry.body)
         );
         if (defaultBranch != null) {
-            FlowControls.bubble(filtered, defaultBranch.body);
+            Jumps.collect(filtered, defaultBranch.body);
         }
     }
 

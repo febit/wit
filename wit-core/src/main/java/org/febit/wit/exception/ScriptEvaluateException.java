@@ -17,7 +17,7 @@ package org.febit.wit.exception;
 
 import org.febit.wit.ir.Located;
 
-public class ScriptEvaluateException extends ScriptException implements ScriptTracker {
+public class ScriptEvaluateException extends ScriptException implements ScriptStackTrace {
 
     public ScriptEvaluateException(String message) {
         super(message);

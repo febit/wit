@@ -15,11 +15,11 @@
  */
 package org.febit.wit.ir.statement;
 
+import org.febit.wit.ir.JumpAware;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.WithFlowControl;
-import org.febit.wit.ir.flow.FlowControl;
-import org.febit.wit.ir.support.FlowControls;
+import org.febit.wit.ir.flow.Jump;
+import org.febit.wit.ir.support.Jumps;
 import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
 
@@ -31,7 +31,7 @@ public record TryCatchFinally(
         Statement catchBody,
         @Nullable Statement finallyBody,
         Position position
-) implements Statement, WithFlowControl {
+) implements Statement, JumpAware {
 
     @Override
     @Nullable
@@ -50,7 +50,7 @@ public record TryCatchFinally(
     }
 
     @Override
-    public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        FlowControls.bubble(collector, body, catchBody, finallyBody);
+    public void collectJumps(Consumer<Jump> collector) {
+        Jumps.collect(collector, body, catchBody, finallyBody);
     }
 }

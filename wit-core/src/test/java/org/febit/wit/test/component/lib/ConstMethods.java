@@ -15,8 +15,8 @@
  */
 package org.febit.wit.test.component.lib;
 
+import org.febit.wit.engine.WitFunction;
 import org.febit.wit.runtime.Undefined;
-import org.febit.wit.runtime.WitFunction;
 
 import java.util.Map;
 

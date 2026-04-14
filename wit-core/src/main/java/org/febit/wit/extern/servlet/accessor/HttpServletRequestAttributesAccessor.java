@@ -15,9 +15,9 @@
  */
 package org.febit.wit.extern.servlet.accessor;
 
+import org.febit.wit.engine.accessor.Getter;
+import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.extern.servlet.facade.HttpServletRequestAttributes;
-import org.febit.wit.runtime.accessor.Getter;
-import org.febit.wit.runtime.accessor.Setter;
 import org.jspecify.annotations.Nullable;
 
 public class HttpServletRequestAttributesAccessor

@@ -16,10 +16,10 @@
 package org.febit.wit.ir.loop;
 
 import org.febit.wit.ir.Expression;
+import org.febit.wit.ir.JumpAware;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.WithFlowControl;
-import org.febit.wit.ir.flow.FlowControl;
+import org.febit.wit.ir.flow.Jump;
 import org.febit.wit.ir.support.ALU;
 import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
@@ -31,7 +31,7 @@ public record While(
         Expression condition,
         LoopBody body,
         Position position
-) implements Statement, WithFlowControl {
+) implements Statement, JumpAware {
 
     @Override
     @Nullable
@@ -53,7 +53,7 @@ public record While(
     }
 
     @Override
-    public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        this.body.bubbleFlowControls(collector);
+    public void collectJumps(Consumer<Jump> collector) {
+        this.body.collectJumps(collector);
     }
 }

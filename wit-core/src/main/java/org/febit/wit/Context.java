@@ -15,8 +15,9 @@
  */
 package org.febit.wit;
 
+import org.febit.wit.engine.ExportedFunction;
+import org.febit.wit.engine.Heap;
 import org.febit.wit.exception.NoSuchFunctionException;
-import org.febit.wit.runtime.heap.Heap;
 
 /**
  * Runtime context.

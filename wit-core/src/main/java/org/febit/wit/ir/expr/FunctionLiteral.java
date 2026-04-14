@@ -24,7 +24,7 @@ import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.StatementBatch;
 import org.febit.wit.runtime.RuntimeContext;
-import org.febit.wit.runtime.function.ScriptFunction;
+import org.febit.wit.runtime.ScriptFunction;
 import org.febit.wit.runtime.heap.ScopeTable;
 import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
@@ -33,7 +33,7 @@ import java.util.List;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class FunctionLiteral implements Expression {
+public class FunctionLiteral implements Expression {
 
     private final int heapSize;
     private final List<ScopeTable> scopeTables;
@@ -72,9 +72,13 @@ public final class FunctionLiteral implements Expression {
                 invocationContext.local(),
                 declarationContext.breakpointHandler()
         );
+        var flow = context.flow();
+        var batches = this.body;
         try {
-            context.visitBatches(body);
-            return context.flow().returnAndReset();
+            for (int i = 0, len = batches.size(); i < len && flow.isNoop(); i++) {
+                batches.get(i).execute(context);
+            }
+            return flow.returned();
         } catch (Exception e) {
             var see = ScriptEvaluateException.from(e, this);
             if (invocationContext != declarationContext) {

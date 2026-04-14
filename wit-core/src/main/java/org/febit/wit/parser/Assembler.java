@@ -19,13 +19,14 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
 import org.febit.wit.Script;
+import org.febit.wit.engine.nativex.NativeAccess;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.ExpressionArray;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.ScriptIR;
 import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.expr.DirectValue;
+import org.febit.wit.ir.expr.ConstantValue;
 import org.febit.wit.ir.expr.NativeStaticFieldValue;
 import org.febit.wit.ir.expr.VariableHeapValue;
 import org.febit.wit.ir.statement.NoopStatement;
@@ -56,7 +57,7 @@ public class Assembler {
 
     @Getter
     private final TemplateTextFactory templateTextFactory;
-    private final NativeLayout nativeLayout;
+    private final NativeAccess nativeAccess;
     /**
      * Current source version.
      */
@@ -73,7 +74,7 @@ public class Assembler {
         this.script = script;
         this.features = wit.features();
         this.templateTextFactory = wit.templateTextFactory();
-        this.nativeLayout = wit.nativeLayout();
+        this.nativeAccess = wit.nativeAccess();
 
         this.varLayout = new VarLayout(wit);
         this.labelIndexMap.put(null, 0);
@@ -202,7 +203,7 @@ public class Assembler {
 
     public Expression createContextValue(int scopeOffset, String name, Position position) {
         var addr = varLayout.locate(name, scopeOffset, !Feature.LOOSE_VAR.isEnabled(this.features), position);
-        return Ast.value(addr, position);
+        return IR.value(addr, position);
     }
 
     public void assignConst(String name, Expression expr, Position position) {
@@ -217,11 +218,11 @@ public class Assembler {
         var clazz = toClass(rope, position);
 
         var path = clazz.getName() + '.' + fieldName;
-        if (!this.nativeLayout.security().allowed(path)) {
+        if (!this.nativeAccess.security().allowed(path)) {
             throw new ScriptParseException("Inaccessible native path: " + path, position);
         }
         if (ReservedNames.CLASS.equals(fieldName)) {
-            return new DirectValue(clazz, position);
+            return new ConstantValue(clazz, position);
         }
         final Field field;
         try {
@@ -237,7 +238,7 @@ public class Assembler {
             return new NativeStaticFieldValue(field, position);
         }
         try {
-            return new DirectValue(field.get(null), position);
+            return new ConstantValue(field.get(null), position);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             throw new ScriptParseException("Failed to get static field value: " + path, ex, position);
         }
@@ -251,15 +252,15 @@ public class Assembler {
         if (ClassUtils.isVoidType(classForCheck)) {
             throw new ScriptParseException("ComponentType must not void", pos);
         }
-        this.nativeLayout.securityCheck(classForCheck.getName() + ".[]", pos);
+        this.nativeAccess.securityCheck(classForCheck.getName() + ".[]", pos);
 
-        var function = this.nativeLayout.functions().array(componentType);
-        return new DirectValue(function, pos);
+        var function = this.nativeAccess.functions().array(componentType);
+        return new ConstantValue(function, pos);
     }
 
     public Expression createMethodNativeFunctionValue(
             Class<?> clazz, String methodName, @Nullable List<Class<?>> paramTypes, Position position) {
-        this.nativeLayout.securityCheck(clazz.getName() + '.' + methodName, position);
+        this.nativeAccess.securityCheck(clazz.getName() + '.' + methodName, position);
 
         Method method;
         try {
@@ -270,13 +271,13 @@ public class Assembler {
             throw new ScriptParseException(ex.getMessage(), ex, position);
         }
 
-        var func = this.nativeLayout.functions().method(method);
-        return new DirectValue(func, position);
+        var func = this.nativeAccess.functions().method(method);
+        return new ConstantValue(func, position);
     }
 
     public Expression createMethodNativeFunctionValue(
             Class<?> clazz, String methodName, Position position) {
-        this.nativeLayout.securityCheck(clazz.getName() + '.' + methodName, position);
+        this.nativeAccess.securityCheck(clazz.getName() + '.' + methodName, position);
 
         var methods = NativeMethods.find(clazz, methodName)
                 .filter(Modifiers::isPublic)
@@ -285,13 +286,13 @@ public class Assembler {
             throw new ScriptParseException("No such method: " + clazz.getName() + '#' + methodName, position);
         }
 
-        var func = this.nativeLayout.functions().method(methods);
-        return new DirectValue(func, position);
+        var func = this.nativeAccess.functions().method(methods);
+        return new ConstantValue(func, position);
     }
 
     public Expression createConstructorNativeFunctionValue(
             Class<?> clazz, @Nullable List<Class<?>> paramTypes, Position position) {
-        this.nativeLayout.securityCheck(clazz.getName() + '.' + ReservedNames.NEW, position);
+        this.nativeAccess.securityCheck(clazz.getName() + '.' + ReservedNames.NEW, position);
 
         Constructor<?> constructor;
         try {
@@ -301,17 +302,17 @@ public class Assembler {
         } catch (NoSuchMethodException | SecurityException ex) {
             throw new ScriptParseException(ex.getMessage(), ex, position);
         }
-        var func = this.nativeLayout.functions().constructor(constructor);
-        return new DirectValue(func, position);
+        var func = this.nativeAccess.functions().constructor(constructor);
+        return new ConstantValue(func, position);
     }
 
     public Expression createConstructorNativeFunctionValue(
             Class<?> clazz, Position position) {
-        this.nativeLayout.securityCheck(clazz.getName() + '.' + ReservedNames.NEW, position);
+        this.nativeAccess.securityCheck(clazz.getName() + '.' + ReservedNames.NEW, position);
 
         var constructors = clazz.getConstructors();
-        var func = this.nativeLayout.functions().constructor(List.of(constructors));
-        return new DirectValue(func, position);
+        var func = this.nativeAccess.functions().constructor(List.of(constructors));
+        return new ConstantValue(func, position);
     }
 
     public Expression createMethodReference(String ref, Position position) {
@@ -336,8 +337,8 @@ public class Assembler {
     }
 
     public ScriptIR buildScriptIR(List<Statement> list) {
-        var batches = Ast.batch(list, ctrl -> {
-            throw new ScriptParseException("Unhandled flow control: " + ctrl, ctrl.position());
+        var batches = IR.batch(list, jump -> {
+            throw new ScriptParseException("Unhandled control flow: " + jump, jump.position());
         });
         if (batches.size() != 1) {
             throw new IllegalStateException("Unexpected batches size: " + batches.size());

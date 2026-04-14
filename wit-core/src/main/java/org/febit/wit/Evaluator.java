@@ -21,11 +21,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.Tolerate;
+import org.febit.wit.engine.BreakpointHandler;
+import org.febit.wit.engine.Heap;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.out.DiscardOut;
-import org.febit.wit.runtime.BreakpointHandler;
 import org.febit.wit.runtime.heap.GenericHeap;
-import org.febit.wit.runtime.heap.Heap;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;

@@ -19,9 +19,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.febit.wit.parser.NativeFunctionFactory;
-import org.febit.wit.parser.support.ReflectNativeFunctionFactory;
-import org.febit.wit.runtime.WitFunction;
+import org.febit.wit.engine.WitFunction;
+import org.febit.wit.engine.nativex.NativeFunctionFactory;
+import org.febit.wit.engine.nativex.ReflectNativeFunctionFactory;
 import org.febit.wit.util.Modifiers;
 import org.febit.wit_shaded.asm.ClassWriter;
 import org.febit.wit_shaded.asm.Constants;
@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
 @RequiredArgsConstructor(staticName = "create")
 public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator {
 
-    private static final String[] FUNC_INTERFACES = {"org/febit/wit/runtime/WitFunction"};
+    private static final String[] FUNC_INTERFACES = {"org/febit/wit/engine/WitFunction"};
 
     @Getter
     private final NativeFunctionFactory delegate;

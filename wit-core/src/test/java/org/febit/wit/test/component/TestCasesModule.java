@@ -33,7 +33,7 @@ public class TestCasesModule implements WitModule {
     public void apply(Wit wit) {
 
         var heaps = wit.globals();
-        var functions = wit.nativeLayout().functions();
+        var functions = wit.nativeAccess().functions();
 
         // Static
         heaps.variables().set("MY_GLOBAL", "MY_GLOBAL");

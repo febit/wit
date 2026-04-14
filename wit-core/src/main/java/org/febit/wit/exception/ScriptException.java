@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Accessors(fluent = true)
-public abstract class ScriptException extends RuntimeException implements ScriptTracker {
+public abstract class ScriptException extends RuntimeException implements ScriptStackTrace {
 
     private final List<Located> locations = new ArrayList<>(8);
     @Getter

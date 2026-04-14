@@ -18,7 +18,7 @@ package org.febit.wit.ir.oper;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.Position;
-import org.febit.wit.ir.expr.DirectValue;
+import org.febit.wit.ir.expr.ConstantValue;
 import org.febit.wit.ir.support.StatementUtils;
 import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
@@ -47,12 +47,12 @@ public record ConstableBiOperator(
 
     @Override
     public Expression optimize() {
-        if (StatementUtils.isImmutableDirectValue(left)
-                && StatementUtils.isImmutableDirectValue(right)) {
-            return new DirectValue(
+        if (StatementUtils.isImmutable(left)
+                && StatementUtils.isImmutable(right)) {
+            return new ConstantValue(
                     operator.apply(
-                            ((DirectValue) left).value(),
-                            ((DirectValue) right).value()
+                            ((ConstantValue) left).value(),
+                            ((ConstantValue) right).value()
                     ),
                     position
             );

@@ -18,10 +18,10 @@ package org.febit.wit.parser.support;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Wit;
+import org.febit.wit.engine.GlobalHeaps;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.TextPosition;
-import org.febit.wit.runtime.heap.GlobalHeaps;
 import org.febit.wit.runtime.heap.ScopeTable;
 import org.jspecify.annotations.Nullable;
 
@@ -137,7 +137,7 @@ public class VarLayout {
             return VarAddress.ofHeap(globals.variables(), name);
         }
         if (globals.constants().has(name)) {
-            return VarAddress.ofDirect(globals.constants().get(name));
+            return VarAddress.ofConstant(globals.constants().get(name));
         }
 
         //failed
@@ -189,7 +189,7 @@ public class VarLayout {
                 return null;
             }
             if (slot < 0) {
-                return VarAddress.ofDirect(this.constMap.get(name));
+                return VarAddress.ofConstant(this.constMap.get(name));
             }
             return contextAddress(this.frameSeq, slot);
         }

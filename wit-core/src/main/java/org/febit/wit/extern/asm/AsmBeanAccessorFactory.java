@@ -17,12 +17,12 @@ package org.febit.wit.extern.asm;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.febit.wit.engine.accessor.AccessorFactory;
+import org.febit.wit.engine.accessor.Getter;
+import org.febit.wit.engine.accessor.Renderer;
+import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.exception.UncheckedException;
-import org.febit.wit.runtime.accessor.AccessorFactory;
-import org.febit.wit.runtime.accessor.Getter;
 import org.febit.wit.runtime.accessor.ReflectBeanAccessorFactory;
-import org.febit.wit.runtime.accessor.Renderer;
-import org.febit.wit.runtime.accessor.Setter;
 import org.febit.wit.util.ClassMap;
 import org.febit.wit.util.Modifiers;
 import org.febit.wit.util.bean.BeanProperties;

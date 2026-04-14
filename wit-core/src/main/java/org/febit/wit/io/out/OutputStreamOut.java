@@ -27,7 +27,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 @Accessors(fluent = true)
-public final class OutputStreamOut implements Out {
+public class OutputStreamOut implements Out {
 
     private final OutputStream output;
     private final Encoder encoder;

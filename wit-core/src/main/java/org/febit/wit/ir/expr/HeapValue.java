@@ -15,10 +15,10 @@
  */
 package org.febit.wit.ir.expr;
 
+import org.febit.wit.engine.Heap;
 import org.febit.wit.ir.AssignableExpression;
 import org.febit.wit.ir.Position;
 import org.febit.wit.runtime.RuntimeContext;
-import org.febit.wit.runtime.heap.Heap;
 import org.jspecify.annotations.Nullable;
 
 public record HeapValue(

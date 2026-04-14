@@ -17,6 +17,12 @@ package org.febit.wit.runtime.accessor;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.febit.wit.engine.accessor.Accessor;
+import org.febit.wit.engine.accessor.AccessorConsumer;
+import org.febit.wit.engine.accessor.AccessorFactory;
+import org.febit.wit.engine.accessor.Getter;
+import org.febit.wit.engine.accessor.Renderer;
+import org.febit.wit.engine.accessor.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +90,7 @@ public class CompositeAccessorFactory implements AccessorFactory {
 
         private AccessorFactory fallback = ReflectBeanAccessorFactory.get();
 
-        private boolean withPresets = true;
+        private boolean withBuiltIn = true;
 
         @Override
         public <T> void accept(Class<T> type, Accessor<? extends T> accessor) {
@@ -96,8 +102,8 @@ public class CompositeAccessorFactory implements AccessorFactory {
             return this;
         }
 
-        public Builder withPresets(boolean with) {
-            this.withPresets = with;
+        public Builder withBuiltIn(boolean with) {
+            this.withBuiltIn = with;
             return this;
         }
 
@@ -116,8 +122,8 @@ public class CompositeAccessorFactory implements AccessorFactory {
         }
 
         public CompositeAccessorFactory build() {
-            if (withPresets) {
-                PresetAccessors.registerAll(this::accessor);
+            if (withBuiltIn) {
+                BuiltInAccessors.registerAll(this::accessor);
             }
             return new CompositeAccessorFactory(
                     new TypeAccessors<>(List.copyOf(getters), fallback::getter),

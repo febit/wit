@@ -168,9 +168,9 @@ abstract class AbstractParser {
             lexer.setOffset(source);
             this.assembler.onParserStarted();
 
-            var ast = this.process(lexer).value;
-            Objects.requireNonNull(ast, "Parser result is null.");
-            return (ScriptIR) ast;
+            var ir = this.process(lexer).value;
+            Objects.requireNonNull(ir, "IR should not be null");
+            return (ScriptIR) ir;
         } catch (ScriptParseException e) {
             throw e;
         } catch (Exception e) {

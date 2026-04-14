@@ -19,7 +19,7 @@ import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.loop.ForMap;
 import org.febit.wit.ir.support.StatementUtils;
-import org.febit.wit.parser.Ast;
+import org.febit.wit.parser.IR;
 
 import java.util.Objects;
 
@@ -56,7 +56,7 @@ public class ForMapBuilder extends BaseForInBuilder {
         Objects.requireNonNull(collection);
 
         var collection = StatementUtils.optimize(this.collection);
-        var loopBody = Ast.loopBodyFromStatements(this.body, label());
+        var loopBody = IR.loopBodyFromStatements(this.body, label());
         return new ForMap(
                 scope(), collection, filter,
                 iterSlot, keySlot, valueSlot,

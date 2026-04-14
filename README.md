@@ -27,11 +27,33 @@ implementation 'org.febit.wit:wit-core:3.0.0-SNAPSHOT'
 
 ```java
 Wit wit = Wit.builder()
-    .loader(Loaders.fileSystem() ... )
+    // set DispatchLoader with multiple rules.
+    .loader(Loaders.dispatch()
+        // Load script from string content.
+        .rule("code:", Loaders.string().build())
+        // Load script from FileSystem with a specific root.
+        .rule("file:", Loaders.fileSystem()
+            .root("path/to/local/scripts")
+            // Enable caching for file system loader.
+            .cacheEnabled(true)
+            .build())
+        // ... add more rules if needed
+        .build())
     .build();
-Script script = wit.script("/demo.wit");
-script.eval(params, out);
+Script script = wit.script("""
+    code: echo "Hello Wit！";
+    """);
+script.
+
+eval(Vars.empty(),out);
 ```
+
++ What happens next:
+
+- `Wit.builder()` assembles the engine with a loader and extension points.
+- `wit.script(...)` resolves the script source and returns a `Script`.
+- On first use, the script is parsed into executable IR.
+- `script.eval(...)` runs that IR with your inputs and output target.
 
 ## Hello Wit
 

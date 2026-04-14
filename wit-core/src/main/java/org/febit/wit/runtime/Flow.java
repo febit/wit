@@ -17,7 +17,7 @@ package org.febit.wit.runtime;
 
 import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.ir.flow.FlowState;
+import org.febit.wit.ir.flow.JumpKind;
 import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
@@ -27,10 +27,10 @@ public class Flow {
      * Flow state.
      */
     @lombok.Getter
-    private FlowState state = FlowState.NOOP;
+    private JumpKind state = JumpKind.NOOP;
 
     /**
-     * Target label id, used by break/continue-controls, 0 if not specified.
+     * Target label id, used by break/continue-controls, 0 for any label.
      */
     private int target;
 
@@ -41,11 +41,11 @@ public class Flow {
     private Object returned;
 
     public boolean isNoop() {
-        return state == FlowState.NOOP;
+        return state == JumpKind.NOOP;
     }
 
     /**
-     * Check if given label is the target of current flow control.
+     * Check if given label is the target of current jump.
      *
      * @param label target label id
      * @return true if match
@@ -58,47 +58,47 @@ public class Flow {
     }
 
     /**
-     * Change to break control with given label.
+     * Change to break state with given label.
      *
      * @param label target label id
      */
     public void toBreak(int label) {
         this.target = label;
-        this.state = FlowState.BREAK;
+        this.state = JumpKind.BREAK;
     }
 
     /**
-     * Change to continue control with given label.
+     * Change to continue state with given label.
      *
      * @param label target label id
      */
     public void toContinue(int label) {
         this.target = label;
-        this.state = FlowState.CONTINUE;
+        this.state = JumpKind.CONTINUE;
     }
 
     /**
-     * Change to return control with given value.
+     * Change to return state with given value.
      *
      * @param value the returned.
      */
     public void toReturn(@Nullable Object value) {
         this.returned = value;
         this.target = 0;
-        this.state = FlowState.RETURN;
+        this.state = JumpKind.RETURN;
     }
 
     /**
-     * Reset to noop control.
+     * Reset to noop state.
      */
     public void reset() {
         this.returned = null;
         this.target = 0;
-        this.state = FlowState.NOOP;
+        this.state = JumpKind.NOOP;
     }
 
     /**
-     * Reset if current control is break and target label matches given label.
+     * Reset if current state is break and target label matches given label.
      *
      * @param label target label id
      */
@@ -109,21 +109,18 @@ public class Flow {
     }
 
     /**
-     * Get the returned value if current control is return, then reset to noop control.
+     * Get the returned value if current state is return.
      *
-     * @return the returned
-     * @throws ScriptEvaluateException if current control is not return or noop
+     * @return the returned value, or Undefined if current state is noop.
+     * @throws ScriptEvaluateException if current state is not return or noop
      */
     @Nullable
-    public Object returnAndReset() {
+    public Object returned() {
         return switch (this.state) {
-            case RETURN -> {
-                var ret = this.returned;
-                reset();
-                yield ret;
-            }
+            case RETURN -> this.returned;
             case NOOP -> Undefined.UNDEFINED;
-            default -> throw new ScriptEvaluateException("Flow control leaks when returning: " + this.state);
+            default -> throw new ScriptEvaluateException(
+                    "Invalid flow state, expected RETURN or NOOP but was " + this.state);
         };
     }
 

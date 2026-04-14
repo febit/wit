@@ -9,7 +9,7 @@ import org.febit.wit.ir.flow.*;
 import org.febit.wit.ir.include.*;
 import org.febit.wit.ir.statement.*;
 import org.febit.wit.ir.support.*;
-import org.febit.wit.parser.Ast.*;
+import org.febit.wit.parser.IR.*;
 import org.febit.wit.parser.support.*;
 
 import java.util.List;
@@ -147,12 +147,12 @@ statement       ::= expressionStatementAble:$ SEMICOLON
                     {: yield NoopStatement.INSTANCE; :}
 
                     |LRDEBUG:sym
-                    {: yield Ast.breakpointStatement(null, null, %sym.symbol%.pos); :}
+                    {: yield IR.breakpointStatement(null, null, %sym.symbol%.pos); :}
                     |LDEBUG:sym expression:mark COLON RDEBUG
-                    {: yield Ast.breakpointStatement(%mark%, null, %sym.symbol%.pos); :}
+                    {: yield IR.breakpointStatement(%mark%, null, %sym.symbol%.pos); :}
 
                     |expression:expr INTERPOLATION_END
-                    {: yield Ast.interpolation(%expr%); :}
+                    {: yield IR.interpolation(%expr%); :}
 
                     |block:$
 
@@ -178,7 +178,7 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     //RedirectOut
                     |block:stat EQGT:sym expression:expr SEMICOLON
-                    {: yield Ast.renderRedirect(%stat%, Ast.castToAssignable(%expr%), %sym.symbol%.pos); :}
+                    {: yield IR.renderRedirect(%stat%, IR.castToAssignable(%expr%), %sym.symbol%.pos); :}
 
                     //textStat
                     |TEXT_STATEMENT:sym
@@ -190,11 +190,11 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     //var
                     |VAR varPart[COMMA]:parts SEMICOLON
-                    {: yield Ast.statementList(%parts%, %parts.symbol%.pos); :}
+                    {: yield IR.statementList(%parts%, %parts.symbol%.pos); :}
 
                     //echoStat
                     |ECHO:sym expression:expr SEMICOLON
-                    {: yield Ast.echo(%expr%, %sym.symbol%.pos); :}
+                    {: yield IR.echo(%expr%, %sym.symbol%.pos); :}
 
                     //@import
                     |NATIVE_IMPORT:sym classPureName:nameRope SEMICOLON
@@ -210,7 +210,7 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     // Return
                     |RETURN:sym expression:expr? SEMICOLON
-                    {: yield Ast.returnWith(%expr%, %sym.symbol%.pos); :}
+                    {: yield IR.returnWith(%expr%, %sym.symbol%.pos); :}
 
                     // Import
                     |importPart1:builder SEMICOLON
@@ -220,7 +220,7 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     // Include
                     |INCLUDE:sym expression:expr newMapExpr:paramsExpr? SEMICOLON
-                    {: yield Ast.includeBuilder().withoutExport(true).script(assembler.script()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos).build(); :}
+                    {: yield IR.includeBuilder().withoutExport(true).script(assembler.script()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos).build(); :}
 
                     //funcStatement
                     |funcStatementHead:builder LBRACE statement[]:list? RBRACE
@@ -237,19 +237,19 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
 
 varAssign       ::= IDENTIFIER:ident EQ:sym (expression:$ | varAssign:$):expr
-                    {: yield Ast.assign(assembler.declareVarAndCreateContextValue(%ident%, %ident.symbol%.pos), %expr%, %sym.symbol%.pos); :}
+                    {: yield IR.assign(assembler.declareVarAndCreateContextValue(%ident%, %ident.symbol%.pos), %expr%, %sym.symbol%.pos); :}
                     ;
 
 varPart         ::= varAssign:$
                     | IDENTIFIER:ident
                     {: yield assembler.declareVar(%ident%, %ident.symbol%.pos); :}
                     | LBRACK IDENTIFIER[COMMA]:idents RBRACK EQ:sym expression:expr
-                    {: yield Ast.destructuringAssign(assembler.declareVarAndCreateContextValues(%idents%, %idents.symbol%.pos), %expr%, %sym.symbol%.pos); :}
+                    {: yield IR.destructuringAssign(assembler.declareVarAndCreateContextValues(%idents%, %idents.symbol%.pos), %expr%, %sym.symbol%.pos); :}
                     ;
 
 
 importPart1     ::= IMPORT:sym expression:expr newMapExpr:paramsExpr?
-                    {: yield Ast.includeBuilder().script(assembler.script()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos); :}
+                    {: yield IR.includeBuilder().script(assembler.script()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos); :}
                     ;
 
 
@@ -265,25 +265,25 @@ importPart2     ::= importPart1:builder IDENTIFIER:ident
 
 
 block           ::= (LBRACE {: assembler.varLayout().shiftScope(); yield null; :}) statement[]:list? RBRACE
-                    {: yield Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos); :}
+                    {: yield IR.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos); :}
                     ;
 
 
 tryPart         ::= (TRY LBRACE {: assembler.varLayout().shiftScope(); yield null; :}):sym statement[]:list? RBRACE
-                    {: yield Ast.tryCatchBuilder().body(Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)).pos(%sym.symbol%.pos); :}
+                    {: yield IR.tryCatchBuilder().body(IR.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)).pos(%sym.symbol%.pos); :}
                     ;
 
 catchPart       ::= tryPart:builder (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: assembler.varLayout().shiftScope(); yield assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos); :}):varSlot statement[]:list? RBRACE
-                    {: yield (%builder%).exceptionVarSlot((Integer)(%varSlot%)).catchBody(Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)); :}
+                    {: yield (%builder%).exceptionVarSlot((Integer)(%varSlot%)).catchBody(IR.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)); :}
                     ;
 
 finallyPart     ::= (tryPart:$ | catchPart:$):builder (FINALLY LBRACE {: assembler.varLayout().shiftScope(); yield null; :}) statement[]:list? RBRACE
-                    {: yield (%builder%).finallyBody(Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)); :}
+                    {: yield (%builder%).finallyBody(IR.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)); :}
                     ;
 
 
 ifStat          ::= IF:sym LPAREN expression:expr RPAREN block:body (ELSE block:$ | ELSE ifStat:$):elseBody?
-                    {: yield Ast.ifStatement(%expr%, %body%, (Statement) (%elseBody%), %sym.symbol%.pos); :}
+                    {: yield IR.ifStatement(%expr%, %body%, (Statement) (%elseBody%), %sym.symbol%.pos); :}
                     ;
 
 forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
@@ -325,19 +325,19 @@ forInPart       ::= (forInHead:$ | lambdaForHead:$):builder LBRACE statement[]:l
 
 
 whileBuilder       ::= WHILE:sym LPAREN expression:condition RPAREN block:body
-                    {: yield Ast.whileBuilder().kind(WhileKind.WHILE).condition(%condition%).body(%body%).pos(%sym.symbol%.pos); :}
+                    {: yield IR.whileBuilder().kind(WhileKind.WHILE).condition(%condition%).body(%body%).pos(%sym.symbol%.pos); :}
                     |DO:sym block:body WHILE LPAREN expression:condition RPAREN SEMICOLON
-                    {: yield Ast.whileBuilder().kind(WhileKind.DO_WHILE).condition(%condition%).body(%body%).pos(%sym.symbol%.pos); :}
+                    {: yield IR.whileBuilder().kind(WhileKind.DO_WHILE).condition(%condition%).body(%body%).pos(%sym.symbol%.pos); :}
                     ;
 
 
 caseBlockStat   ::= {: assembler.varLayout().shiftScope(); yield null; :} statement[]:list?
-                    {: yield Ast.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos); :}
+                    {: yield IR.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos); :}
                     ;
 
 
 switchPart0     ::=
-                    {: yield Ast.switchBuilder(); :}
+                    {: yield IR.switchBuilder(); :}
                     | CASE:sym MINUS:negative? DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:builder
                     {: yield (%builder%).branch((%negative% == null)?(%key%):ALU.negative(%key%), %body%, %sym.symbol%.pos); :}
                     | DEFAULT:sym COLON caseBlockStat:body switchPart0:builder
@@ -356,26 +356,26 @@ switchPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE TEXT_S
 expressionStatementAble ::=
                     //assignOp =
                     expression:lexpr EQ:sym expression:expr
-                    {: yield Ast.assign(Ast.castToAssignable(%lexpr%), %expr%, %sym.symbol%.pos); :}
+                    {: yield IR.assign(IR.castToAssignable(%lexpr%), %expr%, %sym.symbol%.pos); :}
 
                     |LBRACK expression[COMMA]:list COMMA? RBRACK EQ:sym expression:expr
-                    {: yield Ast.destructuringAssign(Ast.toExpressionArray(%list%), %expr%, %sym.symbol%.pos); :}
+                    {: yield IR.destructuringAssign(IR.toExpressionArray(%list%), %expr%, %sym.symbol%.pos); :}
 
                     // Increase ++
                     |PLUSPLUS:sym expression:expr
-                    {: yield Ast.increaseAndGet(Ast.castToAssignable(%expr%), %sym.symbol%.pos); :}
+                    {: yield IR.increaseAndGet(IR.castToAssignable(%expr%), %sym.symbol%.pos); :}
                     |expression:expr PLUSPLUS:sym
-                    {: yield Ast.getAndIncrease(Ast.castToAssignable(%expr%), %sym.symbol%.pos); :}
+                    {: yield IR.getAndIncrease(IR.castToAssignable(%expr%), %sym.symbol%.pos); :}
 
                     // Decrease --
                     |MINUSMINUS:sym expression:expr
-                    {: yield Ast.decreaseAndGet(Ast.castToAssignable(%expr%), %sym.symbol%.pos); :}
+                    {: yield IR.decreaseAndGet(IR.castToAssignable(%expr%), %sym.symbol%.pos); :}
                     |expression:expr MINUSMINUS:sym
-                    {: yield Ast.getAndDecrease(Ast.castToAssignable(%expr%), %sym.symbol%.pos); :}
+                    {: yield IR.getAndDecrease(IR.castToAssignable(%expr%), %sym.symbol%.pos); :}
 
                     //selfOp
                     |expression:lexpr SELFEQ:sym expression:rexpr
-                    {: yield Ast.selfAssign(%lexpr%, %rexpr%, %sym%, %sym.symbol%.pos); :}
+                    {: yield IR.selfAssign(%lexpr%, %rexpr%, %sym%, %sym.symbol%.pos); :}
 
                     //
                     |funcExecuteExpr:$
@@ -385,100 +385,100 @@ expressionStatementAble ::=
 expression      ::= expressionStatementAble:$
 
                     |LDEBUG:sym expression:expr RDEBUG
-                    {: yield Ast.breakpointExpr(null, %expr%, %sym.symbol%.pos); :}
+                    {: yield IR.breakpointExpr(null, %expr%, %sym.symbol%.pos); :}
 
                     |LDEBUG:sym expression:mark COLON expression:expr RDEBUG
-                    {: yield Ast.breakpointExpr(%mark%, %expr%, %sym.symbol%.pos); :}
+                    {: yield IR.breakpointExpr(%mark%, %expr%, %sym.symbol%.pos); :}
 
                     //bitNotOp ~
                     |COMP:sym expression:expr
-                    {: yield Ast.operator(%expr%, %sym.symbol%); :}
+                    {: yield IR.operator(%expr%, %sym.symbol%); :}
 
                     //negativeOp  -
                     |MINUS:sym expression:expr %prec UMINUS
-                    {: yield Ast.operator(%expr%, %sym.symbol%); :}
+                    {: yield IR.operator(%expr%, %sym.symbol%); :}
 
                     //notOp !
                     |NOT:sym expression:expr
-                    {: yield Ast.operator(%expr%, %sym.symbol%); :}
+                    {: yield IR.operator(%expr%, %sym.symbol%); :}
 
                     // Fixed property .
                     |expression:expr DOT:sym IDENTIFIER:ident
-                    {: yield Ast.property(%expr%, %ident%, %sym.symbol%.pos); :}
+                    {: yield IR.property(%expr%, %ident%, %sym.symbol%.pos); :}
 
                     // property []
                     |expression:lexpr LBRACK:sym expression:rexpr RBRACK
-                    {: yield Ast.property(%lexpr%, %rexpr%, %sym.symbol%.pos); :}
+                    {: yield IR.property(%lexpr%, %rexpr%, %sym.symbol%.pos); :}
 
                     /***********  binaries *************/
                     //-- binary:  *
                     |expression:lexpr MULTI:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  /
                     |expression:lexpr DIV:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  %
                     |expression:lexpr MOD:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  +
                     |expression:lexpr PLUS:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  -
                     |expression:lexpr MINUS:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  <<
                     |expression:lexpr LSHIFT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  >>
                     |expression:lexpr RSHIFT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  >>>
                     |expression:lexpr URSHIFT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  <
                     |expression:lexpr LT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  <=
                     |expression:lexpr LTEQ:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  >
                     |expression:lexpr GT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  >=
                     |expression:lexpr GTEQ:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  ==
                     |expression:lexpr EQEQ:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  !=
                     |expression:lexpr NOTEQ:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  &
                     |expression:lexpr AND:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  |
                     |expression:lexpr OR:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  ^
                     |expression:lexpr XOR:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  &&
                     |expression:lexpr ANDAND:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  ..
                     |expression:lexpr DOTDOT:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
                     //-- binary:  ||
                     |expression:lexpr OROR:sym expression:rexpr
-                    {: yield Ast.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
+                    {: yield IR.binaryOperator(%lexpr%, %rexpr%, %sym.symbol%); :}
 
                     // ? :
                     |expression:ternary QUESTION:sym expression:lexpr COLON expression:rexpr
-                    {: yield Ast.ternary(%ternary%, %lexpr%, %rexpr%, %sym.symbol%.pos); :}
+                    {: yield IR.ternary(%ternary%, %lexpr%, %rexpr%, %sym.symbol%.pos); :}
 
                     //
                     |DIRECT_VALUE:sym
-                    {: yield Ast.directValue(%sym.symbol%); :}
+                    {: yield IR.constant(%sym.symbol%); :}
 
                     // ()
                     |LPAREN expression:$ RPAREN
@@ -489,9 +489,9 @@ expression      ::= expressionStatementAble:$
 
                     //arrayValue
                     |LBRACK:sym RBRACK
-                    {: yield Ast.emptyArray(%sym.symbol%.pos); :}
+                    {: yield IR.emptyArray(%sym.symbol%.pos); :}
                     |LBRACK:sym expression[COMMA]:list COMMA? RBRACK
-                    {: yield Ast.newArray(%list%, %sym.symbol%.pos); :}
+                    {: yield IR.newArray(%list%, %sym.symbol%.pos); :}
 
                     //NativeNewArrayDeclareExpression
                     |NATIVE:sym LBRACK RBRACK javaClass:javaClass
@@ -520,7 +520,7 @@ expression      ::= expressionStatementAble:$
 
                     // script string
                     |templateStringBuilder:builder TEMPLATE_STRING_END:end
-                    {: yield (%builder%).segment(Ast.directValue(%end.symbol%)).build(); :}
+                    {: yield (%builder%).segment(IR.constant(%end.symbol%)).build(); :}
                     ;
 
 // super
@@ -546,31 +546,31 @@ contextValueExpr    ::= IDENTIFIER:ident
 // map {key:expr, ...}
 
 newMapEntry         ::= DIRECT_VALUE:key COLON expression:expr
-                        {: yield Ast.entryOfNewMap(Ast.directValue(%key.symbol%), %expr%); :}
+                        {: yield IR.entryOfNewMap(IR.constant(%key.symbol%), %expr%); :}
                         |MINUS:sym DIRECT_VALUE:key COLON expression:expr
-                        {: yield Ast.entryOfNewMap(Ast.directValue(ALU.negative(%key%), %key.symbol%.pos), %expr%); :}
+                        {: yield IR.entryOfNewMap(IR.constant(ALU.negative(%key%), %key.symbol%.pos), %expr%); :}
                         |IDENTIFIER:ident
-                        {: yield Ast.entryOfNewMap(Ast.directValue(%ident.symbol%), assembler.createContextValue(0, %ident%, %ident.symbol%.pos)); :}
+                        {: yield IR.entryOfNewMap(IR.constant(%ident.symbol%), assembler.createContextValue(0, %ident%, %ident.symbol%.pos)); :}
                         |IDENTIFIER:ident COLON expression:expr
-                        {: yield Ast.entryOfNewMap(Ast.directValue(%ident.symbol%), %expr%); :}
+                        {: yield IR.entryOfNewMap(IR.constant(%ident.symbol%), %expr%); :}
                         // |IDENTIFIER:ident mapPropertyFuncHead:builder LBRACE statement[]:list? RBRACE
-                        // {: yield Ast.entryOfNewMap(Ast.directValue(%ident.symbol%), (%builder%).build(%list%)); :}
+                        // {: yield IR.entryOfNewMap(IR.constant(%ident.symbol%), (%builder%).build(%list%)); :}
                         |LBRACK expression:key RBRACK COLON expression:expr
-                        {: yield Ast.entryOfNewMap(%key%, %expr%); :}
+                        {: yield IR.entryOfNewMap(%key%, %expr%); :}
                         ;
 
 
 newMapExpr          ::= LBRACE:sym RBRACE
-                        {: yield Ast.newMap(List.of(), %sym.symbol%.pos); :}
+                        {: yield IR.newMap(List.of(), %sym.symbol%.pos); :}
                         |LBRACE:sym newMapEntry[COMMA]:entries COMMA? RBRACE
-                        {: yield Ast.newMap(%entries%, %sym.symbol%.pos); :}
+                        {: yield IR.newMap(%entries%, %sym.symbol%.pos); :}
                         ;
 
 
 templateStringBuilder  ::= TEMPLATE_STRING_START:sym
-                            {: yield Ast.templateStringBuilder().pos(%sym.symbol%.pos); :}
+                            {: yield IR.templateStringBuilder().pos(%sym.symbol%.pos); :}
                             | templateStringBuilder:builder TEMPLATE_STRING_INTERPOLATION_START:start expression:segment TEMPLATE_STRING_INTERPOLATION_END
-                            {: yield (%builder%).segment(Ast.directValue(%start.symbol%)).segment(%segment%); :}
+                            {: yield (%builder%).segment(IR.constant(%start.symbol%)).segment(%segment%); :}
                             ;
 
 /* function  */
@@ -594,13 +594,13 @@ funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
                         ;
 
 funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
-                        {: yield Ast.functionCall(%funcExpr%, ExpressionArray.ofEmpty(), %funcExpr.symbol%.pos); :}
+                        {: yield IR.functionCall(%funcExpr%, ExpressionArray.ofEmpty(), %funcExpr.symbol%.pos); :}
                         |expression:funcExpr LPAREN expression[COMMA]:list COMMA? RPAREN
-                        {: yield Ast.functionCall(%funcExpr%, Ast.toExpressionArray(%list%), %funcExpr.symbol%.pos); :}
+                        {: yield IR.functionCall(%funcExpr%, IR.toExpressionArray(%list%), %funcExpr.symbol%.pos); :}
                         |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN RPAREN
-                        {: yield Ast.dynamicNativeMethodCall(%param0%, %ident%, ExpressionArray.ofEmpty(), %ident.symbol%.pos); :}
+                        {: yield IR.dynamicNativeInvocationCall(%param0%, %ident%, ExpressionArray.ofEmpty(), %ident.symbol%.pos); :}
                         |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expression[COMMA]:list COMMA? RPAREN
-                        {: yield Ast.dynamicNativeMethodCall(%param0%, %ident%, Ast.toExpressionArray(%list%), %ident.symbol%.pos); :}
+                        {: yield IR.dynamicNativeInvocationCall(%param0%, %ident%, IR.toExpressionArray(%list%), %ident.symbol%.pos); :}
                         ;
 
 

@@ -28,7 +28,7 @@ import java.util.Map;
  * Immutable prefix tree (trie) for path matching with custom separators.
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public final class PathTrie {
+public class PathTrie {
 
     private static final Segment[] EMPTY_SEGMENTS = {};
 

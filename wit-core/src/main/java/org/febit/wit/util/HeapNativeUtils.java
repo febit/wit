@@ -16,9 +16,9 @@
 package org.febit.wit.util;
 
 import lombok.experimental.UtilityClass;
+import org.febit.wit.engine.Heap;
+import org.febit.wit.engine.nativex.NativeFunctionFactory;
 import org.febit.wit.exception.UncheckedException;
-import org.febit.wit.parser.NativeFunctionFactory;
-import org.febit.wit.runtime.heap.Heap;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

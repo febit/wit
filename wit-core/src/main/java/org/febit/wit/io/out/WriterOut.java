@@ -27,7 +27,7 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 
 @Accessors(fluent = true)
-public final class WriterOut implements Out {
+public class WriterOut implements Out {
 
     private final Writer writer;
     @Getter

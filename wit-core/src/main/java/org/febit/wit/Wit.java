@@ -19,17 +19,17 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+import org.febit.wit.engine.GlobalHeaps;
+import org.febit.wit.engine.ScriptImpl;
+import org.febit.wit.engine.accessor.AccessorFactory;
+import org.febit.wit.engine.nativex.NativeAccess;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.io.CodecFactory;
 import org.febit.wit.io.Loader;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.out.OutputStreamOut;
 import org.febit.wit.io.out.WriterOut;
-import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.parser.TemplateTextFactory;
-import org.febit.wit.runtime.ScriptImpl;
-import org.febit.wit.runtime.accessor.AccessorFactory;
-import org.febit.wit.runtime.heap.GlobalHeaps;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
@@ -73,7 +73,7 @@ public class Wit {
     @Getter
     private final CodecFactory codecFactory;
     @Getter
-    private final NativeLayout nativeLayout;
+    private final NativeAccess nativeAccess;
 
     public static WitBuilder builder() {
         return new WitBuilder();

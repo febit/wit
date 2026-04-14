@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 @RequiredArgsConstructor(staticName = "of")
-public final class MapKeyIter<K, V> implements KeyIter {
+public class MapKeyIter<K, V> implements KeyIter {
 
     private final Cursor cursor = new Cursor();
     private final Iterator<Map.Entry<K, V>> iterator;

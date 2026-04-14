@@ -20,7 +20,7 @@ import org.febit.wit.ir.TextPosition;
 import org.jspecify.annotations.Nullable;
 
 @RequiredArgsConstructor
-public final class Token {
+public class Token {
 
     public final int kind;
     public final TextPosition pos;

@@ -15,18 +15,18 @@
  */
 package org.febit.wit;
 
+import org.febit.wit.engine.accessor.Getter;
+import org.febit.wit.engine.accessor.Setter;
+import org.febit.wit.engine.nativex.NativeAccess;
 import org.febit.wit.extern.asm.AsmBeanAccessor;
 import org.febit.wit.extern.asm.AsmBeanAccessorFactory;
 import org.febit.wit.io.CodecFactory;
 import org.febit.wit.io.Loader;
 import org.febit.wit.io.codec.DefaultCodecFactory;
-import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.parser.template.AdaptiveTemplateTextFactory;
 import org.febit.wit.runtime.accessor.CachingAccessorFactory;
 import org.febit.wit.runtime.accessor.CompositeAccessorFactory;
-import org.febit.wit.runtime.accessor.Getter;
-import org.febit.wit.runtime.accessor.Setter;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -57,7 +57,7 @@ class WitBuilderTest {
         assertInstanceOf(CachingAccessorFactory.class, wit.accessors());
         assertInstanceOf(DefaultCodecFactory.class, wit.codecFactory());
         assertInstanceOf(AdaptiveTemplateTextFactory.class, wit.templateTextFactory());
-        assertInstanceOf(NativeLayout.class, wit.nativeLayout());
+        assertInstanceOf(NativeAccess.class, wit.nativeAccess());
 
         assertTrue(wit.predefinedVars().isEmpty());
         assertEquals(StandardCharsets.UTF_8, wit.charset());
@@ -114,12 +114,12 @@ class WitBuilderTest {
         var loader = mock(Loader.class);
         var templateTextFactory = mock(TemplateTextFactory.class);
         var codecFactory = mock(CodecFactory.class);
-        var nativeLayout = mock(NativeLayout.class);
+        var nativeAccess = mock(NativeAccess.class);
 
         var wit = new WitBuilder()
                 .loader(loader)
                 .codecFactory(codecFactory)
-                .nativeLayout(nativeLayout)
+                .nativeAccess(nativeAccess)
                 .templateTextFactory(templateTextFactory)
                 .charset(StandardCharsets.UTF_16BE)
                 .predefinedVars("a", "b")
@@ -130,7 +130,7 @@ class WitBuilderTest {
 
         assertSame(loader, wit.loader());
         assertSame(codecFactory, wit.codecFactory());
-        assertSame(nativeLayout, wit.nativeLayout());
+        assertSame(nativeAccess, wit.nativeAccess());
         assertSame(templateTextFactory, wit.templateTextFactory());
 
         assertEquals(StandardCharsets.UTF_16BE, wit.charset());

@@ -18,11 +18,11 @@ package org.febit.wit.extern.lib.tld;
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Wit;
 import org.febit.wit.WitModule;
+import org.febit.wit.engine.WitFunction;
+import org.febit.wit.engine.nativex.NativeAccess;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.exception.UncheckedException;
 import org.febit.wit.ir.TextPosition;
-import org.febit.wit.parser.NativeLayout;
-import org.febit.wit.runtime.WitFunction;
 import org.febit.wit.util.ClassUtils;
 import org.febit.wit.util.PathUtils;
 
@@ -48,7 +48,7 @@ public class TldModule implements WitModule {
     @Override
     public void apply(Wit wit) {
         var heaps = wit.globals();
-        var nativeLayout = wit.nativeLayout();
+        var nativeAccess = wit.nativeAccess();
 
         log.info("Load TLD file: {}", path);
         var input = ClassUtils.loader()
@@ -66,15 +66,15 @@ public class TldModule implements WitModule {
         for (var func : functions) {
             heaps.constants().set(
                     this.prefix + func.name(),
-                    createFunction(nativeLayout, func)
+                    createFunction(nativeAccess, func)
             );
         }
     }
 
-    protected WitFunction createFunction(NativeLayout nativeLayout, TldFunction func) {
+    protected WitFunction createFunction(NativeAccess nativeAccess, TldFunction func) {
 
         if (checkAccess) {
-            nativeLayout.securityCheck(
+            nativeAccess.securityCheck(
                     func.declaredClass() + '.' + func.methodName(),
                     TextPosition.UNKNOWN
             );
@@ -93,6 +93,6 @@ public class TldModule implements WitModule {
             throw new ScriptParseException(ex.getMessage(), ex, TextPosition.UNKNOWN);
         }
 
-        return nativeLayout.functions().method(method);
+        return nativeAccess.functions().method(method);
     }
 }

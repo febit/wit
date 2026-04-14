@@ -26,7 +26,7 @@ import org.febit.wit.runtime.iter.Iters;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class DestructuringAssign implements Expression {
+public class DestructuringAssign implements Expression {
 
     private final AssignableExpression[] targets;
     private final Expression source;

@@ -17,6 +17,7 @@ package org.febit.wit.runtime.heap;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.febit.wit.engine.Heap;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.jspecify.annotations.Nullable;
 

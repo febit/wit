@@ -19,16 +19,16 @@ import lombok.experimental.UtilityClass;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.expr.DirectValue;
+import org.febit.wit.ir.expr.ConstantValue;
 import org.febit.wit.ir.statement.NoopStatement;
 import org.jspecify.annotations.Nullable;
 
 @UtilityClass
 public class StatementUtils {
 
-    public static boolean isImmutableDirectValue(Expression expr) {
-        return (expr instanceof DirectValue direct)
-                && ALU.isKnownBaseImmutable(direct.value());
+    public static boolean isImmutable(Expression expr) {
+        return (expr instanceof ConstantValue constant)
+                && ALU.isKnownBaseImmutable(constant.value());
     }
 
     @Nullable

@@ -17,6 +17,10 @@ package org.febit.wit.runtime.accessor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+import org.febit.wit.engine.accessor.AccessorFactory;
+import org.febit.wit.engine.accessor.Getter;
+import org.febit.wit.engine.accessor.Renderer;
+import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.util.ClassMap;
 
 @Accessors(fluent = true)

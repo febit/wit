@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class CharArrayTemplateText implements Statement {
+public class CharArrayTemplateText implements Statement {
 
     private final char[] chars;
     @Getter

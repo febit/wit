@@ -18,7 +18,7 @@ package org.febit.wit.extern.lib.test;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Script;
-import org.febit.wit.exception.ScriptTracker;
+import org.febit.wit.exception.ScriptStackTrace;
 import org.febit.wit.ir.Located;
 
 import java.io.PrintStream;
@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Accessors(fluent = true)
-public class WitAssertionError extends AssertionError implements ScriptTracker {
+public class WitAssertionError extends AssertionError implements ScriptStackTrace {
 
     private final List<Located> locations = new ArrayList<>(8);
 

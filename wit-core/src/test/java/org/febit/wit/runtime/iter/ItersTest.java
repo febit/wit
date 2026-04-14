@@ -56,7 +56,7 @@ class ItersTest {
 
         assertInstanceOf(EnumerationIter.class, Iters.ofIter(new Vector<>(List.of("a", "b")).elements(), statement));
 
-        var desc = IntDescIter.of(1, 2);
+        var desc = CountDownIter.of(1, 2);
         assertSame(desc, Iters.ofIter(desc, statement));
 
         assertThrows(ScriptEvaluateException.class, () -> Iters.ofIter(123, statement));

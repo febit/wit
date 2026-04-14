@@ -19,7 +19,7 @@ import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.loop.ForIn;
 import org.febit.wit.ir.support.StatementUtils;
-import org.febit.wit.parser.Ast;
+import org.febit.wit.parser.IR;
 
 import java.util.Objects;
 
@@ -46,7 +46,7 @@ public class ForInBuilder extends BaseForInBuilder {
         Objects.requireNonNull(this.collection);
 
         var collection = StatementUtils.optimize(this.collection);
-        var loopBody = Ast.loopBodyFromStatements(this.body, label());
+        var loopBody = IR.loopBodyFromStatements(this.body, label());
         return new ForIn(
                 scope(), collection, filter,
                 iterSlot, itemSlot,

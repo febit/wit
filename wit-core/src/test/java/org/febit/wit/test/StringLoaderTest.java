@@ -43,4 +43,14 @@ class StringLoaderTest {
                 .eval(Vars.empty(), writer);
         assertEquals("Hello Wit！", writer.toString());
     }
+
+    @Test
+    void testTextBlock() throws NoSuchSourceException {
+        var writer = new StringWriter();
+        script("""
+                code: echo "Hello Wit！";
+                """)
+                .eval(Vars.empty(), writer);
+        assertEquals("Hello Wit！", writer.toString());
+    }
 }

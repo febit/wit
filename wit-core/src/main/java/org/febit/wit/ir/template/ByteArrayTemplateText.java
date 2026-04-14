@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public final class ByteArrayTemplateText implements Statement {
+public class ByteArrayTemplateText implements Statement {
 
     private final byte[] bytes;
     @Getter

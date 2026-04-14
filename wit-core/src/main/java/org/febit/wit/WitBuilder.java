@@ -19,16 +19,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.febit.wit.engine.accessor.Accessor;
+import org.febit.wit.engine.nativex.NativeAccess;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.io.CodecFactory;
 import org.febit.wit.io.Loader;
 import org.febit.wit.io.codec.DefaultCodecFactory;
 import org.febit.wit.io.out.DiscardOut;
-import org.febit.wit.parser.NativeLayout;
 import org.febit.wit.parser.ReservedNames;
 import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.parser.template.AdaptiveTemplateTextFactory;
-import org.febit.wit.runtime.accessor.Accessor;
 import org.febit.wit.runtime.accessor.CompositeAccessorFactory;
 import org.jspecify.annotations.Nullable;
 
@@ -71,7 +71,7 @@ public class WitBuilder {
     @Getter
     @Setter
     @Nullable
-    private NativeLayout nativeLayout;
+    private NativeAccess nativeAccess;
     @Getter
     @Setter
     @Nullable
@@ -151,7 +151,7 @@ public class WitBuilder {
                 .accessors(accessors)
                 .charset(nvl(charset, StandardCharsets.UTF_8))
                 .codecFactory(nvl(codecFactory, DefaultCodecFactory::new))
-                .nativeLayout(nvl(nativeLayout, NativeLayout::ofDefault))
+                .nativeAccess(nvl(nativeAccess, NativeAccess::ofDefault))
                 .templateTextFactory(nvl(templateTextFactory, AdaptiveTemplateTextFactory::new))
                 .build();
 

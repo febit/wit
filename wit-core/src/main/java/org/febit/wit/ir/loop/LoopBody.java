@@ -15,13 +15,13 @@
  */
 package org.febit.wit.ir.loop;
 
-import org.febit.wit.ir.WithFlowControl;
+import org.febit.wit.ir.JumpAware;
 import org.febit.wit.runtime.RuntimeContext;
 
-public interface LoopBody extends WithFlowControl {
+public interface LoopBody extends JumpAware {
 
     /**
-     * Execute loop body, handle flow control.
+     * Execute loop body, handle flow control jumps.
      *
      * @param context execution context
      * @return true if loop should interrupt, false if should continue to next iteration

@@ -16,12 +16,12 @@
 package org.febit.wit.ir.statement;
 
 import org.febit.wit.ir.Expression;
+import org.febit.wit.ir.JumpAware;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.WithFlowControl;
-import org.febit.wit.ir.flow.FlowControl;
+import org.febit.wit.ir.flow.Jump;
 import org.febit.wit.ir.support.ALU;
-import org.febit.wit.ir.support.FlowControls;
+import org.febit.wit.ir.support.Jumps;
 import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
 
@@ -32,7 +32,7 @@ public record IfElse(
         Statement then,
         Statement elseBody,
         Position position
-) implements Statement, WithFlowControl {
+) implements Statement, JumpAware {
 
     @Override
     @Nullable
@@ -42,7 +42,7 @@ public record IfElse(
     }
 
     @Override
-    public void bubbleFlowControls(Consumer<FlowControl> collector) {
-        FlowControls.bubble(collector, then, elseBody);
+    public void collectJumps(Consumer<Jump> collector) {
+        Jumps.collect(collector, then, elseBody);
     }
 }

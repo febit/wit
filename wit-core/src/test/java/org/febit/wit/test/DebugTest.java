@@ -35,7 +35,7 @@ class DebugTest {
         var counter = new AtomicInteger(0);
 
         script.evaluator()
-                .breakpointHandler((mark, context, statement, result) -> {
+                .breakpointHandler((mark, context, located, result) -> {
                     marks.add(mark);
                     counter.incrementAndGet();
                 })

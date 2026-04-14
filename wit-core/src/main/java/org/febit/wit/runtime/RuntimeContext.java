@@ -17,27 +17,27 @@ package org.febit.wit.runtime;
 
 import lombok.experimental.Accessors;
 import org.febit.wit.Context;
-import org.febit.wit.ExportedFunction;
 import org.febit.wit.Feature;
 import org.febit.wit.Script;
 import org.febit.wit.Vars;
 import org.febit.wit.Wit;
+import org.febit.wit.engine.BreakpointHandler;
+import org.febit.wit.engine.ExportedFunction;
+import org.febit.wit.engine.Heap;
+import org.febit.wit.engine.WitFunction;
+import org.febit.wit.engine.accessor.AccessorFactory;
+import org.febit.wit.engine.accessor.Getter;
+import org.febit.wit.engine.accessor.Renderer;
+import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.exception.NoSuchFunctionException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.out.DiscardOut;
-import org.febit.wit.ir.StatementBatch;
-import org.febit.wit.runtime.accessor.AccessorFactory;
-import org.febit.wit.runtime.accessor.Getter;
-import org.febit.wit.runtime.accessor.Renderer;
-import org.febit.wit.runtime.accessor.Setter;
-import org.febit.wit.runtime.heap.Heap;
 import org.febit.wit.runtime.heap.VariableHeap;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -101,13 +101,6 @@ public final class RuntimeContext implements Context {
 
     public boolean isEnabled(Feature feature) {
         return feature.isEnabled(this.features);
-    }
-
-    public void visitBatches(List<StatementBatch> batches) {
-        var fl = this.flow();
-        for (int i = 0, len = batches.size(); i < len && fl.isNoop(); i++) {
-            batches.get(i).execute(this);
-        }
     }
 
     /**

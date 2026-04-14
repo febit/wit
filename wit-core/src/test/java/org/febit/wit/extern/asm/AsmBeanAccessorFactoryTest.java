@@ -18,8 +18,8 @@ package org.febit.wit.extern.asm;
 import lombok.Getter;
 import lombok.Setter;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.accessor.impl.ReflectBeanAccessor;
-import org.febit.wit.runtime.accessor.impl.ToStringRenderer;
+import org.febit.wit.runtime.accessor.ReflectBeanAccessor;
+import org.febit.wit.runtime.accessor.ToStringRenderer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

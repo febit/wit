@@ -17,7 +17,7 @@ package org.febit.wit.ir.oper;
 
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.Position;
-import org.febit.wit.ir.expr.DirectValue;
+import org.febit.wit.ir.expr.ConstantValue;
 import org.febit.wit.ir.support.ALU;
 import org.febit.wit.ir.support.StatementUtils;
 import org.febit.wit.runtime.RuntimeContext;
@@ -40,15 +40,15 @@ public record And(
 
     @Override
     public Expression optimize() {
-        if (!StatementUtils.isImmutableDirectValue(left)) {
+        if (!StatementUtils.isImmutable(left)) {
             return this;
         }
-        if (StatementUtils.isImmutableDirectValue(right)) {
-            return new DirectValue(
-                    ALU.and(((DirectValue) left).value(), ((DirectValue) right).value()),
+        if (StatementUtils.isImmutable(right)) {
+            return new ConstantValue(
+                    ALU.and(((ConstantValue) left).value(), ((ConstantValue) right).value()),
                     position);
         } else {
-            return ALU.not(((DirectValue) left).value())
+            return ALU.not(((ConstantValue) left).value())
                     ? left : right;
         }
     }

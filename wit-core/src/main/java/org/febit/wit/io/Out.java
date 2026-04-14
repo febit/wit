@@ -19,9 +19,9 @@ import java.nio.charset.Charset;
 
 public interface Out {
 
-    boolean preferBytes();
-
     Charset charset();
+
+    boolean preferBytes();
 
     void write(byte[] bytes, int offset, int length);
 

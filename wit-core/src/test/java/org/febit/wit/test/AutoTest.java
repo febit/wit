@@ -22,9 +22,9 @@ import org.febit.wit.WitTestSupport;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.extern.lib.test.AssertionModule;
-import org.febit.wit.ir.Statement;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.expr.BreakpointExpr;
-import org.febit.wit.ir.expr.DirectValue;
+import org.febit.wit.ir.expr.ConstantValue;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.util.ClassUtils;
 import org.jspecify.annotations.Nullable;
@@ -108,27 +108,27 @@ class AutoTest {
     private void handleBreakpoint(
             @Nullable Object label,
             RuntimeContext context,
-            Statement statement,
+            Located located,
             @Nullable Object result
     ) {
         breakpointCounter.increment();
-        var innerExpr = statement instanceof BreakpointExpr
-                ? ((BreakpointExpr) statement).supervised()
+        var innerExpr = located instanceof BreakpointExpr
+                ? ((BreakpointExpr) located).supervised()
                 : null;
 
-        if ("assert:DirectValue".equals(label)) {
-            if (!(innerExpr instanceof DirectValue)) {
-                throw new ScriptEvaluateException("Required DirectValue, at {}"
-                        + statement.position(), statement);
+        if ("assert:ConstantValue".equals(label)) {
+            if (!(innerExpr instanceof ConstantValue)) {
+                throw new ScriptEvaluateException("ConstantValue expected, at "
+                        + located.position(), located);
             }
-        } else if ("assert:NotDirectValue".equals(label)) {
-            if (innerExpr instanceof DirectValue) {
-                throw new ScriptEvaluateException("Required No-DirectValue, at "
-                        + statement.position(), statement);
+        } else if ("assert:NotConstantValue".equals(label)) {
+            if (innerExpr instanceof ConstantValue) {
+                throw new ScriptEvaluateException("Not ConstantValue expected, at "
+                        + located.position(), located);
             }
         } else {
             throw new ScriptEvaluateException("Not handled break point: " + label + ", at "
-                    + statement.position(), statement);
+                    + located.position(), located);
         }
     }
 

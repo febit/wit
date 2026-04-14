@@ -16,13 +16,13 @@
 package org.febit.wit;
 
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+import org.febit.wit.engine.BreakpointHandler;
+import org.febit.wit.engine.Heap;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.Source;
 import org.febit.wit.io.out.DiscardOut;
-import org.febit.wit.runtime.BreakpointHandler;
-import org.febit.wit.runtime.heap.Heap;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;

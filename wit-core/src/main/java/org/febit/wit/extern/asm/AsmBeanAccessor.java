@@ -15,8 +15,8 @@
  */
 package org.febit.wit.extern.asm;
 
-import org.febit.wit.runtime.accessor.Getter;
-import org.febit.wit.runtime.accessor.Setter;
+import org.febit.wit.engine.accessor.Getter;
+import org.febit.wit.engine.accessor.Setter;
 
 public interface AsmBeanAccessor extends Getter<Object>, Setter<Object> {
 }

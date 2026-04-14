@@ -23,7 +23,7 @@ import org.febit.wit.ir.expr.FunctionLiteral;
 import org.febit.wit.ir.expr.VariableHeapValue;
 import org.febit.wit.ir.flow.Return;
 import org.febit.wit.ir.oper.Assign;
-import org.febit.wit.parser.Ast;
+import org.febit.wit.parser.IR;
 import org.febit.wit.parser.ReservedNames;
 import org.jspecify.annotations.Nullable;
 
@@ -114,10 +114,10 @@ public class FunctionLiteralBuilder {
         int heapSize = varLayout.slotSize();
         varLayout.unshiftFrame();
 
-        var batches = Ast.batch(list, ctrl -> {
-            if (!ctrl.state().isReturn()) {
-                throw new ScriptParseException(
-                        "flow control leaks from function body: " + ctrl.state(), ctrl.position());
+        var batches = IR.batch(list, jump -> {
+            if (!jump.state().isReturn()) {
+                throw new ScriptParseException("Unhandled control flow in function literal: "
+                        + jump.state(), jump.position());
             }
         });
 

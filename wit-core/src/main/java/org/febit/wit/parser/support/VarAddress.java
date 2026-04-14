@@ -15,7 +15,7 @@
  */
 package org.febit.wit.parser.support;
 
-import org.febit.wit.runtime.heap.Heap;
+import org.febit.wit.engine.Heap;
 import org.jspecify.annotations.Nullable;
 
 public record VarAddress(
@@ -30,7 +30,7 @@ public record VarAddress(
     public enum Kind {
         VAR,
         FRAME_VAR,
-        DIRECT,
+        CONSTANT,
         HEAP,
         ;
     }
@@ -47,8 +47,8 @@ public record VarAddress(
         return new VarAddress(Kind.HEAP, -1, -1, heap, name, null);
     }
 
-    static VarAddress ofDirect(@Nullable Object value) {
-        return new VarAddress(Kind.DIRECT, -1, -1, null, null, value);
+    static VarAddress ofConstant(@Nullable Object value) {
+        return new VarAddress(Kind.CONSTANT, -1, -1, null, null, value);
     }
 
 }

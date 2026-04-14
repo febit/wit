@@ -16,8 +16,10 @@
 package org.febit.wit.runtime.accessor;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.runtime.accessor.impl.ReflectBeanAccessor;
-import org.febit.wit.runtime.accessor.impl.ToStringRenderer;
+import org.febit.wit.engine.accessor.AccessorFactory;
+import org.febit.wit.engine.accessor.Getter;
+import org.febit.wit.engine.accessor.Renderer;
+import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.util.ClassMap;
 
 public class ReflectBeanAccessorFactory implements AccessorFactory {

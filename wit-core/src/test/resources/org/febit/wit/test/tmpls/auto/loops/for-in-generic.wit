@@ -1,14 +1,14 @@
 {
-    var step = 3..6;
-    assertEquals(-1, step.index);
-    assertTrue(step.hasNext);
-    for(i : step){
+    var range = 3..6;
+    assertEquals(-1, range.index);
+    assertTrue(range.hasNext);
+    for(i : range){
         //empty block
     }else{
         //empty block
     }
-    assertFalse(step.hasNext);
-    assertEquals(3, step.index);
+    assertFalse(range.hasNext);
+    assertEquals(3, range.index);
 }
 {
     var s = "";

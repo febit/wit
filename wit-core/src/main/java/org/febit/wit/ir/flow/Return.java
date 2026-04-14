@@ -16,9 +16,9 @@
 package org.febit.wit.ir.flow;
 
 import org.febit.wit.ir.Expression;
+import org.febit.wit.ir.JumpAware;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.WithFlowControl;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
 import org.jspecify.annotations.Nullable;
@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 public record Return(
         @Nullable Expression value,
         Position position
-) implements Statement, WithFlowControl {
+) implements Statement, JumpAware {
 
     @Override
     @Nullable
@@ -41,9 +41,9 @@ public record Return(
     }
 
     @Override
-    public void bubbleFlowControls(Consumer<FlowControl> collector) {
+    public void collectJumps(Consumer<Jump> collector) {
         collector.accept(
-                new FlowControl(0, FlowState.RETURN, position)
+                new Jump(0, JumpKind.RETURN, position)
         );
     }
 }
