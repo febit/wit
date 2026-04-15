@@ -52,7 +52,6 @@
     @import org.febit.wit.test.component.lib.StaticFields;
 
     var f1 = native StaticFields.field1;
-
     var f2 = native StaticFields.field2;
 
     assertEquals("field1", f1);

@@ -1,5 +1,7 @@
 [versions]
 hierynomus-license = '0.16.1'
+jmh = '1.37'
+jmh-plugin = '0.7.2'
 
 febit-commons = '4.0.1'
 febit-devkit = '1.6.0'
@@ -15,6 +17,8 @@ jakarta-servlet-api= { module = 'jakarta.servlet:jakarta.servlet-api', version.r
 zerofs = { module = 'io.roastedroot:zerofs', version.ref = 'zerofs' }
 jetty-bom = { module = 'org.eclipse.jetty:jetty-bom', version.ref = 'jetty' }
 jetty-ee11-bom = { module = 'org.eclipse.jetty.ee11:jetty-ee11-bom', version.ref = 'jetty' }
+jmh-core = { module = 'org.openjdk.jmh:jmh-core', version.ref = 'jmh' }
+jmh-generator = { module = 'org.openjdk.jmh:jmh-generator-annprocess', version.ref = 'jmh' }
 
 [plugins]
 febit-bom = { id = 'org.febit.standard-bom', version.ref = 'febit-devkit' }
@@ -23,3 +27,4 @@ febit-java = { id = 'org.febit.standard-java', version.ref = 'febit-devkit' }
 febit-maven-publish = { id = 'org.febit.standard-maven-publish', version.ref = 'febit-devkit' }
 license = { id = 'com.github.hierynomus.license', version.ref = 'hierynomus-license' }
 xbib-jflex = { id = "org.xbib.gradle.plugin.jflex", version.ref = "xbib-jflex" }
+jmh = { id = 'me.champeau.jmh', version.ref = 'jmh-plugin' }

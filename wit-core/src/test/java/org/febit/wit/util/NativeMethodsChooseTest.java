@@ -15,8 +15,10 @@
  */
 package org.febit.wit.util;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,10 +26,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.febit.wit.util.NativeMethods.chooseConstructor;
 import static org.junit.jupiter.api.Assertions.*;
 
-class NativeMethodsTest {
+class NativeMethodsChooseTest {
 
     List<Method> fooMethods;
     List<Method> mixMethods;
@@ -50,49 +51,55 @@ class NativeMethodsTest {
         }
     }
 
+    static <T extends Executable> T choose(
+            List<T> executables, boolean mix, @Nullable Class<?>... args) {
+        return NativeMethods.choose(executables,
+                mix ? NativeMethods::distanceMix : NativeMethods::distance,
+                args, 0);
+    }
+
     @Test
     void test() {
 
         // let's go
         assertEquals(methodPool.get("fooEmpty"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{}));
+                choose(fooMethods, false));
         assertEquals(methodPool.get("fooString"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{String.class}));
+                choose(fooMethods, false, String.class));
         assertEquals(methodPool.get("fooObject"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{StringBuilder.class}));
+                choose(fooMethods, false, StringBuilder.class));
         assertEquals(methodPool.get("fooInt"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{Integer.class}));
+                choose(fooMethods, false, Integer.class));
 
         assertEquals(methodPool.get("fooList"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{List.class}));
+                choose(fooMethods, false, List.class));
         assertEquals(methodPool.get("fooArrayList"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{ArrayList.class}));
+                choose(fooMethods, false, ArrayList.class));
         assertEquals(methodPool.get("fooList"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{LinkedList.class}));
+                choose(fooMethods, false, LinkedList.class));
 
         assertEquals(methodPool.get("fooArrayListObject"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{ArrayList.class, Integer.class}));
+                choose(fooMethods, false, ArrayList.class, Integer.class));
         assertEquals(methodPool.get("fooListObject"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{List.class, Integer.class}));
+                choose(fooMethods, false, List.class, Integer.class));
 
         assertEquals(methodPool.get("fooObjectListList"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{ArrayList.class, ArrayList.class, ArrayList.class}));
+                choose(fooMethods, false, ArrayList.class, ArrayList.class, ArrayList.class));
 
         // nullable
         assertEquals(methodPool.get("fooArrayListObject"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{ArrayList.class, null}));
+                choose(fooMethods, false, ArrayList.class, null));
         assertEquals(methodPool.get("fooArrayListObjectObject"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{ArrayList.class, null, null}));
+                choose(fooMethods, false, ArrayList.class, null, null));
         assertEquals(methodPool.get("fooArrayListObjectObject"),
-                NativeMethods.chooseMethod(fooMethods, new Class[]{ArrayList.class, null, ArrayList.class}));
+                choose(fooMethods, false, ArrayList.class, null, ArrayList.class));
 
-        assertNull(NativeMethods.chooseMethod(List.of(
-                        methodPool.get("fooEmpty"),
-                        methodPool.get("fooObject"),
-                        methodPool.get("fooString")
-                ),
-                new Class[]{String.class, null}
-        ));
+        List<Method> executables = List.of(
+                methodPool.get("fooEmpty"),
+                methodPool.get("fooObject"),
+                methodPool.get("fooString")
+        );
+        assertNull(choose(executables, false, String.class, null));
 
         // AmbiguousMethodException
         // assertEquals(methodPool.get("fooListString"), matchFoo(ArrayList.class, String.class));
@@ -102,53 +109,53 @@ class NativeMethodsTest {
     void testMix() {
 
         assertEquals(methodPool.get("mixStaticEmpty"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{}, true));
+                choose(mixMethods, true));
         assertEquals(methodPool.get("mixEmpty"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{Methods.class}, true));
+                choose(mixMethods, true, Methods.class));
 
         assertEquals(methodPool.get("mixStaticString"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{Methods.class, String.class}, true));
+                choose(mixMethods, true, Methods.class, String.class));
 
         assertEquals(methodPool.get("mixObject"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{Methods.class, StringBuilder.class}, true));
+                choose(mixMethods, true, Methods.class, StringBuilder.class));
         assertEquals(methodPool.get("mixInt"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{Methods.class, Integer.class}, true));
+                choose(mixMethods, true, Methods.class, Integer.class));
 
         assertEquals(methodPool.get("mixStaticList"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{Methods.class, List.class}, true));
+                choose(mixMethods, true, Methods.class, List.class));
         assertEquals(methodPool.get("mixArrayList"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{Methods.class, ArrayList.class}, true));
+                choose(mixMethods, true, Methods.class, ArrayList.class));
         assertEquals(methodPool.get("mixStaticList"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{Methods.class, LinkedList.class}, true));
+                choose(mixMethods, true, Methods.class, LinkedList.class));
 
         assertEquals(methodPool.get("mixArrayListInteger"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{Methods.class, ArrayList.class, Integer.class}, true));
+                choose(mixMethods, true, Methods.class, ArrayList.class, Integer.class));
         assertEquals(methodPool.get("mixStaticArrayListString"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{Methods.class, ArrayList.class, String.class}, true));
+                choose(mixMethods, true, Methods.class, ArrayList.class, String.class));
         assertEquals(methodPool.get("mixStaticListInteger"),
-                NativeMethods.chooseMethod(mixMethods, new Class[]{Methods.class, LinkedList.class, Integer.class}, true));
+                choose(mixMethods, true, Methods.class, LinkedList.class, Integer.class));
     }
 
     @Test
     void testChooseConstructor() throws NoSuchMethodException {
         var constructors = List.of(Methods.class.getConstructors());
 
-        assertEquals(Methods.class.getConstructor(), chooseConstructor(constructors, new Class[]{}));
-        assertEquals(Methods.class.getConstructor(int.class), chooseConstructor(constructors, new Class[]{Integer.class}));
-        assertEquals(Methods.class.getConstructor(int.class), chooseConstructor(constructors, new Class[]{int.class}));
-        assertEquals(Methods.class.getConstructor(Object.class), chooseConstructor(constructors, new Class[]{String.class}));
-        assertEquals(Methods.class.getConstructor(List.class), chooseConstructor(constructors, new Class[]{List.class}));
-        assertEquals(Methods.class.getConstructor(List.class), chooseConstructor(constructors, new Class[]{LinkedList.class}));
-        assertEquals(Methods.class.getConstructor(ArrayList.class), chooseConstructor(constructors, new Class[]{ArrayList.class}));
-        assertNull(chooseConstructor(constructors, new Class[]{ArrayList.class, Boolean.class}));
+        assertEquals(Methods.class.getConstructor(), choose(constructors, false));
+        assertEquals(Methods.class.getConstructor(int.class), choose(constructors, false, Integer.class));
+        assertEquals(Methods.class.getConstructor(int.class), choose(constructors, false, int.class));
+        assertEquals(Methods.class.getConstructor(Object.class), choose(constructors, false, String.class));
+        assertEquals(Methods.class.getConstructor(List.class), choose(constructors, false, List.class));
+        assertEquals(Methods.class.getConstructor(List.class), choose(constructors, false, LinkedList.class));
+        assertEquals(Methods.class.getConstructor(ArrayList.class), choose(constructors, false, ArrayList.class));
+        assertNull(choose(constructors, false, ArrayList.class, Boolean.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class, String.class),
-                chooseConstructor(constructors, new Class[]{ArrayList.class, String.class}));
+                choose(constructors, false, ArrayList.class, String.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class, String.class),
-                chooseConstructor(constructors, new Class[]{ArrayList.class, String.class}));
+                choose(constructors, false, ArrayList.class, String.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class, Integer.class),
-                chooseConstructor(constructors, new Class[]{ArrayList.class, Integer.class}));
+                choose(constructors, false, ArrayList.class, Integer.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class, Integer.class),
-                chooseConstructor(constructors, new Class[]{ArrayList.class, int.class}));
+                choose(constructors, false, ArrayList.class, int.class));
     }
 
     @SuppressWarnings({

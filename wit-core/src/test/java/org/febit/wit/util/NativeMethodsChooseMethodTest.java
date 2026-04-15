@@ -16,8 +16,10 @@
 package org.febit.wit.util;
 
 import org.febit.wit.exception.AmbiguousMethodException;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Executable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,122 +27,124 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.febit.wit.util.NativeMethods.chooseMethod;
 import static org.febit.wit.util.NativeMethods.find;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NativeMethodsChooseMethodTest {
 
+    static <T extends Executable> T choose(
+            List<T> executables, boolean mix, @Nullable Class<?>... args) {
+        return NativeMethods.choose(executables,
+                mix ? NativeMethods::distanceMix : NativeMethods::distance,
+                args, 0);
+    }
+
     @Test
     void arraysFill() throws NoSuchMethodException {
-        var methods = find(Arrays.class, "fill")
-                .toList();
+        var methods = find(Arrays.class, "fill").toList();
 
         assertEquals(
                 Arrays.class.getMethod("fill", int[].class, int.class),
-                chooseMethod(methods, new Class<?>[]{int[].class, int.class})
+                choose(methods, false, int[].class, int.class)
         );
         assertEquals(
                 Arrays.class.getMethod("fill", int[].class, int.class),
-                chooseMethod(methods, new Class<?>[]{int[].class, int.class}, true)
+                choose(methods, true, int[].class, int.class)
         );
 
         assertEquals(
                 Arrays.class.getMethod("fill", long[].class, long.class),
-                chooseMethod(methods, new Class<?>[]{long[].class, long.class})
+                choose(methods, false, long[].class, long.class)
         );
         assertEquals(
                 Arrays.class.getMethod("fill", long[].class, long.class),
-                chooseMethod(methods, new Class<?>[]{long[].class, long.class}, true)
+                choose(methods, true, long[].class, long.class)
         );
 
         assertEquals(
                 Arrays.class.getMethod("fill", long[].class, int.class, int.class, long.class),
-                chooseMethod(methods, new Class<?>[]{long[].class, int.class})
+                choose(methods, false, long[].class, int.class)
         );
         assertEquals(
                 Arrays.class.getMethod("fill", long[].class, int.class, int.class, long.class),
-                chooseMethod(methods, new Class<?>[]{long[].class, int.class}, true)
+                choose(methods, true, long[].class, int.class)
         );
 
         assertEquals(
                 Arrays.class.getMethod("fill", Object[].class, int.class, int.class, Object.class),
-                chooseMethod(methods, new Class<?>[]{Object[].class, int.class, int.class, Object.class})
+                choose(methods, false, Object[].class, int.class, int.class, Object.class)
         );
         assertEquals(
                 Arrays.class.getMethod("fill", Object[].class, int.class, int.class, Object.class),
-                chooseMethod(methods, new Class<?>[]{Object[].class, int.class, int.class, Object.class}, true)
+                choose(methods, true, Object[].class, int.class, int.class, Object.class)
         );
     }
 
     @Test
     void multi() throws NoSuchMethodException {
-        var methods = find(Foo.class, "multi")
-                .toList();
+        var methods = find(Foo.class, "multi").toList();
 
         assertEquals(
                 Foo.class.getMethod("multi", Integer.class, Number.class),
-                chooseMethod(methods, new Class<?>[]{Foo.class, Integer.class, Number.class}, true)
+                choose(methods, true, Foo.class, Integer.class, Number.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("multi", Integer.class, Object.class),
-                chooseMethod(methods, new Class<?>[]{Foo.class, Integer.class, Object.class}, true)
+                choose(methods, true, Foo.class, Integer.class, Object.class)
         );
         assertEquals(
                 Foo.class.getMethod("multi", Integer.class, Object.class),
-                chooseMethod(methods, new Class<?>[]{Foo.class, Integer.class, String.class}, true)
+                choose(methods, true, Foo.class, Integer.class, String.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("multi", Integer.class, Number.class),
-                chooseMethod(methods, new Class<?>[]{Foo.class, Integer.class, Integer.class}, true)
+                choose(methods, true, Foo.class, Integer.class, Integer.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("multi", Foo.class, Number.class, Long.class),
-                chooseMethod(methods, new Class<?>[]{Foo.class, Number.class, Long.class}, true)
+                choose(methods, true, Foo.class, Number.class, Long.class)
         );
     }
 
     @Test
     void ambiguous() throws NoSuchMethodException {
-        var methods = find(Foo.class, "ambiguous")
-                .toList();
+        var methods = find(Foo.class, "ambiguous").toList();
 
         assertEquals(
                 Foo.class.getMethod("ambiguous", Collection.class),
-                chooseMethod(methods, new Class<?>[]{Collection.class}, true)
+                choose(methods, true, Collection.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("ambiguous", List.class),
-                chooseMethod(methods, new Class<?>[]{List.class}, true)
+                choose(methods, true, List.class)
         );
         assertEquals(
                 Foo.class.getMethod("ambiguous", AbstractList.class),
-                chooseMethod(methods, new Class<?>[]{AbstractList.class}, true)
+                choose(methods, true, AbstractList.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("ambiguous", Collection.class),
-                chooseMethod(methods, new Class<?>[]{Set.class}, true)
+                choose(methods, true, Set.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("ambiguous", AbstractList.class),
-                chooseMethod(methods, new Class<?>[]{ArrayList.class}, true)
+                choose(methods, true, ArrayList.class)
         );
 
     }
 
     @Test
     void cannotResolvedAmbiguous() {
-        var methods = find(Foo.class, "cannotResolved")
-                .toList();
+        var methods = find(Foo.class, "cannotResolved").toList();
 
         assertThrows(AmbiguousMethodException.class,
-                () -> chooseMethod(methods, new Class<?>[]{Foo.class}, true)
+                () -> choose(methods, true, Foo.class)
         );
     }
 

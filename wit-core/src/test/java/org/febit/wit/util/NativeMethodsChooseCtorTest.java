@@ -16,8 +16,10 @@
 package org.febit.wit.util;
 
 import org.febit.wit.exception.AmbiguousMethodException;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Executable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,32 +30,37 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NativeMethodsChooseCtorTest {
 
+    static <T extends Executable> T choose(
+            List<T> executables, @Nullable Class<?>... args) {
+        return NativeMethods.choose(executables, NativeMethods::distance, args, 0);
+    }
+
     @Test
     void ambiguous() throws NoSuchMethodException {
         var ctors = List.of(Foo.class.getConstructors());
 
         assertEquals(
                 Foo.class.getConstructor(Collection.class),
-                NativeMethods.chooseConstructor(ctors, new Class<?>[]{Collection.class})
+                choose(ctors, Collection.class)
         );
 
         assertEquals(
                 Foo.class.getConstructor(List.class),
-                NativeMethods.chooseConstructor(ctors, new Class<?>[]{List.class})
+                choose(ctors, List.class)
         );
         assertEquals(
                 Foo.class.getConstructor(AbstractList.class),
-                NativeMethods.chooseConstructor(ctors, new Class<?>[]{AbstractList.class})
+                choose(ctors, AbstractList.class)
         );
 
         assertEquals(
                 Foo.class.getConstructor(Collection.class),
-                NativeMethods.chooseConstructor(ctors, new Class<?>[]{Set.class})
+                choose(ctors, Set.class)
         );
 
         assertEquals(
                 Foo.class.getConstructor(AbstractList.class),
-                NativeMethods.chooseConstructor(ctors, new Class<?>[]{ArrayList.class})
+                choose(ctors, ArrayList.class)
         );
     }
 
@@ -61,7 +68,7 @@ class NativeMethodsChooseCtorTest {
     void cannotResolved() {
         var ctors = List.of(Foo.class.getConstructors());
         assertThrows(AmbiguousMethodException.class, () ->
-                NativeMethods.chooseConstructor(ctors, new Class<?>[]{Integer.class, Integer.class})
+                choose(ctors, Integer.class, Integer.class)
         );
     }
 

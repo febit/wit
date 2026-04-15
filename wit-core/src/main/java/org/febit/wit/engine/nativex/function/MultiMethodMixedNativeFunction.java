@@ -30,7 +30,7 @@ public record MultiMethodMixedNativeFunction(
     @Nullable
     @Override
     public Object apply(@Nullable Object @Nullable [] args) {
-        Method method = NativeMethods.chooseMethod(methods, args, true);
+        Method method = NativeMethods.choose(methods, args, true);
         if (method == null) {
             throw new ScriptEvaluateException("no such native method");
         }

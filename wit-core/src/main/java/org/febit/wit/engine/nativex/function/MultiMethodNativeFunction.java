@@ -21,7 +21,6 @@ import org.febit.wit.util.NativeMethods;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 
 public record MultiMethodNativeFunction(
@@ -34,14 +33,14 @@ public record MultiMethodNativeFunction(
     public Object apply(@Nullable Object @Nullable [] args) {
         Method method;
         if (isStatic) {
-            method = NativeMethods.chooseMethod(methods, args);
+            method = NativeMethods.choose(methods, args, 0);
         } else {
             if (args == null
                     || args.length == 0
                     || args[0] == null) {
                 throw new ScriptEvaluateException("this method need one argument at least");
             }
-            method = NativeMethods.chooseMethod(methods, Arrays.copyOfRange(args, 1, args.length));
+            method = NativeMethods.choose(methods, args, 1);
         }
         if (method == null) {
             throw new ScriptEvaluateException("no such native method");

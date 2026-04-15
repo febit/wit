@@ -34,10 +34,12 @@ import org.febit.wit.ir.support.StatementUtils;
 import org.febit.wit.parser.support.ClassNameRope;
 import org.febit.wit.parser.support.VarLayout;
 import org.febit.wit.util.ClassUtils;
+import org.febit.wit.util.MethodHandleUtils;
 import org.febit.wit.util.Modifiers;
 import org.febit.wit.util.NativeMethods;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -233,13 +235,19 @@ public class Assembler {
         if (!Modifiers.isStatic(field)) {
             throw new ScriptParseException("No a static field: " + path, position);
         }
-        field.trySetAccessible();
+        VarHandle handle;
+        try {
+            handle = MethodHandleUtils.lookupOf(clazz)
+                    .unreflectVarHandle(field);
+        } catch (IllegalAccessException e) {
+            throw new ScriptParseException("Cannot access field: " + path, e, position);
+        }
         if (!Modifiers.isFinal(field)) {
-            return new NativeStaticFieldValue(field, position);
+            return new NativeStaticFieldValue(handle, position);
         }
         try {
-            return new ConstantValue(field.get(null), position);
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            return new ConstantValue(handle.get(), position);
+        } catch (IllegalArgumentException ex) {
             throw new ScriptParseException("Failed to get static field value: " + path, ex, position);
         }
     }
@@ -280,7 +288,6 @@ public class Assembler {
         this.nativeAccess.securityCheck(clazz.getName() + '.' + methodName, position);
 
         var methods = NativeMethods.find(clazz, methodName)
-                .filter(Modifiers::isPublic)
                 .toList();
         if (methods.isEmpty()) {
             throw new ScriptParseException("No such method: " + clazz.getName() + '#' + methodName, position);

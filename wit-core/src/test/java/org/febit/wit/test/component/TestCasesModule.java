@@ -20,7 +20,6 @@ import org.febit.wit.WitModule;
 import org.febit.wit.test.component.lib.ConstMethods;
 import org.febit.wit.test.component.lib.ConstMethods2;
 import org.febit.wit.util.HeapNativeUtils;
-import org.febit.wit.util.Modifiers;
 import org.febit.wit.util.NativeMethods;
 
 import java.util.ArrayList;
@@ -59,11 +58,11 @@ public class TestCasesModule implements WitModule {
         try {
             heaps.constants().set("new_ConstMethods2", functions.constructor(ConstMethods2.class.getConstructor()));
             heaps.constants().set("const2Member", functions.method(NativeMethods.find(ConstMethods2.class, "const2Member")
-                    .filter(Modifiers::isPublic).toList()));
+                    .toList()));
             heaps.constants().set("const2Size", functions.method(NativeMethods.find(ConstMethods2.class, "const2Size")
-                    .filter(Modifiers::isPublic).toList()));
+                    .toList()));
             heaps.constants().set("const2Foo", functions.method(NativeMethods.find(ConstMethods2.class, "const2Foo")
-                    .filter(Modifiers::isPublic).toList()));
+                    .toList()));
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }

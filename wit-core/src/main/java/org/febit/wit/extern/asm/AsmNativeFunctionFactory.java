@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
 @RequiredArgsConstructor(staticName = "create")
 public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator {
 
-    private static final String[] FUNC_INTERFACES = {"org/febit/wit/engine/WitFunction"};
+    private static final String[] FUNC_INTERFACES = {"org/febit/wit/engine/WitFunction$Constable"};
 
     @Getter
     private final NativeFunctionFactory delegate;
@@ -65,8 +65,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
         return delegate.method(method);
     }
 
-    @Nullable
-    private WitFunction checkAndConstruct(Member member) {
+    private WitFunction.@Nullable Constable checkAndConstruct(Member member) {
         if (!Modifiers.isPublic(member.getDeclaringClass()) || !Modifiers.isPublic(member)) {
             return null;
         }
@@ -81,7 +80,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
     @SuppressWarnings({
             "squid:S3776" // Cognitive Complexity of methods should not be too high
     })
-    static WitFunction construct(Member obj)
+    static WitFunction.Constable construct(Member obj)
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         var className = "org.febit.wit.extern.asm.AsmFunction" + AsmUtils.SEQ.getAndIncrement();
         var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
@@ -122,7 +121,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
 
         var paramTypesLen = paramTypes.length;
         var m = classWriter.visitMethod(Constants.ACC_PUBLIC, "apply",
-                "(Lorg/febit/wit/runtime/RuntimeContext;[Ljava/lang/Object;)Ljava/lang/Object;", null);
+                "([Ljava/lang/Object;)Ljava/lang/Object;", null);
 
         if (paramTypesLen == 0) {
             if (isStatic) {
@@ -136,16 +135,16 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
                 m.visitInsn(Constants.ARETURN);
             } else {
                 Label toException = new Label();
-                m.visitVarInsn(Constants.ALOAD, 2);
+                m.visitVarInsn(Constants.ALOAD, 1);
                 m.visitJumpInsn(Constants.IFNULL, toException);
-                m.visitVarInsn(Constants.ALOAD, 2);
+                m.visitVarInsn(Constants.ALOAD, 1);
                 m.visitInsn(Constants.ARRAYLENGTH);
                 m.visitJumpInsn(Constants.IFEQ, toException);
-                m.visitVarInsn(Constants.ALOAD, 2);
+                m.visitVarInsn(Constants.ALOAD, 1);
                 m.visitInsn(Constants.ICONST_0);
                 m.visitInsn(Constants.AALOAD);
                 m.visitJumpInsn(Constants.IFNULL, toException);
-                m.visitVarInsn(Constants.ALOAD, 2);
+                m.visitVarInsn(Constants.ALOAD, 1);
                 m.visitInsn(Constants.ICONST_0);
                 m.visitInsn(Constants.AALOAD);
                 m.checkCast(ownerClass);
@@ -162,16 +161,16 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
                 m.visitInsn(Constants.DUP);
             }
 
-            m.visitVarInsn(Constants.ALOAD, 2);
+            m.visitVarInsn(Constants.ALOAD, 1);
 
             m.push(isStatic || isConstructor ? paramTypesLen : paramTypesLen + 1);
             m.invokeStatic("org/febit/wit/util/Args", "ensureSize",
                     "([Ljava/lang/Object;I)[Ljava/lang/Object;");
-            m.visitVarInsn(Constants.ASTORE, 2);
+            m.visitVarInsn(Constants.ASTORE, 1);
 
             int paramCount = 0;
             if (!isStatic && !isConstructor) {
-                m.visitVarInsn(Constants.ALOAD, 2);
+                m.visitVarInsn(Constants.ALOAD, 1);
                 m.visitInsn(Constants.ICONST_0);
                 m.visitInsn(Constants.AALOAD);
                 m.checkCast(ownerClass);
@@ -179,7 +178,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
             }
 
             for (Class<?> paramType : paramTypes) {
-                m.visitVarInsn(Constants.ALOAD, 2);
+                m.visitVarInsn(Constants.ALOAD, 1);
                 m.push(paramCount);
                 m.visitInsn(Constants.AALOAD);
                 m.checkCast(AsmUtils.boxedInternalNameOf(paramType));
@@ -190,12 +189,13 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
             @SuppressWarnings({
                     "squid:S3358" // Ternary operators should not be nested
             })
-            var opCode = isStatic ? Constants.INVOKESTATIC
+            var opCode = isStatic
+                    ? Constants.INVOKESTATIC
                     : isConstructor
-                    ? Constants.INVOKESPECIAL
-                    : isInterface
-                    ? Constants.INVOKEINTERFACE
-                    : Constants.INVOKEVIRTUAL;
+                      ? Constants.INVOKESPECIAL
+                      : isInterface
+                        ? Constants.INVOKEINTERFACE
+                        : Constants.INVOKEVIRTUAL;
             //Invoke Method
             m.visitMethodInsn(opCode, ownerClass, destName, destDesc);
             AsmUtils.visitBoxIfNeed(m, returnType);
@@ -203,7 +203,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
         }
         m.visitMaxs();
 
-        return (WitFunction) AsmUtils.loadClass(className, classWriter)
+        return (WitFunction.Constable) AsmUtils.loadClass(className, classWriter)
                 .getConstructor().newInstance();
     }
 }

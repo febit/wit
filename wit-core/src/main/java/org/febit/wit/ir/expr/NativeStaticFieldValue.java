@@ -21,10 +21,10 @@ import org.febit.wit.ir.Position;
 import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.Field;
+import java.lang.invoke.VarHandle;
 
 public record NativeStaticFieldValue(
-        Field field,
+        VarHandle handle,
         Position position
 ) implements AssignableExpression {
 
@@ -32,9 +32,9 @@ public record NativeStaticFieldValue(
     @Nullable
     public Object execute(RuntimeContext context) {
         try {
-            return field.get(null);
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
-            return new ScriptEvaluateException("Cannot get value from static field: " + field, ex, this);
+            return handle.get();
+        } catch (IllegalArgumentException ex) {
+            return new ScriptEvaluateException("Cannot get value from static field: " + handle, ex, this);
         }
     }
 
@@ -42,10 +42,10 @@ public record NativeStaticFieldValue(
     @Nullable
     public Object assign(RuntimeContext context, @Nullable Object value) {
         try {
-            field.set(null, value);
+            handle.set(value);
             return value;
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
-            return new ScriptEvaluateException("Cannot set value to static field: " + field, ex, this);
+        } catch (IllegalArgumentException ex) {
+            return new ScriptEvaluateException("Cannot set value to static field: " + handle, ex, this);
         }
     }
 }

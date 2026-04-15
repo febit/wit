@@ -1,5 +1,6 @@
 plugins {
   alias libs.plugins.xbib.jflex
+  alias libs.plugins.jmh
 }
 
 description = 'Wit Core'
@@ -31,6 +32,9 @@ dependencies {
   testImplementation 'commons-io:commons-io'
   testImplementation libs.jakarta.servlet.api
   testImplementation libs.zerofs
+
+  jmh libs.jmh.core
+  jmh libs.jmh.generator
 }
 
 def PKG_CORE = 'org/febit/wit/parser'

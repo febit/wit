@@ -16,12 +16,12 @@
 package org.febit.wit.engine.nativex;
 
 import org.febit.wit.engine.WitFunction;
-import org.febit.wit.engine.nativex.function.ConstructorNativeFunction;
-import org.febit.wit.engine.nativex.function.MethodNativeFunction;
+import org.febit.wit.engine.nativex.function.MethodInvokerFunction;
 import org.febit.wit.engine.nativex.function.MultiConstructorNativeFunction;
 import org.febit.wit.engine.nativex.function.MultiMethodMixedNativeFunction;
 import org.febit.wit.engine.nativex.function.MultiMethodNativeFunction;
 import org.febit.wit.engine.nativex.function.NewArrayNativeFunction;
+import org.febit.wit.engine.nativex.support.MethodInvokerUtils;
 import org.febit.wit.util.Modifiers;
 
 import java.lang.reflect.Constructor;
@@ -33,18 +33,18 @@ public class ReflectNativeFunctionFactory implements NativeFunctionFactory {
     public static final ReflectNativeFunctionFactory INSTANCE = new ReflectNativeFunctionFactory();
 
     @Override
-    public WitFunction array(Class<?> componentType) {
+    public WitFunction.Constable array(Class<?> componentType) {
         return new NewArrayNativeFunction(componentType);
     }
 
     @Override
-    public WitFunction method(Method method) {
-        method.trySetAccessible();
-        return new MethodNativeFunction(method);
+    public WitFunction.Constable method(Method method) {
+        var invoker = MethodInvokerUtils.of(method);
+        return new MethodInvokerFunction(invoker);
     }
 
     @Override
-    public WitFunction method(List<Method> methods) {
+    public WitFunction.Constable method(List<Method> methods) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException("methods is empty");
         }
@@ -67,13 +67,13 @@ public class ReflectNativeFunctionFactory implements NativeFunctionFactory {
     }
 
     @Override
-    public WitFunction constructor(Constructor<?> constructor) {
-        constructor.trySetAccessible();
-        return new ConstructorNativeFunction(constructor);
+    public WitFunction.Constable constructor(Constructor<?> constructor) {
+        var invoker = MethodInvokerUtils.of(constructor);
+        return new MethodInvokerFunction(invoker);
     }
 
     @Override
-    public WitFunction constructor(List<Constructor<?>> constructors) {
+    public WitFunction.Constable constructor(List<Constructor<?>> constructors) {
         if (constructors.isEmpty()) {
             throw new IllegalArgumentException("constructors is empty");
         }

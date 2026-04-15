@@ -13,21 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.engine.nativex.function;
+@NullMarked
+package org.febit.wit.engine.nativex.support;
 
-import org.febit.wit.engine.WitFunction;
-import org.febit.wit.util.NativeMethods;
-import org.jspecify.annotations.Nullable;
-
-import java.lang.reflect.Method;
-
-public record MethodNativeFunction(
-        Method method
-) implements WitFunction.Constable {
-
-    @Nullable
-    @Override
-    public Object apply(@Nullable Object @Nullable [] args) {
-        return NativeMethods.invoke(method, args);
-    }
-}
+import org.jspecify.annotations.NullMarked;

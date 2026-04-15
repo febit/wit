@@ -58,7 +58,6 @@ public record DynamicNativeInvocation(
             throw new ScriptEvaluateException("not a function (NPE)", this);
         }
         var methods = NativeMethods.find(target.getClass(), methodName)
-                .filter(Modifiers::isPublic)
                 .filter(Modifiers::isNotStatic)
                 .toList();
         if (methods.isEmpty()) {
@@ -69,11 +68,11 @@ public record DynamicNativeInvocation(
 
     @Nullable
     private Object chooseAndInvoke(Object self, List<Method> methods, Object[] params) {
-        var method = NativeMethods.chooseMethod(methods, params);
+        var method = NativeMethods.choose(methods, params, 0);
         if (method == null) {
             throw new ScriptEvaluateException("no such native method: " + self.getClass() + '#' + this.methodName);
         }
-        return NativeMethods.invoke(method, self, params);
+        return NativeMethods.invoke(method, self, params, 0);
     }
 
 }

@@ -16,7 +16,7 @@
 package org.febit.wit.util.bean;
 
 import lombok.experimental.UtilityClass;
-import org.febit.wit.util.NativeMethods;
+import org.febit.wit.util.MethodHandleUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
@@ -30,8 +30,8 @@ import java.util.Map;
 @UtilityClass
 public class PropertyAccessors {
 
-    private static final MethodType GETTER_TYPE = MethodType.methodType(Object.class, Object.class);
-    private static final MethodType SETTER_TYPE = MethodType.methodType(void.class, Object.class, Object.class);
+    private static final MethodType MT_GETTER = MethodType.methodType(Object.class, Object.class);
+    private static final MethodType MT_SETTER = MethodType.methodType(void.class, Object.class, Object.class);
 
     public static Map<String, PropertyAccessor> of(Class<?> cls) {
         var map = new HashMap<String, PropertyAccessor>(16);
@@ -45,9 +45,9 @@ public class PropertyAccessors {
 
     static PropertyAccessor.Getter getterOf(Method method) {
         try {
-            var handle = NativeMethods.lookupOf(method.getDeclaringClass())
+            var handle = MethodHandleUtils.lookupOf(method.getDeclaringClass())
                     .unreflect(method)
-                    .asType(GETTER_TYPE);
+                    .asType(MT_GETTER);
             return new MethodGetter(handle);
         } catch (IllegalAccessException ex) {
             throw new BeanException(ex.getMessage(), ex);
@@ -56,7 +56,7 @@ public class PropertyAccessors {
 
     static PropertyAccessor.Getter getterOf(Field field) {
         try {
-            var handle = NativeMethods.lookupOf(field.getDeclaringClass())
+            var handle = MethodHandleUtils.lookupOf(field.getDeclaringClass())
                     .unreflectVarHandle(field);
             return new FieldGetter(handle);
         } catch (IllegalAccessException ex) {
@@ -66,9 +66,9 @@ public class PropertyAccessors {
 
     static PropertyAccessor.Setter setterOf(Method method) {
         try {
-            var handle = NativeMethods.lookupOf(method.getDeclaringClass())
+            var handle = MethodHandleUtils.lookupOf(method.getDeclaringClass())
                     .unreflect(method)
-                    .asType(SETTER_TYPE);
+                    .asType(MT_SETTER);
             return new MethodSetter(handle, method.getParameterTypes()[0]);
         } catch (IllegalAccessException ex) {
             throw new BeanException(ex.getMessage(), ex);
@@ -77,7 +77,7 @@ public class PropertyAccessors {
 
     static PropertyAccessor.Setter setterOf(Field field) {
         try {
-            var handle = NativeMethods.lookupOf(field.getDeclaringClass())
+            var handle = MethodHandleUtils.lookupOf(field.getDeclaringClass())
                     .unreflectVarHandle(field);
             return new FieldSetter(handle, field.getType());
         } catch (IllegalAccessException ex) {

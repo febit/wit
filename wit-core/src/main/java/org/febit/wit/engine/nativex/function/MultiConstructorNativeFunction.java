@@ -29,7 +29,7 @@ public record MultiConstructorNativeFunction(
 
     @Override
     public Object apply(@Nullable Object @Nullable [] args) {
-        var constructor = NativeMethods.chooseConstructor(constructors, args);
+        var constructor = NativeMethods.choose(constructors, args, 0);
         if (constructor == null) {
             throw new ScriptEvaluateException("no such native constructor");
         }
