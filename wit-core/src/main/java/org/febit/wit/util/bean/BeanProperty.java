@@ -30,56 +30,29 @@ public record BeanProperty(
         @Nullable Field field,
         @Nullable Method getterMethod,
         @Nullable Method setterMethod
-) implements Comparable<BeanProperty> {
+) {
 
     public PropertyAccessor.@Nullable Getter getter() {
         if (getterMethod != null) {
-            getterMethod.trySetAccessible();
-            return new PropertyAccessors.MethodGetter(getterMethod);
+            return PropertyAccessors.getterOf(getterMethod);
         }
         if (field != null) {
-            field.trySetAccessible();
-            return new PropertyAccessors.FieldGetter(field);
+            return PropertyAccessors.getterOf(field);
         }
         return null;
     }
 
     public PropertyAccessor.@Nullable Setter setter() {
         if (setterMethod != null) {
-            setterMethod.trySetAccessible();
-            var propertyType = setterMethod.getParameterTypes()[0];
-            return new PropertyAccessors.MethodSetter(setterMethod, propertyType);
+            return PropertyAccessors.setterOf(setterMethod);
         }
         if (field != null && !isReadonlyField()) {
-            field.trySetAccessible();
-            return new PropertyAccessors.FieldSetter(field, field.getType());
+            return PropertyAccessors.setterOf(field);
         }
         return null;
     }
 
     public boolean isReadonlyField() {
         return this.field != null && Modifiers.isFinal(this.field);
-    }
-
-    @Override
-    public int compareTo(final BeanProperty o) {
-        return Integer.compare(name().hashCode(), o.name().hashCode());
-    }
-
-    @Override
-    public int hashCode() {
-        return name().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof BeanProperty other)) {
-            return false;
-        }
-        return this.beanType() == other.beanType()
-                && this.name().equals(other.name());
     }
 }

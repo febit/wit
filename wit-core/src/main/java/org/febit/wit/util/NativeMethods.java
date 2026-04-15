@@ -21,6 +21,7 @@ import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.runtime.Undefined;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -385,4 +386,10 @@ public class NativeMethods {
         return invoke(method, args[0], methodArgs);
     }
 
+    public static MethodHandles.Lookup lookupOf(Class<?> cls) throws IllegalAccessException {
+        if (Modifiers.isPublic(cls)) {
+            return MethodHandles.lookup();
+        }
+        return MethodHandles.privateLookupIn(cls, MethodHandles.lookup());
+    }
 }

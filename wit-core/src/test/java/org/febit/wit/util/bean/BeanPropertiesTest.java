@@ -15,12 +15,10 @@
  */
 package org.febit.wit.util.bean;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.febit.wit.util.bean.model.Foo;
+import org.febit.wit.util.bean.model.User;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -199,99 +197,6 @@ class BeanPropertiesTest {
                     assertNotNull(info.getterMethod());
                     assertNull(info.setterMethod());
                 });
-    }
-
-    @SuppressWarnings("unused")
-    public record User(
-            String name,
-            int age,
-            AtomicBoolean enabledRef,
-            AtomicReference<String> statusRef
-    ) {
-
-        public String code() {
-            return name.toUpperCase();
-        }
-
-        public boolean isEnabled() {
-            return enabledRef.get();
-        }
-
-        public void setEnabled(boolean enabled) {
-            enabledRef.set(enabled);
-        }
-
-        public String status() {
-            return statusRef.get();
-        }
-
-        public void status(String status) {
-            statusRef.set(status);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public static class FooParent {
-
-        public static String publicStatic0;
-        private static String privateStatic0;
-        public final String public0 = "";
-        private String private0;
-        protected String protected0;
-        protected String protected1;
-
-        @Setter
-        @Getter
-        public String publicWithGetterSetter0;
-        @Getter
-        private String privateWithGetter0;
-        @Setter
-        private String privateWithSetter0;
-        @Setter
-        @Getter
-        private String privateWithGetterSetter0;
-
-        public String getMethodField0() {
-            return null;
-        }
-
-        private String getMethodField1() {
-            return null;
-        }
-
-        protected String getMethodField2() {
-            return null;
-        }
-
-        protected String getMethodField3() {
-            return null;
-        }
-
-        public void setMethodField3(Object obj) {
-            // do nothing
-        }
-    }
-
-    public static class Foo extends FooParent {
-
-        public static String publicStatic;
-        private String private2;
-
-        public String getProtected1() {
-            return protected1;
-        }
-
-        protected String getPrivate2() {
-            return private2;
-        }
-
-        void setPrivate2(String private2) {
-            this.private2 = private2;
-        }
-
-        public String getMethodField4() {
-            return null;
-        }
     }
 
 }

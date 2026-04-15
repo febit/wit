@@ -1,0 +1,5 @@
+{
+  var integer = native Integer.class;
+  assertInstanceOf(native Class.class, integer);
+  assertEquals("java.lang.Integer", integer.name);
+}

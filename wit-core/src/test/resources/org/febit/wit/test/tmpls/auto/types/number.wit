@@ -1,7 +1,7 @@
 {
     // int
-    assertEquals((0).~getClass().name, "java.lang.Integer");
-    assertEquals((10).~getClass().name, "java.lang.Integer");
+    assertInstanceOf(native Integer.class, 0);
+    assertInstanceOf(native Integer.class, 10);
     assertEquals((0).~toString(), "0");
     assertEquals((- 1).~toString(), "-1");
     assertEquals((999999999).~toString(), "999999999");

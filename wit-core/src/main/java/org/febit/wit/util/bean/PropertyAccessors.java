@@ -16,19 +16,22 @@
 package org.febit.wit.util.bean;
 
 import lombok.experimental.UtilityClass;
+import org.febit.wit.util.NativeMethods;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodType;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings({
-        "squid:RedundantThrowsDeclarationCheck"
-})
 @UtilityClass
 public class PropertyAccessors {
+
+    private static final MethodType GETTER_TYPE = MethodType.methodType(Object.class, Object.class);
+    private static final MethodType SETTER_TYPE = MethodType.methodType(void.class, Object.class, Object.class);
 
     public static Map<String, PropertyAccessor> of(Class<?> cls) {
         var map = new HashMap<String, PropertyAccessor>(16);
@@ -40,51 +43,83 @@ public class PropertyAccessors {
         return Map.copyOf(map);
     }
 
-    record MethodGetter(Method method) implements PropertyAccessor.Getter {
+    static PropertyAccessor.Getter getterOf(Method method) {
+        try {
+            var handle = NativeMethods.lookupOf(method.getDeclaringClass())
+                    .unreflect(method)
+                    .asType(GETTER_TYPE);
+            return new MethodGetter(handle);
+        } catch (IllegalAccessException ex) {
+            throw new BeanException(ex.getMessage(), ex);
+        }
+    }
+
+    static PropertyAccessor.Getter getterOf(Field field) {
+        try {
+            var handle = NativeMethods.lookupOf(field.getDeclaringClass())
+                    .unreflectVarHandle(field);
+            return new FieldGetter(handle);
+        } catch (IllegalAccessException ex) {
+            throw new BeanException(ex.getMessage(), ex);
+        }
+    }
+
+    static PropertyAccessor.Setter setterOf(Method method) {
+        try {
+            var handle = NativeMethods.lookupOf(method.getDeclaringClass())
+                    .unreflect(method)
+                    .asType(SETTER_TYPE);
+            return new MethodSetter(handle, method.getParameterTypes()[0]);
+        } catch (IllegalAccessException ex) {
+            throw new BeanException(ex.getMessage(), ex);
+        }
+    }
+
+    static PropertyAccessor.Setter setterOf(Field field) {
+        try {
+            var handle = NativeMethods.lookupOf(field.getDeclaringClass())
+                    .unreflectVarHandle(field);
+            return new FieldSetter(handle, field.getType());
+        } catch (IllegalAccessException ex) {
+            throw new BeanException(ex.getMessage(), ex);
+        }
+    }
+
+    record MethodGetter(MethodHandle handle) implements PropertyAccessor.Getter {
         @Override
         @Nullable
         public Object get(Object bean) throws BeanException {
             try {
-                return this.method.invoke(bean, (Object[]) null);
-            } catch (IllegalAccessException
-                     | IllegalArgumentException
-                     | InvocationTargetException ex) {
-                throw new BeanException(ex.toString(), ex);
+                return this.handle.invokeExact(bean);
+            } catch (Throwable ex) {
+                throw new BeanException("Cannot get property value: " + ex.getMessage(), ex);
             }
         }
     }
 
-    record MethodSetter(Method method, Class<?> propertyType) implements PropertyAccessor.Setter {
+    record MethodSetter(MethodHandle handle, Class<?> propertyType) implements PropertyAccessor.Setter {
         @Override
         public void set(Object bean, @Nullable Object value) throws BeanException {
             try {
-                this.method.invoke(bean, value);
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                throw new BeanException(ex.toString(), ex);
+                this.handle.invokeExact(bean, value);
+            } catch (Throwable ex) {
+                throw new BeanException("Cannot set property value: " + ex.getMessage(), ex);
             }
         }
     }
 
-    record FieldGetter(Field field) implements PropertyAccessor.Getter {
+    record FieldGetter(VarHandle handle) implements PropertyAccessor.Getter {
         @Nullable
         @Override
         public Object get(Object bean) throws BeanException {
-            try {
-                return this.field.get(bean);
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new BeanException(ex.toString(), ex);
-            }
+            return this.handle.get(bean);
         }
     }
 
-    record FieldSetter(Field field, Class<?> propertyType) implements PropertyAccessor.Setter {
+    record FieldSetter(VarHandle handle, Class<?> propertyType) implements PropertyAccessor.Setter {
         @Override
         public void set(Object bean, @Nullable Object value) throws BeanException {
-            try {
-                this.field.set(bean, value);
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new BeanException(ex.toString(), ex);
-            }
+            this.handle.set(bean, value);
         }
     }
 }

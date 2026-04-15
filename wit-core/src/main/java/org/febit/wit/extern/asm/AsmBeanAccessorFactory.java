@@ -33,6 +33,7 @@ import org.febit.wit_shaded.asm.Label;
 import org.febit.wit_shaded.asm.MethodWriter;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Optional;
 
 @Slf4j
@@ -120,7 +121,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         AsmUtils.visitConstructor(classWriter);
 
         var fields = BeanProperties.introspect(beanClass)
-                .sorted()
+                .sorted(Comparator.comparing(b -> b.name().hashCode()))
                 .toArray(BeanProperty[]::new);
 
         final int fieldCount = fields.length;
