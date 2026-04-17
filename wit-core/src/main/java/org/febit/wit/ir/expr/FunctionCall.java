@@ -32,6 +32,10 @@ public record FunctionCall(
         Position position
 ) implements Expression {
 
+    public FunctionCall {
+        function = StatementUtils.optimize(function);
+    }
+
     @Override
     @Nullable
     @SuppressWarnings({

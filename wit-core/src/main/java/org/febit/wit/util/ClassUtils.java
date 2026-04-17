@@ -105,21 +105,20 @@ public class ClassUtils {
         };
     }
 
-    private static Class<?> load0(String name) throws ClassNotFoundException {
-        return Class.forName(name, true, loader());
-    }
-
-    public static Class<?> load(String name) {
+    private static Class<?> load0(String name) {
         try {
-            var cls = primitiveType(name);
-            return cls != null ? cls
-                    : load0(name);
+            return Class.forName(name, true, loader());
         } catch (ClassNotFoundException ex) {
             throw new UncheckedException(ex);
         }
     }
 
-    public static Class<?> load(String name, int arrayDepth) throws ClassNotFoundException {
+    public static Class<?> load(String name) {
+        var cls = primitiveType(name);
+        return cls != null ? cls : load0(name);
+    }
+
+    public static Class<?> load(String name, int arrayDepth) {
         if (arrayDepth == 0) {
             return load(name);
         }

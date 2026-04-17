@@ -16,9 +16,13 @@
 package org.febit.wit.engine.nativex.support;
 
 import lombok.RequiredArgsConstructor;
+import org.febit.wit.util.NativeMethods;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -57,6 +61,87 @@ class MethodInvokerUtilsTest {
                 sum += i;
             }
             return prefix + sum;
+        }
+
+        public static String echo() {
+            return "echo:";
+        }
+
+        public static String echo(String value) {
+            return "echo:" + value;
+        }
+
+        public static String echo(String v1, String v2) {
+            return "echo:" + v1 + "," + v2;
+        }
+
+        public static String echo(String v1, String v2, String v3) {
+            return "echo:" + v1 + "," + v2 + "," + v3;
+        }
+
+        public static String echo(String v1, String v2, String v3, String v4) {
+            return "echo:" + v1 + "," + v2 + "," + v3 + "," + v4;
+        }
+
+        public static String echo(String v1, String v2, String v3, String v4, String v5) {
+            return "echo:" + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5;
+        }
+
+        public static String echo(String v1, String v2, String v3, String v4, String v5, String v6) {
+            return "echo:" + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5 + "," + v6;
+        }
+
+        public static String echo(String v1, String v2, String v3, String v4, String v5,
+                                  String v6, String v7) {
+            return "echo:" + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5 + "," + v6 + "," + v7;
+        }
+
+        public static String echo(String v1, String v2, String v3, String v4, String v5,
+                                  String v6, String v7, String v8) {
+            return "echo:" + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5 + "," + v6 + "," + v7 + "," + v8;
+        }
+
+        public static String echo(String v1, String v2, String v3, String v4, String v5,
+                                  String v6, String v7, String v8, String v9) {
+            return "echo:" + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5 + "," + v6 + "," + v7 + "," + v8 + "," + v9;
+        }
+
+        public static String echo(String v1, String v2, String v3, String v4, String v5,
+                                  String v6, String v7, String v8, String v9, String v10) {
+            return "echo:" + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5 + "," + v6 + "," + v7 + "," + v8 + "," + v9
+                    + "," + v10;
+        }
+
+        public static String echo(String v1, String v2, String v3, String v4, String v5,
+                                  String v6, String v7, String v8, String v9, String v10, String v11) {
+            return "echo:" + v1 + "," + v2 + "," + v3 + "," + v4 + "," + v5 + "," + v6 + "," + v7 + "," + v8 + "," + v9
+                    + "," + v10 + "," + v11;
+        }
+    }
+
+    @Test
+    void testEcho() throws Throwable {
+        var invokers = NativeMethods.find(TestClass.class, "echo")
+                .sorted(Comparator.comparing(Method::getParameterCount))
+                .map(MethodInvokerUtils::of)
+                .toList();
+        assertThat(invokers)
+                .hasSize(12);
+
+        var args = new String[12];
+        for (int i = 0; i < args.length; i++) {
+            args[i] = "a" + (i + 1);
+        }
+
+        for (int i = 0; i < invokers.size(); i++) {
+            var invoker = invokers.get(i);
+            assertEquals(i, invoker.executable().getParameterCount());
+            var expected = "echo:" + Stream.of(args)
+                    .limit(i)
+                    .reduce((a, b) -> a + "," + b)
+                    .orElse("");
+            assertThat(invoker.invoke(args))
+                    .isEqualTo(expected);
         }
     }
 

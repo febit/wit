@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.invoke.VarHandle;
 
-public record NativeStaticFieldValue(
+public record StaticNativeFieldValue(
         VarHandle handle,
         Position position
 ) implements AssignableExpression {

@@ -34,12 +34,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public record DynamicNativeInvocation(
+public record DynamicNativeCall(
         Expression self,
         String methodName,
         ExpressionArray params,
         Position position
 ) implements Expression {
+
+    public DynamicNativeCall {
+        self = StatementUtils.optimize(self);
+    }
 
     @Nullable
     public static Object invoke(

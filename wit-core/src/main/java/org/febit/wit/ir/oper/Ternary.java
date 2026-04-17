@@ -18,6 +18,7 @@ package org.febit.wit.ir.oper;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.support.ALU;
+import org.febit.wit.ir.support.StatementUtils;
 import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
 
@@ -27,6 +28,12 @@ public record Ternary(
         Expression right,
         Position position
 ) implements Expression {
+
+    public Ternary {
+        condition = StatementUtils.optimize(condition);
+        left = StatementUtils.optimize(left);
+        right = StatementUtils.optimize(right);
+    }
 
     @Override
     @Nullable

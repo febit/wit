@@ -28,7 +28,15 @@ public record NewMap(
         Position position
 ) implements Expression {
 
+    public NewMap {
+        entries = List.copyOf(entries);
+    }
+
     public record NewMapEntry(Expression key, Expression value) {
+        public NewMapEntry {
+            key = StatementUtils.optimize(key);
+            value = StatementUtils.optimize(value);
+        }
     }
 
     @Override

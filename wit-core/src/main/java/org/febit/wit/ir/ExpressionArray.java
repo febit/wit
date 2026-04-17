@@ -33,6 +33,17 @@ public class ExpressionArray {
         return new ExpressionArray(EMPTY_EXPRS);
     }
 
+    public static ExpressionArray of(@Nullable List<Expression> list) {
+        if (list == null || list.isEmpty()) {
+            return ExpressionArray.ofEmpty();
+        }
+        var arr = list.toArray(new Expression[0]);
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = StatementUtils.optimize(arr[i]);
+        }
+        return ExpressionArray.of(arr);
+    }
+
     public List<Expression> asList() {
         return List.of(values);
     }

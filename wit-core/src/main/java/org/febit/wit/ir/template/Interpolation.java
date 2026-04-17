@@ -26,6 +26,10 @@ public record Interpolation(
         Position position
 ) implements Statement {
 
+    public static Interpolation of(Expression value) {
+        return new Interpolation(value, value.position());
+    }
+
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {

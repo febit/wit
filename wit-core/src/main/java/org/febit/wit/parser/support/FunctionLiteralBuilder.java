@@ -19,11 +19,11 @@ import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
+import org.febit.wit.ir.StatementBatch;
 import org.febit.wit.ir.expr.FunctionLiteral;
 import org.febit.wit.ir.expr.VariableHeapValue;
 import org.febit.wit.ir.flow.Return;
 import org.febit.wit.ir.oper.Assign;
-import org.febit.wit.parser.IR;
 import org.febit.wit.parser.ReservedNames;
 import org.jspecify.annotations.Nullable;
 
@@ -114,7 +114,7 @@ public class FunctionLiteralBuilder {
         int heapSize = varLayout.slotSize();
         varLayout.unshiftFrame();
 
-        var batches = IR.batch(list, jump -> {
+        var batches = StatementBatch.batch(list, jump -> {
             if (!jump.state().isReturn()) {
                 throw new ScriptParseException("Unhandled control flow in function literal: "
                         + jump.state(), jump.position());

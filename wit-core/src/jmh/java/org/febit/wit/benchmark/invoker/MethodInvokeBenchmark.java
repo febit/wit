@@ -19,7 +19,7 @@ import org.febit.wit.engine.WitFunction;
 import org.febit.wit.engine.nativex.support.MethodInvoker;
 import org.febit.wit.engine.nativex.support.MethodInvokerUtils;
 import org.febit.wit.extern.asm.AsmNativeFunctionFactory;
-import org.febit.wit.ir.expr.DynamicNativeInvocation;
+import org.febit.wit.ir.expr.DynamicNativeCall;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
@@ -111,12 +111,12 @@ public class MethodInvokeBenchmark {
 
     @Benchmark
     public Object benchmarkMethodInvoke() {
-        return DynamicNativeInvocation.invoke(echo1, instance, invokeArgs1);
+        return DynamicNativeCall.invoke(echo1, instance, invokeArgs1);
     }
 
     @Benchmark
     public Object benchmarkMethodInvoke8() {
-        return DynamicNativeInvocation.invoke(echo8, instance, invokeArgs8);
+        return DynamicNativeCall.invoke(echo8, instance, invokeArgs8);
     }
 
     @Benchmark

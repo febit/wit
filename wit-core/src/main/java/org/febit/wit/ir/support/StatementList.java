@@ -30,6 +30,10 @@ public record StatementList(
         Position position
 ) implements Statement, JumpAware {
 
+    public StatementList {
+        statements = List.copyOf(statements);
+    }
+
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {

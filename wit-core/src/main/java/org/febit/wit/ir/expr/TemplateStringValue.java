@@ -15,7 +15,10 @@
  */
 package org.febit.wit.ir.expr;
 
+import lombok.Builder;
+import lombok.Singular;
 import org.febit.wit.ir.Expression;
+import org.febit.wit.ir.ExpressionArray;
 import org.febit.wit.ir.Position;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
@@ -26,6 +29,21 @@ public record TemplateStringValue(
         List<Expression> segments,
         Position position
 ) implements Expression {
+
+    public TemplateStringValue {
+        segments = List.copyOf(segments);
+    }
+
+    @Builder(
+            builderClassName = "TemplateStringBuilder"
+    )
+    private static TemplateStringValue builder0(
+            @lombok.NonNull Position pos,
+            @Singular
+            List<Expression> segments
+    ) {
+        return new TemplateStringValue(ExpressionArray.of(segments).asList(), pos);
+    }
 
     @Override
     public Object execute(RuntimeContext context) {

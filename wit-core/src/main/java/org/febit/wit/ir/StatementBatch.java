@@ -17,10 +17,16 @@ package org.febit.wit.ir;
 
 import lombok.RequiredArgsConstructor;
 import org.febit.wit.ir.flow.Jump;
+import org.febit.wit.ir.statement.NoopStatement;
 import org.febit.wit.ir.support.Jumps;
+import org.febit.wit.ir.support.StatementList;
+import org.febit.wit.ir.support.StatementUtils;
 import org.febit.wit.runtime.RuntimeContext;
+import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
@@ -39,6 +45,60 @@ public class StatementBatch implements JumpAware {
 
     public static StatementBatch of(List<Statement> statements) {
         return new StatementBatch(statements.toArray(Statement[]::new));
+    }
+
+    /**
+     * Batch statements, collect flow control jumps.
+     *
+     * @return always not empty, if no statement, return a batch with empty statements.
+     */
+    public static List<StatementBatch> batch(@Nullable List<Statement> list, Consumer<Jump> jumpConsumer) {
+        if (list == null || list.isEmpty()) {
+            return List.of(StatementBatch.empty());
+        }
+        var flag = new AtomicBoolean();
+        var collecting = (Consumer<Jump>) (jump -> {
+            flag.set(true);
+            jumpConsumer.accept(jump);
+        });
+
+        var batches = new ArrayList<StatementBatch>();
+        var current = new ArrayList<Statement>();
+
+        flatAndOptimize(list, stat -> {
+            current.add(stat);
+            Jumps.collect(collecting, stat);
+            if (flag.get()) {
+                batches.add(StatementBatch.of(current));
+                current.clear();
+                flag.set(false);
+            }
+        });
+
+        if (!current.isEmpty()) {
+            batches.add(StatementBatch.of(current));
+        }
+        if (batches.isEmpty()) {
+            return List.of(StatementBatch.empty());
+        }
+        return List.copyOf(batches);
+    }
+
+    private static void flatAndOptimize(@Nullable List<Statement> statements, Consumer<Statement> collector) {
+        if (statements == null || statements.isEmpty()) {
+            return;
+        }
+        for (var stat : statements) {
+            if (stat instanceof StatementList list) {
+                flatAndOptimize(list.statements(), collector);
+                continue;
+            }
+            stat = StatementUtils.optimize(stat);
+            if (stat instanceof NoopStatement) {
+                continue;
+            }
+            collector.accept(stat);
+        }
     }
 
     public void execute(RuntimeContext context) {

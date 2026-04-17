@@ -1,14 +1,18 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.parser;
 
+import java.util.List;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.*;
 import org.febit.wit.ir.expr.*;
 import org.febit.wit.ir.expr.NewMap.NewMapEntry;
+import org.febit.wit.ir.expr.TemplateStringValue.TemplateStringBuilder;
 import org.febit.wit.ir.flow.*;
 import org.febit.wit.ir.include.*;
+import org.febit.wit.ir.include.Include.IncludeBuilder;
 import org.febit.wit.ir.statement.*;
 import org.febit.wit.ir.support.*;
+import org.febit.wit.ir.template.*;
 import org.febit.wit.parser.IR.*;
 import org.febit.wit.parser.support.*;
 
@@ -81,14 +85,14 @@ nonterminal TryCatchBuilder tryPart, catchPart, finallyPart;
 nonterminal Expression expression, expressionStatementAble;
 nonterminal NewMapEntry newMapEntry;
 nonterminal NewMap newMapExpr;
-nonterminal TemplateStringBuilder templateStringBuilder;
+nonterminal TemplateStringBuilder tmplStringBuilder;
 nonterminal Integer superCount;
 nonterminal Expression contextValueExpr;
 
 /* function & Lambda */
 nonterminal Argument funcArg;
-nonterminal Expression funcExecuteExpr;
-nonterminal FunctionLiteralBuilder funcHead, funcStatementHead, mapPropertyFuncHead;
+nonterminal Expression funcCall;
+nonterminal FunctionLiteralBuilder funcHead, funcStatHead, mapPropertyFuncHead;
 nonterminal Expression lambdaExpr;
 nonterminal FunctionLiteralBuilder lambdaExprHead;
 nonterminal FunctionLiteralBuilder lambdaForHead1, lambdaForMapHead1;
@@ -119,7 +123,7 @@ precedence left     DOT, LBRACK, LBRACE, LPAREN, RPAREN, DYNAMIC_DOT; // . [ { (
 
 
 scriptAST       ::= statement[]:list ?
-                    {: yield assembler.buildScriptIR(%list%); :}
+                    {: yield assembler.ir().script(%list%); :}
                     ;
 
 
@@ -137,7 +141,7 @@ className       ::= classPureName:rope
 
 
 javaClass       ::= className:nameRope
-                    {: yield assembler.toClass(%nameRope%, %nameRope.symbol%.pos); :}
+                    {: yield assembler.classes().resolve(%nameRope%, %nameRope.symbol%.pos); :}
                     ;
 
 
@@ -152,7 +156,7 @@ statement       ::= expressionStatementAble:$ SEMICOLON
                     {: yield IR.breakpointStatement(%mark%, null, %sym.symbol%.pos); :}
 
                     |expression:expr INTERPOLATION_END
-                    {: yield IR.interpolation(%expr%); :}
+                    {: yield Interpolation.of(%expr%); :}
 
                     |block:$
 
@@ -182,7 +186,7 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     //textStat
                     |TEXT_STATEMENT:sym
-                    {: yield assembler.createTemplateText(%sym%, %sym.symbol%.pos); :}
+                    {: yield assembler.ir().templateText(%sym%, %sym.symbol%.pos); :}
 
                     //
                     |CONST IDENTIFIER:ident EQ expression:expr SEMICOLON
@@ -198,15 +202,15 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     //@import
                     |NATIVE_IMPORT:sym classPureName:nameRope SEMICOLON
-                    {: assembler.importClass(%nameRope%, %sym.symbol%.pos); yield NoopStatement.INSTANCE; :}
+                    {: assembler.classes().imports(%nameRope%, %sym.symbol%.pos); yield NoopStatement.INSTANCE; :}
 
                     // Break
                     |BREAK:sym IDENTIFIER:label? SEMICOLON
-                    {: yield new Break(assembler.getLabelIndex(%label%), %sym.symbol%.pos); :}
+                    {: yield IR.breakTo(assembler.getLabelIndex(%label%), %sym.symbol%.pos); :}
 
                     // Continue
                     |CONTINUE:sym IDENTIFIER:label? SEMICOLON
-                    {: yield new Continue(assembler.getLabelIndex(%label%), %sym.symbol%.pos); :}
+                    {: yield IR.continueTo(assembler.getLabelIndex(%label%), %sym.symbol%.pos); :}
 
                     // Return
                     |RETURN:sym expression:expr? SEMICOLON
@@ -220,65 +224,63 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     // Include
                     |INCLUDE:sym expression:expr newMapExpr:paramsExpr? SEMICOLON
-                    {: yield IR.includeBuilder().withoutExport(true).script(assembler.script()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos).build(); :}
+                    {: yield Include.builder().withoutExport(true).refer(assembler.script().path()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos).build(); :}
 
                     //funcStatement
-                    |funcStatementHead:builder LBRACE statement[]:list? RBRACE
+                    |funcStatHead:builder LBRACE statement[]:list? RBRACE
                     {: yield (%builder%).buildAndAssign(%list%); :}
 
-                    //
                     |(catchPart:$ | finallyPart:$):builder
                     {: yield (%builder%).build(); :}
 
-                    //
                     | THROW:sym expression:expr SEMICOLON
-                    {: yield new Throw(%expr%, %sym.symbol%.pos); :}
+                    {: yield IR.throwWith(%expr%, %sym.symbol%.pos); :}
                     ;
 
 
 varAssign       ::= IDENTIFIER:ident EQ:sym (expression:$ | varAssign:$):expr
-                    {: yield IR.assign(assembler.declareVarAndCreateContextValue(%ident%, %ident.symbol%.pos), %expr%, %sym.symbol%.pos); :}
+                    {: yield IR.assign(assembler.ir().declareAndLocate(%ident%, %ident.symbol%.pos), %expr%, %sym.symbol%.pos); :}
                     ;
 
 varPart         ::= varAssign:$
                     | IDENTIFIER:ident
-                    {: yield assembler.declareVar(%ident%, %ident.symbol%.pos); :}
+                    {: yield assembler.ir().declare(%ident%, %ident.symbol%.pos); :}
                     | LBRACK IDENTIFIER[COMMA]:idents RBRACK EQ:sym expression:expr
-                    {: yield IR.destructuringAssign(assembler.declareVarAndCreateContextValues(%idents%, %idents.symbol%.pos), %expr%, %sym.symbol%.pos); :}
+                    {: yield IR.destructuringAssign(assembler.ir().declareAndLocate(%idents%, %idents.symbol%.pos), %expr%, %sym.symbol%.pos); :}
                     ;
 
 
 importPart1     ::= IMPORT:sym expression:expr newMapExpr:paramsExpr?
-                    {: yield IR.includeBuilder().script(assembler.script()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos); :}
+                    {: yield Include.builder().refer(assembler.script().path()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos); :}
                     ;
 
 
 importPart2     ::= importPart1:builder IDENTIFIER:ident
-                    {: yield (%builder%).export(%ident%, assembler.createContextValue(0, %ident%, %ident.symbol%.pos)); :}
+                    {: yield (%builder%).exportTo(%ident%, IR.castToAssignable(assembler.ir().locate(0, %ident%, %ident.symbol%.pos))); :}
                     |importPart1:builder contextValueExpr:valueExpr EQ IDENTIFIER:ident
-                    {: yield (%builder%).export(%ident%, %valueExpr%); :}
+                    {: yield (%builder%).exportTo(%ident%, IR.castToAssignable(%valueExpr%)); :}
                     |importPart2:builder COMMA IDENTIFIER:ident
-                    {: yield (%builder%).export(%ident%, assembler.createContextValue(0, %ident%, %ident.symbol%.pos)); :}
+                    {: yield (%builder%).exportTo(%ident%, IR.castToAssignable(assembler.ir().locate(0, %ident%, %ident.symbol%.pos))); :}
                     |importPart2:builder COMMA contextValueExpr:valueExpr EQ IDENTIFIER:ident
-                    {: yield (%builder%).export(%ident%, %valueExpr%); :}
+                    {: yield (%builder%).exportTo(%ident%, IR.castToAssignable(%valueExpr%)); :}
                     ;
 
 
-block           ::= (LBRACE {: assembler.varLayout().shiftScope(); yield null; :}) statement[]:list? RBRACE
-                    {: yield IR.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos); :}
+block           ::= (LBRACE {: assembler.vars().shiftScope(); yield null; :}) statement[]:list? RBRACE
+                    {: yield IR.block(%list%, assembler.vars().unshiftScope(), %list.symbol%.pos); :}
                     ;
 
 
-tryPart         ::= (TRY LBRACE {: assembler.varLayout().shiftScope(); yield null; :}):sym statement[]:list? RBRACE
-                    {: yield IR.tryCatchBuilder().body(IR.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)).pos(%sym.symbol%.pos); :}
+tryPart         ::= (TRY LBRACE {: assembler.vars().shiftScope(); yield null; :}):sym statement[]:list? RBRACE
+                    {: yield IR.tryCatchBuilder().body(IR.block(%list%, assembler.vars().unshiftScope(), %list.symbol%.pos)).pos(%sym.symbol%.pos); :}
                     ;
 
-catchPart       ::= tryPart:builder (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: assembler.varLayout().shiftScope(); yield assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos); :}):varSlot statement[]:list? RBRACE
-                    {: yield (%builder%).exceptionVarSlot((Integer)(%varSlot%)).catchBody(IR.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)); :}
+catchPart       ::= tryPart:builder (CATCH LPAREN IDENTIFIER:ident RPAREN LBRACE {: assembler.vars().shiftScope(); yield assembler.vars().assignVar(%ident%, %ident.symbol%.pos); :}):varSlot statement[]:list? RBRACE
+                    {: yield (%builder%).exceptionVarSlot((Integer)(%varSlot%)).catchBody(IR.block(%list%, assembler.vars().unshiftScope(), %list.symbol%.pos)); :}
                     ;
 
-finallyPart     ::= (tryPart:$ | catchPart:$):builder (FINALLY LBRACE {: assembler.varLayout().shiftScope(); yield null; :}) statement[]:list? RBRACE
-                    {: yield (%builder%).finallyBody(IR.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos)); :}
+finallyPart     ::= (tryPart:$ | catchPart:$):builder (FINALLY LBRACE {: assembler.vars().shiftScope(); yield null; :}) statement[]:list? RBRACE
+                    {: yield (%builder%).finallyBody(IR.block(%list%, assembler.vars().unshiftScope(), %list.symbol%.pos)); :}
                     ;
 
 
@@ -287,30 +289,30 @@ ifStat          ::= IF:sym LPAREN expression:expr RPAREN block:body (ELSE block:
                     ;
 
 forInHead       ::= FOR:sym LPAREN IDENTIFIER:item COLON expression:items RPAREN
-                    {: yield new ForInBuilder(%item%, assembler.varLayout(), %sym.symbol%.pos).collection(%items%).shiftScope(); :}
+                    {: yield new ForInBuilder(%item%, assembler.vars(), %sym.symbol%.pos).collection(%items%).shiftScope(); :}
                     |FOR:sym LPAREN IDENTIFIER:key COMMA IDENTIFIER:value COLON expression:map RPAREN
-                    {: yield new ForMapBuilder(%key%, %value%, assembler.varLayout(), %sym.symbol%.pos).collection(%map%).shiftScope(); :}
+                    {: yield new ForMapBuilder(%key%, %value%, assembler.vars(), %sym.symbol%.pos).collection(%map%).shiftScope(); :}
                     ;
 
 
 lambdaForHead1  ::= FOR LPAREN IDENTIFIER:ident MINUSGT:sym
-                    {: yield FunctionLiteralBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
+                    {: yield FunctionLiteralBuilder.create(assembler.vars(), %sym.symbol%.pos).arg(%ident%); :}
                     ;
 
 
 lambdaForMapHead1   ::= FOR LPAREN IDENTIFIER:key COMMA IDENTIFIER:value MINUSGT:sym
-                    {: yield FunctionLiteralBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%key%).arg(%value%); :}
+                    {: yield FunctionLiteralBuilder.create(assembler.vars(), %sym.symbol%.pos).arg(%key%).arg(%value%); :}
                     ;
 
 
 lambdaForHead2  ::= lambdaForHead1:builder expression:expr COLON
-                    {: yield new ForInBuilder((%builder%).argAt(0), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
+                    {: yield new ForInBuilder((%builder%).argAt(0), assembler.vars(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
                     |lambdaForHead1:builder LBRACE statement[]:list RBRACE COLON
-                    {: yield new ForInBuilder((%builder%).argAt(0), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
+                    {: yield new ForInBuilder((%builder%).argAt(0), assembler.vars(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
                     |lambdaForMapHead1:builder expression:expr COLON
-                    {: yield new ForMapBuilder((%builder%).argAt(0), (%builder%).argAt(1), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
+                    {: yield new ForMapBuilder((%builder%).argAt(0), (%builder%).argAt(1), assembler.vars(), %builder.symbol%.pos).filter((%builder%).build(%expr%)); :}
                     |lambdaForMapHead1:builder LBRACE statement[]:list RBRACE COLON
-                    {: yield new ForMapBuilder((%builder%).argAt(0), (%builder%).argAt(1), assembler.varLayout(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
+                    {: yield new ForMapBuilder((%builder%).argAt(0), (%builder%).argAt(1), assembler.vars(), %builder.symbol%.pos).filter((%builder%).build(%list%)); :}
                     ;
 
 
@@ -331,8 +333,8 @@ whileBuilder       ::= WHILE:sym LPAREN expression:condition RPAREN block:body
                     ;
 
 
-caseBlockStat   ::= {: assembler.varLayout().shiftScope(); yield null; :} statement[]:list?
-                    {: yield IR.block(%list%, assembler.varLayout().unshiftScope(), %list.symbol%.pos); :}
+caseBlockStat   ::= {: assembler.vars().shiftScope(); yield null; :} statement[]:list?
+                    {: yield IR.block(%list%, assembler.vars().unshiftScope(), %list.symbol%.pos); :}
                     ;
 
 
@@ -359,7 +361,7 @@ expressionStatementAble ::=
                     {: yield IR.assign(IR.castToAssignable(%lexpr%), %expr%, %sym.symbol%.pos); :}
 
                     |LBRACK expression[COMMA]:list COMMA? RBRACK EQ:sym expression:expr
-                    {: yield IR.destructuringAssign(IR.toExpressionArray(%list%), %expr%, %sym.symbol%.pos); :}
+                    {: yield IR.destructuringAssign(ExpressionArray.of(%list%), %expr%, %sym.symbol%.pos); :}
 
                     // Increase ++
                     |PLUSPLUS:sym expression:expr
@@ -378,7 +380,7 @@ expressionStatementAble ::=
                     {: yield IR.selfAssign(%lexpr%, %rexpr%, %sym%, %sym.symbol%.pos); :}
 
                     //
-                    |funcExecuteExpr:$
+                    |funcCall:$
                     ;
 
 
@@ -495,22 +497,22 @@ expression      ::= expressionStatementAble:$
 
                     //NativeNewArrayDeclareExpression
                     |NATIVE:sym LBRACK RBRACK javaClass:javaClass
-                    {: yield assembler.createNewArrayNativeFunctionValue(%javaClass%, %sym.symbol%.pos); :}
+                    {: yield assembler.ir().newNativeArray(%javaClass%, %sym.symbol%.pos); :}
 
                     //nativeMethodExpr
                     |NATIVE:sym classPureName:nameRope DOT IDENTIFIER:ident LPAREN javaClass[COMMA]:list? RPAREN
-                    {: yield assembler.createMethodNativeFunctionValue(assembler.toClass(%nameRope%, %nameRope.symbol%.pos), %ident%, %list%, %sym.symbol%.pos); :}
+                    {: yield assembler.ir().nativeMethod(assembler.classes().resolve(%nameRope%, %nameRope.symbol%.pos), %ident%, %list%, %sym.symbol%.pos); :}
 
                     //native static field
                     |NATIVE classPureName:nameRope
-                    {: yield assembler.createNativeStaticFieldValue(%nameRope%, %nameRope.symbol%.pos); :}
+                    {: yield assembler.ir().staticNativeField(%nameRope%, %nameRope.symbol%.pos); :}
 
                     //nativeConstructorExpr
                     |NATIVE:sym NEW classPureName:nameRope LPAREN javaClass[COMMA]:list? RPAREN
-                    {: yield assembler.createConstructorNativeFunctionValue(assembler.toClass(%nameRope%, %nameRope.symbol%.pos), %list%, %sym.symbol%.pos); :}
+                    {: yield assembler.ir().nativeNew(assembler.classes().resolve(%nameRope%, %nameRope.symbol%.pos), %list%, %sym.symbol%.pos); :}
 
                     |METHOD_REFERENCE:ref
-                    {: yield assembler.createMethodReference(%ref%, %ref.symbol%.pos); :}
+                    {: yield assembler.ir().nativeMethodReference(%ref%, %ref.symbol%.pos); :}
 
                     |contextValueExpr:$
                     |newMapExpr:$
@@ -519,7 +521,7 @@ expression      ::= expressionStatementAble:$
                     |lambdaExpr:$
 
                     // script string
-                    |templateStringBuilder:builder TEMPLATE_STRING_END:end
+                    |tmplStringBuilder:builder TEMPLATE_STRING_END:end
                     {: yield (%builder%).segment(IR.constant(%end.symbol%)).build(); :}
                     ;
 
@@ -534,87 +536,87 @@ superCount      ::= SUPER DOT
 // ident  super...ident  this.ident
 
 contextValueExpr    ::= IDENTIFIER:ident
-                        {: yield assembler.createContextValue(0, %ident%, %ident.symbol%.pos); :}
-                        |superCount:count IDENTIFIER:ident
-                        {: yield assembler.createContextValue(%count%, %ident%, %ident.symbol%.pos); :}
-                        |FOR DOT IDENTIFIER:ident
-                        {: yield assembler.createContextValue(0, ("for." + %ident%), %ident.symbol%.pos); :}
-                        |superCount:count FOR DOT IDENTIFIER:ident
-                        {: yield assembler.createContextValue(%count%, ("for." + %ident%), %ident.symbol%.pos); :}
-                        ;
+                    {: yield assembler.ir().locate(0, %ident%, %ident.symbol%.pos); :}
+                    |superCount:count IDENTIFIER:ident
+                    {: yield assembler.ir().locate(%count%, %ident%, %ident.symbol%.pos); :}
+                    |FOR DOT IDENTIFIER:ident
+                    {: yield assembler.ir().locate(0, ("for." + %ident%), %ident.symbol%.pos); :}
+                    |superCount:count FOR DOT IDENTIFIER:ident
+                    {: yield assembler.ir().locate(%count%, ("for." + %ident%), %ident.symbol%.pos); :}
+                    ;
 
 // map {key:expr, ...}
 
-newMapEntry         ::= DIRECT_VALUE:key COLON expression:expr
-                        {: yield IR.entryOfNewMap(IR.constant(%key.symbol%), %expr%); :}
-                        |MINUS:sym DIRECT_VALUE:key COLON expression:expr
-                        {: yield IR.entryOfNewMap(IR.constant(ALU.negative(%key%), %key.symbol%.pos), %expr%); :}
-                        |IDENTIFIER:ident
-                        {: yield IR.entryOfNewMap(IR.constant(%ident.symbol%), assembler.createContextValue(0, %ident%, %ident.symbol%.pos)); :}
-                        |IDENTIFIER:ident COLON expression:expr
-                        {: yield IR.entryOfNewMap(IR.constant(%ident.symbol%), %expr%); :}
-                        // |IDENTIFIER:ident mapPropertyFuncHead:builder LBRACE statement[]:list? RBRACE
-                        // {: yield IR.entryOfNewMap(IR.constant(%ident.symbol%), (%builder%).build(%list%)); :}
-                        |LBRACK expression:key RBRACK COLON expression:expr
-                        {: yield IR.entryOfNewMap(%key%, %expr%); :}
-                        ;
+newMapEntry     ::= DIRECT_VALUE:key COLON expression:expr
+                    {: yield IR.entryOfNewMap(IR.constant(%key.symbol%), %expr%); :}
+                    |MINUS:sym DIRECT_VALUE:key COLON expression:expr
+                    {: yield IR.entryOfNewMap(IR.constant(ALU.negative(%key%), %key.symbol%.pos), %expr%); :}
+                    |IDENTIFIER:ident
+                    {: yield IR.entryOfNewMap(IR.constant(%ident.symbol%), assembler.ir().locate(0, %ident%, %ident.symbol%.pos)); :}
+                    |IDENTIFIER:ident COLON expression:expr
+                    {: yield IR.entryOfNewMap(IR.constant(%ident.symbol%), %expr%); :}
+                    // |IDENTIFIER:ident mapPropertyFuncHead:builder LBRACE statement[]:list? RBRACE
+                    // {: yield IR.entryOfNewMap(IR.constant(%ident.symbol%), (%builder%).build(%list%)); :}
+                    |LBRACK expression:key RBRACK COLON expression:expr
+                    {: yield IR.entryOfNewMap(%key%, %expr%); :}
+                    ;
 
 
-newMapExpr          ::= LBRACE:sym RBRACE
-                        {: yield IR.newMap(List.of(), %sym.symbol%.pos); :}
-                        |LBRACE:sym newMapEntry[COMMA]:entries COMMA? RBRACE
-                        {: yield IR.newMap(%entries%, %sym.symbol%.pos); :}
-                        ;
+newMapExpr      ::= LBRACE:sym RBRACE
+                    {: yield IR.newMap(List.of(), %sym.symbol%.pos); :}
+                    |LBRACE:sym newMapEntry[COMMA]:entries COMMA? RBRACE
+                    {: yield IR.newMap(%entries%, %sym.symbol%.pos); :}
+                    ;
 
 
-templateStringBuilder  ::= TEMPLATE_STRING_START:sym
-                            {: yield IR.templateStringBuilder().pos(%sym.symbol%.pos); :}
-                            | templateStringBuilder:builder TEMPLATE_STRING_INTERPOLATION_START:start expression:segment TEMPLATE_STRING_INTERPOLATION_END
-                            {: yield (%builder%).segment(IR.constant(%start.symbol%)).segment(%segment%); :}
-                            ;
+tmplStringBuilder  ::= TEMPLATE_STRING_START:sym
+                    {: yield TemplateStringValue.builder().pos(%sym.symbol%.pos); :}
+                    | tmplStringBuilder:builder TEMPLATE_STRING_INTERPOLATION_START:start expression:segment TEMPLATE_STRING_INTERPOLATION_END
+                    {: yield (%builder%).segment(IR.constant(%start.symbol%)).segment(%segment%); :}
+                    ;
 
 /* function  */
-funcArg             ::= IDENTIFIER:ident
-                        {: yield FunctionLiteralBuilder.ofArgument(%ident%, null); :}
-                        | IDENTIFIER:ident EQ expression:expr
-                        {: yield FunctionLiteralBuilder.ofArgument(%ident%, StatementUtils.evalAsConst(%expr%)); :}
-                        ;
+funcArg         ::= IDENTIFIER:ident
+                    {: yield FunctionLiteralBuilder.ofArgument(%ident%, null); :}
+                    | IDENTIFIER:ident EQ expression:expr
+                    {: yield FunctionLiteralBuilder.ofArgument(%ident%, StatementUtils.evalAsConst(%expr%)); :}
+                    ;
 
 
-funcStatementHead   ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:args? RPAREN
-                        {: yield FunctionLiteralBuilder.create(assembler.varLayout(), assembler.varLayout().assignVar(%ident%, %ident.symbol%.pos), %sym.symbol%.pos).args(%args%); :}
-                        ;
+funcStatHead    ::= FUNCTION:sym IDENTIFIER:ident LPAREN funcArg[COMMA]:args? RPAREN
+                    {: yield FunctionLiteralBuilder.create(assembler.vars(), assembler.vars().assignVar(%ident%, %ident.symbol%.pos), %sym.symbol%.pos).args(%args%); :}
+                    ;
 
 // mapPropertyFuncHead ::= LPAREN:sym funcArg[COMMA]:args? RPAREN
-//                         {: yield FunctionLiteralBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
-//                         ;
+//                     {: yield FunctionLiteralBuilder.create(assembler.vars(), %sym.symbol%.pos).args(%args%); :}
+//                     ;
 
-funcHead            ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
-                        {: yield FunctionLiteralBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
-                        ;
+funcHead        ::= FUNCTION:sym LPAREN funcArg[COMMA]:args? RPAREN
+                    {: yield FunctionLiteralBuilder.create(assembler.vars(), %sym.symbol%.pos).args(%args%); :}
+                    ;
 
-funcExecuteExpr     ::= expression:funcExpr LPAREN RPAREN
-                        {: yield IR.functionCall(%funcExpr%, ExpressionArray.ofEmpty(), %funcExpr.symbol%.pos); :}
-                        |expression:funcExpr LPAREN expression[COMMA]:list COMMA? RPAREN
-                        {: yield IR.functionCall(%funcExpr%, IR.toExpressionArray(%list%), %funcExpr.symbol%.pos); :}
-                        |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN RPAREN
-                        {: yield IR.dynamicNativeInvocationCall(%param0%, %ident%, ExpressionArray.ofEmpty(), %ident.symbol%.pos); :}
-                        |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expression[COMMA]:list COMMA? RPAREN
-                        {: yield IR.dynamicNativeInvocationCall(%param0%, %ident%, IR.toExpressionArray(%list%), %ident.symbol%.pos); :}
-                        ;
+funcCall        ::= expression:funcExpr LPAREN RPAREN
+                    {: yield IR.functionCall(%funcExpr%, ExpressionArray.ofEmpty(), %funcExpr.symbol%.pos); :}
+                    |expression:funcExpr LPAREN expression[COMMA]:list COMMA? RPAREN
+                    {: yield IR.functionCall(%funcExpr%, ExpressionArray.of(%list%), %funcExpr.symbol%.pos); :}
+                    |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN RPAREN
+                    {: yield IR.dynamicNativeCall(%param0%, %ident%, ExpressionArray.ofEmpty(), %ident.symbol%.pos); :}
+                    |expression:param0 DYNAMIC_DOT IDENTIFIER:ident LPAREN expression[COMMA]:list COMMA? RPAREN
+                    {: yield IR.dynamicNativeCall(%param0%, %ident%, ExpressionArray.of(%list%), %ident.symbol%.pos); :}
+                    ;
 
 
 /* lambda */
-lambdaExprHead      ::= IDENTIFIER:ident MINUSGT:sym
-                        {: yield FunctionLiteralBuilder.create(assembler.varLayout(), %sym.symbol%.pos).arg(%ident%); :}
-                        |LPAREN funcArg[COMMA]:args? RPAREN_MINUSGT:sym
-                        {: yield FunctionLiteralBuilder.create(assembler.varLayout(), %sym.symbol%.pos).args(%args%); :}
-                        ;
+lambdaExprHead  ::= IDENTIFIER:ident MINUSGT:sym
+                    {: yield FunctionLiteralBuilder.create(assembler.vars(), %sym.symbol%.pos).arg(%ident%); :}
+                    |LPAREN funcArg[COMMA]:args? RPAREN_MINUSGT:sym
+                    {: yield FunctionLiteralBuilder.create(assembler.vars(), %sym.symbol%.pos).args(%args%); :}
+                    ;
 
 
-lambdaExpr          ::= lambdaExprHead:builder expression:expr
-                        {: yield (%builder%).buildAndAssign(%expr%); :}
-                        |lambdaExprHead:builder LBRACE statement[]:list RBRACE
-                        {: yield (%builder%).buildAndAssign(%list%); :}
-                        ;
+lambdaExpr      ::= lambdaExprHead:builder expression:expr
+                    {: yield (%builder%).buildAndAssign(%expr%); :}
+                    |lambdaExprHead:builder LBRACE statement[]:list RBRACE
+                    {: yield (%builder%).buildAndAssign(%list%); :}
+                    ;
 

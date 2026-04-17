@@ -26,8 +26,11 @@ import org.febit.wit.ir.ExpressionArray;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.ScriptIR;
 import org.febit.wit.ir.Statement;
+import org.febit.wit.ir.StatementBatch;
 import org.febit.wit.ir.expr.ConstantValue;
-import org.febit.wit.ir.expr.NativeStaticFieldValue;
+import org.febit.wit.ir.expr.HeapValue;
+import org.febit.wit.ir.expr.StaticNativeFieldValue;
+import org.febit.wit.ir.expr.VariableHeapFrameValue;
 import org.febit.wit.ir.expr.VariableHeapValue;
 import org.febit.wit.ir.statement.NoopStatement;
 import org.febit.wit.ir.support.StatementUtils;
@@ -46,29 +49,31 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Accessors(fluent = true)
 public class Assembler {
 
-    private final Map<String, String> importedClasses = new HashMap<>();
     private final Map<@Nullable String, Integer> labelIndexMap = new HashMap<>();
     private final AtomicInteger nextLabelIndex = new AtomicInteger();
 
+    @Getter
+    private final IRFactory ir = new IRFactory();
+    @Getter
+    private final ClassManager classes = new ClassManager();
+    @Getter
+    private final Script script;
+    @Getter
+    private final VarLayout vars;
     private final int features;
 
-    @Getter
     private final TemplateTextFactory templateTextFactory;
     private final NativeAccess nativeAccess;
     /**
      * Current source version.
      */
     private final long lastSourceVersion;
-
-    @Getter
-    private final Script script;
-    @Getter
-    private final VarLayout varLayout;
 
     public Assembler(Script script) {
         var wit = script.engine();
@@ -78,7 +83,7 @@ public class Assembler {
         this.templateTextFactory = wit.templateTextFactory();
         this.nativeAccess = wit.nativeAccess();
 
-        this.varLayout = new VarLayout(wit);
+        this.vars = new VarLayout(wit);
         this.labelIndexMap.put(null, 0);
         this.nextLabelIndex.set(1);
 
@@ -98,263 +103,196 @@ public class Assembler {
         return feature.isEnabled(features);
     }
 
-    private Class<?> toClass(String className) {
-        int arrayDept = 0;
-        int flag = className.indexOf('[');
-        if (flag >= 0) {
-            // figure out array dept
-            for (char c : className.substring(flag).toCharArray()) {
-                if (c == '[') {
-                    arrayDept++;
-                }
-            }
-            className = className.substring(0, flag).trim();
-        }
-        String classFullName = resolveClassFullName(className);
-        try {
-            return ClassUtils.load(classFullName, arrayDept);
-        } catch (ClassNotFoundException ex) {
-            throw new ScriptParseException("Class<?> not found:" + classFullName, ex);
-        }
-    }
-
-    private String resolveClassFullName(String className) {
-
-        // 0. full name
-        if (className.indexOf('.') >= 0) {
-            return className;
-        }
-
-        //1. find from @imports
-        String fullName = importedClasses.get(className);
-        if (fullName != null) {
-            return fullName;
-        }
-        Class<?> cls;
-
-        // 2. find as primitive type
-        cls = ClassUtils.primitiveType(className);
-        if (cls != null) {
-            return className;
-        }
-
-        // 3. find as java.lang.*
-        try {
-            cls = ClassUtils.load("java.lang.".concat(className));
-        } catch (Exception ignore) {
-            // Ignore
-        }
-        if (cls != null) {
-            return cls.getName();
-        }
-
-        // failed, just return
-        return className;
-    }
-
-    public void importClass(ClassNameRope rope, Position position) throws ScriptParseException {
-        var simpleName = rope.simpleName();
-        if (ClassUtils.primitiveType(simpleName) != null) {
-            throw new ScriptParseException("Cannot import primitive type:" + simpleName, position);
-        }
-        var componentName = rope.componentName();
-        var existing = importedClasses.get(simpleName);
-        if (existing != null) {
-            if (existing.equals(componentName)) {
-                return;
-            }
-            throw new ScriptParseException("Ambiguous import for class name: " + simpleName
-                    + ", exists: " + existing + ", new: " + componentName, position);
-        }
-        importedClasses.put(simpleName, componentName);
-    }
-
     public int getLabelIndex(String label) {
         return labelIndexMap.computeIfAbsent(label,
                 l -> nextLabelIndex.getAndIncrement());
     }
 
-    public Class<?> toClass(ClassNameRope rope, Position position) throws ScriptParseException {
-        var compName = rope.componentName();
-        var classFullName = resolveClassFullName(compName);
-        try {
-            return ClassUtils.load(classFullName, rope.arrayDepth());
-        } catch (ClassNotFoundException ex) {
-            throw new ScriptParseException("Class<?> not found:" + classFullName, ex, position);
-        }
+    public void assignConst(String name, Expression expr, Position position) {
+        vars.assignConst(name, StatementUtils.evalAsConst(expr), position);
     }
 
-    public Statement createTemplateText(char @Nullable [] text, Position position) {
-        if (text == null || text.length == 0) {
+    public class IRFactory {
+
+        public Statement templateText(char @Nullable [] text, Position position) {
+            if (text == null || text.length == 0) {
+                return NoopStatement.INSTANCE;
+            }
+            return templateTextFactory.create(script, text, position);
+        }
+
+        public Statement declare(String name, Position position) {
+            //XXX: Should Check var used before init
+            vars.assignVar(name, position);
             return NoopStatement.INSTANCE;
         }
-        return this.templateTextFactory.create(script, text, position);
-    }
 
-    public VariableHeapValue declareVarAndCreateContextValue(String name, Position position) {
-        return new VariableHeapValue(varLayout.assignVar(name, position), position);
-    }
+        public VariableHeapValue declareAndLocate(String name, Position position) {
+            return new VariableHeapValue(vars.assignVar(name, position), position);
+        }
 
-    public ExpressionArray declareVarAndCreateContextValues(List<String> names, Position position) {
-        var contextVars = new Expression[names.size()];
-        for (int i = 0; i < names.size(); i++) {
-            contextVars[i] = declareVarAndCreateContextValue(names.get(i), position);
+        public ExpressionArray declareAndLocate(List<String> names, Position position) {
+            var contextVars = new Expression[names.size()];
+            for (int i = 0; i < names.size(); i++) {
+                contextVars[i] = declareAndLocate(names.get(i), position);
+            }
+            return ExpressionArray.of(contextVars);
         }
-        return ExpressionArray.of(contextVars);
-    }
 
-    public Expression createContextValue(int scopeOffset, String name, Position position) {
-        var addr = varLayout.locate(name, scopeOffset, !Feature.LOOSE_VAR.isEnabled(this.features), position);
-        return IR.value(addr, position);
-    }
+        public Expression locate(int scopeOffset, String name, Position pos) {
+            var addr = vars.locate(name, scopeOffset, !Feature.LOOSE_VAR.isEnabled(features), pos);
+            return switch (addr.kind()) {
+                case VAR -> new VariableHeapValue(addr.slot(), pos);
+                case FRAME_VAR -> new VariableHeapFrameValue(addr.frameOffset(), addr.slot(), pos);
+                case CONSTANT -> new ConstantValue(addr.value(), pos);
+                case HEAP -> {
+                    var key = Objects.requireNonNull(addr.key());
+                    var heap = Objects.requireNonNull(addr.heap());
+                    yield new HeapValue(
+                            heap, key, pos
+                    );
+                }
+            };
+        }
 
-    public void assignConst(String name, Expression expr, Position position) {
-        varLayout.assignConst(name, StatementUtils.evalAsConst(expr), position);
-    }
+        public Expression staticNativeField(ClassNameRope rope, Position position) {
+            if (rope.size() <= 1) {
+                throw new ScriptParseException("native static need a field name.", position);
+            }
+            var fieldName = rope.pop();
+            var clazz = classes.resolve(rope, position);
 
-    public Expression createNativeStaticFieldValue(ClassNameRope rope, Position position) {
-        if (rope.size() <= 1) {
-            throw new ScriptParseException("native static need a field name.", position);
+            var path = clazz.getName() + '.' + fieldName;
+            if (!nativeAccess.security().allowed(path)) {
+                throw new ScriptParseException("Inaccessible native path: " + path, position);
+            }
+            if (ReservedNames.CLASS.equals(fieldName)) {
+                return new ConstantValue(clazz, position);
+            }
+            final Field field;
+            try {
+                field = clazz.getField(fieldName);
+            } catch (NoSuchFieldException ex) {
+                throw new ScriptParseException("No such field: " + path, ex, position);
+            }
+            if (!Modifiers.isStatic(field)) {
+                throw new ScriptParseException("No a static field: " + path, position);
+            }
+            VarHandle handle;
+            try {
+                handle = MethodHandleUtils.lookupOf(clazz)
+                        .unreflectVarHandle(field);
+            } catch (IllegalAccessException e) {
+                throw new ScriptParseException("Cannot access field: " + path, e, position);
+            }
+            if (!Modifiers.isFinal(field)) {
+                return new StaticNativeFieldValue(handle, position);
+            }
+            try {
+                return new ConstantValue(handle.get(), position);
+            } catch (IllegalArgumentException ex) {
+                throw new ScriptParseException("Failed to get static field value: " + path, ex, position);
+            }
         }
-        var fieldName = rope.pop();
-        var clazz = toClass(rope, position);
 
-        var path = clazz.getName() + '.' + fieldName;
-        if (!this.nativeAccess.security().allowed(path)) {
-            throw new ScriptParseException("Inaccessible native path: " + path, position);
-        }
-        if (ReservedNames.CLASS.equals(fieldName)) {
-            return new ConstantValue(clazz, position);
-        }
-        final Field field;
-        try {
-            field = clazz.getField(fieldName);
-        } catch (NoSuchFieldException ex) {
-            throw new ScriptParseException("No such field: " + path, ex, position);
-        }
-        if (!Modifiers.isStatic(field)) {
-            throw new ScriptParseException("No a static field: " + path, position);
-        }
-        VarHandle handle;
-        try {
-            handle = MethodHandleUtils.lookupOf(clazz)
-                    .unreflectVarHandle(field);
-        } catch (IllegalAccessException e) {
-            throw new ScriptParseException("Cannot access field: " + path, e, position);
-        }
-        if (!Modifiers.isFinal(field)) {
-            return new NativeStaticFieldValue(handle, position);
-        }
-        try {
-            return new ConstantValue(handle.get(), position);
-        } catch (IllegalArgumentException ex) {
-            throw new ScriptParseException("Failed to get static field value: " + path, ex, position);
-        }
-    }
+        public Expression newNativeArray(Class<?> componentType, Position pos) {
+            Class<?> classForCheck = componentType;
+            while (classForCheck.isArray()) {
+                classForCheck = classForCheck.getComponentType();
+            }
+            if (ClassUtils.isVoidType(classForCheck)) {
+                throw new ScriptParseException("ComponentType must not void", pos);
+            }
+            nativeAccess.securityCheck(classForCheck.getName() + ".[]", pos);
 
-    public Expression createNewArrayNativeFunctionValue(Class<?> componentType, Position pos) {
-        Class<?> classForCheck = componentType;
-        while (classForCheck.isArray()) {
-            classForCheck = classForCheck.getComponentType();
+            var function = nativeAccess.functions().array(componentType);
+            return new ConstantValue(function, pos);
         }
-        if (ClassUtils.isVoidType(classForCheck)) {
-            throw new ScriptParseException("ComponentType must not void", pos);
+
+        public Expression nativeMethod(
+                Class<?> clazz, String methodName, @Nullable List<Class<?>> paramTypes, Position position) {
+            nativeAccess.securityCheck(clazz.getName() + '.' + methodName, position);
+
+            Method method;
+            try {
+                method = clazz.getMethod(methodName,
+                        paramTypes == null ? new Class[0] : paramTypes.toArray(new Class[0])
+                );
+            } catch (NoSuchMethodException | SecurityException ex) {
+                throw new ScriptParseException(ex.getMessage(), ex, position);
+            }
+
+            var func = nativeAccess.functions().method(method);
+            return new ConstantValue(func, position);
         }
-        this.nativeAccess.securityCheck(classForCheck.getName() + ".[]", pos);
 
-        var function = this.nativeAccess.functions().array(componentType);
-        return new ConstantValue(function, pos);
-    }
+        public Expression nativeMethod(
+                Class<?> clazz, String methodName, Position position) {
+            nativeAccess.securityCheck(clazz.getName() + '.' + methodName, position);
 
-    public Expression createMethodNativeFunctionValue(
-            Class<?> clazz, String methodName, @Nullable List<Class<?>> paramTypes, Position position) {
-        this.nativeAccess.securityCheck(clazz.getName() + '.' + methodName, position);
+            var methods = NativeMethods.find(clazz, methodName)
+                    .toList();
+            if (methods.isEmpty()) {
+                throw new ScriptParseException("No such method: " + clazz.getName() + '#' + methodName, position);
+            }
 
-        Method method;
-        try {
-            method = clazz.getMethod(methodName,
-                    paramTypes == null ? new Class[0] : paramTypes.toArray(new Class[0])
+            var func = nativeAccess.functions().method(methods);
+            return new ConstantValue(func, position);
+        }
+
+        public Expression nativeNew(
+                Class<?> clazz, @Nullable List<Class<?>> paramTypes, Position position) {
+            nativeAccess.securityCheck(clazz.getName() + '.' + ReservedNames.NEW, position);
+
+            Constructor<?> constructor;
+            try {
+                constructor = clazz.getConstructor(
+                        paramTypes == null ? new Class[0] : paramTypes.toArray(new Class[0])
+                );
+            } catch (NoSuchMethodException | SecurityException ex) {
+                throw new ScriptParseException(ex.getMessage(), ex, position);
+            }
+            var func = nativeAccess.functions().constructor(constructor);
+            return new ConstantValue(func, position);
+        }
+
+        public Expression nativeNew(Class<?> clazz, Position position) {
+            nativeAccess.securityCheck(clazz.getName() + '.' + ReservedNames.NEW, position);
+
+            var constructors = clazz.getConstructors();
+            var func = nativeAccess.functions().constructor(List.of(constructors));
+            return new ConstantValue(func, position);
+        }
+
+        public Expression nativeMethodReference(String pattern, Position position) {
+            int split = pattern.indexOf("::");
+            var className = pattern.substring(0, split).trim();
+            var cls = classes.load(className);
+
+            var method = pattern.substring(split + 2).trim();
+            if (!ReservedNames.NEW.equals(method)) {
+                return nativeMethod(cls, method, position);
+            }
+            if (cls.isArray()) {
+                return newNativeArray(cls.getComponentType(), position);
+            }
+            return nativeNew(cls, position);
+        }
+
+        public ScriptIR script(List<Statement> list) {
+            var batches = StatementBatch.batch(list, jump -> {
+                throw new ScriptParseException("Unhandled control flow: " + jump, jump.position());
+            });
+            if (batches.size() != 1) {
+                throw new IllegalStateException("Unexpected batches size: " + batches.size());
+            }
+            return new ScriptIR(
+                    lastSourceVersion,
+                    vars.slotSize(),
+                    vars.buildScopeTables(),
+                    batches.get(0)
             );
-        } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ScriptParseException(ex.getMessage(), ex, position);
         }
-
-        var func = this.nativeAccess.functions().method(method);
-        return new ConstantValue(func, position);
     }
 
-    public Expression createMethodNativeFunctionValue(
-            Class<?> clazz, String methodName, Position position) {
-        this.nativeAccess.securityCheck(clazz.getName() + '.' + methodName, position);
-
-        var methods = NativeMethods.find(clazz, methodName)
-                .toList();
-        if (methods.isEmpty()) {
-            throw new ScriptParseException("No such method: " + clazz.getName() + '#' + methodName, position);
-        }
-
-        var func = this.nativeAccess.functions().method(methods);
-        return new ConstantValue(func, position);
-    }
-
-    public Expression createConstructorNativeFunctionValue(
-            Class<?> clazz, @Nullable List<Class<?>> paramTypes, Position position) {
-        this.nativeAccess.securityCheck(clazz.getName() + '.' + ReservedNames.NEW, position);
-
-        Constructor<?> constructor;
-        try {
-            constructor = clazz.getConstructor(
-                    paramTypes == null ? new Class[0] : paramTypes.toArray(new Class[0])
-            );
-        } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ScriptParseException(ex.getMessage(), ex, position);
-        }
-        var func = this.nativeAccess.functions().constructor(constructor);
-        return new ConstantValue(func, position);
-    }
-
-    public Expression createConstructorNativeFunctionValue(
-            Class<?> clazz, Position position) {
-        this.nativeAccess.securityCheck(clazz.getName() + '.' + ReservedNames.NEW, position);
-
-        var constructors = clazz.getConstructors();
-        var func = this.nativeAccess.functions().constructor(List.of(constructors));
-        return new ConstantValue(func, position);
-    }
-
-    public Expression createMethodReference(String ref, Position position) {
-        int split = ref.indexOf("::");
-        var className = ref.substring(0, split).trim();
-        var cls = toClass(className);
-
-        var method = ref.substring(split + 2).trim();
-        if (!ReservedNames.NEW.equals(method)) {
-            return createMethodNativeFunctionValue(cls, method, position);
-        }
-        if (cls.isArray()) {
-            return createNewArrayNativeFunctionValue(cls.getComponentType(), position);
-        }
-        return createConstructorNativeFunctionValue(cls, position);
-    }
-
-    public Statement declareVar(String name, Position position) {
-        //XXX: Should Check var used before init
-        varLayout.assignVar(name, position);
-        return NoopStatement.INSTANCE;
-    }
-
-    public ScriptIR buildScriptIR(List<Statement> list) {
-        var batches = IR.batch(list, jump -> {
-            throw new ScriptParseException("Unhandled control flow: " + jump, jump.position());
-        });
-        if (batches.size() != 1) {
-            throw new IllegalStateException("Unexpected batches size: " + batches.size());
-        }
-        return new ScriptIR(
-                this.lastSourceVersion,
-                this.varLayout.slotSize(),
-                this.varLayout.buildScopeTables(),
-                batches.get(0)
-        );
-    }
 }

@@ -15,18 +15,23 @@
  */
 package org.febit.wit.ir.include;
 
+import lombok.Builder;
+import lombok.Singular;
 import org.febit.wit.Context;
 import org.febit.wit.Feature;
 import org.febit.wit.Vars;
 import org.febit.wit.exception.NoSuchSourceException;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.ScriptParseException;
+import org.febit.wit.ir.AssignableExpression;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
+import org.febit.wit.ir.support.StatementUtils;
 import org.febit.wit.runtime.RuntimeContext;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 public record Include(
@@ -36,6 +41,42 @@ public record Include(
         @Nullable Expression inputs,
         Position position
 ) implements Statement {
+
+    @Builder(
+            builderClassName = "IncludeBuilder"
+    )
+    private static Include builder0(
+            @lombok.NonNull String refer,
+            @lombok.NonNull Expression path,
+            @lombok.NonNull Position pos,
+            @Nullable Boolean withoutExport,
+            @Nullable Expression params,
+            @Singular("exportVar")
+            List<AssignMappedIncludeHandler.Entry> exportMappings
+    ) {
+        path = StatementUtils.optimize(path);
+
+        if (params != null) {
+            params = StatementUtils.optimize(params);
+        }
+        IncludeHandler handler;
+        if (withoutExport != null && withoutExport) {
+            handler = IncludeHandlers::noop;
+        } else if (exportMappings.isEmpty()) {
+            // If empty, means export & import all.
+            handler = IncludeHandlers::importAll;
+        } else {
+            handler = new AssignMappedIncludeHandler(exportMappings);
+        }
+        return new Include(refer, path, handler, params, pos);
+    }
+
+    public static class IncludeBuilder {
+
+        public IncludeBuilder exportTo(String name, AssignableExpression target) {
+            return exportVar(new AssignMappedIncludeHandler.Entry(name, target));
+        }
+    }
 
     @Override
     @Nullable

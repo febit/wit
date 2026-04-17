@@ -16,9 +16,7 @@
 package org.febit.wit.parser;
 
 import lombok.Builder;
-import lombok.Singular;
 import lombok.experimental.UtilityClass;
-import org.febit.wit.Script;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.AssignableExpression;
 import org.febit.wit.ir.Expression;
@@ -29,21 +27,15 @@ import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.StatementBatch;
 import org.febit.wit.ir.expr.BreakpointExpr;
 import org.febit.wit.ir.expr.ConstantValue;
-import org.febit.wit.ir.expr.DynamicNativeInvocation;
+import org.febit.wit.ir.expr.DynamicNativeCall;
 import org.febit.wit.ir.expr.FunctionCall;
-import org.febit.wit.ir.expr.HeapValue;
 import org.febit.wit.ir.expr.LazyValue;
 import org.febit.wit.ir.expr.NewArray;
 import org.febit.wit.ir.expr.NewMap;
-import org.febit.wit.ir.expr.TemplateStringValue;
-import org.febit.wit.ir.expr.VariableHeapFrameValue;
-import org.febit.wit.ir.expr.VariableHeapValue;
+import org.febit.wit.ir.flow.Break;
+import org.febit.wit.ir.flow.Continue;
 import org.febit.wit.ir.flow.Jump;
 import org.febit.wit.ir.flow.Return;
-import org.febit.wit.ir.include.AssignMappedIncludeHandler;
-import org.febit.wit.ir.include.Include;
-import org.febit.wit.ir.include.IncludeHandler;
-import org.febit.wit.ir.include.IncludeHandlers;
 import org.febit.wit.ir.loop.DoWhile;
 import org.febit.wit.ir.loop.JumpAwareLoopBody;
 import org.febit.wit.ir.loop.LoopBody;
@@ -73,23 +65,19 @@ import org.febit.wit.ir.statement.IfNot;
 import org.febit.wit.ir.statement.NoJumpBlock;
 import org.febit.wit.ir.statement.NoopStatement;
 import org.febit.wit.ir.statement.RenderRedirect;
+import org.febit.wit.ir.statement.Throw;
 import org.febit.wit.ir.statement.TryCatchFinally;
 import org.febit.wit.ir.statement.TryFinally;
 import org.febit.wit.ir.support.ALU;
-import org.febit.wit.ir.support.Jumps;
 import org.febit.wit.ir.support.StatementList;
 import org.febit.wit.ir.support.StatementUtils;
-import org.febit.wit.ir.template.Interpolation;
 import org.febit.wit.parser.support.SwitchBuilder;
-import org.febit.wit.parser.support.VarAddress;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 @UtilityClass
@@ -110,6 +98,18 @@ public class IR {
 
     public static Return returnWith(@Nullable Expression value, Position pos) {
         return new Return(value, pos);
+    }
+
+    public static Throw throwWith(Expression value, Position pos) {
+        return new Throw(value, pos);
+    }
+
+    public static Break breakTo(int label, Position pos) {
+        return new Break(label, pos);
+    }
+
+    public static Continue continueTo(int label, Position pos) {
+        return new Continue(label, pos);
     }
 
     public static RenderRedirect renderRedirect(Statement body, AssignableExpression target, Position pos) {
@@ -154,10 +154,6 @@ public class IR {
         return new FixedPropertyAccess(target, property, pos);
     }
 
-    public static Interpolation interpolation(Expression value) {
-        return new Interpolation(value, value.position());
-    }
-
     public static ConstantValue constant(@Nullable Object value, Position pos) {
         return new ConstantValue(value, pos);
     }
@@ -188,34 +184,19 @@ public class IR {
             List<Expression> values,
             Position pos
     ) {
-        return new NewArray(toExpressionArray(values), pos);
+        return new NewArray(ExpressionArray.of(values), pos);
     }
 
     public static NewMap newMap(List<NewMap.NewMapEntry> entries, Position pos) {
-        return new NewMap(List.copyOf(entries), pos);
+        return new NewMap(entries, pos);
     }
 
     public static NewMap.NewMapEntry entryOfNewMap(Expression key, Expression value) {
-        key = StatementUtils.optimize(key);
-        value = StatementUtils.optimize(value);
         return new NewMap.NewMapEntry(key, value);
     }
 
     public static SwitchBuilder switchBuilder() {
         return new SwitchBuilder();
-    }
-
-    @Builder(
-            builderMethodName = "templateStringBuilder",
-            builderClassName = "TemplateStringBuilder"
-    )
-    public static TemplateStringValue templateString(
-            @Singular
-            List<Expression> segments,
-            Position pos
-    ) {
-        Objects.requireNonNull(pos, "position is required");
-        return new TemplateStringValue(toExpressionArray(segments).asList(), pos);
     }
 
     public enum WhileKind {
@@ -227,17 +208,12 @@ public class IR {
             builderClassName = "WhileBuilder"
     )
     private static Statement while0(
-            WhileKind kind,
-            Expression condition,
-            IBlock body,
-            @Nullable Integer label,
-            Position pos
+            @lombok.NonNull WhileKind kind,
+            @lombok.NonNull Expression condition,
+            @lombok.NonNull IBlock body,
+            @lombok.NonNull Position pos,
+            @Nullable Integer label
     ) {
-        Objects.requireNonNull(kind, "kind is required");
-        Objects.requireNonNull(condition, "condition is required");
-        Objects.requireNonNull(body, "body is required");
-        Objects.requireNonNull(pos, "position is required");
-
         var loopBody = loopBodyFromBatches(
                 body.body(),
                 label != null ? label : 0
@@ -254,15 +230,12 @@ public class IR {
             builderClassName = "TryCatchBuilder"
     )
     private static Statement tryCatch(
-            Statement body,
+            @lombok.NonNull Statement body,
+            @lombok.NonNull Position pos,
             @Nullable Statement catchBody,
             @Nullable Statement finallyBody,
-            @Nullable Integer exceptionVarSlot,
-            Position pos
+            @Nullable Integer exceptionVarSlot
     ) {
-        Objects.requireNonNull(body, "tryBody is required");
-        Objects.requireNonNull(pos, "position is required");
-
         body = StatementUtils.optimize(body);
 
         if (catchBody != null) {
@@ -284,54 +257,9 @@ public class IR {
         return new TryCatchFinally(exceptionVarSlot, body, catchBody, finallyBody, pos);
     }
 
-    public static class IncludeBuilder {
-
-        public IncludeBuilder export(String name, Expression target) {
-            var optimized = castToAssignable(StatementUtils.optimize(target));
-            return exportVar(new AssignMappedIncludeHandler.Entry(name, optimized));
-        }
-    }
-
-    @Builder(
-            builderMethodName = "includeBuilder",
-            builderClassName = "IncludeBuilder"
-    )
-    private static Include include(
-            Script script,
-            Position pos,
-            Expression path,
-            @Nullable Boolean withoutExport,
-            @Nullable Expression params,
-            @Singular("exportVar")
-            List<AssignMappedIncludeHandler.Entry> exportMappings
-    ) {
-        Objects.requireNonNull(script, "script is required");
-        Objects.requireNonNull(path, "path is required");
-        Objects.requireNonNull(pos, "position is required");
-
-        path = StatementUtils.optimize(path);
-
-        if (params != null) {
-            params = StatementUtils.optimize(params);
-        }
-
-        var refer = script.path();
-
-        IncludeHandler handler;
-        if (withoutExport != null && withoutExport) {
-            handler = IncludeHandlers::noop;
-        } else if (exportMappings.isEmpty()) {
-            // If empty, means export & import all.
-            handler = IncludeHandlers::importAll;
-        } else {
-            handler = new AssignMappedIncludeHandler(exportMappings);
-        }
-        return new Include(refer, path, handler, params, pos);
-    }
-
     public static LoopBody loopBodyFromStatements(List<Statement> statements, int targetLabel) {
         var jumps = new ArrayList<Jump>();
-        var batches = batch(statements, jumps::add);
+        var batches = StatementBatch.batch(statements, jumps::add);
         return loopBody0(batches, jumps, targetLabel);
     }
 
@@ -357,46 +285,17 @@ public class IR {
         return new JumpAwareLoopBody(targetLabel, batches, bubbled);
     }
 
-    public static Expression value(VarAddress addr, Position pos) {
-        return switch (addr.kind()) {
-            case VAR -> new VariableHeapValue(addr.slot(), pos);
-            case FRAME_VAR -> new VariableHeapFrameValue(addr.frameOffset(), addr.slot(), pos);
-            case CONSTANT -> new ConstantValue(addr.value(), pos);
-            case HEAP -> {
-                var key = Objects.requireNonNull(addr.key());
-                var heap = Objects.requireNonNull(addr.heap());
-                yield new HeapValue(
-                        heap, key, pos
-                );
-            }
-        };
-    }
-
-    public static ExpressionArray toExpressionArray(@Nullable List<Expression> list) {
-        if (list == null || list.isEmpty()) {
-            return ExpressionArray.ofEmpty();
-        }
-        var arr = list.toArray(new Expression[0]);
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = StatementUtils.optimize(arr[i]);
-        }
-        return ExpressionArray.of(arr);
-    }
-
     public static StatementList statementList(List<Statement> list, Position pos) {
-        return new StatementList(List.copyOf(list), pos);
+        return new StatementList(list, pos);
     }
 
-    public static FunctionCall functionCall(
-            Expression func, ExpressionArray params, Position pos) {
-        func = StatementUtils.optimize(func);
+    public static FunctionCall functionCall(Expression func, ExpressionArray params, Position pos) {
         return new FunctionCall(func, params, pos);
     }
 
-    public static DynamicNativeInvocation dynamicNativeInvocationCall(
+    public static DynamicNativeCall dynamicNativeCall(
             Expression self, String method, ExpressionArray params, Position pos) {
-        self = StatementUtils.optimize(self);
-        return new DynamicNativeInvocation(self, method, params, pos);
+        return new DynamicNativeCall(self, method, params, pos);
     }
 
     public static Statement ifStatement(
@@ -421,72 +320,18 @@ public class IR {
 
     public static IBlock block(@Nullable List<Statement> list, int scope, Position pos) {
         var jumps = new ArrayList<Jump>();
-        var batches = batch(list, jumps::add);
+        var batches = StatementBatch.batch(list, jumps::add);
         if (jumps.isEmpty()) {
             if (batches.size() != 1) {
                 throw new IllegalStateException("Unexpected multiple batches without jumps");
             }
             return new NoJumpBlock(scope, batches.get(0), pos);
         }
-
         return new Block(scope, batches, List.copyOf(jumps), pos);
     }
 
-    public static void flatAndOptimize(@Nullable List<Statement> statements, Consumer<Statement> collector) {
-        if (statements == null || statements.isEmpty()) {
-            return;
-        }
-        for (var stat : statements) {
-            if (stat instanceof StatementList list) {
-                flatAndOptimize(list.statements(), collector);
-                continue;
-            }
-            stat = StatementUtils.optimize(stat);
-            if (stat instanceof NoopStatement) {
-                continue;
-            }
-            collector.accept(stat);
-        }
-    }
-
-    /**
-     * Batch statements, collect flow control jumps.
-     *
-     * @return always not empty, if no statement, return a batch with empty statements.
-     */
-    public static List<StatementBatch> batch(@Nullable List<Statement> list, Consumer<Jump> jumpConsumer) {
-        if (list == null || list.isEmpty()) {
-            return List.of(StatementBatch.empty());
-        }
-        var flag = new AtomicBoolean();
-        var collecting = (Consumer<Jump>) (jump -> {
-            flag.set(true);
-            jumpConsumer.accept(jump);
-        });
-
-        var batches = new ArrayList<StatementBatch>();
-        var current = new ArrayList<Statement>();
-
-        flatAndOptimize(list, stat -> {
-            current.add(stat);
-            Jumps.collect(collecting, stat);
-            if (flag.get()) {
-                batches.add(StatementBatch.of(current));
-                current.clear();
-                flag.set(false);
-            }
-        });
-
-        if (!current.isEmpty()) {
-            batches.add(StatementBatch.of(current));
-        }
-        if (batches.isEmpty()) {
-            return List.of(StatementBatch.empty());
-        }
-        return List.copyOf(batches);
-    }
-
     public static AssignableExpression castToAssignable(Expression expr) {
+        expr = StatementUtils.optimize(expr);
         if (expr instanceof AssignableExpression assign) {
             return assign;
         }

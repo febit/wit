@@ -28,6 +28,7 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 @UtilityClass
 public class MethodInvokerUtils {
@@ -273,6 +274,10 @@ public class MethodInvokerUtils {
     }
 
     private static Object invokeN(MethodHandle handle, @Nullable Object[] args) throws Throwable {
+        var expected = handle.type().parameterCount();
+        if (args.length > expected) {
+            args = Arrays.copyOf(args, expected);
+        }
         return handle.invokeWithArguments(args);
     }
 }
