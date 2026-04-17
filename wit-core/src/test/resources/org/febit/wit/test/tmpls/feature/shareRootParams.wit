@@ -3,8 +3,8 @@ var v1,v2;
     var back1;
     var back2;
 
-    assertEquals(v1, "V1");
-    assertEquals(v2, "V2");
+    assertEquals("V1", v1);
+    assertEquals("V2", v2);
 
     import "./shareRootParams.include.wit" {"a1":"A1","a2":"A2"};
 

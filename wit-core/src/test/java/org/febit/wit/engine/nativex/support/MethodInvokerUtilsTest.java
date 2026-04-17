@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.util;
+package org.febit.wit.engine.nativex.support;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;

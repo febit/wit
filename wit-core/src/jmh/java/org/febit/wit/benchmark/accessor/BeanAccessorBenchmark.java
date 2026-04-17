@@ -19,12 +19,11 @@ import org.febit.wit.engine.accessor.Getter;
 import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.extern.asm.AsmBeanAccessorFactory;
 import org.febit.wit.runtime.accessor.ReflectBeanAccessorFactory;
+import org.febit.wit.util.bean.PropertyAccessor;
+import org.febit.wit.util.bean.PropertyAccessors;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
@@ -33,11 +32,9 @@ import org.openjdk.jmh.annotations.Warmup;
 
 import java.util.concurrent.TimeUnit;
 
-@BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.NANOSECONDS)
-@Warmup(iterations = 5, time = 1)
-@Measurement(iterations = 5, time = 1)
-@Fork(1)
+@Warmup(time = 1, batchSize = 10)
+@Measurement(time = 1, batchSize = 10)
+@OutputTimeUnit(TimeUnit.SECONDS)
 @State(Scope.Benchmark)
 public class BeanAccessorBenchmark {
 
@@ -48,6 +45,9 @@ public class BeanAccessorBenchmark {
     private Setter<Foo> reflectSetter;
     private Getter<Foo> asmGetter;
     private Setter<Foo> asmSetter;
+
+    private PropertyAccessor.Getter directReflectGetter;
+    private PropertyAccessor.Setter directReflectSetter;
 
     private Foo bean;
 
@@ -62,6 +62,21 @@ public class BeanAccessorBenchmark {
         var asmFactory = AsmBeanAccessorFactory.get();
         asmGetter = asmFactory.getter(Foo.class);
         asmSetter = asmFactory.setter(Foo.class);
+
+        var accessors = PropertyAccessors.of(Foo.class);
+        var propertyAccessor = accessors.get(NAME);
+        directReflectGetter = propertyAccessor.getter();
+        directReflectSetter = propertyAccessor.setter();
+    }
+
+    @Benchmark
+    public Object directReflectGetter() {
+        return directReflectGetter.get(bean);
+    }
+
+    @Benchmark
+    public void directReflectSetter() {
+        directReflectSetter.set(bean, NAME_VALUE);
     }
 
     @Benchmark

@@ -15,21 +15,60 @@
  */
 package org.febit.wit.engine.nativex.support;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import org.febit.wit.engine.WitFunction;
+import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.runtime.Undefined;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Executable;
 
-public record MethodInvoker(
-        MethodHandle handle,
-        Handler handler,
-        int argsCount,
-        boolean returnsVoid,
-        @Nullable Class<?> varargsComponentType
-) {
+@Getter
+@Builder(
+        builderClassName = "Builder"
+)
+@Accessors(fluent = true)
+public final class MethodInvoker<E extends Executable> implements ExecutableAware<E>, WitFunction.Constable {
 
+    @lombok.NonNull
+    @SuppressWarnings("NullableProblems")
+    private final E executable;
+    @lombok.NonNull
+    private final MethodHandle handle;
+    @lombok.NonNull
+    private final Handler handler;
+    private final int argsCount;
+    private final boolean returnsVoid;
+    private final boolean isStatic;
+    @Nullable
+    private final Class<?> varargsComponentType;
+
+    @Nullable
     public Object invoke(@Nullable Object @Nullable [] args) throws Throwable {
         var fitArgs = MethodInvokerUtils.fitArgs(args, argsCount, varargsComponentType);
         return handler.invoke(handle, fitArgs);
+    }
+
+    @Nullable
+    @Override
+    public Object apply(@Nullable Object @Nullable [] args) {
+        try {
+            var result = invoke(args);
+            return returnsVoid
+                    ? Undefined.UNDEFINED
+                    : result;
+        } catch (Throwable e) {
+            throw new ScriptEvaluateException("Cannot invoke method", e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "MethodInvoker[" +
+                "executable=" + executable + ']';
     }
 
     @FunctionalInterface
@@ -37,6 +76,7 @@ public record MethodInvoker(
         @SuppressWarnings({
                 "java:S112", // Generic exceptions should never be thrown
         })
+        @Nullable
         Object invoke(MethodHandle handle, @Nullable Object[] args) throws Throwable;
     }
 }

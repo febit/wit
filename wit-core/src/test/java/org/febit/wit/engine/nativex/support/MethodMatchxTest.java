@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.util;
+package org.febit.wit.engine.nativex.support;
 
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,9 +24,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static org.febit.wit.engine.nativex.support.MethodMatchSupport.findBest;
 import static org.junit.jupiter.api.Assertions.*;
 
-class NativeMethodsChooseTest {
+class MethodMatchxTest {
 
     List<Method> fooMethods;
     List<Method> mixMethods;
@@ -51,55 +50,48 @@ class NativeMethodsChooseTest {
         }
     }
 
-    static <T extends Executable> T choose(
-            List<T> executables, boolean mix, @Nullable Class<?>... args) {
-        return NativeMethods.choose(executables,
-                mix ? NativeMethods::distanceMix : NativeMethods::distance,
-                args, 0);
-    }
-
     @Test
     void test() {
 
         // let's go
         assertEquals(methodPool.get("fooEmpty"),
-                choose(fooMethods, false));
+                findBest(fooMethods, false));
         assertEquals(methodPool.get("fooString"),
-                choose(fooMethods, false, String.class));
+                findBest(fooMethods, false, String.class));
         assertEquals(methodPool.get("fooObject"),
-                choose(fooMethods, false, StringBuilder.class));
+                findBest(fooMethods, false, StringBuilder.class));
         assertEquals(methodPool.get("fooInt"),
-                choose(fooMethods, false, Integer.class));
+                findBest(fooMethods, false, Integer.class));
 
         assertEquals(methodPool.get("fooList"),
-                choose(fooMethods, false, List.class));
+                findBest(fooMethods, false, List.class));
         assertEquals(methodPool.get("fooArrayList"),
-                choose(fooMethods, false, ArrayList.class));
+                findBest(fooMethods, false, ArrayList.class));
         assertEquals(methodPool.get("fooList"),
-                choose(fooMethods, false, LinkedList.class));
+                findBest(fooMethods, false, LinkedList.class));
 
         assertEquals(methodPool.get("fooArrayListObject"),
-                choose(fooMethods, false, ArrayList.class, Integer.class));
+                findBest(fooMethods, false, ArrayList.class, Integer.class));
         assertEquals(methodPool.get("fooListObject"),
-                choose(fooMethods, false, List.class, Integer.class));
+                findBest(fooMethods, false, List.class, Integer.class));
 
         assertEquals(methodPool.get("fooObjectListList"),
-                choose(fooMethods, false, ArrayList.class, ArrayList.class, ArrayList.class));
+                findBest(fooMethods, false, ArrayList.class, ArrayList.class, ArrayList.class));
 
         // nullable
         assertEquals(methodPool.get("fooArrayListObject"),
-                choose(fooMethods, false, ArrayList.class, null));
+                findBest(fooMethods, false, ArrayList.class, null));
         assertEquals(methodPool.get("fooArrayListObjectObject"),
-                choose(fooMethods, false, ArrayList.class, null, null));
+                findBest(fooMethods, false, ArrayList.class, null, null));
         assertEquals(methodPool.get("fooArrayListObjectObject"),
-                choose(fooMethods, false, ArrayList.class, null, ArrayList.class));
+                findBest(fooMethods, false, ArrayList.class, null, ArrayList.class));
 
         List<Method> executables = List.of(
                 methodPool.get("fooEmpty"),
                 methodPool.get("fooObject"),
                 methodPool.get("fooString")
         );
-        assertNull(choose(executables, false, String.class, null));
+        assertNull(findBest(executables, false, String.class, null));
 
         // AmbiguousMethodException
         // assertEquals(methodPool.get("fooListString"), matchFoo(ArrayList.class, String.class));
@@ -109,53 +101,53 @@ class NativeMethodsChooseTest {
     void testMix() {
 
         assertEquals(methodPool.get("mixStaticEmpty"),
-                choose(mixMethods, true));
+                findBest(mixMethods, true));
         assertEquals(methodPool.get("mixEmpty"),
-                choose(mixMethods, true, Methods.class));
+                findBest(mixMethods, true, Methods.class));
 
         assertEquals(methodPool.get("mixStaticString"),
-                choose(mixMethods, true, Methods.class, String.class));
+                findBest(mixMethods, true, Methods.class, String.class));
 
         assertEquals(methodPool.get("mixObject"),
-                choose(mixMethods, true, Methods.class, StringBuilder.class));
+                findBest(mixMethods, true, Methods.class, StringBuilder.class));
         assertEquals(methodPool.get("mixInt"),
-                choose(mixMethods, true, Methods.class, Integer.class));
+                findBest(mixMethods, true, Methods.class, Integer.class));
 
         assertEquals(methodPool.get("mixStaticList"),
-                choose(mixMethods, true, Methods.class, List.class));
+                findBest(mixMethods, true, Methods.class, List.class));
         assertEquals(methodPool.get("mixArrayList"),
-                choose(mixMethods, true, Methods.class, ArrayList.class));
+                findBest(mixMethods, true, Methods.class, ArrayList.class));
         assertEquals(methodPool.get("mixStaticList"),
-                choose(mixMethods, true, Methods.class, LinkedList.class));
+                findBest(mixMethods, true, Methods.class, LinkedList.class));
 
         assertEquals(methodPool.get("mixArrayListInteger"),
-                choose(mixMethods, true, Methods.class, ArrayList.class, Integer.class));
+                findBest(mixMethods, true, Methods.class, ArrayList.class, Integer.class));
         assertEquals(methodPool.get("mixStaticArrayListString"),
-                choose(mixMethods, true, Methods.class, ArrayList.class, String.class));
+                findBest(mixMethods, true, Methods.class, ArrayList.class, String.class));
         assertEquals(methodPool.get("mixStaticListInteger"),
-                choose(mixMethods, true, Methods.class, LinkedList.class, Integer.class));
+                findBest(mixMethods, true, Methods.class, LinkedList.class, Integer.class));
     }
 
     @Test
     void testChooseConstructor() throws NoSuchMethodException {
         var constructors = List.of(Methods.class.getConstructors());
 
-        assertEquals(Methods.class.getConstructor(), choose(constructors, false));
-        assertEquals(Methods.class.getConstructor(int.class), choose(constructors, false, Integer.class));
-        assertEquals(Methods.class.getConstructor(int.class), choose(constructors, false, int.class));
-        assertEquals(Methods.class.getConstructor(Object.class), choose(constructors, false, String.class));
-        assertEquals(Methods.class.getConstructor(List.class), choose(constructors, false, List.class));
-        assertEquals(Methods.class.getConstructor(List.class), choose(constructors, false, LinkedList.class));
-        assertEquals(Methods.class.getConstructor(ArrayList.class), choose(constructors, false, ArrayList.class));
-        assertNull(choose(constructors, false, ArrayList.class, Boolean.class));
+        assertEquals(Methods.class.getConstructor(), findBest(constructors, false));
+        assertEquals(Methods.class.getConstructor(int.class), findBest(constructors, false, Integer.class));
+        assertEquals(Methods.class.getConstructor(int.class), findBest(constructors, false, int.class));
+        assertEquals(Methods.class.getConstructor(Object.class), findBest(constructors, false, String.class));
+        assertEquals(Methods.class.getConstructor(List.class), findBest(constructors, false, List.class));
+        assertEquals(Methods.class.getConstructor(List.class), findBest(constructors, false, LinkedList.class));
+        assertEquals(Methods.class.getConstructor(ArrayList.class), findBest(constructors, false, ArrayList.class));
+        assertNull(findBest(constructors, false, ArrayList.class, Boolean.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class, String.class),
-                choose(constructors, false, ArrayList.class, String.class));
+                findBest(constructors, false, ArrayList.class, String.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class, String.class),
-                choose(constructors, false, ArrayList.class, String.class));
+                findBest(constructors, false, ArrayList.class, String.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class, Integer.class),
-                choose(constructors, false, ArrayList.class, Integer.class));
+                findBest(constructors, false, ArrayList.class, Integer.class));
         assertEquals(Methods.class.getConstructor(ArrayList.class, Integer.class),
-                choose(constructors, false, ArrayList.class, int.class));
+                findBest(constructors, false, ArrayList.class, int.class));
     }
 
     @SuppressWarnings({

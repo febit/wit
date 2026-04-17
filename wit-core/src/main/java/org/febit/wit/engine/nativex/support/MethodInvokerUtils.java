@@ -56,7 +56,7 @@ public class MethodInvokerUtils {
             Object.class, Object.class, Object.class, Object.class, Object.class,
             Object.class, Object.class, Object.class, Object.class, Object.class);
 
-    public static MethodInvoker of(Method method) {
+    public static MethodInvoker<Method> of(Method method) {
         var handle = MethodInvokerUtils.handleOf(method);
         var invoker = MethodInvokerUtils.invokerOf(handle);
         var parameterCount = method.getParameterCount();
@@ -66,29 +66,33 @@ public class MethodInvokerUtils {
 
         var actualParameterCount = Modifiers.isStatic(method)
                 ? parameterCount : parameterCount + 1;
-        return new MethodInvoker(
-                handle,
-                invoker,
-                actualParameterCount,
-                ClassUtils.isVoidType(method.getReturnType()),
-                varargsComponentType
-        );
+        return MethodInvoker.<Method>builder()
+                .executable(method)
+                .handle(handle)
+                .handler(invoker)
+                .argsCount(actualParameterCount)
+                .returnsVoid(ClassUtils.isVoidType(method.getReturnType()))
+                .isStatic(Modifiers.isStatic(method))
+                .varargsComponentType(varargsComponentType)
+                .build();
     }
 
-    public static MethodInvoker of(Constructor<?> constructor) {
+    public static MethodInvoker<Constructor<?>> of(Constructor<?> constructor) {
         var handle = MethodInvokerUtils.handleOf(constructor);
         var invoker = MethodInvokerUtils.invokerOf(handle);
         var parameterCount = constructor.getParameterCount();
         var varargsComponentType = constructor.isVarArgs()
                 ? constructor.getParameterTypes()[parameterCount - 1].getComponentType()
                 : null;
-        return new MethodInvoker(
-                handle,
-                invoker,
-                parameterCount,
-                false,
-                varargsComponentType
-        );
+        return MethodInvoker.<Constructor<?>>builder()
+                .executable(constructor)
+                .handle(handle)
+                .handler(invoker)
+                .argsCount(parameterCount)
+                .returnsVoid(false)
+                .isStatic(false)
+                .varargsComponentType(varargsComponentType)
+                .build();
     }
 
     static @Nullable Object[] fitArgs(
@@ -106,9 +110,13 @@ public class MethodInvokerUtils {
             }
             return fit;
         }
-        if (args.length < expectedSize) {
+        var actualSize = args.length;
+        if (actualSize >= expectedSize && varargsComponentType == null) {
+            return args;
+        }
+        if (actualSize < expectedSize) {
             var fit = new Object[expectedSize];
-            System.arraycopy(args, 0, fit, 0, args.length);
+            System.arraycopy(args, 0, fit, 0, actualSize);
             if (varargsComponentType != null) {
                 fit[expectedSize - 1] = Array.newInstance(varargsComponentType, 0);
             }

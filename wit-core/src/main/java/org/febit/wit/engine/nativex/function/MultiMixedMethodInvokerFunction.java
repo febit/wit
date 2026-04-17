@@ -17,23 +17,23 @@ package org.febit.wit.engine.nativex.function;
 
 import org.febit.wit.engine.WitFunction;
 import org.febit.wit.engine.nativex.support.MethodInvoker;
+import org.febit.wit.engine.nativex.support.MethodMatchUtils;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.runtime.Undefined;
 import org.jspecify.annotations.Nullable;
 
-public record MethodInvokerFunction(
-        MethodInvoker invoker
+import java.util.List;
+
+public record MultiMixedMethodInvokerFunction(
+        List<MethodInvoker<?>> invokers
 ) implements WitFunction.Constable {
 
+    @Nullable
     @Override
     public Object apply(@Nullable Object @Nullable [] args) {
-        try {
-            var result = invoker.invoke(args);
-            return invoker.returnsVoid()
-                    ? Undefined.UNDEFINED
-                    : result;
-        } catch (Throwable e) {
-            throw new ScriptEvaluateException("Cannot invoke method", e);
+        var invoker = MethodMatchUtils.findBest(invokers, args, true);
+        if (invoker == null) {
+            throw new ScriptEvaluateException("no such native method");
         }
+        return invoker.apply(args);
     }
 }

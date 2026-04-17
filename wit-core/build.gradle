@@ -37,6 +37,15 @@ dependencies {
   jmh libs.jmh.generator
 }
 
+jmh {
+  fork = 1
+  warmupIterations = 5
+  iterations = 5
+  threads = 1
+  benchmarkMode = ['Throughput']
+  jvmArgsAppend = ['-XX:CompileThreshold=20']
+}
+
 def PKG_CORE = 'org/febit/wit/parser'
 def parserSrcDir = layout.buildDirectory.dir("generated/sources/parser")
 def parserResDir = layout.buildDirectory.dir("generated/resources/parser")

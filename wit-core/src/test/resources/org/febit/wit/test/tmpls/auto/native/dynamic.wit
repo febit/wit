@@ -1,8 +1,8 @@
 const a = 1;
 const b = "bbb";
 {
-    assertEquals("123".~length(), 3);
-    assertEquals("123".~substring(1,2), "2");
+    assertEquals(3, "123".~length());
+    assertEquals("2", "123".~substring(1,2));
 }
 {
 
@@ -15,24 +15,24 @@ const b = "bbb";
         "2": b
     };
 
-    assertEquals(map["1"], a);
-    assertEquals(map["2"], b);
+    assertEquals(a, map["1"]);
+    assertEquals(b, map["2"]);
 
     map.~put("2", a);
     map.~put("3", b);
-    assertEquals(map["2"], a);
-    assertEquals(map["3"], b);
-    assertEquals(map.~size(), 3);
+    assertEquals(a, map["2"]);
+    assertEquals(b, map["3"]);
+    assertEquals(3, map.~size());
 
-    assertEquals(java.util.Map::get(map,"2"), a);
-    assertEquals( java.util.Map :: size (map), 3);
+    assertEquals(a, java.util.Map::get(map,"2"));
+    assertEquals(3, java.util.Map :: size (map));
 
     var map2 = HashMap::new(map);
-    assertEquals( java.util.Map :: size (map), 3);
-    assertEquals(Map::size(map2), 3);
-    assertEquals(map2["1"], a);
-    assertEquals(map2["2"], a);
-    assertEquals(HashMap::get(map,"3"), b);
+    assertEquals(3, java.util.Map :: size (map));
+    assertEquals(3, Map::size(map2));
+    assertEquals(a, map2["1"]);
+    assertEquals(a, map2["2"]);
+    assertEquals(b, HashMap::get(map,"3"));
 
     var values = HashSet::new(map2.~values());
     assertTrue(values.~contains(1));
@@ -56,15 +56,15 @@ const b = "bbb";
 
   var max = Math::max;
 
-  assertEquals(max(1,2), 2);
-  assertEquals(Math::max(1,2), 2);
-  assertEquals(Math::min(1,2), 1);
-  assertEquals(String::length("1234"), 4);
-  assertEquals(String::valueOf("1234"), "1234");
-  assertEquals(String::valueOf(1234), "1234");
+  assertEquals(2, max(1,2));
+  assertEquals(2, Math::max(1,2));
+  assertEquals(1, Math::min(1,2));
+  assertEquals(4, String::length("1234"));
+  assertEquals("1234", String::valueOf("1234"));
+  assertEquals("1234", String::valueOf(1234));
 
-  assertEquals(Integer::parseInt("1234"), 1234);
-  assertEquals(Long::parseLong("1234"), 1234L);
+  assertEquals(1234, Integer::parseInt("1234"));
+  assertEquals(1234L, Long::parseLong("1234"));
 
 }
 {

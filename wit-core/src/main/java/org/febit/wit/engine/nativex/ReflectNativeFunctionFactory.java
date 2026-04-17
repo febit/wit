@@ -16,16 +16,16 @@
 package org.febit.wit.engine.nativex;
 
 import org.febit.wit.engine.WitFunction;
-import org.febit.wit.engine.nativex.function.MethodInvokerFunction;
-import org.febit.wit.engine.nativex.function.MultiConstructorNativeFunction;
-import org.febit.wit.engine.nativex.function.MultiMethodMixedNativeFunction;
-import org.febit.wit.engine.nativex.function.MultiMethodNativeFunction;
+import org.febit.wit.engine.nativex.function.MultiMethodInvokerFunction;
+import org.febit.wit.engine.nativex.function.MultiMixedMethodInvokerFunction;
 import org.febit.wit.engine.nativex.function.NewArrayNativeFunction;
+import org.febit.wit.engine.nativex.support.MethodInvoker;
 import org.febit.wit.engine.nativex.support.MethodInvokerUtils;
 import org.febit.wit.util.Modifiers;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReflectNativeFunctionFactory implements NativeFunctionFactory {
@@ -39,8 +39,7 @@ public class ReflectNativeFunctionFactory implements NativeFunctionFactory {
 
     @Override
     public WitFunction.Constable method(Method method) {
-        var invoker = MethodInvokerUtils.of(method);
-        return new MethodInvokerFunction(invoker);
+        return MethodInvokerUtils.of(method);
     }
 
     @Override
@@ -52,24 +51,25 @@ public class ReflectNativeFunctionFactory implements NativeFunctionFactory {
         if (size == 1) {
             return method(methods.get(0));
         }
-        methods.forEach(Method::trySetAccessible);
 
-        var isStatic = Modifiers.isStatic(methods.get(0));
-        boolean mix = false;
-        for (int i = 1; i < methods.size(); i++) {
-            if (isStatic != Modifiers.isStatic(methods.get(i))) {
+        List<MethodInvoker<?>> invokers = new ArrayList<>(size);
+        var asStatic = Modifiers.isStatic(methods.get(0));
+        var mix = false;
+        for (Method method : methods) {
+            var invoker = MethodInvokerUtils.of(method);
+            invokers.add(invoker);
+            if (asStatic != invoker.isStatic()) {
                 mix = true;
-                break;
             }
         }
-        return mix ? new MultiMethodMixedNativeFunction(List.copyOf(methods))
-                : new MultiMethodNativeFunction(List.copyOf(methods), isStatic);
+        invokers = List.copyOf(invokers);
+        return mix ? new MultiMixedMethodInvokerFunction(invokers)
+                : new MultiMethodInvokerFunction(invokers, asStatic);
     }
 
     @Override
     public WitFunction.Constable constructor(Constructor<?> constructor) {
-        var invoker = MethodInvokerUtils.of(constructor);
-        return new MethodInvokerFunction(invoker);
+        return MethodInvokerUtils.of(constructor);
     }
 
     @Override
@@ -80,7 +80,9 @@ public class ReflectNativeFunctionFactory implements NativeFunctionFactory {
         if (constructors.size() == 1) {
             return constructor(constructors.get(0));
         }
-        constructors.forEach(Constructor::trySetAccessible);
-        return new MultiConstructorNativeFunction(List.copyOf(constructors));
+        var invokers = constructors.stream()
+                .map(MethodInvokerUtils::of)
+                .toList();
+        return new MultiMethodInvokerFunction(List.copyOf(invokers), true);
     }
 }

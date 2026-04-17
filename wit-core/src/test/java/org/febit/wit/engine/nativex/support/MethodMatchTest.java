@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.util;
+package org.febit.wit.engine.nativex.support;
 
 import org.febit.wit.exception.AmbiguousMethodException;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Executable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,17 +25,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static org.febit.wit.engine.nativex.support.MethodMatchSupport.findBest;
 import static org.febit.wit.util.NativeMethods.find;
 import static org.junit.jupiter.api.Assertions.*;
 
-class NativeMethodsChooseMethodTest {
-
-    static <T extends Executable> T choose(
-            List<T> executables, boolean mix, @Nullable Class<?>... args) {
-        return NativeMethods.choose(executables,
-                mix ? NativeMethods::distanceMix : NativeMethods::distance,
-                args, 0);
-    }
+class MethodMatchTest {
 
     @Test
     void arraysFill() throws NoSuchMethodException {
@@ -45,38 +37,38 @@ class NativeMethodsChooseMethodTest {
 
         assertEquals(
                 Arrays.class.getMethod("fill", int[].class, int.class),
-                choose(methods, false, int[].class, int.class)
+                findBest(methods, false, int[].class, int.class)
         );
         assertEquals(
                 Arrays.class.getMethod("fill", int[].class, int.class),
-                choose(methods, true, int[].class, int.class)
+                findBest(methods, true, int[].class, int.class)
         );
 
         assertEquals(
                 Arrays.class.getMethod("fill", long[].class, long.class),
-                choose(methods, false, long[].class, long.class)
+                findBest(methods, false, long[].class, long.class)
         );
         assertEquals(
                 Arrays.class.getMethod("fill", long[].class, long.class),
-                choose(methods, true, long[].class, long.class)
+                findBest(methods, true, long[].class, long.class)
         );
 
         assertEquals(
                 Arrays.class.getMethod("fill", long[].class, int.class, int.class, long.class),
-                choose(methods, false, long[].class, int.class)
+                findBest(methods, false, long[].class, int.class)
         );
         assertEquals(
                 Arrays.class.getMethod("fill", long[].class, int.class, int.class, long.class),
-                choose(methods, true, long[].class, int.class)
+                findBest(methods, true, long[].class, int.class)
         );
 
         assertEquals(
                 Arrays.class.getMethod("fill", Object[].class, int.class, int.class, Object.class),
-                choose(methods, false, Object[].class, int.class, int.class, Object.class)
+                findBest(methods, false, Object[].class, int.class, int.class, Object.class)
         );
         assertEquals(
                 Arrays.class.getMethod("fill", Object[].class, int.class, int.class, Object.class),
-                choose(methods, true, Object[].class, int.class, int.class, Object.class)
+                findBest(methods, true, Object[].class, int.class, int.class, Object.class)
         );
     }
 
@@ -86,26 +78,26 @@ class NativeMethodsChooseMethodTest {
 
         assertEquals(
                 Foo.class.getMethod("multi", Integer.class, Number.class),
-                choose(methods, true, Foo.class, Integer.class, Number.class)
+                findBest(methods, true, Foo.class, Integer.class, Number.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("multi", Integer.class, Object.class),
-                choose(methods, true, Foo.class, Integer.class, Object.class)
+                findBest(methods, true, Foo.class, Integer.class, Object.class)
         );
         assertEquals(
                 Foo.class.getMethod("multi", Integer.class, Object.class),
-                choose(methods, true, Foo.class, Integer.class, String.class)
+                findBest(methods, true, Foo.class, Integer.class, String.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("multi", Integer.class, Number.class),
-                choose(methods, true, Foo.class, Integer.class, Integer.class)
+                findBest(methods, true, Foo.class, Integer.class, Integer.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("multi", Foo.class, Number.class, Long.class),
-                choose(methods, true, Foo.class, Number.class, Long.class)
+                findBest(methods, true, Foo.class, Number.class, Long.class)
         );
     }
 
@@ -115,26 +107,26 @@ class NativeMethodsChooseMethodTest {
 
         assertEquals(
                 Foo.class.getMethod("ambiguous", Collection.class),
-                choose(methods, true, Collection.class)
+                findBest(methods, true, Collection.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("ambiguous", List.class),
-                choose(methods, true, List.class)
+                findBest(methods, true, List.class)
         );
         assertEquals(
                 Foo.class.getMethod("ambiguous", AbstractList.class),
-                choose(methods, true, AbstractList.class)
+                findBest(methods, true, AbstractList.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("ambiguous", Collection.class),
-                choose(methods, true, Set.class)
+                findBest(methods, true, Set.class)
         );
 
         assertEquals(
                 Foo.class.getMethod("ambiguous", AbstractList.class),
-                choose(methods, true, ArrayList.class)
+                findBest(methods, true, ArrayList.class)
         );
 
     }
@@ -144,7 +136,7 @@ class NativeMethodsChooseMethodTest {
         var methods = find(Foo.class, "cannotResolved").toList();
 
         assertThrows(AmbiguousMethodException.class,
-                () -> choose(methods, true, Foo.class)
+                () -> findBest(methods, true, Foo.class)
         );
     }
 

@@ -22,6 +22,7 @@ usage and maintenance, and improve performance and robustness.
 + Improved unit tests and increased code coverage.
 + Optimized runtime execution of Statement blocks with batch processing to reduce control state checks and improve
   performance.
++ Optimized reflection calls with MethodHandle/VarHandle for better performance.
 
 ### BUG FIXES
 

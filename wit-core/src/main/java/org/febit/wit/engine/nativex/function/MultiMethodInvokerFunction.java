@@ -16,24 +16,35 @@
 package org.febit.wit.engine.nativex.function;
 
 import org.febit.wit.engine.WitFunction;
+import org.febit.wit.engine.nativex.support.MethodInvoker;
+import org.febit.wit.engine.nativex.support.MethodMatchUtils;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.util.NativeMethods;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
-public record MultiMethodMixedNativeFunction(
-        List<Method> methods
+public record MultiMethodInvokerFunction(
+        List<MethodInvoker<?>> invokers,
+        boolean asStatic
 ) implements WitFunction.Constable {
 
     @Nullable
     @Override
     public Object apply(@Nullable Object @Nullable [] args) {
-        Method method = NativeMethods.choose(methods, args, true);
-        if (method == null) {
+        MethodInvoker<?> invoker;
+        if (asStatic) {
+            invoker = MethodMatchUtils.findBest(invokers, args, 0);
+        } else {
+            if (args == null
+                    || args.length == 0
+                    || args[0] == null) {
+                throw new ScriptEvaluateException("this method need one argument at least");
+            }
+            invoker = MethodMatchUtils.findBest(invokers, args, 1);
+        }
+        if (invoker == null) {
             throw new ScriptEvaluateException("no such native method");
         }
-        return NativeMethods.invoke(method, args);
+        return invoker.apply(args);
     }
 }

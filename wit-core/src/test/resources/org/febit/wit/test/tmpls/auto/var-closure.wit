@@ -5,12 +5,12 @@
         var b = "b";
         assertSame(a, super.a);
         assertNotSame(b, super.b);
-        assertEquals(a, "a");
+        assertEquals("a", a);
         {
             assertSame(a, super.a);
             assertSame(a, super.super.a);
             assertNotSame(super.b, super.super.b);
-            assertEquals(a, "a");
+            assertEquals("a", a);
         }
     }
 
@@ -27,20 +27,20 @@
         assertNull(a);
 
         a = 0;
-        assertEquals(a, 0);
-        assertEquals(b, 1);
-        assertEquals(c, 1);
-        assertEquals(d, 2);
+        assertEquals(0, a);
+        assertEquals(1, b);
+        assertEquals(1, c);
+        assertEquals(2, d);
     }
     {
         var b=c=1, d=2, a;
         assertNull(a);
 
         a = 0;
-        assertEquals(a, 0);
-        assertEquals(b, 1);
-        assertEquals(c, 1);
-        assertEquals(d, 2);
+        assertEquals(0, a);
+        assertEquals(1, b);
+        assertEquals(1, c);
+        assertEquals(2, d);
     }
 }
 {
