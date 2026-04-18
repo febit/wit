@@ -6,6 +6,7 @@
 
 + 支持使用 Java 原生 Builder 模式构建 Wit 引擎实例，API 更流畅易用。
 + 支持对 Record 对象执行 `getProperty(bean, propertyName)` 属性获取操作。
++ 新增 `RuntimeReference`，在属性访问前即时解析目标对象。
 + 新增 Native Class 语法，可在脚本中直接获取 Java Class 对象。
 + 新增内置断言方法。
 + 断言失败时抛出 `WitAssertionError`，并自动记录完整脚本调用栈信息。
@@ -13,6 +14,8 @@
 + `ClasspathLoader` 支持传入指定 `ClassLoader` 加载资源。
 + `FileSystemLoader`（原 `FileLoader`）支持传入指定 `FileSystem` 加载资源。
 + 脚本 Map 字面量现在默认创建 `LinkedHashMap` 实例，保持键值插入顺序。
++ 增强 `$GLOBAL`/`$LOCAL`，同时支持属性、下标与函数调用访问，即：读取可使用 `$LOCAL.property`、`$LOCAL[key]`
+  或 `$LOCAL(key)`，属性/下标写入等价于 `$LOCAL(key, expr)`。
 
 ### 优化
 

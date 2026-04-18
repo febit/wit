@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 
-public interface Heap {
+public interface Heap extends WitFunction.Constable {
 
     boolean has(String name);
 
@@ -44,5 +44,24 @@ public interface Heap {
 
     default void setAsFunction(String key, WitFunction.Constable func) {
         set(key, func);
+    }
+
+    @Nullable
+    @Override
+    default Object apply(@Nullable Object @Nullable [] args) {
+        final int len = args == null ? 0 : args.length;
+        if (args == null || len < 1) {
+            throw new ScriptEvaluateException("key of heap is required");
+        }
+        var arg0 = args[0];
+        if (arg0 == null) {
+            throw new ScriptEvaluateException("key of heap cannot be null");
+        }
+        var key = arg0.toString();
+        if (len == 1) {
+            return get(key);
+        }
+        set(key, args[1]);
+        return args[1];
     }
 }

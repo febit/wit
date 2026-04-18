@@ -15,33 +15,29 @@
  */
 package org.febit.wit.extern.lib.context;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
-import org.febit.wit.Wit;
-import org.febit.wit.WitModule;
 import org.febit.wit.engine.Heap;
-import org.febit.wit.runtime.heap.GenericHeap;
+import org.febit.wit.engine.WitFunction;
+import org.febit.wit.runtime.RuntimeContext;
+import org.febit.wit.runtime.RuntimeReference;
+import org.jspecify.annotations.Nullable;
 
-@Accessors(fluent = true)
-@RequiredArgsConstructor(staticName = "create")
-public class GlobalContextRegistry implements WitModule {
+import java.io.Serial;
+import java.io.Serializable;
 
-    public static final String DEFAULT_NAME = "$GLOBAL";
+public class LocalContextReference implements
+        RuntimeReference<Heap>, WitFunction, Serializable {
 
-    @Getter
-    private final Heap table = GenericHeap.concurrent();
-
-    @Getter
-    private final String name;
-
-    public static GlobalContextRegistry create() {
-        return create(DEFAULT_NAME);
-    }
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Override
-    public void apply(Wit wit) {
-        var heap = wit.globals().constants();
-        heap.set(this.name, this.table);
+    public Heap get(RuntimeContext context) {
+        return context.local();
+    }
+
+    @Nullable
+    @Override
+    public Object apply(RuntimeContext context, @Nullable Object @Nullable [] args) {
+        return context.local().apply(context, args);
     }
 }

@@ -7,6 +7,7 @@ usage and maintenance, and improve performance and robustness.
 
 + Support building Wit engine instances using native Java Builder pattern for a smoother API experience.
 + Support `getProperty(bean, propertyName)` for Record objects.
++ Add `RuntimeReference` to defer target resolution until just before property access.
 + Add Native Class syntax to directly access Java Class objects in scripts.
 + Add built-in assertion methods.
 + Throw `WitAssertionError` with full script stack trace when assertion fails.
@@ -15,6 +16,9 @@ usage and maintenance, and improve performance and robustness.
 + `ClasspathLoader` supports specifying a `ClassLoader` for resource loading.
 + `FileSystemLoader` (formerly `FileLoader`) supports specifying a `FileSystem` for resource loading.
 + Map literals in scripts now create `LinkedHashMap` instances to preserve insertion order.
++ Enhance `$GLOBAL`/`$LOCAL` to support property, index, and function-call access, e.g., reads can use
+  `$LOCAL.property`, `$LOCAL[key]`, or `$LOCAL(key)`, and property/index writes are equivalent to
+  `$LOCAL(key, expr)`.
 
 ### IMPROVEMENTS
 
