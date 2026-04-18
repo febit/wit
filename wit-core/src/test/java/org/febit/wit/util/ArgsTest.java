@@ -17,6 +17,8 @@ package org.febit.wit.util;
 
 import org.junit.jupiter.api.Test;
 
+import static org.febit.wit.ir.IRTestSupport.args;
+import static org.febit.wit.util.Args.at;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ArgsTest {
@@ -30,19 +32,19 @@ class ArgsTest {
 
     @Test
     void testAt() {
-        assertNull(Args.at(null, 0));
-        assertNull(Args.at(new Object[]{1, 2, 3}, 3));
-        assertEquals(2, Args.at(new Object[]{1, 2, 3}, 1));
+        assertNull(at(null, 0));
+        assertNull(at(args(1, 2, 3), 3));
+        assertEquals(2, at(args(1, 2, 3), 1));
     }
 
     @Test
     void testEnsureSize() {
-        var arr = new Object[]{1, 2, 3};
+        var arr = args(1, 2, 3);
 
         assertSame(arr, Args.ensureSize(arr, 2));
         assertSame(arr, Args.ensureSize(arr, 3));
 
         assertArrayEquals(new Object[5], Args.ensureSize(null, 5));
-        assertArrayEquals(new Object[]{1, 2, 3, null, null}, Args.ensureSize(arr, 5));
+        assertArrayEquals(args(1, 2, 3, null, null), Args.ensureSize(arr, 5));
     }
 }

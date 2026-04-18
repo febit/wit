@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
+import static org.febit.wit.ir.IRTestSupport.args;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -93,16 +94,16 @@ class VarsTest {
         verify(mocked).set("a", 1);
 
         reset(mocked);
-        Vars.of(new String[]{"a", "b"}, new Object[]{1, 2}).sink(mocked);
+        Vars.of(new String[]{"a", "b"}, args(1, 2)).sink(mocked);
         verify(mocked).set("a", 1);
         verify(mocked).set("b", 2);
 
         reset(mocked);
-        Vars.of(new String[]{"a"}, new Object[]{1, 2}).sink(mocked);
+        Vars.of(new String[]{"a"}, args(1, 2)).sink(mocked);
         verify(mocked).set("a", 1);
 
         reset(mocked);
-        Vars.of(new String[]{}, new Object[]{}).sink(mocked);
+        Vars.of(new String[]{}, args()).sink(mocked);
         verify(mocked, never()).set(any(), any());
         verify(mocked, never()).set(anyString(), any());
 

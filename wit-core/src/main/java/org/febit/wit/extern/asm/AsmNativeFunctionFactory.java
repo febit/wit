@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
 @RequiredArgsConstructor(staticName = "create")
 public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator {
 
-    private static final String[] FUNC_INTERFACES = {"org/febit/wit/engine/WitFunction$Constable"};
+    private static final String[] FUNC_INTERFACES = {"org/febit/wit/extern/asm/AsmWitFunction"};
 
     @Getter
     private final NativeFunctionFactory delegate;
@@ -72,7 +72,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
         try {
             return construct(member);
         } catch (Exception | LinkageError e) {
-            log.error("Cannot construct AsmFunction for '{}'.", member, e);
+            log.error("Cannot construct AsmWitFunction for '{}'.", member, e);
             return null;
         }
     }
@@ -82,7 +82,7 @@ public class AsmNativeFunctionFactory implements NativeFunctionFactory.Decorator
     })
     static WitFunction.Constable construct(Member obj)
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        var className = "org.febit.wit.extern.asm.AsmFunction" + AsmUtils.SEQ.getAndIncrement();
+        var className = "org.febit.wit.extern.asm.AsmWitFunction" + AsmUtils.SEQ.getAndIncrement();
         var classWriter = new ClassWriter(Constants.V1_5, Constants.ACC_PUBLIC + Constants.ACC_FINAL,
                 AsmUtils.internalNameOf(className), AsmUtils.TYPE_OBJ, FUNC_INTERFACES);
 

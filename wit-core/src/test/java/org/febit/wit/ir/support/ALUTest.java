@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import static org.febit.wit.ir.IRTestSupport.args;
 import static org.febit.wit.ir.support.ALU.greater;
 import static org.febit.wit.ir.support.ALU.greaterEqual;
 import static org.febit.wit.ir.support.ALU.isEqual;
@@ -110,7 +111,7 @@ class ALUTest {
 
         assertEquals(10, size(new int[10]));
         assertEquals(5, size(new String[]{"a", "b", "c", "d", "e"}));
-        assertEquals(3, size(new Object[]{1, 2, 3}));
+        assertEquals(3, size(args(1, 2, 3)));
 
         assertEquals(2, size(Map.of("a", 1, "b", 2)));
         assertEquals(3, size(Set.of(1, 2, 3)));

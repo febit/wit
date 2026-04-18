@@ -31,11 +31,7 @@ public record StaticNativeFieldValue(
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {
-        try {
-            return handle.get();
-        } catch (IllegalArgumentException ex) {
-            return new ScriptEvaluateException("Cannot get value from static field: " + handle, ex, this);
-        }
+        return handle.get();
     }
 
     @Override
@@ -44,8 +40,8 @@ public record StaticNativeFieldValue(
         try {
             handle.set(value);
             return value;
-        } catch (IllegalArgumentException ex) {
-            return new ScriptEvaluateException("Cannot set value to static field: " + handle, ex, this);
+        } catch (ClassCastException ex) {
+            throw new ScriptEvaluateException("Can not assign value to static field: " + ex.getMessage(), this);
         }
     }
 }

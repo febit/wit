@@ -21,6 +21,15 @@ tasks.withType(Javadoc).configureEach {
   exclude 'org/febit/wit_shaded/**'
 }
 
+jacocoTestReport {
+  classDirectories = files(classDirectories.files.collect { dir ->
+    fileTree(dir: dir, exclude: [
+        'org/febit/wit_shaded/**',
+        'org/febit/wit/parser/Lexer.*'
+    ])
+  })
+}
+
 def cupRuntime = configurations.create('cup')
 
 dependencies {

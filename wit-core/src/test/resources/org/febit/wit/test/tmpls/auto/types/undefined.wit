@@ -1,12 +1,12 @@
 @import org.febit.wit.exception.ScriptEvaluateException;
 @import org.febit.wit.runtime.Undefined;
 
-var UNDEFINED = (() -> { return; })();
-
 {
     assertInstanceOf(native Undefined.class, UNDEFINED);
     assertTrue(!UNDEFINED);
     assertFalse(!!UNDEFINED);
+
+    assertEquals(UNDEFINED, (() -> { return; })());
 }
 {
     var out;

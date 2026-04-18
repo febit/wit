@@ -16,7 +16,6 @@
 package org.febit.wit.engine.nativex.support;
 
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.util.NativeMethods;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -27,6 +26,8 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.febit.wit.engine.nativex.support.MethodInvokerUtils.of;
+import static org.febit.wit.ir.IRTestSupport.args;
+import static org.febit.wit.util.NativeMethods.find;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MethodInvokerUtilsTest {
@@ -121,7 +122,7 @@ class MethodInvokerUtilsTest {
 
     @Test
     void testEcho() throws Throwable {
-        var invokers = NativeMethods.find(TestClass.class, "echo")
+        var invokers = find(TestClass.class, "echo")
                 .sorted(Comparator.comparing(Method::getParameterCount))
                 .map(MethodInvokerUtils::of)
                 .toList();
@@ -148,14 +149,14 @@ class MethodInvokerUtilsTest {
     @Test
     void testConstructor() throws Throwable {
         var invoker = of(TestClass.class.getConstructor());
-        assertThat(invoker.invoke(new Object[]{}))
+        assertThat(invoker.invoke(args()))
                 .isInstanceOf(TestClass.class);
     }
 
     @Test
     void testStaticMethod() throws Throwable {
         var invoker = of(TestClass.class.getMethod("staticEcho", String.class));
-        assertThat(invoker.invoke(new Object[]{"test"}))
+        assertThat(invoker.invoke(args("test")))
                 .isEqualTo("static:test");
         assertThat(invoker.invoke(null))
                 .isEqualTo("static:null");
@@ -165,40 +166,40 @@ class MethodInvokerUtilsTest {
     void testInstanceMethod() throws Throwable {
         var invoker = of(TestClass.class.getMethod("instanceEcho", String.class));
         var instance = new TestClass();
-        assertThat(invoker.invoke(new Object[]{instance, "test"}))
+        assertThat(invoker.invoke(args(instance, "test")))
                 .isEqualTo("instance:test");
-        assertThat(invoker.invoke(new Object[]{instance}))
+        assertThat(invoker.invoke(args(instance)))
                 .isEqualTo("instance:null");
     }
 
     @Test
     void testPrimitivesAndBoxing() throws Throwable {
         var invoker = of(TestClass.class.getMethod("staticSum", int.class, int.class));
-        assertThat(invoker.invoke(new Object[]{10, 20}))
+        assertThat(invoker.invoke(args(10, 20)))
                 .isEqualTo(30);
     }
 
     @Test
     void testArgumentMismatch_tooFew() throws Throwable {
         var invoker = of(TestClass.class.getMethod("staticSum", int.class, int.class));
-        assertThatThrownBy(() -> invoker.invoke(new Object[]{10}))
+        assertThatThrownBy(() -> invoker.invoke(args(10)))
                 .isInstanceOf(NullPointerException.class);
     }
 
     @Test
     void testArgumentMismatch_tooMany() throws Throwable {
         var invoker = of(TestClass.class.getMethod("staticSum", int.class, int.class));
-        assertDoesNotThrow(() -> invoker.invoke(new Object[]{10, 20, 30, 40}));
+        assertDoesNotThrow(() -> invoker.invoke(args(10, 20, 30, 40)));
     }
 
     @Test
     void testSubtypeArgument() throws Throwable {
         var invoker = of(TestClass.class.getMethod("withSubtype", Object.class));
         var instance = new TestClass();
-        assertThat(invoker.invoke(new Object[]{instance, "a string"}))
+        assertThat(invoker.invoke(args(instance, "a string")))
                 .isEqualTo("got:String");
 
-        assertThat(invoker.invoke(new Object[]{instance, new ArrayList<>()}))
+        assertThat(invoker.invoke(args(instance, new ArrayList<>())))
                 .isEqualTo("got:ArrayList");
     }
 
@@ -209,23 +210,23 @@ class MethodInvokerUtilsTest {
         var instance = new TestClass();
 
         // No arguments
-        assertThatThrownBy(() -> invoker.invoke(new Object[]{}))
+        assertThatThrownBy(() -> invoker.invoke(args()))
                 .isInstanceOf(NullPointerException.class);
 
         // Instance only
-        assertThat(invoker.invoke(new Object[]{instance}))
+        assertThat(invoker.invoke(args(instance)))
                 .isEqualTo("null0");
 
         // No varargs
-        assertThat(invoker.invoke(new Object[]{instance, "sum:"}))
+        assertThat(invoker.invoke(args(instance, "sum:")))
                 .isEqualTo("sum:0");
 
         // One vararg
-        assertThat(invoker.invoke(new Object[]{instance, "sum:", new int[]{10}}))
+        assertThat(invoker.invoke(args(instance, "sum:", new int[]{10})))
                 .isEqualTo("sum:10");
 
         // Multiple varargs
-        assertThat(invoker.invoke(new Object[]{instance, "sum:", new int[]{10, 20, 30}}))
+        assertThat(invoker.invoke(args(instance, "sum:", new int[]{10, 20, 30})))
                 .isEqualTo("sum:60");
     }
 
@@ -235,7 +236,7 @@ class MethodInvokerUtilsTest {
 
         assertThat(invoker.invoke(new Object[]{null}))
                 .isEqualTo("static:null");
-        assertThat(invoker.invoke(new Object[]{}))
+        assertThat(invoker.invoke(args()))
                 .isEqualTo("static:null");
     }
 
@@ -243,7 +244,7 @@ class MethodInvokerUtilsTest {
     void testVoidMethod() throws Throwable {
         var invoker = of(TestClass.class.getMethod("doNothing"));
         var instance = new TestClass();
-        assertThat(invoker.invoke(new Object[]{instance}))
+        assertThat(invoker.invoke(args(instance)))
                 .isNull();
     }
 }

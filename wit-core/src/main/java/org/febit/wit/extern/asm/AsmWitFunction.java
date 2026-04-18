@@ -13,23 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.util.bean.model;
+package org.febit.wit.extern.asm;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import org.febit.wit.engine.WitFunction;
 
-@SuppressWarnings({"unused"})
-@RequiredArgsConstructor
-class InternalBean {
-
-    public String f1 = "f1";
-    @Getter
-    @Setter
-    private String f2 = "f2";
-    public int f4 = 4;
-
-    public String m1() {
-        return "m1";
-    }
+public interface AsmWitFunction extends WitFunction.Constable {
 }

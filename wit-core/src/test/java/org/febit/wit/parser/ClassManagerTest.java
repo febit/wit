@@ -16,8 +16,6 @@
 package org.febit.wit.parser;
 
 import org.febit.wit.exception.ScriptParseException;
-import org.febit.wit.ir.Position;
-import org.febit.wit.ir.TextPosition;
 import org.febit.wit.parser.support.ClassNameRope;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,10 +25,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.febit.wit.ir.IRTestSupport.DUMMY_POS;
 
 class ClassManagerTest {
-
-    private static final Position DUMMY_POS = TextPosition.of(1, 1);
 
     private ClassManager classManager;
 

@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.febit.wit.ir.IRTestSupport.args;
+
 class SequenceIterTest {
 
     @Test
@@ -35,8 +37,8 @@ class SequenceIterTest {
 
     @Test
     void objectArray() {
-        IterAsserts.empty(SequenceIter.of(new Object[]{}));
-        IterAsserts.abc(SequenceIter.of(new Object[]{"a", "b", "c"}));
+        IterAsserts.empty(SequenceIter.of(args()));
+        IterAsserts.abc(SequenceIter.of(args("a", "b", "c")));
     }
 
     @Test

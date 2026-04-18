@@ -13,6 +13,14 @@ assertNull($LOCAL("a"));
     assertEquals("ghi", $LOCAL("a"));
 }
 {
+    // Case: null keys
+    assertEquals(UNDEFINED, $LOCAL[null]);
+    assertDoesNotThrow(() -> {
+        $LOCAL[null] = "x";
+    });
+    assertEquals(UNDEFINED, $LOCAL[null]);
+}
+{
     // Case: include
     $LOCAL("a", "abc");
     include "../lib/local.include.wit";

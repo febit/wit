@@ -25,6 +25,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.febit.wit.ir.IRTestSupport.args;
 
 class MultiMixedMethodInvokerFunctionTest {
 
@@ -63,12 +64,12 @@ class MultiMixedMethodInvokerFunctionTest {
         var function = functionOf(MixedMethods.class, "echo");
         var target = new MixedMethods("instance");
 
-        assertThat(function.apply(new Object[]{"wit"}))
+        assertThat(function.apply(args("wit")))
                 .isEqualTo("static:wit");
-        assertThat(function.apply(new Object[]{target, 7}))
+        assertThat(function.apply(args(target, 7)))
                 .isEqualTo("instance:7");
 
-        assertThat(function.apply(new Object[]{target, 3.14f}))
+        assertThat(function.apply(args(target, 3.14f)))
                 .isEqualTo("static(Float):3.14");
     }
 
@@ -76,7 +77,7 @@ class MultiMixedMethodInvokerFunctionTest {
     void rejectsMissingReceiverForInstanceOnlyMethod() {
         var function = functionOf(MixedMethods.class, "instanceOnly");
 
-        assertThatThrownBy(() -> function.apply(new Object[]{"wit"}))
+        assertThatThrownBy(() -> function.apply(args("wit")))
                 .isInstanceOf(ScriptEvaluateException.class)
                 .hasMessage("no such native method");
     }
@@ -86,7 +87,7 @@ class MultiMixedMethodInvokerFunctionTest {
         var function = functionOf(MixedMethods.class, "echo");
         var target = new MixedMethods("instance");
 
-        assertThatThrownBy(() -> function.apply(new Object[]{target, "wit"}))
+        assertThatThrownBy(() -> function.apply(args(target, "wit")))
                 .isInstanceOf(ScriptEvaluateException.class)
                 .hasMessage("no such native method");
     }

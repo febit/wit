@@ -31,6 +31,7 @@ import org.febit.wit.extern.servlet.ServletContextLoader;
 import org.febit.wit.io.Loader;
 import org.febit.wit.io.Loaders;
 import org.febit.wit.io.Source;
+import org.febit.wit.runtime.Undefined;
 import org.febit.wit.test.component.TestCasesModule;
 import org.febit.wit.test.component.TestConfigFlagModule;
 import org.febit.wit.test.component.TestSpiFlagModule;
@@ -60,6 +61,10 @@ public class WitTestSupport {
                     GlobalContextRegistry.create(),
                     LocalContextRegistry.create()
             )
+            .module(wit -> {
+                var constants = wit.globals().constants();
+                constants.set("UNDEFINED", Undefined.UNDEFINED);
+            })
             .module(new TestCasesModule())
             .module(new TestSpiFlagModule())
             .module(new TestConfigFlagModule())

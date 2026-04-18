@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
+import static org.febit.wit.extern.asm.AsmUtils.boxedInternalNameOf;
+import static org.febit.wit.extern.asm.AsmUtils.descriptorOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AsmUtilsTest {
@@ -50,40 +52,40 @@ class AsmUtilsTest {
 
     @Test
     void testBoxedInternalNameOf() {
-        assertEquals("java/lang/Integer", AsmUtils.boxedInternalNameOf(Integer.class));
-        assertEquals("java/lang/String", AsmUtils.boxedInternalNameOf(String.class));
-        assertEquals("java/util/Map", AsmUtils.boxedInternalNameOf(Map.class));
+        assertEquals("java/lang/Integer", boxedInternalNameOf(Integer.class));
+        assertEquals("java/lang/String", boxedInternalNameOf(String.class));
+        assertEquals("java/util/Map", boxedInternalNameOf(Map.class));
 
-        assertEquals("java/lang/Integer", AsmUtils.boxedInternalNameOf(int.class));
-        assertEquals("java/lang/Boolean", AsmUtils.boxedInternalNameOf(boolean.class));
-        assertEquals("java/lang/Void", AsmUtils.boxedInternalNameOf(Void.TYPE));
-        assertEquals("java/lang/Void", AsmUtils.boxedInternalNameOf(Void.class));
+        assertEquals("java/lang/Integer", boxedInternalNameOf(int.class));
+        assertEquals("java/lang/Boolean", boxedInternalNameOf(boolean.class));
+        assertEquals("java/lang/Void", boxedInternalNameOf(Void.TYPE));
+        assertEquals("java/lang/Void", boxedInternalNameOf(Void.class));
 
-        assertEquals("[I", AsmUtils.boxedInternalNameOf(int[].class));
-        assertEquals("[[I", AsmUtils.boxedInternalNameOf(int[][].class));
-        assertEquals("[[[I", AsmUtils.boxedInternalNameOf(int[][][].class));
+        assertEquals("[I", boxedInternalNameOf(int[].class));
+        assertEquals("[[I", boxedInternalNameOf(int[][].class));
+        assertEquals("[[[I", boxedInternalNameOf(int[][][].class));
     }
 
     @Test
-    void descriptorOf() {
+    void testDescriptorOf() {
 
-        assertEquals("I", AsmUtils.descriptorOf(int.class));
-        assertEquals("J", AsmUtils.descriptorOf(long.class));
-        assertEquals("Z", AsmUtils.descriptorOf(boolean.class));
-        assertEquals("B", AsmUtils.descriptorOf(byte.class));
-        assertEquals("C", AsmUtils.descriptorOf(char.class));
+        assertEquals("I", descriptorOf(int.class));
+        assertEquals("J", descriptorOf(long.class));
+        assertEquals("Z", descriptorOf(boolean.class));
+        assertEquals("B", descriptorOf(byte.class));
+        assertEquals("C", descriptorOf(char.class));
 
-        assertEquals("Ljava/lang/Integer;", AsmUtils.descriptorOf(Integer.class));
-        assertEquals("Ljava/lang/String;", AsmUtils.descriptorOf(String.class));
-        assertEquals("Ljava/util/Map;", AsmUtils.descriptorOf(Map.class));
+        assertEquals("Ljava/lang/Integer;", descriptorOf(Integer.class));
+        assertEquals("Ljava/lang/String;", descriptorOf(String.class));
+        assertEquals("Ljava/util/Map;", descriptorOf(Map.class));
 
-        assertEquals("[I", AsmUtils.descriptorOf(int[].class));
-        assertEquals("[[I", AsmUtils.descriptorOf(int[][].class));
-        assertEquals("[[[I", AsmUtils.descriptorOf(int[][][].class));
+        assertEquals("[I", descriptorOf(int[].class));
+        assertEquals("[[I", descriptorOf(int[][].class));
+        assertEquals("[[[I", descriptorOf(int[][][].class));
 
-        assertEquals("[Ljava/lang/Integer;", AsmUtils.descriptorOf(Integer[].class));
-        assertEquals("[[Ljava/lang/Integer;", AsmUtils.descriptorOf(Integer[][].class));
-        assertEquals("[[[Ljava/lang/Integer;", AsmUtils.descriptorOf(Integer[][][].class));
+        assertEquals("[Ljava/lang/Integer;", descriptorOf(Integer[].class));
+        assertEquals("[[Ljava/lang/Integer;", descriptorOf(Integer[][].class));
+        assertEquals("[[[Ljava/lang/Integer;", descriptorOf(Integer[][][].class));
     }
 
 }

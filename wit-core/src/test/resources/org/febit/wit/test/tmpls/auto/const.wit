@@ -1,3 +1,5 @@
+@import java.util.concurrent.atomic.AtomicInteger;
+
 const a = 1;
 const b = "bbb";
 const c = 0xABCDEF;
@@ -22,27 +24,29 @@ assertEquals("xxx", toString2);
     assertEquals("bbbaaa", b);
 }
 {
-
     const arr = ["xx", a, b,c];
-
     assertEquals("xx", arr[0]);
     assertEquals(a, arr[1]);
     assertEquals(b, arr[2]);
     assertEquals(c, arr[3]);
-
 }
 {
-
     const map = {
         "1": a,
         "2": b
     };
-
     assertEquals(a, map["1"]);
     assertEquals(b, map["2"]);
-
 }
+{
+    const a = AtomicInteger::new(5);
+    const b = AtomicInteger::new(10);
+    const sum = a + b;
+    assertEquals(15, sum);
 
+    const not = !a;
+    assertFalse(not);
+}
 {
     // set by plugins
     assertTrue(PLUGIN_CONFIG_FLAG)

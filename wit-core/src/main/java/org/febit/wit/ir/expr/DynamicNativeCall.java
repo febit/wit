@@ -46,9 +46,7 @@ public record DynamicNativeCall(
     }
 
     @Nullable
-    public static Object invoke(
-            final Method method, @Nullable Object self, @Nullable Object @Nullable [] args
-    ) {
+    public static Object invoke(Method method, Object self, @Nullable Object[] args) {
         var methodArgs = fitArgs(args, method.getParameterCount());
         try {
             Object result = method.invoke(self, methodArgs);
@@ -64,13 +62,9 @@ public record DynamicNativeCall(
         }
     }
 
-    private static @Nullable Object[] fitArgs(
-            @Nullable Object @Nullable [] args, int expectedSize) {
+    private static @Nullable Object[] fitArgs(@Nullable Object[] args, int expectedSize) {
         if (expectedSize == 0) {
             return Args.empty();
-        }
-        if (args == null) {
-            return new Object[expectedSize];
         }
         if (args.length == expectedSize) {
             return args;
