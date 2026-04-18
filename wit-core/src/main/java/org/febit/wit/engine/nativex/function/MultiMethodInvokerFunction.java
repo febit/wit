@@ -25,14 +25,14 @@ import java.util.List;
 
 public record MultiMethodInvokerFunction(
         List<MethodInvoker<?>> invokers,
-        boolean asStatic
+        boolean withoutReceiver
 ) implements WitFunction.Constable {
 
     @Nullable
     @Override
     public Object apply(@Nullable Object @Nullable [] args) {
         MethodInvoker<?> invoker;
-        if (asStatic) {
+        if (withoutReceiver) {
             invoker = MethodMatchUtils.findBest(invokers, args, 0);
         } else {
             if (args == null

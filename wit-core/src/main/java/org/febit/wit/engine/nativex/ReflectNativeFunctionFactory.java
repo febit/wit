@@ -53,18 +53,18 @@ public class ReflectNativeFunctionFactory implements NativeFunctionFactory {
         }
 
         List<MethodInvoker<?>> invokers = new ArrayList<>(size);
-        var asStatic = Modifiers.isStatic(methods.get(0));
+        var withoutReceiver = Modifiers.isStatic(methods.get(0));
         var mix = false;
         for (Method method : methods) {
             var invoker = MethodInvokerUtils.of(method);
             invokers.add(invoker);
-            if (asStatic != invoker.isStatic()) {
+            if (withoutReceiver != invoker.isStatic()) {
                 mix = true;
             }
         }
         invokers = List.copyOf(invokers);
         return mix ? new MultiMixedMethodInvokerFunction(invokers)
-                : new MultiMethodInvokerFunction(invokers, asStatic);
+                : new MultiMethodInvokerFunction(invokers, withoutReceiver);
     }
 
     @Override
