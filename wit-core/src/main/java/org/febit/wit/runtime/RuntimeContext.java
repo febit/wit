@@ -104,43 +104,48 @@ public final class RuntimeContext implements Context {
     }
 
     /**
-     * Get a bean's property.
+     * Get a object's property.
      *
-     * @param <T>      bean type
-     * @param obj      bean
+     * @param target   target object
      * @param property property
      * @return value
      */
     @Nullable
-    public <T> Object getProperty(@Nullable T obj, @Nullable Object property) {
-        if (obj == null) {
+    public Object getProperty(@Nullable Object target, @Nullable Object property) {
+        while (target instanceof RuntimeReference<?> ref) {
+            target = ref.get(this);
+        }
+        if (target == null) {
             if (!isEnabled(Feature.IGNORE_ACCESSOR_NULL_POINTER)) {
                 throw new ScriptEvaluateException("Null pointer.");
             }
             return Undefined.UNDEFINED;
         }
         @SuppressWarnings("unchecked")
-        var getter = (Getter<Object>) this.accessors.getter(obj.getClass());
-        return getter.get(obj, property);
+        var getter = (Getter<Object>) this.accessors.getter(target.getClass());
+        return getter.get(target, property);
     }
 
     /**
-     * Set a bean's property.
+     * Set a object's property.
      *
-     * @param obj      bean
+     * @param target   target object
      * @param property property
      * @param value    value
      */
-    public <T> void setProperty(@Nullable T obj, @Nullable Object property, @Nullable Object value) {
-        if (obj == null) {
+    public void setProperty(@Nullable Object target, @Nullable Object property, @Nullable Object value) {
+        while (target instanceof RuntimeReference<?> ref) {
+            target = ref.get(this);
+        }
+        if (target == null) {
             if (!isEnabled(Feature.IGNORE_ACCESSOR_NULL_POINTER)) {
                 throw new ScriptEvaluateException("Null pointer.");
             }
             return;
         }
         @SuppressWarnings("unchecked")
-        var setter = (Setter<Object>) this.accessors.setter(obj.getClass());
-        setter.set(obj, property, value);
+        var setter = (Setter<Object>) this.accessors.setter(target.getClass());
+        setter.set(target, property, value);
     }
 
     @Nullable
