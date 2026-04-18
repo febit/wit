@@ -15,6 +15,7 @@
  */
 package org.febit.wit;
 
+import org.febit.wit.engine.TemplateTextFactory;
 import org.febit.wit.engine.accessor.Getter;
 import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.engine.nativex.NativeAccess;
@@ -23,7 +24,6 @@ import org.febit.wit.extern.asm.AsmBeanAccessorFactory;
 import org.febit.wit.io.CodecFactory;
 import org.febit.wit.io.Loader;
 import org.febit.wit.io.codec.DefaultCodecFactory;
-import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.parser.template.AdaptiveTemplateTextFactory;
 import org.febit.wit.runtime.accessor.CachingAccessorFactory;
 import org.febit.wit.runtime.accessor.CompositeAccessorFactory;

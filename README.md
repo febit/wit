@@ -43,17 +43,17 @@ Wit wit = Wit.builder()
 Script script = wit.script("""
     code: echo "Hello Wit！";
     """);
-script.
-
-eval(Vars.empty(),out);
+Context context = script.eval(Vars.empty(), out);
 ```
 
 + What happens next:
 
-- `Wit.builder()` assembles the engine with a loader and extension points.
-- `wit.script(...)` resolves the script source and returns a `Script`.
-- On first use, the script is parsed into executable IR.
-- `script.eval(...)` runs that IR with your inputs and output target.
+- `Wit.builder()` / `WitBuilder` assembles the engine with `Loader`, `ParserFactory`, and other extension points.
+- `wit.script(...)` resolves the path through `Loader` and creates a cached `ScriptImpl`.
+- `ScriptImpl` starts compilation through `ParserFactory` with a `ParseContext`.
+- `parser` parses the source and assembles it into `ir.ScriptIR`.
+- `script.eval(...)` creates a `RuntimeContext` for the current inputs and output target.
+- `ScriptIR.execute(context)` runs the compiled IR.
 
 ## Hello Wit
 

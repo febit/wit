@@ -82,7 +82,7 @@ public class Evaluator {
 
     public Context eval() {
         return script().eval(
-                nvl(inputs, Vars::empty),
+                inputs,
                 nvl(out, (Supplier<Out>) DiscardOut::get).get(),
                 nvl(local, GenericHeap::local),
                 breakpointHandler

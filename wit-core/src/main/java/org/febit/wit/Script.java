@@ -22,7 +22,6 @@ import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.Source;
-import org.febit.wit.io.out.DiscardOut;
 import org.jspecify.annotations.Nullable;
 
 import java.io.OutputStream;
@@ -51,8 +50,8 @@ public interface Script {
      * @throws ScriptEvaluateException when script runtime exception
      */
     Context eval(
-            Vars inputs,
-            Out out,
+            @Nullable Vars inputs,
+            @Nullable Out out,
             @Nullable Heap local,
             @Nullable BreakpointHandler breakpointHandler
     );
@@ -70,7 +69,7 @@ public interface Script {
      * @throws ScriptParseException    when unable to parse
      */
     default Context eval() {
-        return eval(Vars.empty(), DiscardOut.get(), null, null);
+        return eval(null, null, null, null);
     }
 
     /**

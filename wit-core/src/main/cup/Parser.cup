@@ -1,8 +1,9 @@
 // Copyright (c) 2013-2016, febit.org. All Rights Reserved.
 package org.febit.wit.parser;
 
-import java.util.List;
+import org.febit.wit.engine.ParseContext;
 import org.febit.wit.exception.ScriptParseException;
+import org.febit.wit.io.Source;
 import org.febit.wit.ir.*;
 import org.febit.wit.ir.expr.*;
 import org.febit.wit.ir.expr.NewMap.NewMapEntry;
@@ -224,7 +225,7 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     // Include
                     |INCLUDE:sym expression:expr newMapExpr:paramsExpr? SEMICOLON
-                    {: yield Include.builder().withoutExport(true).refer(assembler.script().path()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos).build(); :}
+                    {: yield Include.builder().withoutExport(true).refer(assembler.scriptPath()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos).build(); :}
 
                     //funcStatement
                     |funcStatHead:builder LBRACE statement[]:list? RBRACE
@@ -251,7 +252,7 @@ varPart         ::= varAssign:$
 
 
 importPart1     ::= IMPORT:sym expression:expr newMapExpr:paramsExpr?
-                    {: yield Include.builder().refer(assembler.script().path()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos); :}
+                    {: yield Include.builder().refer(assembler.scriptPath()).path(%expr%).params(%paramsExpr%).pos(%sym.symbol%.pos); :}
                     ;
 
 

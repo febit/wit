@@ -27,7 +27,7 @@ dependencies {
   api 'org.slf4j:slf4j-api'
   compileOnly libs.jakarta.servlet.api
 
-  cup files('src/main/cup/java_cup_wit-20260218.jar')
+  cup files('src/main/cup/java_cup_wit-20260418.jar')
 
   testImplementation 'commons-io:commons-io'
   testImplementation libs.jakarta.servlet.api
@@ -56,6 +56,7 @@ sourceSets.main {
 }
 
 tasks.register('generateParser') {
+  group = 'codegen'
   doLast {
     providers.javaexec({ JavaExecSpec exec ->
       exec.setClasspath(cupRuntime)
@@ -63,6 +64,10 @@ tasks.register('generateParser') {
       exec.args(
           '-exception', 'ScriptParseException',
           '-symbols', 'TokenKinds',
+          '-parser', 'ParserImpl',
+          '-parser-code', """
+    public ParserImpl(ParseContext context) { super(context); }
+""",
           '-destdir', parserSrcDir.get().dir(PKG_CORE).getAsFile().absolutePath,
           '-destresdir', parserResDir.get().dir(PKG_CORE).getAsFile().absolutePath,
           file('src/main/cup/Parser.cup').absolutePath

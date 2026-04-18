@@ -13,28 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.parser.template;
+package org.febit.wit.engine;
 
-import org.febit.wit.engine.ParseContext;
-import org.febit.wit.engine.TemplateTextFactory;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.template.CharArrayTemplateText;
 
-public class CharArrayTemplateTextFactory implements TemplateTextFactory {
+public interface TemplateTextFactory {
 
-    @Override
-    public void onParseStarted(ParseContext context) {
-        // Do nothing
-    }
+    void onParseStarted(ParseContext context);
 
-    @Override
-    public void onParseCompleted(ParseContext context) {
-        // Do nothing
-    }
+    void onParseCompleted(ParseContext context);
 
-    @Override
-    public Statement create(ParseContext context, char[] text, Position position) {
-        return new CharArrayTemplateText(text, position);
-    }
+    Statement create(ParseContext context, char[] text, Position position);
 }

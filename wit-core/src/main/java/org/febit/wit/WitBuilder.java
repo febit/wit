@@ -19,6 +19,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.febit.wit.engine.ParserFactory;
+import org.febit.wit.engine.TemplateTextFactory;
 import org.febit.wit.engine.accessor.Accessor;
 import org.febit.wit.engine.nativex.NativeAccess;
 import org.febit.wit.exception.NoSuchSourceException;
@@ -26,8 +28,8 @@ import org.febit.wit.io.CodecFactory;
 import org.febit.wit.io.Loader;
 import org.febit.wit.io.codec.DefaultCodecFactory;
 import org.febit.wit.io.out.DiscardOut;
+import org.febit.wit.parser.ParserImpl;
 import org.febit.wit.parser.ReservedNames;
-import org.febit.wit.parser.TemplateTextFactory;
 import org.febit.wit.parser.template.AdaptiveTemplateTextFactory;
 import org.febit.wit.runtime.accessor.CompositeAccessorFactory;
 import org.jspecify.annotations.Nullable;
@@ -72,6 +74,10 @@ public class WitBuilder {
     @Setter
     @Nullable
     private NativeAccess nativeAccess;
+    @Getter
+    @Setter
+    @Nullable
+    private ParserFactory parserFactory;
     @Getter
     @Setter
     @Nullable
@@ -152,7 +158,8 @@ public class WitBuilder {
                 .charset(nvl(charset, StandardCharsets.UTF_8))
                 .codecFactory(nvl(codecFactory, DefaultCodecFactory::new))
                 .nativeAccess(nvl(nativeAccess, NativeAccess::ofDefault))
-                .templateTextFactory(nvl(templateTextFactory, AdaptiveTemplateTextFactory::new))
+                .parserFactory(nvl(parserFactory, WitBuilder::defaultParser))
+                .templateTextFactory(nvl(templateTextFactory, WitBuilder::defaultTemplateTextFactory))
                 .build();
 
         for (var module : modules) {
@@ -164,6 +171,14 @@ public class WitBuilder {
             throw new UncheckedIOException(e.getMessage(), e);
         }
         return wit;
+    }
+
+    private static ParserFactory defaultParser() {
+        return ParserImpl::new;
+    }
+
+    private static TemplateTextFactory defaultTemplateTextFactory() {
+        return new AdaptiveTemplateTextFactory();
     }
 
     private static void setup(Wit wit, List<String> scripts) throws NoSuchSourceException {

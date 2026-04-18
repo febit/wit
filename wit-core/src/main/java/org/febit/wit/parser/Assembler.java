@@ -18,7 +18,8 @@ package org.febit.wit.parser;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.Feature;
-import org.febit.wit.Script;
+import org.febit.wit.engine.ParseContext;
+import org.febit.wit.engine.TemplateTextFactory;
 import org.febit.wit.engine.nativex.NativeAccess;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.Expression;
@@ -63,7 +64,9 @@ public class Assembler {
     @Getter
     private final ClassManager classes = new ClassManager();
     @Getter
-    private final Script script;
+    private final String scriptPath;
+    @Getter
+    private final ParseContext context;
     @Getter
     private final VarLayout vars;
     private final int features;
@@ -75,28 +78,29 @@ public class Assembler {
      */
     private final long lastSourceVersion;
 
-    public Assembler(Script script) {
-        var wit = script.engine();
+    public Assembler(ParseContext context) {
+        this.context = context;
+        this.scriptPath = context.path();
 
-        this.script = script;
-        this.features = wit.features();
-        this.templateTextFactory = wit.templateTextFactory();
-        this.nativeAccess = wit.nativeAccess();
+        var engine = context.engine();
+        this.features = engine.features();
+        this.templateTextFactory = engine.templateTextFactory();
+        this.nativeAccess = engine.nativeAccess();
 
-        this.vars = new VarLayout(wit);
+        this.vars = new VarLayout(engine);
         this.labelIndexMap.put(null, 0);
         this.nextLabelIndex.set(1);
 
         // TODO: get source version before open it, may less than actual value.
-        this.lastSourceVersion = script.source().version();
+        this.lastSourceVersion = context.source().version();
     }
 
-    public void onParserStarted() {
-        this.templateTextFactory.onParserStarted(script);
+    public void onParseStarted() {
+        this.templateTextFactory.onParseStarted(context);
     }
 
-    public void onParserCompleted() {
-        this.templateTextFactory.onParserCompleted(script);
+    public void onParseCompleted() {
+        this.templateTextFactory.onParseCompleted(context);
     }
 
     public boolean isEnabled(Feature feature) {
@@ -118,7 +122,7 @@ public class Assembler {
             if (text == null || text.length == 0) {
                 return NoopStatement.INSTANCE;
             }
-            return templateTextFactory.create(script, text, position);
+            return templateTextFactory.create(context, text, position);
         }
 
         public Statement declare(String name, Position position) {

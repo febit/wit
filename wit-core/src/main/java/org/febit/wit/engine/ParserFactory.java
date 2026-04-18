@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.parser.template;
+package org.febit.wit.engine;
 
-import org.febit.wit.engine.ParseContext;
-import org.febit.wit.ir.Position;
-import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.template.AdaptiveTemplateText;
+import org.febit.wit.parser.Parser;
 
-public class AdaptiveTemplateTextFactory extends ByteArrayTemplateTextFactory {
+@FunctionalInterface
+public interface ParserFactory {
 
-    @Override
-    public Statement create(ParseContext context, char[] text, Position position) {
-        return new AdaptiveTemplateText(text, encode(text), context.engine().charset(), position);
-    }
+    Parser get(ParseContext context);
 }

@@ -3,7 +3,8 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * You may
+ * obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -13,17 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.parser.template;
+package org.febit.wit.engine;
 
-import org.febit.wit.engine.ParseContext;
-import org.febit.wit.ir.Position;
-import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.template.AdaptiveTemplateText;
+import org.febit.wit.Wit;
+import org.febit.wit.io.Source;
 
-public class AdaptiveTemplateTextFactory extends ByteArrayTemplateTextFactory {
-
-    @Override
-    public Statement create(ParseContext context, char[] text, Position position) {
-        return new AdaptiveTemplateText(text, encode(text), context.engine().charset(), position);
-    }
+public record ParseContext(
+        Wit engine,
+        String path,
+        Source source
+) {
 }
+

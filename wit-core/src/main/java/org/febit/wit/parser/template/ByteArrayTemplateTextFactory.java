@@ -15,13 +15,13 @@
  */
 package org.febit.wit.parser.template;
 
-import org.febit.wit.Script;
+import org.febit.wit.engine.ParseContext;
+import org.febit.wit.engine.TemplateTextFactory;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.codec.Encoder;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.template.ByteArrayTemplateText;
-import org.febit.wit.parser.TemplateTextFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,32 +32,32 @@ public class ByteArrayTemplateTextFactory implements TemplateTextFactory {
     private final ThreadLocal<ByteArrayOutputStream> outputs = new ThreadLocal<>();
 
     @Override
-    public void onParserStarted(Script script) {
-        var wit = script.engine();
-        encoders.set(wit.codecFactory().encoder(wit.charset()));
+    public void onParseStarted(ParseContext context) {
+        var engine = context.engine();
+        encoders.set(engine.codecFactory().encoder(engine.charset()));
         outputs.set(new ByteArrayOutputStream(512));
     }
 
     @Override
-    public void onParserCompleted(Script script) {
+    public void onParseCompleted(ParseContext context) {
         encoders.remove();
         outputs.remove();
     }
 
     protected byte[] encode(char[] text) {
+        var out = outputs.get();
         try {
-            var out = outputs.get();
             encoders.get().encode(text, 0, text.length, out);
-            var bytes = out.toByteArray();
-            out.reset();
-            return bytes;
+            return out.toByteArray();
         } catch (IOException ex) {
             throw new ScriptEvaluateException(ex);
+        } finally {
+            out.reset();
         }
     }
 
     @Override
-    public Statement create(Script script, char[] text, Position position) {
+    public Statement create(ParseContext context, char[] text, Position position) {
         return new ByteArrayTemplateText(encode(text), position);
     }
 }

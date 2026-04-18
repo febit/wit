@@ -26,13 +26,11 @@ import org.febit.wit.exception.ScriptException;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.io.Out;
 import org.febit.wit.io.Source;
+import org.febit.wit.io.out.DiscardOut;
 import org.febit.wit.ir.ScriptIR;
-import org.febit.wit.parser.Parser;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.heap.GenericHeap;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Objects;
 
 import static org.febit.wit.util.Defaults.nvl;
 
@@ -79,7 +77,9 @@ public class ScriptImpl implements Script {
     private synchronized ScriptIR ir(boolean renew) {
         var ir = this.compiledIR;
         if (renew || isIrExpired(ir)) {
-            ir = Parser.parse(this);
+            ir = engine.parserFactory()
+                    .get(new ParseContext(engine, path, source))
+                    .parse();
             this.compiledIR = ir;
         }
         return ir;
@@ -94,20 +94,18 @@ public class ScriptImpl implements Script {
 
     @Override
     public Context eval(
-            Vars inputs,
-            Out out,
+            @Nullable Vars inputs,
+            @Nullable Out out,
             @Nullable Heap local,
             @Nullable BreakpointHandler breakpointHandler
     ) {
-        Objects.requireNonNull(inputs, "inputs is required");
-        Objects.requireNonNull(out, "out is required");
         try {
             var ir = ir();
             var context = new RuntimeContext(
                     this,
                     ir.createVariableHeap(),
-                    inputs,
-                    out,
+                    nvl(inputs, Vars::empty),
+                    nvl(out, DiscardOut::get),
                     nvl(local, GenericHeap::local),
                     breakpointHandler
             );

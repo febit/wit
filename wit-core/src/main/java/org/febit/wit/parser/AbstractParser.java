@@ -17,7 +17,7 @@ package org.febit.wit.parser;
 
 import lombok.extern.slf4j.Slf4j;
 import org.febit.wit.Feature;
-import org.febit.wit.Script;
+import org.febit.wit.engine.ParseContext;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.exception.UncheckedException;
 import org.febit.wit.ir.ScriptIR;
@@ -31,7 +31,7 @@ import java.io.ObjectInputStream;
 import java.util.Objects;
 
 @Slf4j
-abstract class AbstractParser {
+abstract class AbstractParser implements Parser {
 
     private static final short[][] PRODUCTION_TABLE = loadTable("Production");
     private static final short[][] ACTION_TABLE = loadTable("Action");
@@ -39,14 +39,17 @@ abstract class AbstractParser {
 
     final Stack<Token> tokenStack = new Stack<>(24);
 
-    Assembler assembler;
+    private final ParseContext context;
 
+    final Assembler assembler;
     /**
      * flag to stop parser
      */
     boolean goonParse;
 
-    AbstractParser() {
+    AbstractParser(ParseContext context) {
+        this.context = context;
+        this.assembler = new Assembler(context);
     }
 
     private static short lookupAction(int state, final int sym) {
@@ -101,7 +104,7 @@ abstract class AbstractParser {
 
     private static short[][] loadTable(String name) {
         try (var in = new ObjectInputStream(ClassUtils.loader()
-                .getResourceAsStream("org/febit/wit/parser/Parser$" + name + ".data")
+                .getResourceAsStream("org/febit/wit/parser/ParserImpl$" + name + ".data")
         )) {
             return (short[][]) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -143,22 +146,12 @@ abstract class AbstractParser {
         return new Token(TokenKinds.SEMICOLON, refer.pos, null);
     }
 
-    public static ScriptIR parse(Script script) throws ScriptParseException {
-        return new Parser().parse0(script);
-    }
-
     @Nullable
     abstract Object doAction(int actionId) throws ScriptParseException;
 
-    /**
-     * @param script Script
-     * @return ScriptIR
-     * @throws ScriptParseException ScriptParseException
-     */
-    protected ScriptIR parse0(Script script) throws ScriptParseException {
-        this.assembler = new Assembler(script);
-
-        var source = script.source();
+    @Override
+    public ScriptIR parse() throws ScriptParseException {
+        var source = context.source();
         Lexer lexer = null;
         try {
             //ISSUE: LexerProvider
@@ -166,8 +159,7 @@ abstract class AbstractParser {
             lexer.setTrimCodeBlockBlankLine(assembler.isEnabled(Feature.TRIM_CODE_BLOCK_BLANK_LINE));
             lexer.beginWith(source.beginWith());
             lexer.setOffset(source);
-            this.assembler.onParserStarted();
-
+            this.assembler.onParseStarted();
             var ir = this.process(lexer).value;
             Objects.requireNonNull(ir, "IR should not be null");
             return (ScriptIR) ir;
@@ -176,7 +168,7 @@ abstract class AbstractParser {
         } catch (Exception e) {
             throw new ScriptParseException(e);
         } finally {
-            this.assembler.onParserCompleted();
+            this.assembler.onParseCompleted();
             if (lexer != null) {
                 try {
                     lexer.close();

@@ -15,15 +15,16 @@
  */
 package org.febit.wit.parser;
 
-import org.febit.wit.Script;
-import org.febit.wit.ir.Position;
-import org.febit.wit.ir.Statement;
+import org.febit.wit.exception.ScriptParseException;
+import org.febit.wit.ir.ScriptIR;
 
-public interface TemplateTextFactory {
+public interface Parser {
 
-    void onParserStarted(Script script);
-
-    void onParserCompleted(Script script);
-
-    Statement create(Script script, char[] text, Position position);
+    /**
+     * Parse the source to a script IR.
+     *
+     * @return the script IR
+     * @throws ScriptParseException when unable to parse
+     */
+    ScriptIR parse() throws ScriptParseException;
 }
