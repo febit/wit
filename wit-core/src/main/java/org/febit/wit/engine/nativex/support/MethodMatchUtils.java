@@ -56,13 +56,13 @@ public class MethodMatchUtils {
      *
      * @param executables executables
      * @param args        args
-     * @param from        arg offset used to match method parameters
+     * @param argsOffset  args offset used to match method parameters
      * @return null if not found
      */
     @Nullable
     public static <T extends ExecutableAware<?>> T findBest(
-            List<T> executables, @Nullable Object @Nullable [] args, int from) {
-        return findBest(executables, MethodMatchUtils::distance, argTypes(args), from);
+            List<T> executables, @Nullable Object @Nullable [] args, int argsOffset) {
+        return findBest(executables, MethodMatchUtils::distance, argTypes(args), argsOffset);
     }
 
     /**
@@ -70,17 +70,12 @@ public class MethodMatchUtils {
      *
      * @param executables executables
      * @param args        if mixed, first arg is the host of member methods.
-     * @param mix         if mix, static methods with member methods
      * @return null if not found
      */
     @Nullable
-    public static <T extends ExecutableAware<?>> T findBest(
-            List<T> executables, @Nullable Object @Nullable [] args, boolean mix) {
-        return findBest(executables,
-                mix ? MethodMatchUtils::distanceMix : MethodMatchUtils::distance,
-                argTypes(args),
-                0
-        );
+    public static <T extends ExecutableAware<?>> T findMixedBest(
+            List<T> executables, @Nullable Object @Nullable [] args) {
+        return findBest(executables, MethodMatchUtils::distanceMix, argTypes(args), 0);
     }
 
     /**
@@ -88,7 +83,7 @@ public class MethodMatchUtils {
      *
      * @param executables executables
      * @param argTypes    argTypes
-     * @param from        arg offset used to match method parameters
+     * @param argsOffset  args offset used to match method parameters
      * @return null if not found
      */
     @SuppressWarnings({
@@ -99,7 +94,7 @@ public class MethodMatchUtils {
     public static <T extends ExecutableAware<?>> T findBest(
             List<T> executables,
             DistanceCalculator<T> distanceCalculator,
-            @Nullable Class<?>[] argTypes, int from) {
+            @Nullable Class<?>[] argTypes, int argsOffset) {
         if (executables.isEmpty()) {
             return null;
         }
@@ -108,7 +103,7 @@ public class MethodMatchUtils {
         int leastDistance = Integer.MAX_VALUE;
 
         for (var exec : executables) {
-            int distance = distanceCalculator.distance(exec, argTypes, from);
+            int distance = distanceCalculator.distance(exec, argTypes, argsOffset);
             if (distance < 0) {
                 continue;
             }

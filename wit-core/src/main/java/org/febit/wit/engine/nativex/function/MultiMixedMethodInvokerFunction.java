@@ -27,10 +27,14 @@ public record MultiMixedMethodInvokerFunction(
         List<MethodInvoker<?>> invokers
 ) implements WitFunction.Constable {
 
+    public MultiMixedMethodInvokerFunction {
+        invokers = List.copyOf(invokers);
+    }
+
     @Nullable
     @Override
     public Object apply(@Nullable Object @Nullable [] args) {
-        var invoker = MethodMatchUtils.findBest(invokers, args, true);
+        var invoker = MethodMatchUtils.findMixedBest(invokers, args);
         if (invoker == null) {
             throw new ScriptEvaluateException("no such native method");
         }

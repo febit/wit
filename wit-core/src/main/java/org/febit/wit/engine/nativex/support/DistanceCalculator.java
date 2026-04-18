@@ -18,6 +18,6 @@ package org.febit.wit.engine.nativex.support;
 import org.jspecify.annotations.Nullable;
 
 @FunctionalInterface
-interface DistanceCalculator<T> {
+public interface DistanceCalculator<T> {
     int distance(T exec, @Nullable Class<?>[] actuals, int actualOffset);
 }

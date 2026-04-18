@@ -30,11 +30,11 @@ public class MethodMatchSupport {
         return result == null ? null : result.executable();
     }
 
-    static <T extends Executable> T findBest(
-            List<T> executables, boolean mix, @Nullable Class<?>... args) {
+    static <T extends Executable> T findMixedBest(
+            List<T> executables, @Nullable Class<?>... args) {
         var wrappers = Lists.collect(executables, ExecutableWrapper::of);
         var result = MethodMatchUtils.findBest(wrappers,
-                mix ? MethodMatchUtils::distanceMix : MethodMatchUtils::distance,
+                MethodMatchUtils::distanceMix,
                 args, 0);
         return result == null ? null : result.executable();
     }
