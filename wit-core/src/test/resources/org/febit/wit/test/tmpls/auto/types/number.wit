@@ -2,30 +2,30 @@
     // int
     assertInstanceOf(native Integer.class, 0);
     assertInstanceOf(native Integer.class, 10);
-    assertEquals((0).~toString(), "0");
-    assertEquals((- 1).~toString(), "-1");
-    assertEquals((999999999).~toString(), "999999999");
-    assertEquals((2147483646).~toString(), "2147483646");
-    assertEquals((2147483647).~toString(), "2147483647");
-    assertEquals((- 2147483648).~toString(), "-2147483648");
-    assertEquals((- 2147483647).~toString(), "-2147483647");
-    assertEquals((0xFFFFFFFF).~toString(), "-1");
-    assertEquals((0x80000000).~toString(), "-2147483648");
-    assertEquals((0x80000001).~toString(), "-2147483647");
-    assertEquals((0x7FFFFFFF).~toString(), "2147483647");
+    assertEquals("0", (0).~toString());
+    assertEquals("-1", (- 1).~toString());
+    assertEquals("999999999", (999999999).~toString());
+    assertEquals("2147483646", (2147483646).~toString());
+    assertEquals("2147483647", (2147483647).~toString());
+    assertEquals("-2147483648", (- 2147483648).~toString());
+    assertEquals("-2147483647", (- 2147483647).~toString());
+    assertEquals("-1", (0xFFFFFFFF).~toString());
+    assertEquals("-2147483648", (0x80000000).~toString());
+    assertEquals("-2147483647", (0x80000001).~toString());
+    assertEquals("2147483647", (0x7FFFFFFF).~toString());
 
-    assertEquals((0B0).~toString(), "0");
-    assertEquals((0b0000).~toString(), "0");
-    assertEquals((0b1111).~toString(), "15");
+    assertEquals("0", (0B0).~toString());
+    assertEquals("0", (0b0000).~toString());
+    assertEquals("15", (0b1111).~toString());
 
-    assertEquals((01).~toString(), "1");
-    assertEquals((010).~toString(), "8");
-    assertEquals((-01).~toString(), "-1");
-    assertEquals((-010).~toString(), "-8");
-    assertEquals((017777777777).~toString(), "2147483647");
-    assertEquals((037777777777).~toString(), "-1");
-    assertEquals((-037777777777).~toString(), "1");
-    assertEquals((020000000000).~toString(), "-2147483648");
+    assertEquals("1", (01).~toString());
+    assertEquals("8", (010).~toString());
+    assertEquals("-1", (-01).~toString());
+    assertEquals("-8", (-010).~toString());
+    assertEquals("2147483647", (017777777777).~toString());
+    assertEquals("-1", (037777777777).~toString());
+    assertEquals("1", (-037777777777).~toString());
+    assertEquals("-2147483648", (020000000000).~toString());
 }
 {
     assertEquals(10.0f,1e1f);

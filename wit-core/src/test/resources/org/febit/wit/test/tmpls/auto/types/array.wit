@@ -3,8 +3,8 @@
 {
   var arr = [];
 
-  assertEquals(arr.size, 0);
-  assertEquals(arr.length, 0);
+  assertEquals(0, arr.size);
+  assertEquals(0, arr.length);
   assertTrue(arr.isEmpty);
 }
 {
@@ -14,8 +14,8 @@
   ];
 
   assertFalse(arr.isEmpty);
-  assertEquals(arr.size, 1);
-  assertEquals(arr[0], "a");
+  assertEquals(1, arr.size);
+  assertEquals("a", arr[0]);
 }
 {
 
@@ -23,10 +23,10 @@
       "a", "b", null
   ];
 
-  assertEquals(arr.size, 3);
-  assertEquals(arr[0], "a");
-  assertEquals(arr[1], "b");
-  assertEquals(arr[2], null);
+  assertEquals(3, arr.size);
+  assertEquals("a", arr[0]);
+  assertEquals("b", arr[1]);
+  assertNull(arr[2]);
 }
 {
   var arr = [];

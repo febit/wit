@@ -1,21 +1,21 @@
-assertEquals(CONST_STRING_BUILDER.~toString(), "");
-assertEquals(CONST_ATOMIC_INT.~get(), 0);
+assertEquals("", CONST_STRING_BUILDER.~toString());
+assertEquals(0, CONST_ATOMIC_INT.~get());
 
-assertEquals(CONST_STRING_BUILDER + "", "");
-assertEquals(CONST_ATOMIC_INT + 0, 0);
+assertEquals("", CONST_STRING_BUILDER + "");
+assertEquals(0, CONST_ATOMIC_INT + 0);
 
-assertEquals(CONST_STRING_BUILDER + "abc", "abc");
-assertEquals(CONST_ATOMIC_INT + 100, 100);
+assertEquals("abc", CONST_STRING_BUILDER + "abc");
+assertEquals(100, CONST_ATOMIC_INT + 100);
 
 // changed
 CONST_STRING_BUILDER.~append("XYZ");
 CONST_ATOMIC_INT.~set(1024);
 
-assertEquals(CONST_STRING_BUILDER.~toString(), "XYZ");
-assertEquals(CONST_ATOMIC_INT.~get(), 1024);
+assertEquals("XYZ", CONST_STRING_BUILDER.~toString());
+assertEquals(1024, CONST_ATOMIC_INT.~get());
 
-assertEquals(CONST_STRING_BUILDER + "abc", "XYZabc");
-assertEquals(CONST_ATOMIC_INT + 100, 1124);
+assertEquals("XYZabc", CONST_STRING_BUILDER + "abc");
+assertEquals(1124, CONST_ATOMIC_INT + 100);
 
 // IR asserts
 CONST_STRING_BUILDER.~setLength(0)
@@ -24,67 +24,67 @@ CONST_ATOMIC_INT.~set(1024)
 var obj
 
 obj = [? "assert:ConstantValue" : 1 ?]
-assertEquals(obj, 1);
+assertEquals(1, obj);
 obj = [? "assert:ConstantValue" : "abc" ?]
-assertEquals(obj, "abc");
+assertEquals("abc", obj);
 obj = [? "assert:ConstantValue" : CONST_STRING_BUILDER ?]
-assertEquals(obj.~toString(), "XYZ");
+assertEquals("XYZ", obj.~toString());
 
 obj = [? "assert:ConstantValue" : 1 + 2 ?]
-assertEquals(obj, 3);
+assertEquals(3, obj);
 obj = [? "assert:ConstantValue" : "abc" + "xyz" ?]
-assertEquals(obj, "abcxyz");
+assertEquals("abcxyz", obj);
 obj = [? "assert:ConstantValue" : "abc" + 123 ?]
-assertEquals(obj, "abc123");
+assertEquals("abc123", obj);
 
 obj = [? "assert:NotConstantValue" : 100 + CONST_ATOMIC_INT ?]
 obj = [? "assert:NotConstantValue" : CONST_ATOMIC_INT + 100 ?]
-assertEquals(obj, 1124);
+assertEquals(1124, obj);
 obj = [? "assert:NotConstantValue" : "abc" + CONST_STRING_BUILDER ?]
 obj = [? "assert:NotConstantValue" : CONST_STRING_BUILDER + "abc" ?]
-assertEquals(obj, "XYZabc");
+assertEquals("XYZabc", obj);
 
 
 obj = [? "assert:ConstantValue" : 100 && 200 ?]
-assertEquals(obj, 200);
+assertEquals(200, obj);
 obj = [? "assert:ConstantValue" : 100 && 200 * 100 ?]
-assertEquals(obj, 20000);
+assertEquals(20000, obj);
 obj = [? "assert:ConstantValue" : 100 || 200 ?]
-assertEquals(obj, 100);
+assertEquals(100, obj);
 
 
 const N100 = 100;
 
 obj = [? "assert:ConstantValue" : -100 ?]
-assertEquals(obj, -100);
+assertEquals(-100, obj);
 obj = [? "assert:ConstantValue" : -N100 ?]
-assertEquals(obj, -100);
+assertEquals(-100, obj);
 
 obj = [? "assert:ConstantValue" : !-N100 ?]
-assertEquals(obj, false);
+assertFalse(obj);
 obj = [? "assert:ConstantValue" : !100 ?]
-assertEquals(obj, false);
+assertFalse(obj);
 obj = [? "assert:ConstantValue" : !!100 ?]
-assertEquals(obj, true);
+assertTrue(obj);
 obj = [? "assert:ConstantValue" : !!!100 ?]
-assertEquals(obj, false);
+assertFalse(obj);
 
 obj = [? "assert:NotConstantValue" : !CONST_ATOMIC_INT ?]
-assertEquals(obj, false);
+assertFalse(obj);
 
 obj = [? "assert:ConstantValue" : false && CONST_ATOMIC_INT ?]
-assertEquals(obj, false);
+assertFalse(obj);
 obj = [? "assert:ConstantValue" : "" && CONST_ATOMIC_INT ?]
-assertEquals(obj, "");
+assertEquals("", obj);
 obj = [? "assert:ConstantValue" : 100 || CONST_ATOMIC_INT ?]
-assertEquals(obj, 100);
+assertEquals(100, obj);
 
 obj = [? "assert:ConstantValue" : true && CONST_ATOMIC_INT ?]
-assertEquals(obj, CONST_ATOMIC_INT);
+assertEquals(CONST_ATOMIC_INT, obj);
 obj = [? "assert:ConstantValue" : false || CONST_ATOMIC_INT ?]
-assertEquals(obj, CONST_ATOMIC_INT);
+assertEquals(CONST_ATOMIC_INT, obj);
 
 obj = [? "assert:NotConstantValue" : CONST_ATOMIC_INT && 100 ?]
-assertEquals(obj, 100);
+assertEquals(100, obj);
 obj = [? "assert:NotConstantValue" : CONST_ATOMIC_INT || 100 ?]
-assertEquals(obj, CONST_ATOMIC_INT);
+assertEquals(CONST_ATOMIC_INT, obj);

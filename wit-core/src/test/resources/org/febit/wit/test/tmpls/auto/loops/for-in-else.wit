@@ -2,14 +2,14 @@
     var i = 0;
     var counter = 3;
     for(i : 3..6){
-        assertEquals(i, counter);
+        assertEquals(counter, i);
         counter++;
     }else{
         //assert shouldn't run here
         assertNotNull(null);
     }
-    assertEquals(i, 0);
-    assertEquals(counter, 7);
+    assertEquals(0, i);
+    assertEquals(7, counter);
 }
 {
     for(i : 3..6){

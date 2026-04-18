@@ -101,13 +101,13 @@ const new_doubles = native [] double;
     assertFalse(bools.isEmpty);
     assertEquals(2, bools.size);
 
-    assertEquals(false, bools[0]);
+    assertFalse(bools[0]);
 
     bools[0] = 1;
     bools[1] = false;
 
-    assertEquals(true, bools[0]);
-    assertEquals(false, bools[1]);
+    assertTrue(bools[0]);
+    assertFalse(bools[1]);
 }
 {
     var bytes = new_bytes(2);

@@ -3,28 +3,28 @@ var UNDEFINED = (() -> { return; })();
 var str
 
 str = ``
-assertEquals(str, "")
+assertEquals("", str)
 
 str = `null: ${null}`
-assertEquals(str, "null: ")
+assertEquals("null: ", str)
 
 str = `undefined: ${UNDEFINED}`
-assertEquals(str, "undefined: ")
+assertEquals("undefined: ", str)
 
 str = `awesome\t\n script
 
 .`
-assertEquals(str, "awesome\t\n script\n\n.")
+assertEquals("awesome\t\n script\n\n.", str)
 
 var id=9527, name="Mr Tang";
 var jobs = {
   9527: "Master"
 };
 str = `${1+2}, ${id}, ${name}, ${jobs[id]}${(()->".")()}`
-assertEquals(str, "3, 9527, Mr Tang, Master.")
+assertEquals("3, 9527, Mr Tang, Master.", str)
 
 str = `${((name)->{ var map={func:"bala..bala..bala"}; return "nested function: " + name + " - " + map[name]})("func")}`
-assertEquals(str, "nested function: func - bala..bala..bala")
+assertEquals("nested function: func - bala..bala..bala", str)
 
 // ScriptParseException: Illegal character '`', not support nesting script string
 // str = `${`nested`}.`

@@ -5,7 +5,7 @@ var a
   + 222
   + 333
   /3
-assertEquals(a, 444)
+assertEquals(444, a)
 
 b=0
 d=a
@@ -13,16 +13,16 @@ d=a
 b
 c=1
 
-assertEquals(a, 444)
+assertEquals(444, a)
 assertEquals(a, d)
-assertEquals(b, 1)
-assertEquals(c, 1)
+assertEquals(1, b)
+assertEquals(1, c)
 
 
 //
 b= function(x){return x}
 
-assertEquals(b(123), 123)
+assertEquals(123, b(123))
 
 //
 a=0
@@ -49,7 +49,7 @@ var arr = [1,2,3]
 c = arr
 [a] = [2,3,4]
 
-assertEquals(a, 2)
+assertEquals(2, a)
 assertEquals(c, arr)
 
 
@@ -57,8 +57,8 @@ c = arr
 [a, d] = [3,4]
 
 assertEquals(c, arr)
-assertEquals(a, 3)
-assertEquals(d, 4)
+assertEquals(3, a)
+assertEquals(4, d)
 
 // return test
 
@@ -70,5 +70,5 @@ var func = ()->{
 
 var VOID = (()->{return})()
 
-assertEquals(func(), VOID)
+assertEquals(VOID, func())
 assertEquals("def", "def")

@@ -44,7 +44,7 @@
 {
     // &&
     assertEquals(2, 1 && 2);
-    assertEquals(null, null && 2);
+    assertNull(null && 2);
 
     // ||
     assertEquals(1, 1 || 2);
@@ -129,7 +129,7 @@
         assertEquals(i, num);
         i++;
     }
-    assertEquals(i, 4);
+    assertEquals(4, i);
 
     //desc
     i = 3;
@@ -137,6 +137,6 @@
         assertEquals(i, num);
         i--;
     }
-    assertEquals(i, 0);
+    assertEquals(0, i);
 
 }

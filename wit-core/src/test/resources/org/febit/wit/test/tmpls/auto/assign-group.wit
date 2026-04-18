@@ -4,24 +4,24 @@
 
     var [A,B] = [a,b];
 
-    assertEquals(a, "a");
-    assertEquals(b, "b");
+    assertEquals("a", a);
+    assertEquals("b", b);
 
-    assertEquals(A, "a");
-    assertEquals(B, "b");
+    assertEquals("a", A);
+    assertEquals("b", B);
 }
 
 {
 
     var [a, b]= ["a", "b"];
 
-    assertEquals(a, "a");
-    assertEquals(b, "b");
+    assertEquals("a", a);
+    assertEquals("b", b);
 
     [a, b] = [b, a];
 
-    assertEquals(a, "b");
-    assertEquals(b, "a");
+    assertEquals("b", a);
+    assertEquals("a", b);
 
 }
 
@@ -30,52 +30,52 @@
 
     [a,b,c] = [0,1,2,3,4];
 
-    assertEquals(a, 0);
-    assertEquals(b, 1);
-    assertEquals(c, 2);
+    assertEquals(0, a);
+    assertEquals(1, b);
+    assertEquals(2, c);
 
 
     [a,b,c] = [5,6,7];
 
-    assertEquals(a, 5);
-    assertEquals(b, 6);
-    assertEquals(c, 7);
+    assertEquals(5, a);
+    assertEquals(6, b);
+    assertEquals(7, c);
 
     [a,b,c] = [10,11];
 
-    assertEquals(a, 10);
-    assertEquals(b, 11);
-    assertEquals(c, null);
+    assertEquals(10, a);
+    assertEquals(11, b);
+    assertNull(c);
 
 
     [a,b,c] = [15];
 
-    assertEquals(a, 15);
-    assertEquals(b, null);
-    assertEquals(c, null);
+    assertEquals(15, a);
+    assertNull(b);
+    assertNull(c);
 
 
     [a,b,c] = [];
 
-    assertEquals(a, null);
-    assertEquals(b, null);
-    assertEquals(c, null);
+    assertNull(a);
+    assertNull(b);
+    assertNull(c);
 
     [a] = [];
 
-    assertEquals(a, null);
+    assertNull(a);
 }
 
 {
 
     var [a,b,c,d,e,f] = 1..10;
 
-    assertEquals(a, 1);
-    assertEquals(b, 2);
-    assertEquals(c, 3);
-    assertEquals(d, 4);
-    assertEquals(e, 5);
-    assertEquals(f, 6);
+    assertEquals(1, a);
+    assertEquals(2, b);
+    assertEquals(3, c);
+    assertEquals(4, d);
+    assertEquals(5, e);
+    assertEquals(6, f);
 }
 
 {
@@ -87,20 +87,20 @@
     [arr[0],arr[1],arr[2],arr[3]] = 1..10;
 
 
-    assertEquals(arr[0], 1);
-    assertEquals(arr[1], 2);
-    assertEquals(arr[2], 3);
-    assertEquals(arr[3], 4);
-    assertEquals(arr[4], 0);
-    assertEquals(arr[5], 0);
+    assertEquals(1, arr[0]);
+    assertEquals(2, arr[1]);
+    assertEquals(3, arr[2]);
+    assertEquals(4, arr[3]);
+    assertEquals(0, arr[4]);
+    assertEquals(0, arr[5]);
 
     [arr[5],arr[6],arr[7],arr[8],arr[9]] = arr;
 
-    assertEquals(arr[5], 1);
-    assertEquals(arr[6], 2);
-    assertEquals(arr[7], 3);
-    assertEquals(arr[8], 4);
-    assertEquals(arr[9], 0);
+    assertEquals(1, arr[5]);
+    assertEquals(2, arr[6]);
+    assertEquals(3, arr[7]);
+    assertEquals(4, arr[8]);
+    assertEquals(0, arr[9]);
 }
 
 {
@@ -108,6 +108,6 @@
 
     [a, b] = (x -> [1,2])();
 
-    assertEquals(a, 1);
-    assertEquals(b, 2);
+    assertEquals(1, a);
+    assertEquals(2, b);
 }

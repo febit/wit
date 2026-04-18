@@ -25,10 +25,10 @@ assertEquals("xxx", toString2);
 
     const arr = ["xx", a, b,c];
 
-    assertEquals(arr[0], "xx");
-    assertEquals(arr[1], a);
-    assertEquals(arr[2], b);
-    assertEquals(arr[3], c);
+    assertEquals("xx", arr[0]);
+    assertEquals(a, arr[1]);
+    assertEquals(b, arr[2]);
+    assertEquals(c, arr[3]);
 
 }
 {
@@ -38,8 +38,8 @@ assertEquals("xxx", toString2);
         "2": b
     };
 
-    assertEquals(map["1"], a);
-    assertEquals(map["2"], b);
+    assertEquals(a, map["1"]);
+    assertEquals(b, map["2"]);
 
 }
 

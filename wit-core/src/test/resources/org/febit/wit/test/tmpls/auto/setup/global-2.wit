@@ -1,7 +1,7 @@
 {
     assertNotNull($GLOBAL);
-    assertEquals($GLOBAL["one"], 1);
-    assertEquals($GLOBAL["two"], 2);
-    assertEquals($GLOBAL["string"], "string");
-    assertEquals($GLOBAL["string2"], "string2");
+    assertEquals(1, $GLOBAL["one"]);
+    assertEquals(2, $GLOBAL["two"]);
+    assertEquals("string", $GLOBAL["string"]);
+    assertEquals("string2", $GLOBAL["string2"]);
 }

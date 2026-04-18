@@ -14,14 +14,14 @@
         assertSame(c, func(c));
 
         assertNotSame(b, super.b);
-        assertEquals(b, "b");
+        assertEquals("b", b);
 
     }
     {
         var a_1;
         import "lib/abc.import.wit" a_1=a;
-        assertEquals(a_1, "a");
-        assertEquals(b, "B");
+        assertEquals("a", a_1);
+        assertEquals("B", b);
     }
     {
         var b;
@@ -34,12 +34,12 @@
 
         assertSame(a, super.a);
 
-        assertEquals(a, "a");
+        assertEquals("a", a);
 
         assertNull(func);
         assertNull(b);
 
-        assertEquals(b_1, "b");
+        assertEquals("b", b_1);
     }
     {
         import "lib/abc.import.wit" {"1":"1","2":"2"} a,b;

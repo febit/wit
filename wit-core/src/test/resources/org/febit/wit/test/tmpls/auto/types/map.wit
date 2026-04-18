@@ -1,6 +1,6 @@
 var mapEmpty = {};
 
-assertEquals(mapEmpty.~size(), 0);
+assertEquals(0, mapEmpty.~size());
 
 var a = "A"
 var b = "B"
@@ -17,17 +17,17 @@ var map = {
     [ -1-1 ] : "e"
 };
 
-assertEquals(map["a"], "A");
-assertEquals(map["b"], "B");
-assertEquals(map["id"], "9527");
-assertEquals(map.name, "wit");
-assertEquals(map[1], "a");
-assertEquals(map["1"], "b");
-assertEquals(map['1'], "c");
-assertEquals(map[-1], "d");
-assertEquals(map[-2], "e");
-assertEquals(map[-11], "negative");
-assertEquals(map[2], null);
+assertEquals("A", map["a"]);
+assertEquals("B", map["b"]);
+assertEquals("9527", map["id"]);
+assertEquals("wit", map.name);
+assertEquals("a", map[1]);
+assertEquals("b", map["1"]);
+assertEquals("c", map['1']);
+assertEquals("d", map[-1]);
+assertEquals("e", map[-2]);
+assertEquals("negative", map[-11]);
+assertNull(map[2]);
 
 var mapLoose = {
     1 : "a",
@@ -39,8 +39,8 @@ var mapLoose2 = {
 };
 
 
-assertEquals(mapLoose.~size(), 1);
-assertEquals(mapLoose[1], "a");
-assertEquals(mapLoose2.~size(), 2);
-assertEquals(mapLoose2[1], "a");
-assertEquals(mapLoose2["1"], "b");
+assertEquals(1, mapLoose.~size());
+assertEquals("a", mapLoose[1]);
+assertEquals(2, mapLoose2.~size());
+assertEquals("a", mapLoose2[1]);
+assertEquals("b", mapLoose2["1"]);

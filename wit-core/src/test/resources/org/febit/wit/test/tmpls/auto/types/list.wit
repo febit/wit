@@ -32,7 +32,7 @@ var new_list = native new java.util.ArrayList();
 
     assertEquals(12, list.size);
     assertEquals("No.8", list[8]);
-    assertEquals(null, list[9]);
+    assertNull(list[9]);
     assertEquals("No.9", list[10]);
     assertEquals("No.10", list[11]);
 }
