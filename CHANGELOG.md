@@ -1,4 +1,6 @@
-## 3.0.0 (not yet released)
+## 3.1.0 (not yet released)
+
+## 3.0.0 (2026-04-19)
 
 This is a major reset release with a large number of breaking changes. It aims to modernize the architecture, simplify
 usage and maintenance, and improve performance and robustness.
