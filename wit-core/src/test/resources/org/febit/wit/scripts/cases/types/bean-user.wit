@@ -1,0 +1,49 @@
+@import org.febit.wit.exception.ScriptEvaluateException;
+@import org.febit.wit.script.bean.User;
+@import org.febit.wit.script.bean.UserRecord;
+
+var new_user = native new User();
+var new_record = native new UserRecord(String, int);
+
+{
+    var user = new_user();
+    assertNull(user.name);
+    assertEquals(0, user.age);
+
+    user.name = "febit";
+    user["age"] = 3;
+
+    assertEquals("febit", user["name"]);
+    assertEquals(3, user.age);
+
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        user.name = 1;
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        user.age = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        user[null] = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        user["x"] = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = user[null];
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        var x = user["x"];
+    });
+}
+{
+    var record = new_record("febit", 3);
+    assertEquals("febit", record.name);
+    assertEquals(3, record.age);
+
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        record.name = "x";
+    });
+    assertThrows(native ScriptEvaluateException.class, () -> {
+        record.age = 1;
+    });
+}

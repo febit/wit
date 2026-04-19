@@ -105,7 +105,7 @@ details.
 
 > [github-issue][new_issue_github]
 
-[tests]: https://github.com/febit/wit/tree/main/wit-core/src/test/resources/org/febit/wit/test/tmpls
+[tests]: https://github.com/febit/wit/tree/main/wit-core/src/test/resources/org/febit/wit/scripts/fixtures
 
 [new_issue_github]: https://github.com/febit/wit/issues/new
 

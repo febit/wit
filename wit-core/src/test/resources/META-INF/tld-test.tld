@@ -8,12 +8,12 @@
     <uri>/witTldTest</uri>
     <function>
         <name>plus</name>
-      <function-class>org.febit.wit.test.component.lib.TldFunctions</function-class>
+      <function-class>org.febit.wit.script.component.lib.TldFunctions</function-class>
         <function-signature>int plus ( int, int )</function-signature>
     </function>
     <function>
         <name>multi</name>
-      <function-class>org.febit.wit.test.component.lib.TldFunctions</function-class>
+      <function-class>org.febit.wit.script.component.lib.TldFunctions</function-class>
         <function-signature>int multi(int,int)</function-signature>
     </function>
 </taglib>

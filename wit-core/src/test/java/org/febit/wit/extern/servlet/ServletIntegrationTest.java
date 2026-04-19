@@ -16,7 +16,7 @@
 package org.febit.wit.extern.servlet;
 
 import org.apache.commons.io.IOUtils;
-import org.febit.wit.ServletTestSupport;
+import org.febit.wit.script.ServletTestSupport;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
