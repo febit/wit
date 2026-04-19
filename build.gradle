@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'org.febit.wit'
-version = '3.0.0-SNAPSHOT'
+version = '3.0.0'
 
 subprojects {
   group = rootProject.group

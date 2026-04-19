@@ -13,14 +13,14 @@ A script/template engine implemented in pure Java (Java 17+).
 <dependency>
     <groupId>org.febit.wit</groupId>
     <artifactId>wit-core</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.0</version>
 </dependency>
 ```
 
 + Gradle
 
 ```
-implementation 'org.febit.wit:wit-core:3.0.0-SNAPSHOT'
+implementation 'org.febit.wit:wit-core:3.0.0'
 ```
 
 + Config Wit engine, load script and eval:
