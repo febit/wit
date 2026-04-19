@@ -9,7 +9,7 @@ jakarta-servlet-api='6.1.0'
 slf4j = '2.0.17'
 xbib-jflex = "3.0.2"
 zerofs = "0.1.0"
-jetty = "12.1.7"
+jetty = "12.1.8"
 
 [libraries]
 febit-commons-deps = { module = 'org.febit:febit-commons-dependencies', version.ref = 'febit-commons' }

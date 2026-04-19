@@ -13,12 +13,12 @@ subprojects {
   version = rootProject.version
 }
 
-allprojects {
+allprojects { subproject ->
   apply plugin: 'com.github.hierynomus.license'
 
   standardMavenPublish {
-    pom {
-      customPom(it)
+    pom { pom ->
+      customPom(subproject, pom)
     }
   }
 
@@ -80,7 +80,16 @@ configure(subprojects.findAll {
   }
 }
 
-def customPom(MavenPom pom) {
+static def customPom(Project project, MavenPom pom) {
+  if (!project.name.endsWith("-bom")) {
+    pom.withXml {
+      def root = asNode()
+      def dm = root.dependencyManagement?.getAt(0) as Node
+      if (dm != null) {
+        root.remove(dm)
+      }
+    }
+  }
   pom.with {
     name.set project.name
     description.set project.description
