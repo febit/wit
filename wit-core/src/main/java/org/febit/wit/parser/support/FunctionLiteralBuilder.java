@@ -17,9 +17,10 @@ package org.febit.wit.parser.support;
 
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.Expression;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.StatementBatch;
+import org.febit.wit.ir.TextPosition;
 import org.febit.wit.ir.expr.FunctionLiteral;
 import org.febit.wit.ir.expr.VariableHeapValue;
 import org.febit.wit.ir.flow.Return;
@@ -35,29 +36,29 @@ public class FunctionLiteralBuilder {
     private final VarLayout varLayout;
     private final int assignTarget;
     private final int argsBeginSlot;
-    private final Position position;
+    private final Located located;
 
     private final List<Argument> args = new ArrayList<>();
 
-    private FunctionLiteralBuilder(VarLayout varLayout, int assignTarget, Position position) {
+    private FunctionLiteralBuilder(VarLayout varLayout, int assignTarget, Located located) {
         this.varLayout = varLayout;
-        this.position = position;
+        this.located = located;
         this.assignTarget = assignTarget;
 
         varLayout.shiftFrame();
-        argsBeginSlot = varLayout.assignVar(ReservedNames.ARGUMENTS, position);
+        argsBeginSlot = varLayout.assignVar(ReservedNames.ARGUMENTS, located);
     }
 
     public static Argument ofArgument(String name, @Nullable Object defaultValue) {
         return new Argument(name, defaultValue);
     }
 
-    public static FunctionLiteralBuilder create(VarLayout varLayout, Position position) {
-        return new FunctionLiteralBuilder(varLayout, -1, position);
+    public static FunctionLiteralBuilder create(VarLayout varLayout, Located located) {
+        return new FunctionLiteralBuilder(varLayout, -1, located);
     }
 
-    public static FunctionLiteralBuilder create(VarLayout varLayout, int assignTarget, Position position) {
-        return new FunctionLiteralBuilder(varLayout, assignTarget, position);
+    public static FunctionLiteralBuilder create(VarLayout varLayout, int assignTarget, Located located) {
+        return new FunctionLiteralBuilder(varLayout, assignTarget, located);
     }
 
     public FunctionLiteralBuilder args(@Nullable List<Argument> infos) {
@@ -76,8 +77,8 @@ public class FunctionLiteralBuilder {
     }
 
     public FunctionLiteralBuilder arg(Argument info) {
-        if (varLayout.assignVar(info.name, position) != (argsBeginSlot + (this.args.size() + 1))) {
-            throw new ScriptParseException("Cannot assign argument variable: " + info.name);
+        if (varLayout.assignVar(info.name, located) != (argsBeginSlot + (this.args.size() + 1))) {
+            throw new ScriptParseException("Cannot assign argument variable: " + info.name, TextPosition.UNKNOWN);
         }
         this.args.add(info);
         return this;
@@ -100,7 +101,7 @@ public class FunctionLiteralBuilder {
     public Expression buildAndAssign(List<Statement> list) {
         var expr = build(list);
         if (this.assignTarget >= 0) {
-            return new Assign(new VariableHeapValue(this.assignTarget, position), expr, position);
+            return new Assign(new VariableHeapValue(this.assignTarget, located.position()), expr, located.position());
         }
         return expr;
     }
@@ -117,7 +118,7 @@ public class FunctionLiteralBuilder {
         var batches = StatementBatch.batch(list, jump -> {
             if (!jump.state().isReturn()) {
                 throw new ScriptParseException("Unhandled control flow in function literal: "
-                        + jump.state(), jump.position());
+                        + jump.state(), jump);
             }
         });
 
@@ -132,7 +133,7 @@ public class FunctionLiteralBuilder {
                 batches,
                 argDefaults,
                 argsBeginSlot,
-                position
+                located.position()
         );
     }
 

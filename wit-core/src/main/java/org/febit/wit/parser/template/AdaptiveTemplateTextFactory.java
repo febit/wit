@@ -16,14 +16,14 @@
 package org.febit.wit.parser.template;
 
 import org.febit.wit.engine.ParseContext;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.template.AdaptiveTemplateText;
 
 public class AdaptiveTemplateTextFactory extends ByteArrayTemplateTextFactory {
 
     @Override
-    public Statement create(ParseContext context, char[] text, Position position) {
-        return new AdaptiveTemplateText(text, encode(text), context.engine().charset(), position);
+    public Statement create(ParseContext context, char[] text, Located located) {
+        return new AdaptiveTemplateText(text, encode(text), context.engine().charset(), located.position());
     }
 }

@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 import org.febit.wit.Wit;
 import org.febit.wit.engine.GlobalHeaps;
 import org.febit.wit.exception.ScriptParseException;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.TextPosition;
 import org.febit.wit.runtime.heap.ScopeTable;
 import org.jspecify.annotations.Nullable;
@@ -114,15 +114,15 @@ public class VarLayout {
         return List.of(Arrays.copyOfRange(tables, start, size));
     }
 
-    public int assignVar(String name, Position pos) {
-        return scopeView.peek().assignVar(name, pos);
+    public int assignVar(String name, Located located) {
+        return scopeView.peek().assignVar(name, located);
     }
 
-    public void assignConst(String name, @Nullable Object value, Position pos) {
-        scopeView.peek().assignConst(name, value, pos);
+    public void assignConst(String name, @Nullable Object value, Located located) {
+        scopeView.peek().assignConst(name, value, located);
     }
 
-    public VarAddress locate(String name, int scopeOffset, boolean force, Position pos) {
+    public VarAddress locate(String name, int scopeOffset, boolean force, Located located) {
 
         //local var/const
         for (; scopeOffset < scopeView.size(); scopeOffset++) {
@@ -142,10 +142,10 @@ public class VarLayout {
 
         //failed
         if (force) {
-            throw new ScriptParseException("No such variable: " + name, pos);
+            throw new ScriptParseException("No such variable: " + name, located);
         }
         //assign at root
-        return contextAddress(root.frameSeq, root.assignVar(name, pos));
+        return contextAddress(root.frameSeq, root.assignVar(name, located));
     }
 
     private VarAddress contextAddress(int frameSeq, int slot) {
@@ -194,21 +194,21 @@ public class VarLayout {
             return contextAddress(this.frameSeq, slot);
         }
 
-        void shouldNotAssigned(String name, Position position) {
+        void shouldNotAssigned(String name, Located located) {
             if (this.table.containsKey(name)) {
-                throw new ScriptParseException("Variable already exists: " + name, position);
+                throw new ScriptParseException("Variable already exists: " + name, located);
             }
         }
 
-        Integer assignVar(String name, Position position) {
-            shouldNotAssigned(name, position);
+        Integer assignVar(String name, Located located) {
+            shouldNotAssigned(name, located);
             int slot = VarLayout.this.slotSize++;
             this.table.put(name, slot);
             return slot;
         }
 
-        void assignConst(final String name, @Nullable Object value, Position position) {
-            shouldNotAssigned(name, position);
+        void assignConst(final String name, @Nullable Object value, Located located) {
+            shouldNotAssigned(name, located);
             this.table.put(name, -1);
             this.constMap.put(name, value);
         }

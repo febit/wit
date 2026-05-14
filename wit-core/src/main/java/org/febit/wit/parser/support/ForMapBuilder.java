@@ -15,7 +15,7 @@
  */
 package org.febit.wit.parser.support;
 
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.loop.ForMap;
 import org.febit.wit.ir.support.StatementUtils;
@@ -35,9 +35,9 @@ public class ForMapBuilder extends BaseForInBuilder {
             String keyVarName,
             String valueVarName,
             VarLayout varLayout,
-            Position position
+            Located located
     ) {
-        super(varLayout, position);
+        super(varLayout, located);
         this.keyVarName = keyVarName;
         this.valueVarName = valueVarName;
     }
@@ -45,8 +45,8 @@ public class ForMapBuilder extends BaseForInBuilder {
     @Override
     public final ForMapBuilder shiftScope() {
         super.shiftScope();
-        this.keySlot = varLayout.assignVar(keyVarName, position);
-        this.valueSlot = varLayout.assignVar(valueVarName, position);
+        this.keySlot = varLayout.assignVar(keyVarName, located);
+        this.valueSlot = varLayout.assignVar(valueVarName, located);
         return this;
     }
 
@@ -61,7 +61,7 @@ public class ForMapBuilder extends BaseForInBuilder {
                 scope(), collection, filter,
                 iterSlot, keySlot, valueSlot,
                 loopBody, elseBody,
-                position
+                located.position()
         );
     }
 }

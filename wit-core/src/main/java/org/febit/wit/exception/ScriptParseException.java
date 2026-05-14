@@ -15,35 +15,17 @@
  */
 package org.febit.wit.exception;
 
-import org.febit.wit.ir.Position;
-import org.febit.wit.ir.TextPosition;
+import org.febit.wit.ir.Located;
 
 public class ScriptParseException extends ScriptException {
 
-    public ScriptParseException(String message) {
-        this(message, TextPosition.UNKNOWN);
-    }
-
-    public ScriptParseException(String message, Position position) {
+    public ScriptParseException(String message, Located located) {
         super(message);
-        add(position);
+        add(located);
     }
 
-    public ScriptParseException(String message, Throwable cause) {
-        this(message, cause, TextPosition.UNKNOWN);
-    }
-
-    public ScriptParseException(String message, Throwable cause, Position position) {
+    public ScriptParseException(String message, Throwable cause, Located located) {
         super(message, cause);
-        add(position);
-    }
-
-    public ScriptParseException(Throwable cause) {
-        this(cause, TextPosition.UNKNOWN);
-    }
-
-    public ScriptParseException(Throwable cause, Position position) {
-        super(cause);
-        add(position);
+        add(located);
     }
 }

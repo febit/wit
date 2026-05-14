@@ -22,7 +22,7 @@ public interface Expression extends Statement {
 
     @Nullable
     default Object evalAsConst() {
-        throw new ScriptParseException("Cannot calculate as const", position());
+        throw new ScriptParseException("Cannot calculate as const", this);
     }
 
     @Override

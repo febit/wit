@@ -143,7 +143,7 @@ abstract class AbstractParser implements Parser {
     }
 
     private static Token createLooseSemicolonToken(Token refer) {
-        return new Token(TokenKinds.SEMICOLON, refer.pos, null);
+        return new Token(TokenKinds.SEMICOLON, refer.position(), null);
     }
 
     @Nullable
@@ -166,7 +166,7 @@ abstract class AbstractParser implements Parser {
         } catch (ScriptParseException e) {
             throw e;
         } catch (Exception e) {
-            throw new ScriptParseException(e);
+            throw new ScriptParseException("unexpected error: " + e.getMessage(), e, TextPosition.UNKNOWN);
         } finally {
             this.assembler.onParseCompleted();
             if (lexer != null) {
@@ -297,7 +297,7 @@ abstract class AbstractParser implements Parser {
             token = new Token(tokenKind, TextPosition.UNKNOWN, result);
         } else {
             //position based on left
-            token = new Token(tokenKind, stack.peek(handleSize - 1).pos, result);
+            token = new Token(tokenKind, stack.peek(handleSize - 1).position(), result);
             //pop the handle
             stack.pops(handleSize);
         }

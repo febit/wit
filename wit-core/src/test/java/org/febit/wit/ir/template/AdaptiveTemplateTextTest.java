@@ -16,7 +16,7 @@
 package org.febit.wit.ir.template;
 
 import org.febit.wit.io.Out;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.TextPosition;
 import org.febit.wit.runtime.RuntimeContext;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -38,7 +38,7 @@ class AdaptiveTemplateTextTest {
             hello.toCharArray(),
             hello.getBytes(StandardCharsets.UTF_8),
             StandardCharsets.UTF_8,
-            mock(Position.class)
+            TextPosition.UNKNOWN
     );
 
     @Test

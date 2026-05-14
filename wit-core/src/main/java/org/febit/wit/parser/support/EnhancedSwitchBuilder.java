@@ -19,7 +19,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.Expression;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.support.Jumps;
 import org.febit.wit.ir.support.StatementUtils;
@@ -45,7 +45,7 @@ import static java.util.Objects.requireNonNull;
 public class EnhancedSwitchBuilder {
 
     @Nullable
-    private Position position;
+    private Located located;
     @Nullable
     private Expression condition;
     private @Nullable Statement defaultBranch;
@@ -55,15 +55,15 @@ public class EnhancedSwitchBuilder {
 
     private final Map<@Nullable Object, Statement> branches = new HashMap<>();
 
-    public EnhancedSwitchBuilder condition(Expression condition, Position position) {
+    public EnhancedSwitchBuilder condition(Expression condition, Located located) {
         this.condition = condition;
-        this.position = position;
+        this.located = located;
         return this;
     }
 
     private void attachBranch(@Nullable Object compareTo, Statement branch) {
         if (branches.putIfAbsent(compareTo, branch) != null) {
-            throw new ScriptParseException("duplicated case value in one switch", branch.position());
+            throw new ScriptParseException("duplicated case value in one switch", branch);
         }
     }
 
@@ -126,8 +126,7 @@ public class EnhancedSwitchBuilder {
         ) {
             return branch;
         }
-        throw new ScriptParseException(
-                "Unsupported switch branch for expression: " + branch.getClass(), branch.position());
+        throw new ScriptParseException("Unsupported switch branch for expression: " + branch.getClass(), branch);
     }
 
     private SwitchBranch transformForStatement(Statement statement) {
@@ -141,33 +140,32 @@ public class EnhancedSwitchBuilder {
         if (branch instanceof YieldSwitchBranch yieldBranch) {
             return new JumpAwareSwitchBranch(label, yieldBranch.body());
         }
-        throw new ScriptParseException(
-                "Unsupported switch branch for statement: " + branch.getClass(), branch.position());
+        throw new ScriptParseException("Unsupported switch branch for statement: " + branch.getClass(), branch);
     }
 
     public Statement buildAsStatement() {
         requireNonNull(condition);
-        requireNonNull(position);
+        requireNonNull(located);
         return new SwitchStatement(
                 label,
                 condition,
                 buildBranches(this::transformForStatement),
                 defaultBranch != null ? transformForStatement(defaultBranch) : null,
-                position
+                located.position()
         );
     }
 
     public Expression buildAsExpression() {
         requireNonNull(condition);
-        requireNonNull(position);
+        requireNonNull(located);
         if (label != 0) {
-            throw new ScriptParseException("label is not allowed in switch expression", position);
+            throw new ScriptParseException("label is not allowed in switch expression", located);
         }
         return new SwitchExpression(
                 condition,
                 buildBranches(this::transformForExpression),
                 defaultBranch != null ? transformForExpression(defaultBranch) : null,
-                position
+                located.position()
         );
     }
 }

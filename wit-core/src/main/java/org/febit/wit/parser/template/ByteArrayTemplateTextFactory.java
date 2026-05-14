@@ -19,7 +19,7 @@ import org.febit.wit.engine.ParseContext;
 import org.febit.wit.engine.TemplateTextFactory;
 import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.io.codec.Encoder;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.template.ByteArrayTemplateText;
 
@@ -57,7 +57,7 @@ public class ByteArrayTemplateTextFactory implements TemplateTextFactory {
     }
 
     @Override
-    public Statement create(ParseContext context, char[] text, Position position) {
-        return new ByteArrayTemplateText(encode(text), position);
+    public Statement create(ParseContext context, char[] text, Located located) {
+        return new ByteArrayTemplateText(encode(text), located.position());
     }
 }

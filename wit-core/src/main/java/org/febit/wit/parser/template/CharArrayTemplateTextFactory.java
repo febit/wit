@@ -17,7 +17,7 @@ package org.febit.wit.parser.template;
 
 import org.febit.wit.engine.ParseContext;
 import org.febit.wit.engine.TemplateTextFactory;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.template.CharArrayTemplateText;
 
@@ -34,7 +34,7 @@ public class CharArrayTemplateTextFactory implements TemplateTextFactory {
     }
 
     @Override
-    public Statement create(ParseContext context, char[] text, Position position) {
-        return new CharArrayTemplateText(text, position);
+    public Statement create(ParseContext context, char[] text, Located located) {
+        return new CharArrayTemplateText(text, located.position());
     }
 }

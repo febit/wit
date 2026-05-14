@@ -15,13 +15,14 @@
  */
 package org.febit.wit.ir.flow;
 
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Position;
 
 public record Jump(
         int label,
         JumpKind state,
         Position position
-) {
+) implements Located {
 
     public boolean matchesLabel(int label) {
         return this.label == 0 || this.label == label;

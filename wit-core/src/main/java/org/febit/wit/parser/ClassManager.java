@@ -17,7 +17,8 @@ package org.febit.wit.parser;
 
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.exception.UncheckedException;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
+import org.febit.wit.ir.TextPosition;
 import org.febit.wit.parser.support.ClassNameRope;
 import org.febit.wit.util.ClassUtils;
 
@@ -28,10 +29,10 @@ public class ClassManager {
 
     private final Map<String, String> imported = new HashMap<>();
 
-    public void imports(ClassNameRope rope, Position position) throws ScriptParseException {
+    public void imports(ClassNameRope rope, Located located) throws ScriptParseException {
         var simpleName = rope.simpleName();
         if (ClassUtils.primitiveType(simpleName) != null) {
-            throw new ScriptParseException("Cannot import primitive type: " + simpleName, position);
+            throw new ScriptParseException("Cannot import primitive type: " + simpleName, located);
         }
         var componentName = rope.componentName();
         var existing = imported.get(simpleName);
@@ -40,18 +41,18 @@ public class ClassManager {
                 return;
             }
             throw new ScriptParseException("Ambiguous import for class name: " + simpleName
-                    + ", exists: " + existing + ", new: " + componentName, position);
+                    + ", exists: " + existing + ", new: " + componentName, located);
         }
         imported.put(simpleName, componentName);
     }
 
-    public Class<?> resolve(ClassNameRope rope, Position position) throws ScriptParseException {
+    public Class<?> resolve(ClassNameRope rope, Located located) throws ScriptParseException {
         var compName = rope.componentName();
         var fullName = resolveFullName(compName);
         try {
             return ClassUtils.load(fullName, rope.arrayDepth());
         } catch (UncheckedException ex) {
-            throw new ScriptParseException("Class<?> not found: " + fullName, ex.getCause(), position);
+            throw new ScriptParseException("Class<?> not found: " + fullName, ex.getCause(), located);
         }
     }
 
@@ -74,7 +75,7 @@ public class ClassManager {
         try {
             return ClassUtils.load(fullName, arrayDept);
         } catch (UncheckedException ex) {
-            throw new ScriptParseException("Class<?> not found: " + fullName, ex.getCause());
+            throw new ScriptParseException("Class<?> not found: " + fullName, ex.getCause(), TextPosition.UNKNOWN);
         }
     }
 

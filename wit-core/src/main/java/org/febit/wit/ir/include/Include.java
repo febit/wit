@@ -25,6 +25,7 @@ import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.AssignableExpression;
 import org.febit.wit.ir.Expression;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.support.StatementUtils;
@@ -48,7 +49,7 @@ public record Include(
     private static Include builder0(
             @lombok.NonNull String refer,
             @lombok.NonNull Expression path,
-            @lombok.NonNull Position pos,
+            @lombok.NonNull Located located,
             @Nullable Boolean withoutExport,
             @Nullable Expression params,
             @Singular("exportVar")
@@ -68,7 +69,7 @@ public record Include(
         } else {
             handler = new AssignMappedIncludeHandler(exportMappings);
         }
-        return new Include(refer, path, handler, params, pos);
+        return new Include(refer, path, handler, params, located.position());
     }
 
     public static class IncludeBuilder {

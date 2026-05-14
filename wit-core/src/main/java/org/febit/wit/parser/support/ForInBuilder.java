@@ -15,7 +15,7 @@
  */
 package org.febit.wit.parser.support;
 
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.loop.ForIn;
 import org.febit.wit.ir.support.StatementUtils;
@@ -28,15 +28,15 @@ public class ForInBuilder extends BaseForInBuilder {
     private final String itemVarName;
     private int itemSlot;
 
-    public ForInBuilder(String itemVarName, VarLayout varLayout, Position position) {
-        super(varLayout, position);
+    public ForInBuilder(String itemVarName, VarLayout varLayout, Located located) {
+        super(varLayout, located);
         this.itemVarName = itemVarName;
     }
 
     @Override
     public final ForInBuilder shiftScope() {
         super.shiftScope();
-        itemSlot = varLayout.assignVar(itemVarName, position);
+        itemSlot = varLayout.assignVar(itemVarName, located);
         return this;
     }
 
@@ -51,7 +51,7 @@ public class ForInBuilder extends BaseForInBuilder {
                 scope(), collection, filter,
                 iterSlot, itemSlot,
                 loopBody, elseBody,
-                position
+                located.position()
         );
     }
 }

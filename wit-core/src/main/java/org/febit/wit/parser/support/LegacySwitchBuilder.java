@@ -19,7 +19,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.Expression;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.support.StatementUtils;
 import org.febit.wit.ir.switches.LegacySwitch;
@@ -34,7 +34,7 @@ import java.util.Objects;
 public class LegacySwitchBuilder {
 
     @Nullable
-    private Position position;
+    private Located located;
     @Nullable
     private Expression condition;
     @Nullable
@@ -47,9 +47,9 @@ public class LegacySwitchBuilder {
 
     private final Map<@Nullable Object, Branch> branches = new HashMap<>();
 
-    public LegacySwitchBuilder condition(Expression condition, Position position) {
+    public LegacySwitchBuilder condition(Expression condition, Located located) {
         this.condition = condition;
-        this.position = position;
+        this.located = located;
         return this;
     }
 
@@ -57,12 +57,12 @@ public class LegacySwitchBuilder {
         var branch = new Branch(StatementUtils.optimize(body), latest);
         // else use last as current for this key
         if (branches.containsKey(compareTo)) {
-            throw new ScriptParseException("duplicated case value in one switch", body.position());
+            throw new ScriptParseException("duplicated case value in one switch", body);
         }
 
         if (compareTo == null) {
             if (defaultBranch != null) {
-                throw new ScriptParseException("multi default block in one switch", body.position());
+                throw new ScriptParseException("multi default block in one switch", body);
             }
             defaultBranch = branch;
         } else {
@@ -75,10 +75,10 @@ public class LegacySwitchBuilder {
 
     public Statement build() {
         Objects.requireNonNull(condition);
-        Objects.requireNonNull(position);
+        Objects.requireNonNull(located);
 
         return StatementUtils.optimize(
-                new LegacySwitch(label, condition, Map.copyOf(branches), defaultBranch, position)
+                new LegacySwitch(label, condition, Map.copyOf(branches), defaultBranch, located.position())
         );
     }
 }

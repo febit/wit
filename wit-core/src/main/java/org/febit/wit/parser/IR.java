@@ -22,7 +22,7 @@ import org.febit.wit.ir.AssignableExpression;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.ExpressionArray;
 import org.febit.wit.ir.IBlock;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.StatementBatch;
 import org.febit.wit.ir.expr.BreakpointExpr;
@@ -89,112 +89,112 @@ public class IR {
             Expression condition,
             Expression left,
             Expression right,
-            Position pos
+            Located located
     ) {
-        return new Ternary(condition, left, right, pos);
+        return new Ternary(condition, left, right, located.position());
     }
 
-    public static Echo echo(Expression value, Position pos) {
-        return new Echo(value, pos);
+    public static Echo echo(Expression value, Located located) {
+        return new Echo(value, located.position());
     }
 
-    public static Return returnWith(@Nullable Expression value, Position pos) {
-        return new Return(value, pos);
+    public static Return returnWith(@Nullable Expression value, Located located) {
+        return new Return(value, located.position());
     }
 
-    public static Yield yieldWith(Expression value, Position pos) {
-        return new Yield(value, pos);
+    public static Yield yieldWith(Expression value, Located located) {
+        return new Yield(value, located.position());
     }
 
-    public static Throw throwWith(Expression value, Position pos) {
-        return new Throw(value, pos);
+    public static Throw throwWith(Expression value, Located located) {
+        return new Throw(value, located.position());
     }
 
-    public static Break breakTo(int label, Position pos) {
-        return new Break(label, pos);
+    public static Break breakTo(int label, Located located) {
+        return new Break(label, located.position());
     }
 
-    public static Continue continueTo(int label, Position pos) {
-        return new Continue(label, pos);
+    public static Continue continueTo(int label, Located located) {
+        return new Continue(label, located.position());
     }
 
-    public static RenderRedirect renderRedirect(Statement body, AssignableExpression target, Position pos) {
-        return new RenderRedirect(target, body, pos);
+    public static RenderRedirect renderRedirect(Statement body, AssignableExpression target, Located located) {
+        return new RenderRedirect(target, body, located.position());
     }
 
-    public static IncreaseAndGet increaseAndGet(AssignableExpression target, Position pos) {
-        return new IncreaseAndGet(target, pos);
+    public static IncreaseAndGet increaseAndGet(AssignableExpression target, Located located) {
+        return new IncreaseAndGet(target, located.position());
     }
 
-    public static DecreaseAndGet decreaseAndGet(AssignableExpression target, Position pos) {
-        return new DecreaseAndGet(target, pos);
+    public static DecreaseAndGet decreaseAndGet(AssignableExpression target, Located located) {
+        return new DecreaseAndGet(target, located.position());
     }
 
-    public static GetAndIncrease getAndIncrease(AssignableExpression target, Position pos) {
-        return new GetAndIncrease(target, pos);
+    public static GetAndIncrease getAndIncrease(AssignableExpression target, Located located) {
+        return new GetAndIncrease(target, located.position());
     }
 
-    public static GetAndDecrease getAndDecrease(AssignableExpression target, Position pos) {
-        return new GetAndDecrease(target, pos);
+    public static GetAndDecrease getAndDecrease(AssignableExpression target, Located located) {
+        return new GetAndDecrease(target, located.position());
     }
 
-    public static Assign assign(AssignableExpression target, Expression value, Position pos) {
-        return new Assign(target, value, pos);
+    public static Assign assign(AssignableExpression target, Expression value, Located located) {
+        return new Assign(target, value, located.position());
     }
 
-    public static DestructuringAssign destructuringAssign(ExpressionArray targets, Expression value, Position pos) {
+    public static DestructuringAssign destructuringAssign(ExpressionArray targets, Expression value, Located located) {
         var targetList = targets.asList();
         var size = targetList.size();
         var assignables = new AssignableExpression[size];
         for (int i = 0; i < size; i++) {
             assignables[i] = castToAssignable(targetList.get(i));
         }
-        return new DestructuringAssign(assignables, value, pos);
+        return new DestructuringAssign(assignables, value, located.position());
     }
 
-    public static PropertyAccess property(Expression target, Expression property, Position pos) {
-        return new PropertyAccess(target, property, pos);
+    public static PropertyAccess property(Expression target, Expression property, Located located) {
+        return new PropertyAccess(target, property, located.position());
     }
 
-    public static FixedPropertyAccess property(Expression target, String property, Position pos) {
-        return new FixedPropertyAccess(target, property, pos);
+    public static FixedPropertyAccess property(Expression target, String property, Located located) {
+        return new FixedPropertyAccess(target, property, located.position());
     }
 
-    public static ConstantValue constant(@Nullable Object value, Position pos) {
-        return new ConstantValue(value, pos);
+    public static ConstantValue constant(@Nullable Object value, Located located) {
+        return new ConstantValue(value, located.position());
     }
 
     public static ConstantValue constant(Token token) {
-        return constant(token.value, token.pos);
+        return constant(token.value, token);
     }
 
     public static BreakpointStatement breakpointStatement(
             @Nullable Expression mark,
             @Nullable Statement supervised,
-            Position pos
+            Located located
     ) {
         var labelObj = mark == null ? null : StatementUtils.evalAsConst(mark);
-        return new BreakpointStatement(labelObj, supervised, pos);
+        return new BreakpointStatement(labelObj, supervised, located.position());
     }
 
-    public static Expression breakpointExpr(@Nullable Expression mark, Expression supervised, Position pos) {
+    public static Expression breakpointExpr(@Nullable Expression mark, Expression supervised, Located located) {
         var markObj = mark == null ? null : StatementUtils.evalAsConst(mark);
-        return new BreakpointExpr(markObj, supervised, pos);
+        return new BreakpointExpr(markObj, supervised, located.position());
     }
 
-    public static LazyValue emptyArray(Position pos) {
-        return new LazyValue(() -> new Object[0], pos);
+    public static LazyValue emptyArray(Located located) {
+        return new LazyValue(() -> new Object[0], located.position());
     }
 
     public static NewArray newArray(
             List<Expression> values,
-            Position pos
+            Located located
     ) {
-        return new NewArray(ExpressionArray.of(values), pos);
+        return new NewArray(ExpressionArray.of(values), located.position());
     }
 
-    public static NewMap newMap(List<NewMap.NewMapEntry> entries, Position pos) {
-        return new NewMap(entries, pos);
+    public static NewMap newMap(List<NewMap.NewMapEntry> entries, Located located) {
+        return new NewMap(entries, located.position());
     }
 
     public static NewMap.NewMapEntry entryOfNewMap(Expression key, Expression value) {
@@ -221,7 +221,7 @@ public class IR {
             @lombok.NonNull WhileKind kind,
             @lombok.NonNull Expression condition,
             @lombok.NonNull IBlock body,
-            @lombok.NonNull Position pos,
+            @lombok.NonNull Located located,
             @Nullable Integer label
     ) {
         var loopBody = loopBodyFromBatches(
@@ -230,8 +230,8 @@ public class IR {
         );
         var scope = body.scope();
         return switch (kind) {
-            case WHILE -> new While(scope, condition, loopBody, pos);
-            case DO_WHILE -> new DoWhile(scope, condition, loopBody, pos);
+            case WHILE -> new While(scope, condition, loopBody, located.position());
+            case DO_WHILE -> new DoWhile(scope, condition, loopBody, located.position());
         };
     }
 
@@ -241,7 +241,7 @@ public class IR {
     )
     private static Statement tryCatch(
             @lombok.NonNull Statement body,
-            @lombok.NonNull Position pos,
+            @lombok.NonNull Located located,
             @Nullable Statement catchBody,
             @Nullable Statement finallyBody,
             @Nullable Integer exceptionVarSlot
@@ -262,9 +262,9 @@ public class IR {
             if (finallyBody == null) {
                 return body;
             }
-            return new TryFinally(body, finallyBody, pos);
+            return new TryFinally(body, finallyBody, located.position());
         }
-        return new TryCatchFinally(exceptionVarSlot, body, catchBody, finallyBody, pos);
+        return new TryCatchFinally(exceptionVarSlot, body, catchBody, finallyBody, located.position());
     }
 
     public static LoopBody loopBodyFromStatements(List<Statement> statements, int targetLabel) {
@@ -295,49 +295,49 @@ public class IR {
         return new JumpAwareLoopBody(targetLabel, batches, bubbled);
     }
 
-    public static StatementList statementList(List<Statement> list, Position pos) {
-        return new StatementList(list, pos);
+    public static StatementList statementList(List<Statement> list, Located located) {
+        return new StatementList(list, located.position());
     }
 
-    public static FunctionCall functionCall(Expression func, ExpressionArray params, Position pos) {
-        return new FunctionCall(func, params, pos);
+    public static FunctionCall functionCall(Expression func, ExpressionArray params, Located located) {
+        return new FunctionCall(func, params, located.position());
     }
 
     public static DynamicNativeCall dynamicNativeCall(
-            Expression self, String method, ExpressionArray params, Position pos) {
-        return new DynamicNativeCall(self, method, params, pos);
+            Expression self, String method, ExpressionArray params, Located located) {
+        return new DynamicNativeCall(self, method, params, located.position());
     }
 
     public static Statement ifStatement(
             Expression condition,
             @Nullable Statement thenBody,
             @Nullable Statement elseBody,
-            Position pos
+            Located located
     ) {
         thenBody = StatementUtils.optimize(thenBody);
         elseBody = StatementUtils.optimize(elseBody);
         if (!(thenBody instanceof NoopStatement)) {
             if (elseBody instanceof NoopStatement) {
-                return new If(condition, thenBody, pos);
+                return new If(condition, thenBody, located.position());
             }
-            return new IfElse(condition, thenBody, elseBody, pos);
+            return new IfElse(condition, thenBody, elseBody, located.position());
         }
         if (!(elseBody instanceof NoopStatement)) {
-            return new IfNot(condition, elseBody, pos);
+            return new IfNot(condition, elseBody, located.position());
         }
         return NoopStatement.INSTANCE;
     }
 
-    public static IBlock block(@Nullable List<Statement> list, int scope, Position pos) {
+    public static IBlock block(@Nullable List<Statement> list, int scope, Located located) {
         var jumps = new ArrayList<Jump>();
         var batches = StatementBatch.batch(list, jumps::add);
         if (jumps.isEmpty()) {
             if (batches.size() != 1) {
                 throw new IllegalStateException("Unexpected multiple batches without jumps");
             }
-            return new NoJumpBlock(scope, batches.get(0), pos);
+            return new NoJumpBlock(scope, batches.get(0), located.position());
         }
-        return new Block(scope, batches, List.copyOf(jumps), pos);
+        return new Block(scope, batches, List.copyOf(jumps), located.position());
     }
 
     public static AssignableExpression castToAssignable(Expression expr) {
@@ -345,21 +345,21 @@ public class IR {
         if (expr instanceof AssignableExpression assign) {
             return assign;
         }
-        throw new ScriptParseException("expression is not assignable", expr.position());
+        throw new ScriptParseException("expression is not assignable", expr);
     }
 
-    public static ScriptParseException unsupportedOperator(Position pos) {
-        return new ScriptParseException("Unsupported Operator", pos);
+    public static ScriptParseException unsupportedOperator(Located located) {
+        return new ScriptParseException("Unsupported Operator", located);
     }
 
-    public static Expression selfAssign(Expression target, Expression delta, int tokenKind, Position pos) {
+    public static Expression selfAssign(Expression target, Expression delta, int tokenKind, Located located) {
         var assignable = castToAssignable(target);
         var biFunc = binaryOperator(tokenKind);
         if (biFunc == null) {
-            throw unsupportedOperator(pos);
+            throw unsupportedOperator(located);
         }
         var optimized = StatementUtils.optimize(
-                new CompoundAssign(assignable, delta, biFunc, pos)
+                new CompoundAssign(assignable, delta, biFunc, located.position())
         );
         Objects.requireNonNull(optimized);
         return optimized;
@@ -367,16 +367,16 @@ public class IR {
 
     public static Expression operator(Expression target, Token token) {
         if (!(token.value instanceof Integer kind)) {
-            throw unsupportedOperator(token.pos);
+            throw unsupportedOperator(token);
         }
         UnaryOperator<@Nullable Object> func = switch (kind) {
             case TokenKinds.COMP -> ALU::bitNot;
             case TokenKinds.MINUS -> ALU::negative;
             case TokenKinds.NOT -> ALU::not;
-            default -> throw unsupportedOperator(token.pos);
+            default -> throw unsupportedOperator(token);
         };
         var optimized = StatementUtils.optimize(
-                new ConstableUnaryOperator(target, func, token.pos)
+                new ConstableUnaryOperator(target, func, token.position())
         );
         Objects.requireNonNull(optimized);
         return optimized;
@@ -384,18 +384,18 @@ public class IR {
 
     public static Expression binaryOperator(Expression left, Expression right, Token token) {
         if (!(token.value instanceof Integer kind)) {
-            throw unsupportedOperator(token.pos);
+            throw unsupportedOperator(token);
         }
         var op = switch (kind) {
-            case TokenKinds.ANDAND -> new And(left, right, token.pos);
-            case TokenKinds.OROR -> new Or(left, right, token.pos);
-            case TokenKinds.DOTDOT -> new IntRange(left, right, token.pos);
+            case TokenKinds.ANDAND -> new And(left, right, token.position());
+            case TokenKinds.OROR -> new Or(left, right, token.position());
+            case TokenKinds.DOTDOT -> new IntRange(left, right, token.position());
             default -> {
                 var biFunc = binaryOperator(kind);
                 if (biFunc == null) {
-                    throw unsupportedOperator(token.pos);
+                    throw unsupportedOperator(token.position());
                 }
-                yield new ConstableBiOperator(left, right, biFunc, token.pos);
+                yield new ConstableBiOperator(left, right, biFunc, token.position());
             }
         };
         var optimized = StatementUtils.optimize(op);

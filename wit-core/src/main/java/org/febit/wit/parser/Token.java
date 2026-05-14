@@ -16,14 +16,15 @@
 package org.febit.wit.parser;
 
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.ir.TextPosition;
+import org.febit.wit.ir.Located;
+import org.febit.wit.ir.Position;
 import org.jspecify.annotations.Nullable;
 
 @RequiredArgsConstructor
-public class Token {
+public class Token implements Located {
 
     public final int kind;
-    public final TextPosition pos;
+    private final Position position;
 
     @Nullable
     public final Object value;
@@ -33,6 +34,11 @@ public class Token {
      */
     int state;
     boolean isAtEdgeOfNewLine = false;
+
+    @Override
+    public Position position() {
+        return position;
+    }
 
     static boolean isHighestLevel(int kind) {
         return switch (kind) {

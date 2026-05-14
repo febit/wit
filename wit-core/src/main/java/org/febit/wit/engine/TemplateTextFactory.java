@@ -15,7 +15,7 @@
  */
 package org.febit.wit.engine;
 
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 
 public interface TemplateTextFactory {
@@ -24,5 +24,5 @@ public interface TemplateTextFactory {
 
     void onParseCompleted(ParseContext context);
 
-    Statement create(ParseContext context, char[] text, Position position);
+    Statement create(ParseContext context, char[] text, Located located);
 }

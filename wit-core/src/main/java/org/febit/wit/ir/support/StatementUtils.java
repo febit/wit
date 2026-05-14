@@ -41,7 +41,7 @@ public class StatementUtils {
         try {
             return expression.optimize();
         } catch (Exception e) {
-            throw new ScriptParseException("Exception occur when do optimization", e, expression.position());
+            throw new ScriptParseException("Exception occur when do optimization", e, expression);
         }
     }
 
@@ -52,7 +52,7 @@ public class StatementUtils {
         try {
             return statement.optimize();
         } catch (Exception e) {
-            throw new ScriptParseException("Exception occur when do optimization", e, statement.position());
+            throw new ScriptParseException("Exception occur when do optimization", e, statement);
         }
     }
 

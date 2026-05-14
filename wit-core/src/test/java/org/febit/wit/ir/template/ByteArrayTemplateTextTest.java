@@ -15,7 +15,7 @@
  */
 package org.febit.wit.ir.template;
 
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.TextPosition;
 import org.febit.wit.runtime.RuntimeContext;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ class ByteArrayTemplateTextTest {
     final String hello = "Hello, World!";
     final ByteArrayTemplateText templateText = new ByteArrayTemplateText(
             hello.getBytes(StandardCharsets.UTF_8),
-            mock(Position.class)
+            TextPosition.UNKNOWN
     );
 
     @Test

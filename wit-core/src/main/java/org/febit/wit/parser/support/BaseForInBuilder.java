@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.febit.wit.ir.Expression;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.expr.FunctionLiteral;
 import org.jspecify.annotations.Nullable;
@@ -33,7 +33,7 @@ import static org.febit.wit.util.Defaults.nvl;
 public abstract class BaseForInBuilder {
 
     protected final VarLayout varLayout;
-    protected final Position position;
+    protected final Located located;
 
     private boolean scopeShifted = false;
 
@@ -61,8 +61,8 @@ public abstract class BaseForInBuilder {
 
     protected int iterSlot;
 
-    protected BaseForInBuilder(VarLayout varLayout, Position position) {
-        this.position = position;
+    protected BaseForInBuilder(VarLayout varLayout, Located located) {
+        this.located = located;
         this.varLayout = varLayout;
     }
 
@@ -74,7 +74,7 @@ public abstract class BaseForInBuilder {
         }
         this.scopeShifted = true;
         varLayout.shiftScope();
-        iterSlot = varLayout.assignVar(FOR_ITER, position);
+        iterSlot = varLayout.assignVar(FOR_ITER, located);
         return this;
     }
 

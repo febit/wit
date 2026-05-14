@@ -18,7 +18,7 @@ package org.febit.wit.engine.nativex;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.febit.wit.exception.ScriptParseException;
-import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Located;
 
 @Accessors(fluent = true)
 @lombok.Builder(
@@ -38,9 +38,9 @@ public class NativeAccess {
         return builder().build();
     }
 
-    public void securityCheck(String path, Position position) {
+    public void securityCheck(String path, Located located) {
         if (!security().allowed(path)) {
-            throw new ScriptParseException("Not accessible of native path: " + path, position);
+            throw new ScriptParseException("Not accessible of native path: " + path, located);
         }
     }
 

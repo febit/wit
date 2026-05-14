@@ -19,6 +19,7 @@ import lombok.Builder;
 import lombok.Singular;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.ExpressionArray;
+import org.febit.wit.ir.Located;
 import org.febit.wit.ir.Position;
 import org.febit.wit.runtime.RuntimeContext;
 import org.febit.wit.runtime.Undefined;
@@ -38,13 +39,14 @@ public record TemplateStringValue(
             builderClassName = "TemplateStringBuilder"
     )
     private static TemplateStringValue builder0(
-            @lombok.NonNull Position pos,
+            @lombok.NonNull Located located,
             @Singular
             List<Expression> segments
     ) {
-        return new TemplateStringValue(ExpressionArray.of(segments).asList(), pos);
+        return new TemplateStringValue(ExpressionArray.of(segments).asList(), located.position());
     }
 
+    @SuppressWarnings("ForLoopReplaceableByForEach")
     @Override
     public Object execute(RuntimeContext context) {
         var buf = new StringBuilder();
