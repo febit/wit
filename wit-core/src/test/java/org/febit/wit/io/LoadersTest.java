@@ -117,4 +117,3 @@ class LoadersTest {
         assertSame(Source.BeginWith.TEMPLATE, fileSystemLoader.beginWith());
     }
 }
-

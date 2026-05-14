@@ -33,5 +33,14 @@ class FlowOverflowTest {
 
         assertThrows(ScriptParseException.class,
                 tmplChecker("/flow-overflow/switch-continue.wit"));
+
+        assertThrows(ScriptParseException.class,
+                tmplChecker("/flow-overflow/switch-expression.wit"));
+
+        assertThrows(ScriptParseException.class,
+                tmplChecker("/flow-overflow/switch-expression-return.wit"));
+
+        assertThrows(ScriptParseException.class,
+                tmplChecker("/flow-overflow/switch-statement-yield.wit"));
     }
 }

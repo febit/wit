@@ -36,6 +36,7 @@ import org.febit.wit.ir.flow.Break;
 import org.febit.wit.ir.flow.Continue;
 import org.febit.wit.ir.flow.Jump;
 import org.febit.wit.ir.flow.Return;
+import org.febit.wit.ir.flow.Yield;
 import org.febit.wit.ir.loop.DoWhile;
 import org.febit.wit.ir.loop.JumpAwareLoopBody;
 import org.febit.wit.ir.loop.LoopBody;
@@ -71,7 +72,8 @@ import org.febit.wit.ir.statement.TryFinally;
 import org.febit.wit.ir.support.ALU;
 import org.febit.wit.ir.support.StatementList;
 import org.febit.wit.ir.support.StatementUtils;
-import org.febit.wit.parser.support.SwitchBuilder;
+import org.febit.wit.parser.support.EnhancedSwitchBuilder;
+import org.febit.wit.parser.support.LegacySwitchBuilder;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -98,6 +100,10 @@ public class IR {
 
     public static Return returnWith(@Nullable Expression value, Position pos) {
         return new Return(value, pos);
+    }
+
+    public static Yield yieldWith(Expression value, Position pos) {
+        return new Yield(value, pos);
     }
 
     public static Throw throwWith(Expression value, Position pos) {
@@ -195,8 +201,12 @@ public class IR {
         return new NewMap.NewMapEntry(key, value);
     }
 
-    public static SwitchBuilder switchBuilder() {
-        return new SwitchBuilder();
+    public static LegacySwitchBuilder legacySwitchBuilder() {
+        return new LegacySwitchBuilder();
+    }
+
+    public static EnhancedSwitchBuilder enhancedSwitchBuilder() {
+        return new EnhancedSwitchBuilder();
     }
 
     public enum WhileKind {

@@ -149,4 +149,3 @@ public class MethodInvokeBenchmark {
         return invoker10.invoke(args10);
     }
 }
-

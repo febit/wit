@@ -17,6 +17,7 @@ import org.febit.wit.ir.template.*;
 import org.febit.wit.parser.IR.*;
 import org.febit.wit.parser.support.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.febit.wit.parser.support.FunctionLiteralBuilder.Argument;
@@ -35,7 +36,7 @@ terminal Integer    VAR,
                     ECHO,
                     STATIC, NATIVE,
                     IMPORT, INCLUDE, NATIVE_IMPORT,
-                    BREAK, CONTINUE, RETURN,
+                    BREAK, CONTINUE, RETURN, YIELD,
 
                     PLUSPLUS, MINUSMINUS,  // ++ ==
                     PLUS, MINUS, MULTI, DIV, MOD,  // + - * /
@@ -75,9 +76,13 @@ nonterminal ScriptIR scriptAST;
 /* Statement */
 nonterminal Statement statement, ifStat, varPart;
 nonterminal IBlock block, caseBlockStat;
+nonterminal Statement yieldStat, breakStat, enhancedSwitchBranchStat;
 nonterminal Expression varAssign;
 nonterminal IncludeBuilder importPart1, importPart2;
-nonterminal SwitchBuilder switchPart, switchPart0;
+nonterminal LegacySwitchBuilder legacySwitchPart, legacySwitchPart0;
+nonterminal EnhancedSwitchBuilder enhancedSwitchPart, enhancedSwitchPart0, labeledEnhancedSwitchPart;
+nonterminal Object switchCaseKey;
+nonterminal List<Object> switchCaseKeys;
 nonterminal BaseForInBuilder forInHead, forInPart, lambdaForHead, lambdaForHead2;
 nonterminal WhileBuilder whileBuilder;
 nonterminal TryCatchBuilder tryPart, catchPart, finallyPart;
@@ -147,9 +152,16 @@ javaClass       ::= className:nameRope
 
 
 /* statements  */
-statement       ::= expressionStatementAble:$ SEMICOLON
-                    |SEMICOLON
+statement       ::= SEMICOLON
                     {: yield NoopStatement.INSTANCE; :}
+
+                    |expressionStatementAble:$ SEMICOLON
+
+                    // Enhanced Switch
+                    |enhancedSwitchPart:builder
+                    {: yield (%builder%).buildAsStatement(); :}
+                    |IDENTIFIER:label COLON enhancedSwitchPart:builder
+                    {: yield (%builder%).label(assembler.getLabelIndex(%label%)).buildAsStatement(); :}
 
                     |LRDEBUG:sym
                     {: yield IR.breakpointStatement(null, null, %sym.symbol%.pos); :}
@@ -164,9 +176,9 @@ statement       ::= expressionStatementAble:$ SEMICOLON
                     |ifStat:$
 
                     // Switch
-                    |switchPart:builder
+                    |legacySwitchPart:builder
                     {: yield (%builder%).label(0).build(); :}
-                    |IDENTIFIER:label COLON switchPart:builder
+                    |IDENTIFIER:label COLON legacySwitchPart:builder
                     {: yield (%builder%).label(assembler.getLabelIndex(%label%)).build(); :}
 
                     // While
@@ -206,8 +218,7 @@ statement       ::= expressionStatementAble:$ SEMICOLON
                     {: assembler.classes().imports(%nameRope%, %sym.symbol%.pos); yield NoopStatement.INSTANCE; :}
 
                     // Break
-                    |BREAK:sym IDENTIFIER:label? SEMICOLON
-                    {: yield IR.breakTo(assembler.getLabelIndex(%label%), %sym.symbol%.pos); :}
+                    |breakStat:$
 
                     // Continue
                     |CONTINUE:sym IDENTIFIER:label? SEMICOLON
@@ -216,6 +227,9 @@ statement       ::= expressionStatementAble:$ SEMICOLON
                     // Return
                     |RETURN:sym expression:expr? SEMICOLON
                     {: yield IR.returnWith(%expr%, %sym.symbol%.pos); :}
+
+                    // Yield
+                    |yieldStat:$
 
                     // Import
                     |importPart1:builder SEMICOLON
@@ -236,6 +250,16 @@ statement       ::= expressionStatementAble:$ SEMICOLON
 
                     | THROW:sym expression:expr SEMICOLON
                     {: yield IR.throwWith(%expr%, %sym.symbol%.pos); :}
+                    ;
+
+
+breakStat       ::= BREAK:sym IDENTIFIER:label? SEMICOLON
+                    {: yield IR.breakTo(assembler.getLabelIndex(%label%), %sym.symbol%.pos); :}
+                    ;
+
+
+yieldStat       ::= YIELD:sym expression:expr SEMICOLON
+                    {: yield IR.yieldWith(%expr%, %sym.symbol%.pos); :}
                     ;
 
 
@@ -339,20 +363,64 @@ caseBlockStat   ::= {: assembler.vars().shiftScope(); yield null; :} statement[]
                     ;
 
 
-switchPart0     ::=
-                    {: yield IR.switchBuilder(); :}
-                    | CASE:sym MINUS:negative? DIRECT_VALUE:key COLON caseBlockStat:body switchPart0:builder
-                    {: yield (%builder%).branch((%negative% == null)?(%key%):ALU.negative(%key%), %body%, %sym.symbol%.pos); :}
-                    | DEFAULT:sym COLON caseBlockStat:body switchPart0:builder
-                    {: yield (%builder%).branch(null, %body%, %sym.symbol%.pos); :}
+switchCaseKey   ::= MINUS:negative? DIRECT_VALUE:key
+                    {: yield (%negative% == null) ? (%key%) : ALU.negative(%key%); :}
                     ;
 
 
-switchPart      ::= SWITCH:sym LPAREN expression:switchExpr RPAREN LBRACE TEXT_STATEMENT ? switchPart0:builder RBRACE
-                    {: yield (%builder%).condition(%switchExpr%, %sym.symbol%.pos); :}
+switchCaseKeys  ::= switchCaseKey:key
+                    {: yield List.of(%key%); :}
+                    | switchCaseKeys:keys COMMA switchCaseKey:key
+                    {: var list = new ArrayList<>(%keys%); list.add(%key%); yield list; :}
                     ;
 
 
+legacySwitchPart0 ::=
+                    {: yield IR.legacySwitchBuilder(); :}
+                    | CASE:sym MINUS:negative? DIRECT_VALUE:key COLON caseBlockStat:body legacySwitchPart0:builder
+                    {: yield (%builder%).branch((%negative% == null)?(%key%):ALU.negative(%key%), %body%); :}
+                    | DEFAULT:sym COLON caseBlockStat:body legacySwitchPart0:builder
+                    {: yield (%builder%).branch(null, %body%); :}
+                    ;
+
+
+legacySwitchPart ::= SWITCH:sym LPAREN expression:enhancedSwitch RPAREN LBRACE TEXT_STATEMENT ? legacySwitchPart0:builder RBRACE
+                    {: yield (%builder%).condition(%enhancedSwitch%, %sym.symbol%.pos); :}
+                    ;
+
+
+enhancedSwitchBranchStat ::= block:$
+                    |yieldStat:$
+                    |breakStat:$
+                    |THROW:sym expression:expr SEMICOLON
+                    {: yield IR.throwWith(%expr%, %sym.symbol%.pos); :}
+                    ;
+
+
+enhancedSwitchPart0 ::= 
+                    CASE:sym switchCaseKeys:keys MINUSGT expression:body SEMICOLON?
+                    {: yield IR.enhancedSwitchBuilder().branch(%keys%, %body%); :}
+                    | CASE:sym switchCaseKeys:keys MINUSGT expression:body SEMICOLON? enhancedSwitchPart0:builder
+                    {: yield (%builder%).branch(%keys%, %body%); :}
+                    | CASE:sym switchCaseKeys:keys MINUSGT enhancedSwitchBranchStat:body
+                    {: yield IR.enhancedSwitchBuilder().branch(%keys%, %body%); :}
+                    | CASE:sym switchCaseKeys:keys MINUSGT enhancedSwitchBranchStat:body enhancedSwitchPart0:builder
+                    {: yield (%builder%).branch(%keys%, %body%); :}
+                    | DEFAULT:sym MINUSGT expression:body SEMICOLON?
+                    {: yield IR.enhancedSwitchBuilder().defaultBranch(%body%); :}
+                    | DEFAULT:sym MINUSGT expression:body SEMICOLON? enhancedSwitchPart0:builder
+                    {: yield (%builder%).defaultBranch(%body%); :}
+                    | DEFAULT:sym MINUSGT enhancedSwitchBranchStat:body
+                    {: yield IR.enhancedSwitchBuilder().defaultBranch(%body%); :}
+                    | DEFAULT:sym MINUSGT enhancedSwitchBranchStat:body enhancedSwitchPart0:builder
+                    {: yield (%builder%).defaultBranch(%body%); :}
+                    ;
+
+
+enhancedSwitchPart  ::= SWITCH:sym LPAREN expression:enhancedSwitch RPAREN LBRACE TEXT_STATEMENT ? enhancedSwitchPart0:builder RBRACE
+                    {: yield (%builder%).condition(%enhancedSwitch%, %sym.symbol%.pos); :}
+                    ;
+                    
 
 /* Expressions */
 
@@ -489,6 +557,9 @@ expression      ::= expressionStatementAble:$
                     //funcDeclareExpr
                     |funcHead:builder LBRACE statement[]:list? RBRACE
                     {: yield (%builder%).buildAndAssign(%list%); :}
+
+                    |enhancedSwitchPart:builder
+                    {: yield (%builder%).buildAsExpression(); :}
 
                     //arrayValue
                     |LBRACK:sym RBRACK

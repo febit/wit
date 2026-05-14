@@ -1,0 +1,119 @@
+{
+    var func_nested_statement_switch_yield = function(a, b) {
+        return switch (a) {
+            case 0 -> "zero";
+            case 1 -> "one";
+            default -> {
+                var prefix = "outer-";
+                switch (b) {
+                    case 1 -> {
+                        yield prefix + "inner-1";
+                    }
+                    case 2 -> {
+                        yield prefix + "inner-2";
+                    }
+                    default -> {
+                        prefix += "fallback";
+                    }
+                }
+                yield prefix;
+            }
+        };
+    };
+
+    assertEquals("zero", func_nested_statement_switch_yield(0, 1));
+    assertEquals("one", func_nested_statement_switch_yield(1, 1));
+    assertEquals("outer-inner-1", func_nested_statement_switch_yield(2, 1));
+    assertEquals("outer-inner-2", func_nested_statement_switch_yield(2, 2));
+    assertEquals("outer-fallback", func_nested_statement_switch_yield(2, 3));
+}
+
+{
+    var func_nested_statement_switch_in_loop = function(a, b) {
+        return switch (a) {
+            case 1 -> {
+                var trace = "";
+                for (i : 0..4) {
+                    trace += i;
+                    switch (b) {
+                        case 1 -> {
+                            if (i == 2) {
+                                yield trace + "-stop";
+                            }
+                        }
+                        default -> {
+                        }
+                    }
+                }
+                yield trace + "-done";
+            }
+            default -> "default";
+        };
+    };
+
+    assertEquals("012-stop", func_nested_statement_switch_in_loop(1, 1));
+    assertEquals("01234-done", func_nested_statement_switch_in_loop(1, 2));
+    assertEquals("default", func_nested_statement_switch_in_loop(2, 1));
+}
+
+{
+    var func_expression_allows_absorbed_loop_flow = function(a) {
+        return switch (a) {
+            case 1 -> {
+                var trace = "";
+                outer: for (i : 0..4) {
+                    inner: for (j : 0..4) {
+                        if (j == 0) {
+                            continue;
+                        }
+                        if (i == 1 && j == 1) {
+                            break inner;
+                        }
+                        if (i == 2 && j == 1) {
+                            continue outer;
+                        }
+                        trace += i + ":" + j + "|";
+                        break;
+                    }
+                }
+                yield trace;
+            }
+            default -> "default";
+        };
+    };
+
+    assertEquals("0:1|3:1|4:1|", func_expression_allows_absorbed_loop_flow(1));
+    assertEquals("default", func_expression_allows_absorbed_loop_flow(0));
+}
+
+{
+    var func_expression_allows_absorbed_function_return = function(a, b) {
+        return switch (a) {
+            case 1 -> {
+                var nested = function(value) {
+                    var trace = "";
+                    for (i : 0..4) {
+                        if (i == value) {
+                            return trace + "hit-" + i;
+                        }
+                        trace += i;
+                    }
+                    return trace + "-miss";
+                };
+                switch (b) {
+                    case 1 -> {
+                        yield "ok-" + nested(2);
+                    }
+                    default -> {
+                        yield nested(9);
+                    }
+                }
+            }
+            default -> "default";
+        };
+    };
+
+    assertEquals("ok-01hit-2", func_expression_allows_absorbed_function_return(1, 1));
+    assertEquals("01234-miss", func_expression_allows_absorbed_function_return(1, 2));
+    assertEquals("default", func_expression_allows_absorbed_function_return(0, 1));
+}

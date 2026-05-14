@@ -13,33 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.ir.flow;
+package org.febit.wit.ir.switches;
 
-public enum JumpKind {
-    NOOP,
-    BREAK,
-    CONTINUE,
-    YIELD,
-    RETURN,
-    ;
+import org.febit.wit.ir.Position;
+import org.febit.wit.ir.Statement;
+import org.febit.wit.runtime.RuntimeContext;
+import org.febit.wit.runtime.Undefined;
 
-    public boolean isBreak() {
-        return this == BREAK;
+public record NoJumpSwitchBranch(
+        Statement body
+) implements SwitchBranch {
+
+    @Override
+    public Object execute(RuntimeContext context) {
+        body.execute(context);
+        return Undefined.UNDEFINED;
     }
 
-    public boolean isReturn() {
-        return this == RETURN;
-    }
-
-    public boolean isYield() {
-        return this == YIELD;
-    }
-
-    public boolean isBreakOrContinue() {
-        return this == BREAK || this == CONTINUE;
-    }
-
-    public boolean isNoop() {
-        return this == NOOP;
+    @Override
+    public Position position() {
+        return body.position();
     }
 }

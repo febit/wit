@@ -72,6 +72,7 @@ tasks.register('generateParser') {
       exec.mainClass.set("java_cup.Main")
       exec.args(
           '-exception', 'ScriptParseException',
+          '-expect', '2', // Ignore conflicts: enhanced-switch x2;
           '-symbols', 'TokenKinds',
           '-parser', 'ParserImpl',
           '-parser-code', """

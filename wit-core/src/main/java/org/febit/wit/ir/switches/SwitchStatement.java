@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.ir.statement;
+package org.febit.wit.ir.switches;
 
+import org.febit.wit.exception.ScriptEvaluateException;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.JumpAware;
 import org.febit.wit.ir.Position;
-import org.febit.wit.ir.Statement;
 import org.febit.wit.ir.flow.Jump;
 import org.febit.wit.ir.support.Jumps;
 import org.febit.wit.runtime.RuntimeContext;
@@ -27,58 +27,45 @@ import org.jspecify.annotations.Nullable;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public record Switch(
+public record SwitchStatement(
         int label,
         Expression condition,
-        Map<Object, Branch> branches,
-        @Nullable Branch defaultBranch,
+        Map<@Nullable Object, SwitchBranch> branches,
+        @Nullable SwitchBranch defaultBranch,
         Position position
-) implements Statement, JumpAware {
+) implements Expression, JumpAware {
 
     @Override
     @Nullable
     public Object execute(RuntimeContext context) {
         var key = condition.execute(context);
-        var branch = key != null
-                ? branches.get(key)
-                : defaultBranch;
+        var branch = branches.get(key);
         if (branch == null) {
             branch = defaultBranch;
         }
-        if (branch != null) {
-            branch.execute(context);
-            context.flow().resetIfBreak(label);
+        if (branch == null) {
+            throw new ScriptEvaluateException("switch expression did not match any branch");
         }
-        return null;
+        return branch.execute(context);
     }
 
     @Override
     public void collectJumps(Consumer<Jump> collector) {
-        //XXX: May have duplicated jumps caused by duplicated Branch
         var filtered = (Consumer<Jump>) jump -> {
-            if (!jump.matchesLabel(this.label) || !jump.state().isBreak()) {
+            if (!jump.matchesLabel(this.label)
+                    || !jump.state().isBreak()) {
                 collector.accept(jump);
             }
         };
 
-        branches.values().forEach(entry ->
-                Jumps.collect(filtered, entry.body)
-        );
-        if (defaultBranch != null) {
-            Jumps.collect(filtered, defaultBranch.body);
-        }
-    }
-
-    public record Branch(Statement body, @Nullable Branch next) {
-
-        @Nullable
-        Object execute(RuntimeContext context) {
-            body.execute(context);
-            if (context.flow().isNoop() && next != null) {
-                return next.execute(context);
+        branches.values().forEach(branch -> {
+            if (branch instanceof JumpAwareSwitchBranch jumpAware) {
+                Jumps.collect(filtered, jumpAware.body());
             }
-            return null;
+        });
+        if (defaultBranch instanceof JumpAwareSwitchBranch jumpAware) {
+            Jumps.collect(filtered, jumpAware.body());
         }
-
     }
+
 }

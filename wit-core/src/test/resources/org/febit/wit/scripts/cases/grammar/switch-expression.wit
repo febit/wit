@@ -1,0 +1,44 @@
+{
+  var func_switch_expr = function(a) {
+    return switch (a) {
+      case -1 -> "-1";
+      case 1 -> "1";
+      case 2, 3 -> {
+        yield "2|3";
+      }
+      default -> {
+        var value = "default";
+        yield value;
+      }
+    };
+  };
+
+  assertEquals("-1", func_switch_expr(-1));
+  assertEquals("1", func_switch_expr(1));
+  assertEquals("2|3", func_switch_expr(2));
+  assertEquals("2|3", func_switch_expr(3));
+  assertEquals("default", func_switch_expr(100));
+
+  var func_switch_expr2 = function(a) {
+    return switch (a) {
+      case 1 -> {
+        if (true) {
+          yield "1";
+        }
+      }
+      case 2 -> yield UNDEFINED;
+      case 3 -> {
+        var value = "3";
+        yield value;
+      }
+      default -> {
+        yield "default";
+      }
+    };
+  };
+
+  assertEquals("1", func_switch_expr2(1));
+  assertEquals(UNDEFINED, func_switch_expr2(2));
+  assertEquals("3", func_switch_expr2(3));
+  assertEquals("default", func_switch_expr2(4));
+}

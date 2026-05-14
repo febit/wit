@@ -48,6 +48,7 @@ public record JumpAwareLoopBody(
         }
         return switch (flow.state()) {
             case RETURN -> true; // Interrupt loop, loops cannot handle return flow.
+            case YIELD -> true; // Interrupt loop, loops cannot handle yield flow.
             case BREAK -> {
                 // Reset & Interrupt loop.
                 flow.reset();

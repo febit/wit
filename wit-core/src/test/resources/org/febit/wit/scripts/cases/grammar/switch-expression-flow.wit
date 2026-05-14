@@ -1,0 +1,188 @@
+{
+  var func_nested_switch_break = function(a) {
+    return switch (a) {
+      case 1 -> {
+        var result = "start";
+        switch (2) {
+          case 2 -> {
+            result += "-inner";
+            break;
+          }
+          default -> {
+            result = "bad";
+          }
+        }
+        yield result + "-done";
+      }
+      default -> "default";
+    };
+  };
+
+  assertEquals("start-inner-done", func_nested_switch_break(1));
+  assertEquals("default", func_nested_switch_break(0));
+}
+{
+  var func_nested_switch_yield = function(a) {
+    return switch (a) {
+      case 1 -> {
+        var result = "start";
+        switch (2) {
+          case 2 -> {
+            result += "-inner";
+            yield result;
+          }
+          default -> {
+            result = "bad";
+          }
+        }
+        yield result + "-done";
+      }
+      default -> "default";
+    };
+  };
+
+  assertEquals("start-inner", func_nested_switch_yield(1));
+  assertEquals("default", func_nested_switch_yield(0));
+}
+{
+  var func_loop_flow = function(a) {
+    return switch (a) {
+      case 1 -> {
+        var trace = "";
+        for (i : 0..4) {
+          if (i == 1) {
+            continue;
+          }
+          if (i == 3) {
+            break;
+          }
+          trace += i;
+        }
+        yield trace;
+      }
+      default -> "default";
+    };
+  };
+
+  assertEquals("02", func_loop_flow(1));
+  assertEquals("default", func_loop_flow(2));
+}
+
+{
+  var func_loop_yield = function(a, x) {
+    return switch (a) {
+      case 1 -> {
+        var trace = "";
+        for (i : 0..x) {
+          if (x < 0) {
+            break;
+          }
+          if (i == 1) {
+            continue;
+          }
+          if (i == 5) {
+            break;
+          }
+          trace += i;
+          if (i == x) {
+            yield trace;
+          }
+        }
+        yield trace + "-done";
+      }
+      default -> "default";
+    };
+  };
+
+  assertEquals("default", func_loop_yield(2));
+
+  assertEquals("-done", func_loop_yield(1, -1));
+  assertEquals("0", func_loop_yield(1, 0));
+  assertEquals("02", func_loop_yield(1, 2));
+  assertEquals("0234", func_loop_yield(1, 4));
+  assertEquals("0234-done", func_loop_yield(1, 5));
+  assertEquals("0234-done", func_loop_yield(1, 6));
+}
+
+{
+  var func_nested_function_return = function(a) {
+    return switch (a) {
+      case 1 -> {
+        var nested = function(value) {
+          if (value > 0) {
+            return "nested-" + value;
+          }
+          return "bad";
+        };
+        yield nested(a);
+      }
+      default -> "default";
+    };
+  };
+
+  assertEquals("nested-1", func_nested_function_return(1));
+  assertEquals("default", func_nested_function_return(0));
+}
+
+{
+  var func_statement_switch_with_nested_expression = function(a) {
+    var result = "unset";
+    switch (a) {
+      case 1 -> {
+        var nested = function(value) {
+          return switch (value) {
+            case 1 -> {
+              var trace = "";
+              for (i : 0..4) {
+                if (i == 1) {
+                  continue;
+                }
+                if (i == 3) {
+                  break;
+                }
+                trace += i;
+              }
+              yield trace;
+            }
+            default -> "default";
+          };
+        };
+        result = nested(a);
+        break;
+      }
+      default -> {
+        result = "default";
+      }
+    }
+    return result;
+  };
+
+  assertEquals("02", func_statement_switch_with_nested_expression(1));
+  assertEquals("default", func_statement_switch_with_nested_expression(2));
+}
+
+{
+  var trace = "";
+  outer: for (i : 1..4) {
+    switch (i) {
+      case 1 -> {
+        trace += "a";
+        continue outer;
+      }
+      case 2 -> {
+        trace += "b";
+        break;
+      }
+      case 3 -> {
+        trace += "c";
+        break outer;
+      }
+      default -> {
+        trace += "d";
+      }
+    }
+    trace += "|";
+  }
+
+  assertEquals("ab|c", trace);
+}

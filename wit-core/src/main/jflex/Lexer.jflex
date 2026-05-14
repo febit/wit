@@ -387,6 +387,7 @@ MethodReference = {Identifier} ("." {Identifier})* {WhiteSpace}* ("[" {WhiteSpac
   /* "in"                           { return token(TokenKinds.IN); } */
   "function"                     { return token(TokenKinds.FUNCTION); }
   "return"                       { return token(TokenKinds.RETURN); }
+  "yield"                        { return token(TokenKinds.YIELD); }
   "this"                         { return token(TokenKinds.THIS); }
 
   "throw"                        { return token(TokenKinds.THROW); }

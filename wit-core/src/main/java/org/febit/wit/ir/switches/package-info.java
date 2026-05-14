@@ -13,33 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.ir.flow;
+@NullMarked
+package org.febit.wit.ir.switches;
 
-public enum JumpKind {
-    NOOP,
-    BREAK,
-    CONTINUE,
-    YIELD,
-    RETURN,
-    ;
-
-    public boolean isBreak() {
-        return this == BREAK;
-    }
-
-    public boolean isReturn() {
-        return this == RETURN;
-    }
-
-    public boolean isYield() {
-        return this == YIELD;
-    }
-
-    public boolean isBreakOrContinue() {
-        return this == BREAK || this == CONTINUE;
-    }
-
-    public boolean isNoop() {
-        return this == NOOP;
-    }
-}
+import org.jspecify.annotations.NullMarked;

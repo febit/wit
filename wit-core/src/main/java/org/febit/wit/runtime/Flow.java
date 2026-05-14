@@ -35,7 +35,7 @@ public class Flow {
     private int target;
 
     /**
-     * Value to be returned, used by return-controls.
+     * Value to be returned or yielded.
      */
     @Nullable
     private Object returned;
@@ -89,6 +89,17 @@ public class Flow {
     }
 
     /**
+     * Change to yield state with given value.
+     *
+     * @param value the yielded value.
+     */
+    public void toYield(@Nullable Object value) {
+        this.returned = value;
+        this.target = 0;
+        this.state = JumpKind.YIELD;
+    }
+
+    /**
      * Reset to noop state.
      */
     public void reset() {
@@ -106,6 +117,23 @@ public class Flow {
         if (this.state.isBreak() && isTarget(label)) {
             this.reset();
         }
+    }
+
+    /**
+     * Get the yielded value if current state is yield.
+     *
+     * @return the yielded value
+     * @throws ScriptEvaluateException if current state is not yield
+     */
+    @Nullable
+    public Object yieldedAndReset() {
+        if (!this.state.isYield()) {
+            throw new ScriptEvaluateException(
+                    "Invalid flow state, expected YIELD but was " + this.state);
+        }
+        var result = this.returned;
+        this.reset();
+        return result;
     }
 
     /**

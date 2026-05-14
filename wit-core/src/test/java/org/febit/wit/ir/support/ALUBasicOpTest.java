@@ -321,4 +321,3 @@ class ALUBasicOpTest {
         assertEquals(new BigDecimal("0.2"), mod(new BigDecimal("1.6"), 0.7D));
     }
 }
-

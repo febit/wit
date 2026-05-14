@@ -21,9 +21,9 @@ import org.febit.wit.exception.ScriptParseException;
 import org.febit.wit.ir.Expression;
 import org.febit.wit.ir.Position;
 import org.febit.wit.ir.Statement;
-import org.febit.wit.ir.statement.Switch;
-import org.febit.wit.ir.statement.Switch.Branch;
 import org.febit.wit.ir.support.StatementUtils;
+import org.febit.wit.ir.switches.LegacySwitch;
+import org.febit.wit.ir.switches.LegacySwitch.Branch;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Accessors(fluent = true, chain = true)
-public class SwitchBuilder {
+public class LegacySwitchBuilder {
 
     @Nullable
     private Position position;
@@ -47,22 +47,22 @@ public class SwitchBuilder {
 
     private final Map<@Nullable Object, Branch> branches = new HashMap<>();
 
-    public SwitchBuilder condition(Expression condition, Position position) {
+    public LegacySwitchBuilder condition(Expression condition, Position position) {
         this.condition = condition;
         this.position = position;
         return this;
     }
 
-    public SwitchBuilder branch(@Nullable Object compareTo, Statement body, Position position) {
+    public LegacySwitchBuilder branch(@Nullable Object compareTo, Statement body) {
         var branch = new Branch(StatementUtils.optimize(body), latest);
         // else use last as current for this key
         if (branches.containsKey(compareTo)) {
-            throw new ScriptParseException("duplicated case value in one switch", position);
+            throw new ScriptParseException("duplicated case value in one switch", body.position());
         }
 
         if (compareTo == null) {
             if (defaultBranch != null) {
-                throw new ScriptParseException("multi default block in one switch", position);
+                throw new ScriptParseException("multi default block in one switch", body.position());
             }
             defaultBranch = branch;
         } else {
@@ -78,7 +78,7 @@ public class SwitchBuilder {
         Objects.requireNonNull(position);
 
         return StatementUtils.optimize(
-                new Switch(label, condition, Map.copyOf(branches), defaultBranch, position)
+                new LegacySwitch(label, condition, Map.copyOf(branches), defaultBranch, position)
         );
     }
 }

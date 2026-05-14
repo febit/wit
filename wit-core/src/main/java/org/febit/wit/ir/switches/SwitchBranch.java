@@ -13,33 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.ir.flow;
+package org.febit.wit.ir.switches;
 
-public enum JumpKind {
-    NOOP,
-    BREAK,
-    CONTINUE,
-    YIELD,
-    RETURN,
-    ;
+import org.febit.wit.ir.Located;
+import org.febit.wit.runtime.RuntimeContext;
+import org.jspecify.annotations.Nullable;
 
-    public boolean isBreak() {
-        return this == BREAK;
-    }
+public sealed interface SwitchBranch extends Located
+        permits ExpressionSwitchBranch, JumpAwareSwitchBranch,
+        NoJumpSwitchBranch, YieldSwitchBranch {
 
-    public boolean isReturn() {
-        return this == RETURN;
-    }
-
-    public boolean isYield() {
-        return this == YIELD;
-    }
-
-    public boolean isBreakOrContinue() {
-        return this == BREAK || this == CONTINUE;
-    }
-
-    public boolean isNoop() {
-        return this == NOOP;
-    }
+    @Nullable
+    Object execute(RuntimeContext context);
 }

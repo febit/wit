@@ -24,6 +24,83 @@ import static org.junit.jupiter.api.Assertions.*;
 class UnsupportedSyntaxTest {
 
     @Test
+    void testEnhancedSwitchTypedBranchUnsupported() {
+        assertThrows(ScriptParseException.class, codeChecker("""
+                switch (value) {
+                  case String s -> ;
+                }
+                """));
+    }
+
+    @Test
+    void testYieldOutsideSwitchExpressionUnsupported() {
+        assertThrows(ScriptParseException.class, codeChecker("yield 1;"));
+    }
+
+    @Test
+    void testYieldInSwitchStatementUnsupported() {
+        assertThrows(ScriptParseException.class, codeChecker("""
+                switch (value) {
+                  default -> yield 1;
+                }
+                """));
+
+        assertThrows(ScriptParseException.class, codeChecker("""
+                switch (value) {
+                  default -> {
+                    yield 1;
+                  }
+                }
+                """));
+    }
+
+    @Test
+    void testLabeledBreakInSwitchExpressionUnsupported() {
+        assertThrows(ScriptParseException.class, codeChecker("""
+                var x = switch (value) {
+                  default -> break outer;
+                };
+                """));
+    }
+
+    @Test
+    void testBreakInSwitchExpressionUnsupported() {
+        assertThrows(ScriptParseException.class, codeChecker("""
+                var x = switch (value) {
+                  default -> {
+                    break;
+                  }
+                };
+                """));
+    }
+
+    @Test
+    void testContinueInSwitchExpressionUnsupported() {
+        assertThrows(ScriptParseException.class, codeChecker("""
+                outer: while (true) {
+                  var x = switch (value) {
+                    default -> {
+                      continue outer;
+                    }
+                  };
+                }
+                """));
+    }
+
+    @Test
+    void testReturnInSwitchExpressionUnsupported() {
+        assertThrows(ScriptParseException.class, codeChecker("""
+                var func = function(value) {
+                  return switch (value) {
+                    default -> {
+                      return 1;
+                    }
+                  };
+                };
+                """));
+    }
+
+    @Test
     void testNumberParse() {
 
         // int/long
