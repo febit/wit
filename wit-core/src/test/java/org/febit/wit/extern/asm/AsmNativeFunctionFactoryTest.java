@@ -41,9 +41,10 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class AsmNativeFunctionFactoryTest {
 
+    final AsmNativeFunctionFactory factory = AsmNativeFunctionFactory.create();
+
     @Test
     void testFactory() throws NoSuchMethodException {
-        var factory = AsmNativeFunctionFactory.create();
         assertNotNull(factory);
 
         var str_toString = factory.method(String.class.getMethod("toString"));
@@ -61,7 +62,6 @@ class AsmNativeFunctionFactoryTest {
 
     @Test
     void testFactoryWithInternalBean() throws NoSuchMethodException {
-        var factory = AsmNativeFunctionFactory.create();
         var bean = ModelSupport.internalBean();
         var beanClass = bean.getClass();
 
@@ -86,7 +86,6 @@ class AsmNativeFunctionFactoryTest {
 
     @Test
     void testFactoryWithInternalMethod() throws NoSuchMethodException {
-        var factory = AsmNativeFunctionFactory.create();
         var getPrivate2Method = Foo.class.getDeclaredMethod("getPrivate2");
         assertThatThrownBy(() -> factory.method(getPrivate2Method))
                 .isInstanceOf(UncheckedException.class)

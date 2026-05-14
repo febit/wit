@@ -22,6 +22,8 @@ import org.febit.wit.engine.accessor.Getter;
 import org.febit.wit.engine.accessor.Renderer;
 import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.exception.UncheckedException;
+import org.febit.wit.runtime.accessor.EmptyBeanAccessor;
+import org.febit.wit.runtime.accessor.GenericBeanAccessor;
 import org.febit.wit.runtime.accessor.ReflectBeanAccessorFactory;
 import org.febit.wit.util.ClassMap;
 import org.febit.wit.util.Modifiers;
@@ -42,7 +44,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
     private static final String[] ACCESSOR_INTERFACES = {"org/febit/wit/extern/asm/AsmBeanAccessor"};
     private static final ClassMap<Class<?>> ACCESSOR_CLASSES = new ClassMap<>();
 
-    private final ClassMap<Optional<AsmBeanAccessor>> cached = new ClassMap<>();
+    private final ClassMap<Optional<GenericBeanAccessor<?>>> cached = new ClassMap<>();
     private final AccessorFactory fallback = ReflectBeanAccessorFactory.get();
 
     @UtilityClass
@@ -82,7 +84,7 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
             "OptionalAssignedToNull",
             "java:S2789", // "null" should not be used with "Optional"
     })
-    private Optional<AsmBeanAccessor> accessor(Class<?> type) {
+    private Optional<GenericBeanAccessor<?>> accessor(Class<?> type) {
         var accessor = cached.get(type);
         if (accessor != null) {
             return accessor;
@@ -95,10 +97,13 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
         return this;
     }
 
-    private Optional<AsmBeanAccessor> tryCreateAccessor(Class<?> type) {
+    private Optional<GenericBeanAccessor<?>> tryCreateAccessor(Class<?> type) {
         try {
             var cls = ACCESSOR_CLASSES.computeIfAbsent(type, AsmBeanAccessorFactory::constructAccessorClass);
-            var instance = (AsmBeanAccessor) cls.getConstructor().newInstance();
+            if (cls == EmptyBeanAccessor.class) {
+                return Optional.of(EmptyBeanAccessor.get());
+            }
+            var instance = (GenericBeanAccessor<?>) cls.getConstructor().newInstance();
             return Optional.of(instance);
         } catch (UncheckedException e) {
             log.warn("Cannot create accessor for type: {}, {}", type.getName(), e.getMessage());
@@ -110,7 +115,13 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
     }
 
     static Class<?> constructAccessorClass(Class<?> beanClass) {
-        //XXX: rewrite
+        var fields = BeanProperties.introspect(beanClass)
+                .sorted(Comparator.comparing(b -> b.name().hashCode()))
+                .toArray(BeanProperty[]::new);
+        if (fields.length == 0) {
+            return EmptyBeanAccessor.class;
+        }
+
         if (!Modifiers.isPublic(beanClass)) {
             throw new UncheckedException("class is not public: " + beanClass.getName());
         }
@@ -120,30 +131,24 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
                 AsmUtils.internalNameOf(className), AsmUtils.TYPE_OBJ, ACCESSOR_INTERFACES);
         AsmUtils.visitConstructor(classWriter);
 
-        var fields = BeanProperties.introspect(beanClass)
-                .sorted(Comparator.comparing(b -> b.name().hashCode()))
-                .toArray(BeanProperty[]::new);
-
         final int fieldCount = fields.length;
         int[] hashes = new int[fieldCount];
         int[] indexer = new int[fieldCount];
-        if (fieldCount > 0) {
-            int hashCount = 0;
-            int hash;
-            hashes[hashCount++] = hash = fields[0].name().hashCode();
-            int i = 1;
-            while (i < fieldCount) {
-                var property = fields[i];
-                if (hash != property.name().hashCode()) {
-                    indexer[hashCount - 1] = i;
-                    hashes[hashCount++] = hash = property.name().hashCode();
-                }
-                i++;
+        int hashCount = 0;
+        int hash;
+        hashes[hashCount++] = hash = fields[0].name().hashCode();
+        int i = 1;
+        while (i < fieldCount) {
+            var property = fields[i];
+            if (hash != property.name().hashCode()) {
+                indexer[hashCount - 1] = i;
+                hashes[hashCount++] = hash = property.name().hashCode();
             }
-            indexer[hashCount - 1] = fieldCount;
-            hashes = Arrays.copyOf(hashes, hashCount);
-            indexer = Arrays.copyOf(indexer, hashCount);
+            i++;
         }
+        indexer[hashCount - 1] = fieldCount;
+        hashes = Arrays.copyOf(hashes, hashCount);
+        indexer = Arrays.copyOf(indexer, hashCount);
 
         visitXetMethod(true, classWriter, beanClass, fields, hashes, indexer);
         visitXetMethod(false, classWriter, beanClass, fields, hashes, indexer);
@@ -171,31 +176,31 @@ public class AsmBeanAccessorFactory implements AccessorFactory {
                     "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V", null);
         }
         var propsSize = props.length;
-        if (propsSize != 0) {
-            var finalEndLabel = new Label();
-            if (propsSize < 4) {
-                visitXetFields(isGetter, m, props, 0, propsSize, beanName, finalEndLabel);
-            } else {
-                m.visitVarInsn(Constants.ALOAD, 2);
-                m.invokeVirtual(AsmUtils.TYPE_OBJ, "hashCode", "()I");
 
-                var size = hashes.length;
-                var labels = new Label[size];
-                for (int i = 0; i < size; i++) {
-                    labels[i] = new Label();
-                }
+        assert propsSize > 0 : "propsSize should be greater than 0";
+        var finalEndLabel = new Label();
+        if (propsSize < 4) {
+            visitXetFields(isGetter, m, props, 0, propsSize, beanName, finalEndLabel);
+        } else {
+            m.visitVarInsn(Constants.ALOAD, 2);
+            m.invokeVirtual(AsmUtils.TYPE_OBJ, "hashCode", "()I");
 
-                m.visitLookupSwitchInsn(finalEndLabel, hashes, labels);
-                int start = 0;
-                for (int i = 0; i < size; i++) {
-                    int end = indexer[i];
-                    m.visitLabel(labels[i]);
-                    visitXetFields(isGetter, m, props, start, end, beanName, finalEndLabel);
-                    start = end;
-                }
+            var size = hashes.length;
+            var labels = new Label[size];
+            for (int i = 0; i < size; i++) {
+                labels[i] = new Label();
             }
-            m.visitLabel(finalEndLabel);
+
+            m.visitLookupSwitchInsn(finalEndLabel, hashes, labels);
+            int start = 0;
+            for (int i = 0; i < size; i++) {
+                int end = indexer[i];
+                m.visitLabel(labels[i]);
+                visitXetFields(isGetter, m, props, start, end, beanName, finalEndLabel);
+                start = end;
+            }
         }
+        m.visitLabel(finalEndLabel);
         //Exception
         m.visitTypeInsn(Constants.NEW, AsmUtils.TYPE_EVAL_EX);
         m.visitInsn(Constants.DUP);

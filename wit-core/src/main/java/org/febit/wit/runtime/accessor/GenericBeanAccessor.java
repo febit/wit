@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.extern.asm;
+package org.febit.wit.runtime.accessor;
 
-import org.febit.wit.runtime.accessor.GenericBeanAccessor;
+import org.febit.wit.engine.accessor.Getter;
+import org.febit.wit.engine.accessor.Setter;
 
-public interface AsmBeanAccessor extends GenericBeanAccessor<Object> {
+public interface GenericBeanAccessor<T> extends Getter<T>, Setter<T> {
 }

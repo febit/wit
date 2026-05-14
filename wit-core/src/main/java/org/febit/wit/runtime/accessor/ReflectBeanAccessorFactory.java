@@ -21,10 +21,11 @@ import org.febit.wit.engine.accessor.Getter;
 import org.febit.wit.engine.accessor.Renderer;
 import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.util.ClassMap;
+import org.febit.wit.util.bean.PropertyAccessors;
 
 public class ReflectBeanAccessorFactory implements AccessorFactory {
 
-    private final ClassMap<ReflectBeanAccessor<?>> cached = new ClassMap<>();
+    private final ClassMap<GenericBeanAccessor<?>> cached = new ClassMap<>();
 
     @UtilityClass
     private static class LazyHolder {
@@ -36,12 +37,20 @@ public class ReflectBeanAccessorFactory implements AccessorFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> ReflectBeanAccessor<T> accessor(Class<T> type) {
+    private <T> GenericBeanAccessor<T> accessor(Class<T> type) {
         var accessor = cached.get(type);
         if (accessor != null) {
-            return (ReflectBeanAccessor<T>) accessor;
+            return (GenericBeanAccessor<T>) accessor;
         }
-        return (ReflectBeanAccessor<T>) cached.computeIfAbsent(type, ReflectBeanAccessor::of);
+        return (GenericBeanAccessor<T>) cached.computeIfAbsent(type, ReflectBeanAccessorFactory::createAccessor);
+    }
+
+    private static <T> GenericBeanAccessor<T> createAccessor(Class<T> type) {
+        var accessors = PropertyAccessors.of(type);
+        if (accessors.isEmpty()) {
+            return EmptyBeanAccessor.get();
+        }
+        return ReflectBeanAccessor.of(type, accessors);
     }
 
     @Override

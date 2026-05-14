@@ -18,9 +18,11 @@ package org.febit.wit.extern.asm;
 import org.febit.wit.engine.accessor.Getter;
 import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.exception.ScriptEvaluateException;
+import org.febit.wit.runtime.accessor.EmptyBeanAccessor;
 import org.febit.wit.runtime.accessor.ReflectBeanAccessor;
 import org.febit.wit.runtime.accessor.ToStringRenderer;
 import org.febit.wit.util.bean.model.Bar;
+import org.febit.wit.util.bean.model.EmptyBean;
 import org.febit.wit.util.bean.model.ModelSupport;
 import org.junit.jupiter.api.Test;
 
@@ -58,6 +60,19 @@ class AsmBeanAccessorFactoryTest {
         assertEquals("new:f1", getter.get(bean, "f1"));
         assertEquals("new:f2", getter.get(bean, "f2"));
         assertEquals(8, getter.get(bean, "f4"));
+    }
+
+    @Test
+    void emptyBean() {
+        var factory = AsmBeanAccessorFactory.get();
+
+        assertInstanceOf(EmptyBeanAccessor.class, factory.getter(Object.class));
+        assertInstanceOf(EmptyBeanAccessor.class, factory.setter(Object.class));
+        assertInstanceOf(ToStringRenderer.class, factory.renderer(Object.class));
+
+        assertInstanceOf(EmptyBeanAccessor.class, factory.getter(EmptyBean.class));
+        assertInstanceOf(EmptyBeanAccessor.class, factory.setter(EmptyBean.class));
+        assertInstanceOf(ToStringRenderer.class, factory.renderer(EmptyBean.class));
     }
 
     @Test

@@ -111,14 +111,14 @@ public class PropertyAccessors {
     record FieldGetter(VarHandle handle) implements PropertyAccessor.Getter {
         @Nullable
         @Override
-        public Object get(Object bean) throws BeanException {
+        public Object get(Object bean) {
             return this.handle.get(bean);
         }
     }
 
     record FieldSetter(VarHandle handle, Class<?> propertyType) implements PropertyAccessor.Setter {
         @Override
-        public void set(Object bean, @Nullable Object value) throws BeanException {
+        public void set(Object bean, @Nullable Object value) {
             this.handle.set(bean, value);
         }
     }

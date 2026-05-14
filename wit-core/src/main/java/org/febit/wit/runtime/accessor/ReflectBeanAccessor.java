@@ -15,35 +15,25 @@
  */
 package org.febit.wit.runtime.accessor;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.febit.wit.engine.accessor.Getter;
-import org.febit.wit.engine.accessor.Setter;
 import org.febit.wit.exception.ScriptEvaluateException;
-import org.febit.wit.util.bean.BeanException;
 import org.febit.wit.util.bean.PropertyAccessor;
-import org.febit.wit.util.bean.PropertyAccessors;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ReflectBeanAccessor<T> implements Getter<T>, Setter<T> {
+@RequiredArgsConstructor(staticName = "of")
+public class ReflectBeanAccessor<T> implements GenericBeanAccessor<T> {
 
     private final Class<T> beanClass;
     private final Map<String, PropertyAccessor> accessors;
 
-    public static <T> ReflectBeanAccessor<T> of(Class<T> beanClass) {
-        var accessors = PropertyAccessors.of(beanClass);
-        return new ReflectBeanAccessor<>(beanClass, accessors);
-    }
-
-    private PropertyAccessor accessor(String name) throws BeanException {
+    private PropertyAccessor accessor(String name) {
         var accessor = accessors.get(name);
         if (accessor != null) {
             return accessor;
         }
-        throw new BeanException("no such property: " + beanClass + "#" + name);
+        throw new ScriptEvaluateException("no such property: " + beanClass.getName() + "#" + name);
     }
 
     @Nullable
@@ -71,7 +61,7 @@ public class ReflectBeanAccessor<T> implements Getter<T>, Setter<T> {
             setter.set(bean, value);
             return;
         }
-        throw new BeanException("property is not writable: " + bean.getClass() + "#" + name);
+        throw new ScriptEvaluateException("property is not writable: " + bean.getClass() + "#" + name);
     }
 
 }
