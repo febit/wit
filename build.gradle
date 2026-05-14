@@ -118,7 +118,7 @@ static def customPom(Project project, MavenPom pom) {
       developer {
         id = 'kurt'
         name = 'Kurt Zhu'
-        email = 'zqq@febit.org'
+        email = 'kurt@febit.org'
         timezone = '+8'
       }
     }
