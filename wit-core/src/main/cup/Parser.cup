@@ -74,9 +74,9 @@ nonterminal Class<?> javaClass;
 nonterminal ScriptIR scriptAST;
 
 /* Statement */
-nonterminal Statement statement, ifStat, varPart;
+nonterminal Statement statement, ifStat, varPart, enhancedSwitchBranch;
+nonterminal Statement yieldStat, breakStat, continueStat, returnStat, throwStat;
 nonterminal IBlock block, caseBlockStat;
-nonterminal Statement yieldStat, breakStat, enhancedSwitchBranchStat;
 nonterminal Expression varAssign;
 nonterminal IncludeBuilder importPart1, importPart2;
 nonterminal LegacySwitchBuilder legacySwitchPart, legacySwitchPart0;
@@ -220,15 +220,16 @@ statement       ::= SEMICOLON
                     |breakStat:$
 
                     // Continue
-                    |CONTINUE:sym IDENTIFIER:label? SEMICOLON
-                    {: yield IR.continueTo(assembler.getLabelIndex(%label%), %sym.symbol%); :}
+                    |continueStat:$
 
                     // Return
-                    |RETURN:sym expression:expr? SEMICOLON
-                    {: yield IR.returnWith(%expr%, %sym.symbol%); :}
+                    |returnStat:$
 
                     // Yield
                     |yieldStat:$
+
+                    // Throw
+                    |throwStat:$
 
                     // Import
                     |importPart1:builder SEMICOLON
@@ -246,9 +247,6 @@ statement       ::= SEMICOLON
 
                     |(catchPart:$ | finallyPart:$):builder
                     {: yield (%builder%).build(); :}
-
-                    | THROW:sym expression:expr SEMICOLON
-                    {: yield IR.throwWith(%expr%, %sym.symbol%); :}
                     ;
 
 
@@ -259,6 +257,20 @@ breakStat       ::= BREAK:sym IDENTIFIER:label? SEMICOLON
 
 yieldStat       ::= YIELD:sym expression:expr SEMICOLON
                     {: yield IR.yieldWith(%expr%, %sym.symbol%); :}
+                    ;
+
+
+continueStat    ::= CONTINUE:sym IDENTIFIER:label? SEMICOLON
+                    {: yield IR.continueTo(assembler.getLabelIndex(%label%), %sym.symbol%); :}
+                    ;
+
+
+returnStat      ::= RETURN:sym expression:expr? SEMICOLON
+                    {: yield IR.returnWith(%expr%, %sym.symbol%); :}
+                    ;
+
+throwStat       ::= THROW:sym expression:expr SEMICOLON
+                    {: yield IR.throwWith(%expr%, %sym.symbol%); :}
                     ;
 
 
@@ -369,50 +381,44 @@ switchCaseKey   ::= MINUS:negative? DIRECT_VALUE:key
 
 legacySwitchPart0 ::=
                     {: yield IR.legacySwitchBuilder(); :}
-                    | CASE:sym MINUS:negative? DIRECT_VALUE:key COLON caseBlockStat:body legacySwitchPart0:builder
-                    {: yield (%builder%).branch((%negative% == null)?(%key%):ALU.negative(%key%), %body%); :}
+                    | CASE:sym switchCaseKey:key COLON caseBlockStat:body legacySwitchPart0:builder
+                    {: yield (%builder%).branch(%key%, %body%); :}
                     | DEFAULT:sym COLON caseBlockStat:body legacySwitchPart0:builder
                     {: yield (%builder%).branch(null, %body%); :}
                     ;
 
 
-legacySwitchPart ::= SWITCH:sym LPAREN expression:enhancedSwitch RPAREN LBRACE TEXT_STATEMENT ? legacySwitchPart0:builder RBRACE
-                    {: yield (%builder%).condition(%enhancedSwitch%, %sym.symbol%); :}
+legacySwitchPart ::= SWITCH:sym LPAREN expression:condition RPAREN LBRACE TEXT_STATEMENT ? legacySwitchPart0:builder RBRACE
+                    {: yield (%builder%).condition(%condition%, %sym.symbol%); :}
                     ;
 
 
-enhancedSwitchBranchStat ::= block:$
+enhancedSwitchBranch ::= block:$
                     |yieldStat:$
                     |breakStat:$
-                    |THROW:sym expression:expr SEMICOLON
-                    {: yield IR.throwWith(%expr%, %sym.symbol%); :}
+                    |continueStat:$
+                    |returnStat:$
+                    |throwStat:$
+                    |expression:$ SEMICOLON
                     ;
 
 
 enhancedSwitchPart0 ::= 
-                    CASE:sym switchCaseKey[COMMA]:keys MINUSGT expression:body SEMICOLON?
+                    CASE:sym switchCaseKey[COMMA]:keys MINUSGT enhancedSwitchBranch:body
                     {: yield IR.enhancedSwitchBuilder().branch(%keys%, %body%); :}
-                    | CASE:sym switchCaseKey[COMMA]:keys MINUSGT expression:body SEMICOLON? enhancedSwitchPart0:builder
+                    | CASE:sym switchCaseKey[COMMA]:keys MINUSGT enhancedSwitchBranch:body enhancedSwitchPart0:builder
                     {: yield (%builder%).branch(%keys%, %body%); :}
-                    | CASE:sym switchCaseKey[COMMA]:keys MINUSGT enhancedSwitchBranchStat:body
-                    {: yield IR.enhancedSwitchBuilder().branch(%keys%, %body%); :}
-                    | CASE:sym switchCaseKey[COMMA]:keys MINUSGT enhancedSwitchBranchStat:body enhancedSwitchPart0:builder
-                    {: yield (%builder%).branch(%keys%, %body%); :}
-                    | DEFAULT:sym MINUSGT expression:body SEMICOLON?
+                    | DEFAULT:sym MINUSGT enhancedSwitchBranch:body
                     {: yield IR.enhancedSwitchBuilder().defaultBranch(%body%); :}
-                    | DEFAULT:sym MINUSGT expression:body SEMICOLON? enhancedSwitchPart0:builder
-                    {: yield (%builder%).defaultBranch(%body%); :}
-                    | DEFAULT:sym MINUSGT enhancedSwitchBranchStat:body
-                    {: yield IR.enhancedSwitchBuilder().defaultBranch(%body%); :}
-                    | DEFAULT:sym MINUSGT enhancedSwitchBranchStat:body enhancedSwitchPart0:builder
+                    | DEFAULT:sym MINUSGT enhancedSwitchBranch:body enhancedSwitchPart0:builder
                     {: yield (%builder%).defaultBranch(%body%); :}
                     ;
 
 
-enhancedSwitchPart  ::= SWITCH:sym LPAREN expression:enhancedSwitch RPAREN LBRACE TEXT_STATEMENT ? enhancedSwitchPart0:builder RBRACE
-                    {: yield (%builder%).condition(%enhancedSwitch%, %sym.symbol%); :}
+enhancedSwitchPart  ::= SWITCH:sym LPAREN expression:condition RPAREN LBRACE TEXT_STATEMENT ? enhancedSwitchPart0:builder RBRACE
+                    {: yield (%builder%).condition(%condition%, %sym.symbol%); :}
                     ;
-                    
+
 
 /* Expressions */
 

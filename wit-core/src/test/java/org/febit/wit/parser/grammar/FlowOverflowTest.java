@@ -121,22 +121,28 @@ class FlowOverflowTest {
     void switchStatement() {
         ok("""
                 switch (1) {
-                  default -> 1;
-                }
-                """);
-        ok("""
-                switch (1) {
-                  default -> break;
+                  case 1 -> 1;
+                  case 2 -> break;
+                  case 3 -> throw "error";
+                  case 4 -> {
+                    throw "error";
+                  }
+                  default -> { break; }
                 }
                 """);
         error("""
                 switch (1) {
                   default -> continue;
                 }
-                """, "Syntax error");
+                """, "Unhandled control flow");
         error("""
                 switch (1) {
                   default -> { continue; }
+                }
+                """, "Unhandled control flow");
+        error("""
+                switch (1) {
+                  default -> return 1;
                 }
                 """, "Unhandled control flow");
         error("""

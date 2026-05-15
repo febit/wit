@@ -115,7 +115,7 @@ class SwitchTest {
                 var x = switch (1) {
                   default -> continue;
                 };
-                """, "Syntax error");
+                """, "Unsupported switch branch for expression");
         error("""
                 var x = switch (1) {
                   default -> { continue; }
