@@ -1,35 +1,84 @@
+@import org.febit.wit.exception.ScriptEvaluateException;
 {
-  var func_switch = function(a) {
-    return switch (a) {
-      case -1 -> "-1"
-      case 1 -> "1"
-      case 2, 3 -> "2|3"
-      default -> "default"
+  // Default branch before case branch
+  var func = function(a) {
+    var value = "unset";
+    switch (a) {
+      default -> value = "default";
+      case 1 -> value = "1";
     };
+    return value;
   };
-
-  assertEquals("-1", func_switch(-1));
-  assertEquals("1", func_switch(1));
-  assertEquals("2|3", func_switch(2));
-  assertEquals("2|3", func_switch(3));
-  assertEquals("default", func_switch(100));
+  assertEquals("1", func(1));
+  assertEquals("default", func(2));
 }
-
 {
-  var func_switch_stat_branch = function(a) {
-    return switch (a) {
-      case 1 -> {
-        yield "1";
-      }
-      case 2 -> yield UNDEFINED;
+  // Default branch before case branch
+  var func = function(a) {
+    var value = "unset";
+    switch (a) {
       default -> {
-        var value = "default";
-        yield value;
+        value = "default";
+      }
+      case 1 -> {
+        value = "1";
       }
     };
+    return value;
   };
+  assertEquals("1", func(1));
+  assertEquals("default", func(2));
+}
+{
+  // Labelled switch
+  var func = function(a) {
+    var value = "unset";
+    outer: switch (a) {
+      default -> value = "default";
+      case 1 -> value = "1";
+      case 2 -> {
+        value = "2";
+        for (i : 0..4) {
+          if (i == 2) {
+            break outer;
+          }
+          value += "|" + i;
+        }
+      }
+    };
+    return value;
+  };
+  assertEquals("1", func(1));
+  assertEquals("2|0|1", func(2));
+  assertEquals("default", func(3));
+}
+{
+  // Without default branch
+  var func = function(a) {
+    var value = "unset";
+    switch (a) {
+      case 1 -> value = "1";
+      case 2 -> value = "2";
+    };
+    return value;
+  };
+  assertEquals("1", func(1));
+  assertEquals("2", func(2));
 
-  assertEquals("1", func_switch_stat_branch(1));
-  assertEquals(UNDEFINED, func_switch_stat_branch(2));
-  assertEquals("default", func_switch_stat_branch(3));
+  assertThrows(native ScriptEvaluateException.class, () -> {
+      func(3);
+  });
+}
+{
+  // null case
+  var func = function(a) {
+    var value = "unset";
+    switch (a) {
+      case null -> value = "null";
+      default -> value = "default";
+    };
+    return value;
+  };
+  assertEquals("null", func(null));
+  assertEquals("default", func(1));
 }

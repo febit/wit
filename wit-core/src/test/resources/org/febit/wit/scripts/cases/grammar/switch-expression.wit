@@ -1,7 +1,10 @@
+@import org.febit.wit.exception.ScriptEvaluateException;
+
 {
-  var func_switch_expr = function(a) {
+  var func = function(a) {
     return switch (a) {
       case -1 -> "-1";
+      case -2, -3, -4 -> yield "-2|-3|-4";
       case 1 -> "1";
       case 2, 3 -> {
         yield "2|3";
@@ -13,13 +16,18 @@
     };
   };
 
-  assertEquals("-1", func_switch_expr(-1));
-  assertEquals("1", func_switch_expr(1));
-  assertEquals("2|3", func_switch_expr(2));
-  assertEquals("2|3", func_switch_expr(3));
-  assertEquals("default", func_switch_expr(100));
-
-  var func_switch_expr2 = function(a) {
+  assertEquals("-1", func(-1));
+  assertEquals("-2|-3|-4", func(-2));
+  assertEquals("-2|-3|-4", func(-3));
+  assertEquals("-2|-3|-4", func(-4));
+  assertEquals("1", func(1));
+  assertEquals("2|3", func(2));
+  assertEquals("2|3", func(3));
+  assertEquals("default", func(100));
+}
+{
+  // Yield in different branches
+  var func = function(a) {
     return switch (a) {
       case 1 -> {
         if (true) {
@@ -37,8 +45,77 @@
     };
   };
 
-  assertEquals("1", func_switch_expr2(1));
-  assertEquals(UNDEFINED, func_switch_expr2(2));
-  assertEquals("3", func_switch_expr2(3));
-  assertEquals("default", func_switch_expr2(4));
+  assertEquals("1", func(1));
+  assertEquals(UNDEFINED, func(2));
+  assertEquals("3", func(3));
+  assertEquals("default", func(4));
+}
+{
+  // Without yield
+  var func = function(a) {
+    return switch (a) {
+      case 1 -> "1";
+      case 2 -> {
+      }
+      default -> "default";
+    };
+  };
+  assertEquals("1", func(1));
+  assertEquals(UNDEFINED, func(2));
+  assertEquals("default", func(3));
+}
+{
+  // Default branch before case branch
+  var func = function(a) {
+    return switch (a) {
+      default -> "default";
+      case 1 -> "1";
+    };
+  };
+  assertEquals("1", func(1));
+  assertEquals("default", func(2));
+}
+{
+  // Noop jump is yield UNDEFINED
+  var func = function(a) {
+    return switch (a) {
+      case 1 -> "1";
+      case 2 -> {
+      }
+      case 3 -> {
+        var value = "3";
+      }
+      default -> "default";
+    };
+  };
+  assertEquals("1", func(1));
+  assertEquals(UNDEFINED, func(2));
+  assertEquals(UNDEFINED, func(3));
+  assertEquals("default", func(4));
+}
+{
+  // Without default branch
+  var func = function(a) {
+    return switch (a) {
+      case 1 -> "1";
+      case 2 -> "2";
+    };
+  };
+  assertEquals("1", func(1));
+  assertEquals("2", func(2));
+
+  assertThrows(native ScriptEvaluateException.class, () -> {
+      func(3);
+  });
+}
+{
+  // null case
+  var func = function(a) {
+    return switch (a) {
+      case null -> "null";
+      default -> "default";
+    };
+  };
+  assertEquals("null", func(null));
+  assertEquals("default", func(1));
 }

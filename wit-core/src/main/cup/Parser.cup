@@ -82,7 +82,6 @@ nonterminal IncludeBuilder importPart1, importPart2;
 nonterminal LegacySwitchBuilder legacySwitchPart, legacySwitchPart0;
 nonterminal EnhancedSwitchBuilder enhancedSwitchPart, enhancedSwitchPart0, labeledEnhancedSwitchPart;
 nonterminal Object switchCaseKey;
-nonterminal List<Object> switchCaseKeys;
 nonterminal BaseForInBuilder forInHead, forInPart, lambdaForHead, lambdaForHead2;
 nonterminal WhileBuilder whileBuilder;
 nonterminal TryCatchBuilder tryPart, catchPart, finallyPart;
@@ -368,13 +367,6 @@ switchCaseKey   ::= MINUS:negative? DIRECT_VALUE:key
                     ;
 
 
-switchCaseKeys  ::= switchCaseKey:key
-                    {: yield List.of(%key%); :}
-                    | switchCaseKeys:keys COMMA switchCaseKey:key
-                    {: var list = new ArrayList<>(%keys%); list.add(%key%); yield list; :}
-                    ;
-
-
 legacySwitchPart0 ::=
                     {: yield IR.legacySwitchBuilder(); :}
                     | CASE:sym MINUS:negative? DIRECT_VALUE:key COLON caseBlockStat:body legacySwitchPart0:builder
@@ -398,13 +390,13 @@ enhancedSwitchBranchStat ::= block:$
 
 
 enhancedSwitchPart0 ::= 
-                    CASE:sym switchCaseKeys:keys MINUSGT expression:body SEMICOLON?
+                    CASE:sym switchCaseKey[COMMA]:keys MINUSGT expression:body SEMICOLON?
                     {: yield IR.enhancedSwitchBuilder().branch(%keys%, %body%); :}
-                    | CASE:sym switchCaseKeys:keys MINUSGT expression:body SEMICOLON? enhancedSwitchPart0:builder
+                    | CASE:sym switchCaseKey[COMMA]:keys MINUSGT expression:body SEMICOLON? enhancedSwitchPart0:builder
                     {: yield (%builder%).branch(%keys%, %body%); :}
-                    | CASE:sym switchCaseKeys:keys MINUSGT enhancedSwitchBranchStat:body
+                    | CASE:sym switchCaseKey[COMMA]:keys MINUSGT enhancedSwitchBranchStat:body
                     {: yield IR.enhancedSwitchBuilder().branch(%keys%, %body%); :}
-                    | CASE:sym switchCaseKeys:keys MINUSGT enhancedSwitchBranchStat:body enhancedSwitchPart0:builder
+                    | CASE:sym switchCaseKey[COMMA]:keys MINUSGT enhancedSwitchBranchStat:body enhancedSwitchPart0:builder
                     {: yield (%builder%).branch(%keys%, %body%); :}
                     | DEFAULT:sym MINUSGT expression:body SEMICOLON?
                     {: yield IR.enhancedSwitchBuilder().defaultBranch(%body%); :}
