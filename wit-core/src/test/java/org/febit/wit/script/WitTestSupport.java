@@ -169,13 +169,9 @@ public class WitTestSupport {
         return WIT().script(name);
     }
 
-    public static Executable tmplChecker(String tmpl) {
-        return () -> script(tmpl)
+    public static Executable loader(String path) {
+        return () -> script(path)
                 .reload();
-    }
-
-    public static Executable codeChecker(String code) {
-        return tmplChecker("code: \n" + code);
     }
 
 }

@@ -17,14 +17,14 @@ package org.febit.wit.script.feature;
 
 import org.junit.jupiter.api.Test;
 
-import static org.febit.wit.script.WitTestSupport.tmplChecker;
+import static org.febit.wit.script.WitTestSupport.loader;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AssistantSuffixesTest {
 
     @Test
     void test() {
-        assertDoesNotThrow(tmplChecker("/feature/suffixes/assistant1.whtml"));
-        assertDoesNotThrow(tmplChecker("/feature/suffixes/assistant2.wit2"));
+        assertDoesNotThrow(loader("/feature/suffixes/assistant1.whtml"));
+        assertDoesNotThrow(loader("/feature/suffixes/assistant2.wit2"));
     }
 }

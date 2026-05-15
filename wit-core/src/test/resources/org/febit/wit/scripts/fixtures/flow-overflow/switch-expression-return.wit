@@ -1,8 +1,0 @@
-var func = function(a){
-    return switch (a) {
-        case 1 -> {
-            return "unexpected";
-        }
-        default -> "default";
-    };
-};
