@@ -13,42 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.febit.wit.parser.grammar;
+package org.febit.wit.runtime.evaluation;
 
 import org.junit.jupiter.api.Test;
 
-import static org.febit.wit.parser.grammar.GrammarCheckSupport.error;
-import static org.febit.wit.parser.grammar.GrammarCheckSupport.ok;
+import static org.febit.wit.runtime.evaluation.EvalSupport.error;
+import static org.febit.wit.runtime.evaluation.EvalSupport.ok;
 
 @SuppressWarnings({
         "java:S2699", // Tests should include assertions
 })
-class ImportTest {
+class NativeFieldEvalTest {
 
     @Test
-    void simpleImport() {
-        ok("@import java.util.List;");
+    void staticNativeFieldReadAndWrite() {
         ok("""
-                @import java.util.List;
-                @import java.util.List;
+                @import org.febit.wit.script.component.lib.StaticFields;
+                native StaticFields.field2 = "updated";
+                assertEquals("updated", native StaticFields.field2);
+                native StaticFields.field2 = "updated2";
+                assertEquals("updated2", native StaticFields.field2);
                 """);
-    }
 
-    @Test
-    void primitiveImportRejected() {
-        error("@import int;",
-                "Cannot import primitive type: int");
-        error("@import void;",
-                "Cannot import primitive type: void");
-    }
-
-    @Test
-    void ambiguousImportRejected() {
         error("""
-                        @import java.util.List;
-                        @import java.awt.List;
-                        """,
-                "Ambiguous import for class name: List");
+                native org.febit.wit.script.component.lib.StaticFields.field2 = 1;
+                """, "Can not assign value to static field");
     }
 }
 

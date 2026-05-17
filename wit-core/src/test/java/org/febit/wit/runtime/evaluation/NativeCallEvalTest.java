@@ -45,6 +45,12 @@ class NativeCallEvalTest {
 
         // invoking a native method that throws should be wrapped as a script runtime error
         error("\"abc\".~substring(9);", "this method throws an exception");
+
+        // missing arguments can still pick an overload and then fail during reflective invocation
+        error("\"abc\".~substring();", "illegal argument:");
+
+        // incompatible argument types should fail during method resolution
+        error("\"abc\".~substring(\"x\");", "no such native method", "#substring");
     }
 
     @Test
@@ -61,5 +67,11 @@ class NativeCallEvalTest {
                 var max = Math::max;
                 max(1);
                 """, "Cannot invoke method");
+
+        error("""
+                @import java.lang.Math;
+                var max = Math::max;
+                max("x", 1);
+                """, "no such native method");
     }
 }

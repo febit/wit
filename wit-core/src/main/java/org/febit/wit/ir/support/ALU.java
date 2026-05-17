@@ -650,7 +650,7 @@ public class ALU {
 
     private static ScriptEvaluateException unsupportedTypeException(@Nullable Object o1, @Nullable Object o2) {
         return new ScriptEvaluateException("Unsupported type: left ["
-                + toTypeString(o1) + "], right[" + toTypeString(o2) + "]"
+                + toTypeString(o1) + "], right [" + toTypeString(o2) + "]"
         );
     }
 
